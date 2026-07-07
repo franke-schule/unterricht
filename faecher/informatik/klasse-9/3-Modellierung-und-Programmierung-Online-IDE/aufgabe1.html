@@ -1,0 +1,1517 @@
+
+<!DOCTYPE html>
+<html lang="de">
+
+<head>
+  <base target="_top">
+
+  <meta charset="UTF-8">
+
+  <meta
+    name="viewport"
+    content="width=device-width, initial-scale=1.0">
+
+  <title>Aufgabe 1 – Programmtext analysieren</title>
+
+  <style>
+    :root {
+      --bg: #f7f6f2;
+      --surface: #ffffff;
+      --border: #e2ddd6;
+      --accent: #3b6ea5;
+      --accent-dark: #2d5682;
+      --text: #1e1e1e;
+      --muted: #6b6560;
+
+      --info-bg: #eef3f8;
+      --success-bg: #edf7ee;
+      --success-border: #7aae80;
+      --medium-bg: #fff4df;
+      --medium-border: #d99a3a;
+      --low-bg: #fff0f0;
+      --low-border: #d38181;
+      --error-bg: #fff0f0;
+      --error-border: #d38181;
+      --warning-bg: #fff8df;
+      --warning-border: #dfc979;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      min-height: 100vh;
+      margin: 0;
+      background: var(--bg);
+      color: var(--text);
+      font-family: "Segoe UI", system-ui, sans-serif;
+      line-height: 1.5;
+    }
+
+    header {
+      background: var(--accent);
+      color: #ffffff;
+
+      padding:
+        1.5rem
+        max(1rem, calc((100% - 1500px) / 2));
+    }
+
+    header h1 {
+      margin: 0;
+      font-size: 1.5rem;
+    }
+
+    header p {
+      margin: 0.35rem 0 0;
+      opacity: 0.88;
+    }
+
+    .page-nav {
+      margin-bottom: 0.9rem;
+    }
+
+    .back-link {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.35rem;
+
+      padding: 0.55rem 0.85rem;
+
+      border: 1px solid rgb(255 255 255 / 55%);
+      border-radius: 5px;
+
+      background: rgb(255 255 255 / 12%);
+      color: #ffffff;
+
+      font-weight: 600;
+      text-decoration: none;
+    }
+
+    .back-link:hover,
+    .back-link:focus-visible {
+      background: rgb(255 255 255 / 22%);
+      outline: 2px solid #ffffff;
+      outline-offset: 2px;
+    }
+
+    main {
+      max-width: 1500px;
+      margin: 1.5rem auto;
+      padding: 0 1rem 3rem;
+    }
+
+    .exercise-layout {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) minmax(320px, 420px);
+      gap: 1.25rem;
+      align-items: start;
+    }
+
+    .ide-panel {
+      position: sticky;
+      top: 1rem;
+      min-width: 0;
+    }
+
+    .answers-panel {
+      position: sticky;
+      top: 1rem;
+      max-height: calc(100vh - 2rem);
+      overflow-y: auto;
+      padding: 0 0.35rem 0.5rem 0.05rem;
+      scrollbar-gutter: stable;
+    }
+
+    .ide-container {
+      overflow: hidden;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      box-shadow: 0 2px 8px rgb(0 0 0 / 8%);
+    }
+
+    .ide-container iframe {
+      display: block;
+      width: 100%;
+      min-height: 650px;
+      border: 0;
+    }
+
+    .note {
+      margin: 0.75rem 0.25rem 1.5rem;
+      color: var(--muted);
+      font-size: 0.85rem;
+    }
+
+    .privacy-note {
+      margin: 0 0 1rem;
+      padding: 0.9rem 1rem;
+
+      background: var(--warning-bg);
+      border: 1px solid var(--warning-border);
+      border-radius: 6px;
+
+      font-size: 0.9rem;
+    }
+
+    .task-card {
+      margin-top: 1rem;
+      padding: 1.3rem;
+
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+
+      box-shadow: 0 2px 8px rgb(0 0 0 / 5%);
+    }
+
+    .task-card h2 {
+      margin: 0 0 0.5rem;
+      color: var(--accent);
+      font-size: 1.25rem;
+    }
+
+    .exercise-title {
+      margin: 2rem 0 0.75rem;
+      color: var(--accent-dark);
+      font-size: 1.35rem;
+    }
+
+    .task-card p {
+      margin: 0.4rem 0;
+    }
+
+    textarea {
+      display: block;
+      width: 100%;
+      min-height: 150px;
+
+      margin: 1rem 0 0.35rem;
+      padding: 0.8rem;
+
+      border: 1px solid #aaa;
+      border-radius: 6px;
+
+      font: inherit;
+      line-height: 1.45;
+
+      resize: vertical;
+    }
+
+    textarea:focus {
+      border-color: var(--accent);
+      outline: 2px solid rgb(59 110 165 / 20%);
+    }
+
+    textarea:disabled {
+      background: #f1f1f1;
+    }
+
+    .textarea-info {
+      display: flex;
+      justify-content: space-between;
+      gap: 1rem;
+
+      margin-bottom: 0.8rem;
+
+      color: var(--muted);
+      font-size: 0.82rem;
+    }
+
+    button {
+      padding: 0.7rem 1.1rem;
+
+      border: 0;
+      border-radius: 5px;
+
+      background: var(--accent);
+      color: #ffffff;
+
+      font: inherit;
+      font-weight: 600;
+
+      cursor: pointer;
+    }
+
+    button:hover:not(:disabled) {
+      background: var(--accent-dark);
+    }
+
+    button:disabled {
+      opacity: 0.6;
+      cursor: wait;
+    }
+
+    .result {
+      margin-top: 1rem;
+      padding: 1rem;
+
+      background: var(--info-bg);
+      border: 1px solid var(--border);
+      border-radius: 6px;
+    }
+
+    .result.success,
+    .result.high {
+      background: var(--success-bg);
+      border-color: var(--success-border);
+    }
+
+    .result.medium {
+      background: var(--medium-bg);
+      border-color: var(--medium-border);
+    }
+
+    .result.low {
+      background: var(--low-bg);
+      border-color: var(--low-border);
+    }
+
+    .result.error {
+      background: var(--error-bg);
+      border-color: var(--error-border);
+    }
+
+    .result h3 {
+      margin: 0 0 0.6rem;
+      font-size: 1.05rem;
+    }
+
+    .result h4 {
+      margin: 1rem 0 0.35rem;
+      font-size: 0.95rem;
+    }
+
+    .result p {
+      margin: 0.3rem 0;
+    }
+
+    .result ul {
+      margin: 0.3rem 0;
+      padding-left: 1.4rem;
+    }
+
+    .feedback {
+      margin-top: 1rem;
+      padding-top: 0.8rem;
+
+      border-top: 1px solid rgb(0 0 0 / 12%);
+    }
+
+    @media (max-width: 1050px) {
+      .exercise-layout {
+        grid-template-columns: 1fr;
+      }
+
+      .ide-panel {
+        position: static;
+      }
+
+      .answers-panel {
+        position: static;
+        max-height: none;
+        overflow: visible;
+        padding: 0;
+      }
+    }
+
+    @media (max-width: 700px) {
+      .ide-container iframe {
+        min-height: 550px;
+      }
+
+      .textarea-info {
+        display: block;
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+  <header>
+    <nav class="page-nav" aria-label="Seitennavigation">
+      <a class="back-link" href="../../index.html?subject=informatik">
+        &larr; Zurück zum Informatik-Menü
+      </a>
+    </nav>
+
+    <h1>Aufgabe 1 – Programmtext analysieren</h1>
+
+    <p>
+      Programmieraufgabe für die 9. Klasse
+    </p>
+  </header>
+
+
+  <main>
+
+    <h2 class="exercise-title">
+      Aufgabe 1 – Programmtext analysieren
+    </h2>
+
+
+    <div class="exercise-layout">
+
+      <div class="ide-panel">
+
+    <!-- Programmierumgebung Aufgabe 1 -->
+
+    <div class="ide-container">
+
+      <iframe
+        title="Aufgabe 1 – Programmtext analysieren"
+        srcdoc="<script>window.jo_doc = window.frameElement.textContent;</script><script src='https://embed.learnj.de/include/js/includeide/includeIDE.js'></script>"
+        loading="lazy">
+
+        {
+          'id': 'Java9Aufgabe1',
+          'speed': 10,
+          'withBottomPanel': true,
+          'withPCode': true,
+          'withConsole': false,
+          'withFileList': true,
+          'withErrorList': true
+        }
+
+        <script
+          type="text/plain"
+          title="Anleitung"
+          data-type="hint">
+## AUFGABE 1 – PROGRAMMTEXT ANALYSIEREN
+
+a) Führe das folgende Programm aus, indem du auf die GRÜNE PLAYTASTE drückst.
+
+b) Beschreibe, welche Funktion jede Programmzeile hat. Gib deine Antwort anschließend in das Textfeld unterhalb der Programmierumgebung ein.
+
+c) Variiere die Zahlen in den Klammern und erkunde ihre Bedeutung. Halte deine Beobachtungen im zweiten Textfeld fest.
+
+Hinweis:
+
+Mithilfe des grünen Reglers kannst du die Ablaufgeschwindigkeit des Programms ändern.
+        </script>
+
+        <script
+          type="plain/text"
+          title="Hauptprogramm.java">
+Circle ball = new Circle(200, 50, 50);
+
+ball.move(10, 10);
+
+ball.setFillColor(Color.red);
+
+ball.destroy();
+        </script>
+
+      </iframe>
+
+    </div>
+
+
+    <p class="note">
+      Die Online-IDE wird von embed.learnj.de geladen.
+      Dafür ist eine Internetverbindung erforderlich.
+    </p>
+
+
+      </div>
+
+
+      <aside
+        class="answers-panel"
+        aria-label="Freitextantworten">
+
+
+    <!-- Datenschutzhinweis -->
+
+    <div class="privacy-note">
+      <strong>Hinweis:</strong>
+
+      Gib keine Namen, E-Mail-Adressen oder andere personenbezogene
+      Informationen ein. Deine fachliche Antwort wird zur automatischen
+      Auswertung an die Gemini API übertragen.
+    </div>
+
+
+    <!-- Aufgabe b -->
+
+    <section class="task-card">
+
+      <h2>Aufgabe b)</h2>
+
+      <p>
+        Beschreibe, welche Funktion jede einzelne Programmzeile hat.
+      </p>
+
+      <textarea
+        id="answer-b"
+        maxlength="3000"
+        placeholder="Beschreibe hier die Wirkung der einzelnen Programmzeilen ..."
+        oninput="updateCharacterCount('b')"></textarea>
+
+      <div class="textarea-info">
+
+        <span>
+          Formuliere die Erklärung in eigenen Worten.
+        </span>
+
+        <span id="count-b">
+          0 von 3000 Zeichen
+        </span>
+
+      </div>
+
+      <button
+        id="button-b"
+        type="button"
+        onclick="submitAnswer('b')">
+        Antwort prüfen
+      </button>
+
+      <div
+        id="result-b"
+        class="result"
+        aria-live="polite"
+        hidden>
+      </div>
+
+    </section>
+
+
+    <!-- Aufgabe c -->
+
+    <section class="task-card">
+
+      <h2>Aufgabe c)</h2>
+
+      <p>
+        Variiere die Zahlen in den Klammern und beschreibe,
+        welche Wirkung die einzelnen Zahlen haben.
+      </p>
+
+      <textarea
+        id="answer-c"
+        maxlength="3000"
+        placeholder="Beschreibe hier deine Beobachtungen zu den Zahlen ..."
+        oninput="updateCharacterCount('c')"></textarea>
+
+      <div class="textarea-info">
+
+        <span>
+          Verändere die Zahlen am besten einzeln.
+        </span>
+
+        <span id="count-c">
+          0 von 3000 Zeichen
+        </span>
+
+      </div>
+
+      <button
+        id="button-c"
+        type="button"
+        onclick="submitAnswer('c')">
+        Antwort prüfen
+      </button>
+
+      <div
+        id="result-c"
+        class="result"
+        aria-live="polite"
+        hidden>
+      </div>
+
+    </section>
+
+
+      </aside>
+
+    </div>
+
+
+  </main>
+
+
+  <script>
+    /**
+     * ==========================================================
+     * HIER DIE URL DER APPS-SCRIPT-WEB-APP EINTRAGEN
+     * ==========================================================
+     *
+     * Die URL muss auf /exec enden, zum Beispiel:
+     * https://script.google.com/macros/s/AKfycb.../exec
+     */
+    const SCRIPT_SERVER_URL =
+      'https://script.google.com/macros/s/AKfycby8RWL6uYrKZyoJ6m2GRpWyRmXjwsdskyCiqzKpRhIK5-wrDl-9lWWk8CiAGaVMoy0x/exec';
+
+
+    /**
+     * Gibt die eingetragene Apps-Script-Adresse bereinigt zurueck.
+     */
+    function getScriptServerUrl() {
+      return SCRIPT_SERVER_URL.trim();
+    }
+
+
+    /**
+     * Prueft, ob die Apps-Script-Adresse grundsaetzlich verwendbar ist.
+     */
+    function isValidScriptServerUrl(url) {
+      try {
+        const parsedUrl =
+          new URL(url);
+
+        return (
+          parsedUrl.protocol === 'https:' &&
+          parsedUrl.hostname === 'script.google.com' &&
+          parsedUrl.pathname.endsWith('/exec') &&
+          !url.includes('DEINE_BEREITSTELLUNGS_ID') &&
+          !url.includes('DEINE_SCRIPT_ID')
+        );
+      } catch (error) {
+        return false;
+      }
+    }
+
+
+    /**
+     * Gibt die Herkunft der Unterrichtsseite fuer postMessage
+     * zurueck. Bei lokal geoeffneten file://-Seiten wird keine
+     * feste Herkunft uebergeben, damit Apps Script mit "*" antwortet.
+     */
+    function getParentOriginForServer() {
+      if (
+        !location.origin ||
+        location.origin === 'null'
+      ) {
+        return '';
+      }
+
+      try {
+        const originUrl =
+          new URL(location.origin);
+
+        if (
+          originUrl.protocol === 'http:' ||
+          originUrl.protocol === 'https:'
+        ) {
+          return location.origin;
+        }
+      } catch (error) {
+        return '';
+      }
+
+      return '';
+    }
+
+
+    /**
+     * Speichert aktuell laufende Anfragen.
+     */
+    const pendingRequests = new Map();
+
+
+    /**
+     * Aktualisiert die Zeichenanzeige eines Textfeldes.
+     */
+    function updateCharacterCount(taskId) {
+      const textarea =
+        document.getElementById(
+          'answer-' + taskId
+        );
+
+      const counter =
+        document.getElementById(
+          'count-' + taskId
+        );
+
+      counter.textContent =
+        textarea.value.length +
+        ' von 3000 Zeichen';
+    }
+
+
+    /**
+     * Erzeugt eine eindeutige Kennung für eine Anfrage.
+     */
+    function createRequestId() {
+      if (
+        window.crypto &&
+        typeof window.crypto.randomUUID === 'function'
+      ) {
+        return window.crypto.randomUUID();
+      }
+
+      return (
+        Date.now().toString(36) +
+        '-' +
+        Math.random().toString(36).substring(2)
+      );
+    }
+
+
+    /**
+     * Sendet eine Antwort über ein unsichtbares Formular
+     * an die externe Apps-Script-Web-App.
+     */
+    function submitAnswer(taskId) {
+      const textarea =
+        document.getElementById(
+          'answer-' + taskId
+        );
+
+      const button =
+        document.getElementById(
+          'button-' + taskId
+        );
+
+      const resultBox =
+        document.getElementById(
+          'result-' + taskId
+        );
+
+      const answer =
+        textarea.value.trim();
+
+      const scriptServerUrl =
+        getScriptServerUrl();
+
+
+      if (answer.length < 10) {
+        showError(
+          resultBox,
+          'Bitte formuliere eine etwas ausführlichere Antwort.'
+        );
+
+        textarea.focus();
+        return;
+      }
+
+
+      if (
+        !isValidScriptServerUrl(scriptServerUrl)
+      ) {
+        showError(
+          resultBox,
+          'Die Adresse des Auswertungsservers wurde noch nicht richtig eingetragen.'
+        );
+
+        return;
+      }
+
+
+      button.disabled = true;
+      textarea.disabled = true;
+
+      button.textContent =
+        'Antwort wird geprüft …';
+
+      resultBox.hidden = false;
+      resultBox.className = 'result';
+
+      resultBox.textContent =
+        'Deine Antwort wird ausgewertet.';
+
+
+      const requestId =
+        createRequestId();
+
+      {
+      const script =
+        document.createElement('script');
+
+      script.async =
+        true;
+
+      script.src =
+        createJsonpUrl(
+          scriptServerUrl,
+          {
+            callback:
+              '__handleGeminiEvaluationResult',
+            requestId:
+              requestId,
+            taskId:
+              taskId,
+            answer:
+              answer
+          }
+        );
+
+      script.onerror =
+        function() {
+          const pending =
+            pendingRequests.get(
+              requestId
+            );
+
+          if (!pending) {
+            return;
+          }
+
+          restoreTaskControls(
+            pending
+          );
+
+          showError(
+            pending.resultBox,
+            'Der Auswertungsserver konnte nicht geladen werden.'
+          );
+
+          cleanupRequest(
+            requestId
+          );
+        };
+
+      const timeoutId =
+        window.setTimeout(
+          function() {
+            const pending =
+              pendingRequests.get(
+                requestId
+              );
+
+            if (!pending) {
+              return;
+            }
+
+            restoreTaskControls(
+              pending
+            );
+
+            showError(
+              pending.resultBox,
+              'Der Auswertungsserver hat nicht rechtzeitig geantwortet. Bitte versuche es erneut.'
+            );
+
+            cleanupRequest(
+              requestId
+            );
+          },
+          60000
+        );
+
+
+      pendingRequests.set(
+        requestId,
+        {
+          script: script,
+          textarea: textarea,
+          button: button,
+          resultBox: resultBox,
+          timeoutId: timeoutId
+        }
+      );
+
+
+      document.body.appendChild(
+        script
+      );
+
+      return;
+      }
+
+      const iframeName =
+        'gemini-feedback-' +
+        requestId.replace(
+          /[^a-zA-Z0-9_-]/g,
+          ''
+        );
+
+
+      const iframe =
+        document.createElement('iframe');
+
+      iframe.name =
+        iframeName;
+
+      iframe.title =
+        'Unsichtbarer Übertragungsrahmen';
+
+      iframe.setAttribute(
+        'aria-hidden',
+        'true'
+      );
+
+      iframe.style.display =
+        'none';
+
+
+      const form =
+        document.createElement('form');
+
+      form.method =
+        'POST';
+
+      form.action =
+        scriptServerUrl;
+
+      form.target =
+        iframeName;
+
+      form.acceptCharset =
+        'UTF-8';
+
+      form.style.display =
+        'none';
+
+
+      appendHiddenField(
+        form,
+        'requestId',
+        requestId
+      );
+
+      appendHiddenField(
+        form,
+        'taskId',
+        taskId
+      );
+
+      appendHiddenField(
+        form,
+        'answer',
+        answer
+      );
+
+      appendHiddenField(
+        form,
+        'parentOrigin',
+        getParentOriginForServer()
+      );
+
+
+      document.body.appendChild(
+        iframe
+      );
+
+      document.body.appendChild(
+        form
+      );
+
+
+      const timeoutId =
+        window.setTimeout(
+          function() {
+            const pending =
+              pendingRequests.get(
+                requestId
+              );
+
+            if (!pending) {
+              return;
+            }
+
+            restoreTaskControls(
+              pending
+            );
+
+            showError(
+              pending.resultBox,
+              'Der Auswertungsserver hat nicht rechtzeitig geantwortet. Bitte versuche es erneut.'
+            );
+
+            cleanupRequest(
+              requestId
+            );
+          },
+          60000
+        );
+
+
+      pendingRequests.set(
+        requestId,
+        {
+          iframe: iframe,
+          form: form,
+          textarea: textarea,
+          button: button,
+          resultBox: resultBox,
+          timeoutId: timeoutId
+        }
+      );
+
+
+      form.submit();
+    }
+
+
+    /**
+     * Fügt dem versteckten Formular ein Feld hinzu.
+     */
+    function appendHiddenField(
+      form,
+      name,
+      value
+    ) {
+      const input =
+        document.createElement('input');
+
+      input.type =
+        'hidden';
+
+      input.name =
+        name;
+
+      input.value =
+        String(value);
+
+      form.appendChild(
+        input
+      );
+    }
+
+
+    /**
+     * Empfängt die Rückmeldung aus dem
+     * unsichtbaren iframe.
+     */
+    /**
+     * Erstellt die JSONP-Adresse fuer Apps Script.
+     * Dieser Weg vermeidet iframes, die Google per X-Frame-Options blockiert.
+     */
+    function createJsonpUrl(
+      baseUrl,
+      parameters
+    ) {
+      const url =
+        new URL(baseUrl);
+
+      Object.keys(parameters).forEach(
+        function(key) {
+          url.searchParams.set(
+            key,
+            parameters[key]
+          );
+        }
+      );
+
+      return url.toString();
+    }
+
+
+    /**
+     * Wird von Apps Script per JSONP aufgerufen.
+     */
+    window.__handleGeminiEvaluationResult =
+      function(message) {
+        handleEvaluationMessage(
+          normalizeServerMessage(message)
+        );
+      };
+
+
+    /**
+     * Verarbeitet eine Rueckmeldung des Auswertungsservers.
+     */
+    function handleEvaluationMessage(message) {
+      if (
+        !message ||
+        message.type !==
+          'GEMINI_EVALUATION_RESULT' ||
+        !message.requestId
+      ) {
+        return;
+      }
+
+      const pending =
+        pendingRequests.get(
+          message.requestId
+        );
+
+      if (!pending) {
+        console.warn(
+          'Auswertungsnachricht ohne passende offene Anfrage empfangen:',
+          message.requestId
+        );
+
+        return;
+      }
+
+      window.clearTimeout(
+        pending.timeoutId
+      );
+
+      restoreTaskControls(
+        pending
+      );
+
+      const result =
+        message.result;
+
+      if (
+        !result ||
+        result.ok !== true
+      ) {
+        showError(
+          pending.resultBox,
+
+          result && result.message
+            ? result.message
+            : 'Die Rueckmeldung konnte nicht erstellt werden.'
+        );
+
+        cleanupRequest(
+          message.requestId
+        );
+
+        return;
+      }
+
+      showEvaluation(
+        pending.resultBox,
+        result
+      );
+
+      cleanupRequest(
+        message.requestId
+      );
+    }
+
+
+    window.addEventListener(
+      'message',
+
+      function(event) {
+        const message =
+          normalizeServerMessage(
+            event.data
+          );
+
+
+        if (
+          isTrustedAppsScriptOrigin(
+            event.origin
+          ) &&
+          !message
+        ) {
+          console.warn(
+            'Nachricht von Apps Script empfangen, aber nicht erkannt:',
+            event.origin,
+            event.data
+          );
+        }
+
+
+        if (
+          !message ||
+          message.type !==
+            'GEMINI_EVALUATION_RESULT' ||
+          !message.requestId
+        ) {
+          return;
+        }
+
+
+        const pending =
+          pendingRequests.get(
+            message.requestId
+          );
+
+
+        if (!pending) {
+          console.warn(
+            'Auswertungsnachricht ohne passende offene Anfrage empfangen:',
+            message.requestId
+          );
+
+          return;
+        }
+
+
+/*
+ * Apps Script führt HtmlService-Ausgaben in einem
+ * Google-Sandbox-iframe aus. Deshalb kann event.source
+ * nicht mit dem äußeren iframe verglichen werden.
+ *
+ * Stattdessen wird die Herkunft der Nachricht geprüft.
+ */
+if (
+  !isTrustedAppsScriptOrigin(
+    event.origin
+  )
+) {
+  console.warn(
+    'Nachricht von unbekannter Herkunft verworfen:',
+    event.origin
+  );
+
+  return;
+}
+
+
+/**
+ * Akzeptiert ausschließlich Ursprünge der
+ * Google-Apps-Script-Ausgabe.
+ */
+function isTrustedAppsScriptOrigin(origin) {
+  try {
+    const url =
+      new URL(origin);
+
+    if (url.protocol !== 'https:') {
+      return false;
+    }
+
+    return (
+      url.hostname ===
+        'script.google.com' ||
+
+      url.hostname ===
+        'script.googleusercontent.com' ||
+
+      url.hostname.endsWith(
+        '.script.googleusercontent.com'
+      ) ||
+
+      url.hostname.endsWith(
+        '-script.googleusercontent.com'
+      )
+    );
+
+  } catch (error) {
+    return false;
+  }
+}
+
+
+
+        window.clearTimeout(
+          pending.timeoutId
+        );
+
+        restoreTaskControls(
+          pending
+        );
+
+
+        const result =
+          message.result;
+
+
+        if (
+          !result ||
+          result.ok !== true
+        ) {
+          showError(
+            pending.resultBox,
+
+            result && result.message
+              ? result.message
+              : 'Die Rückmeldung konnte nicht erstellt werden.'
+          );
+
+          cleanupRequest(
+            message.requestId
+          );
+
+          return;
+        }
+
+
+        showEvaluation(
+          pending.resultBox,
+          result
+        );
+
+        cleanupRequest(
+          message.requestId
+        );
+      }
+    );
+
+
+    /**
+     * Apps Script und Browser koennen postMessage-Daten je nach
+     * Sandbox als Objekt oder als JSON-String uebergeben.
+     */
+    function normalizeServerMessage(data) {
+      if (
+        data &&
+        typeof data === 'object'
+      ) {
+        return data;
+      }
+
+      if (typeof data !== 'string') {
+        return null;
+      }
+
+      try {
+        const parsed =
+          JSON.parse(data);
+
+        if (
+          parsed &&
+          typeof parsed === 'object'
+        ) {
+          return parsed;
+        }
+      } catch (error) {
+        return null;
+      }
+
+      return null;
+    }
+
+
+    /**
+     * Aktiviert Textfeld und Schaltfläche wieder.
+     */
+    function restoreTaskControls(
+      pending
+    ) {
+      pending.button.disabled =
+        false;
+
+      pending.textarea.disabled =
+        false;
+
+      pending.button.textContent =
+        'Antwort erneut prüfen';
+    }
+
+
+    /**
+     * Entfernt Hilfselemente und gespeicherte Anfrage.
+     */
+    function cleanupRequest(
+      requestId
+    ) {
+      const pending =
+        pendingRequests.get(
+          requestId
+        );
+
+      if (!pending) {
+        return;
+      }
+
+
+      window.clearTimeout(
+        pending.timeoutId
+      );
+
+
+      if (
+        pending.script &&
+        pending.script.parentNode
+      ) {
+        pending.script.parentNode.removeChild(
+          pending.script
+        );
+      }
+
+
+      if (
+        pending.form &&
+        pending.form.parentNode
+      ) {
+        pending.form.parentNode.removeChild(
+          pending.form
+        );
+      }
+
+
+      if (
+        pending.iframe &&
+        pending.iframe.parentNode
+      ) {
+        pending.iframe.parentNode.removeChild(
+          pending.iframe
+        );
+      }
+
+
+      pendingRequests.delete(
+        requestId
+      );
+    }
+
+
+    /**
+     * Zeigt eine erfolgreiche KI-Auswertung an.
+     */
+    function showEvaluation(
+      resultBox,
+      result
+    ) {
+      resultBox.textContent = '';
+      resultBox.hidden = false;
+      resultBox.className =
+        'result ' +
+        getEvaluationLevelClass(
+          result.points
+        );
+
+
+      const heading =
+        document.createElement('h3');
+
+      heading.textContent =
+        result.points +
+        ' von ' +
+        result.maxPoints +
+        ' Punkten – ' +
+        result.status;
+
+      resultBox.appendChild(
+        heading
+      );
+
+
+      appendList(
+        resultBox,
+        'Das ist dir gelungen:',
+        result.strengths,
+        'Es wurde noch kein eindeutiger richtiger Aspekt erkannt.'
+      );
+
+
+      appendList(
+        resultBox,
+        'Das solltest du ergänzen oder überprüfen:',
+        result.missing,
+        'Es fehlen keine wesentlichen Aspekte.'
+      );
+
+
+      const feedbackContainer =
+        document.createElement('div');
+
+      feedbackContainer.className =
+        'feedback';
+
+
+      const feedbackHeading =
+        document.createElement('h4');
+
+      feedbackHeading.textContent =
+        'Rückmeldung';
+
+
+      const feedbackText =
+        document.createElement('p');
+
+      feedbackText.textContent =
+        result.feedback ||
+        'Überprüfe deine Antwort noch einmal.';
+
+
+      feedbackContainer.appendChild(
+        feedbackHeading
+      );
+
+      feedbackContainer.appendChild(
+        feedbackText
+      );
+
+      resultBox.appendChild(
+        feedbackContainer
+      );
+    }
+
+
+    /**
+     * Ordnet die Farbe der Auswertung den erreichten Punkten zu.
+     */
+    function getEvaluationLevelClass(points) {
+      const numericPoints =
+        Number(points);
+
+      if (numericPoints <= 2) {
+        return 'low';
+      }
+
+      if (numericPoints <= 4) {
+        return 'medium';
+      }
+
+      return 'high';
+    }
+
+
+    /**
+     * Erstellt eine sichere Aufzählung.
+     */
+    function appendList(
+      container,
+      headingText,
+      items,
+      emptyText
+    ) {
+      const heading =
+        document.createElement('h4');
+
+      heading.textContent =
+        headingText;
+
+      container.appendChild(
+        heading
+      );
+
+
+      if (
+        !Array.isArray(items) ||
+        items.length === 0
+      ) {
+        const paragraph =
+          document.createElement('p');
+
+        paragraph.textContent =
+          emptyText;
+
+        container.appendChild(
+          paragraph
+        );
+
+        return;
+      }
+
+
+      const list =
+        document.createElement('ul');
+
+
+      items.forEach(
+        function(item) {
+          const listItem =
+            document.createElement('li');
+
+          listItem.textContent =
+            String(item);
+
+          list.appendChild(
+            listItem
+          );
+        }
+      );
+
+
+      container.appendChild(
+        list
+      );
+    }
+
+
+    /**
+     * Zeigt eine Fehlermeldung an.
+     */
+    function showError(
+      resultBox,
+      message
+    ) {
+      resultBox.hidden = false;
+      resultBox.className =
+        'result error';
+
+      resultBox.textContent =
+        message;
+    }
+  </script>
+
+</body>
+
+</html>
