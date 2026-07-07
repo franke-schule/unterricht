@@ -741,13 +741,7 @@ class Hund {
         createRequestId();
 
       {
-      const script =
-        document.createElement('script');
-
-      script.async =
-        true;
-
-      script.src =
+      const jsonpUrl =
         createJsonpUrl(
           scriptServerUrl,
           {
@@ -761,6 +755,33 @@ class Hund {
               answer
           }
         );
+
+      if (jsonpUrl.length > 1800) {
+        button.disabled =
+          false;
+
+        textarea.disabled =
+          false;
+
+        button.textContent =
+          'Antwort prüfen';
+
+        showError(
+          resultBox,
+          'Deine Antwort ist zu lang für die automatische Übertragung. Bitte kürze sie etwas und versuche es erneut.'
+        );
+
+        return;
+      }
+
+      const script =
+        document.createElement('script');
+
+      script.async =
+        true;
+
+      script.src =
+        jsonpUrl;
 
       script.onerror =
         function() {

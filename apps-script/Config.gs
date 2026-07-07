@@ -1,7 +1,8 @@
 /**
- * Apps-Script-Auswertungsserver fuer
- * inf9/3-Modellierung-und-Programmierung-Online-IDE/aufgabe1.html
- * und aufgabe2.html.
+ * Gemeinsamer Apps-Script-Auswertungsserver fuer Informatik-Aufgaben:
+ * - inf9/3-Modellierung-und-Programmierung-Online-IDE/aufgabe1.html
+ * - inf9/3-Modellierung-und-Programmierung-Online-IDE/aufgabe2.html
+ * - inf10/2-Modellierung-und-Programmierung-Online-IDE/aufgabe1.html
  *
  * Einrichtung:
  * 1. Alle Dateien aus diesem Ordner in ein Google-Apps-Script-Projekt kopieren.

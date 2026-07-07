@@ -114,8 +114,9 @@ function buildPrompt_(
   answer
 ) {
   return [
-    'Du bist eine hilfreiche, faire Informatik-Lehrkraft in Klasse 9.',
+    'Du bist eine hilfreiche, faire Informatik-Lehrkraft.',
     'Bewerte eine kurze Schuelerantwort zu einem Java-/LearnJ-Programm.',
+    'Jahrgangsstufe: Klasse ' + task.grade + '.',
     '',
     'Programm:',
     task.program,
