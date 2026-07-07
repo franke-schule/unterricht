@@ -242,12 +242,71 @@ h1 {
   margin: 0 auto;
 }
 
+.module-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: clamp(14px, 2vw, 20px);
+  width: min(100%, 920px);
+  margin: 0 auto;
+}
+
 .grade-button {
   min-height: 124px;
   padding: 22px;
   color: #ffffff;
   font-size: clamp(1.45rem, 2.8vw, 2.4rem);
   text-align: center;
+}
+
+.module-button {
+  position: relative;
+  display: grid;
+  min-height: 150px;
+  align-content: center;
+  gap: 8px;
+  overflow: hidden;
+  padding: 24px;
+  border: 1px solid rgba(255, 255, 255, 0.72);
+  border-radius: 8px;
+  color: #ffffff;
+  background: linear-gradient(135deg, var(--green), var(--blue));
+  box-shadow: var(--shadow-light);
+  text-align: left;
+  transition: transform 180ms ease, box-shadow 180ms ease, border-color 180ms ease;
+}
+
+.module-button::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  background:
+    linear-gradient(135deg, rgba(255, 255, 255, 0.24), transparent 48%),
+    linear-gradient(315deg, rgba(17, 24, 39, 0.12), transparent 52%);
+}
+
+.module-button strong,
+.module-button span {
+  position: relative;
+  z-index: 1;
+}
+
+.module-button strong {
+  font-size: clamp(1.45rem, 3vw, 2.3rem);
+  line-height: 1.05;
+}
+
+.module-button span {
+  font-weight: 800;
+  opacity: 0.9;
+}
+
+.module-button:hover,
+.module-button:focus-visible {
+  border-color: rgba(15, 23, 42, 0.2);
+  box-shadow: var(--shadow);
+  outline: none;
+  transform: translateY(-5px);
 }
 
 .grade-button.green {
@@ -345,7 +404,8 @@ h1 {
   }
 
   .subject-grid,
-  .grade-grid {
+  .grade-grid,
+  .module-grid {
     grid-template-columns: 1fr;
   }
 
@@ -364,6 +424,11 @@ h1 {
   .grade-button {
     min-height: 86px;
     padding: 18px;
+  }
+
+  .module-button {
+    min-height: 118px;
+    padding: 20px;
   }
 
   .subject-button::after {
