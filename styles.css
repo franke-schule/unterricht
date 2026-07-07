@@ -1,0 +1,253 @@
+:root {
+  color-scheme: light;
+  --ink: #19202a;
+  --muted: #56616f;
+  --line: #d8dee8;
+  --paper: #f7f8fb;
+  --white: #ffffff;
+  --green: #1e7a5f;
+  --green-soft: #e8f5ef;
+  --blue: #275da8;
+  --blue-soft: #e8f0fb;
+  --gold: #b68022;
+  --shadow: 0 20px 60px rgba(25, 32, 42, 0.12);
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html {
+  min-height: 100%;
+  background: var(--paper);
+}
+
+body {
+  min-height: 100vh;
+  margin: 0;
+  color: var(--ink);
+  font-family: Arial, Helvetica, sans-serif;
+  line-height: 1.5;
+  background:
+    linear-gradient(120deg, rgba(232, 245, 239, 0.9), rgba(232, 240, 251, 0.72)),
+    var(--paper);
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+.home-shell,
+.page-shell {
+  width: min(1120px, calc(100% - 40px));
+  margin: 0 auto;
+}
+
+.home-shell {
+  display: grid;
+  min-height: 100vh;
+  align-items: center;
+  padding: 48px 0;
+}
+
+.hero {
+  display: grid;
+  gap: 22px;
+}
+
+.eyebrow {
+  margin: 0;
+  color: var(--gold);
+  font-size: 0.9rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+h1 {
+  max-width: 760px;
+  margin: 0;
+  font-size: clamp(3rem, 8vw, 6.6rem);
+  line-height: 0.95;
+  letter-spacing: 0;
+}
+
+.intro {
+  max-width: 620px;
+  margin: 0;
+  color: var(--muted);
+  font-size: 1.2rem;
+}
+
+.subject-grid,
+.grade-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 18px;
+  margin-top: 18px;
+}
+
+.subject-card,
+.grade-card {
+  display: grid;
+  min-height: 220px;
+  align-content: end;
+  gap: 8px;
+  padding: 28px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: var(--white);
+  box-shadow: var(--shadow);
+  transition: transform 160ms ease, border-color 160ms ease, box-shadow 160ms ease;
+}
+
+.subject-card:hover,
+.subject-card:focus-visible,
+.grade-card:hover,
+.grade-card:focus-visible {
+  border-color: #9fb0c7;
+  box-shadow: 0 24px 70px rgba(25, 32, 42, 0.16);
+  outline: none;
+  transform: translateY(-3px);
+}
+
+.subject-card.informatik {
+  background: linear-gradient(135deg, var(--green-soft), var(--white) 62%);
+}
+
+.subject-card.physik {
+  background: linear-gradient(135deg, var(--blue-soft), var(--white) 62%);
+}
+
+.subject-kicker,
+.grade-kicker {
+  color: var(--muted);
+  font-size: 0.9rem;
+  font-weight: 700;
+  text-transform: uppercase;
+}
+
+.subject-title {
+  font-size: clamp(2rem, 5vw, 3.5rem);
+  font-weight: 800;
+  line-height: 1;
+}
+
+.subject-meta,
+.grade-meta {
+  color: var(--muted);
+  font-size: 1rem;
+}
+
+.page-shell {
+  padding: 36px 0 56px;
+}
+
+.topbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  margin-bottom: 52px;
+}
+
+.back-link {
+  display: inline-flex;
+  align-items: center;
+  min-height: 44px;
+  padding: 9px 14px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.72);
+  font-weight: 700;
+}
+
+.page-header {
+  display: grid;
+  gap: 14px;
+  margin-bottom: 28px;
+}
+
+.page-header h1 {
+  font-size: clamp(2.6rem, 7vw, 5.4rem);
+}
+
+.grade-grid {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
+.grade-card {
+  min-height: 170px;
+  box-shadow: 0 14px 42px rgba(25, 32, 42, 0.09);
+}
+
+.grade-title {
+  font-size: clamp(1.8rem, 3vw, 2.7rem);
+  font-weight: 800;
+  line-height: 1;
+}
+
+.placeholder {
+  display: grid;
+  min-height: calc(100vh - 92px);
+  align-content: center;
+  gap: 18px;
+}
+
+.placeholder h1 {
+  font-size: clamp(2.4rem, 7vw, 5.2rem);
+}
+
+.placeholder-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-top: 10px;
+}
+
+@media (max-width: 820px) {
+  .home-shell,
+  .page-shell {
+    width: min(100% - 28px, 680px);
+  }
+
+  .home-shell {
+    align-items: start;
+    padding-top: 64px;
+  }
+
+  .subject-grid,
+  .grade-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .subject-card,
+  .grade-card {
+    min-height: 170px;
+    padding: 24px;
+  }
+
+  .topbar {
+    align-items: flex-start;
+    flex-direction: column;
+    margin-bottom: 34px;
+  }
+}
+
+@media (max-width: 520px) {
+  h1,
+  .page-header h1,
+  .placeholder h1 {
+    font-size: 2.7rem;
+  }
+
+  .intro {
+    font-size: 1.05rem;
+  }
+
+  .subject-title,
+  .grade-title {
+    font-size: 1.9rem;
+  }
+}
