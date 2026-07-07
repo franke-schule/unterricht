@@ -62,6 +62,7 @@ a {
 .site-header {
   display: flex;
   align-items: center;
+  justify-content: center;
   min-height: 70px;
 }
 
@@ -114,6 +115,8 @@ h1 {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: clamp(16px, 3vw, 28px);
+  width: min(100%, 920px);
+  margin: 0 auto;
 }
 
 .subject-button,
@@ -143,8 +146,7 @@ h1 {
     linear-gradient(315deg, rgba(17, 24, 39, 0.12), transparent 52%);
 }
 
-.subject-button::after,
-.grade-button::after {
+.subject-button::after {
   content: ">";
   position: absolute;
   right: 24px;
@@ -168,11 +170,11 @@ h1 {
 
 .subject-button {
   min-height: clamp(170px, 27vh, 260px);
-  justify-content: flex-start;
+  justify-content: center;
   padding: 34px;
   color: #ffffff;
   font-size: clamp(2.35rem, 5vw, 4.5rem);
-  text-align: left;
+  text-align: center;
 }
 
 .subject-button.informatik {
@@ -202,6 +204,7 @@ h1 {
   align-content: start;
   min-height: 100vh;
   padding: 26px 0 54px;
+  text-align: center;
 }
 
 .topbar {
@@ -235,11 +238,13 @@ h1 {
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
   gap: clamp(14px, 2vw, 20px);
+  width: min(100%, 920px);
+  margin: 0 auto;
 }
 
 .grade-button {
   min-height: 124px;
-  padding: 22px 58px 22px 22px;
+  padding: 22px;
   color: #ffffff;
   font-size: clamp(1.45rem, 2.8vw, 2.4rem);
   text-align: center;
@@ -271,9 +276,12 @@ h1 {
 
 .placeholder {
   display: grid;
-  min-height: calc(100vh - 92px);
-  align-content: center;
+  align-content: start;
+  justify-items: center;
+  min-height: 100vh;
+  padding: 26px 0 54px;
   gap: 18px;
+  text-align: center;
 }
 
 .placeholder h1 {
@@ -355,11 +363,10 @@ h1 {
 
   .grade-button {
     min-height: 86px;
-    padding: 18px 52px 18px 18px;
+    padding: 18px;
   }
 
-  .subject-button::after,
-  .grade-button::after {
+  .subject-button::after {
     right: 14px;
     bottom: 14px;
     width: 34px;
