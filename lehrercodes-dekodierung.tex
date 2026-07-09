@@ -1,0 +1,141 @@
+\documentclass[10pt,a4paper]{article}
+
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage[ngerman]{babel}
+\usepackage[a4paper,margin=18mm]{geometry}
+\usepackage{array}
+\usepackage{booktabs}
+\usepackage[table]{xcolor}
+\usepackage{lmodern}
+\usepackage{microtype}
+\usepackage{fancyhdr}
+
+\definecolor{Navy}{HTML}{17324D}
+\definecolor{Blue}{HTML}{2F6FA7}
+\definecolor{LightBlue}{HTML}{EAF3FA}
+\definecolor{Muted}{HTML}{526575}
+
+\pagestyle{fancy}
+\setlength{\headheight}{14pt}
+\fancyhf{}
+\lhead{\textcolor{Muted}{Lehrercodes}}
+\rhead{\textcolor{Muted}{Dekodierung}}
+\cfoot{\textcolor{Muted}{\thepage}}
+\renewcommand{\headrulewidth}{0.4pt}
+
+\setlength{\parindent}{0pt}
+\setlength{\parskip}{4pt}
+\renewcommand{\arraystretch}{1.12}
+
+\newcommand{\sectiontitle}[1]{%
+  \vspace{3pt}%
+  {\large\bfseries\color{Navy}#1}\par
+  \vspace{2pt}%
+}
+
+\begin{document}
+
+{\LARGE\bfseries\color{Navy} Lehrercodes dekodieren}\par
+\vspace{2pt}
+{\normalsize\color{Muted}Schlüsselkarte für Sicherungsblätter}\par
+
+\vspace{8pt}
+\colorbox{LightBlue}{%
+  \parbox{\dimexpr\textwidth-2\fboxsep\relax}{%
+    \textbf{\color{Navy}Positionsmuster: \texttt{FXXX-KXAX}}\\[3pt]
+    1. Zeichen = Fach \quad
+    5. Zeichen = Klasse \quad
+    7. Zeichen = Aufgabe
+  }%
+}
+
+\sectiontitle{So wird ein Code gelesen}
+
+Beim Code \texttt{M7QK-4P2X} werden nur drei festgelegte Positionen
+dekodiert:
+
+\begin{center}
+\begin{tabular}{>{\bfseries}l c l}
+\toprule
+Position & Zeichen & Bedeutung \\
+\midrule
+1 & M & Informatik \\
+5 & 4 & Klasse 9 \\
+7 & 2 & Aufgabe 1 \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+Die übrigen fünf Zeichen sind Prüf- und Tarnzeichen. Sie werden für die
+inhaltliche Dekodierung nicht benötigt, gehören aber zwingend zum gültigen
+Code.
+
+\vspace{3pt}
+\begin{minipage}[t]{0.25\textwidth}
+\sectiontitle{Fach}
+\centering
+\begin{tabular}{l c}
+\toprule
+Fach & Code \\
+\midrule
+Informatik & M \\
+Physik & R \\
+\bottomrule
+\end{tabular}
+\end{minipage}
+\hfill
+\begin{minipage}[t]{0.39\textwidth}
+\sectiontitle{Klasse}
+\centering
+\begin{tabular}{c c@{\hspace{9mm}}c c}
+\toprule
+Klasse & Code & Klasse & Code \\
+\midrule
+5  & 2 & 9  & 4 \\
+6  & 7 & 10 & X \\
+7  & K & 11 & D \\
+8  & P & 12 & Q \\
+\bottomrule
+\end{tabular}
+\end{minipage}
+\hfill
+\begin{minipage}[t]{0.29\textwidth}
+\sectiontitle{Aufgabe}
+\centering
+\begin{tabular}{c c}
+\toprule
+Aufgabe & Code \\
+\midrule
+1 & 2 \\
+2 & P \\
+3 & M \\
+4 & 7 \\
+5 & X \\
+\bottomrule
+\end{tabular}
+\end{minipage}
+
+\sectiontitle{Aktuell verwendete Codes}
+
+\begin{center}
+\rowcolors{2}{LightBlue}{white}
+\begin{tabular}{l l c}
+\toprule
+Material & Bedeutung & Lehrercode \\
+\midrule
+Sicherungsblatt Aufgabe 1 & Informatik, Klasse 9, Aufgabe 1 &
+\texttt{M7QK-4P2X} \\
+Sicherungsblatt Aufgabe 2 & Informatik, Klasse 9, Aufgabe 2 &
+\texttt{MXDT-4QPR} \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+\vfill
+\textcolor{Muted}{\small
+Diese Schlüsselkarte ist für Lehrkräfte bestimmt. Die Codierung verschleiert
+die Bedeutung eines Codes, stellt aber ohne serverseitige Prüfung keine
+kryptografische Zugriffssicherung dar.}
+
+\end{document}
