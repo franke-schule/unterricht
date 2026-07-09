@@ -146,23 +146,6 @@ h1 {
     linear-gradient(315deg, rgba(17, 24, 39, 0.12), transparent 52%);
 }
 
-.subject-button::after {
-  content: ">";
-  position: absolute;
-  right: 24px;
-  bottom: 20px;
-  z-index: 1;
-  display: grid;
-  width: 42px;
-  height: 42px;
-  place-items: center;
-  border-radius: 8px;
-  background: rgba(255, 255, 255, 0.22);
-  color: rgba(255, 255, 255, 0.95);
-  font-size: 1.2rem;
-  line-height: 1;
-}
-
 .subject-button span,
 .grade-button {
   z-index: 1;
@@ -431,10 +414,4 @@ h1 {
     padding: 20px;
   }
 
-  .subject-button::after {
-    right: 14px;
-    bottom: 14px;
-    width: 34px;
-    height: 34px;
-  }
 }
