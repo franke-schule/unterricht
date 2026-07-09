@@ -1,0 +1,179 @@
+\documentclass[10pt,a4paper]{article}
+
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage[ngerman]{babel}
+\usepackage[a4paper,margin=14mm]{geometry}
+\usepackage{lmodern}
+\usepackage{xcolor}
+\usepackage{tabularx}
+\usepackage{array}
+\usepackage{listings}
+\usepackage{enumitem}
+\usepackage{microtype}
+
+\pagestyle{empty}
+\setlength{\parindent}{0pt}
+\setlength{\parskip}{0pt}
+\renewcommand{\familydefault}{\sfdefault}
+
+\definecolor{Navy}{HTML}{17324D}
+\definecolor{Blue}{HTML}{3B6EA5}
+\definecolor{Sky}{HTML}{EAF3FA}
+\definecolor{Mint}{HTML}{E8F5EF}
+\definecolor{Gold}{HTML}{F3B33D}
+\definecolor{Ink}{HTML}{1E2935}
+\definecolor{Muted}{HTML}{617080}
+\definecolor{Line}{HTML}{D8E1E8}
+\definecolor{CodeBg}{HTML}{F5F7F9}
+
+\color{Ink}
+
+\newcommand{\sectiontitle}[2]{%
+  \vspace{3mm}
+  {\color{#1}\bfseries\large #2}\par
+  \vspace{1mm}
+  {\color{#1}\rule{\linewidth}{0.7pt}}\par
+  \vspace{1.5mm}
+}
+
+\newcommand{\solutionrow}[3]{%
+  \textcolor{Blue}{\bfseries #1} &
+  \ttfamily\small #2 &
+  \small #3 \\[2.3mm]
+}
+
+\lstset{
+  basicstyle=\ttfamily\small,
+  backgroundcolor=\color{CodeBg},
+  frame=single,
+  rulecolor=\color{Line},
+  framesep=3mm,
+  xleftmargin=1mm,
+  xrightmargin=1mm,
+  aboveskip=1.5mm,
+  belowskip=1mm,
+  showstringspaces=false,
+  columns=fullflexible
+}
+
+\begin{document}
+
+\colorbox{Navy}{%
+  \parbox{\dimexpr\linewidth-2\fboxsep\relax}{%
+    \vspace{3mm}
+    \color{white}
+    \begin{tabularx}{\linewidth}{@{}Xr@{}}
+      {\small\bfseries INFORMATIK · KLASSE 9} &
+      \colorbox{Gold}{\color{Navy}\small\bfseries\strut LÖSUNGEN}
+    \end{tabularx}
+    \vspace{2.5mm}
+
+    {\fontsize{22}{25}\selectfont\bfseries Sicherungsblatt: Aufgabe 1}\par
+    \vspace{1mm}
+    {\large Programmtext analysieren}
+    \vspace{3mm}
+  }%
+}
+
+\vspace{3mm}
+\colorbox{Sky}{%
+  \parbox{\dimexpr\linewidth-2\fboxsep\relax}{%
+    \vspace{1.8mm}
+    \textcolor{Blue}{\bfseries Ziel:}
+    Du kannst Objekte, Methoden und Parameter in einem kurzen Java-Programm
+    erkennen und ihre Wirkung erklären.
+    \vspace{1.8mm}
+  }%
+}
+
+\sectiontitle{Blue}{1 · Das Ausgangsprogramm}
+
+\begin{lstlisting}
+Circle ball = new Circle(200, 50, 50);
+ball.move(10, 10);
+ball.setFillColor(Color.red);
+ball.destroy();
+\end{lstlisting}
+
+\sectiontitle{Blue}{2 · Musterlösung zu b): Zeile für Zeile}
+
+\renewcommand{\arraystretch}{1.05}
+\begin{tabularx}{\linewidth}{@{}>{\centering\arraybackslash}p{7mm} >{\raggedright\arraybackslash}p{67mm} X@{}}
+  \solutionrow{1}{Circle ball = new Circle(200, 50, 50);}{Ein neues Kreis-Objekt wird erzeugt und in der Objektvariablen \texttt{ball} gespeichert. Die Zahlen legen Position und Größe fest.}
+  \solutionrow{2}{ball.move(10, 10);}{Der Kreis wird um die angegebenen Werte in x- und y-Richtung verschoben.}
+  \solutionrow{3}{ball.setFillColor(Color.red);}{Die Füllfarbe des Kreises wird auf Rot gesetzt.}
+  \solutionrow{4}{ball.destroy();}{Der Kreis wird wieder von der Zeichenfläche entfernt.}
+\end{tabularx}
+
+\sectiontitle{Blue}{3 · Musterlösung zu c): Was bedeuten die Zahlen?}
+
+\begin{tabularx}{\linewidth}{@{}p{50mm} X@{}}
+  \colorbox{Sky}{\parbox{46mm}{%
+    \texttt{new Circle(200, 50, 50)}
+
+    \vspace{1.5mm}
+    \textcolor{Blue}{\bfseries 200} = x-Position
+
+    \textcolor{Blue}{\bfseries 50} = y-Position
+
+    \textcolor{Blue}{\bfseries 50} = Radius / Größe
+  }} &
+  \colorbox{Mint}{\parbox{\dimexpr\linewidth-54mm\relax}{%
+    \texttt{move(10, 10)}
+
+    \vspace{1.5mm}
+    \textcolor{Blue}{\bfseries erste 10} = Verschiebung in x-Richtung
+
+    \textcolor{Blue}{\bfseries zweite 10} = Verschiebung in y-Richtung
+
+    \vspace{1mm}
+    Der Kreis verändert dabei seine Größe und Farbe nicht.
+  }}
+\end{tabularx}
+
+\vspace{2.5mm}
+\colorbox{CodeBg}{%
+  \parbox{\dimexpr\linewidth-2\fboxsep\relax}{%
+    \vspace{1.5mm}
+    \textcolor{Blue}{\bfseries Gute Versuchsstrategie:}
+    Verändere immer nur eine Zahl. Starte das Programm erneut und vergleiche
+    die Beobachtung mit dem vorherigen Durchlauf.
+    \vspace{1.5mm}
+  }%
+}
+
+\sectiontitle{Blue}{4 · Ablauf und Merksätze}
+
+\begin{center}
+  \colorbox{Sky}{\strut\bfseries Kreis erzeugen}
+  \textcolor{Gold}{\bfseries\quad→\quad}
+  \colorbox{Sky}{\strut\bfseries bewegen}
+  \textcolor{Gold}{\bfseries\quad→\quad}
+  \colorbox{Sky}{\strut\bfseries rot färben}
+  \textcolor{Gold}{\bfseries\quad→\quad}
+  \colorbox{Sky}{\strut\bfseries entfernen}
+\end{center}
+
+\vspace{1mm}
+\begin{tabularx}{\linewidth}{@{}p{7mm}X@{}}
+  \textcolor{Gold}{\Large\bfseries !} &
+  \textbf{Objekt und Variable:} \texttt{new Circle(...)} erzeugt das Objekt;
+  \texttt{ball} ist die Objektvariable, über die es angesprochen wird. \\[1.5mm]
+  \textcolor{Gold}{\Large\bfseries !} &
+  \textbf{Methodenaufruf:} Mit der Punktnotation, zum Beispiel
+  \texttt{ball.move(...)}, wird eine Methode für genau dieses Objekt aufgerufen. \\[1.5mm]
+  \textcolor{Gold}{\Large\bfseries !} &
+  \textbf{Parameter:} Werte in den Klammern steuern, wie ein Objekt erzeugt
+  oder wie eine Methode ausgeführt wird.
+\end{tabularx}
+
+\vfill
+{\color{Line}\rule{\linewidth}{0.5pt}}\par
+\vspace{1.5mm}
+\begin{tabularx}{\linewidth}{@{}Xr@{}}
+  {\small\color{Muted}Klasse 9 · Modellierung und Programmierung} &
+  {\small\color{Muted}Sicherungsblatt · Aufgabe 1}
+\end{tabularx}
+
+\end{document}

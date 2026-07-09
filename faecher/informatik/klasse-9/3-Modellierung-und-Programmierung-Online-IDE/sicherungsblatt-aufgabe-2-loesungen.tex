@@ -1,0 +1,187 @@
+\documentclass[10pt,a4paper]{article}
+
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage[ngerman]{babel}
+\usepackage[a4paper,margin=14mm]{geometry}
+\usepackage{lmodern}
+\usepackage{xcolor}
+\usepackage{tabularx}
+\usepackage{array}
+\usepackage{listings}
+\usepackage{microtype}
+
+\pagestyle{empty}
+\setlength{\parindent}{0pt}
+\setlength{\parskip}{0pt}
+\renewcommand{\familydefault}{\sfdefault}
+
+\definecolor{Navy}{HTML}{17324D}
+\definecolor{Blue}{HTML}{3B6EA5}
+\definecolor{Sky}{HTML}{EAF3FA}
+\definecolor{Mint}{HTML}{E8F5EF}
+\definecolor{Gold}{HTML}{F3B33D}
+\definecolor{Ink}{HTML}{1E2935}
+\definecolor{Muted}{HTML}{617080}
+\definecolor{Line}{HTML}{D8E1E8}
+\definecolor{CodeBg}{HTML}{F5F7F9}
+
+\color{Ink}
+
+\newcommand{\sectiontitle}[2]{%
+  \vspace{2.3mm}
+  {\color{#1}\bfseries\large #2}\par
+  \vspace{0.8mm}
+  {\color{#1}\rule{\linewidth}{0.7pt}}\par
+  \vspace{1.2mm}
+}
+
+\newcommand{\solutionrow}[3]{%
+  \textcolor{Blue}{\bfseries #1} &
+  \ttfamily\small #2 &
+  \small #3 \\[1.8mm]
+}
+
+\lstset{
+  basicstyle=\ttfamily\small,
+  backgroundcolor=\color{CodeBg},
+  frame=single,
+  rulecolor=\color{Line},
+  framesep=2.5mm,
+  xleftmargin=1mm,
+  xrightmargin=1mm,
+  aboveskip=1mm,
+  belowskip=1mm,
+  showstringspaces=false,
+  columns=fullflexible
+}
+
+\begin{document}
+
+\colorbox{Navy}{%
+  \parbox{\dimexpr\linewidth-2\fboxsep\relax}{%
+    \vspace{3mm}
+    \color{white}
+    \begin{tabularx}{\linewidth}{@{}Xr@{}}
+      {\small\bfseries INFORMATIK · KLASSE 9} &
+      \colorbox{Gold}{\color{Navy}\small\bfseries\strut LÖSUNGEN}
+    \end{tabularx}
+    \vspace{2.5mm}
+
+    {\fontsize{22}{25}\selectfont\bfseries Sicherungsblatt: Aufgabe 2}\par
+    \vspace{1mm}
+    {\large Klassen analysieren und verändern}
+    \vspace{3mm}
+  }%
+}
+
+\vspace{3mm}
+\colorbox{Sky}{%
+  \parbox{\dimexpr\linewidth-2\fboxsep\relax}{%
+    \vspace{1.8mm}
+    \textcolor{Blue}{\bfseries Ziel:}
+    Du kannst Objekte einer Klasse erzeugen, Methoden aufrufen und aus
+    Java-Code eine Klassenkarte ableiten.
+    \vspace{1.8mm}
+  }%
+}
+
+\sectiontitle{Blue}{1 · Musterlösung zu a): Programmausgabe}
+
+\begin{tabularx}{\linewidth}{@{}X X@{}}
+  \small Die Anweisungen werden von oben nach unten ausgeführt. Zuerst werden
+  zwei Hund-Objekte erzeugt, danach werden Methoden aufgerufen. &
+  \colorbox{CodeBg}{\parbox{\dimexpr\linewidth-4mm\relax}{%
+    \ttfamily\small
+    Der Hund heißt Wuffti und ist 5 Jahre alt.\par
+    Der Hund heißt Schnuffi und ist 8 Jahre alt.\par
+    Schnuffi: Wuff wuff
+  }}
+\end{tabularx}
+
+\sectiontitle{Blue}{2 · Musterlösung zu b): Programm.java erklären}
+
+\renewcommand{\arraystretch}{1.03}
+\begin{tabularx}{\linewidth}{@{}>{\centering\arraybackslash}p{7mm} >{\raggedright\arraybackslash}p{77mm} X@{}}
+  \solutionrow{1}{Hund petersHund = new Hund(5, \textquotedbl{}Wuffti\textquotedbl{});}{Erzeugt einen fünf Jahre alten Hund namens Wuffti und speichert ihn in \texttt{petersHund}.}
+  \solutionrow{2}{Hund inasHund = new Hund(8, \textquotedbl{}Schnuffi\textquotedbl{});}{Erzeugt ein zweites Hund-Objekt mit Alter 8 und Name Schnuffi. Es wird in \texttt{inasHund} gespeichert.}
+  \solutionrow{3}{petersHund.zeigeDaten();}{Ruft \texttt{zeigeDaten()} für Peters Hund auf und gibt seine Daten aus.}
+  \solutionrow{4}{inasHund.zeigeDaten();}{Ruft \texttt{zeigeDaten()} für Inas Hund auf und gibt ihre Daten aus.}
+  \solutionrow{5}{inasHund.belle();}{Ruft \texttt{belle()} für Inas Hund auf und gibt den Belltext mit seinem Namen aus.}
+\end{tabularx}
+
+\sectiontitle{Blue}{3 · Musterlösung zu c): Pauls Hund ergänzen}
+
+\begin{tabularx}{\linewidth}{@{}p{93mm}X@{}}
+  \colorbox{CodeBg}{\parbox{87mm}{%
+    \vspace{1.5mm}
+    \ttfamily\small
+    Hund paulsHund = new Hund(2, \textquotedbl{}Spike\textquotedbl{});\par
+    paulsHund.belle();\par
+    paulsHund.zeigeDaten();\par
+    \vspace{1.5mm}
+  }} &
+  \small
+  \textcolor{Blue}{\bfseries Wichtig:}
+  Alle drei Zeilen gehören in \texttt{Programm.java}. Das Objekt wird zuerst
+  erzeugt. Erst danach können seine Methoden aufgerufen werden.
+\end{tabularx}
+
+\sectiontitle{Blue}{4 · Musterlösung zu d): Klassenkarte Hund}
+
+\begin{tabularx}{\linewidth}{@{}p{76mm}X@{}}
+  \fcolorbox{Blue}{white}{%
+    \parbox{69mm}{%
+      \centering
+      \vspace{1mm}
+      {\large\bfseries Hund}\par
+      \vspace{1mm}
+      {\color{Blue}\rule{\linewidth}{0.6pt}}\par
+      \vspace{1mm}
+      \raggedright
+      \texttt{alter: int}\par
+      \texttt{name: String}\par
+      \vspace{1mm}
+      {\color{Blue}\rule{\linewidth}{0.6pt}}\par
+      \vspace{1mm}
+      \texttt{Hund(par1: int, par2: String)}\par
+      \texttt{zeigeDaten(): void}\par
+      \texttt{belle(): void}\par
+      \vspace{1mm}
+    }%
+  } &
+  \small
+  \textcolor{Blue}{\bfseries Aufbau der Klassenkarte}
+
+  \vspace{1mm}
+  \textbf{oben:} Klassenname
+
+  \textbf{mittig:} Attribute mit Datentyp
+
+  \textbf{unten:} Konstruktor und Methoden
+
+  \vspace{1mm}
+  \texttt{void} bedeutet, dass die Methode keinen Wert zurückgibt.
+\end{tabularx}
+
+\vspace{2.5mm}
+\colorbox{Mint}{%
+  \parbox{\dimexpr\linewidth-2\fboxsep\relax}{%
+    \vspace{1.4mm}
+    \textcolor{Blue}{\bfseries Merksatz:}
+    Die Klasse \texttt{Hund} ist der Bauplan. \texttt{petersHund},
+    \texttt{inasHund} und \texttt{paulsHund} sind verschiedene Objekte
+    dieser Klasse. Jedes Objekt besitzt eigene Attributwerte.
+    \vspace{1.4mm}
+  }%
+}
+
+\vfill
+{\color{Line}\rule{\linewidth}{0.5pt}}\par
+\vspace{1.5mm}
+\begin{tabularx}{\linewidth}{@{}Xr@{}}
+  {\small\color{Muted}Klasse 9 · Modellierung und Programmierung} &
+  {\small\color{Muted}Sicherungsblatt · Aufgabe 2}
+\end{tabularx}
+
+\end{document}

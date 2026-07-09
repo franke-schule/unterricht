@@ -317,6 +317,57 @@
       border-top: 1px solid rgb(0 0 0 / 12%);
     }
 
+    .solution-download {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 1.5rem;
+
+      margin-top: 1.5rem;
+      padding: 1.25rem 1.4rem;
+
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-left: 5px solid var(--accent);
+      border-radius: 8px;
+
+      box-shadow: 0 2px 8px rgb(0 0 0 / 5%);
+    }
+
+    .solution-download h2 {
+      margin: 0 0 0.25rem;
+      color: var(--accent-dark);
+      font-size: 1.15rem;
+    }
+
+    .solution-download p {
+      margin: 0;
+      color: var(--muted);
+    }
+
+    .download-button {
+      display: inline-flex;
+      flex: 0 0 auto;
+      align-items: center;
+      gap: 0.5rem;
+
+      padding: 0.75rem 1.1rem;
+
+      border-radius: 5px;
+      background: var(--accent);
+      color: #ffffff;
+
+      font-weight: 700;
+      text-decoration: none;
+    }
+
+    .download-button:hover,
+    .download-button:focus-visible {
+      background: var(--accent-dark);
+      outline: 2px solid rgb(59 110 165 / 25%);
+      outline-offset: 2px;
+    }
+
     @media (max-width: 1050px) {
       .exercise-layout {
         grid-template-columns: 1fr;
@@ -341,6 +392,15 @@
 
       .textarea-info {
         display: block;
+      }
+
+      .solution-download {
+        align-items: stretch;
+        flex-direction: column;
+      }
+
+      .download-button {
+        justify-content: center;
       }
     }
   </style>
@@ -552,6 +612,22 @@ class Hund {
       </aside>
 
     </div>
+
+    <section class="solution-download" aria-labelledby="solution-download-title">
+      <div>
+        <h2 id="solution-download-title">Sicherungsblatt zu Aufgabe 2</h2>
+        <p>
+          Alle Musterlösungen und die Klassenkarte kompakt auf einer Seite.
+        </p>
+      </div>
+
+      <a
+        class="download-button"
+        href="sicherungsblatt-aufgabe-2-loesungen.pdf"
+        download>
+        &#8595; Arbeitsblatt herunterladen
+      </a>
+    </section>
 
   </main>
 
