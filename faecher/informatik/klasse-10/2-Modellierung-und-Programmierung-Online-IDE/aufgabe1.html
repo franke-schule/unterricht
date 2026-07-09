@@ -300,6 +300,104 @@
       border-top: 1px solid rgb(0 0 0 / 12%);
     }
 
+    .solution-download {
+      margin-top: 1.5rem;
+      padding: 1.25rem 1.4rem;
+
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-left: 5px solid var(--accent);
+      border-radius: 8px;
+
+      box-shadow: 0 2px 8px rgb(0 0 0 / 5%);
+    }
+
+    .solution-download h2 {
+      margin: 0;
+      color: var(--accent-dark);
+      font-size: 1.15rem;
+    }
+
+    .solution-reveal {
+      margin-top: 0.8rem;
+    }
+
+    .solution-reveal summary {
+      width: fit-content;
+      cursor: pointer;
+      color: var(--accent-dark);
+      font-weight: 700;
+    }
+
+    .solution-reveal[open] summary {
+      margin-bottom: 0.9rem;
+    }
+
+    .solution-code-form {
+      display: grid;
+      gap: 0.7rem;
+      max-width: 30rem;
+    }
+
+    .solution-code-form label {
+      font-weight: 700;
+    }
+
+    .solution-code-controls {
+      display: flex;
+      gap: 0.65rem;
+    }
+
+    .solution-code-controls input {
+      min-width: 0;
+      flex: 1 1 12rem;
+      padding: 0.7rem 0.8rem;
+
+      border: 1px solid var(--border);
+      border-radius: 5px;
+
+      font: inherit;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
+
+    .solution-code-message {
+      min-height: 1.3rem;
+      margin: 0;
+      color: var(--muted);
+    }
+
+    .solution-code-message.error {
+      color: #9f2525;
+    }
+
+    .download-button {
+      display: inline-flex;
+      flex: 0 0 auto;
+      align-items: center;
+      gap: 0.5rem;
+
+      padding: 0.75rem 1.1rem;
+
+      border-radius: 5px;
+      background: var(--accent);
+      color: #ffffff;
+
+      font-weight: 700;
+      text-decoration: none;
+    }
+
+    .download-button:hover,
+    .download-button:focus-visible {
+      background: var(--accent-dark);
+      outline: 2px solid rgb(59 110 165 / 25%);
+      outline-offset: 2px;
+    }
+
+    .download-button[hidden] {
+      display: none;
+    }
+
     @media (max-width: 1050px) {
       .exercise-layout {
         grid-template-columns: 1fr;
@@ -324,6 +422,15 @@
 
       .textarea-info {
         display: block;
+      }
+
+      .download-button {
+        justify-content: center;
+      }
+
+      .solution-code-controls {
+        align-items: stretch;
+        flex-direction: column;
       }
     }
   </style>
@@ -712,6 +819,48 @@ class Kiste extends Actor {
       </aside>
 
     </div>
+
+    <section class="solution-download" aria-labelledby="solution-download-title">
+      <h2 id="solution-download-title">Lösungsblatt zu Aufgabe 1</h2>
+
+      <details class="solution-reveal">
+        <summary>Lösungsblatt anzeigen</summary>
+
+        <form
+          class="solution-code-form"
+          onsubmit="unlockSolution(event, 'M4RV-XC2N', 'solution-download-link', 'solution-code-message')">
+          <label for="solution-code">Lehrercode eingeben</label>
+
+          <div class="solution-code-controls">
+            <input
+              id="solution-code"
+              name="solution-code"
+              type="text"
+              maxlength="9"
+              autocomplete="off"
+              autocapitalize="characters"
+              spellcheck="false"
+              required>
+
+            <button type="submit">Code prüfen</button>
+          </div>
+
+          <p
+            id="solution-code-message"
+            class="solution-code-message"
+            aria-live="polite"></p>
+
+          <a
+            id="solution-download-link"
+            class="download-button"
+            href="loesungsblatt-aufgabe-1.pdf"
+            download
+            hidden>
+            &#8595; Lösungsblatt herunterladen
+          </a>
+        </form>
+      </details>
+    </section>
 
 
   </main>
@@ -1713,6 +1862,52 @@ function isTrustedAppsScriptOrigin(origin) {
 
       resultBox.textContent =
         message;
+    }
+
+
+    /**
+     * Gibt das Lösungsblatt nach Eingabe des passenden Lehrercodes frei.
+     */
+    function unlockSolution(
+      event,
+      expectedCode,
+      downloadLinkId,
+      messageId
+    ) {
+      event.preventDefault();
+
+      const form =
+        event.currentTarget;
+
+      const enteredCode =
+        form.elements['solution-code'].value
+          .toUpperCase()
+          .replace(/[^A-Z0-9]/g, '');
+
+      const normalizedExpectedCode =
+        expectedCode.replace(/[^A-Z0-9]/g, '');
+
+      const downloadLink =
+        document.getElementById(downloadLinkId);
+
+      const message =
+        document.getElementById(messageId);
+
+      if (enteredCode === normalizedExpectedCode) {
+        downloadLink.hidden = false;
+        message.className =
+          'solution-code-message';
+        message.textContent =
+          'Code korrekt. Das Lösungsblatt ist freigeschaltet.';
+
+        return;
+      }
+
+      downloadLink.hidden = true;
+      message.className =
+        'solution-code-message error';
+      message.textContent =
+        'Der eingegebene Code ist nicht gültig.';
     }
   </script>
 

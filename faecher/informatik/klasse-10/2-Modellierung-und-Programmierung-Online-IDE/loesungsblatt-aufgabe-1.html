@@ -1,0 +1,547 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Lösungsblatt - Informatik 10 - Aufgabe 1</title>
+  <style>
+    :root {
+      --navy: #17324d;
+      --blue: #3b6ea5;
+      --sky: #eaf3fa;
+      --mint: #e8f5ef;
+      --gold: #f3b33d;
+      --ink: #1e2935;
+      --muted: #617080;
+      --line: #d8e1e8;
+      --code: #f5f7f9;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    @page {
+      size: A4;
+      margin: 12mm;
+    }
+
+    body {
+      margin: 0;
+      color: var(--ink);
+      background: #eceff2;
+      font-family: "Segoe UI", Arial, sans-serif;
+      font-size: 10.5pt;
+      line-height: 1.32;
+    }
+
+    .page {
+      width: 186mm;
+      min-height: 273mm;
+      margin: 8mm auto;
+      padding: 0;
+      background: #ffffff;
+      box-shadow: 0 2px 12px rgb(0 0 0 / 14%);
+      break-after: page;
+    }
+
+    .page:last-child {
+      break-after: auto;
+    }
+
+    header {
+      padding: 7mm 8mm 6mm;
+      color: #ffffff;
+      background: var(--navy);
+    }
+
+    .eyebrow {
+      display: flex;
+      justify-content: space-between;
+      gap: 10mm;
+      align-items: center;
+      margin-bottom: 3mm;
+      font-size: 9pt;
+      font-weight: 700;
+      letter-spacing: 0.06em;
+    }
+
+    .badge {
+      padding: 1.2mm 2.4mm;
+      color: var(--navy);
+      background: var(--gold);
+      border-radius: 2px;
+    }
+
+    h1 {
+      margin: 0;
+      font-size: 22pt;
+      line-height: 1.05;
+    }
+
+    header p {
+      margin: 1.5mm 0 0;
+      font-size: 12pt;
+    }
+
+    main {
+      padding: 5mm 8mm 3mm;
+    }
+
+    h2 {
+      margin: 4mm 0 2mm;
+      padding-bottom: 1mm;
+      color: var(--blue);
+      border-bottom: 0.7pt solid var(--blue);
+      font-size: 14pt;
+    }
+
+    h3 {
+      margin: 2.5mm 0 1mm;
+      color: var(--navy);
+      font-size: 11pt;
+    }
+
+    p {
+      margin: 1mm 0;
+    }
+
+    code {
+      font-family: Consolas, "Courier New", monospace;
+      font-size: 9.3pt;
+    }
+
+    .intro {
+      padding: 3mm 4mm;
+      background: var(--sky);
+      border-left: 4px solid var(--blue);
+    }
+
+    .answers {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 3mm;
+    }
+
+    .answer {
+      padding: 3mm;
+      background: #ffffff;
+      border: 1px solid var(--line);
+      border-radius: 4px;
+      break-inside: avoid;
+    }
+
+    .answer strong:first-child {
+      color: var(--blue);
+    }
+
+    .diagram-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 4mm;
+    }
+
+    .uml {
+      border: 1.3px solid var(--navy);
+      break-inside: avoid;
+    }
+
+    .uml-title {
+      padding: 2mm 3mm;
+      text-align: center;
+      color: #ffffff;
+      background: var(--blue);
+      font-weight: 700;
+    }
+
+    .uml-section {
+      min-height: 15mm;
+      padding: 2.2mm 3mm;
+      border-top: 1px solid var(--navy);
+      font-family: Consolas, "Courier New", monospace;
+      font-size: 8.5pt;
+      white-space: pre-line;
+    }
+
+    .inheritance {
+      margin-bottom: 2mm;
+      color: var(--muted);
+      text-align: center;
+      font-size: 9pt;
+      font-weight: 700;
+    }
+
+    .object .uml-title {
+      background: var(--mint);
+      color: var(--navy);
+      text-decoration: underline;
+    }
+
+    .callout {
+      margin-top: 3mm;
+      padding: 2.5mm 3mm;
+      background: var(--mint);
+      border-left: 4px solid #4f9a74;
+    }
+
+    .bonus {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 3mm;
+    }
+
+    .code-card {
+      padding: 3mm;
+      background: var(--code);
+      border: 1px solid var(--line);
+      border-radius: 4px;
+      break-inside: avoid;
+    }
+
+    .code-card.wide {
+      grid-column: 1 / -1;
+    }
+
+    pre {
+      margin: 1.5mm 0 0;
+      white-space: pre-wrap;
+      font: 8.2pt/1.3 Consolas, "Courier New", monospace;
+    }
+
+    footer {
+      display: flex;
+      justify-content: space-between;
+      margin: 4mm 8mm 0;
+      padding-top: 2mm;
+      color: var(--muted);
+      border-top: 0.5pt solid var(--line);
+      font-size: 8.5pt;
+    }
+
+    @media print {
+      body {
+        background: #ffffff;
+        font-size: 8pt;
+        line-height: 1.16;
+      }
+
+      .page {
+        width: auto;
+        min-height: 273mm;
+        margin: 0;
+        box-shadow: none;
+      }
+
+      header {
+        padding: 4mm 7mm 3.5mm;
+      }
+
+      .eyebrow {
+        margin-bottom: 2mm;
+      }
+
+      h1 {
+        font-size: 18pt;
+      }
+
+      header p {
+        margin-top: 1mm;
+        font-size: 10.5pt;
+      }
+
+      main {
+        padding: 3mm 7mm 1.5mm;
+      }
+
+      h2 {
+        margin: 2mm 0 1mm;
+        font-size: 12pt;
+      }
+
+      h3 {
+        margin: 1.5mm 0 0.8mm;
+      }
+
+      p {
+        margin: 0.7mm 0;
+      }
+
+      .intro,
+      .answer,
+      .code-card {
+        padding: 1.5mm 2.2mm;
+      }
+
+      .answers,
+      .bonus {
+        gap: 2mm;
+      }
+
+      .inheritance {
+        margin-bottom: 1mm;
+      }
+
+      .uml-section {
+        min-height: 12mm;
+        padding: 1.5mm 2.5mm;
+        font-size: 7.5pt;
+      }
+
+      .callout {
+        margin-top: 1.5mm;
+        padding: 1.3mm 2.3mm;
+      }
+
+      pre {
+        margin-top: 0.7mm;
+        font-size: 6.4pt;
+        line-height: 1.15;
+      }
+
+      footer {
+        margin: 2mm 7mm 0;
+        padding-top: 1.5mm;
+        font-size: 7.5pt;
+      }
+    }
+  </style>
+</head>
+<body>
+  <article class="page">
+    <header>
+      <div class="eyebrow">
+        <span>INFORMATIK · KLASSE 10</span>
+        <span class="badge">LÖSUNGEN</span>
+      </div>
+      <h1>Lösungsblatt: Aufgabe 1</h1>
+      <p>Wiederholung - Klassen, Objekte und Vererbung</p>
+    </header>
+
+    <main>
+      <div class="intro">
+        Die Formulierungen sind Musterlösungen. Sinngemäß richtige Antworten
+        und technisch gleichwertige Programmvarianten sind ebenfalls korrekt.
+      </div>
+
+      <h2>1 · Musterlösungen zu a), b), c) und f)</h2>
+
+      <div class="answers">
+        <section class="answer">
+          <strong>a) Bedeutung der Programmzeilen</strong>
+          <p><code>Kiste block = new Kiste();</code> erzeugt ein neues Objekt
+          der Klasse <code>Kiste</code>. Die Objektvariable
+          <code>block</code> verweist auf dieses Objekt.</p>
+          <p><code>Ball ball1 = new Ball(100);</code> erzeugt ein neues Objekt
+          der Klasse <code>Ball</code>. Die Objektvariable
+          <code>ball1</code> verweist darauf; dem Konstruktor wird der Wert
+          <code>100</code> übergeben.</p>
+        </section>
+
+        <section class="answer">
+          <strong>b) Bedeutung der 100</strong>
+          <p>Die <code>100</code> ist das <strong>Argument</strong>
+          (auch: aktueller Parameter) beim Konstruktoraufruf. Es wird dem
+          formalen Parameter <code>startX</code> zugewiesen und legt im
+          Konstruktor die x-Position des Kreismittelpunkts fest.</p>
+          <p><code>Ball(float startX) → new Circle(startX, 50, 30)</code></p>
+        </section>
+
+        <section class="answer">
+          <strong>c) Klasse und Objekt</strong>
+          <p>Eine <strong>Klasse</strong> ist der Bauplan. Sie beschreibt
+          Attribute und Methoden, zum Beispiel die Klassen
+          <code>Ball</code> und <code>Kiste</code>.</p>
+          <p>Ein <strong>Objekt</strong> ist eine konkrete Instanz dieses
+          Bauplans. <code>ball1</code> bezeichnet ein Ball-Objekt,
+          <code>block</code> ein Kiste-Objekt.</p>
+        </section>
+
+        <section class="answer">
+          <strong>f) <code>extends Actor</code></strong>
+          <p><code>Ball</code> <strong>erbt</strong> von der Oberklasse
+          <code>Actor</code>. Ein Ball ist damit ein spezieller Actor und kann
+          dessen Eigenschaften und Methoden verwenden. Die Methode
+          <code>act()</code> wird von der Umgebung wiederholt aufgerufen und
+          bestimmt das Verhalten des Balls.</p>
+        </section>
+      </div>
+
+      <h2>2 · Klassendiagramme zu d)</h2>
+      <div class="inheritance">Actor &nbsp; △ - - - &nbsp; Ball und Kiste</div>
+
+      <div class="diagram-grid">
+        <section class="uml">
+          <div class="uml-title">Ball</div>
+          <div class="uml-section">- geschwindigkeit: int
+- ball: Circle</div>
+          <div class="uml-section">+ Ball(startX: float)
++ act(): void
++ setzeBallfarbe(neueFarbe: String): void
++ bewegeBall(): void
++ setzteBallnachoben(): void</div>
+        </section>
+
+        <section class="uml">
+          <div class="uml-title">Kiste</div>
+          <div class="uml-section">- geschwindigkeit: int
+- farbe: Color
+- kiste: Rectangle</div>
+          <div class="uml-section">+ Kiste()
++ act(): void
++ bewegeKisterechts(): void
++ setzeKistenfarbe(neueFarbe: String): void</div>
+        </section>
+      </div>
+
+      <h2>3 · Objektdiagramm zu e)</h2>
+      <div class="diagram-grid">
+        <section class="uml object">
+          <div class="uml-title">block : Kiste</div>
+          <div class="uml-section">geschwindigkeit = 10
+farbe = Color.green
+kiste = Rectangle-Objekt</div>
+        </section>
+
+        <section class="uml object">
+          <div class="uml-title">ball1 : Ball</div>
+          <div class="uml-section">geschwindigkeit = 5
+ball = Circle-Objekt
+Startposition = (100 | 50)</div>
+        </section>
+      </div>
+    </main>
+
+    <footer>
+      <span>Informatik 10 · Modellierung und Programmierung</span>
+      <span>Lösungsblatt · Aufgabe 1 · Seite 1</span>
+    </footer>
+  </article>
+
+  <article class="page">
+    <header>
+      <div class="eyebrow">
+        <span>INFORMATIK · KLASSE 10</span>
+        <span class="badge">BONUSLÖSUNGEN</span>
+      </div>
+      <h1>Programmierlösungen</h1>
+      <p>Eine mögliche Umsetzung der Bonusaufgaben g) bis k)</p>
+    </header>
+
+    <main>
+      <h2>4 · Änderungen in Kiste</h2>
+
+      <div class="bonus">
+        <section class="code-card">
+          <strong>g) Kiste am unteren Rand erzeugen</strong>
+          <pre>Kiste()
+{
+   kiste = new Rectangle(300, 550, 100, 100);
+   setzeKistenfarbe(farbe);
+   geschwindigkeit = 10;
+}</pre>
+        </section>
+
+        <section class="code-card">
+          <strong>i) Rechts hinaus - links wieder erscheinen</strong>
+          <pre>void act()
+{
+   bewegeKisterechts();
+
+   if(kiste.isOutsideView())
+   {
+      kiste.moveTo(50, kiste.getCenterY());
+   }
+}</pre>
+        </section>
+      </div>
+
+      <div class="callout">
+        Bei einer Zeichenfläche mit anderer Höhe muss die y-Position in g)
+        angepasst werden. Bei 600 Pixeln Höhe und einer 100 Pixel hohen Kiste
+        liegt ihr Mittelpunkt am unteren Rand bei <code>y = 550</code>.
+      </div>
+
+      <h2>5 · Änderungen in Ball</h2>
+
+      <div class="bonus">
+        <section class="code-card">
+          <strong>h) Oben neu erscheinen</strong>
+          <p>Diese Funktion ist im Ausgangsprogramm bereits enthalten:</p>
+          <pre>void act()
+{
+   bewegeBall();
+
+   if(ball.isOutsideView())
+   {
+      setzteBallnachoben();
+   }
+}
+
+void setzteBallnachoben()
+{
+   ball.moveTo(ball.getCenterX(), 0);
+}</pre>
+        </section>
+
+        <section class="code-card">
+          <strong>j) Bis zur Geschwindigkeit 20 beschleunigen</strong>
+          <pre>void setzteBallnachoben()
+{
+   ball.moveTo(ball.getCenterX(), 0);
+
+   if(geschwindigkeit &lt; 20)
+   {
+      geschwindigkeit =
+         geschwindigkeit + 1;
+   }
+}</pre>
+        </section>
+
+        <section class="code-card wide">
+          <strong>k) Bei maximaler Geschwindigkeit rot färben</strong>
+          <pre>void setzteBallnachoben()
+{
+   ball.moveTo(ball.getCenterX(), 0);
+
+   if(geschwindigkeit &lt; 20)
+   {
+      geschwindigkeit = geschwindigkeit + 1;
+   }
+
+   if(geschwindigkeit &gt;= 20)
+   {
+      ball.setFillColor(Color.red);
+   }
+}</pre>
+        </section>
+      </div>
+
+      <div class="callout">
+        <strong>Hinweis zur Bewertung:</strong> Entscheidend sind die
+        Begrenzung auf 20, das Zurücksetzen nach oben und der Farbwechsel.
+        Ob diese Schritte in einer Hilfsmethode oder direkt in
+        <code>act()</code> stehen, ist für die Funktion unerheblich.
+      </div>
+
+      <h2>6 · Kurze Prüfkriterien</h2>
+      <div class="answers">
+        <section class="answer">
+          <strong>Begriffe</strong>
+          <p>Klasse, Objekt, Konstruktor, Argument/Parameter, Attribut,
+          Methode und Vererbung werden korrekt verwendet.</p>
+        </section>
+        <section class="answer">
+          <strong>Diagramme</strong>
+          <p>Klassendiagramme zeigen Struktur und Typen; Objektdiagramme
+          zeigen konkrete Instanzen und aktuelle Attributwerte.</p>
+        </section>
+      </div>
+    </main>
+
+    <footer>
+      <span>Informatik 10 · Modellierung und Programmierung</span>
+      <span>Lösungsblatt · Aufgabe 1 · Seite 2</span>
+    </footer>
+  </article>
+</body>
+</html>
