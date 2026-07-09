@@ -264,6 +264,205 @@ h1 {
   font-size: clamp(1.5rem, 4vw, 2.3rem);
 }
 
+.spreadsheet-page {
+  width: min(1380px, calc(100% - 44px));
+}
+
+.spreadsheet-header {
+  display: grid;
+  gap: 10px;
+}
+
+.spreadsheet-header h1 {
+  font-size: clamp(3rem, 7vw, 5.5rem);
+}
+
+.spreadsheet-header > p:last-child {
+  max-width: 760px;
+  margin: 0 auto;
+  color: var(--muted);
+  font-size: 1.08rem;
+}
+
+.eyebrow {
+  margin: 0;
+  color: var(--blue);
+  font-size: 0.85rem;
+  font-weight: 900;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.spreadsheet-workspace {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 330px;
+  gap: 22px;
+  align-items: start;
+}
+
+.geogebra-card,
+.formula-card,
+.check-panel {
+  border: 1px solid rgba(255, 255, 255, 0.78);
+  border-radius: 10px;
+  background: rgba(255, 255, 255, 0.86);
+  box-shadow: var(--shadow-light);
+}
+
+.geogebra-card {
+  min-width: 0;
+  overflow: hidden;
+  text-align: left;
+}
+
+.card-heading {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
+  padding: 18px 20px;
+  border-bottom: 1px solid var(--line);
+}
+
+.card-heading h2,
+.formula-card h2,
+.check-panel h2 {
+  margin: 0;
+  color: #1e293b;
+  font-size: clamp(1.25rem, 2vw, 1.65rem);
+}
+
+.card-heading p,
+.formula-card p,
+.check-panel p {
+  margin: 6px 0 0;
+  color: var(--muted);
+}
+
+.load-status {
+  flex: 0 0 auto;
+  padding: 6px 10px;
+  border-radius: 999px;
+  color: #92400e;
+  background: #fef3c7;
+  font-size: 0.82rem;
+  font-weight: 800;
+}
+
+.load-status.ready {
+  color: #065f46;
+  background: #d1fae5;
+}
+
+.load-status.error {
+  color: #991b1b;
+  background: #fee2e2;
+}
+
+.geogebra-frame {
+  min-height: 640px;
+  overflow: auto;
+  background: #ffffff;
+}
+
+#ggb-element {
+  width: 980px;
+  min-height: 640px;
+}
+
+.formula-card {
+  padding: 22px;
+  text-align: left;
+}
+
+.formula-card img {
+  display: block;
+  width: 100%;
+  max-width: 304px;
+  height: auto;
+  margin: 18px auto;
+  border-radius: 6px;
+  background: #ffffff;
+}
+
+.check-panel {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 18px 24px;
+  align-items: center;
+  margin-top: 22px;
+  padding: 22px;
+  text-align: left;
+}
+
+.check-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  justify-content: flex-end;
+}
+
+.primary-action,
+.secondary-action {
+  min-height: 46px;
+  padding: 10px 18px;
+  border: 0;
+  border-radius: 8px;
+  font: inherit;
+  font-weight: 900;
+  cursor: pointer;
+  transition: transform 160ms ease, box-shadow 160ms ease, opacity 160ms ease;
+}
+
+.primary-action {
+  color: #ffffff;
+  background: linear-gradient(135deg, var(--green), var(--blue));
+  box-shadow: 0 10px 24px rgba(37, 99, 235, 0.2);
+}
+
+.secondary-action {
+  border: 1px solid var(--line);
+  color: #334155;
+  background: #ffffff;
+}
+
+.primary-action:hover:not(:disabled),
+.primary-action:focus-visible:not(:disabled),
+.secondary-action:hover:not(:disabled),
+.secondary-action:focus-visible:not(:disabled) {
+  outline: none;
+  transform: translateY(-2px);
+}
+
+.primary-action:disabled,
+.secondary-action:disabled {
+  cursor: wait;
+  opacity: 0.5;
+}
+
+.check-result {
+  display: none;
+  grid-column: 1 / -1;
+  padding: 14px 16px;
+  border-radius: 8px;
+  font-weight: 800;
+}
+
+.check-result.success,
+.check-result.error {
+  display: block;
+}
+
+.check-result.success {
+  color: #065f46;
+  background: #d1fae5;
+}
+
+.check-result.error {
+  color: #991b1b;
+  background: #fee2e2;
+}
+
 .grade-button {
   min-height: 124px;
   padding: 22px;
@@ -400,6 +599,23 @@ h1 {
 
   .subject-button {
     min-height: 190px;
+  }
+
+  .spreadsheet-page {
+    width: min(100% - 32px, 720px);
+  }
+
+  .spreadsheet-workspace,
+  .check-panel {
+    grid-template-columns: 1fr;
+  }
+
+  .formula-card {
+    text-align: center;
+  }
+
+  .check-actions {
+    justify-content: flex-start;
   }
 
   .grade-grid {

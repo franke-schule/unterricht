@@ -3,26 +3,288 @@
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Aufgabe 1 – Tabellenkalkulation</title>
-    <link rel="stylesheet" href="../../../../styles.css?v=20260709">
+    <title>Aufgabe 1 – Formeln in der Tabellenkalkulation</title>
+    <link rel="stylesheet" href="../../../../styles.css?v=20260709-2">
+    <script src="https://www.geogebra.org/apps/deployggb.js"></script>
   </head>
   <body>
     <div class="site-backdrop" aria-hidden="true"></div>
-    <main class="page-shell">
+    <main class="page-shell spreadsheet-page">
       <nav class="topbar" aria-label="Navigation">
         <a class="back-link" href="../">Zurück zur Aufgabenübersicht</a>
         <a class="back-link" href="../../../../">Startseite</a>
       </nav>
 
-      <header class="page-header">
+      <header class="page-header spreadsheet-header">
+        <p class="eyebrow">Tabellenkalkulation</p>
         <h1>Aufgabe 1</h1>
-        <p>Tabellenkalkulation</p>
+        <p>Trage in den gelben Zellen F4 bis F17 passende Formeln ein.</p>
       </header>
 
-      <section class="placeholder-card">
-        <h2>Dummy-Aufgabe</h2>
-        <p>Diese Aufgabe wird noch ergänzt.</p>
+      <div class="spreadsheet-workspace">
+        <section class="geogebra-card" aria-labelledby="spreadsheet-title">
+          <div class="card-heading">
+            <div>
+              <h2 id="spreadsheet-title">Mathematische Funktionen</h2>
+              <p>Beginne jede Formel mit einem Gleichheitszeichen.</p>
+            </div>
+            <span id="geogebra-status" class="load-status" role="status">GeoGebra wird geladen …</span>
+          </div>
+
+          <div class="geogebra-frame">
+            <div id="ggb-element" aria-label="GeoGebra-Tabellenkalkulation"></div>
+          </div>
+        </section>
+
+        <aside class="formula-card" aria-labelledby="formula-title">
+          <h2 id="formula-title">Formelsammlung</h2>
+          <img
+            src="formelsammlung.png"
+            alt="Formeln für Flächeninhalt und Volumen von Dreieck, Rechteck, Quadrat, Trapez, Kreis, Parallelogramm, Würfel, Quader, Prisma, Zylinder, Kegel und Pyramide"
+          >
+          <p>Die Grundfläche eines Körpers muss zunächst mit der passenden Flächenformel berechnet werden.</p>
+        </aside>
+      </div>
+
+      <section class="check-panel" aria-labelledby="check-title">
+        <div>
+          <h2 id="check-title">Eingaben überprüfen</h2>
+          <p>Die Prüfung kontrolliert, ob deine Ergebnisse auch bei anderen Ausgangswerten richtig berechnet werden.</p>
+        </div>
+        <div class="check-actions">
+          <button id="check-formulas" class="primary-action" type="button" disabled>Formeln prüfen</button>
+          <button id="reset-formulas" class="secondary-action" type="button" disabled>Ergebnisse leeren</button>
+        </div>
+        <div id="check-result" class="check-result" role="status" aria-live="polite"></div>
       </section>
+
+      <noscript>
+        <p class="check-result error">Für diese Aufgabe muss JavaScript aktiviert sein.</p>
+      </noscript>
     </main>
+
+    <script>
+      (() => {
+        "use strict";
+
+        const outputCells = [
+          { cell: "F4", name: "Fläche Dreieck", expected: ({ a, h }) => a * h / 2 },
+          { cell: "F5", name: "Fläche Rechteck", expected: ({ a, b }) => a * b },
+          { cell: "F6", name: "Fläche Quadrat", expected: ({ a }) => a ** 2 },
+          { cell: "F7", name: "Fläche Trapez", expected: ({ a, c, h }) => (a + c) * h / 2 },
+          { cell: "F8", name: "Fläche Kreis", expected: ({ r }) => r ** 2 * Math.PI },
+          { cell: "F9", name: "Fläche Parallelogramm", expected: ({ a, h }) => a * h },
+          { cell: "F10", name: "Umfang Kreis", expected: ({ r }) => 2 * r * Math.PI },
+          { cell: "F11", name: "Volumen Würfel", expected: ({ a }) => a ** 3 },
+          { cell: "F12", name: "Volumen Quader", expected: ({ a, b, c }) => a * b * c },
+          { cell: "F13", name: "Oberfläche Quader", expected: ({ a, b, c }) => 2 * a * b + 2 * a * c + 2 * b * c },
+          { cell: "F14", name: "Volumen dreiseitiges Prisma", expected: ({ a, d, h }) => a * h / 2 * d },
+          { cell: "F15", name: "Volumen Zylinder", expected: ({ r, h }) => r ** 2 * Math.PI * h },
+          { cell: "F16", name: "Volumen Kegel", expected: ({ r, h }) => r ** 2 * Math.PI * h / 3 },
+          { cell: "F17", name: "Volumen Pyramide", expected: ({ a, h }) => a ** 2 * h / 3 }
+        ];
+
+        const testCases = [
+          { a: 3, b: 4, c: 5, d: 6, h: 7, r: 3 },
+          { a: 4, b: 6, c: 8, d: 5, h: 3, r: 2 }
+        ];
+
+        const inputCells = {
+          a: "B4",
+          b: "B5",
+          c: "B6",
+          d: "B7",
+          h: "B8",
+          r: "B9"
+        };
+
+        const statusElement = document.getElementById("geogebra-status");
+        const checkButton = document.getElementById("check-formulas");
+        const resetButton = document.getElementById("reset-formulas");
+        const resultElement = document.getElementById("check-result");
+        let ggbApi = null;
+
+        function populateSpreadsheet(api) {
+          const commands = [
+            'A1 = "Mathematische Funktionen"',
+            'A2 = "Trage in F4 bis F17 Formeln ein."',
+            'A4 = "Seite a / Grundseite g:"',
+            "B4 = 3",
+            'A5 = "Seite b:"',
+            "B5 = 4",
+            'A6 = "Seite c:"',
+            "B6 = 5",
+            'A7 = "Seite d / Körperhöhe:"',
+            "B7 = 6",
+            'A8 = "Höhe h:"',
+            "B8 = 7",
+            'A9 = "Radius r:"',
+            "B9 = 3",
+            'A10 = "Pi:"',
+            "B10 = pi",
+            'A12 = "Grundflächen bei Körpern"',
+            'A13 = "zuerst extra berechnen!"',
+            'E4 = "A_Dreieck ="',
+            'E5 = "A_Rechteck ="',
+            'E6 = "A_Quadrat ="',
+            'E7 = "A_Trapez ="',
+            'E8 = "A_Kreis ="',
+            'E9 = "A_Parallelogramm ="',
+            'E10 = "U_Kreis ="',
+            'E11 = "V_Würfel ="',
+            'E12 = "V_Quader ="',
+            'E13 = "O_Quader ="',
+            'E14 = "V_dreiseitiges Prisma ="',
+            'E15 = "V_Zylinder ="',
+            'E16 = "V_Kegel ="',
+            'E17 = "V_Pyramide ="'
+          ];
+
+          outputCells.forEach(({ cell }) => {
+            commands.push(`${cell} = ""`);
+          });
+
+          api.setRepaintingActive(false);
+          api.setErrorDialogsActive(false);
+          api.evalCommand(commands.join("\n"));
+
+          const fixedCells = [
+            "A1", "A2", "A4", "A5", "A6", "A7", "A8", "A9", "A10", "A12", "A13",
+            "B4", "B5", "B6", "B7", "B8", "B9", "B10",
+            "E4", "E5", "E6", "E7", "E8", "E9", "E10", "E11", "E12", "E13", "E14", "E15", "E16", "E17"
+          ];
+
+          fixedCells.forEach((cell) => api.setFixed(cell, true, false));
+          outputCells.forEach(({ cell }) => api.setFixed(cell, false, true));
+
+          ["A1", "A2"].forEach((cell) => api.evalCommand(`SetBackgroundColor(${cell}, "#DBEAFE")`));
+          ["A12", "A13"].forEach((cell) => api.evalCommand(`SetBackgroundColor(${cell}, "#FEF3C7")`));
+          Object.values(inputCells).concat("B10").forEach((cell) => {
+            api.evalCommand(`SetBackgroundColor(${cell}, "#E2E8F0")`);
+          });
+          outputCells.forEach(({ cell }) => {
+            api.evalCommand(`SetBackgroundColor(${cell}, "#FEF3C7")`);
+          });
+
+          api.setRepaintingActive(true);
+          api.refreshViews();
+        }
+
+        function setInputs(api, values) {
+          Object.entries(inputCells).forEach(([key, cell]) => {
+            api.setValue(cell, values[key]);
+          });
+        }
+
+        function isClose(actual, expected) {
+          const tolerance = Math.max(1, Math.abs(expected)) * 1e-7;
+          return Number.isFinite(actual) && Math.abs(actual - expected) <= tolerance;
+        }
+
+        function checkFormulas() {
+          if (!ggbApi) {
+            showResult("GeoGebra ist noch nicht bereit.", "error");
+            return;
+          }
+
+          const originalInputs = {};
+          Object.entries(inputCells).forEach(([key, cell]) => {
+            originalInputs[key] = ggbApi.getValue(cell);
+          });
+
+          const results = new Map(outputCells.map(({ cell }) => [cell, true]));
+
+          try {
+            ggbApi.setRepaintingActive(false);
+
+            testCases.forEach((testCase) => {
+              setInputs(ggbApi, testCase);
+              ggbApi.evalCommand("UpdateConstruction()");
+
+              outputCells.forEach(({ cell, expected }) => {
+                const isNumeric = ggbApi.exists(cell)
+                  && ggbApi.isDefined(cell)
+                  && ggbApi.getObjectType(cell) === "numeric";
+                const correct = isNumeric && isClose(ggbApi.getValue(cell), expected(testCase));
+                results.set(cell, results.get(cell) && correct);
+              });
+            });
+          } finally {
+            setInputs(ggbApi, originalInputs);
+            ggbApi.evalCommand("UpdateConstruction()");
+            ggbApi.setRepaintingActive(true);
+            ggbApi.refreshViews();
+          }
+
+          const incorrect = outputCells.filter(({ cell }) => !results.get(cell));
+
+          if (incorrect.length === 0) {
+            showResult("Sehr gut! Alle Formeln berechnen auch mit veränderten Ausgangswerten das richtige Ergebnis.", "success");
+            return;
+          }
+
+          const labels = incorrect.map(({ cell, name }) => `${cell} (${name})`).join(", ");
+          showResult(`Noch nicht richtig: ${labels}. Prüfe dort deine Zellbezüge und Rechenzeichen.`, "error");
+        }
+
+        function resetFormulas() {
+          if (!ggbApi) {
+            return;
+          }
+
+          outputCells.forEach(({ cell }) => {
+            ggbApi.deleteObject(cell);
+            ggbApi.evalCommand(`${cell} = ""`);
+            ggbApi.setFixed(cell, false, true);
+            ggbApi.evalCommand(`SetBackgroundColor(${cell}, "#FEF3C7")`);
+          });
+          resultElement.className = "check-result";
+          resultElement.textContent = "";
+        }
+
+        function showResult(message, type) {
+          resultElement.className = `check-result ${type}`;
+          resultElement.textContent = message;
+        }
+
+        function initializeGeoGebra(api) {
+          ggbApi = api;
+          populateSpreadsheet(api);
+          statusElement.textContent = "Bereit";
+          statusElement.classList.add("ready");
+          checkButton.disabled = false;
+          resetButton.disabled = false;
+        }
+
+        checkButton.addEventListener("click", checkFormulas);
+        resetButton.addEventListener("click", resetFormulas);
+
+        window.addEventListener("load", () => {
+          if (typeof GGBApplet !== "function") {
+            statusElement.textContent = "GeoGebra konnte nicht geladen werden.";
+            statusElement.classList.add("error");
+            showResult("Prüfe die Internetverbindung und lade die Seite anschließend neu.", "error");
+            return;
+          }
+
+          const parameters = {
+            appName: "classic",
+            perspective: "S",
+            width: 980,
+            height: 640,
+            showToolBar: true,
+            showMenuBar: false,
+            showAlgebraInput: false,
+            enableShiftDragZoom: false,
+            enableRightClick: false,
+            language: "de",
+            appletOnLoad: initializeGeoGebra
+          };
+
+          const applet = new GGBApplet(parameters, true);
+          applet.inject("ggb-element");
+        });
+      })();
+    </script>
   </body>
 </html>
