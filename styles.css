@@ -425,6 +425,10 @@ h1 {
   background: #fee2e2;
 }
 
+.spreadsheet-cell.formula-cell.is-correct {
+  background: #d1fae5;
+}
+
 .spreadsheet-cell input {
   display: block;
   width: 100%;
@@ -454,6 +458,23 @@ h1 {
 }
 
 .formula-cell.has-error .cell-result {
+  color: #991b1b;
+}
+
+.cell-feedback {
+  min-height: 30px;
+  margin-top: 4px;
+  color: #64748b;
+  font-size: 0.72rem;
+  font-weight: 800;
+  line-height: 1.2;
+}
+
+.cell-feedback.success {
+  color: #065f46;
+}
+
+.cell-feedback.error {
   color: #991b1b;
 }
 
@@ -533,6 +554,7 @@ h1 {
   padding: 14px 16px;
   border-radius: 8px;
   font-weight: 800;
+  white-space: pre-line;
 }
 
 .check-result.success,

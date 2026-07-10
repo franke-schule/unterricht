@@ -69,20 +69,20 @@
         const columns = ["A", "B", "C", "D", "E", "F"];
         const rowCount = 17;
         const outputCells = [
-          { cell: "F4", name: "Fläche Dreieck", expected: ({ a, h }) => a * h / 2 },
-          { cell: "F5", name: "Fläche Rechteck", expected: ({ a, b }) => a * b },
-          { cell: "F6", name: "Fläche Quadrat", expected: ({ a }) => a ** 2 },
-          { cell: "F7", name: "Fläche Trapez", expected: ({ a, c, h }) => (a + c) * h / 2 },
-          { cell: "F8", name: "Fläche Kreis", expected: ({ r }) => r ** 2 * Math.PI },
-          { cell: "F9", name: "Fläche Parallelogramm", expected: ({ a, h }) => a * h },
-          { cell: "F10", name: "Umfang Kreis", expected: ({ r }) => 2 * r * Math.PI },
-          { cell: "F11", name: "Volumen Würfel", expected: ({ a }) => a ** 3 },
-          { cell: "F12", name: "Volumen Quader", expected: ({ a, b, c }) => a * b * c },
-          { cell: "F13", name: "Oberfläche Quader", expected: ({ a, b, c }) => 2 * a * b + 2 * a * c + 2 * b * c },
-          { cell: "F14", name: "Volumen dreiseitiges Prisma", expected: ({ a, d, h }) => a * h / 2 * d },
-          { cell: "F15", name: "Volumen Zylinder", expected: ({ r, h }) => r ** 2 * Math.PI * h },
-          { cell: "F16", name: "Volumen Kegel", expected: ({ r, h }) => r ** 2 * Math.PI * h / 3 },
-          { cell: "F17", name: "Volumen Pyramide", expected: ({ a, h }) => a ** 2 * h / 3 }
+          { cell: "F4", name: "Fläche Dreieck", requiredRefs: ["B4", "B8"], allowedNumbers: [2], expected: ({ a, h }) => a * h / 2 },
+          { cell: "F5", name: "Fläche Rechteck", requiredRefs: ["B4", "B5"], allowedNumbers: [], expected: ({ a, b }) => a * b },
+          { cell: "F6", name: "Fläche Quadrat", requiredRefs: ["B4"], allowedNumbers: [2], expected: ({ a }) => a ** 2 },
+          { cell: "F7", name: "Fläche Trapez", requiredRefs: ["B4", "B6", "B8"], allowedNumbers: [2], expected: ({ a, c, h }) => (a + c) * h / 2 },
+          { cell: "F8", name: "Fläche Kreis", requiredRefs: ["B9", "B10"], allowedNumbers: [2], expected: ({ r }) => r ** 2 * Math.PI },
+          { cell: "F9", name: "Fläche Parallelogramm", requiredRefs: ["B4", "B8"], allowedNumbers: [], expected: ({ a, h }) => a * h },
+          { cell: "F10", name: "Umfang Kreis", requiredRefs: ["B9", "B10"], allowedNumbers: [2], expected: ({ r }) => 2 * r * Math.PI },
+          { cell: "F11", name: "Volumen Würfel", requiredRefs: ["B4"], allowedNumbers: [3], expected: ({ a }) => a ** 3 },
+          { cell: "F12", name: "Volumen Quader", requiredRefs: ["B4", "B5", "B6"], allowedNumbers: [], expected: ({ a, b, c }) => a * b * c },
+          { cell: "F13", name: "Oberfläche Quader", requiredRefs: ["B4", "B5", "B6"], allowedNumbers: [2], expected: ({ a, b, c }) => 2 * a * b + 2 * a * c + 2 * b * c },
+          { cell: "F14", name: "Volumen dreiseitiges Prisma", requiredRefs: ["B4", "B7", "B8"], allowedNumbers: [2], expected: ({ a, d, h }) => a * h / 2 * d },
+          { cell: "F15", name: "Volumen Zylinder", requiredRefs: ["B8", "B9", "B10"], allowedNumbers: [2], expected: ({ r, h }) => r ** 2 * Math.PI * h },
+          { cell: "F16", name: "Volumen Kegel", requiredRefs: ["B8", "B9", "B10"], allowedNumbers: [2, 3], expected: ({ r, h }) => r ** 2 * Math.PI * h / 3 },
+          { cell: "F17", name: "Volumen Pyramide", requiredRefs: ["B4", "B8"], allowedNumbers: [2, 3], expected: ({ a, h }) => a ** 2 * h / 3 }
         ];
 
         const testCases = [
@@ -176,6 +176,24 @@
           }
 
           return value || "";
+        }
+
+        function analyzeFormulaReferences(formula, { requiredRefs, allowedNumbers }) {
+          const source = String(formula ?? "").trim();
+          const foundRefs = new Set((source.match(/[A-Za-z]+[0-9]+/g) || []).map(normalizeCellName));
+          const missingRefs = requiredRefs.filter((cell) => !foundRefs.has(cell));
+          const withoutRefs = source.replace(/[A-Za-z]+[0-9]+/g, "");
+          const typedNumbers = (withoutRefs.match(/\d+(?:[,.]\d+)?/g) || [])
+            .map((numberText) => Number(numberText.replace(",", ".")))
+            .filter((numberValue) => {
+              return Number.isFinite(numberValue)
+                && !allowedNumbers.some((allowed) => isClose(numberValue, allowed));
+            });
+
+          return {
+            missingRefs,
+            typedNumbers
+          };
         }
 
         function parseFormula(source, lookupValue) {
@@ -405,7 +423,11 @@
                 output.className = "cell-result";
                 output.dataset.resultFor = cellName;
 
-                td.append(input, output);
+                const feedback = document.createElement("div");
+                feedback.className = "cell-feedback";
+                feedback.dataset.feedbackFor = cellName;
+
+                td.append(input, output, feedback);
               } else {
                 const value = cells.get(cellName);
                 td.className = "spreadsheet-cell";
@@ -441,7 +463,7 @@
             }
 
             const formula = String(cells.get(cell) ?? "").trim();
-            cellElement.classList.remove("has-error");
+            cellElement.classList.remove("has-error", "is-correct");
 
             if (!formula) {
               resultOutput.textContent = "";
@@ -463,6 +485,25 @@
           });
         }
 
+        function setCellFeedback(cell, message, type) {
+          const feedbackElement = gridElement.querySelector(`[data-feedback-for="${cell}"]`);
+          const cellElement = gridElement.querySelector(`[data-cell="${cell}"]`);
+          if (!feedbackElement || !cellElement) {
+            return;
+          }
+
+          feedbackElement.textContent = message;
+          feedbackElement.className = type ? `cell-feedback ${type}` : "cell-feedback";
+          cellElement.classList.toggle("has-error", type === "error");
+          cellElement.classList.toggle("is-correct", type === "success");
+        }
+
+        function clearCellFeedback() {
+          formulaCells.forEach((cell) => {
+            setCellFeedback(cell, "", "");
+          });
+        }
+
         function refreshInputs() {
           formulaCells.forEach((cell) => {
             const input = gridElement.querySelector(`[data-cell="${cell}"] input`);
@@ -479,20 +520,66 @@
             originalInputs[key] = cells.get(cell);
           });
 
-          const results = new Map(outputCells.map(({ cell }) => [cell, true]));
+          const results = new Map(outputCells.map(({ cell, name, requiredRefs, allowedNumbers }) => {
+            return [cell, {
+              cell,
+              name,
+              requiredRefs,
+              allowedNumbers,
+              correct: true,
+              message: "Richtig."
+            }];
+          }));
+
+          outputCells.forEach(({ cell, requiredRefs, allowedNumbers }) => {
+            const result = results.get(cell);
+            const formula = String(cells.get(cell) ?? "").trim();
+
+            if (!formula.startsWith("=")) {
+              result.correct = false;
+              result.message = "Beginne die Formel mit =.";
+              return;
+            }
+
+            const analysis = analyzeFormulaReferences(formula, { requiredRefs, allowedNumbers });
+            const hasMissingRefs = analysis.missingRefs.length > 0;
+            const hasTypedNumbers = analysis.typedNumbers.length > 0;
+
+            if (hasMissingRefs || hasTypedNumbers) {
+              const messages = [];
+              if (hasMissingRefs) {
+                messages.push(`Verwende Zellbezüge: ${analysis.missingRefs.join(", ")}.`);
+              }
+              if (hasTypedNumbers) {
+                const numbers = [...new Set(analysis.typedNumbers.map((value) => formatNumber(value)))].join(", ");
+                messages.push(`Tippe die Ausgangswerte nicht als Zahl ein (${numbers}).`);
+              }
+              result.correct = false;
+              result.message = messages.join(" ");
+            }
+          });
 
           try {
             testCases.forEach((testCase) => {
               setInputs(testCase);
 
               outputCells.forEach(({ cell, expected }) => {
+                const result = results.get(cell);
+                if (!result.correct) {
+                  return;
+                }
+
                 let correct = false;
                 try {
                   correct = isClose(evaluateOutputCell(cell), expected(testCase));
                 } catch (error) {
                   correct = false;
                 }
-                results.set(cell, results.get(cell) && correct);
+
+                if (!correct) {
+                  result.correct = false;
+                  result.message = "Das Ergebnis passt noch nicht. Prüfe Rechenzeichen, Klammern und Zellbezüge.";
+                }
               });
             });
           } finally {
@@ -500,15 +587,23 @@
             refreshComputedValues();
           }
 
-          const incorrect = outputCells.filter(({ cell }) => !results.get(cell));
+          const incorrect = outputCells.filter(({ cell }) => !results.get(cell).correct);
+
+          outputCells.forEach(({ cell }) => {
+            const result = results.get(cell);
+            setCellFeedback(cell, result.message, result.correct ? "success" : "error");
+          });
 
           if (incorrect.length === 0) {
             showResult("Sehr gut! Alle Formeln berechnen auch mit veränderten Ausgangswerten das richtige Ergebnis.", "success");
             return;
           }
 
-          const labels = incorrect.map(({ cell, name }) => `${cell} (${name})`).join(", ");
-          showResult(`Noch nicht richtig: ${labels}. Prüfe dort deine Zellbezüge und Rechenzeichen.`, "error");
+          const lines = incorrect.map(({ cell, name }) => {
+            const result = results.get(cell);
+            return `${cell} (${name}): ${result.message}`;
+          });
+          showResult(`Noch nicht richtig:\n${lines.join("\n")}`, "error");
         }
 
         function resetFormulas() {
@@ -522,6 +617,7 @@
         function clearResult() {
           resultElement.className = "check-result";
           resultElement.textContent = "";
+          clearCellFeedback();
         }
 
         function showResult(message, type) {
