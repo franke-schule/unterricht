@@ -4,8 +4,7 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Aufgabe 1 – Formeln in der Tabellenkalkulation</title>
-    <link rel="stylesheet" href="../../../../styles.css?v=20260709-2">
-    <script src="https://www.geogebra.org/apps/deployggb.js"></script>
+    <link rel="stylesheet" href="../../../../styles.css?v=20260710-1">
   </head>
   <body>
     <div class="site-backdrop" aria-hidden="true"></div>
@@ -22,17 +21,17 @@
       </header>
 
       <div class="spreadsheet-workspace">
-        <section class="geogebra-card" aria-labelledby="spreadsheet-title">
+        <section class="spreadsheet-card" aria-labelledby="spreadsheet-title">
           <div class="card-heading">
             <div>
               <h2 id="spreadsheet-title">Mathematische Funktionen</h2>
               <p>Beginne jede Formel mit einem Gleichheitszeichen.</p>
             </div>
-            <span id="geogebra-status" class="load-status" role="status">GeoGebra wird geladen …</span>
+            <span id="spreadsheet-status" class="load-status ready" role="status">Bereit</span>
           </div>
 
-          <div class="geogebra-frame">
-            <div id="ggb-element" aria-label="GeoGebra-Tabellenkalkulation"></div>
+          <div class="spreadsheet-frame">
+            <div id="spreadsheet-grid" aria-label="Mini-Tabellenkalkulation"></div>
           </div>
         </section>
 
@@ -52,8 +51,8 @@
           <p>Die Prüfung kontrolliert, ob deine Ergebnisse auch bei anderen Ausgangswerten richtig berechnet werden.</p>
         </div>
         <div class="check-actions">
-          <button id="check-formulas" class="primary-action" type="button" disabled>Formeln prüfen</button>
-          <button id="reset-formulas" class="secondary-action" type="button" disabled>Ergebnisse leeren</button>
+          <button id="check-formulas" class="primary-action" type="button">Formeln prüfen</button>
+          <button id="reset-formulas" class="secondary-action" type="button">Ergebnisse leeren</button>
         </div>
         <div id="check-result" class="check-result" role="status" aria-live="polite"></div>
       </section>
@@ -67,6 +66,8 @@
       (() => {
         "use strict";
 
+        const columns = ["A", "B", "C", "D", "E", "F"];
+        const rowCount = 17;
         const outputCells = [
           { cell: "F4", name: "Fläche Dreieck", expected: ({ a, h }) => a * h / 2 },
           { cell: "F5", name: "Fläche Rechteck", expected: ({ a, b }) => a * b },
@@ -98,81 +99,59 @@
           r: "B9"
         };
 
-        const statusElement = document.getElementById("geogebra-status");
+        const initialCells = {
+          A1: "Mathematische Funktionen",
+          A2: "Trage in F4 bis F17 Formeln ein.",
+          A4: "Seite a / Grundseite g:",
+          B4: 3,
+          A5: "Seite b:",
+          B5: 4,
+          A6: "Seite c:",
+          B6: 5,
+          A7: "Seite d / Körperhöhe:",
+          B7: 6,
+          A8: "Höhe h:",
+          B8: 7,
+          A9: "Radius r:",
+          B9: 3,
+          A10: "Pi:",
+          B10: Math.PI,
+          A12: "Grundflächen bei Körpern",
+          A13: "zuerst extra berechnen!",
+          E4: "A_Dreieck =",
+          E5: "A_Rechteck =",
+          E6: "A_Quadrat =",
+          E7: "A_Trapez =",
+          E8: "A_Kreis =",
+          E9: "A_Parallelogramm =",
+          E10: "U_Kreis =",
+          E11: "V_Würfel =",
+          E12: "V_Quader =",
+          E13: "O_Quader =",
+          E14: "V_dreiseitiges Prisma =",
+          E15: "V_Zylinder =",
+          E16: "V_Kegel =",
+          E17: "V_Pyramide ="
+        };
+
+        const formulaCells = new Set(outputCells.map(({ cell }) => cell));
+        const inputCellSet = new Set(Object.values(inputCells).concat("B10"));
+        const noteCells = new Set(["A1", "A2", "A12", "A13"]);
+        const cells = new Map(Object.entries(initialCells).map(([cell, value]) => [cell, value]));
+        outputCells.forEach(({ cell }) => cells.set(cell, ""));
+
+        const gridElement = document.getElementById("spreadsheet-grid");
         const checkButton = document.getElementById("check-formulas");
         const resetButton = document.getElementById("reset-formulas");
         const resultElement = document.getElementById("check-result");
-        let ggbApi = null;
 
-        function populateSpreadsheet(api) {
-          const commands = [
-            'A1 = "Mathematische Funktionen"',
-            'A2 = "Trage in F4 bis F17 Formeln ein."',
-            'A4 = "Seite a / Grundseite g:"',
-            "B4 = 3",
-            'A5 = "Seite b:"',
-            "B5 = 4",
-            'A6 = "Seite c:"',
-            "B6 = 5",
-            'A7 = "Seite d / Körperhöhe:"',
-            "B7 = 6",
-            'A8 = "Höhe h:"',
-            "B8 = 7",
-            'A9 = "Radius r:"',
-            "B9 = 3",
-            'A10 = "Pi:"',
-            "B10 = pi",
-            'A12 = "Grundflächen bei Körpern"',
-            'A13 = "zuerst extra berechnen!"',
-            'E4 = "A_Dreieck ="',
-            'E5 = "A_Rechteck ="',
-            'E6 = "A_Quadrat ="',
-            'E7 = "A_Trapez ="',
-            'E8 = "A_Kreis ="',
-            'E9 = "A_Parallelogramm ="',
-            'E10 = "U_Kreis ="',
-            'E11 = "V_Würfel ="',
-            'E12 = "V_Quader ="',
-            'E13 = "O_Quader ="',
-            'E14 = "V_dreiseitiges Prisma ="',
-            'E15 = "V_Zylinder ="',
-            'E16 = "V_Kegel ="',
-            'E17 = "V_Pyramide ="'
-          ];
-
-          outputCells.forEach(({ cell }) => {
-            commands.push(`${cell} = ""`);
-          });
-
-          api.setRepaintingActive(false);
-          api.setErrorDialogsActive(false);
-          api.evalCommand(commands.join("\n"));
-
-          const fixedCells = [
-            "A1", "A2", "A4", "A5", "A6", "A7", "A8", "A9", "A10", "A12", "A13",
-            "B4", "B5", "B6", "B7", "B8", "B9", "B10",
-            "E4", "E5", "E6", "E7", "E8", "E9", "E10", "E11", "E12", "E13", "E14", "E15", "E16", "E17"
-          ];
-
-          fixedCells.forEach((cell) => api.setFixed(cell, true, false));
-          outputCells.forEach(({ cell }) => api.setFixed(cell, false, true));
-
-          ["A1", "A2"].forEach((cell) => api.evalCommand(`SetBackgroundColor(${cell}, "#DBEAFE")`));
-          ["A12", "A13"].forEach((cell) => api.evalCommand(`SetBackgroundColor(${cell}, "#FEF3C7")`));
-          Object.values(inputCells).concat("B10").forEach((cell) => {
-            api.evalCommand(`SetBackgroundColor(${cell}, "#E2E8F0")`);
-          });
-          outputCells.forEach(({ cell }) => {
-            api.evalCommand(`SetBackgroundColor(${cell}, "#FEF3C7")`);
-          });
-
-          api.setRepaintingActive(true);
-          api.refreshViews();
+        function normalizeCellName(cell) {
+          return String(cell).trim().toUpperCase();
         }
 
-        function setInputs(api, values) {
+        function setInputs(values) {
           Object.entries(inputCells).forEach(([key, cell]) => {
-            api.setValue(cell, values[key]);
+            cells.set(cell, values[key]);
           });
         }
 
@@ -181,39 +160,344 @@
           return Number.isFinite(actual) && Math.abs(actual - expected) <= tolerance;
         }
 
-        function checkFormulas() {
-          if (!ggbApi) {
-            showResult("GeoGebra ist noch nicht bereit.", "error");
-            return;
+        function formatNumber(value) {
+          return value.toLocaleString("de-DE", {
+            maximumFractionDigits: 6
+          });
+        }
+
+        function displayStaticValue(cell, value) {
+          if (cell === "B10") {
+            return "π";
           }
 
+          if (typeof value === "number") {
+            return formatNumber(value);
+          }
+
+          return value || "";
+        }
+
+        function parseFormula(source, lookupValue) {
+          const formula = source.trim().replace(/^=/, "");
+          let index = 0;
+
+          function skipSpaces() {
+            while (formula[index] === " ") {
+              index += 1;
+            }
+          }
+
+          function match(character) {
+            skipSpaces();
+            if (formula[index] === character) {
+              index += 1;
+              return true;
+            }
+            return false;
+          }
+
+          function parseExpression() {
+            let value = parseTerm();
+
+            while (true) {
+              if (match("+")) {
+                value += parseTerm();
+              } else if (match("-")) {
+                value -= parseTerm();
+              } else {
+                return value;
+              }
+            }
+          }
+
+          function parseTerm() {
+            let value = parsePower();
+
+            while (true) {
+              if (match("*")) {
+                value *= parsePower();
+              } else if (match("/")) {
+                value /= parsePower();
+              } else {
+                return value;
+              }
+            }
+          }
+
+          function parsePower() {
+            const base = parseUnary();
+            if (match("^")) {
+              return base ** parsePower();
+            }
+            return base;
+          }
+
+          function parseUnary() {
+            if (match("+")) {
+              return parseUnary();
+            }
+            if (match("-")) {
+              return -parseUnary();
+            }
+            return parsePrimary();
+          }
+
+          function parsePrimary() {
+            skipSpaces();
+
+            if (match("(")) {
+              const value = parseExpression();
+              if (!match(")")) {
+                throw new Error("Schließende Klammer fehlt.");
+              }
+              return value;
+            }
+
+            if (/\d|,|\./.test(formula[index])) {
+              return parseNumber();
+            }
+
+            if (/[A-Za-zÄÖÜäöü]/.test(formula[index] || "") || formula[index] === "π") {
+              return parseIdentifier();
+            }
+
+            throw new Error("Unerwartetes Zeichen.");
+          }
+
+          function parseNumber() {
+            let text = "";
+
+            while (/\d|,|\./.test(formula[index] || "")) {
+              text += formula[index];
+              index += 1;
+            }
+
+            const value = Number(text.replace(",", "."));
+            if (!Number.isFinite(value)) {
+              throw new Error("Zahl konnte nicht gelesen werden.");
+            }
+            return value;
+          }
+
+          function parseIdentifier() {
+            let text = "";
+
+            while (/[A-Za-zÄÖÜäöü0-9_]/.test(formula[index] || "") || formula[index] === "π") {
+              text += formula[index];
+              index += 1;
+            }
+
+            const normalized = text.toUpperCase();
+            if (normalized === "PI" || text === "π") {
+              if (match("(") && !match(")")) {
+                throw new Error("PI braucht keine Argumente.");
+              }
+              return Math.PI;
+            }
+
+            if (/^[A-Z]+[0-9]+$/.test(normalized)) {
+              return lookupValue(normalized);
+            }
+
+            throw new Error("Unbekannter Name.");
+          }
+
+          const result = parseExpression();
+          skipSpaces();
+
+          if (index !== formula.length) {
+            throw new Error("Formel konnte nicht vollständig gelesen werden.");
+          }
+
+          return result;
+        }
+
+        function evaluateCell(cell, visiting = new Set()) {
+          const normalized = normalizeCellName(cell);
+
+          if (visiting.has(normalized)) {
+            throw new Error("Zellbezug enthält einen Kreis.");
+          }
+
+          const value = cells.get(normalized);
+
+          if (typeof value === "number") {
+            return value;
+          }
+
+          const text = String(value ?? "").trim();
+          if (!text) {
+            throw new Error("Zelle ist leer.");
+          }
+
+          if (!text.startsWith("=")) {
+            const numberValue = Number(text.replace(",", "."));
+            if (Number.isFinite(numberValue)) {
+              return numberValue;
+            }
+            throw new Error("Zelle enthält keinen Zahlenwert.");
+          }
+
+          visiting.add(normalized);
+          try {
+            return parseFormula(text, (referencedCell) => evaluateCell(referencedCell, visiting));
+          } finally {
+            visiting.delete(normalized);
+          }
+        }
+
+        function evaluateOutputCell(cell) {
+          const formula = String(cells.get(cell) ?? "").trim();
+          if (!formula.startsWith("=")) {
+            throw new Error("Formel muss mit = beginnen.");
+          }
+          return evaluateCell(cell);
+        }
+
+        function createGrid() {
+          const table = document.createElement("table");
+          table.className = "mini-spreadsheet-table";
+
+          const thead = document.createElement("thead");
+          const headRow = document.createElement("tr");
+          headRow.append(document.createElement("th"));
+          columns.forEach((column) => {
+            const heading = document.createElement("th");
+            heading.scope = "col";
+            heading.textContent = column;
+            headRow.append(heading);
+          });
+          thead.append(headRow);
+          table.append(thead);
+
+          const tbody = document.createElement("tbody");
+          for (let row = 1; row <= rowCount; row += 1) {
+            const tr = document.createElement("tr");
+            const rowHeading = document.createElement("th");
+            rowHeading.scope = "row";
+            rowHeading.textContent = row;
+            tr.append(rowHeading);
+
+            columns.forEach((column) => {
+              const cellName = `${column}${row}`;
+              const td = document.createElement("td");
+              td.dataset.cell = cellName;
+
+              if (formulaCells.has(cellName)) {
+                td.className = "spreadsheet-cell formula-cell";
+
+                const input = document.createElement("input");
+                input.type = "text";
+                input.inputMode = "text";
+                input.autocomplete = "off";
+                input.spellcheck = false;
+                input.value = cells.get(cellName);
+                input.placeholder = "=";
+                input.setAttribute("aria-label", `Formel für ${cellName}`);
+                input.addEventListener("input", () => {
+                  cells.set(cellName, input.value);
+                  refreshComputedValues();
+                  clearResult();
+                });
+
+                const output = document.createElement("output");
+                output.className = "cell-result";
+                output.dataset.resultFor = cellName;
+
+                td.append(input, output);
+              } else {
+                const value = cells.get(cellName);
+                td.className = "spreadsheet-cell";
+                if (noteCells.has(cellName)) {
+                  td.classList.add("note-cell");
+                }
+                if (inputCellSet.has(cellName)) {
+                  td.classList.add("input-cell");
+                }
+                if (column === "E" && row >= 4) {
+                  td.classList.add("label-cell");
+                }
+                td.textContent = displayStaticValue(cellName, value);
+              }
+
+              tr.append(td);
+            });
+
+            tbody.append(tr);
+          }
+
+          table.append(tbody);
+          gridElement.append(table);
+          refreshComputedValues();
+        }
+
+        function refreshComputedValues() {
+          formulaCells.forEach((cell) => {
+            const resultOutput = gridElement.querySelector(`[data-result-for="${cell}"]`);
+            const cellElement = gridElement.querySelector(`[data-cell="${cell}"]`);
+            if (!resultOutput || !cellElement) {
+              return;
+            }
+
+            const formula = String(cells.get(cell) ?? "").trim();
+            cellElement.classList.remove("has-error");
+
+            if (!formula) {
+              resultOutput.textContent = "";
+              return;
+            }
+
+            if (!formula.startsWith("=")) {
+              resultOutput.textContent = "mit = beginnen";
+              cellElement.classList.add("has-error");
+              return;
+            }
+
+            try {
+              resultOutput.textContent = formatNumber(evaluateOutputCell(cell));
+            } catch (error) {
+              resultOutput.textContent = "Fehler";
+              cellElement.classList.add("has-error");
+            }
+          });
+        }
+
+        function refreshInputs() {
+          formulaCells.forEach((cell) => {
+            const input = gridElement.querySelector(`[data-cell="${cell}"] input`);
+            if (input) {
+              input.value = cells.get(cell);
+            }
+          });
+          refreshComputedValues();
+        }
+
+        function checkFormulas() {
           const originalInputs = {};
           Object.entries(inputCells).forEach(([key, cell]) => {
-            originalInputs[key] = ggbApi.getValue(cell);
+            originalInputs[key] = cells.get(cell);
           });
 
           const results = new Map(outputCells.map(({ cell }) => [cell, true]));
 
           try {
-            ggbApi.setRepaintingActive(false);
-
             testCases.forEach((testCase) => {
-              setInputs(ggbApi, testCase);
-              ggbApi.evalCommand("UpdateConstruction()");
+              setInputs(testCase);
 
               outputCells.forEach(({ cell, expected }) => {
-                const isNumeric = ggbApi.exists(cell)
-                  && ggbApi.isDefined(cell)
-                  && ggbApi.getObjectType(cell) === "numeric";
-                const correct = isNumeric && isClose(ggbApi.getValue(cell), expected(testCase));
+                let correct = false;
+                try {
+                  correct = isClose(evaluateOutputCell(cell), expected(testCase));
+                } catch (error) {
+                  correct = false;
+                }
                 results.set(cell, results.get(cell) && correct);
               });
             });
           } finally {
-            setInputs(ggbApi, originalInputs);
-            ggbApi.evalCommand("UpdateConstruction()");
-            ggbApi.setRepaintingActive(true);
-            ggbApi.refreshViews();
+            setInputs(originalInputs);
+            refreshComputedValues();
           }
 
           const incorrect = outputCells.filter(({ cell }) => !results.get(cell));
@@ -228,16 +512,14 @@
         }
 
         function resetFormulas() {
-          if (!ggbApi) {
-            return;
-          }
-
           outputCells.forEach(({ cell }) => {
-            ggbApi.deleteObject(cell);
-            ggbApi.evalCommand(`${cell} = ""`);
-            ggbApi.setFixed(cell, false, true);
-            ggbApi.evalCommand(`SetBackgroundColor(${cell}, "#FEF3C7")`);
+            cells.set(cell, "");
           });
+          refreshInputs();
+          clearResult();
+        }
+
+        function clearResult() {
           resultElement.className = "check-result";
           resultElement.textContent = "";
         }
@@ -247,43 +529,9 @@
           resultElement.textContent = message;
         }
 
-        function initializeGeoGebra(api) {
-          ggbApi = api;
-          populateSpreadsheet(api);
-          statusElement.textContent = "Bereit";
-          statusElement.classList.add("ready");
-          checkButton.disabled = false;
-          resetButton.disabled = false;
-        }
-
         checkButton.addEventListener("click", checkFormulas);
         resetButton.addEventListener("click", resetFormulas);
-
-        window.addEventListener("load", () => {
-          if (typeof GGBApplet !== "function") {
-            statusElement.textContent = "GeoGebra konnte nicht geladen werden.";
-            statusElement.classList.add("error");
-            showResult("Prüfe die Internetverbindung und lade die Seite anschließend neu.", "error");
-            return;
-          }
-
-          const parameters = {
-            appName: "classic",
-            perspective: "S",
-            width: 980,
-            height: 640,
-            showToolBar: true,
-            showMenuBar: false,
-            showAlgebraInput: false,
-            enableShiftDragZoom: false,
-            enableRightClick: false,
-            language: "de",
-            appletOnLoad: initializeGeoGebra
-          };
-
-          const applet = new GGBApplet(parameters, true);
-          applet.inject("ggb-element");
-        });
+        createGrid();
       })();
     </script>
   </body>
