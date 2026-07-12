@@ -36,7 +36,6 @@
               <span id="zoom-level" aria-live="polite">100 %</span>
               <button id="zoom-in" type="button" aria-label="Tabelle vergrößern">+</button>
               <button id="zoom-reset" type="button">100 %</button>
-              <small>Strg + Mausrad oder Touchpad-Geste</small>
             </div>
             <div id="spreadsheet-grid" aria-label="Mini-Tabellenkalkulation"></div>
           </div>
@@ -75,20 +74,21 @@
 
         const columns = ["A", "B", "C", "D", "E", "F"];
         const rowCount = 17;
+        const PI_VALUE = 3.1415;
         const outputCells = [
           { cell: "F4", name: "Fläche Dreieck", requiredRefs: ["B4", "B8"], expected: ({ a, h }) => a * h / 2 },
           { cell: "F5", name: "Fläche Rechteck", requiredRefs: ["B4", "B5"], expected: ({ a, b }) => a * b },
           { cell: "F6", name: "Fläche Quadrat", requiredRefs: ["B4"], expected: ({ a }) => a ** 2 },
           { cell: "F7", name: "Fläche Trapez", requiredRefs: ["B4", "B6", "B8"], expected: ({ a, c, h }) => (a + c) * h / 2 },
-          { cell: "F8", name: "Fläche Kreis", requiredRefs: ["B9", "B10"], expected: ({ r }) => r ** 2 * Math.PI },
+          { cell: "F8", name: "Fläche Kreis", requiredRefs: ["B9", "B10"], expected: ({ r }) => r ** 2 * PI_VALUE },
           { cell: "F9", name: "Fläche Parallelogramm", requiredRefs: ["B4", "B8"], expected: ({ a, h }) => a * h },
-          { cell: "F10", name: "Umfang Kreis", requiredRefs: ["B9", "B10"], expected: ({ r }) => 2 * r * Math.PI },
+          { cell: "F10", name: "Umfang Kreis", requiredRefs: ["B9", "B10"], expected: ({ r }) => 2 * r * PI_VALUE },
           { cell: "F11", name: "Volumen Würfel", requiredRefs: ["B4"], expected: ({ a }) => a ** 3 },
           { cell: "F12", name: "Volumen Quader", requiredRefs: ["B4", "B5", "B6"], expected: ({ a, b, c }) => a * b * c },
           { cell: "F13", name: "Oberfläche Quader", requiredRefs: ["B4", "B5", "B6"], expected: ({ a, b, c }) => 2 * a * b + 2 * a * c + 2 * b * c },
           { cell: "F14", name: "Volumen dreiseitiges Prisma", requiredRefs: ["B4", "B7", "B8"], expected: ({ a, d, h }) => a * h / 2 * d },
-          { cell: "F15", name: "Volumen Zylinder", requiredRefs: ["B8", "B9", "B10"], expected: ({ r, h }) => r ** 2 * Math.PI * h },
-          { cell: "F16", name: "Volumen Kegel", requiredRefs: ["B8", "B9", "B10"], expected: ({ r, h }) => r ** 2 * Math.PI * h / 3 },
+          { cell: "F15", name: "Volumen Zylinder", requiredRefs: ["B8", "B9", "B10"], expected: ({ r, h }) => r ** 2 * PI_VALUE * h },
+          { cell: "F16", name: "Volumen Kegel", requiredRefs: ["B8", "B9", "B10"], expected: ({ r, h }) => r ** 2 * PI_VALUE * h / 3 },
           { cell: "F17", name: "Volumen Pyramide", requiredRefs: ["B4", "B8"], expected: ({ a, h }) => a ** 2 * h / 3 }
         ];
 
@@ -124,7 +124,7 @@
           A9: "Radius r:",
           B9: 3,
           A10: "Pi:",
-          B10: Math.PI,
+          B10: PI_VALUE,
           A12: "Grundflächen bei Körpern",
           A13: "zuerst extra berechnen!",
           E4: "A_Dreieck =",
@@ -182,10 +182,6 @@
         }
 
         function displayStaticValue(cell, value) {
-          if (cell === "B10") {
-            return "π";
-          }
-
           if (typeof value === "number") {
             return formatNumber(value);
           }
@@ -318,7 +314,7 @@
               if (match("(") && !match(")")) {
                 throw new Error("PI braucht keine Argumente.");
               }
-              return Math.PI;
+              return PI_VALUE;
             }
 
             if (/^[A-Z]+[0-9]+$/.test(normalized)) {
