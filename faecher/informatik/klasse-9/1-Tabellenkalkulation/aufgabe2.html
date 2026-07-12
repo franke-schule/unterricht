@@ -436,7 +436,9 @@
           input.setAttribute("aria-label", `Formel für ${cellName}`);
           input.addEventListener("input", () => {
             cells.set(cellName, input.value);
-            updateCopiedFormulas();
+            if (cellName === "E2" || cellName === "F2") {
+              updateCopiedFormulas();
+            }
             refreshComputedValues();
             clearResult();
           });
@@ -455,6 +457,49 @@
           feedback.className = "cell-feedback";
           feedback.dataset.feedbackFor = cellName;
           td.append(input, output, checkCellButton, feedback);
+        }
+
+        function parseEnteredValue(cellName, enteredValue) {
+          const text = enteredValue.trim();
+          if (!text) {
+            return "";
+          }
+          if (text.startsWith("=")) {
+            return text;
+          }
+
+          let normalized = text.replace(/\s/g, "").replace("€", "");
+          if (cellName === "D8" && normalized.endsWith("%")) {
+            normalized = normalized.slice(0, -1);
+            const percentValue = Number(normalized.replace(/\./g, "").replace(",", "."));
+            return Number.isFinite(percentValue) ? percentValue / 100 : enteredValue;
+          }
+
+          normalized = normalized.replace(/\./g, "").replace(",", ".");
+          const numberValue = Number(normalized);
+          return Number.isFinite(numberValue) ? numberValue : enteredValue;
+        }
+
+        function createEditableCell(td, cellName) {
+          const input = document.createElement("input");
+          input.type = "text";
+          input.autocomplete = "off";
+          input.spellcheck = false;
+          input.value = displayValue(cellName, cells.get(cellName));
+          input.setAttribute("aria-label", `Zelle ${cellName}`);
+          input.addEventListener("input", () => {
+            cells.set(cellName, parseEnteredValue(cellName, input.value));
+            refreshComputedValues();
+            clearResult();
+          });
+          td.append(input);
+
+          if (copiedFormulaCells.has(cellName)) {
+            const output = document.createElement("output");
+            output.className = "cell-result";
+            output.dataset.computedFor = cellName;
+            td.append(output);
+          }
         }
 
         function createGrid() {
@@ -494,25 +539,15 @@
             tr.append(rowHeading);
 
             columns.forEach((column) => {
-              if ([2, 4, 5].includes(row) && (column === "I" || column === "J")) {
-                return;
-              }
               const cellName = `${column}${row}`;
               const td = document.createElement("td");
               td.dataset.cell = cellName;
-              if ([2, 4, 5].includes(row) && column === "H") {
-                td.colSpan = 3;
-              }
               applyCellClasses(td, cellName);
 
               if (formulaCells.has(cellName)) {
                 createFormulaCell(td, cellName);
               } else {
-                const value = document.createElement(copiedFormulaCells.has(cellName) ? "output" : "span");
-                value.className = "cell-static-value";
-                value.dataset.valueFor = cellName;
-                value.textContent = displayValue(cellName, cells.get(cellName));
-                td.append(value);
+                createEditableCell(td, cellName);
               }
               tr.append(td);
             });
@@ -526,7 +561,11 @@
 
         function refreshComputedValues() {
           copiedFormulaCells.forEach((cell) => {
-            const output = gridElement.querySelector(`[data-value-for="${cell}"]`);
+            const input = gridElement.querySelector(`[data-cell="${cell}"] input`);
+            const output = gridElement.querySelector(`[data-computed-for="${cell}"]`);
+            if (input && input.value !== cells.get(cell)) {
+              input.value = cells.get(cell);
+            }
             if (!output) return;
             try {
               output.textContent = displayValue(cell, evaluateCell(cell));
@@ -599,7 +638,6 @@
           } finally {
             cells.clear();
             originalCells.forEach((value, key) => cells.set(key, value));
-            updateCopiedFormulas();
             refreshComputedValues();
           }
 
