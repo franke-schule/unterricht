@@ -364,6 +364,55 @@ h1 {
   background: #ffffff;
 }
 
+.spreadsheet-zoom {
+  position: sticky;
+  top: 0;
+  left: 0;
+  z-index: 3;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  width: max-content;
+  min-width: 100%;
+  padding: 8px 12px;
+  border-bottom: 1px solid #cbd5e1;
+  background: rgba(248, 250, 252, 0.96);
+}
+
+.spreadsheet-zoom button {
+  min-width: 36px;
+  border: 1px solid #94a3b8;
+  border-radius: 6px;
+  padding: 5px 9px;
+  color: #1e293b;
+  background: #ffffff;
+  font: inherit;
+  font-weight: 900;
+  cursor: pointer;
+}
+
+.spreadsheet-zoom button:hover,
+.spreadsheet-zoom button:focus-visible {
+  background: #dbeafe;
+}
+
+.spreadsheet-zoom button:disabled {
+  opacity: 0.45;
+  cursor: default;
+}
+
+.spreadsheet-zoom span {
+  min-width: 58px;
+  color: #1e293b;
+  font-weight: 900;
+  text-align: center;
+}
+
+.spreadsheet-zoom small {
+  color: #64748b;
+  font-weight: 700;
+}
+
 .mini-spreadsheet-table {
   width: 100%;
   min-width: 980px;
