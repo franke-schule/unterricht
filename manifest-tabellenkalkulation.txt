@@ -1,0 +1,294 @@
+Manifest: Aufgaben zur Tabellenkalkulation
+==========================================
+
+Ziel und Abhaengigkeit
+----------------------
+Dieses Manifest ergaenzt manifest-allgemein.txt fuer interaktive Aufgaben zur
+Tabellenkalkulation. Es beschreibt den Nachbau einer Arbeitsmappe als lokale
+Mini-Tabellenkalkulation sowie die fachlich belastbare Pruefung von Formeln.
+
+Die allgemeinen Regeln zu Menues, Navigation, Sicherungsblaettern,
+Lehrercodes, Barrierearmut und Abschlusspruefung gelten zusaetzlich.
+
+
+1. Ausgangsdatei zuerst vollstaendig untersuchen
+------------------------------------------------
+
+Vor dem HTML-Nachbau die Excel-Datei systematisch auslesen und visuell pruefen:
+
+  - Blattnamen und verwendeter Zellbereich,
+  - Zellwerte und vorhandene Formeln,
+  - verbundene Zellen,
+  - Spaltenbreiten und Zeilenhoehen,
+  - Zahlenformate fuer Dezimalzahlen, Prozent und Waehrung,
+  - Schrift, Rahmen und Fuellfarben,
+  - Bilder, Diagramme, Hinweise und Druckbereiche,
+  - orange/gelb markierte Ziel- oder Eingabezellen.
+
+Nicht allein aus sichtbaren Werten auf Formeln schliessen. Zelltypen,
+Formeldefinitionen und Formatvorlagen aus der Arbeitsmappe beruecksichtigen.
+Die Webseite soll Inhalt, Anordnung und didaktische Markierungen der Vorlage
+erkennbar wiedergeben.
+
+
+2. Aufbau der Mini-Tabellenkalkulation
+--------------------------------------
+
+Bevorzugt eine lokale HTML-/CSS-/JavaScript-Loesung verwenden, wenn keine echte
+externe Tabellenanwendung verlangt ist. Dadurch bleibt die Aufgabe schnell,
+offline-nah und gezielt pruefbar.
+
+Die Tabelle benoetigt:
+
+  - sichtbare Spaltenbuchstaben und Zeilennummern,
+  - stabile Zelladressen wie A1, B4 oder F10,
+  - passende Spaltenbreiten und Zellformatierung,
+  - horizontales Scrollen auf schmalen Bildschirmen,
+  - bei grossen Tabellen eine Zoomsteuerung,
+  - eindeutige aria-labels mit Zelladresse,
+  - eine interne Datenstruktur, z. B. Map<Zelladresse, Wert/Formel>.
+
+Wenn die Aufgabe freie Tabellenarbeit vorsieht, jede dargestellte Zelle
+editierbar machen, einschliesslich Leerzellen, Beschriftungen und uebertragener
+Formeln. Nur dann einzelne Zellen sperren, wenn der Arbeitsauftrag dies
+ausdruecklich verlangt.
+
+Zellwerte typgerecht behandeln:
+
+  - Zahlen intern als Zahlen speichern,
+  - Prozentwerte intern als Dezimalzahl speichern (19 % = 0.19),
+  - Waehrung nur fuer die Anzeige formatieren,
+  - Formeln als Text mit fuehrendem Gleichheitszeichen speichern,
+  - deutsche Dezimalkommas bei Eingaben akzeptieren.
+
+
+3. Zielzellen und Pruefbuttons
+------------------------------
+
+Jede fachlich markierte Formel-Zielzelle erhaelt:
+
+  - ein Formeleingabefeld,
+  - eine berechnete Vorschau,
+  - einen eigenen Button "<Zelle> pruefen",
+  - ein eigenes Rueckmeldungsfeld,
+  - zusaetzlich optional einen Button "Alle Formeln pruefen".
+
+Dekorative Farbflaechen oder Hinweisbaender aus der Vorlage sind keine
+Formel-Zielzellen. Diese Unterscheidung beim Auslesen der Arbeitsmappe explizit
+dokumentieren.
+
+Zielzellen zentral als Metadaten definieren, nicht ueber verteilte
+Sonderfaelle. Beispiel:
+
+  {
+    cell: "F10",
+    name: "Summe der Gesamtpreise",
+    requiredRefs: ["F2", "F3", "F4", "F5", "F6"],
+    allowedNumbers: [],
+    expected: (testData) => ...
+  }
+
+So bleiben Sollwert, benoetigte Zellbezuege und erlaubte Konstanten gemeinsam
+wartbar.
+
+
+4. Formelsprache und Zellberechnung
+-----------------------------------
+
+Der Parser muss nur die fuer die Aufgabe benoetigte Formelsprache unterstuetzen,
+diese aber eindeutig und sicher auswerten. Typischer Umfang:
+
+  - fuehrendes =,
+  - Zellbezuege A1 sowie absolute/gemischte Bezuege $A$1, A$1, $A1,
+  - +, -, *, / und ^,
+  - Klammern und unaere Vorzeichen,
+  - benoetigte Funktionen wie SUMME/SUM,
+  - benoetigte Zellbereiche wie F2:F6,
+  - deutsche Dezimalkommas.
+
+Keine Formeln mit eval() oder Function() ausfuehren. Einen begrenzten Parser
+verwenden, damit Formeleingaben nicht als beliebiger JavaScript-Code laufen.
+
+Bei Zellberechnung:
+
+  - leere oder nichtnumerische Bezuege verstaendlich melden,
+  - Kreisbezuege erkennen,
+  - Division durch null und nicht endliche Ergebnisse abfangen,
+  - Zellbereiche korrekt expandieren,
+  - Funktionsnamen bei Bedarf deutsch und englisch akzeptieren.
+
+
+5. Mathematisch aequivalente Formeln pruefen
+--------------------------------------------
+
+Formeln niemals nur als Zeichenkette mit einer Musterformel vergleichen.
+Mathematisch aequivalente Schreibweisen muessen akzeptiert werden, z. B.:
+
+  =D2+D2*$D$8
+  =D2*(1+$D$8)
+  =$D2*(100%+$D$8)       (nur falls Prozentliterale unterstuetzt werden)
+
+Robustes Pruefverfahren:
+
+  1. Formel syntaktisch parsen.
+  2. Geforderte Zellbezuege separat pruefen.
+  3. Formel mit mehreren unabhaengigen Testdatensaetzen auswerten.
+  4. Ergebnis jeweils mit einer unabhaengig programmierten Sollfunktion
+     vergleichen.
+  5. Nur akzeptieren, wenn alle Testfaelle stimmen.
+
+Testdaten muessen unterschiedliche Werte enthalten:
+
+  - verschiedene ganze Zahlen und Dezimalzahlen,
+  - unterschiedliche Prozentwerte,
+  - nach Bedarf negative Werte oder null,
+  - Werte, bei denen haeufige Fehlformeln sichtbar abweichen.
+
+Nicht nur mit den auf dem Blatt sichtbaren Ausgangswerten testen. Sonst kann
+eine hart codierte Zahl oder eine zufaellig passende Fehlformel bestehen.
+
+Vergleich mit Toleranz statt striktem ===:
+
+  tolerance = max(1, abs(expected)) * 1e-7
+  korrekt, wenn abs(actual - expected) <= tolerance
+
+Die Sollfunktion darf nicht dieselbe Parser-/Formellogik wiederverwenden, die
+geprueft wird. Sonst bestaetigt ein gemeinsamer Fehler sich selbst.
+
+
+6. Verwendung von Zellbezuegen erzwingen
+-----------------------------------------
+
+Wenn der Arbeitsauftrag Zellbezuege verlangt, reicht ein richtiges Ergebnis
+nicht aus. Die Formel muss die benoetigten Bezuege tatsaechlich enthalten.
+
+Vorgehen:
+
+  - Alle Zellreferenzen syntaktisch aus der Formel ermitteln.
+  - $-Zeichen fuer den Adressvergleich normalisieren.
+  - Bereiche expandieren: F2:F6 enthaelt F2, F3, F4, F5 und F6.
+  - requiredRefs der Zielzelle mit den gefundenen Referenzen vergleichen.
+  - Fehlende Bezuege konkret nennen: "Verwende Zellbezuege: D2, D8."
+
+Beispiele:
+
+  requiredRefs: ["B2", "E2"]
+    =B2*E2       -> Referenzen vorhanden
+    =2*E2        -> B2 fehlt, auch wenn der aktuelle Wert in B2 gerade 2 ist
+
+  requiredRefs: ["F2", "F3", "F4", "F5", "F6"]
+    =SUMME(F2:F6) -> alle Referenzen vorhanden
+    =SUMME(F2:F5) -> F6 fehlt
+
+Wenn ein bestimmter absoluter Bezug didaktisch verlangt ist, neben der
+normalisierten Adresse auch die Schreibweise pruefen. Beispiel:
+
+  requiredAbsoluteRefs: ["$D$8"]
+
+Dann darf D8 zwar rechnerisch denselben aktuellen Wert liefern, besteht aber
+nicht die Anforderung zum absoluten Zellbezug.
+
+
+7. Hart codierte Zahlen und erlaubte Konstanten
+------------------------------------------------
+
+Bei Aufgaben zu Zellbezuegen hart codierte Ausgangswerte ablehnen. Zahlen in
+der Formel syntaktisch sammeln und nur explizit erlaubte Konstanten zulassen.
+
+Beispiele fuer erlaubte Konstanten:
+
+  - 2 bei Halbierung oder Umfangsformeln,
+  - 3 bei Kegel-/Pyramidenformeln,
+  - 1 bei einer fachlich sinnvollen Schreibweise wie (1 + Steuersatz).
+
+Metadaten:
+
+  allowedNumbers: [1]
+
+Wichtig:
+
+  - Ziffern aus Zelladressen nicht als Zahlenliteral zaehlen.
+  - Zahlen in Prozentliteralen passend normalisieren.
+  - Nur Konstanten erlauben, die fuer genau diese Zielzelle fachlich noetig
+    oder sinnvoll sind.
+  - Die dynamische Mehrfachauswertung bleibt trotzdem erforderlich.
+
+
+8. Relative, absolute und uebertragene Formeln
+----------------------------------------------
+
+Wenn die Vorlage das Ausfuellen/Kopieren einer Formel vorsieht, dieses Verhalten
+online nachvollziehbar nachbilden.
+
+Beim Uebertragen um einen Zeilen-/Spaltenversatz:
+
+  - relative Zeile und Spalte verschieben,
+  - $A$1 weder in Zeile noch Spalte verschieben,
+  - A$1 nur in der Spalte verschieben,
+  - $A1 nur in der Zeile verschieben.
+
+Beispiel beim Kopieren von Zeile 2 nach Zeile 3:
+
+  =D2+D2*$D$8  ->  =D3+D3*$D$8
+  =B2*E2       ->  =B3*E3
+
+Uebertragene Zellen sollen bei freier Tabellenarbeit weiterhin editierbar sein.
+Eine erneute Aenderung der Quellformel darf die vorgesehenen Kopien
+aktualisieren; eine reine Pruefung darf eigenstaendige Schuelereingaben nicht
+unbeabsichtigt ueberschreiben.
+
+
+9. Rueckmeldungen
+-----------------
+
+Rueckmeldungen sollen den Fehlertyp unterscheiden:
+
+  - Gleichheitszeichen fehlt,
+  - Formel kann nicht gelesen werden,
+  - benoetigte Zellbezuege fehlen,
+  - unerlaubte Zahlen wurden eingetippt,
+  - Ergebnis ist mathematisch falsch,
+  - Zellbezug ist kreisfoermig oder leer.
+
+Keine Musterformel sofort verraten. Zuerst einen konkreten, lernfoerderlichen
+Hinweis geben. Bei Erfolg bestaetigen, dass die Formel auch mit veraenderten
+Ausgangswerten funktioniert.
+
+Jede Zielzelle erhaelt eigenes Feedback; die Gesamtpruefung fasst nur zusammen.
+
+
+10. Spezifische Abschlusspruefung
+---------------------------------
+
+Zusaetzlich zur allgemeinen Checkliste:
+
+  [ ] Inhalt, Zellbereich und Formatierung der Excel-Vorlage wurden geprueft.
+  [ ] Alle vorgesehenen Zellen sind editierbar oder bewusst gesperrt.
+  [ ] Jede Formel-Zielzelle besitzt Button und eigenes Feedback.
+  [ ] Richtige Standardformeln bestehen.
+  [ ] Mindestens eine anders geschriebene, mathematisch aequivalente Formel
+      besteht ebenfalls.
+  [ ] Hart codierte aktuelle Ergebnisse werden abgelehnt.
+  [ ] Fehlende requiredRefs werden konkret gemeldet.
+  [ ] Zellbereiche werden fuer die Referenzpruefung expandiert.
+  [ ] Relative und absolute Bezuege werden beim Kopieren korrekt behandelt.
+  [ ] Mehrere veraenderte Testdatensaetze wurden ausgefuehrt.
+  [ ] Falsche Rechenzeichen, falsche Klammern und unvollstaendige Bereiche
+      werden abgelehnt.
+  [ ] Reset, Einzelpruefung, Gesamtpruefung und Zoom funktionieren.
+  [ ] Inline-Skript ist syntaktisch gueltig.
+  [ ] Seite wurde nach Moeglichkeit interaktiv im Browser getestet.
+
+
+Kurz-Checkliste Tabellenkalkulation
+-----------------------------------
+
+  [ ] Allgemeines Manifest angewendet.
+  [ ] Arbeitsmappe inhaltlich und visuell untersucht.
+  [ ] Tabelle mit korrekten Zelladressen nachgebaut.
+  [ ] Zielzellen als zentrale Metadaten definiert.
+  [ ] Begrenzter Formelparser implementiert.
+  [ ] Mathematische Aequivalenz mit mehreren Datensaetzen geprueft.
+  [ ] Geforderte Zellbezuege und erlaubte Konstanten geprueft.
+  [ ] Einzel- und Gesamtfeedback umgesetzt.
+  [ ] Allgemeine und spezifische Abschlusspruefung ausgefuehrt.

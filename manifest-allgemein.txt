@@ -1,0 +1,214 @@
+Manifest: Allgemeine Regeln fuer Aufgabenseiten
+===============================================
+
+Ziel und Geltungsbereich
+------------------------
+Dieses Manifest enthaelt Regeln, die fuer alle Aufgabenseiten im Repo
+"unterricht" gelten. Fachspezifische Ergaenzungen stehen in:
+
+  manifest-online-ide-programmieraufgaben.txt
+  manifest-tabellenkalkulation.txt
+
+Bei einer neuen Seite gilt immer zuerst dieses allgemeine Manifest und danach
+das passende Fachmanifest. Fachregeln duerfen allgemeine Regeln konkretisieren,
+aber Navigation, Barrierearmut und Schutz von Sicherungsblaettern nicht umgehen.
+
+
+1. Ordner, Dateinamen und Menues
+--------------------------------
+
+Grundschema:
+
+  faecher/<fach>/klasse-<jahrgang>/<thema>/aufgabeN.html
+
+Jede Jahrgangsstufe besitzt eine Uebersichtsseite:
+
+  faecher/<fach>/klasse-<jahrgang>/index.html
+
+Regeln:
+
+  - Aufgaben als sichtbare Buttons darstellen, nicht als Dateiliste.
+  - Bei mehreren Themen die vorhandene topic-list-/topic-section-Struktur
+    verwenden.
+  - Ordnernummer und Themenueberschrift muessen zueinander passen.
+  - Pro Aufgabe eine eigene HTML-Datei verwenden.
+  - Buttontext kurz halten: Aufgabennummer plus knappe Beschreibung.
+  - Neue Seiten analog zu vorhandenen Seiten desselben Themas aufbauen.
+  - Relative Links aus Sicht der jeweiligen HTML-Datei pruefen.
+  - Stylesheet mit Cache-Buster einbinden, wenn sich sichtbare CSS-Regeln
+    geaendert haben.
+
+
+2. Navigation und Seitenaufbau
+------------------------------
+
+Jede Aufgabenseite benoetigt:
+
+  - lang="de" und UTF-8,
+  - einen sichtbaren Rueckweg zur Aufgabenuebersicht der Jahrgangsstufe,
+  - einen sichtbaren Link zur Startseite,
+  - eine eindeutige Hauptueberschrift,
+  - einen kurzen Arbeitsauftrag,
+  - einen klar abgegrenzten Arbeits- und Rueckmeldungsbereich.
+
+Der Zurueck-Link soll den fachlichen Kontext erhalten. Eine konkrete Aufgabe
+verlinkt deshalb normalerweise auf die Jahrgangs-/Aufgabenuebersicht und nicht
+auf eine weiter entfernte Oberseite.
+
+Bestehende Layoutklassen wiederverwenden, bevor neue Klassen angelegt werden.
+Auf Menueebenen wenig erklaerenden Text verwenden; die eigentliche Anleitung
+gehoert auf die Aufgabenseite.
+
+
+3. Sicherungsblaetter und Loesungsblaetter
+------------------------------------------
+
+Bevorzugte Dateinamen fuer neue Aufgaben:
+
+  sicherungsblatt-aufgabe-N-loesungen.tex
+  sicherungsblatt-aufgabe-N-loesungen.pdf
+
+Inhalt:
+
+  - kurze Aufgabenueberschrift,
+  - Musterloesungen,
+  - zentrale Merksaetze,
+  - kompakte und gut lesbare Darstellung.
+
+In der Schueleransicht nicht offensiv mit Musterloesungen werben. Der
+Downloadbutton bleibt zunaechst verborgen und erscheint erst nach korrekter
+Lehrercode-Eingabe in einem eingeklappten details-Bereich.
+
+Grundstruktur:
+
+  <section class="solution-download" aria-labelledby="solution-download-title">
+    <h2 id="solution-download-title">Sicherungsblatt zu Aufgabe N</h2>
+    <details class="solution-reveal">
+      <summary>Sicherungsblatt anzeigen</summary>
+      <form class="solution-code-form"
+        onsubmit="unlockSolution(event, 'LEHRERCODE', 'solution-download-link', 'solution-code-message')">
+        <label for="solution-code">Lehrercode eingeben</label>
+        <div class="solution-code-controls">
+          <input id="solution-code" name="solution-code" type="text"
+            maxlength="9" autocomplete="off" autocapitalize="characters"
+            spellcheck="false" required>
+          <button type="submit">Code pruefen</button>
+        </div>
+        <p id="solution-code-message" class="solution-code-message"
+          aria-live="polite"></p>
+        <a id="solution-download-link" class="download-button"
+          href="sicherungsblatt-aufgabe-N-loesungen.pdf" download hidden>
+          &#8595; Sicherungsblatt herunterladen
+        </a>
+      </form>
+    </details>
+  </section>
+
+Erforderliche CSS-Regel:
+
+  .download-button[hidden] { display: none; }
+
+Die Freigabelogik:
+
+  - Formularabsendung verhindern.
+  - Eingabe in Grossbuchstaben umwandeln.
+  - Zeichen ausser A-Z und 0-9 fuer den Vergleich entfernen.
+  - Downloadlink nur bei korrektem Code sichtbar machen.
+  - Erfolg und Fehler ueber aria-live="polite" melden.
+
+Der Lehrercode ist eine pragmatische Unterrichtshuerde, keine kryptografische
+Zugriffssperre. Der PDF-Link bleibt technisch im clientseitigen HTML auffindbar.
+
+
+4. Lehrercode-Schema
+--------------------
+
+Aktuelles Muster:
+
+  FXXX-KXAX
+
+Bedeutung:
+
+  Position 1: Fach
+  Position 5: Klasse/Jahrgang
+  Position 7: Aufgabennummer
+
+Dekodiertabellen:
+
+  Fach:
+    Informatik = M
+    Physik     = R
+
+  Klasse:
+    5  = 2
+    6  = 7
+    7  = K
+    8  = P
+    9  = 4
+    10 = X
+    11 = D
+    12 = Q
+
+  Aufgabe:
+    1 = 2
+    2 = P
+    3 = M
+    4 = 7
+    5 = X
+
+Alle anderen Positionen sind Tarn-/Pruefzeichen. Bei neuen Codes:
+
+  - Fach, Klasse und Aufgabe gemaess Tabellen setzen.
+  - Code in der Aufgabenseite eintragen.
+  - lehrercodes-dekodierung.tex und lehrercodes-dekodierung.pdf aktualisieren.
+  - Code in der eigenen Materialverwaltung notieren.
+  - Uebereinstimmung zwischen HTML und Dekodier-PDF pruefen.
+
+
+5. Barrierearmut und Rueckmeldungen
+----------------------------------
+
+Beibehalten:
+
+  - aria-label fuer Navigationen und schwer erkennbare Steuerelemente,
+  - aria-labelledby fuer groessere Bereiche,
+  - sichtbare label-Elemente fuer Formulareingaben,
+  - aria-live="polite" fuer dynamische Rueckmeldungen,
+  - eindeutige Buttonbeschriftungen,
+  - Tastaturbedienbarkeit und sichtbare Fokusmarkierung,
+  - ausreichende Farbkontraste.
+
+Richtig/falsch darf nicht ausschliesslich durch Farbe vermittelt werden. Immer
+zusaetzlich eine konkrete Textmeldung anzeigen.
+
+
+6. Abschlusspruefung
+--------------------
+
+Vor Abschluss mindestens pruefen:
+
+  [ ] Alle lokalen HTML-, Bild- und PDF-Links existieren.
+  [ ] Aufgabe ist im richtigen Jahrgangs- und Themenmenue sichtbar.
+  [ ] Rueck- und Startseitenlink zeigen auf die richtigen Ziele.
+  [ ] Dynamische Rueckmeldungen sind verstaendlich und barrierearm.
+  [ ] Inline-JavaScript ist syntaktisch gueltig.
+  [ ] Sicherungsblatt-Download ist anfangs verborgen.
+  [ ] Lehrercode stimmt mit der Dekodierdatei ueberein.
+  [ ] Neue PDFs wurden gebaut, gerendert und visuell geprueft.
+  [ ] Seite wurde nach Moeglichkeit im Browser interaktiv getestet.
+  [ ] git diff --check meldet keine Fehler.
+
+Empfohlener Git-Check:
+
+  git -c safe.directory=C:/Users/ffran/Documents/git/unterricht diff --check
+
+
+Kurz-Checkliste fuer jede neue Aufgabe
+--------------------------------------
+
+  [ ] aufgabeN.html im passenden Themenordner angelegt.
+  [ ] Menueeintrag ergaenzt.
+  [ ] Allgemeine Navigation und Barrierearmut umgesetzt.
+  [ ] Fachmanifest angewendet.
+  [ ] Sicherungsblatt und Lehrercode umgesetzt, falls vorgesehen.
+  [ ] Links, Skripte, Interaktionen und Git-Diff geprueft.
