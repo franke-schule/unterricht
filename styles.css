@@ -300,6 +300,10 @@ h1 {
   align-items: start;
 }
 
+.spreadsheet-workspace.spreadsheet-workspace-wide {
+  grid-template-columns: minmax(0, 1fr);
+}
+
 .spreadsheet-card,
 .formula-card,
 .check-panel {
@@ -422,6 +426,30 @@ h1 {
   font-size: 0.92rem;
 }
 
+.mini-spreadsheet-table.invoice-spreadsheet-table {
+  min-width: 1180px;
+}
+
+.invoice-spreadsheet-table col.row-number-column {
+  width: 34px;
+}
+
+.invoice-spreadsheet-table col.standard-column {
+  width: 100px;
+}
+
+.invoice-spreadsheet-table col.description-column {
+  width: 190px;
+}
+
+.invoice-spreadsheet-table col.price-column {
+  width: 120px;
+}
+
+.invoice-spreadsheet-table col.total-column {
+  width: 145px;
+}
+
 .mini-spreadsheet-table th,
 .mini-spreadsheet-table td {
   height: 52px;
@@ -474,6 +502,60 @@ h1 {
   min-width: 180px;
   background: #fef3c7;
   padding: 5px;
+}
+
+.spreadsheet-cell.workbook-header-cell {
+  color: #7c2d12;
+  background: #fed7aa;
+  font-weight: 900;
+}
+
+.spreadsheet-cell.invoice-formula-cell,
+.spreadsheet-cell.instruction-cell {
+  background: #ffc000;
+}
+
+.spreadsheet-cell.instruction-cell {
+  color: #78350f;
+  font-weight: 900;
+}
+
+.spreadsheet-cell.computed-cell {
+  color: #334155;
+  background: #fff7ed;
+  font-weight: 800;
+  text-align: right;
+}
+
+.spreadsheet-cell.currency-cell,
+.spreadsheet-cell.number-cell,
+.spreadsheet-cell.percent-cell {
+  text-align: right;
+}
+
+.spreadsheet-cell.center-cell {
+  text-align: center;
+}
+
+.spreadsheet-cell.summary-label-cell {
+  color: #7f1d1d;
+  background: #ef4444;
+  font-weight: 900;
+  text-align: right;
+}
+
+.spreadsheet-cell.summary-spacer-cell {
+  background: #ef4444;
+}
+
+.spreadsheet-cell.exercise-label-cell {
+  border-color: #475569;
+  font-weight: 700;
+}
+
+.spreadsheet-cell .cell-static-value {
+  display: block;
+  width: 100%;
 }
 
 .spreadsheet-cell.formula-cell.has-error {

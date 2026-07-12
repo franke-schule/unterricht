@@ -1,0 +1,666 @@
+<!doctype html>
+<html lang="de">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Aufgabe 2 – Rechnungsformular mit Prozent</title>
+    <link rel="stylesheet" href="../../../../styles.css?v=20260712-1">
+  </head>
+  <body>
+    <div class="site-backdrop" aria-hidden="true"></div>
+    <main class="page-shell spreadsheet-page">
+      <nav class="topbar" aria-label="Navigation">
+        <a class="back-link" href="../">Zurück zur Aufgabenübersicht</a>
+        <a class="back-link" href="../../../../">Startseite</a>
+      </nav>
+
+      <header class="page-header spreadsheet-header">
+        <p class="eyebrow">Tabellenkalkulation</p>
+        <h1>Aufgabe 2</h1>
+        <p>Erstelle ein Rechnungsformular und berechne Bruttopreise, Gesamtpreise und die Rechnungssumme.</p>
+      </header>
+
+      <div class="spreadsheet-workspace spreadsheet-workspace-wide">
+        <section class="spreadsheet-card" aria-labelledby="spreadsheet-title">
+          <div class="card-heading">
+            <div>
+              <h2 id="spreadsheet-title">Rechnungsformular mit Prozent</h2>
+              <p><strong>Hinweis:</strong> Trage Formeln nur in die orange markierten Zellen E2, F2 und F10 ein. E2 und F2 werden automatisch bis Zeile 6 übertragen.</p>
+            </div>
+            <span class="load-status ready" role="status">Bereit</span>
+          </div>
+
+          <div class="spreadsheet-frame">
+            <div class="spreadsheet-zoom" aria-label="Zoomsteuerung für die Tabelle">
+              <button id="zoom-out" type="button" aria-label="Tabelle verkleinern">−</button>
+              <span id="zoom-level" aria-live="polite">100 %</span>
+              <button id="zoom-in" type="button" aria-label="Tabelle vergrößern">+</button>
+              <button id="zoom-reset" type="button">100 %</button>
+              <small>Strg + Mausrad funktioniert ebenfalls.</small>
+            </div>
+            <div id="spreadsheet-grid" aria-label="Mini-Tabellenkalkulation für Aufgabe 2"></div>
+          </div>
+        </section>
+      </div>
+
+      <section class="check-panel" aria-labelledby="check-title">
+        <div>
+          <h2 id="check-title">Eingaben überprüfen</h2>
+          <p>Prüfe eine Formel direkt in ihrer orangefarbenen Zelle oder kontrolliere alle drei Formeln gemeinsam.</p>
+        </div>
+        <div class="check-actions">
+          <button id="check-formulas" class="primary-action" type="button">Alle Formeln prüfen</button>
+          <button id="reset-formulas" class="secondary-action" type="button">Formeln leeren</button>
+        </div>
+        <div id="check-result" class="check-result" role="status" aria-live="polite"></div>
+      </section>
+
+      <noscript>
+        <p class="check-result error">Für diese Aufgabe muss JavaScript aktiviert sein.</p>
+      </noscript>
+    </main>
+
+    <script>
+      (() => {
+        "use strict";
+
+        const columns = ["A", "B", "C", "D", "E", "F", "G", "H", "I", "J"];
+        const rowCount = 15;
+        const outputCells = [
+          {
+            cell: "E2",
+            name: "Bruttopreis",
+            requiredRefs: ["D2", "D8"],
+            expected: ({ net, tax }) => net[0] * (1 + tax)
+          },
+          {
+            cell: "F2",
+            name: "Gesamtpreis",
+            requiredRefs: ["B2", "E2"],
+            prepare: ({ quantities, net, tax }) => cells.set("E2", net[0] * (1 + tax)),
+            expected: ({ quantities, net, tax }) => quantities[0] * net[0] * (1 + tax)
+          },
+          {
+            cell: "F10",
+            name: "Summe der Gesamtpreise",
+            requiredRefs: ["F2", "F3", "F4", "F5", "F6"],
+            prepare: ({ quantities, net, tax }) => {
+              for (let row = 2; row <= 6; row += 1) {
+                const index = row - 2;
+                cells.set(`F${row}`, quantities[index] * net[index] * (1 + tax));
+              }
+            },
+            expected: ({ quantities, net, tax }) => quantities.reduce(
+              (sum, quantity, index) => sum + quantity * net[index] * (1 + tax),
+              0
+            )
+          }
+        ];
+
+        const testCases = [
+          { quantities: [2, 1, 5, 1, 8], net: [1.2, 12.95, 2.9, 2.79, 0.9], tax: 0.19 },
+          { quantities: [3, 2, 4, 6, 1], net: [2.5, 8.4, 1.25, 3.1, 6.75], tax: 0.07 },
+          { quantities: [1, 7, 2, 3, 5], net: [9.99, 0.8, 4.5, 2.25, 1.1], tax: 0.16 }
+        ];
+
+        const initialCells = {
+          A1: "Position",
+          B1: "Anzahl",
+          C1: "Artikelbezeichnung",
+          D1: "netto",
+          E1: "brutto",
+          F1: "Gesamtpreis",
+          A2: 1,
+          B2: 2,
+          C2: "Radiergummi",
+          D2: 1.2,
+          H2: "Nur hier Formeln eintragen",
+          A3: 2,
+          B3: 1,
+          C3: "Füller",
+          D3: 12.95,
+          A4: 3,
+          B4: 5,
+          C4: "Tintenpatronen",
+          D4: 2.9,
+          H4: "Brutto = Netto + Netto * MwSt (Zelle D8)",
+          A5: 4,
+          B5: 1,
+          C5: "Lineal",
+          D5: 2.79,
+          H5: "Gesamtpreis = Anzahl * Brutto",
+          A6: 5,
+          B6: 8,
+          C6: "Heft",
+          D6: 0.9,
+          C8: "MwSt",
+          D8: 0.19,
+          E10: "Summe Gesamtpreise:",
+          C11: "Aufgabe 3a)",
+          D11: "höchster Einzelpreis:",
+          D12: "kleinster Einzelpreis:",
+          D13: "Mittelwert aller Einzelp:",
+          D14: "Produkt der Mengen:",
+          E15: "2³²:"
+        };
+
+        const formulaCells = new Set(outputCells.map(({ cell }) => cell));
+        const copiedFormulaCells = new Set([
+          "E3", "E4", "E5", "E6",
+          "F3", "F4", "F5", "F6"
+        ]);
+        const workbookHeaderCells = new Set(["A1", "B1", "C1", "D1", "E1", "F1"]);
+        const instructionCells = new Set(["H2", "I2", "J2"]);
+        const currencyCells = new Set([
+          "D2", "D3", "D4", "D5", "D6",
+          "E2", "E3", "E4", "E5", "E6",
+          "F2", "F3", "F4", "F5", "F6", "F10"
+        ]);
+        const centeredCells = new Set(["A2", "A3", "A4", "A5", "A6", "B2", "B3", "B4", "B5", "B6"]);
+        const cells = new Map(Object.entries(initialCells));
+        formulaCells.forEach((cell) => cells.set(cell, ""));
+        copiedFormulaCells.forEach((cell) => cells.set(cell, ""));
+
+        const gridElement = document.getElementById("spreadsheet-grid");
+        const checkButton = document.getElementById("check-formulas");
+        const resetButton = document.getElementById("reset-formulas");
+        const resultElement = document.getElementById("check-result");
+        const spreadsheetFrame = document.querySelector(".spreadsheet-frame");
+        const zoomOutButton = document.getElementById("zoom-out");
+        const zoomInButton = document.getElementById("zoom-in");
+        const zoomResetButton = document.getElementById("zoom-reset");
+        const zoomLevelElement = document.getElementById("zoom-level");
+        let zoomLevel = 1;
+
+        function normalizeCellName(cell) {
+          return String(cell).replace(/\$/g, "").trim().toUpperCase();
+        }
+
+        function setTestInputs({ quantities, net, tax }) {
+          quantities.forEach((value, index) => cells.set(`B${index + 2}`, value));
+          net.forEach((value, index) => cells.set(`D${index + 2}`, value));
+          cells.set("D8", tax);
+        }
+
+        function isClose(actual, expected) {
+          const tolerance = Math.max(1, Math.abs(expected)) * 1e-7;
+          return Number.isFinite(actual) && Math.abs(actual - expected) <= tolerance;
+        }
+
+        function formatNumber(value) {
+          return value.toLocaleString("de-DE", { maximumFractionDigits: 6 });
+        }
+
+        function formatCurrency(value) {
+          return value.toLocaleString("de-DE", {
+            style: "currency",
+            currency: "EUR",
+            minimumFractionDigits: 2,
+            maximumFractionDigits: 2
+          });
+        }
+
+        function displayValue(cell, value) {
+          if (typeof value !== "number") {
+            return value || "";
+          }
+          if (cell === "D8") {
+            return value.toLocaleString("de-DE", { style: "percent", maximumFractionDigits: 0 });
+          }
+          if (currencyCells.has(cell)) {
+            return formatCurrency(value);
+          }
+          return formatNumber(value);
+        }
+
+        function columnToNumber(column) {
+          return column.split("").reduce((total, character) => total * 26 + character.charCodeAt(0) - 64, 0);
+        }
+
+        function numberToColumn(number) {
+          let result = "";
+          let current = number;
+          while (current > 0) {
+            current -= 1;
+            result = String.fromCharCode(65 + current % 26) + result;
+            current = Math.floor(current / 26);
+          }
+          return result;
+        }
+
+        function expandRange(start, end) {
+          const startMatch = normalizeCellName(start).match(/^([A-Z]+)(\d+)$/);
+          const endMatch = normalizeCellName(end).match(/^([A-Z]+)(\d+)$/);
+          if (!startMatch || !endMatch) {
+            return [];
+          }
+          const startColumn = columnToNumber(startMatch[1]);
+          const endColumn = columnToNumber(endMatch[1]);
+          const startRow = Number(startMatch[2]);
+          const endRow = Number(endMatch[2]);
+          const references = [];
+          for (let row = Math.min(startRow, endRow); row <= Math.max(startRow, endRow); row += 1) {
+            for (let column = Math.min(startColumn, endColumn); column <= Math.max(startColumn, endColumn); column += 1) {
+              references.push(`${numberToColumn(column)}${row}`);
+            }
+          }
+          return references;
+        }
+
+        function findFormulaReferences(formula) {
+          const references = new Set();
+          const source = String(formula || "").toUpperCase();
+          const rangePattern = /(\$?[A-Z]+\$?\d+)\s*:\s*(\$?[A-Z]+\$?\d+)/g;
+          let rangeMatch;
+          while ((rangeMatch = rangePattern.exec(source)) !== null) {
+            expandRange(rangeMatch[1], rangeMatch[2]).forEach((cell) => references.add(cell));
+          }
+          (source.match(/\$?[A-Z]+\$?\d+/g) || []).forEach((cell) => references.add(normalizeCellName(cell)));
+          return references;
+        }
+
+        function analyzeFormulaReferences(formula, { requiredRefs }) {
+          const foundRefs = findFormulaReferences(formula);
+          return { missingRefs: requiredRefs.filter((cell) => !foundRefs.has(cell)) };
+        }
+
+        function translateFormula(formula, rowOffset) {
+          return String(formula || "").replace(
+            /(\$?)([A-Za-z]+)(\$?)(\d+)/g,
+            (match, absoluteColumn, column, absoluteRow, row) => {
+              const translatedRow = absoluteRow ? Number(row) : Number(row) + rowOffset;
+              return `${absoluteColumn}${column.toUpperCase()}${absoluteRow}${translatedRow}`;
+            }
+          );
+        }
+
+        function updateCopiedFormulas() {
+          for (let row = 3; row <= 6; row += 1) {
+            cells.set(`E${row}`, translateFormula(cells.get("E2"), row - 2));
+            cells.set(`F${row}`, translateFormula(cells.get("F2"), row - 2));
+          }
+        }
+
+        function parseFormula(source, lookupValue) {
+          const formula = String(source).trim().replace(/^=/, "");
+          let index = 0;
+
+          function skipSpaces() {
+            while (/\s/.test(formula[index] || "")) {
+              index += 1;
+            }
+          }
+
+          function match(character) {
+            skipSpaces();
+            if (formula[index] === character) {
+              index += 1;
+              return true;
+            }
+            return false;
+          }
+
+          function parseExpression() {
+            let value = parseTerm();
+            while (true) {
+              if (match("+")) value += parseTerm();
+              else if (match("-")) value -= parseTerm();
+              else return value;
+            }
+          }
+
+          function parseTerm() {
+            let value = parsePower();
+            while (true) {
+              if (match("*")) value *= parsePower();
+              else if (match("/")) value /= parsePower();
+              else return value;
+            }
+          }
+
+          function parsePower() {
+            const base = parseUnary();
+            return match("^") ? base ** parsePower() : base;
+          }
+
+          function parseUnary() {
+            if (match("+")) return parseUnary();
+            if (match("-")) return -parseUnary();
+            return parsePrimary();
+          }
+
+          function parsePrimary() {
+            skipSpaces();
+            if (match("(")) {
+              const value = parseExpression();
+              if (!match(")")) throw new Error("Schließende Klammer fehlt.");
+              return value;
+            }
+            if (/\d|,|\./.test(formula[index] || "")) return parseNumber();
+            if (/[A-Za-z$]/.test(formula[index] || "")) return parseIdentifier();
+            throw new Error("Unerwartetes Zeichen.");
+          }
+
+          function parseNumber() {
+            let text = "";
+            while (/\d|,|\./.test(formula[index] || "")) {
+              text += formula[index];
+              index += 1;
+            }
+            const value = Number(text.replace(",", "."));
+            if (!Number.isFinite(value)) throw new Error("Zahl konnte nicht gelesen werden.");
+            return value;
+          }
+
+          function parseCellReference() {
+            skipSpaces();
+            const remaining = formula.slice(index);
+            const matchCell = remaining.match(/^\$?([A-Za-z]+)\$?(\d+)/);
+            if (!matchCell) throw new Error("Zellbezug erwartet.");
+            index += matchCell[0].length;
+            return `${matchCell[1].toUpperCase()}${matchCell[2]}`;
+          }
+
+          function parseIdentifier() {
+            skipSpaces();
+            const remaining = formula.slice(index);
+            const functionMatch = remaining.match(/^([A-Za-zÄÖÜäöü]+)\s*\(/);
+            if (functionMatch) {
+              const functionName = functionMatch[1].toUpperCase();
+              if (functionName !== "SUM" && functionName !== "SUMME") {
+                throw new Error("Unbekannte Funktion.");
+              }
+              index += functionMatch[0].length;
+              const startCell = parseCellReference();
+              if (!match(":")) throw new Error("Zellbereich erwartet.");
+              const endCell = parseCellReference();
+              if (!match(")")) throw new Error("Schließende Klammer fehlt.");
+              return expandRange(startCell, endCell).reduce((sum, cell) => sum + lookupValue(cell), 0);
+            }
+            return lookupValue(parseCellReference());
+          }
+
+          const result = parseExpression();
+          skipSpaces();
+          if (index !== formula.length) throw new Error("Formel konnte nicht vollständig gelesen werden.");
+          return result;
+        }
+
+        function evaluateCell(cell, visiting = new Set()) {
+          const normalized = normalizeCellName(cell);
+          if (visiting.has(normalized)) throw new Error("Zellbezug enthält einen Kreis.");
+          const value = cells.get(normalized);
+          if (typeof value === "number") return value;
+          const text = String(value || "").trim();
+          if (!text) throw new Error("Zelle ist leer.");
+          if (!text.startsWith("=")) {
+            const numericValue = Number(text.replace(",", "."));
+            if (Number.isFinite(numericValue)) return numericValue;
+            throw new Error("Zelle enthält keinen Zahlenwert.");
+          }
+          visiting.add(normalized);
+          try {
+            return parseFormula(text, (referencedCell) => evaluateCell(referencedCell, visiting));
+          } finally {
+            visiting.delete(normalized);
+          }
+        }
+
+        function evaluateOutputCell(cell) {
+          const formula = String(cells.get(cell) || "").trim();
+          if (!formula.startsWith("=")) throw new Error("Formel muss mit = beginnen.");
+          return evaluateCell(cell);
+        }
+
+        function applyCellClasses(td, cellName) {
+          td.className = "spreadsheet-cell";
+          if (workbookHeaderCells.has(cellName)) td.classList.add("workbook-header-cell");
+          if (instructionCells.has(cellName)) td.classList.add("instruction-cell");
+          if (formulaCells.has(cellName)) td.classList.add("formula-cell", "invoice-formula-cell");
+          if (copiedFormulaCells.has(cellName)) td.classList.add("computed-cell");
+          if (currencyCells.has(cellName)) td.classList.add("currency-cell");
+          if (centeredCells.has(cellName)) td.classList.add("center-cell");
+          if (cellName === "D8") td.classList.add("percent-cell");
+          if (cellName === "D10") td.classList.add("summary-spacer-cell");
+          if (cellName === "E10") td.classList.add("summary-label-cell");
+          if (["C11", "C12", "D11", "D12"].includes(cellName)) td.classList.add("exercise-label-cell");
+        }
+
+        function createFormulaCell(td, cellName) {
+          const input = document.createElement("input");
+          input.type = "text";
+          input.inputMode = "text";
+          input.autocomplete = "off";
+          input.spellcheck = false;
+          input.placeholder = "=";
+          input.setAttribute("aria-label", `Formel für ${cellName}`);
+          input.addEventListener("input", () => {
+            cells.set(cellName, input.value);
+            updateCopiedFormulas();
+            refreshComputedValues();
+            clearResult();
+          });
+
+          const output = document.createElement("output");
+          output.className = "cell-result";
+          output.dataset.resultFor = cellName;
+
+          const checkCellButton = document.createElement("button");
+          checkCellButton.className = "cell-check-button";
+          checkCellButton.type = "button";
+          checkCellButton.textContent = `${cellName} prüfen`;
+          checkCellButton.addEventListener("click", () => checkFormula(cellName, true));
+
+          const feedback = document.createElement("div");
+          feedback.className = "cell-feedback";
+          feedback.dataset.feedbackFor = cellName;
+          td.append(input, output, checkCellButton, feedback);
+        }
+
+        function createGrid() {
+          const table = document.createElement("table");
+          table.className = "mini-spreadsheet-table invoice-spreadsheet-table";
+
+          const colgroup = document.createElement("colgroup");
+          [
+            "row-number-column",
+            "standard-column", "standard-column", "description-column", "price-column", "price-column",
+            "total-column", "standard-column", "description-column", "standard-column", "standard-column"
+          ].forEach((className) => {
+            const col = document.createElement("col");
+            col.className = className;
+            colgroup.append(col);
+          });
+          table.append(colgroup);
+
+          const thead = document.createElement("thead");
+          const headRow = document.createElement("tr");
+          headRow.append(document.createElement("th"));
+          columns.forEach((column) => {
+            const heading = document.createElement("th");
+            heading.scope = "col";
+            heading.textContent = column;
+            headRow.append(heading);
+          });
+          thead.append(headRow);
+          table.append(thead);
+
+          const tbody = document.createElement("tbody");
+          for (let row = 1; row <= rowCount; row += 1) {
+            const tr = document.createElement("tr");
+            const rowHeading = document.createElement("th");
+            rowHeading.scope = "row";
+            rowHeading.textContent = row;
+            tr.append(rowHeading);
+
+            columns.forEach((column) => {
+              if ([2, 4, 5].includes(row) && (column === "I" || column === "J")) {
+                return;
+              }
+              const cellName = `${column}${row}`;
+              const td = document.createElement("td");
+              td.dataset.cell = cellName;
+              if ([2, 4, 5].includes(row) && column === "H") {
+                td.colSpan = 3;
+              }
+              applyCellClasses(td, cellName);
+
+              if (formulaCells.has(cellName)) {
+                createFormulaCell(td, cellName);
+              } else {
+                const value = document.createElement(copiedFormulaCells.has(cellName) ? "output" : "span");
+                value.className = "cell-static-value";
+                value.dataset.valueFor = cellName;
+                value.textContent = displayValue(cellName, cells.get(cellName));
+                td.append(value);
+              }
+              tr.append(td);
+            });
+            tbody.append(tr);
+          }
+
+          table.append(tbody);
+          gridElement.append(table);
+          refreshComputedValues();
+        }
+
+        function refreshComputedValues() {
+          copiedFormulaCells.forEach((cell) => {
+            const output = gridElement.querySelector(`[data-value-for="${cell}"]`);
+            if (!output) return;
+            try {
+              output.textContent = displayValue(cell, evaluateCell(cell));
+            } catch (error) {
+              output.textContent = "";
+            }
+          });
+
+          formulaCells.forEach((cell) => {
+            const output = gridElement.querySelector(`[data-result-for="${cell}"]`);
+            const cellElement = gridElement.querySelector(`[data-cell="${cell}"]`);
+            if (!output || !cellElement) return;
+            cellElement.classList.remove("has-error", "is-correct");
+            try {
+              output.textContent = displayValue(cell, evaluateOutputCell(cell));
+            } catch (error) {
+              output.textContent = "";
+            }
+          });
+        }
+
+        function setCellFeedback(cell, message, type) {
+          const feedback = gridElement.querySelector(`[data-feedback-for="${cell}"]`);
+          const cellElement = gridElement.querySelector(`[data-cell="${cell}"]`);
+          if (!feedback || !cellElement) return;
+          feedback.textContent = message;
+          feedback.className = type ? `cell-feedback ${type}` : "cell-feedback";
+          cellElement.classList.toggle("has-error", type === "error");
+          cellElement.classList.toggle("is-correct", type === "success");
+        }
+
+        function clearCellFeedback() {
+          formulaCells.forEach((cell) => setCellFeedback(cell, "", ""));
+        }
+
+        function checkFormula(cell, showSummary = false) {
+          const definition = outputCells.find((entry) => entry.cell === cell);
+          if (!definition) return false;
+          const formula = String(cells.get(cell) || "").trim();
+          let message = "Richtig.";
+          let correct = true;
+
+          if (!formula.startsWith("=")) {
+            correct = false;
+            message = "Beginne die Formel mit =.";
+          } else {
+            const { missingRefs } = analyzeFormulaReferences(formula, definition);
+            if (missingRefs.length > 0) {
+              correct = false;
+              message = `Verwende Zellbezüge: ${missingRefs.join(", ")}.`;
+            }
+          }
+
+          const originalCells = new Map(cells);
+          try {
+            if (correct) {
+              for (const testCase of testCases) {
+                setTestInputs(testCase);
+                if (definition.prepare) definition.prepare(testCase);
+                if (!isClose(evaluateOutputCell(cell), definition.expected(testCase))) {
+                  correct = false;
+                  message = "Das Ergebnis passt noch nicht. Prüfe Rechenzeichen, Zellbezüge und den Prozentwert.";
+                  break;
+                }
+              }
+            }
+          } catch (error) {
+            correct = false;
+            message = "Die Formel konnte nicht berechnet werden. Prüfe Schreibweise und Zellbezüge.";
+          } finally {
+            cells.clear();
+            originalCells.forEach((value, key) => cells.set(key, value));
+            updateCopiedFormulas();
+            refreshComputedValues();
+          }
+
+          setCellFeedback(cell, message, correct ? "success" : "error");
+          if (showSummary) showResult(`${cell} (${definition.name}): ${message}`, correct ? "success" : "error");
+          return correct;
+        }
+
+        function checkFormulas() {
+          const incorrect = outputCells.filter(({ cell }) => !checkFormula(cell));
+          if (incorrect.length === 0) {
+            showResult("Sehr gut! Alle drei Formeln funktionieren auch mit veränderten Mengen, Preisen und Steuersätzen.", "success");
+            return;
+          }
+          showResult(`${incorrect.length} Formel${incorrect.length === 1 ? " ist" : "n sind"} noch nicht richtig. Beachte die Hinweise direkt in den orangefarbenen Zellen.`, "error");
+        }
+
+        function resetFormulas() {
+          formulaCells.forEach((cell) => cells.set(cell, ""));
+          updateCopiedFormulas();
+          formulaCells.forEach((cell) => {
+            const input = gridElement.querySelector(`[data-cell="${cell}"] input`);
+            if (input) input.value = "";
+          });
+          refreshComputedValues();
+          clearResult();
+        }
+
+        function clearResult() {
+          resultElement.className = "check-result";
+          resultElement.textContent = "";
+          clearCellFeedback();
+        }
+
+        function showResult(message, type) {
+          resultElement.className = `check-result ${type}`;
+          resultElement.textContent = message;
+        }
+
+        function setZoom(nextZoom) {
+          zoomLevel = Math.min(1.3, Math.max(0.6, Math.round(nextZoom * 10) / 10));
+          gridElement.style.zoom = zoomLevel;
+          zoomLevelElement.textContent = `${Math.round(zoomLevel * 100)} %`;
+          zoomOutButton.disabled = zoomLevel <= 0.6;
+          zoomInButton.disabled = zoomLevel >= 1.3;
+        }
+
+        checkButton.addEventListener("click", checkFormulas);
+        resetButton.addEventListener("click", resetFormulas);
+        zoomOutButton.addEventListener("click", () => setZoom(zoomLevel - 0.1));
+        zoomInButton.addEventListener("click", () => setZoom(zoomLevel + 0.1));
+        zoomResetButton.addEventListener("click", () => setZoom(1));
+        spreadsheetFrame.addEventListener("wheel", (event) => {
+          if (!event.ctrlKey) return;
+          event.preventDefault();
+          setZoom(zoomLevel + (event.deltaY < 0 ? 0.1 : -0.1));
+        }, { passive: false });
+
+        createGrid();
+        setZoom(1);
+      })();
+    </script>
+  </body>
+</html>
