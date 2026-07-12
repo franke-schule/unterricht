@@ -447,6 +447,33 @@ h1 {
   outline-offset: 1px;
 }
 
+.spreadsheet-cell:not(.formula-cell) input {
+  height: 100%;
+  min-height: 36px;
+  font-weight: inherit;
+  text-align: inherit;
+  background: transparent;
+}
+
+.cell-check-button {
+  width: 100%;
+  margin-top: 5px;
+  border: 1px solid #d97706;
+  border-radius: 6px;
+  padding: 5px 7px;
+  color: #78350f;
+  background: #fde68a;
+  font: inherit;
+  font-size: 0.72rem;
+  font-weight: 900;
+  cursor: pointer;
+}
+
+.cell-check-button:hover,
+.cell-check-button:focus-visible {
+  background: #fcd34d;
+}
+
 .cell-result {
   display: block;
   min-height: 18px;

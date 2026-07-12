@@ -1,0 +1,400 @@
+Manifest: Programmieraufgaben mit Online-IDE
+============================================
+
+Ziel
+----
+Dieses Manifest beschreibt die wiederholbare Struktur fuer Programmieraufgaben
+mit eingebetteter Online-IDE im Repo "unterricht". Es soll helfen, neue Aufgaben
+einheitlich anzulegen: Aufgabenordner, Jahrgangsmenue, Themenmenue,
+Aufgabenseite, Sicherungsblatt/Loesungsblatt und Download-Mechanik mit
+Lehrercode.
+
+
+1. Ordner- und Dateistruktur
+----------------------------
+
+Grundschema:
+
+  faecher/<fach>/klasse-<jahrgang>/<thema>-<Themenname>-Online-IDE/
+
+Beispiele:
+
+  faecher/informatik/klasse-9/3-Modellierung-und-Programmierung-Online-IDE/
+  faecher/informatik/klasse-10/2-Modellierung-und-Programmierung-Online-IDE/
+
+Empfohlene Dateien im Aufgabenordner:
+
+  index.html
+    Optionaler Einstieg oder Redirect innerhalb des Themenordners.
+
+  aufgabe1.html
+  aufgabe2.html
+    Einzelne Aufgabenseiten. Pro Aufgabe eine eigene HTML-Datei.
+
+  sicherungsblatt-aufgabe-1-loesungen.tex
+  sicherungsblatt-aufgabe-1-loesungen.pdf
+    Sicherungsblatt/Loesungsblatt zur Aufgabe. Bei neueren Aufgaben bevorzugt:
+    "sicherungsblatt-aufgabe-N-loesungen.pdf".
+
+  lehrercodes-dekodierung.tex
+  lehrercodes-dekodierung.pdf
+    Liegen im Hauptordner des Repos und enthalten die Dekodiertabellen fuer
+    Lehrercodes.
+
+Hinweis:
+Bestehende aeltere Dateien koennen noch "loesungsblatt-aufgabe-N.*" heissen.
+Bei neuen Aufgaben sollte ein einheitliches Sicherungsblatt-Schema verwendet
+werden.
+
+
+2. Menueschema fuer Jahrgangsstufen
+-----------------------------------
+
+Jede Jahrgangsstufe bekommt eine eigene Uebersichtsseite:
+
+  faecher/<fach>/klasse-<jahrgang>/index.html
+
+Grundelemente:
+
+  - HTML-Sprache: lang="de"
+  - Stylesheet mit Cache-Buster:
+      <link rel="stylesheet" href="../../../styles.css?v=YYYYMMDD">
+  - sichtbare Navigation oben:
+      Zurueck
+      Startseite
+  - Hauptueberschrift:
+      <h1>Klasse 9</h1>
+  - Aufgaben als gut sichtbare Buttons, nicht als Dateiliste.
+
+Bei mehreren Themengebieten innerhalb einer Jahrgangsstufe:
+
+  <div class="topic-list">
+    <section class="topic-section" aria-labelledby="topic-oop">
+      <h2 id="topic-oop">3. Objektorientierte Modellierung und Programmierung</h2>
+      <nav class="module-grid" aria-label="Aufgaben Objektorientierte Modellierung und Programmierung">
+        <a class="module-button" href="3-Modellierung-und-Programmierung-Online-IDE/aufgabe1.html">
+          <strong>Aufgabe 1</strong>
+          <span>Kurzbeschreibung</span>
+        </a>
+      </nav>
+    </section>
+  </div>
+
+Regeln:
+
+  - Themen werden nach fachlicher Reihenfolge nummeriert, z. B.
+      1. Tabellenkalkulation
+      3. Objektorientierte Modellierung und Programmierung
+  - Die Ordnernummer soll zur Themenueberschrift passen.
+  - Innerhalb eines Themas werden Aufgaben als "Aufgabe 1", "Aufgabe 2", ...
+    gefuehrt.
+  - Der Button-Text bleibt kurz: oben die Aufgabennummer, darunter eine knappe
+    Beschreibung.
+  - Die Seite soll wie ein Lernmenue wirken, nicht wie ein Dateisystemindex.
+
+Bei nur einem Eintrag in einer Jahrgangsstufe kann auch direkt ein
+<nav class="module-grid"> verwendet werden. Sobald mehrere Themen existieren,
+ist die topic-list-Struktur vorzuziehen.
+
+
+3. Struktur einer Aufgabenseite
+-------------------------------
+
+Eine Online-IDE-Aufgabenseite besteht in der Regel aus:
+
+  1. Kopfbereich
+     - Titel der Aufgabe
+     - kurze Einordnung
+     - Navigation zurueck zur Jahrgangsstufe und zur Startseite
+
+  2. Arbeitsbereich
+     - linke Seite: eingebettete Online-IDE
+     - rechte Seite: Aufgaben, Eingabefelder, Pruefbuttons und Rueckmeldungen
+
+  3. Auswertungslogik
+     - Antwortfelder erhalten eindeutige IDs.
+     - Pruefbuttons rufen submitAnswer(...) mit dem passenden Teilaufgaben-Key
+       auf.
+     - Rueckmeldefelder verwenden aria-live="polite".
+     - Die bestehende JSONP-/Apps-Script-Mechanik nicht veraendern, solange
+       keine Serveraenderung ausdruecklich gewuenscht ist.
+
+  4. Sicherungsblatt-Bereich
+     - siehe Abschnitt 5.
+
+Online-IDE:
+
+  - Die IDE wird von embed.learnj.de geladen.
+  - Die IDE steht sichtbar neben den Aufgaben, nicht weit darunter.
+  - Die rechte Aufgaben-/Antwortspalte darf separat scrollen, wenn die Aufgabe
+    laenger ist.
+  - Der Lernfluss ist: lesen -> ausprobieren -> Antwort eingeben -> pruefen.
+
+
+4. Apps-Script- und Auswertungsregeln
+-------------------------------------
+
+Wichtige Regel:
+
+  Die Apps-Script-Dateien im Ordner apps-script/ nur aendern, wenn das
+  ausdruecklich Teil der Aufgabe ist.
+
+Bei neuen Aufgaben pruefen:
+
+  - Gibt es fuer die neue HTML-Seite einen passenden taskId-/Aufgabenbezug?
+  - Ist die Seite in apps-script/Config.gs oder der bestehenden Konfiguration
+    vorgesehen?
+  - Bleibt die bestehende Rueckgabeform kompatibel mit der Aufgabenseite?
+  - Sind lange Antworten ein Thema? Dann clientseitig pruefen, ob die bisherige
+    JSONP-URL-Laenge ausreicht.
+
+Wenn nur die Aufgabenseite geaendert werden soll:
+
+  - zuerst clientseitig debuggen,
+  - Serverkopie unveraendert lassen,
+  - bestehende Funktionsnamen und Result-Strukturen beibehalten.
+
+
+5. Sicherungsblatt-/Loesungsblatt-Struktur
+-----------------------------------------
+
+Fuer neue Online-IDE-Aufgaben bevorzugt:
+
+  sicherungsblatt-aufgabe-N-loesungen.tex
+  sicherungsblatt-aufgabe-N-loesungen.pdf
+
+Inhalt des Sicherungsblatts:
+
+  - kurze Aufgabenueberschrift,
+  - Musterloesungen,
+  - zentrale Merksaetze,
+  - kompakte, gut lesbare Darstellung,
+  - keine ueberladene Langfassung.
+
+Wichtig fuer die Schueleransicht:
+
+  Die Aufgabenseite soll nicht offensiv mit der Musterloesung werben.
+  Insbesondere die Aussage
+
+    "Die Musterloesungen und wichtigsten Merksaetze kompakt auf einer Seite."
+
+  soll nicht sichtbar auf der Aufgabenseite stehen.
+
+Der Downloadbutton soll nicht sofort sichtbar sein. Stattdessen:
+
+  - ein eingeklappter details-Bereich,
+  - darin eine Lehrercode-Abfrage,
+  - der eigentliche Downloadlink bleibt hidden,
+  - erst nach korrektem Code wird der Link sichtbar.
+
+
+6. Download-Mechanik mit Pruefcode
+----------------------------------
+
+HTML-Grundstruktur:
+
+  <section class="solution-download" aria-labelledby="solution-download-title">
+    <h2 id="solution-download-title">Sicherungsblatt zu Aufgabe N</h2>
+
+    <details class="solution-reveal">
+      <summary>Sicherungsblatt anzeigen</summary>
+
+      <form
+        class="solution-code-form"
+        onsubmit="unlockSolution(event, 'LEHRERCODE', 'solution-download-link', 'solution-code-message')">
+        <label for="solution-code">Lehrercode eingeben</label>
+
+        <div class="solution-code-controls">
+          <input
+            id="solution-code"
+            name="solution-code"
+            type="text"
+            maxlength="9"
+            autocomplete="off"
+            autocapitalize="characters"
+            spellcheck="false"
+            required>
+
+          <button type="submit">Code pruefen</button>
+        </div>
+
+        <p
+          id="solution-code-message"
+          class="solution-code-message"
+          aria-live="polite"></p>
+
+        <a
+          id="solution-download-link"
+          class="download-button"
+          href="sicherungsblatt-aufgabe-N-loesungen.pdf"
+          download
+          hidden>
+          &#8595; Arbeitsblatt herunterladen
+        </a>
+      </form>
+    </details>
+  </section>
+
+JavaScript-Grundlogik:
+
+  - event.preventDefault()
+  - eingegebenen Code in Grossbuchstaben umwandeln
+  - alle Zeichen ausser A-Z und 0-9 entfernen
+  - mit dem erwarteten Code vergleichen
+  - bei Erfolg: downloadLink.hidden = false
+  - bei Fehler: downloadLink.hidden = true
+
+CSS-Regel nicht vergessen:
+
+  .download-button[hidden] {
+    display: none;
+  }
+
+Hinweise:
+
+  - Der Code verhindert den schnellen Erstzugriff, ist aber keine echte
+    kryptografische Zugriffssperre.
+  - Der PDF-Link liegt clientseitig im HTML und kann technisch gefunden oder
+    weitergegeben werden.
+  - Fuer echte Sicherheit waere eine serverseitige Freigabe erforderlich.
+  - Fuer den Unterricht reicht die Mechanik als pragmatische Huerde meist aus.
+
+
+7. Lehrercode-Schema
+--------------------
+
+Aktuell gewaehltes Muster:
+
+  FXXX-KXAX
+
+Bedeutung der Positionen:
+
+  Position 1: Fach
+  Position 5: Klasse/Jahrgang
+  Position 7: Aufgabennummer
+
+Alle anderen Zeichen sind Tarn-/Pruefzeichen und tragen keine direkte Bedeutung.
+Sie duerfen frei gewaehlt werden, sollten aber fest notiert werden.
+
+Dekodiertabellen:
+
+  Fach:
+    Informatik = M
+    Physik     = R
+
+  Klasse:
+    5  = 2
+    6  = 7
+    7  = K
+    8  = P
+    9  = 4
+    10 = X
+    11 = D
+    12 = Q
+
+  Aufgabe:
+    1 = 2
+    2 = P
+    3 = M
+    4 = 7
+    5 = X
+
+Beispiele:
+
+  M7QK-4P2X
+    Position 1 = M -> Informatik
+    Position 5 = 4 -> Klasse 9
+    Position 7 = 2 -> Aufgabe 1
+
+  MXDT-4QPR
+    Position 1 = M -> Informatik
+    Position 5 = 4 -> Klasse 9
+    Position 7 = P -> Aufgabe 2
+
+Bei neuen Codes:
+
+  - Fach, Klasse und Aufgabe gemaess Tabellen setzen.
+  - Tarnzeichen so waehlen, dass der Code nicht zu offensichtlich wirkt.
+  - Code in der Aufgabenseite eintragen.
+  - Code in lehrercodes-dekodierung.tex und lehrercodes-dekodierung.pdf
+    ergaenzen.
+  - Code in der eigenen Materialverwaltung notieren.
+
+
+8. Barrierearmut und Bedienbarkeit
+----------------------------------
+
+Beibehalten:
+
+  - aria-label fuer Navigationen,
+  - aria-labelledby fuer groessere Bereiche,
+  - aria-live="polite" fuer Rueckmeldungen,
+  - sichtbare Labels fuer Eingabefelder,
+  - Buttons mit eindeutiger Beschriftung,
+  - kein Downloadlink ohne Kontext.
+
+Die Sicherungsblatt-Freigabe soll fuer Lehrkraefte schnell sein:
+
+  - Code eintippen,
+  - "Code pruefen",
+  - Downloadbutton erscheint direkt darunter.
+
+
+9. Validierung vor Abschluss
+----------------------------
+
+Nach dem Anlegen oder Aendern einer Aufgabe pruefen:
+
+  - Existieren alle verlinkten HTML- und PDF-Dateien?
+  - Stimmen Pfade relativ zur aktuellen HTML-Datei?
+  - Ist die Aufgabe im Jahrgangsmenue sichtbar?
+  - Ist die Themenueberschrift korrekt und fachlich sortiert?
+  - Ist der Sicherungsblatt-Download zuerst verborgen?
+  - Funktioniert die Code-Normalisierung auch mit Bindestrich oder Leerzeichen?
+  - Ist der erwartete Code auf der Seite und im Dekodier-PDF identisch?
+  - Gibt es keine sichtbare Werbeaussage zur Musterloesung?
+  - Sind neue PDF-Dateien visuell geprueft?
+
+Empfohlene technische Checks:
+
+  git -c safe.directory=C:/Users/ffran/Documents/git/unterricht diff --check
+
+  Fuer Inline-JavaScript:
+    HTML-Datei lesen, inline <script>...</script> extrahieren und mit Node/vm
+    syntaktisch pruefen.
+
+  Fuer PDFs:
+    LaTeX/PDF bauen, Seitenzahl pruefen und bei Layoutrelevanz als Bild rendern
+    und visuell kontrollieren.
+
+
+10. Stilregeln fuer neue Aufgaben
+---------------------------------
+
+  - Wenig erklaerender Ballast auf der Start-/Menueebene.
+  - Aufgabenbuttons statt Dateilisten.
+  - Klare Fachsprache, aber kurze sichtbare Texte.
+  - Loesungen nicht als erstes anbieten.
+  - Sicherungsblatt erst nach bewusstem Oeffnen und Codeeingabe.
+  - Bestehende Layoutklassen wiederverwenden, bevor neue Klassen erfunden
+    werden.
+  - Bei mehreren aehnlichen Seiten gleiche Struktur und gleiche Begriffe
+    verwenden.
+  - Bei Schuelertexten "Sicherungsblatt" bevorzugen; intern darf klar sein,
+    dass es Musterloesungen enthaelt.
+
+
+Kurz-Checkliste fuer eine neue Online-IDE-Aufgabe
+-------------------------------------------------
+
+  [ ] Themenordner nach Schema angelegt.
+  [ ] aufgabeN.html erstellt.
+  [ ] Online-IDE eingebettet.
+  [ ] Antwort-/Pruefbereiche mit eindeutigen IDs angelegt.
+  [ ] Jahrgangsmenue aktualisiert.
+  [ ] Sicherungsblatt als .tex und .pdf erstellt.
+  [ ] Downloadbereich mit details + Lehrercode eingebaut.
+  [ ] Code nach FXXX-KXAX erzeugt.
+  [ ] Dekodier-PDF aktualisiert.
+  [ ] Link- und Script-Checks ausgefuehrt.
+  [ ] Sichtpruefung der Seite und des PDFs erledigt.

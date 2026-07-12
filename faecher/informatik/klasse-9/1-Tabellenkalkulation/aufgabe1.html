@@ -25,7 +25,7 @@
           <div class="card-heading">
             <div>
               <h2 id="spreadsheet-title">Mathematische Funktionen</h2>
-              <p>Beginne jede Formel mit einem Gleichheitszeichen.</p>
+              <p><strong>Hinweis:</strong> Schreibe nur in die gelb markierten Zellen. Beginne jede Formel mit einem Gleichheitszeichen.</p>
             </div>
             <span id="spreadsheet-status" class="load-status ready" role="status">Bereit</span>
           </div>
@@ -48,10 +48,10 @@
       <section class="check-panel" aria-labelledby="check-title">
         <div>
           <h2 id="check-title">Eingaben überprüfen</h2>
-          <p>Die Prüfung kontrolliert, ob deine Ergebnisse auch bei anderen Ausgangswerten richtig berechnet werden.</p>
+          <p>Prüfe jede Formel mit dem Button direkt in der gelben Zelle. Dabei wird besonders kontrolliert, ob du Zellbezüge statt eingetippter Ausgangswerte verwendest.</p>
         </div>
         <div class="check-actions">
-          <button id="check-formulas" class="primary-action" type="button">Formeln prüfen</button>
+          <button id="check-formulas" class="primary-action" type="button">Alle Formeln prüfen</button>
           <button id="reset-formulas" class="secondary-action" type="button">Ergebnisse leeren</button>
         </div>
         <div id="check-result" class="check-result" role="status" aria-live="polite"></div>
@@ -427,7 +427,13 @@
                 feedback.className = "cell-feedback";
                 feedback.dataset.feedbackFor = cellName;
 
-                td.append(input, output, feedback);
+                const checkCellButton = document.createElement("button");
+                checkCellButton.className = "cell-check-button";
+                checkCellButton.type = "button";
+                checkCellButton.textContent = "Diese Formel prüfen";
+                checkCellButton.addEventListener("click", () => checkFormula(cellName, true));
+
+                td.append(input, output, checkCellButton, feedback);
               } else {
                 const value = cells.get(cellName);
                 td.className = "spreadsheet-cell";
@@ -440,7 +446,20 @@
                 if (column === "E" && row >= 4) {
                   td.classList.add("label-cell");
                 }
-                td.textContent = displayStaticValue(cellName, value);
+                const input = document.createElement("input");
+                input.type = "text";
+                input.autocomplete = "off";
+                input.spellcheck = false;
+                input.value = displayStaticValue(cellName, value);
+                input.setAttribute("aria-label", `Zelle ${cellName}`);
+                input.addEventListener("input", () => {
+                  const enteredValue = input.value.trim();
+                  const numberValue = Number(enteredValue.replace(",", "."));
+                  cells.set(cellName, enteredValue !== "" && Number.isFinite(numberValue) ? numberValue : input.value);
+                  refreshComputedValues();
+                  clearResult();
+                });
+                td.append(input);
               }
 
               tr.append(td);
@@ -505,105 +524,84 @@
         }
 
         function refreshInputs() {
-          formulaCells.forEach((cell) => {
+          cells.forEach((value, cell) => {
             const input = gridElement.querySelector(`[data-cell="${cell}"] input`);
             if (input) {
-              input.value = cells.get(cell);
+              input.value = formulaCells.has(cell) ? value : displayStaticValue(cell, value);
             }
           });
           refreshComputedValues();
         }
 
-        function checkFormulas() {
+        function checkFormula(cell, showSummary = false) {
+          const definition = outputCells.find((entry) => entry.cell === cell);
+          if (!definition) {
+            return false;
+          }
+
+          const formula = String(cells.get(cell) ?? "").trim();
+          let message = "Richtig.";
+          let correct = true;
+
+          if (!formula.startsWith("=")) {
+            correct = false;
+            message = "Beginne die Formel mit =.";
+          } else {
+            const analysis = analyzeFormulaReferences(formula, definition);
+            const messages = [];
+            if (analysis.missingRefs.length > 0) {
+              messages.push(`Verwende Zellbezüge: ${analysis.missingRefs.join(", ")}.`);
+            }
+            if (analysis.typedNumbers.length > 0) {
+              const numbers = [...new Set(analysis.typedNumbers.map((value) => formatNumber(value)))].join(", ");
+              messages.push(`Schreibe keine Ausgangswerte als Zahl in die Formel (${numbers}), sondern verwende Zellbezüge.`);
+            }
+            if (messages.length > 0) {
+              correct = false;
+              message = messages.join(" ");
+            }
+          }
+
           const originalInputs = {};
-          Object.entries(inputCells).forEach(([key, cell]) => {
-            originalInputs[key] = cells.get(cell);
-          });
-
-          const results = new Map(outputCells.map(({ cell, name, requiredRefs, allowedNumbers }) => {
-            return [cell, {
-              cell,
-              name,
-              requiredRefs,
-              allowedNumbers,
-              correct: true,
-              message: "Richtig."
-            }];
-          }));
-
-          outputCells.forEach(({ cell, requiredRefs, allowedNumbers }) => {
-            const result = results.get(cell);
-            const formula = String(cells.get(cell) ?? "").trim();
-
-            if (!formula.startsWith("=")) {
-              result.correct = false;
-              result.message = "Beginne die Formel mit =.";
-              return;
-            }
-
-            const analysis = analyzeFormulaReferences(formula, { requiredRefs, allowedNumbers });
-            const hasMissingRefs = analysis.missingRefs.length > 0;
-            const hasTypedNumbers = analysis.typedNumbers.length > 0;
-
-            if (hasMissingRefs || hasTypedNumbers) {
-              const messages = [];
-              if (hasMissingRefs) {
-                messages.push(`Verwende Zellbezüge: ${analysis.missingRefs.join(", ")}.`);
-              }
-              if (hasTypedNumbers) {
-                const numbers = [...new Set(analysis.typedNumbers.map((value) => formatNumber(value)))].join(", ");
-                messages.push(`Tippe die Ausgangswerte nicht als Zahl ein (${numbers}).`);
-              }
-              result.correct = false;
-              result.message = messages.join(" ");
-            }
+          Object.entries(inputCells).forEach(([key, inputCell]) => {
+            originalInputs[key] = cells.get(inputCell);
           });
 
           try {
-            testCases.forEach((testCase) => {
-              setInputs(testCase);
-
-              outputCells.forEach(({ cell, expected }) => {
-                const result = results.get(cell);
-                if (!result.correct) {
-                  return;
-                }
-
-                let correct = false;
-                try {
-                  correct = isClose(evaluateOutputCell(cell), expected(testCase));
-                } catch (error) {
+            if (correct) {
+              for (const testCase of testCases) {
+                setInputs(testCase);
+                if (!isClose(evaluateOutputCell(cell), definition.expected(testCase))) {
                   correct = false;
+                  message = "Das Ergebnis passt noch nicht. Prüfe Rechenzeichen, Klammern und Zellbezüge.";
+                  break;
                 }
-
-                if (!correct) {
-                  result.correct = false;
-                  result.message = "Das Ergebnis passt noch nicht. Prüfe Rechenzeichen, Klammern und Zellbezüge.";
-                }
-              });
-            });
+              }
+            }
+          } catch (error) {
+            correct = false;
+            message = "Die Formel konnte nicht berechnet werden. Prüfe Rechenzeichen, Klammern und Zellbezüge.";
           } finally {
             setInputs(originalInputs);
             refreshComputedValues();
           }
 
-          const incorrect = outputCells.filter(({ cell }) => !results.get(cell).correct);
+          setCellFeedback(cell, message, correct ? "success" : "error");
+          if (showSummary) {
+            showResult(`${cell} (${definition.name}): ${message}`, correct ? "success" : "error");
+          }
+          return correct;
+        }
 
-          outputCells.forEach(({ cell }) => {
-            const result = results.get(cell);
-            setCellFeedback(cell, result.message, result.correct ? "success" : "error");
-          });
+        function checkFormulas() {
+          const incorrect = outputCells.filter(({ cell }) => !checkFormula(cell));
 
           if (incorrect.length === 0) {
             showResult("Sehr gut! Alle Formeln berechnen auch mit veränderten Ausgangswerten das richtige Ergebnis.", "success");
             return;
           }
 
-          const lines = incorrect.map(({ cell, name }) => {
-            const result = results.get(cell);
-            return `${cell} (${name}): ${result.message}`;
-          });
-          showResult(`Noch nicht richtig:\n${lines.join("\n")}`, "error");
+          showResult(`${incorrect.length} Formel${incorrect.length === 1 ? " ist" : "n sind"} noch nicht richtig. Beachte die Hinweise direkt in den gelben Zellen.`, "error");
         }
 
         function resetFormulas() {
