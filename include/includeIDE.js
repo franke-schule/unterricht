@@ -1,4 +1,7 @@
-let base = "https://embed.learnj.de/include/";
+let includeScriptUrl = document.currentScript ? document.currentScript.src : "";
+let base = includeScriptUrl
+    ? new URL("./", includeScriptUrl).href
+    : "./";
 
 
 let scripts = [

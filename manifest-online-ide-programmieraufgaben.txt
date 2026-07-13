@@ -34,9 +34,9 @@ Typischer Arbeitsbereich:
   - rechts Aufgaben, Antwortfelder, Pruefbuttons und Rueckmeldungen,
   - auf kleinen Bildschirmen eine verstaendliche einspaltige Reihenfolge.
 
-Die IDE wird von embed.learnj.de geladen und soll sichtbar neben den Aufgaben
-stehen, nicht weit darunter. Die Aufgabenspalte darf separat scrollen, wenn sie
-lang ist.
+Die IDE wird aus dem include-Ordner dieses GitHub-Auftritts geladen und soll
+sichtbar neben den Aufgaben stehen, nicht weit darunter. Die Aufgabenspalte darf
+separat scrollen, wenn sie lang ist.
 
 Lernfluss:
 
