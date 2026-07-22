@@ -499,6 +499,8 @@ h1 {
 }
 
 .spreadsheet-cell.formula-cell {
+  position: relative;
+  overflow: visible;
   min-width: 180px;
   background: #fef3c7;
   padding: 5px;
@@ -525,6 +527,49 @@ h1 {
   background: #fff7ed;
   font-weight: 800;
   text-align: right;
+}
+
+.spreadsheet-cell.fill-source-cell {
+  box-shadow: inset 0 0 0 2px #2563eb;
+}
+
+.spreadsheet-cell.fill-preview-cell {
+  background: #dbeafe;
+  box-shadow: inset 0 0 0 2px rgba(37, 99, 235, 0.55);
+}
+
+.spreadsheet-cell.fill-complete-cell {
+  background: #eff6ff;
+}
+
+.spreadsheet-fill-handle {
+  position: absolute;
+  right: -5px;
+  bottom: -5px;
+  z-index: 4;
+  width: 12px;
+  height: 12px;
+  border: 2px solid #ffffff;
+  border-radius: 2px;
+  padding: 0;
+  background: #2563eb;
+  box-shadow: 0 0 0 1px #1d4ed8;
+  cursor: ns-resize;
+  touch-action: none;
+}
+
+.spreadsheet-fill-handle:hover,
+.spreadsheet-fill-handle:focus-visible {
+  width: 16px;
+  height: 16px;
+  outline: 3px solid rgba(37, 99, 235, 0.28);
+  outline-offset: 2px;
+}
+
+body.is-filling-spreadsheet,
+body.is-filling-spreadsheet * {
+  cursor: ns-resize !important;
+  user-select: none !important;
 }
 
 .spreadsheet-cell.currency-cell,

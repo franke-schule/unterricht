@@ -4,7 +4,7 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Aufgabe 2 – Rechnungsformular mit Prozent</title>
-    <link rel="stylesheet" href="../../../../styles.css?v=20260712-1">
+    <link rel="stylesheet" href="../../../../styles.css?v=20260722-1">
   </head>
   <body>
     <div class="site-backdrop" aria-hidden="true"></div>
@@ -25,7 +25,7 @@
           <div class="card-heading">
             <div>
               <h2 id="spreadsheet-title">Rechnungsformular mit Prozent</h2>
-              <p><strong>Hinweis:</strong> Trage Formeln nur in die orange markierten Zellen E2, F2 und F10 ein. E2 und F2 werden automatisch bis Zeile 6 übertragen.</p>
+              <p><strong>Arbeitsauftrag:</strong> Trage zuerst die korrekten Formeln in E2 und F2 ein. Ziehe danach das Ausfüllkästchen unten rechts an F2 bis Zeile 6 nach unten. Trage zum Schluss die Summenformel in F10 ein.</p>
             </div>
             <span class="load-status ready" role="status">Bereit</span>
           </div>
@@ -46,11 +46,11 @@
       <section class="check-panel" aria-labelledby="check-title">
         <div>
           <h2 id="check-title">Eingaben überprüfen</h2>
-          <p>Prüfe eine Formel direkt in ihrer orangefarbenen Zelle oder kontrolliere alle drei Formeln gemeinsam.</p>
+          <p>Prüfe eine Formel direkt in ihrer orangefarbenen Zelle oder kontrolliere Formeln und Ausfüllbereich gemeinsam.</p>
         </div>
         <div class="check-actions">
           <button id="check-formulas" class="primary-action" type="button">Alle Formeln prüfen</button>
-          <button id="reset-formulas" class="secondary-action" type="button">Formeln leeren</button>
+          <button id="reset-formulas" class="secondary-action" type="button">Aufgabe zurücksetzen</button>
         </div>
         <div id="check-result" class="check-result" role="status" aria-live="polite"></div>
       </section>
@@ -71,6 +71,7 @@
             cell: "E2",
             name: "Bruttopreis",
             requiredRefs: ["D2", "D8"],
+            requiredAbsoluteRefs: ["D8"],
             expected: ({ net, tax }) => net[0] * (1 + tax)
           },
           {
@@ -171,6 +172,9 @@
         const zoomResetButton = document.getElementById("zoom-reset");
         const zoomLevelElement = document.getElementById("zoom-level");
         let zoomLevel = 1;
+        let fillPointerId = null;
+        let fillPreviewRow = 2;
+        let filledThroughRow = 2;
 
         function normalizeCellName(cell) {
           return String(cell).replace(/\$/g, "").trim().toUpperCase();
@@ -259,9 +263,15 @@
           return references;
         }
 
-        function analyzeFormulaReferences(formula, { requiredRefs }) {
+        function analyzeFormulaReferences(formula, { requiredRefs, requiredAbsoluteRefs = [] }) {
           const foundRefs = findFormulaReferences(formula);
-          return { missingRefs: requiredRefs.filter((cell) => !foundRefs.has(cell)) };
+          const absoluteRefs = new Set(
+            (String(formula || "").toUpperCase().match(/\$[A-Z]+\$\d+/g) || []).map(normalizeCellName)
+          );
+          return {
+            missingRefs: requiredRefs.filter((cell) => !foundRefs.has(cell)),
+            missingAbsoluteRefs: requiredAbsoluteRefs.filter((cell) => !absoluteRefs.has(cell))
+          };
         }
 
         function translateFormula(formula, rowOffset) {
@@ -274,11 +284,19 @@
           );
         }
 
-        function updateCopiedFormulas() {
+        function clearCopiedFormulas() {
+          copiedFormulaCells.forEach((cell) => cells.set(cell, ""));
+          filledThroughRow = 2;
+        }
+
+        function fillFormulasThrough(targetRow) {
+          const lastRow = Math.min(6, Math.max(3, targetRow));
           for (let row = 3; row <= 6; row += 1) {
-            cells.set(`E${row}`, translateFormula(cells.get("E2"), row - 2));
-            cells.set(`F${row}`, translateFormula(cells.get("F2"), row - 2));
+            const shouldFill = row <= lastRow;
+            cells.set(`E${row}`, shouldFill ? translateFormula(cells.get("E2"), row - 2) : "");
+            cells.set(`F${row}`, shouldFill ? translateFormula(cells.get("F2"), row - 2) : "");
           }
+          filledThroughRow = lastRow;
         }
 
         function parseFormula(source, lookupValue) {
@@ -435,10 +453,10 @@
           input.placeholder = "=";
           input.setAttribute("aria-label", `Formel für ${cellName}`);
           input.addEventListener("input", () => {
-            cells.set(cellName, input.value);
-            if (cellName === "E2" || cellName === "F2") {
-              updateCopiedFormulas();
+            if ((cellName === "E2" || cellName === "F2") && filledThroughRow > 2) {
+              clearCopiedFormulas();
             }
+            cells.set(cellName, input.value);
             refreshComputedValues();
             clearResult();
           });
@@ -457,6 +475,22 @@
           feedback.className = "cell-feedback";
           feedback.dataset.feedbackFor = cellName;
           td.append(input, output, checkCellButton, feedback);
+
+          if (cellName === "F2") {
+            const fillHandle = document.createElement("button");
+            fillHandle.className = "spreadsheet-fill-handle";
+            fillHandle.type = "button";
+            fillHandle.setAttribute("aria-label", "Formeln aus E2 und F2 bis Zeile 6 ausfüllen");
+            fillHandle.title = "Nach unten ziehen, um E2 und F2 auszufüllen";
+            fillHandle.addEventListener("pointerdown", startFormulaFill);
+            fillHandle.addEventListener("pointermove", moveFormulaFill);
+            fillHandle.addEventListener("pointerup", finishFormulaFill);
+            fillHandle.addEventListener("pointercancel", cancelFormulaFill);
+            fillHandle.addEventListener("click", (event) => {
+              if (event.detail === 0) fillFormulasWithKeyboard();
+            });
+            td.append(fillHandle);
+          }
         }
 
         function parseEnteredValue(cellName, enteredValue) {
@@ -495,6 +529,9 @@
           td.append(input);
 
           if (copiedFormulaCells.has(cellName)) {
+            input.readOnly = true;
+            input.tabIndex = -1;
+            input.setAttribute("aria-readonly", "true");
             const output = document.createElement("output");
             output.className = "cell-result";
             output.dataset.computedFor = cellName;
@@ -559,6 +596,100 @@
           refreshComputedValues();
         }
 
+        function sourceFormulasAreReady() {
+          return ["E2", "F2"].every((cell) => String(cells.get(cell) || "").trim().startsWith("="));
+        }
+
+        function updateFillAppearance(previewRow = null) {
+          const sourceReady = sourceFormulasAreReady();
+          ["E2", "F2"].forEach((cell) => {
+            gridElement.querySelector(`[data-cell="${cell}"]`)?.classList.toggle("fill-source-cell", sourceReady);
+          });
+
+          for (let row = 3; row <= 6; row += 1) {
+            ["E", "F"].forEach((column) => {
+              const cellElement = gridElement.querySelector(`[data-cell="${column}${row}"]`);
+              if (!cellElement) return;
+              cellElement.classList.toggle("fill-preview-cell", previewRow !== null && row <= previewRow);
+              cellElement.classList.toggle("fill-complete-cell", row <= filledThroughRow);
+            });
+          }
+        }
+
+        function validateFillSource() {
+          if (!sourceFormulasAreReady()) {
+            showResult("Trage zuerst Formeln in E2 und F2 ein.", "error");
+            return false;
+          }
+          const sourceCorrect = checkFormula("E2") && checkFormula("F2");
+          if (!sourceCorrect) {
+            showResult("Prüfe zuerst die Formeln in E2 und F2. Ausfüllen ist erst mit korrekten Ausgangsformeln möglich.", "error");
+          }
+          return sourceCorrect;
+        }
+
+        function startFormulaFill(event) {
+          if (event.button !== 0 || !validateFillSource()) return;
+          event.preventDefault();
+          fillPointerId = event.pointerId;
+          fillPreviewRow = 2;
+          event.currentTarget.setPointerCapture?.(event.pointerId);
+          document.body.classList.add("is-filling-spreadsheet");
+          updateFillAppearance(fillPreviewRow);
+        }
+
+        function getFillRowAtPoint(clientX, clientY) {
+          const cellElement = document.elementFromPoint(clientX, clientY)?.closest?.("td[data-cell]");
+          const match = cellElement?.dataset.cell?.match(/^([EF])(\d+)$/);
+          if (!match) return 2;
+          const row = Number(match[2]);
+          return row >= 2 && row <= 6 ? row : 2;
+        }
+
+        function moveFormulaFill(event) {
+          if (event.pointerId !== fillPointerId) return;
+          event.preventDefault();
+          fillPreviewRow = getFillRowAtPoint(event.clientX, event.clientY);
+          updateFillAppearance(fillPreviewRow);
+        }
+
+        function finishFormulaFill(event) {
+          if (event.pointerId !== fillPointerId) return;
+          event.preventDefault();
+          const targetRow = getFillRowAtPoint(event.clientX, event.clientY);
+          event.currentTarget.releasePointerCapture?.(event.pointerId);
+          fillPointerId = null;
+          document.body.classList.remove("is-filling-spreadsheet");
+          if (targetRow >= 3) {
+            fillFormulasThrough(targetRow);
+            refreshComputedValues();
+            clearResult();
+            showResult(
+              targetRow === 6
+                ? "E2 und F2 wurden bis Zeile 6 ausgefüllt."
+                : `E2 und F2 wurden bis Zeile ${targetRow} ausgefüllt. Ziehe das Ausfüllkästchen noch bis Zeile 6.`,
+              targetRow === 6 ? "success" : "error"
+            );
+          }
+          updateFillAppearance();
+        }
+
+        function cancelFormulaFill(event) {
+          if (event.pointerId !== fillPointerId) return;
+          fillPointerId = null;
+          document.body.classList.remove("is-filling-spreadsheet");
+          updateFillAppearance();
+        }
+
+        function fillFormulasWithKeyboard() {
+          if (!validateFillSource()) return;
+          fillFormulasThrough(6);
+          refreshComputedValues();
+          clearResult();
+          showResult("E2 und F2 wurden bis Zeile 6 ausgefüllt.", "success");
+          updateFillAppearance();
+        }
+
         function refreshComputedValues() {
           copiedFormulaCells.forEach((cell) => {
             const input = gridElement.querySelector(`[data-cell="${cell}"] input`);
@@ -585,6 +716,7 @@
               output.textContent = "";
             }
           });
+          updateFillAppearance(fillPointerId === null ? null : fillPreviewRow);
         }
 
         function setCellFeedback(cell, message, type) {
@@ -612,10 +744,13 @@
             correct = false;
             message = "Beginne die Formel mit =.";
           } else {
-            const { missingRefs } = analyzeFormulaReferences(formula, definition);
+            const { missingRefs, missingAbsoluteRefs } = analyzeFormulaReferences(formula, definition);
             if (missingRefs.length > 0) {
               correct = false;
               message = `Verwende Zellbezüge: ${missingRefs.join(", ")}.`;
+            } else if (missingAbsoluteRefs.length > 0) {
+              correct = false;
+              message = "Der Bezug auf D8 muss beim Ausfüllen fest bleiben. Ohne $-Zeichen würde daraus in den nächsten Zeilen D9, D10 usw. Verwende deshalb den absoluten Zellbezug $D$8.";
             }
           }
 
@@ -648,22 +783,35 @@
 
         function checkFormulas() {
           const incorrect = outputCells.filter(({ cell }) => !checkFormula(cell));
-          if (incorrect.length === 0) {
-            showResult("Sehr gut! Alle drei Formeln funktionieren auch mit veränderten Mengen, Preisen und Steuersätzen.", "success");
+          const fillComplete = filledThroughRow === 6 && [...copiedFormulaCells].every((cell) => {
+            const sourceCell = `${cell[0]}2`;
+            return cells.get(cell) === translateFormula(cells.get(sourceCell), Number(cell.slice(1)) - 2);
+          });
+          if (incorrect.length === 0 && fillComplete) {
+            showResult("Sehr gut! Die Formeln funktionieren auch mit veränderten Werten und wurden korrekt bis Zeile 6 ausgefüllt.", "success");
+            return;
+          }
+          if (!fillComplete) {
+            showResult("Der Ausfüllbereich ist noch nicht vollständig. Ziehe das Ausfüllkästchen an F2 bis Zeile 6 nach unten.", "error");
             return;
           }
           showResult(`${incorrect.length} Formel${incorrect.length === 1 ? " ist" : "n sind"} noch nicht richtig. Beachte die Hinweise direkt in den orangefarbenen Zellen.`, "error");
         }
 
         function resetFormulas() {
+          cells.clear();
+          Object.entries(initialCells).forEach(([cell, value]) => cells.set(cell, value));
           formulaCells.forEach((cell) => cells.set(cell, ""));
-          updateCopiedFormulas();
-          formulaCells.forEach((cell) => {
-            const input = gridElement.querySelector(`[data-cell="${cell}"] input`);
-            if (input) input.value = "";
+          clearCopiedFormulas();
+          gridElement.querySelectorAll("td[data-cell]").forEach((cellElement) => {
+            const input = cellElement.querySelector("input");
+            if (!input) return;
+            const cell = cellElement.dataset.cell;
+            input.value = formulaCells.has(cell) ? "" : displayValue(cell, cells.get(cell));
           });
           refreshComputedValues();
           clearResult();
+          updateFillAppearance();
         }
 
         function clearResult() {
