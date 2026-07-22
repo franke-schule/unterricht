@@ -475,9 +475,48 @@ h1 {
 }
 
 .spreadsheet-cell {
+  position: relative;
   overflow: hidden;
   background: #ffffff;
   word-break: break-word;
+}
+
+.spreadsheet-cell.text-overflow-source {
+  z-index: 1;
+  overflow: visible;
+}
+
+.spreadsheet-cell.cell-has-content:not(.text-overflow-source) {
+  z-index: 2;
+}
+
+.cell-overflow-text {
+  position: absolute;
+  top: 50%;
+  left: 14px;
+  z-index: 1;
+  display: none;
+  width: max-content;
+  min-width: calc(100% - 28px);
+  color: inherit;
+  font: inherit;
+  font-weight: inherit;
+  line-height: 1.2;
+  white-space: nowrap;
+  pointer-events: none;
+  transform: translateY(-50%);
+}
+
+.spreadsheet-cell.text-overflow-source .cell-overflow-text {
+  display: block;
+}
+
+.spreadsheet-cell.text-overflow-source input:not(:focus) {
+  color: transparent;
+}
+
+.spreadsheet-cell.text-overflow-source:focus-within .cell-overflow-text {
+  display: none;
 }
 
 .spreadsheet-cell.note-cell {

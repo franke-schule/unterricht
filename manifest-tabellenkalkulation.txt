@@ -61,6 +61,21 @@ Zellwerte typgerecht behandeln:
   - Formeln als Text mit fuehrendem Gleichheitszeichen speichern,
   - deutsche Dezimalkommas bei Eingaben akzeptieren.
 
+Textueberlauf wie in einer Tabellenkalkulation darstellen:
+
+  - Text, der breiter als seine Zelle ist, vollstaendig anzeigen, wenn die
+    unmittelbar rechts angrenzende Zelle leer ist.
+  - Der Text darf leere Nachbarzellen optisch ueberlagern, ohne deren Zellwert
+    zu veraendern.
+  - Sobald eine ueberlagerte Nachbarzelle einen Wert enthaelt, muss deren Inhalt
+    und Hintergrund den ueberlaufenden Text verdecken.
+  - Zahlen, Formeln und berechnete Ergebnisse nicht als ueberlaufenden Text
+    darstellen.
+  - Den Zustand nach Eingabe, Loeschen, Ausfuellen und Reset neu bestimmen.
+  - Bei HTML-Eingabefeldern bei Bedarf eine synchronisierte, nicht interaktive
+    Textanzeige verwenden; beim Fokussieren bleibt das echte Eingabefeld
+    sichtbar und bedienbar.
+
 
 3. Zielzellen und Pruefbuttons
 ------------------------------
@@ -183,10 +198,11 @@ Beispiele:
 Wenn ein bestimmter absoluter Bezug didaktisch verlangt ist, neben der
 normalisierten Adresse auch die Schreibweise pruefen. Beispiel:
 
-  requiredAbsoluteRefs: ["$D$8"]
+  requiredAbsoluteRefs: ["D8"]
 
-Dann darf D8 zwar rechnerisch denselben aktuellen Wert liefern, besteht aber
-nicht die Anforderung zum absoluten Zellbezug.
+Dann reicht D8 trotz desselben aktuellen Werts nicht aus. Die Rueckmeldung soll
+den Grund erklaeren, z. B.: Ohne $-Zeichen wird D8 beim Ausfuellen zu D9, D10
+usw.; verwende deshalb $D$8.
 
 
 7. Hart codierte Zahlen und erlaubte Konstanten
@@ -220,6 +236,24 @@ Wichtig:
 Wenn die Vorlage das Ausfuellen/Kopieren einer Formel vorsieht, dieses Verhalten
 online nachvollziehbar nachbilden.
 
+Bei einer ausdruecklichen Uebung zur Ausfuellfunktion gilt zusaetzlich:
+
+  - Zielzellen anfangs leer lassen; Formeln nicht schon waehrend der Eingabe in
+    der Quellzelle automatisch uebertragen.
+  - Ein sichtbares Ausfuellkaestchen am unteren rechten Rand des Quellbereichs
+    anbieten und Ziehen mit Maus oder Touch ermoeglichen.
+  - Die gerade anvisierten Zielzellen waehrend des Ziehens sichtbar markieren.
+  - Nur die fachlich vorgesehene Ausfuellrichtung erlauben, wenn freie falsche
+    Richtungen keinen zusaetzlichen Lernwert haben.
+  - Vor dem Ausfuellen die Ausgangsformeln pruefen, wenn falsche Kopien die
+    weitere Bearbeitung unnoetig erschweren wuerden.
+  - Fuer Tastaturbedienung eine gleichwertige Aktion am Ausfuellkaestchen
+    bereitstellen.
+  - Die Gesamtpruefung darf erst erfolgreich sein, wenn der geforderte
+    Zielbereich tatsaechlich vollstaendig ausgefuellt wurde.
+  - Wird eine Quellformel nach dem Ausfuellen geaendert, uebertragene Formeln
+    leeren oder eindeutig als veraltet markieren, damit erneut ausgefuellt wird.
+
 Beim Uebertragen um einen Zeilen-/Spaltenversatz:
 
   - relative Zeile und Spalte verschieben,
@@ -233,9 +267,15 @@ Beispiel beim Kopieren von Zeile 2 nach Zeile 3:
   =B2*E2       ->  =B3*E3
 
 Uebertragene Zellen sollen bei freier Tabellenarbeit weiterhin editierbar sein.
-Eine erneute Aenderung der Quellformel darf die vorgesehenen Kopien
-aktualisieren; eine reine Pruefung darf eigenstaendige Schuelereingaben nicht
-unbeabsichtigt ueberschreiben.
+Bei einer ausdruecklichen Ausfuelluebung duerfen sie dagegen gesperrt werden,
+damit die Ausfuellaktion der einzige vorgesehene Uebertragungsweg ist. Eine
+reine Pruefung darf eigenstaendige Schuelereingaben niemals unbeabsichtigt
+ueberschreiben.
+
+Bei einer ausdruecklichen Ausfuelluebung stellt ein Reset alle Ausgangswerte,
+Quellformeln, uebertragenen Formeln, Markierungen und Rueckmeldungen in den
+definierten Anfangszustand zurueck. Wenn falsche Ausfuellrichtungen ausprobiert
+werden duerfen, ist dieser vollstaendige Reset verpflichtend.
 
 
 9. Rueckmeldungen
@@ -264,6 +304,8 @@ Zusaetzlich zur allgemeinen Checkliste:
 
   [ ] Inhalt, Zellbereich und Formatierung der Excel-Vorlage wurden geprueft.
   [ ] Alle vorgesehenen Zellen sind editierbar oder bewusst gesperrt.
+  [ ] Ueberlanger Text ueberlagert nur leere rechte Nachbarzellen und wird von
+      belegten Zellen verdeckt.
   [ ] Jede Formel-Zielzelle besitzt Button und eigenes Feedback.
   [ ] Richtige Standardformeln bestehen.
   [ ] Mindestens eine anders geschriebene, mathematisch aequivalente Formel
@@ -272,6 +314,10 @@ Zusaetzlich zur allgemeinen Checkliste:
   [ ] Fehlende requiredRefs werden konkret gemeldet.
   [ ] Zellbereiche werden fuer die Referenzpruefung expandiert.
   [ ] Relative und absolute Bezuege werden beim Kopieren korrekt behandelt.
+  [ ] Ausfuell-Zielzellen sind anfangs leer und werden nur durch die vorgesehene
+      Ausfuellaktion befuellt.
+  [ ] Die Gesamtpruefung erkennt einen fehlenden oder unvollstaendigen
+      Ausfuellbereich.
   [ ] Mehrere veraenderte Testdatensaetze wurden ausgefuehrt.
   [ ] Falsche Rechenzeichen, falsche Klammern und unvollstaendige Bereiche
       werden abgelehnt.
@@ -290,5 +336,8 @@ Kurz-Checkliste Tabellenkalkulation
   [ ] Begrenzter Formelparser implementiert.
   [ ] Mathematische Aequivalenz mit mehreren Datensaetzen geprueft.
   [ ] Geforderte Zellbezuege und erlaubte Konstanten geprueft.
+  [ ] Textueberlauf in leere sowie Begrenzung durch belegte Nachbarzellen
+      geprueft.
+  [ ] Falls verlangt: Ausfuellaktion, Bezugsverschiebung und Reset geprueft.
   [ ] Einzel- und Gesamtfeedback umgesetzt.
   [ ] Allgemeine und spezifische Abschlusspruefung ausgefuehrt.

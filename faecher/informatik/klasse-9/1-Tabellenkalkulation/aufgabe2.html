@@ -4,7 +4,7 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Aufgabe 2 – Rechnungsformular mit Prozent</title>
-    <link rel="stylesheet" href="../../../../styles.css?v=20260722-1">
+    <link rel="stylesheet" href="../../../../styles.css?v=20260722-2">
   </head>
   <body>
     <div class="site-backdrop" aria-hidden="true"></div>
@@ -430,6 +430,39 @@
           return evaluateCell(cell);
         }
 
+        function cellHasContent(value) {
+          return value !== undefined && value !== null && String(value).trim() !== "";
+        }
+
+        function refreshTextOverflow() {
+          gridElement.querySelectorAll("td[data-cell]").forEach((cellElement) => {
+            const cell = cellElement.dataset.cell;
+            const value = cells.get(cell);
+            const overflowText = cellElement.querySelector(".cell-overflow-text");
+            cellElement.classList.toggle("cell-has-content", cellHasContent(value));
+
+            if (!overflowText) {
+              cellElement.classList.remove("text-overflow-source");
+              return;
+            }
+
+            const match = cell.match(/^([A-Z]+)(\d+)$/);
+            const columnIndex = match ? columns.indexOf(match[1]) : -1;
+            const nextColumn = columns[columnIndex + 1];
+            const nextCell = nextColumn && match ? `${nextColumn}${match[2]}` : null;
+            const text = typeof value === "string" ? value : "";
+            const canOverflow = Boolean(
+              text.trim() &&
+              !text.trim().startsWith("=") &&
+              nextCell &&
+              !cellHasContent(cells.get(nextCell))
+            );
+
+            cellElement.classList.toggle("text-overflow-source", canOverflow);
+            overflowText.textContent = canOverflow ? text : "";
+          });
+        }
+
         function applyCellClasses(td, cellName) {
           td.className = "spreadsheet-cell";
           if (workbookHeaderCells.has(cellName)) td.classList.add("workbook-header-cell");
@@ -527,6 +560,11 @@
             clearResult();
           });
           td.append(input);
+
+          const overflowText = document.createElement("span");
+          overflowText.className = "cell-overflow-text";
+          overflowText.setAttribute("aria-hidden", "true");
+          td.append(overflowText);
 
           if (copiedFormulaCells.has(cellName)) {
             input.readOnly = true;
@@ -717,6 +755,7 @@
             }
           });
           updateFillAppearance(fillPointerId === null ? null : fillPreviewRow);
+          refreshTextOverflow();
         }
 
         function setCellFeedback(cell, message, type) {

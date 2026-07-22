@@ -4,7 +4,7 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Aufgabe 1 – Formeln in der Tabellenkalkulation</title>
-    <link rel="stylesheet" href="../../../../styles.css?v=20260710-1">
+    <link rel="stylesheet" href="../../../../styles.css?v=20260722-2">
   </head>
   <body>
     <div class="site-backdrop" aria-hidden="true"></div>
@@ -376,6 +376,39 @@
           return evaluateCell(cell);
         }
 
+        function cellHasContent(value) {
+          return value !== undefined && value !== null && String(value).trim() !== "";
+        }
+
+        function refreshTextOverflow() {
+          gridElement.querySelectorAll("td[data-cell]").forEach((cellElement) => {
+            const cell = cellElement.dataset.cell;
+            const value = cells.get(cell);
+            const overflowText = cellElement.querySelector(".cell-overflow-text");
+            cellElement.classList.toggle("cell-has-content", cellHasContent(value));
+
+            if (!overflowText) {
+              cellElement.classList.remove("text-overflow-source");
+              return;
+            }
+
+            const match = cell.match(/^([A-Z]+)(\d+)$/);
+            const columnIndex = match ? columns.indexOf(match[1]) : -1;
+            const nextColumn = columns[columnIndex + 1];
+            const nextCell = nextColumn && match ? `${nextColumn}${match[2]}` : null;
+            const text = typeof value === "string" ? value : "";
+            const canOverflow = Boolean(
+              text.trim() &&
+              !text.trim().startsWith("=") &&
+              nextCell &&
+              !cellHasContent(cells.get(nextCell))
+            );
+
+            cellElement.classList.toggle("text-overflow-source", canOverflow);
+            overflowText.textContent = canOverflow ? text : "";
+          });
+        }
+
         function createGrid() {
           const table = document.createElement("table");
           table.className = "mini-spreadsheet-table";
@@ -462,7 +495,10 @@
                   refreshComputedValues();
                   clearResult();
                 });
-                td.append(input);
+                const overflowText = document.createElement("span");
+                overflowText.className = "cell-overflow-text";
+                overflowText.setAttribute("aria-hidden", "true");
+                td.append(input, overflowText);
               }
 
               tr.append(td);
@@ -503,6 +539,7 @@
               resultOutput.textContent = "";
             }
           });
+          refreshTextOverflow();
         }
 
         function setCellFeedback(cell, message, type) {
