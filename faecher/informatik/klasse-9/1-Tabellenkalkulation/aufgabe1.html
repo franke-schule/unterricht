@@ -145,6 +145,7 @@
 
         const formulaCells = new Set(outputCells.map(({ cell }) => cell));
         const inputCellSet = new Set(Object.values(inputCells).concat("B10"));
+        const textOverflowBlockerCells = new Set([...formulaCells, ...inputCellSet]);
         const noteCells = new Set(["A1", "A2", "A12", "A13"]);
         const cells = new Map(Object.entries(initialCells).map(([cell, value]) => [cell, value]));
         outputCells.forEach(({ cell }) => cells.set(cell, ""));
@@ -401,7 +402,8 @@
               text.trim() &&
               !text.trim().startsWith("=") &&
               nextCell &&
-              !cellHasContent(cells.get(nextCell))
+              !cellHasContent(cells.get(nextCell)) &&
+              !textOverflowBlockerCells.has(nextCell)
             );
 
             cellElement.classList.toggle("text-overflow-source", canOverflow);

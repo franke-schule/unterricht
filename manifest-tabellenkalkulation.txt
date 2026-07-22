@@ -64,7 +64,11 @@ Zellwerte typgerecht behandeln:
 Textueberlauf wie in einer Tabellenkalkulation darstellen:
 
   - Text, der breiter als seine Zelle ist, vollstaendig anzeigen, wenn die
-    unmittelbar rechts angrenzende Zelle leer ist.
+    unmittelbar rechts angrenzende Zelle wirklich frei ist.
+  - Eine Zelle ist nicht frei, wenn sie einen Wert enthaelt oder als Formel-
+    Eingabe, Schuelereingabe, Ausfuellziel oder berechneter Ergebnisbereich
+    vorgesehen ist. Solche Zellen blockieren den Textueberlauf auch im noch
+    leeren Anfangszustand.
   - Der Text darf leere Nachbarzellen optisch ueberlagern, ohne deren Zellwert
     zu veraendern.
   - Sobald eine ueberlagerte Nachbarzelle einen Wert enthaelt, muss deren Inhalt
@@ -304,8 +308,9 @@ Zusaetzlich zur allgemeinen Checkliste:
 
   [ ] Inhalt, Zellbereich und Formatierung der Excel-Vorlage wurden geprueft.
   [ ] Alle vorgesehenen Zellen sind editierbar oder bewusst gesperrt.
-  [ ] Ueberlanger Text ueberlagert nur leere rechte Nachbarzellen und wird von
-      belegten Zellen verdeckt.
+  [ ] Ueberlanger Text ueberlagert nur wirklich freie rechte Nachbarzellen und
+      wird von belegten oder fuer Eingaben/Ergebnisse reservierten Zellen
+      begrenzt.
   [ ] Jede Formel-Zielzelle besitzt Button und eigenes Feedback.
   [ ] Richtige Standardformeln bestehen.
   [ ] Mindestens eine anders geschriebene, mathematisch aequivalente Formel
