@@ -1,0 +1,1116 @@
+<!doctype html>
+<html lang="de">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Aufgabe 2 – Objekte visualisieren</title>
+  <style>
+    :root {
+      color-scheme: dark;
+      --bg: #020617;
+      --panel: rgb(15 23 42 / 82%);
+      --panel-strong: #0f172a;
+      --surface: #1e293b;
+      --border: #1e293b;
+      --border-light: #334155;
+      --text: #e2e8f0;
+      --muted: #94a3b8;
+      --subtle: #64748b;
+      --indigo: #6366f1;
+      --indigo-light: #818cf8;
+      --purple: #c084fc;
+      --emerald: #34d399;
+      --red: #f87171;
+      --yellow: #facc15;
+      --blue: #60a5fa;
+      --green: #4ade80;
+      --orange: #fb923c;
+      --cyan: #22d3ee;
+      --code: "Fira Code", "Cascadia Code", Consolas, monospace;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    html {
+      min-height: 100%;
+      background: var(--bg);
+    }
+
+    body {
+      min-height: 100vh;
+      margin: 0;
+      color: var(--text);
+      background:
+        radial-gradient(circle at 25% 4%, rgb(99 102 241 / 13%), transparent 29rem),
+        radial-gradient(circle at 87% 32%, rgb(16 185 129 / 7%), transparent 25rem),
+        var(--bg);
+      font-family: Inter, "Segoe UI", system-ui, sans-serif;
+      line-height: 1.5;
+    }
+
+    button,
+    input,
+    select {
+      font: inherit;
+    }
+
+    button,
+    select {
+      cursor: pointer;
+    }
+
+    button:focus-visible,
+    input:focus-visible,
+    select:focus-visible,
+    a:focus-visible {
+      outline: 3px solid rgb(129 140 248 / 55%);
+      outline-offset: 3px;
+    }
+
+    .back-link {
+      position: fixed;
+      top: 0.75rem;
+      left: 0.75rem;
+      z-index: 20;
+      padding: 0.5rem 0.85rem;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
+      color: var(--muted);
+      background: rgb(30 41 59 / 95%);
+      border: 1px solid rgb(71 85 105 / 55%);
+      border-radius: 0.5rem;
+      backdrop-filter: blur(8px);
+      font-size: 0.75rem;
+      font-weight: 650;
+      text-decoration: none;
+      transition: color 150ms ease, border-color 150ms ease;
+    }
+
+    .back-link:hover {
+      color: #fff;
+      border-color: var(--subtle);
+    }
+
+    .page {
+      width: min(100% - 2rem, 80rem);
+      margin: 0 auto;
+      padding: 4rem 0;
+    }
+
+    .hero {
+      margin-bottom: 3rem;
+      text-align: center;
+    }
+
+    .task-label {
+      width: fit-content;
+      margin: 0 auto 1rem;
+      padding: 0.35rem 0.85rem;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.45rem;
+      color: var(--indigo-light);
+      background: rgb(99 102 241 / 10%);
+      border: 1px solid rgb(99 102 241 / 30%);
+      border-radius: 999px;
+      font-size: 0.75rem;
+      font-weight: 700;
+    }
+
+    .task-label span {
+      font-size: 1rem;
+      line-height: 1;
+    }
+
+    h1 {
+      margin: 0 0 0.6rem;
+      color: transparent;
+      background: linear-gradient(90deg, var(--indigo-light), var(--purple));
+      background-clip: text;
+      -webkit-background-clip: text;
+      font-size: clamp(2.25rem, 5vw, 3rem);
+      letter-spacing: -0.04em;
+    }
+
+    .hero p {
+      margin: 0;
+      color: var(--muted);
+    }
+
+    .workspace {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 2rem;
+      align-items: start;
+    }
+
+    .panel {
+      min-width: 0;
+      padding: 1.5rem;
+      background: var(--panel);
+      border: 1px solid var(--border);
+      border-radius: 1rem;
+      box-shadow: 0 1.5rem 4rem rgb(0 0 0 / 18%);
+    }
+
+    .panel-heading {
+      margin-bottom: 1.5rem;
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+    }
+
+    .panel-icon {
+      width: 2.5rem;
+      height: 2.5rem;
+      flex: 0 0 auto;
+      display: grid;
+      place-items: center;
+      color: #fff;
+      border-radius: 0.65rem;
+      font-size: 1.25rem;
+      font-weight: 800;
+    }
+
+    .class-icon {
+      background: linear-gradient(135deg, var(--indigo), #a855f7);
+    }
+
+    .object-icon {
+      background: linear-gradient(135deg, #10b981, #14b8a6);
+    }
+
+    .panel-heading h2,
+    .panel-heading p {
+      margin: 0;
+    }
+
+    .panel-heading h2 {
+      color: #f8fafc;
+      font-size: 1.05rem;
+    }
+
+    .panel-heading p {
+      margin-top: 0.15rem;
+      color: var(--subtle);
+      font-size: 0.72rem;
+    }
+
+    .object-count {
+      margin-left: auto;
+      padding: 0.25rem 0.55rem;
+      color: var(--emerald);
+      white-space: nowrap;
+      background: rgb(16 185 129 / 16%);
+      border-radius: 999px;
+      font-size: 0.68rem;
+      font-weight: 700;
+    }
+
+    .code-window {
+      padding: 1rem;
+      overflow: hidden;
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: 0.75rem;
+    }
+
+    .window-bar {
+      margin-bottom: 0.75rem;
+      display: flex;
+      align-items: center;
+      gap: 0.4rem;
+    }
+
+    .window-dot {
+      width: 0.7rem;
+      height: 0.7rem;
+      border-radius: 50%;
+    }
+
+    .window-dot.red { background: #ef4444; }
+    .window-dot.yellow { background: #eab308; }
+    .window-dot.green { background: #22c55e; }
+
+    .window-bar small {
+      margin-left: 0.35rem;
+      color: #475569;
+      font: 0.68rem var(--code);
+    }
+
+    pre {
+      margin: 0;
+      overflow-x: auto;
+      color: #cbd5e1;
+      font: 0.78rem/1.55 var(--code);
+      tab-size: 4;
+    }
+
+    .syn-purple { color: var(--purple); }
+    .syn-yellow { color: var(--yellow); }
+    .syn-blue { color: var(--blue); }
+    .syn-green { color: var(--green); }
+    .syn-orange { color: var(--orange); }
+    .syn-cyan { color: var(--cyan); }
+    .syn-comment { color: #475569; }
+
+    .create-area {
+      padding-top: 1rem;
+      text-align: center;
+    }
+
+    .primary-button {
+      padding: 0.75rem 1.4rem;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.45rem;
+      color: #fff;
+      background: #4f46e5;
+      border: 0;
+      border-radius: 0.7rem;
+      font-weight: 750;
+      transition: background 150ms ease, transform 150ms ease;
+    }
+
+    .primary-button:hover {
+      background: var(--indigo);
+      transform: translateY(-1px);
+    }
+
+    .primary-button span {
+      font-size: 1.2rem;
+      line-height: 1;
+    }
+
+    .objects-container {
+      min-height: 25rem;
+      display: grid;
+      align-content: start;
+      gap: 1rem;
+    }
+
+    .empty-state {
+      min-height: 20rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-direction: column;
+      color: #475569;
+      text-align: center;
+    }
+
+    .empty-state .empty-icon {
+      margin-bottom: 0.6rem;
+      font-size: 2.7rem;
+      line-height: 1;
+    }
+
+    .empty-state strong {
+      font-size: 0.9rem;
+    }
+
+    .empty-state p {
+      margin: 0.3rem 0 0;
+      font-size: 0.78rem;
+    }
+
+    .object-card {
+      padding: 1rem;
+      background: rgb(30 41 59 / 55%);
+      border: 1px solid var(--border-light);
+      border-radius: 0.75rem;
+      animation: pop 280ms ease-out;
+    }
+
+    @keyframes pop {
+      from {
+        opacity: 0;
+        transform: scale(0.94);
+      }
+
+      to {
+        opacity: 1;
+        transform: scale(1);
+      }
+    }
+
+    .object-head {
+      margin-bottom: 0.8rem;
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+    }
+
+    .car-swatch {
+      width: 3rem;
+      height: 2rem;
+      flex: 0 0 auto;
+      display: grid;
+      place-items: center;
+      border: 1px solid rgb(148 163 184 / 22%);
+      border-radius: 0.4rem;
+      box-shadow: 0 0.3rem 0.7rem rgb(0 0 0 / 18%);
+      font-size: 1rem;
+    }
+
+    .object-title {
+      min-width: 0;
+    }
+
+    .object-title code {
+      color: var(--cyan);
+      font: 0.82rem var(--code);
+    }
+
+    .object-title small {
+      margin-left: 0.45rem;
+      color: var(--subtle);
+      font-size: 0.68rem;
+    }
+
+    .delete-button {
+      width: 2rem;
+      height: 2rem;
+      margin-left: auto;
+      display: grid;
+      place-items: center;
+      padding: 0;
+      color: var(--subtle);
+      background: transparent;
+      border: 0;
+      border-radius: 0.45rem;
+      font-size: 1rem;
+    }
+
+    .delete-button:hover {
+      color: var(--red);
+      background: rgb(239 68 68 / 10%);
+    }
+
+    /* Jede Attributgruppe belegt bewusst eine eigene Zeile. */
+    .object-attributes {
+      margin: 0 0 0.8rem;
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 0.5rem;
+    }
+
+    .object-attributes > div {
+      min-height: 3.1rem;
+      padding: 0.6rem 0.75rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 1rem;
+      background: rgb(2 6 23 / 55%);
+      border: 1px solid rgb(51 65 85 / 50%);
+      border-radius: 0.55rem;
+    }
+
+    .object-attributes dt {
+      color: var(--subtle);
+      font-size: 0.7rem;
+    }
+
+    .object-attributes dd {
+      margin: 0;
+      font: 0.8rem var(--code);
+    }
+
+    .string-value { color: var(--green); }
+    .number-value { color: var(--orange); }
+
+    .methods {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 0.5rem;
+    }
+
+    .methods button {
+      padding: 0.55rem;
+      border: 0;
+      border-radius: 0.5rem;
+      font: 0.72rem var(--code);
+      transition: background 150ms ease;
+    }
+
+    .accelerate {
+      color: var(--emerald);
+      background: rgb(5 150 105 / 24%);
+    }
+
+    .accelerate:hover {
+      background: rgb(5 150 105 / 42%);
+    }
+
+    .brake {
+      color: var(--red);
+      background: rgb(220 38 38 / 22%);
+    }
+
+    .brake:hover {
+      background: rgb(220 38 38 / 40%);
+    }
+
+    .explainer {
+      margin-top: 2rem;
+      padding: 1.5rem;
+      background: rgb(15 23 42 / 58%);
+      border: 1px solid var(--border);
+      border-radius: 0.8rem;
+    }
+
+    .explainer > h2 {
+      margin: 0 0 1rem;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      color: #f8fafc;
+      font-size: 1.05rem;
+    }
+
+    .explainer-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 1.5rem;
+    }
+
+    .explanation-card {
+      padding: 1rem;
+      border-radius: 0.6rem;
+    }
+
+    .class-explanation {
+      background: rgb(99 102 241 / 10%);
+      border: 1px solid rgb(99 102 241 / 30%);
+    }
+
+    .object-explanation {
+      background: rgb(16 185 129 / 10%);
+      border: 1px solid rgb(16 185 129 / 30%);
+    }
+
+    .explanation-card h3 {
+      margin: 0 0 0.5rem;
+      color: var(--indigo-light);
+      font-size: 0.85rem;
+    }
+
+    .object-explanation h3 {
+      color: var(--emerald);
+    }
+
+    .explanation-card ul {
+      margin: 0;
+      padding-left: 1.25rem;
+      color: var(--muted);
+      font-size: 0.78rem;
+      line-height: 1.7;
+    }
+
+    .explanation-card code {
+      padding: 0.05rem 0.3rem;
+      color: var(--text);
+      background: var(--surface);
+      border-radius: 0.25rem;
+      font-family: var(--code);
+    }
+
+    dialog {
+      width: min(calc(100% - 2rem), 27rem);
+      padding: 1.5rem;
+      color: #f8fafc;
+      background: var(--panel-strong);
+      border: 1px solid var(--border-light);
+      border-radius: 1rem;
+      box-shadow: 0 2rem 5rem rgb(0 0 0 / 50%);
+    }
+
+    dialog::backdrop {
+      background: rgb(0 0 0 / 68%);
+      backdrop-filter: blur(5px);
+    }
+
+    .dialog-heading {
+      margin-bottom: 1.1rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 1rem;
+    }
+
+    .dialog-heading h2 {
+      margin: 0;
+      font-size: 1.05rem;
+    }
+
+    .dialog-close {
+      width: 2rem;
+      height: 2rem;
+      display: grid;
+      place-items: center;
+      padding: 0;
+      color: var(--muted);
+      background: var(--surface);
+      border: 0;
+      border-radius: 0.45rem;
+      font-size: 1.1rem;
+    }
+
+    .form-field {
+      margin-bottom: 0.9rem;
+      display: block;
+    }
+
+    .form-field > span,
+    .color-field legend {
+      margin-bottom: 0.35rem;
+      display: block;
+      color: var(--muted);
+      font-size: 0.75rem;
+    }
+
+    .form-field input,
+    .form-field select {
+      width: 100%;
+      height: 2.6rem;
+      padding: 0 0.75rem;
+      color: #f8fafc;
+      background: var(--surface);
+      border: 1px solid var(--border-light);
+      border-radius: 0.5rem;
+    }
+
+    .form-field input {
+      font-family: var(--code);
+    }
+
+    .color-field {
+      margin: 0 0 1.1rem;
+      padding: 0;
+      border: 0;
+    }
+
+    .color-options {
+      display: flex;
+      gap: 0.55rem;
+    }
+
+    .color-button {
+      width: 2.6rem;
+      height: 2.6rem;
+      padding: 0;
+      border: 2px solid transparent;
+      border-radius: 0.55rem;
+      box-shadow: inset 0 0 0 1px rgb(148 163 184 / 25%);
+    }
+
+    .color-button[aria-pressed="true"] {
+      border-color: #fff;
+      box-shadow: 0 0 0 2px #4f46e5;
+    }
+
+    .code-preview {
+      margin-bottom: 1rem;
+      padding: 0.8rem;
+      overflow-x: auto;
+      color: #cbd5e1;
+      white-space: nowrap;
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: 0.5rem;
+      font: 0.72rem var(--code);
+    }
+
+    .dialog-actions {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 0.7rem;
+    }
+
+    .dialog-actions button {
+      padding: 0.65rem;
+      color: #f8fafc;
+      background: var(--border-light);
+      border: 0;
+      border-radius: 0.5rem;
+      font-weight: 650;
+    }
+
+    .dialog-actions .submit-button {
+      background: #4f46e5;
+    }
+
+    .dialog-actions button:hover {
+      filter: brightness(1.15);
+    }
+
+    @media (max-width: 900px) {
+      .workspace {
+        grid-template-columns: 1fr;
+      }
+
+      .objects-container {
+        min-height: 17rem;
+      }
+
+      .empty-state {
+        min-height: 14rem;
+      }
+    }
+
+    @media (max-width: 600px) {
+      .page {
+        width: min(100% - 1.25rem, 80rem);
+        padding: 5rem 0 3rem;
+      }
+
+      .panel {
+        padding: 1rem;
+      }
+
+      pre {
+        font-size: 0.68rem;
+      }
+
+      .panel-heading {
+        align-items: flex-start;
+      }
+
+      .object-title small {
+        display: block;
+        margin: 0.2rem 0 0;
+      }
+
+      .explainer {
+        padding: 1rem;
+      }
+
+      .explainer-grid {
+        grid-template-columns: 1fr;
+        gap: 0.75rem;
+      }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      *,
+      *::before,
+      *::after {
+        animation-duration: 0.01ms !important;
+        transition-duration: 0.01ms !important;
+      }
+    }
+  </style>
+</head>
+<body>
+  <a class="back-link" href="../">
+    <span aria-hidden="true">←</span>
+    Übersicht
+  </a>
+
+  <main class="page">
+    <header class="hero">
+      <div class="task-label">
+        <span aria-hidden="true">◇</span>
+        Aufgabe 2 · Objekte visualisieren
+      </div>
+      <h1>Klassen &amp; Objekte</h1>
+      <p>Visualisiere den Unterschied zwischen Bauplan und Instanz.</p>
+    </header>
+
+    <div class="workspace">
+      <section class="panel" aria-labelledby="class-heading">
+        <div class="panel-heading">
+          <span class="panel-icon class-icon" aria-hidden="true">▤</span>
+          <div>
+            <h2 id="class-heading">Klasse (Bauplan)</h2>
+            <p>Definiert Attribute und Methoden</p>
+          </div>
+        </div>
+
+        <div class="code-window">
+          <div class="window-bar" aria-hidden="true">
+            <span class="window-dot red"></span>
+            <span class="window-dot yellow"></span>
+            <span class="window-dot green"></span>
+            <small>Auto.java</small>
+          </div>
+          <pre aria-label="Java-Klasse Auto"><code><span class="syn-purple">public class</span> <span class="syn-yellow">Auto</span> {
+    <span class="syn-comment">// Attribute</span>
+    <span class="syn-blue">String</span> marke;
+    <span class="syn-blue">String</span> farbe;
+    <span class="syn-blue">int</span> geschwindigkeit;
+
+    <span class="syn-comment">// Konstruktor</span>
+    <span class="syn-yellow">Auto</span>(<span class="syn-blue">String</span> m, <span class="syn-blue">String</span> f) {
+        marke = m;
+        farbe = f;
+        geschwindigkeit = <span class="syn-orange">0</span>;
+    }
+
+    <span class="syn-comment">// Methoden</span>
+    <span class="syn-purple">void</span> <span class="syn-green">beschleunige</span>(<span class="syn-blue">int</span> wert) {
+        geschwindigkeit += wert;
+    }
+
+    <span class="syn-purple">void</span> <span class="syn-green">bremse</span>() {
+        geschwindigkeit = <span class="syn-orange">0</span>;
+    }
+}</code></pre>
+        </div>
+
+        <div class="create-area">
+          <button class="primary-button" id="open-dialog" type="button">
+            <span aria-hidden="true">＋</span>
+            Neues Auto erstellen
+          </button>
+        </div>
+      </section>
+
+      <section class="panel" aria-labelledby="objects-heading">
+        <div class="panel-heading">
+          <span class="panel-icon object-icon" aria-hidden="true">⬡</span>
+          <div>
+            <h2 id="objects-heading">Objekte (Instanzen)</h2>
+            <p>Konkrete Autos im Speicher</p>
+          </div>
+          <span class="object-count" id="object-count" aria-live="polite">0 Objekte</span>
+        </div>
+
+        <div class="objects-container" id="objects-container">
+          <div class="empty-state">
+            <span class="empty-icon" aria-hidden="true">◇</span>
+            <strong>Noch keine Objekte erstellt</strong>
+            <p>Klicke auf „Neues Auto erstellen“</p>
+          </div>
+        </div>
+      </section>
+    </div>
+
+    <aside class="explainer" aria-labelledby="difference-heading">
+      <h2 id="difference-heading"><span aria-hidden="true">💡</span> Der Unterschied</h2>
+      <div class="explainer-grid">
+        <section class="explanation-card class-explanation">
+          <h3>Klasse = Bauplan</h3>
+          <ul>
+            <li>Existiert nur einmal im Code</li>
+            <li>Definiert, WELCHE Eigenschaften Objekte haben</li>
+            <li>Definiert, WAS Objekte tun können</li>
+            <li>Hat selbst keine konkreten Werte</li>
+          </ul>
+        </section>
+        <section class="explanation-card object-explanation">
+          <h3>Objekt = Instanz</h3>
+          <ul>
+            <li>Es können beliebig viele erstellt werden</li>
+            <li>Jedes hat EIGENE Attributwerte</li>
+            <li>Wird mit <code>new</code> erzeugt</li>
+            <li>Belegt Speicherplatz im Heap</li>
+          </ul>
+        </section>
+      </div>
+    </aside>
+  </main>
+
+  <dialog id="create-dialog" aria-labelledby="dialog-title">
+    <form id="create-form">
+      <div class="dialog-heading">
+        <h2 id="dialog-title">Neues Auto-Objekt erstellen</h2>
+        <button class="dialog-close" id="close-dialog" type="button" aria-label="Dialog schließen">×</button>
+      </div>
+
+      <label class="form-field">
+        <span>Variablenname</span>
+        <input
+          id="variable-name"
+          name="variableName"
+          type="text"
+          pattern="[A-Za-z_$][A-Za-z0-9_$]*"
+          maxlength="30"
+          autocomplete="off"
+          spellcheck="false"
+          required>
+      </label>
+
+      <label class="form-field">
+        <span>Marke</span>
+        <select id="brand-input" name="brand">
+          <option>BMW</option>
+          <option>Mercedes</option>
+          <option>Audi</option>
+          <option>VW</option>
+          <option>Tesla</option>
+        </select>
+      </label>
+
+      <fieldset class="color-field">
+        <legend>Farbe</legend>
+        <div class="color-options">
+          <button class="color-button" type="button" data-color="rot" aria-label="Rot" style="background:#ef4444"></button>
+          <button class="color-button" type="button" data-color="blau" aria-label="Blau" style="background:#3b82f6"></button>
+          <button class="color-button" type="button" data-color="gruen" aria-label="Grün" style="background:#22c55e"></button>
+          <button class="color-button" type="button" data-color="schwarz" aria-label="Schwarz" style="background:#1f2937"></button>
+          <button class="color-button" type="button" data-color="weiss" aria-label="Weiß" style="background:#fff"></button>
+        </div>
+      </fieldset>
+
+      <div class="code-preview" aria-label="Vorschau des Java-Codes">
+        <span class="syn-yellow">Auto</span>
+        <span class="syn-cyan" id="preview-variable">auto1</span> =
+        <span class="syn-purple">new</span>
+        <span class="syn-yellow">Auto</span>(<span class="syn-green">"<span id="preview-brand">BMW</span>"</span>,
+        <span class="syn-green">"<span id="preview-color">rot</span>"</span>);
+      </div>
+
+      <div class="dialog-actions">
+        <button id="cancel-dialog" type="button">Abbrechen</button>
+        <button class="submit-button" type="submit">Erstellen</button>
+      </div>
+    </form>
+  </dialog>
+
+  <script>
+    'use strict';
+
+    const colorStyles = {
+      rot: { background: '#ef4444', text: '#ffffff' },
+      blau: { background: '#3b82f6', text: '#ffffff' },
+      gruen: { background: '#22c55e', text: '#ffffff' },
+      schwarz: { background: '#1f2937', text: '#ffffff' },
+      weiss: { background: '#ffffff', text: '#1f2937' }
+    };
+
+    const state = {
+      cars: [],
+      nextId: 1,
+      nextNumber: 1,
+      selectedColor: 'rot'
+    };
+
+    const dialog = document.getElementById('create-dialog');
+    const form = document.getElementById('create-form');
+    const variableInput = document.getElementById('variable-name');
+    const brandInput = document.getElementById('brand-input');
+    const previewVariable = document.getElementById('preview-variable');
+    const previewBrand = document.getElementById('preview-brand');
+    const previewColor = document.getElementById('preview-color');
+    const objectsContainer = document.getElementById('objects-container');
+    const objectCount = document.getElementById('object-count');
+    const colorButtons = Array.from(document.querySelectorAll('.color-button'));
+
+    function selectColor(color) {
+      state.selectedColor = color;
+      previewColor.textContent = color;
+
+      colorButtons.forEach(function(button) {
+        button.setAttribute(
+          'aria-pressed',
+          String(button.dataset.color === color)
+        );
+      });
+    }
+
+    function openCreateDialog() {
+      const variableName = 'auto' + state.nextNumber;
+      state.nextNumber += 1;
+
+      variableInput.value = variableName;
+      brandInput.value = 'BMW';
+      previewVariable.textContent = variableName;
+      previewBrand.textContent = 'BMW';
+      selectColor('rot');
+      dialog.showModal();
+      variableInput.focus();
+      variableInput.select();
+    }
+
+    function closeCreateDialog() {
+      dialog.close();
+    }
+
+    function updateCar(id, update) {
+      const car = state.cars.find(function(item) {
+        return item.id === id;
+      });
+
+      if (!car) {
+        return;
+      }
+
+      update(car);
+      renderObjects();
+    }
+
+    function deleteCar(id) {
+      state.cars = state.cars.filter(function(car) {
+        return car.id !== id;
+      });
+      renderObjects();
+    }
+
+    function createAttribute(label, value, valueClass) {
+      const row = document.createElement('div');
+      const term = document.createElement('dt');
+      const description = document.createElement('dd');
+
+      term.textContent = label;
+      description.textContent = value;
+      description.className = valueClass;
+      row.append(term, description);
+      return row;
+    }
+
+    function createMethodButton(label, className, handler) {
+      const button = document.createElement('button');
+      button.type = 'button';
+      button.className = className;
+      button.textContent = label;
+      button.addEventListener('click', handler);
+      return button;
+    }
+
+    function createObjectCard(car) {
+      const card = document.createElement('article');
+      card.className = 'object-card';
+
+      const header = document.createElement('div');
+      header.className = 'object-head';
+
+      const swatch = document.createElement('span');
+      const style = colorStyles[car.color];
+      swatch.className = 'car-swatch';
+      swatch.textContent = '🚗';
+      swatch.style.backgroundColor = style.background;
+      swatch.style.color = style.text;
+      swatch.setAttribute('aria-label', 'Autofarbe ' + car.color);
+
+      const title = document.createElement('div');
+      title.className = 'object-title';
+
+      const variable = document.createElement('code');
+      variable.textContent = car.variableName;
+
+      const comment = document.createElement('small');
+      comment.textContent = '// Auto-Objekt';
+      title.append(variable, comment);
+
+      const deleteButton = document.createElement('button');
+      deleteButton.type = 'button';
+      deleteButton.className = 'delete-button';
+      deleteButton.textContent = '⌫';
+      deleteButton.setAttribute('aria-label', car.variableName + ' löschen');
+      deleteButton.addEventListener('click', function() {
+        deleteCar(car.id);
+      });
+
+      header.append(swatch, title, deleteButton);
+
+      const attributes = document.createElement('dl');
+      attributes.className = 'object-attributes';
+      attributes.append(
+        createAttribute('marke', '"' + car.brand + '"', 'string-value'),
+        createAttribute('farbe', '"' + car.color + '"', 'string-value'),
+        createAttribute('geschwindigkeit', String(car.speed), 'number-value')
+      );
+
+      const methods = document.createElement('div');
+      methods.className = 'methods';
+      methods.append(
+        createMethodButton('beschleunige(10)', 'accelerate', function() {
+          updateCar(car.id, function(item) {
+            item.speed += 10;
+          });
+        }),
+        createMethodButton('bremse()', 'brake', function() {
+          updateCar(car.id, function(item) {
+            item.speed = 0;
+          });
+        })
+      );
+
+      card.append(header, attributes, methods);
+      return card;
+    }
+
+    function renderObjects() {
+      objectsContainer.replaceChildren();
+      objectCount.textContent =
+        state.cars.length + ' ' +
+        (state.cars.length === 1 ? 'Objekt' : 'Objekte');
+
+      if (state.cars.length === 0) {
+        const emptyState = document.createElement('div');
+        emptyState.className = 'empty-state';
+
+        const icon = document.createElement('span');
+        icon.className = 'empty-icon';
+        icon.setAttribute('aria-hidden', 'true');
+        icon.textContent = '◇';
+
+        const title = document.createElement('strong');
+        title.textContent = 'Noch keine Objekte erstellt';
+
+        const hint = document.createElement('p');
+        hint.textContent = 'Klicke auf „Neues Auto erstellen“';
+
+        emptyState.append(icon, title, hint);
+        objectsContainer.append(emptyState);
+        return;
+      }
+
+      state.cars.forEach(function(car) {
+        objectsContainer.append(createObjectCard(car));
+      });
+    }
+
+    document.getElementById('open-dialog').addEventListener('click', openCreateDialog);
+    document.getElementById('close-dialog').addEventListener('click', closeCreateDialog);
+    document.getElementById('cancel-dialog').addEventListener('click', closeCreateDialog);
+
+    variableInput.addEventListener('input', function() {
+      previewVariable.textContent = variableInput.value || 'meinAuto';
+    });
+
+    brandInput.addEventListener('change', function() {
+      previewBrand.textContent = brandInput.value;
+    });
+
+    colorButtons.forEach(function(button) {
+      button.addEventListener('click', function() {
+        selectColor(button.dataset.color);
+      });
+    });
+
+    form.addEventListener('submit', function(event) {
+      event.preventDefault();
+
+      if (!form.reportValidity()) {
+        return;
+      }
+
+      state.cars.push({
+        id: state.nextId,
+        variableName: variableInput.value.trim(),
+        brand: brandInput.value,
+        color: state.selectedColor,
+        speed: 0
+      });
+      state.nextId += 1;
+      renderObjects();
+      closeCreateDialog();
+    });
+
+    dialog.addEventListener('click', function(event) {
+      if (event.target === dialog) {
+        closeCreateDialog();
+      }
+    });
+
+    selectColor('rot');
+  </script>
+</body>
+</html>
