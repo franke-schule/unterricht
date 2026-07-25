@@ -6,26 +6,26 @@
   <title>Aufgabe 2 – Objekte visualisieren</title>
   <style>
     :root {
-      color-scheme: dark;
-      --bg: #020617;
-      --panel: rgb(15 23 42 / 82%);
-      --panel-strong: #0f172a;
-      --surface: #1e293b;
-      --border: #1e293b;
-      --border-light: #334155;
-      --text: #e2e8f0;
-      --muted: #94a3b8;
-      --subtle: #64748b;
-      --indigo: #6366f1;
-      --indigo-light: #818cf8;
-      --purple: #c084fc;
-      --emerald: #34d399;
-      --red: #f87171;
-      --yellow: #facc15;
-      --blue: #60a5fa;
-      --green: #4ade80;
-      --orange: #fb923c;
-      --cyan: #22d3ee;
+      color-scheme: light;
+      --bg: #f7f6f2;
+      --panel: #ffffff;
+      --panel-strong: #ffffff;
+      --surface: #eef3f8;
+      --border: #e2ddd6;
+      --border-light: #cbd5df;
+      --text: #1e1e1e;
+      --muted: #6b6560;
+      --subtle: #77716b;
+      --indigo: #3b6ea5;
+      --indigo-light: #3b6ea5;
+      --purple: #7253a6;
+      --emerald: #28775e;
+      --red: #aa4444;
+      --yellow: #8d6a00;
+      --blue: #285f98;
+      --green: #287451;
+      --orange: #af5720;
+      --cyan: #166f86;
       --code: "Fira Code", "Cascadia Code", Consolas, monospace;
     }
 
@@ -42,10 +42,7 @@
       min-height: 100vh;
       margin: 0;
       color: var(--text);
-      background:
-        radial-gradient(circle at 25% 4%, rgb(99 102 241 / 13%), transparent 29rem),
-        radial-gradient(circle at 87% 32%, rgb(16 185 129 / 7%), transparent 25rem),
-        var(--bg);
+      background: var(--bg);
       font-family: Inter, "Segoe UI", system-ui, sans-serif;
       line-height: 1.5;
     }
@@ -70,17 +67,14 @@
     }
 
     .back-link {
-      position: fixed;
-      top: 0.75rem;
-      left: 0.75rem;
-      z-index: 20;
+      margin-bottom: 0.9rem;
       padding: 0.5rem 0.85rem;
       display: inline-flex;
       align-items: center;
       gap: 0.4rem;
-      color: var(--muted);
-      background: rgb(30 41 59 / 95%);
-      border: 1px solid rgb(71 85 105 / 55%);
+      color: #ffffff;
+      background: rgb(255 255 255 / 12%);
+      border: 1px solid rgb(255 255 255 / 55%);
       border-radius: 0.5rem;
       backdrop-filter: blur(8px);
       font-size: 0.75rem;
@@ -90,57 +84,43 @@
     }
 
     .back-link:hover {
-      color: #fff;
-      border-color: var(--subtle);
+      color: #ffffff;
+      background: rgb(255 255 255 / 22%);
+      border-color: #ffffff;
     }
 
     .page {
-      width: min(100% - 2rem, 80rem);
-      margin: 0 auto;
-      padding: 4rem 0;
+      width: 100%;
+      margin: 0;
+      padding: 0;
     }
 
     .hero {
-      margin-bottom: 3rem;
-      text-align: center;
-    }
-
-    .task-label {
-      width: fit-content;
-      margin: 0 auto 1rem;
-      padding: 0.35rem 0.85rem;
-      display: inline-flex;
-      align-items: center;
-      gap: 0.45rem;
-      color: var(--indigo-light);
-      background: rgb(99 102 241 / 10%);
-      border: 1px solid rgb(99 102 241 / 30%);
-      border-radius: 999px;
-      font-size: 0.75rem;
-      font-weight: 700;
-    }
-
-    .task-label span {
-      font-size: 1rem;
-      line-height: 1;
+      margin-bottom: 1.5rem;
+      padding:
+        1.5rem
+        max(1rem, calc((100% - 1500px) / 2));
+      color: #ffffff;
+      background: var(--indigo);
+      text-align: left;
     }
 
     h1 {
-      margin: 0 0 0.6rem;
-      color: transparent;
-      background: linear-gradient(90deg, var(--indigo-light), var(--purple));
-      background-clip: text;
-      -webkit-background-clip: text;
-      font-size: clamp(2.25rem, 5vw, 3rem);
-      letter-spacing: -0.04em;
+      margin: 0;
+      color: #ffffff;
+      font-size: 1.5rem;
+      letter-spacing: -0.01em;
     }
 
     .hero p {
-      margin: 0;
-      color: var(--muted);
+      margin: 0.35rem 0 0;
+      color: #ffffff;
+      opacity: 0.88;
     }
 
     .workspace {
+      width: min(calc(100% - 2rem), 1500px);
+      margin: 0 auto;
       display: grid;
       grid-template-columns: repeat(2, minmax(0, 1fr));
       gap: 2rem;
@@ -152,8 +132,8 @@
       padding: 1.5rem;
       background: var(--panel);
       border: 1px solid var(--border);
-      border-radius: 1rem;
-      box-shadow: 0 1.5rem 4rem rgb(0 0 0 / 18%);
+      border-radius: 0.5rem;
+      box-shadow: 0 2px 8px rgb(0 0 0 / 8%);
     }
 
     .panel-heading {
@@ -189,7 +169,7 @@
     }
 
     .panel-heading h2 {
-      color: #f8fafc;
+      color: var(--text);
       font-size: 1.05rem;
     }
 
@@ -204,7 +184,8 @@
       padding: 0.25rem 0.55rem;
       color: var(--emerald);
       white-space: nowrap;
-      background: rgb(16 185 129 / 16%);
+      background: #e6f4ee;
+      border: 1px solid #b9dcca;
       border-radius: 999px;
       font-size: 0.68rem;
       font-weight: 700;
@@ -213,8 +194,8 @@
     .code-window {
       padding: 1rem;
       overflow: hidden;
-      background: var(--bg);
-      border: 1px solid var(--border);
+      background: #f8fafc;
+      border: 1px solid #d8e0e8;
       border-radius: 0.75rem;
     }
 
@@ -237,14 +218,14 @@
 
     .window-bar small {
       margin-left: 0.35rem;
-      color: #475569;
+      color: #697586;
       font: 0.68rem var(--code);
     }
 
     pre {
       margin: 0;
       overflow-x: auto;
-      color: #cbd5e1;
+      color: #334155;
       font: 0.78rem/1.55 var(--code);
       tab-size: 4;
     }
@@ -255,7 +236,7 @@
     .syn-green { color: var(--green); }
     .syn-orange { color: var(--orange); }
     .syn-cyan { color: var(--cyan); }
-    .syn-comment { color: #475569; }
+    .syn-comment { color: #7b8794; }
 
     .create-area {
       padding-top: 1rem;
@@ -269,7 +250,7 @@
       justify-content: center;
       gap: 0.45rem;
       color: #fff;
-      background: #4f46e5;
+      background: var(--indigo);
       border: 0;
       border-radius: 0.7rem;
       font-weight: 750;
@@ -277,7 +258,7 @@
     }
 
     .primary-button:hover {
-      background: var(--indigo);
+      background: #2d5682;
       transform: translateY(-1px);
     }
 
@@ -299,7 +280,7 @@
       align-items: center;
       justify-content: center;
       flex-direction: column;
-      color: #475569;
+      color: #7b8490;
       text-align: center;
     }
 
@@ -320,8 +301,8 @@
 
     .object-card {
       padding: 1rem;
-      background: rgb(30 41 59 / 55%);
-      border: 1px solid var(--border-light);
+      background: #f9fafb;
+      border: 1px solid #d9e0e7;
       border-radius: 0.75rem;
       animation: pop 280ms ease-out;
     }
@@ -351,7 +332,7 @@
       flex: 0 0 auto;
       display: grid;
       place-items: center;
-      border: 1px solid rgb(148 163 184 / 22%);
+      border: 1px solid rgb(100 116 139 / 28%);
       border-radius: 0.4rem;
       box-shadow: 0 0.3rem 0.7rem rgb(0 0 0 / 18%);
       font-size: 1rem;
@@ -388,7 +369,7 @@
 
     .delete-button:hover {
       color: var(--red);
-      background: rgb(239 68 68 / 10%);
+      background: #fff0f0;
     }
 
     /* Jede Attributgruppe belegt bewusst eine eigene Zeile. */
@@ -406,8 +387,8 @@
       align-items: center;
       justify-content: space-between;
       gap: 1rem;
-      background: rgb(2 6 23 / 55%);
-      border: 1px solid rgb(51 65 85 / 50%);
+      background: #ffffff;
+      border: 1px solid #e0e5ea;
       border-radius: 0.55rem;
     }
 
@@ -432,7 +413,6 @@
 
     .methods button {
       padding: 0.55rem;
-      border: 0;
       border-radius: 0.5rem;
       font: 0.72rem var(--code);
       transition: background 150ms ease;
@@ -440,28 +420,35 @@
 
     .accelerate {
       color: var(--emerald);
-      background: rgb(5 150 105 / 24%);
+      background: #e5f4ed;
+      border: 1px solid #b9dccb;
     }
 
     .accelerate:hover {
-      background: rgb(5 150 105 / 42%);
+      background: #d3ecdf;
     }
 
     .brake {
       color: var(--red);
-      background: rgb(220 38 38 / 22%);
+      background: #fff0f0;
+      border: 1px solid #e5c2c2;
     }
 
     .brake:hover {
-      background: rgb(220 38 38 / 40%);
+      background: #f8dddd;
     }
 
     .explainer {
+      width: min(calc(100% - 2rem), 1500px);
       margin-top: 2rem;
+      margin-right: auto;
+      margin-bottom: 3rem;
+      margin-left: auto;
       padding: 1.5rem;
-      background: rgb(15 23 42 / 58%);
+      background: #ffffff;
       border: 1px solid var(--border);
-      border-radius: 0.8rem;
+      border-radius: 0.5rem;
+      box-shadow: 0 2px 8px rgb(0 0 0 / 6%);
     }
 
     .explainer > h2 {
@@ -469,7 +456,7 @@
       display: flex;
       align-items: center;
       gap: 0.5rem;
-      color: #f8fafc;
+      color: var(--text);
       font-size: 1.05rem;
     }
 
@@ -485,13 +472,13 @@
     }
 
     .class-explanation {
-      background: rgb(99 102 241 / 10%);
-      border: 1px solid rgb(99 102 241 / 30%);
+      background: #eef3f8;
+      border: 1px solid #c7d7e7;
     }
 
     .object-explanation {
-      background: rgb(16 185 129 / 10%);
-      border: 1px solid rgb(16 185 129 / 30%);
+      background: #edf7ee;
+      border: 1px solid #b9d8bd;
     }
 
     .explanation-card h3 {
@@ -515,7 +502,7 @@
     .explanation-card code {
       padding: 0.05rem 0.3rem;
       color: var(--text);
-      background: var(--surface);
+      background: #ffffff;
       border-radius: 0.25rem;
       font-family: var(--code);
     }
@@ -523,15 +510,15 @@
     dialog {
       width: min(calc(100% - 2rem), 27rem);
       padding: 1.5rem;
-      color: #f8fafc;
+      color: var(--text);
       background: var(--panel-strong);
       border: 1px solid var(--border-light);
       border-radius: 1rem;
-      box-shadow: 0 2rem 5rem rgb(0 0 0 / 50%);
+      box-shadow: 0 2rem 5rem rgb(0 0 0 / 24%);
     }
 
     dialog::backdrop {
-      background: rgb(0 0 0 / 68%);
+      background: rgb(30 41 59 / 45%);
       backdrop-filter: blur(5px);
     }
 
@@ -579,8 +566,8 @@
       width: 100%;
       height: 2.6rem;
       padding: 0 0.75rem;
-      color: #f8fafc;
-      background: var(--surface);
+      color: var(--text);
+      background: #ffffff;
       border: 1px solid var(--border-light);
       border-radius: 0.5rem;
     }
@@ -611,17 +598,17 @@
 
     .color-button[aria-pressed="true"] {
       border-color: #fff;
-      box-shadow: 0 0 0 2px #4f46e5;
+      box-shadow: 0 0 0 3px var(--indigo);
     }
 
     .code-preview {
       margin-bottom: 1rem;
       padding: 0.8rem;
       overflow-x: auto;
-      color: #cbd5e1;
+      color: #334155;
       white-space: nowrap;
-      background: var(--bg);
-      border: 1px solid var(--border);
+      background: #f8fafc;
+      border: 1px solid #d8e0e8;
       border-radius: 0.5rem;
       font: 0.72rem var(--code);
     }
@@ -634,15 +621,16 @@
 
     .dialog-actions button {
       padding: 0.65rem;
-      color: #f8fafc;
-      background: var(--border-light);
+      color: var(--text);
+      background: #e5e7eb;
       border: 0;
       border-radius: 0.5rem;
       font-weight: 650;
     }
 
     .dialog-actions .submit-button {
-      background: #4f46e5;
+      color: #ffffff;
+      background: var(--indigo);
     }
 
     .dialog-actions button:hover {
@@ -665,8 +653,8 @@
 
     @media (max-width: 600px) {
       .page {
-        width: min(100% - 1.25rem, 80rem);
-        padding: 5rem 0 3rem;
+        width: 100%;
+        padding: 0;
       }
 
       .panel {
@@ -707,19 +695,14 @@
   </style>
 </head>
 <body>
-  <a class="back-link" href="../">
-    <span aria-hidden="true">←</span>
-    Übersicht
-  </a>
-
   <main class="page">
     <header class="hero">
-      <div class="task-label">
-        <span aria-hidden="true">◇</span>
-        Aufgabe 2 · Objekte visualisieren
-      </div>
-      <h1>Klassen &amp; Objekte</h1>
-      <p>Visualisiere den Unterschied zwischen Bauplan und Instanz.</p>
+      <a class="back-link" href="../">
+        <span aria-hidden="true">←</span>
+        Zurück zur Aufgabenübersicht Klasse 10
+      </a>
+      <h1>Aufgabe 2 – Objekte visualisieren</h1>
+      <p>Klassen und Objekte: Visualisiere den Unterschied zwischen Bauplan und Instanz.</p>
     </header>
 
     <div class="workspace">
