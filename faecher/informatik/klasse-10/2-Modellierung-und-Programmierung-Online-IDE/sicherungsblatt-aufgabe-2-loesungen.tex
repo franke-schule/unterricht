@@ -1,0 +1,164 @@
+\documentclass[10pt,a4paper]{article}
+
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage[ngerman]{babel}
+\usepackage[a4paper,margin=12mm]{geometry}
+\usepackage{xcolor}
+\usepackage{lmodern}
+\usepackage{microtype}
+\usepackage{listings}
+\usepackage{tikz}
+\usetikzlibrary{shapes.multipart,positioning}
+
+\definecolor{Navy}{HTML}{17324D}
+\definecolor{Blue}{HTML}{3B6EA5}
+\definecolor{LightBlue}{HTML}{EAF3FA}
+\definecolor{Mint}{HTML}{E8F5EF}
+\definecolor{Line}{HTML}{D8E1E8}
+\definecolor{Muted}{HTML}{617080}
+
+\setlength{\parindent}{0pt}
+\setlength{\parskip}{2pt}
+\pagestyle{empty}
+
+\lstset{
+  language=Java,
+  basicstyle=\ttfamily\footnotesize,
+  keywordstyle=\color{Blue}\bfseries,
+  commentstyle=\color{Muted},
+  backgroundcolor=\color{LightBlue},
+  frame=single,
+  rulecolor=\color{Line},
+  columns=fullflexible,
+  keepspaces=true,
+  showstringspaces=false,
+  aboveskip=3pt,
+  belowskip=3pt
+}
+
+\newcommand{\tasktitle}[1]{%
+  \vspace{2pt}{\large\bfseries\color{Blue}#1}\par
+  \color{Line}\hrule\color{black}\vspace{2pt}
+}
+
+\begin{document}
+
+\colorbox{Navy}{%
+  \parbox{\dimexpr\textwidth-2\fboxsep\relax}{%
+    \color{white}
+    {\small\bfseries INFORMATIK · KLASSE 10\hfill LÖSUNGEN}\par
+    \vspace{4pt}
+    {\LARGE\bfseries Sicherungsblatt: Aufgabe 2}\par
+    {\large Wiederholung Roboter}
+  }%
+}
+
+\vspace{4pt}
+\colorbox{LightBlue}{%
+  \parbox{\dimexpr\textwidth-2\fboxsep\relax}{%
+    \textbf{\color{Navy}Grundidee:}
+    Der Roboter wiederholt Anweisungen, solange vor ihm keine Wand ist.
+    An einer Ecke dreht er sich. Für eine vier Ziegel hohe Mauer darf er
+    nicht auf die Mauer steigen, sondern muss auf einer Spur daneben laufen.
+  }%
+}
+
+\tasktitle{a) Ziegelreihe bis zur Wand}
+
+Eine mögliche Schleife lautet:
+
+\begin{lstlisting}
+Robot roboter = new Robot(1, 1, 15, 15);
+
+while (!roboter.istWand()) {
+   roboter.hinlegen();
+   roboter.schritt();
+}
+\end{lstlisting}
+
+\textbf{Merksatz:} Eine \texttt{while}-Schleife eignet sich, wenn vor dem
+Start nicht feststeht, wie oft wiederholt werden muss.
+
+\tasktitle{b) Ziegel am gesamten Rand entlang}
+
+Eine Seite und das anschließende Drehen werden viermal wiederholt:
+
+\begin{lstlisting}
+Robot roboter = new Robot(1, 1, 15, 15);
+
+for (int seite = 0; seite < 4; seite++) {
+   while (!roboter.istWand()) {
+      roboter.hinlegen();
+      roboter.schritt();
+   }
+   roboter.linksDrehen();
+}
+\end{lstlisting}
+
+Je nach Startpunkt und gewünschter Lage der Ziegel kann eine zusätzliche
+Drehung oder ein versetzter Startpunkt nötig sein. Entscheidend ist die
+Schachtelung: Die innere Schleife bearbeitet eine Seite, die äußere alle vier.
+
+\tasktitle{c) Mauer mit Höhe 4}
+
+\texttt{hinlegen(4)} legt vier Ziegel auf das Feld vor dem Roboter. Weil der
+Roboter höchstens einen Ziegel hochspringen kann, läuft er auf einer Spur
+\emph{neben} der Mauer. Das Grundmuster für eine gerade Seite ist:
+
+\begin{lstlisting}
+while (!roboter.istWand()) {
+   roboter.hinlegen(4);
+
+   // Zur Laufrichtung drehen, ein Feld weitergehen
+   // und wieder zur Mauer drehen.
+   roboter.linksDrehen();
+   roboter.schritt();
+   roboter.rechtsDrehen();
+}
+\end{lstlisting}
+
+Für jede Ecke müssen Laufrichtung und Abstand zum Rand angepasst werden.
+Eine korrekte Lösung darf Hilfsmethoden verwenden, zum Beispiel
+\texttt{baueSeite()} und \texttt{geheZurNaechstenSeite()}.
+
+\tasktitle{d) Struktogramm zu c)}
+
+\begin{center}
+\begin{tikzpicture}[
+  node distance=0pt,
+  every node/.style={
+    draw=Navy,
+    minimum width=11.8cm,
+    text width=11.2cm,
+    align=left,
+    font=\small,
+    inner sep=5pt
+  }
+]
+  \node (start) {\textbf{Roboter erzeugen und an der inneren Randspur ausrichten}};
+  \node[below=of start] (outer) {\textbf{Wiederhole für jede Seite:}};
+  \node[below=of outer, fill=LightBlue] (inner) {
+    \textbf{Solange das nächste Feld an der Mauer bearbeitet werden kann:}\\
+    vier Ziegel ablegen; zur Laufrichtung drehen; einen Schritt gehen;
+    wieder zur Mauer drehen
+  };
+  \node[below=of inner] (corner) {\textbf{Ecke:} zur nächsten Randseite wechseln und neu ausrichten};
+\end{tikzpicture}
+\end{center}
+
+\vspace{3pt}
+\colorbox{Mint}{%
+  \parbox{\dimexpr\textwidth-2\fboxsep\relax}{%
+    \textbf{\color{Navy}Prüfkriterien:}
+    Das Programm endet ohne Wandkollision, bearbeitet alle gewünschten
+    Randfelder, erzeugt überall genau vier Ziegel und das Struktogramm zeigt
+    dieselben Schleifen, Bedingungen und Anweisungen wie der Programmcode.
+  }%
+}
+
+\vspace{3pt}
+{\small\color{Muted}
+Informatik 10 · Modellierung und Programmierung · Aufgabe 2}
+
+\end{document}

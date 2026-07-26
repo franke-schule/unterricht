@@ -3,39 +3,25 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Aufgabe 2 – Objekte visualisieren</title>
+  <title>Aufgabe 2 - Wiederholung Roboter</title>
   <style>
     :root {
-      color-scheme: light;
       --bg: #f7f6f2;
-      --panel: #ffffff;
-      --panel-strong: #ffffff;
-      --surface: #eef3f8;
+      --surface: #ffffff;
       --border: #e2ddd6;
-      --border-light: #cbd5df;
+      --accent: #3b6ea5;
+      --accent-dark: #2d5682;
       --text: #1e1e1e;
       --muted: #6b6560;
-      --subtle: #77716b;
-      --indigo: #3b6ea5;
-      --indigo-light: #3b6ea5;
-      --purple: #7253a6;
-      --emerald: #28775e;
-      --red: #aa4444;
-      --yellow: #8d6a00;
-      --blue: #285f98;
-      --green: #287451;
-      --orange: #af5720;
-      --cyan: #166f86;
-      --code: "Fira Code", "Cascadia Code", Consolas, monospace;
+      --info-bg: #eef3f8;
+      --success-bg: #edf7ee;
+      --success-border: #7aae80;
+      --warning-bg: #fff8df;
+      --warning-border: #dfc979;
     }
 
     * {
       box-sizing: border-box;
-    }
-
-    html {
-      min-height: 100%;
-      background: var(--bg);
     }
 
     body {
@@ -43,1057 +29,510 @@
       margin: 0;
       color: var(--text);
       background: var(--bg);
-      font-family: Inter, "Segoe UI", system-ui, sans-serif;
+      font-family: "Segoe UI", system-ui, sans-serif;
       line-height: 1.5;
     }
 
     button,
-    input,
-    select {
+    input {
       font: inherit;
-    }
-
-    button,
-    select {
-      cursor: pointer;
     }
 
     button:focus-visible,
     input:focus-visible,
-    select:focus-visible,
+    summary:focus-visible,
     a:focus-visible {
-      outline: 3px solid rgb(129 140 248 / 55%);
+      outline: 3px solid rgb(255 255 255 / 80%);
       outline-offset: 3px;
     }
 
-    .back-link {
+    header {
+      padding: 1.5rem max(1rem, calc((100% - 1500px) / 2));
+      color: #ffffff;
+      background: var(--accent);
+    }
+
+    .page-nav {
       margin-bottom: 0.9rem;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.65rem;
+    }
+
+    .back-link {
       padding: 0.5rem 0.85rem;
       display: inline-flex;
       align-items: center;
-      gap: 0.4rem;
       color: #ffffff;
       background: rgb(255 255 255 / 12%);
       border: 1px solid rgb(255 255 255 / 55%);
-      border-radius: 0.5rem;
-      backdrop-filter: blur(8px);
-      font-size: 0.75rem;
+      border-radius: 5px;
       font-weight: 650;
       text-decoration: none;
-      transition: color 150ms ease, border-color 150ms ease;
     }
 
     .back-link:hover {
-      color: #ffffff;
       background: rgb(255 255 255 / 22%);
-      border-color: #ffffff;
-    }
-
-    .page {
-      width: 100%;
-      margin: 0;
-      padding: 0;
-    }
-
-    .hero {
-      margin-bottom: 1.5rem;
-      padding:
-        1.5rem
-        max(1rem, calc((100% - 1500px) / 2));
-      color: #ffffff;
-      background: var(--indigo);
-      text-align: left;
     }
 
     h1 {
       margin: 0;
-      color: #ffffff;
-      font-size: 1.5rem;
-      letter-spacing: -0.01em;
+      font-size: clamp(1.55rem, 3vw, 2rem);
     }
 
-    .hero p {
+    header p {
       margin: 0.35rem 0 0;
-      color: #ffffff;
-      opacity: 0.88;
+      opacity: 0.9;
     }
 
-    .workspace {
+    main {
       width: min(calc(100% - 2rem), 1500px);
-      margin: 0 auto;
+      margin: 1.5rem auto 3rem;
+    }
+
+    .intro {
+      margin-bottom: 1.25rem;
+      padding: 1rem 1.15rem;
+      background: var(--info-bg);
+      border-left: 4px solid var(--accent);
+      border-radius: 6px;
+    }
+
+    .intro p {
+      margin: 0;
+    }
+
+    .exercise-layout {
       display: grid;
-      grid-template-columns: repeat(2, minmax(0, 1fr));
-      gap: 2rem;
+      grid-template-columns: minmax(0, 1fr) minmax(330px, 430px);
+      gap: 1.25rem;
       align-items: start;
     }
 
-    .panel {
+    .ide-panel {
+      position: sticky;
+      top: 1rem;
       min-width: 0;
-      padding: 1.5rem;
-      background: var(--panel);
+    }
+
+    .ide-container {
+      overflow: hidden;
+      background: var(--surface);
       border: 1px solid var(--border);
-      border-radius: 0.5rem;
+      border-radius: 8px;
       box-shadow: 0 2px 8px rgb(0 0 0 / 8%);
     }
 
-    .panel-heading {
-      margin-bottom: 1.5rem;
-      display: flex;
-      align-items: center;
-      gap: 0.75rem;
-    }
-
-    .panel-icon {
-      width: 2.5rem;
-      height: 2.5rem;
-      flex: 0 0 auto;
-      display: grid;
-      place-items: center;
-      color: #fff;
-      border-radius: 0.65rem;
-      font-size: 1.25rem;
-      font-weight: 800;
-    }
-
-    .class-icon {
-      background: linear-gradient(135deg, var(--indigo), #a855f7);
-    }
-
-    .object-icon {
-      background: linear-gradient(135deg, #10b981, #14b8a6);
-    }
-
-    .panel-heading h2,
-    .panel-heading p {
-      margin: 0;
-    }
-
-    .panel-heading h2 {
-      color: var(--text);
-      font-size: 1.05rem;
-    }
-
-    .panel-heading p {
-      margin-top: 0.15rem;
-      color: var(--subtle);
-      font-size: 0.72rem;
-    }
-
-    .object-count {
-      margin-left: auto;
-      padding: 0.25rem 0.55rem;
-      color: var(--emerald);
-      white-space: nowrap;
-      background: #e6f4ee;
-      border: 1px solid #b9dcca;
-      border-radius: 999px;
-      font-size: 0.68rem;
-      font-weight: 700;
-    }
-
-    .code-window {
-      padding: 1rem;
-      overflow: hidden;
-      background: #f8fafc;
-      border: 1px solid #d8e0e8;
-      border-radius: 0.75rem;
-    }
-
-    .window-bar {
-      margin-bottom: 0.75rem;
-      display: flex;
-      align-items: center;
-      gap: 0.4rem;
-    }
-
-    .window-dot {
-      width: 0.7rem;
-      height: 0.7rem;
-      border-radius: 50%;
-    }
-
-    .window-dot.red { background: #ef4444; }
-    .window-dot.yellow { background: #eab308; }
-    .window-dot.green { background: #22c55e; }
-
-    .window-bar small {
-      margin-left: 0.35rem;
-      color: #697586;
-      font: 0.68rem var(--code);
-    }
-
-    pre {
-      margin: 0;
-      overflow-x: auto;
-      color: #334155;
-      font: 0.78rem/1.55 var(--code);
-      tab-size: 4;
-    }
-
-    .syn-purple { color: var(--purple); }
-    .syn-yellow { color: var(--yellow); }
-    .syn-blue { color: var(--blue); }
-    .syn-green { color: var(--green); }
-    .syn-orange { color: var(--orange); }
-    .syn-cyan { color: var(--cyan); }
-    .syn-comment { color: #7b8794; }
-
-    .create-area {
-      padding-top: 1rem;
-      text-align: center;
-    }
-
-    .primary-button {
-      padding: 0.75rem 1.4rem;
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      gap: 0.45rem;
-      color: #fff;
-      background: var(--indigo);
+    .ide-container iframe {
+      width: 100%;
+      min-height: 680px;
+      display: block;
       border: 0;
-      border-radius: 0.7rem;
-      font-weight: 750;
-      transition: background 150ms ease, transform 150ms ease;
     }
 
-    .primary-button:hover {
-      background: #2d5682;
-      transform: translateY(-1px);
-    }
-
-    .primary-button span {
-      font-size: 1.2rem;
-      line-height: 1;
-    }
-
-    .objects-container {
-      min-height: 25rem;
-      display: grid;
-      align-content: start;
-      gap: 1rem;
-    }
-
-    .empty-state {
-      min-height: 20rem;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      flex-direction: column;
-      color: #7b8490;
-      text-align: center;
-    }
-
-    .empty-state .empty-icon {
-      margin-bottom: 0.6rem;
-      font-size: 2.7rem;
-      line-height: 1;
-    }
-
-    .empty-state strong {
-      font-size: 0.9rem;
-    }
-
-    .empty-state p {
-      margin: 0.3rem 0 0;
-      font-size: 0.78rem;
-    }
-
-    .object-card {
-      padding: 1rem;
-      background: #f9fafb;
-      border: 1px solid #d9e0e7;
-      border-radius: 0.75rem;
-      animation: pop 280ms ease-out;
-    }
-
-    @keyframes pop {
-      from {
-        opacity: 0;
-        transform: scale(0.94);
-      }
-
-      to {
-        opacity: 1;
-        transform: scale(1);
-      }
-    }
-
-    .object-head {
-      margin-bottom: 0.8rem;
-      display: flex;
-      align-items: center;
-      gap: 0.75rem;
-    }
-
-    .car-swatch {
-      width: 3rem;
-      height: 2rem;
-      flex: 0 0 auto;
-      display: grid;
-      place-items: center;
-      border: 1px solid rgb(100 116 139 / 28%);
-      border-radius: 0.4rem;
-      box-shadow: 0 0.3rem 0.7rem rgb(0 0 0 / 18%);
-      font-size: 1rem;
-    }
-
-    .object-title {
-      min-width: 0;
-    }
-
-    .object-title code {
-      color: var(--cyan);
-      font: 0.82rem var(--code);
-    }
-
-    .object-title small {
-      margin-left: 0.45rem;
-      color: var(--subtle);
-      font-size: 0.68rem;
-    }
-
-    .delete-button {
-      width: 2rem;
-      height: 2rem;
-      margin-left: auto;
-      display: grid;
-      place-items: center;
-      padding: 0;
-      color: var(--subtle);
-      background: transparent;
-      border: 0;
-      border-radius: 0.45rem;
-      font-size: 1rem;
-    }
-
-    .delete-button:hover {
-      color: var(--red);
-      background: #fff0f0;
-    }
-
-    /* Jede Attributgruppe belegt bewusst eine eigene Zeile. */
-    .object-attributes {
-      margin: 0 0 0.8rem;
-      display: grid;
-      grid-template-columns: 1fr;
-      gap: 0.5rem;
-    }
-
-    .object-attributes > div {
-      min-height: 3.1rem;
-      padding: 0.6rem 0.75rem;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 1rem;
-      background: #ffffff;
-      border: 1px solid #e0e5ea;
-      border-radius: 0.55rem;
-    }
-
-    .object-attributes dt {
-      color: var(--subtle);
-      font-size: 0.7rem;
-    }
-
-    .object-attributes dd {
-      margin: 0;
-      font: 0.8rem var(--code);
-    }
-
-    .string-value { color: var(--green); }
-    .number-value { color: var(--orange); }
-
-    .methods {
-      display: grid;
-      grid-template-columns: repeat(2, 1fr);
-      gap: 0.5rem;
-    }
-
-    .methods button {
-      padding: 0.55rem;
-      border-radius: 0.5rem;
-      font: 0.72rem var(--code);
-      transition: background 150ms ease;
-    }
-
-    .accelerate {
-      color: var(--emerald);
-      background: #e5f4ed;
-      border: 1px solid #b9dccb;
-    }
-
-    .accelerate:hover {
-      background: #d3ecdf;
-    }
-
-    .brake {
-      color: var(--red);
-      background: #fff0f0;
-      border: 1px solid #e5c2c2;
-    }
-
-    .brake:hover {
-      background: #f8dddd;
-    }
-
-    .explainer {
-      width: min(calc(100% - 2rem), 1500px);
-      margin-top: 2rem;
-      margin-right: auto;
-      margin-bottom: 3rem;
-      margin-left: auto;
-      padding: 1.5rem;
-      background: #ffffff;
-      border: 1px solid var(--border);
-      border-radius: 0.5rem;
-      box-shadow: 0 2px 8px rgb(0 0 0 / 6%);
-    }
-
-    .explainer > h2 {
-      margin: 0 0 1rem;
-      display: flex;
-      align-items: center;
-      gap: 0.5rem;
-      color: var(--text);
-      font-size: 1.05rem;
-    }
-
-    .explainer-grid {
-      display: grid;
-      grid-template-columns: repeat(2, minmax(0, 1fr));
-      gap: 1.5rem;
-    }
-
-    .explanation-card {
-      padding: 1rem;
-      border-radius: 0.6rem;
-    }
-
-    .class-explanation {
-      background: #eef3f8;
-      border: 1px solid #c7d7e7;
-    }
-
-    .object-explanation {
-      background: #edf7ee;
-      border: 1px solid #b9d8bd;
-    }
-
-    .explanation-card h3 {
-      margin: 0 0 0.5rem;
-      color: var(--indigo-light);
+    .note {
+      margin: 0.75rem 0.25rem 0;
+      color: var(--muted);
       font-size: 0.85rem;
     }
 
-    .object-explanation h3 {
-      color: var(--emerald);
+    .tasks-panel {
+      position: sticky;
+      top: 1rem;
+      max-height: calc(100vh - 2rem);
+      overflow-y: auto;
+      padding: 0 0.35rem 0.5rem 0.05rem;
+      scrollbar-gutter: stable;
     }
 
-    .explanation-card ul {
-      margin: 0;
-      padding-left: 1.25rem;
-      color: var(--muted);
-      font-size: 0.78rem;
-      line-height: 1.7;
-    }
-
-    .explanation-card code {
-      padding: 0.05rem 0.3rem;
-      color: var(--text);
-      background: #ffffff;
-      border-radius: 0.25rem;
-      font-family: var(--code);
-    }
-
-    dialog {
-      width: min(calc(100% - 2rem), 27rem);
-      padding: 1.5rem;
-      color: var(--text);
-      background: var(--panel-strong);
-      border: 1px solid var(--border-light);
-      border-radius: 1rem;
-      box-shadow: 0 2rem 5rem rgb(0 0 0 / 24%);
-    }
-
-    dialog::backdrop {
-      background: rgb(30 41 59 / 45%);
-      backdrop-filter: blur(5px);
-    }
-
-    .dialog-heading {
-      margin-bottom: 1.1rem;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 1rem;
-    }
-
-    .dialog-heading h2 {
-      margin: 0;
-      font-size: 1.05rem;
-    }
-
-    .dialog-close {
-      width: 2rem;
-      height: 2rem;
-      display: grid;
-      place-items: center;
-      padding: 0;
-      color: var(--muted);
-      background: var(--surface);
-      border: 0;
-      border-radius: 0.45rem;
-      font-size: 1.1rem;
-    }
-
-    .form-field {
-      margin-bottom: 0.9rem;
-      display: block;
-    }
-
-    .form-field > span,
-    .color-field legend {
-      margin-bottom: 0.35rem;
-      display: block;
-      color: var(--muted);
-      font-size: 0.75rem;
-    }
-
-    .form-field input,
-    .form-field select {
-      width: 100%;
-      height: 2.6rem;
-      padding: 0 0.75rem;
-      color: var(--text);
-      background: #ffffff;
-      border: 1px solid var(--border-light);
-      border-radius: 0.5rem;
-    }
-
-    .form-field input {
-      font-family: var(--code);
-    }
-
-    .color-field {
-      margin: 0 0 1.1rem;
-      padding: 0;
-      border: 0;
-    }
-
-    .color-options {
-      display: flex;
-      gap: 0.55rem;
-    }
-
-    .color-button {
-      width: 2.6rem;
-      height: 2.6rem;
-      padding: 0;
-      border: 2px solid transparent;
-      border-radius: 0.55rem;
-      box-shadow: inset 0 0 0 1px rgb(148 163 184 / 25%);
-    }
-
-    .color-button[aria-pressed="true"] {
-      border-color: #fff;
-      box-shadow: 0 0 0 3px var(--indigo);
-    }
-
-    .code-preview {
+    .task-card {
       margin-bottom: 1rem;
-      padding: 0.8rem;
-      overflow-x: auto;
-      color: #334155;
-      white-space: nowrap;
-      background: #f8fafc;
-      border: 1px solid #d8e0e8;
-      border-radius: 0.5rem;
-      font: 0.72rem var(--code);
+      padding: 1.15rem;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      box-shadow: 0 2px 8px rgb(0 0 0 / 5%);
     }
 
-    .dialog-actions {
-      display: grid;
-      grid-template-columns: repeat(2, 1fr);
-      gap: 0.7rem;
+    .task-card h2 {
+      margin: 0 0 0.5rem;
+      color: var(--accent);
+      font-size: 1.15rem;
     }
 
-    .dialog-actions button {
-      padding: 0.65rem;
-      color: var(--text);
-      background: #e5e7eb;
+    .task-card p {
+      margin: 0.4rem 0;
+    }
+
+    .hint {
+      margin-top: 0.8rem;
+      padding: 0.75rem;
+      color: #493f1b;
+      background: var(--warning-bg);
+      border: 1px solid var(--warning-border);
+      border-radius: 6px;
+      font-size: 0.9rem;
+    }
+
+    code {
+      padding: 0.08rem 0.25rem;
+      background: #f1f3f5;
+      border-radius: 3px;
+      font-family: Consolas, "Courier New", monospace;
+    }
+
+    .check-row {
+      margin-top: 0.9rem;
+      display: flex;
+      align-items: flex-start;
+      gap: 0.6rem;
+    }
+
+    .check-row input {
+      width: 1.15rem;
+      height: 1.15rem;
+      margin-top: 0.18rem;
+      flex: 0 0 auto;
+      accent-color: var(--accent);
+    }
+
+    .task-card button,
+    .solution-code-controls button,
+    .download-button {
+      margin-top: 0.85rem;
+      padding: 0.65rem 0.9rem;
+      color: #ffffff;
+      background: var(--accent);
       border: 0;
-      border-radius: 0.5rem;
+      border-radius: 5px;
+      font-weight: 700;
+      cursor: pointer;
+    }
+
+    .task-card button:hover,
+    .solution-code-controls button:hover,
+    .download-button:hover {
+      background: var(--accent-dark);
+    }
+
+    .result {
+      margin: 0.75rem 0 0;
+      padding: 0.7rem 0.8rem;
+      border-radius: 5px;
       font-weight: 650;
     }
 
-    .dialog-actions .submit-button {
-      color: #ffffff;
-      background: var(--indigo);
+    .result.success {
+      background: var(--success-bg);
+      border: 1px solid var(--success-border);
     }
 
-    .dialog-actions button:hover {
-      filter: brightness(1.15);
+    .result.pending {
+      background: var(--warning-bg);
+      border: 1px solid var(--warning-border);
     }
 
-    @media (max-width: 900px) {
-      .workspace {
+    .solution-download {
+      margin-top: 1.5rem;
+      padding: 1.15rem;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+    }
+
+    .solution-download h2 {
+      margin: 0 0 0.75rem;
+      color: var(--accent);
+      font-size: 1.2rem;
+    }
+
+    .solution-reveal summary {
+      cursor: pointer;
+      font-weight: 700;
+    }
+
+    .solution-code-form {
+      margin-top: 1rem;
+      max-width: 520px;
+    }
+
+    .solution-code-form label {
+      display: block;
+      margin-bottom: 0.35rem;
+      font-weight: 650;
+    }
+
+    .solution-code-controls {
+      display: flex;
+      align-items: end;
+      gap: 0.65rem;
+    }
+
+    .solution-code-controls input {
+      min-width: 0;
+      padding: 0.62rem 0.7rem;
+      border: 1px solid #999;
+      border-radius: 5px;
+      text-transform: uppercase;
+    }
+
+    .solution-code-controls button {
+      margin-top: 0;
+    }
+
+    .solution-code-message {
+      min-height: 1.5em;
+      margin: 0.65rem 0;
+    }
+
+    .download-button {
+      margin-top: 0;
+      display: inline-flex;
+      text-decoration: none;
+    }
+
+    .download-button[hidden] {
+      display: none;
+    }
+
+    @media (max-width: 1050px) {
+      .exercise-layout {
         grid-template-columns: 1fr;
       }
 
-      .objects-container {
-        min-height: 17rem;
+      .ide-panel,
+      .tasks-panel {
+        position: static;
       }
 
-      .empty-state {
-        min-height: 14rem;
-      }
-    }
-
-    @media (max-width: 600px) {
-      .page {
-        width: 100%;
+      .tasks-panel {
+        max-height: none;
+        overflow: visible;
         padding: 0;
       }
-
-      .panel {
-        padding: 1rem;
-      }
-
-      pre {
-        font-size: 0.68rem;
-      }
-
-      .panel-heading {
-        align-items: flex-start;
-      }
-
-      .object-title small {
-        display: block;
-        margin: 0.2rem 0 0;
-      }
-
-      .explainer {
-        padding: 1rem;
-      }
-
-      .explainer-grid {
-        grid-template-columns: 1fr;
-        gap: 0.75rem;
-      }
     }
 
-    @media (prefers-reduced-motion: reduce) {
-      *,
-      *::before,
-      *::after {
-        animation-duration: 0.01ms !important;
-        transition-duration: 0.01ms !important;
+    @media (max-width: 620px) {
+      .ide-container iframe {
+        min-height: 580px;
+      }
+
+      .solution-code-controls {
+        align-items: stretch;
+        flex-direction: column;
       }
     }
   </style>
 </head>
 <body>
-  <main class="page">
-    <header class="hero">
-      <a class="back-link" href="../">
-        <span aria-hidden="true">←</span>
-        Zurück zur Aufgabenübersicht Klasse 10
-      </a>
-      <h1>Aufgabe 2 – Objekte visualisieren</h1>
-      <p>Klassen und Objekte: Visualisiere den Unterschied zwischen Bauplan und Instanz.</p>
-    </header>
+  <header>
+    <nav class="page-nav" aria-label="Seitennavigation">
+      <a class="back-link" href="../">&larr; Aufgabenübersicht Klasse 10</a>
+      <a class="back-link" href="../../../../">Startseite</a>
+    </nav>
+    <h1>Aufgabe 2 - Wiederholung Roboter</h1>
+    <p>Schleifen, Bedingungen und Struktogramme mit dem Roboter wiederholen.</p>
+  </header>
 
-    <div class="workspace">
-      <section class="panel" aria-labelledby="class-heading">
-        <div class="panel-heading">
-          <span class="panel-icon class-icon" aria-hidden="true">▤</span>
-          <div>
-            <h2 id="class-heading">Klasse (Bauplan)</h2>
-            <p>Definiert Attribute und Methoden</p>
-          </div>
+  <main>
+    <section class="intro" aria-label="Arbeitsauftrag">
+      <p>
+        Bearbeite die Teile der Reihe nach. Teste jede Erweiterung mit der
+        grünen Playtaste und übertrage den Programmcode aus c) sowie das
+        Struktogramm aus d) auf dein Arbeitsblatt.
+      </p>
+    </section>
+
+    <div class="exercise-layout">
+      <section class="ide-panel" aria-label="Online-IDE">
+        <div class="ide-container">
+          <iframe
+            title="Online-IDE zu Aufgabe 2 - Wiederholung Roboter"
+            srcdoc="<script>window.jo_doc = window.frameElement.textContent;</script><script src='../../../../include/js/includeide/includeIDE.js'></script>">
+            {
+              'id': 'Java10Aufgabe2Roboter',
+              'speed': 10,
+              'withBottomPanel': true,
+              'withPCode': true,
+              'withConsole': false,
+              'withFileList': true,
+              'withErrorList': true
+            }
+
+            <script type="text/plain" title="Anleitung" data-type="hint">
+## AUFGABE 2 - WIEDERHOLUNG ROBOTER
+
+a) Schreibe ein Programm, sodass der Roboter eine Ziegelreihe bis zur Wand legt.
+
+b) Erweitere dein Programm, sodass der Roboter die Ziegel am Rand entlang legt.
+
+c) Erweitere dein Programm, sodass der Roboter eine Ziegelmauer mit der Höhe 4 am Rand entlang legt. Notiere den Programmcode auf deinem Arbeitsblatt.
+
+d) Zeichne das passende Struktogramm zu c) auf dein Arbeitsblatt.
+            </script>
+
+            <script type="plain/text" title="Hauptprogramm.java">
+Robot roboter = new Robot(1, 1, 15, 15);
+
+// Beispiel - kann gelöscht werden
+roboter.schritt();
+for (int i = 0; i &lt; 10; i++) {
+   roboter.schritt();
+   roboter.hinlegen();
+}
+            </script>
+          </iframe>
         </div>
-
-        <div class="code-window">
-          <div class="window-bar" aria-hidden="true">
-            <span class="window-dot red"></span>
-            <span class="window-dot yellow"></span>
-            <span class="window-dot green"></span>
-            <small>Auto.java</small>
-          </div>
-          <pre aria-label="Java-Klasse Auto"><code><span class="syn-purple">public class</span> <span class="syn-yellow">Auto</span> {
-    <span class="syn-comment">// Attribute</span>
-    <span class="syn-blue">String</span> marke;
-    <span class="syn-blue">String</span> farbe;
-    <span class="syn-blue">int</span> geschwindigkeit;
-
-    <span class="syn-comment">// Konstruktor</span>
-    <span class="syn-yellow">Auto</span>(<span class="syn-blue">String</span> m, <span class="syn-blue">String</span> f) {
-        marke = m;
-        farbe = f;
-        geschwindigkeit = <span class="syn-orange">0</span>;
-    }
-
-    <span class="syn-comment">// Methoden</span>
-    <span class="syn-purple">void</span> <span class="syn-green">beschleunige</span>(<span class="syn-blue">int</span> wert) {
-        geschwindigkeit += wert;
-    }
-
-    <span class="syn-purple">void</span> <span class="syn-green">bremse</span>() {
-        geschwindigkeit = <span class="syn-orange">0</span>;
-    }
-}</code></pre>
-        </div>
-
-        <div class="create-area">
-          <button class="primary-button" id="open-dialog" type="button">
-            <span aria-hidden="true">＋</span>
-            Neues Auto erstellen
-          </button>
-        </div>
+        <p class="note">
+          Tipp: Speichere nach jedem funktionierenden Teil eine Kopie deines
+          Codes, bevor du ihn für den nächsten Teil erweiterst.
+        </p>
       </section>
 
-      <section class="panel" aria-labelledby="objects-heading">
-        <div class="panel-heading">
-          <span class="panel-icon object-icon" aria-hidden="true">⬡</span>
-          <div>
-            <h2 id="objects-heading">Objekte (Instanzen)</h2>
-            <p>Konkrete Autos im Speicher</p>
+      <aside class="tasks-panel" aria-label="Aufgabenschritte">
+        <section class="task-card" aria-labelledby="task-2a-title">
+          <h2 id="task-2a-title">a) Ziegelreihe bis zur Wand</h2>
+          <p>
+            Schreibe ein Programm, sodass der Roboter eine Ziegelreihe bis zur
+            Wand legt.
+          </p>
+          <div class="hint">
+            Überlege, welche Bedingung die Schleife beendet. Nützlich sind
+            <code>istWand()</code>, <code>hinlegen()</code> und
+            <code>schritt()</code>.
           </div>
-          <span class="object-count" id="object-count" aria-live="polite">0 Objekte</span>
-        </div>
+          <label class="check-row" for="complete-2a">
+            <input id="complete-2a" type="checkbox">
+            <span>Mein Programm läuft ohne Fehler und endet an der Wand.</span>
+          </label>
+          <button type="button" onclick="checkTask('2a')">Teil a prüfen</button>
+          <p id="result-2a" class="result" aria-live="polite" hidden></p>
+        </section>
 
-        <div class="objects-container" id="objects-container">
-          <div class="empty-state">
-            <span class="empty-icon" aria-hidden="true">◇</span>
-            <strong>Noch keine Objekte erstellt</strong>
-            <p>Klicke auf „Neues Auto erstellen“</p>
+        <section class="task-card" aria-labelledby="task-2b-title">
+          <h2 id="task-2b-title">b) Ziegel am Rand entlang</h2>
+          <p>
+            Erweitere dein Programm, sodass der Roboter die Ziegel am Rand
+            entlang legt.
+          </p>
+          <div class="hint">
+            Wenn der Roboter eine Wand erreicht, muss er sich drehen. Suche
+            nach einer wiederholbaren Lösung für eine Seite und eine Ecke.
           </div>
-        </div>
-      </section>
+          <label class="check-row" for="complete-2b">
+            <input id="complete-2b" type="checkbox">
+            <span>Der Roboter legt die Ziegel an allen vier Seiten ab.</span>
+          </label>
+          <button type="button" onclick="checkTask('2b')">Teil b prüfen</button>
+          <p id="result-2b" class="result" aria-live="polite" hidden></p>
+        </section>
+
+        <section class="task-card" aria-labelledby="task-2c-title">
+          <h2 id="task-2c-title">c) Ziegelmauer mit Höhe 4</h2>
+          <p>
+            Erweitere dein Programm, sodass der Roboter am Rand entlang eine
+            Ziegelmauer mit der Höhe 4 legt. Notiere den Programmcode auf
+            deinem Arbeitsblatt.
+          </p>
+          <div class="hint">
+            <code>hinlegen(4)</code> legt vier Ziegel auf einmal. Beachte:
+            Der Roboter kann höchstens einen Ziegel hoch- oder herunterspringen.
+          </div>
+          <label class="check-row" for="complete-2c">
+            <input id="complete-2c" type="checkbox">
+            <span>Die Mauer ist vier Ziegel hoch und mein Code steht auf dem Arbeitsblatt.</span>
+          </label>
+          <button type="button" onclick="checkTask('2c')">Teil c prüfen</button>
+          <p id="result-2c" class="result" aria-live="polite" hidden></p>
+        </section>
+
+        <section class="task-card" aria-labelledby="task-2d-title">
+          <h2 id="task-2d-title">d) Struktogramm</h2>
+          <p>
+            Zeichne auf deinem Arbeitsblatt das passende Struktogramm zu
+            deinem Programm aus c). Stelle Schleifen und Bedingungen
+            vollständig dar.
+          </p>
+          <label class="check-row" for="complete-2d">
+            <input id="complete-2d" type="checkbox">
+            <span>Mein Struktogramm entspricht meinem Programm aus c).</span>
+          </label>
+          <button type="button" onclick="checkTask('2d')">Teil d prüfen</button>
+          <p id="result-2d" class="result" aria-live="polite" hidden></p>
+        </section>
+      </aside>
     </div>
 
-    <aside class="explainer" aria-labelledby="difference-heading">
-      <h2 id="difference-heading"><span aria-hidden="true">💡</span> Der Unterschied</h2>
-      <div class="explainer-grid">
-        <section class="explanation-card class-explanation">
-          <h3>Klasse = Bauplan</h3>
-          <ul>
-            <li>Existiert nur einmal im Code</li>
-            <li>Definiert, WELCHE Eigenschaften Objekte haben</li>
-            <li>Definiert, WAS Objekte tun können</li>
-            <li>Hat selbst keine konkreten Werte</li>
-          </ul>
-        </section>
-        <section class="explanation-card object-explanation">
-          <h3>Objekt = Instanz</h3>
-          <ul>
-            <li>Es können beliebig viele erstellt werden</li>
-            <li>Jedes hat EIGENE Attributwerte</li>
-            <li>Wird mit <code>new</code> erzeugt</li>
-            <li>Belegt Speicherplatz im Heap</li>
-          </ul>
-        </section>
-      </div>
-    </aside>
+    <section class="solution-download" aria-labelledby="solution-download-title">
+      <h2 id="solution-download-title">Sicherungsblatt zu Aufgabe 2</h2>
+      <details class="solution-reveal">
+        <summary>Sicherungsblatt anzeigen</summary>
+        <form
+          class="solution-code-form"
+          onsubmit="unlockSolution(event, 'M8KR-XQPT', 'solution-download-link', 'solution-code-message')">
+          <label for="solution-code">Lehrercode eingeben</label>
+          <div class="solution-code-controls">
+            <input
+              id="solution-code"
+              name="solution-code"
+              type="text"
+              maxlength="9"
+              autocomplete="off"
+              autocapitalize="characters"
+              spellcheck="false"
+              required>
+            <button type="submit">Code prüfen</button>
+          </div>
+          <p id="solution-code-message" class="solution-code-message" aria-live="polite"></p>
+          <a
+            id="solution-download-link"
+            class="download-button"
+            href="sicherungsblatt-aufgabe-2-loesungen.pdf"
+            download
+            hidden>
+            &#8595; Sicherungsblatt herunterladen
+          </a>
+        </form>
+      </details>
+    </section>
   </main>
 
-  <dialog id="create-dialog" aria-labelledby="dialog-title">
-    <form id="create-form">
-      <div class="dialog-heading">
-        <h2 id="dialog-title">Neues Auto-Objekt erstellen</h2>
-        <button class="dialog-close" id="close-dialog" type="button" aria-label="Dialog schließen">×</button>
-      </div>
-
-      <label class="form-field">
-        <span>Variablenname</span>
-        <input
-          id="variable-name"
-          name="variableName"
-          type="text"
-          pattern="[A-Za-z_$][A-Za-z0-9_$]*"
-          maxlength="30"
-          autocomplete="off"
-          spellcheck="false"
-          required>
-      </label>
-
-      <label class="form-field">
-        <span>Marke</span>
-        <select id="brand-input" name="brand">
-          <option>BMW</option>
-          <option>Mercedes</option>
-          <option>Audi</option>
-          <option>VW</option>
-          <option>Tesla</option>
-        </select>
-      </label>
-
-      <fieldset class="color-field">
-        <legend>Farbe</legend>
-        <div class="color-options">
-          <button class="color-button" type="button" data-color="rot" aria-label="Rot" style="background:#ef4444"></button>
-          <button class="color-button" type="button" data-color="blau" aria-label="Blau" style="background:#3b82f6"></button>
-          <button class="color-button" type="button" data-color="gruen" aria-label="Grün" style="background:#22c55e"></button>
-          <button class="color-button" type="button" data-color="schwarz" aria-label="Schwarz" style="background:#1f2937"></button>
-          <button class="color-button" type="button" data-color="weiss" aria-label="Weiß" style="background:#fff"></button>
-        </div>
-      </fieldset>
-
-      <div class="code-preview" aria-label="Vorschau des Java-Codes">
-        <span class="syn-yellow">Auto</span>
-        <span class="syn-cyan" id="preview-variable">auto1</span> =
-        <span class="syn-purple">new</span>
-        <span class="syn-yellow">Auto</span>(<span class="syn-green">"<span id="preview-brand">BMW</span>"</span>,
-        <span class="syn-green">"<span id="preview-color">rot</span>"</span>);
-      </div>
-
-      <div class="dialog-actions">
-        <button id="cancel-dialog" type="button">Abbrechen</button>
-        <button class="submit-button" type="submit">Erstellen</button>
-      </div>
-    </form>
-  </dialog>
-
   <script>
-    'use strict';
+    function checkTask(taskId) {
+      const checkbox = document.getElementById('complete-' + taskId);
+      const result = document.getElementById('result-' + taskId);
 
-    const colorStyles = {
-      rot: { background: '#ef4444', text: '#ffffff' },
-      blau: { background: '#3b82f6', text: '#ffffff' },
-      gruen: { background: '#22c55e', text: '#ffffff' },
-      schwarz: { background: '#1f2937', text: '#ffffff' },
-      weiss: { background: '#ffffff', text: '#1f2937' }
-    };
+      result.hidden = false;
 
-    const state = {
-      cars: [],
-      nextId: 1,
-      nextNumber: 1,
-      selectedColor: 'rot'
-    };
-
-    const dialog = document.getElementById('create-dialog');
-    const form = document.getElementById('create-form');
-    const variableInput = document.getElementById('variable-name');
-    const brandInput = document.getElementById('brand-input');
-    const previewVariable = document.getElementById('preview-variable');
-    const previewBrand = document.getElementById('preview-brand');
-    const previewColor = document.getElementById('preview-color');
-    const objectsContainer = document.getElementById('objects-container');
-    const objectCount = document.getElementById('object-count');
-    const colorButtons = Array.from(document.querySelectorAll('.color-button'));
-
-    function selectColor(color) {
-      state.selectedColor = color;
-      previewColor.textContent = color;
-
-      colorButtons.forEach(function(button) {
-        button.setAttribute(
-          'aria-pressed',
-          String(button.dataset.color === color)
-        );
-      });
-    }
-
-    function openCreateDialog() {
-      const variableName = 'auto' + state.nextNumber;
-      state.nextNumber += 1;
-
-      variableInput.value = variableName;
-      brandInput.value = 'BMW';
-      previewVariable.textContent = variableName;
-      previewBrand.textContent = 'BMW';
-      selectColor('rot');
-      dialog.showModal();
-      variableInput.focus();
-      variableInput.select();
-    }
-
-    function closeCreateDialog() {
-      dialog.close();
-    }
-
-    function updateCar(id, update) {
-      const car = state.cars.find(function(item) {
-        return item.id === id;
-      });
-
-      if (!car) {
-        return;
+      if (checkbox.checked) {
+        result.className = 'result success';
+        result.textContent = 'Erledigt. Du kannst mit dem nächsten Teil weiterarbeiten.';
+      } else {
+        result.className = 'result pending';
+        result.textContent = 'Noch nicht abgehakt. Teste dein Ergebnis und bestätige dann die Aussage.';
       }
-
-      update(car);
-      renderObjects();
     }
 
-    function deleteCar(id) {
-      state.cars = state.cars.filter(function(car) {
-        return car.id !== id;
-      });
-      renderObjects();
-    }
-
-    function createAttribute(label, value, valueClass) {
-      const row = document.createElement('div');
-      const term = document.createElement('dt');
-      const description = document.createElement('dd');
-
-      term.textContent = label;
-      description.textContent = value;
-      description.className = valueClass;
-      row.append(term, description);
-      return row;
-    }
-
-    function createMethodButton(label, className, handler) {
-      const button = document.createElement('button');
-      button.type = 'button';
-      button.className = className;
-      button.textContent = label;
-      button.addEventListener('click', handler);
-      return button;
-    }
-
-    function createObjectCard(car) {
-      const card = document.createElement('article');
-      card.className = 'object-card';
-
-      const header = document.createElement('div');
-      header.className = 'object-head';
-
-      const swatch = document.createElement('span');
-      const style = colorStyles[car.color];
-      swatch.className = 'car-swatch';
-      swatch.textContent = '🚗';
-      swatch.style.backgroundColor = style.background;
-      swatch.style.color = style.text;
-      swatch.setAttribute('aria-label', 'Autofarbe ' + car.color);
-
-      const title = document.createElement('div');
-      title.className = 'object-title';
-
-      const variable = document.createElement('code');
-      variable.textContent = car.variableName;
-
-      const comment = document.createElement('small');
-      comment.textContent = '// Auto-Objekt';
-      title.append(variable, comment);
-
-      const deleteButton = document.createElement('button');
-      deleteButton.type = 'button';
-      deleteButton.className = 'delete-button';
-      deleteButton.textContent = '⌫';
-      deleteButton.setAttribute('aria-label', car.variableName + ' löschen');
-      deleteButton.addEventListener('click', function() {
-        deleteCar(car.id);
-      });
-
-      header.append(swatch, title, deleteButton);
-
-      const attributes = document.createElement('dl');
-      attributes.className = 'object-attributes';
-      attributes.append(
-        createAttribute('marke', '"' + car.brand + '"', 'string-value'),
-        createAttribute('farbe', '"' + car.color + '"', 'string-value'),
-        createAttribute('geschwindigkeit', String(car.speed), 'number-value')
-      );
-
-      const methods = document.createElement('div');
-      methods.className = 'methods';
-      methods.append(
-        createMethodButton('beschleunige(10)', 'accelerate', function() {
-          updateCar(car.id, function(item) {
-            item.speed += 10;
-          });
-        }),
-        createMethodButton('bremse()', 'brake', function() {
-          updateCar(car.id, function(item) {
-            item.speed = 0;
-          });
-        })
-      );
-
-      card.append(header, attributes, methods);
-      return card;
-    }
-
-    function renderObjects() {
-      objectsContainer.replaceChildren();
-      objectCount.textContent =
-        state.cars.length + ' ' +
-        (state.cars.length === 1 ? 'Objekt' : 'Objekte');
-
-      if (state.cars.length === 0) {
-        const emptyState = document.createElement('div');
-        emptyState.className = 'empty-state';
-
-        const icon = document.createElement('span');
-        icon.className = 'empty-icon';
-        icon.setAttribute('aria-hidden', 'true');
-        icon.textContent = '◇';
-
-        const title = document.createElement('strong');
-        title.textContent = 'Noch keine Objekte erstellt';
-
-        const hint = document.createElement('p');
-        hint.textContent = 'Klicke auf „Neues Auto erstellen“';
-
-        emptyState.append(icon, title, hint);
-        objectsContainer.append(emptyState);
-        return;
-      }
-
-      state.cars.forEach(function(car) {
-        objectsContainer.append(createObjectCard(car));
-      });
-    }
-
-    document.getElementById('open-dialog').addEventListener('click', openCreateDialog);
-    document.getElementById('close-dialog').addEventListener('click', closeCreateDialog);
-    document.getElementById('cancel-dialog').addEventListener('click', closeCreateDialog);
-
-    variableInput.addEventListener('input', function() {
-      previewVariable.textContent = variableInput.value || 'meinAuto';
-    });
-
-    brandInput.addEventListener('change', function() {
-      previewBrand.textContent = brandInput.value;
-    });
-
-    colorButtons.forEach(function(button) {
-      button.addEventListener('click', function() {
-        selectColor(button.dataset.color);
-      });
-    });
-
-    form.addEventListener('submit', function(event) {
+    function unlockSolution(event, expectedCode, linkId, messageId) {
       event.preventDefault();
 
-      if (!form.reportValidity()) {
-        return;
+      const form = event.currentTarget;
+      const input = form.querySelector('input');
+      const link = document.getElementById(linkId);
+      const message = document.getElementById(messageId);
+      const normalizedInput = input.value.toUpperCase().replace(/[^A-Z0-9]/g, '');
+      const normalizedCode = expectedCode.toUpperCase().replace(/[^A-Z0-9]/g, '');
+
+      if (normalizedInput === normalizedCode) {
+        link.hidden = false;
+        message.textContent = 'Code korrekt. Das Sicherungsblatt ist jetzt freigeschaltet.';
+        message.style.color = '#287451';
+      } else {
+        link.hidden = true;
+        message.textContent = 'Der Lehrercode ist nicht korrekt. Bitte prüfe deine Eingabe.';
+        message.style.color = '#aa4444';
       }
-
-      state.cars.push({
-        id: state.nextId,
-        variableName: variableInput.value.trim(),
-        brand: brandInput.value,
-        color: state.selectedColor,
-        speed: 0
-      });
-      state.nextId += 1;
-      renderObjects();
-      closeCreateDialog();
-    });
-
-    dialog.addEventListener('click', function(event) {
-      if (event.target === dialog) {
-        closeCreateDialog();
-      }
-    });
-
-    selectColor('rot');
+    }
   </script>
 </body>
 </html>
