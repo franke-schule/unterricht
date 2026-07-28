@@ -1,0 +1,749 @@
+<!DOCTYPE html>
+<html lang="de">
+
+<head>
+    <meta name="robots" content="noindex, nofollow">
+    
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Aufgabe 1 - Grundlagen Datenbanken | Informatik 10</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Fira+Code:wght@400;500&display=swap"
+        rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0"
+        rel="stylesheet">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: { sans: ['Inter', 'sans-serif'], code: ['Fira Code', 'monospace'] },
+                    colors: { bgDark: '#f8fafc', sqlKey: '#56b6c2', sqlStr: '#98c379', sqlNum: '#d19a66', sqlCom: '#5c6370' }
+                }
+            }
+        }
+    </script>
+    <style>
+        .code-font {
+            font-family: 'Fira Code', Consolas, monospace; font-variant-ligatures: none;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .fade-in {
+            animation: fadeIn 0.5s ease-out forwards;
+        }
+
+        .code-gap {
+            background: #ffffff;
+            border-bottom: 2px solid #64748b;
+            color: #92400e;
+            font-family: 'Fira Code', Consolas, monospace; font-variant-ligatures: none;
+            padding: 0 6px;
+            text-align: center;
+            border-radius: 2px;
+            outline: none;
+            transition: all 0.2s;
+            min-width: 60px;
+            display: inline-block;
+        }
+
+        .code-gap:focus {
+            background: rgba(6, 182, 212, 0.15);
+            border-bottom-color: #06b6d4;
+        }
+
+        .code-gap.correct {
+            border-bottom-color: #22c55e;
+            color: #22c55e;
+            background: rgba(34, 197, 94, 0.1);
+        }
+
+        .code-gap.wrong {
+            border-bottom-color: #ef4444;
+            animation: shake 0.4s;
+        }
+
+        @keyframes shake {
+
+            0%,
+            100% {
+                transform: translateX(0);
+            }
+
+            25% {
+                transform: translateX(-4px);
+            }
+
+            75% {
+                transform: translateX(4px);
+            }
+        }
+
+        .shake {
+            animation: shake 0.4s ease-in-out;
+        }
+    
+        /* ===== PDF-Export (Druck-Layout) ===== */
+        @media print {
+            body { background:#fff !important; color:#111 !important; }
+            a[href="../index.html"], #feedback-toast, #back-btn, button,
+            div[id^="step"][id$="-feedback"], #completion, .max-w-3xl, #student-badge { display:none !important; }
+            
+            /* Disable animations and transitions to prevent frozen 0% opacity frames in print engines */
+            *, ::before, ::after {
+                animation: none !important;
+                transition: none !important;
+            }
+            .fade-in {
+                opacity: 1 !important;
+                transform: none !important;
+            }
+            #student-badge {
+                display: none !important;
+            }
+            
+            /* Reset heights, overflows, and positioning on all layout containers to prevent page clipping */
+            html, body, .max-w-5xl, .max-w-4xl, .grid {
+                height: auto !important;
+                min-height: 0 !important;
+                overflow: visible !important;
+                position: static !important;
+            }
+            
+            /* Force the grid and step containers to display even if they have the 'hidden' class from JS */
+            div.grid, div.grid.hidden {
+                display: block !important;
+            }
+            div.step-desc, div.step-desc.hidden, div.step, div.step.hidden {
+                display: block !important;
+                background: #fff !important;
+                border: 1px solid #cbd5e1 !important;
+                box-shadow: none !important;
+                margin-bottom: 14px;
+                break-inside: avoid;
+                page-break-inside: avoid;
+            }
+}
+</style>
+</head>
+
+<body class="bg-slate-50 text-slate-800 min-h-screen">
+    <!-- Navigation -->
+    <a href="../index.html"
+        style="position:fixed;top:12px;left:12px;z-index:9999;display:flex;align-items:center;gap:6px;background:rgba(255,255,255,0.95);backdrop-filter:blur(8px);border:1px solid rgba(148,163,184,0.55);padding:8px 14px;border-radius:8px;color:#475569;text-decoration:none;font-size:12px;box-shadow:0 8px 24px rgba(15,23,42,0.08);"
+        onmouseover="this.style.color='#0f172a';" onmouseout="this.style.color='#475569';">
+        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none"
+            stroke="currentColor" stroke-width="2">
+            <path d="m12 19-7-7 7-7" />
+            <path d="M19 12H5" />
+        </svg>
+        Übersicht
+    </a>
+
+    <div class="max-w-4xl mx-auto px-6 py-16">
+        <header class="text-center mb-10">
+            <div
+                class="inline-flex items-center gap-2 bg-blue-500/10 border border-blue-500/30 rounded-full px-4 py-1.5 mb-4">
+                <span class="material-symbols-outlined text-blue-700 text-lg">storage</span>
+                <span class="text-xs font-medium text-blue-700">Theorie & Grundlagen</span>
+            </div>
+            <h1
+                class="text-4xl font-bold mb-3 bg-gradient-to-r from-cyan-700 to-blue-700 bg-clip-text text-transparent">
+                Aufgabe 1 - Grundlagen Datenbanken
+            </h1>
+            <p class="text-slate-600">Wie strukturieren und speichern wir Millionen von Daten?</p>
+        </header>
+
+        <!-- Fortschrittsanzeige -->
+        <div class="mb-8">
+            <div class="flex justify-between text-sm text-slate-500 mb-2">
+                <span>Fortschritt</span>
+                <span id="progress-text">Schritt 1 von 5</span>
+            </div>
+            <div class="h-2 bg-slate-200 rounded-full overflow-hidden">
+                <div id="progress-bar"
+                    class="h-full bg-gradient-to-r from-cyan-500 to-blue-500 transition-all duration-500"
+                    style="width: 0%"></div>
+            </div>
+            <div class="flex justify-between mt-3" id="dot-container"></div>
+        </div>
+
+        <!-- SCHRITT 1: Was ist eine Datenbank -->
+        <section id="step-1" data-q="1"
+            class="step-section bg-white border border-slate-200 rounded-2xl p-8 mb-6">
+            <div class="flex items-center gap-3 mb-6">
+                <div
+                    class="w-10 h-10 rounded-full bg-blue-500 flex items-center justify-center font-bold text-white shadow-[0_0_15px_rgba(59,130,246,0.5)]">
+                    1</div>
+                <h2 class="text-xl font-bold text-slate-900">Das digitale Archiv</h2>
+            </div>
+            <div class="bg-slate-100 rounded-xl p-6 mb-6 text-slate-700 leading-relaxed">
+                <p class="mb-4">
+                    Stell dir vor, du hast eine Schule mit 1000 Schülern. Wenn du deren Daten auf Zettel schreibst,
+                    findest du nie wieder jemanden. Ein normales Textdokument ist auch nicht viel besser.
+                </p>
+                <p class="mb-4">
+                    Wir brauchen ein System, das Daten <strong>strukturiert</strong> speichert, sodass wir sie in
+                    Millisekunden durchsuchen, sortieren und verknüpfen können. Dafür nutzen wir <strong>Relationale
+                        Datenbanken</strong>.
+                </p>
+                <div class="bg-blue-500/10 border border-blue-500/30 rounded-lg p-4 flex gap-4 items-center">
+                    <span class="material-symbols-outlined text-4xl text-blue-700">grid_on</span>
+                    <p class="text-sm">In einer relationalen Datenbank werden alle Daten in Form von
+                        <strong>Tabellen</strong> (in der Fachsprache: <strong>Relationen</strong>) organisiert.</p>
+                </div>
+            </div>
+
+            <div class="bg-white border border-slate-200 rounded-xl p-6">
+                <h4 class="font-semibold text-cyan-700 mb-4 flex items-center gap-2"><span
+                        class="material-symbols-outlined">quiz</span> Checkpoint</h4>
+                <p class="text-slate-700 mb-4">Was ist in der Datenbankwelt mit dem Fachbegriff "Relation" gemeint?</p>
+                <div class="space-y-2">
+                    <button onclick="checkStepChoice('1', 'falsch')"
+                        class="step1-btn w-full bg-slate-100 hover:bg-slate-200 border border-slate-300 px-4 py-3 rounded-lg transition text-left">A)
+                        Die Verwandtschaft zwischen zwei Schülern.</button>
+                    <button onclick="checkStepChoice('1', 'richtig')"
+                        class="step1-btn w-full bg-slate-100 hover:bg-slate-200 border border-slate-300 px-4 py-3 rounded-lg transition text-left">B)
+                        Eine strukturierte Datentabelle.</button>
+                    <button onclick="checkStepChoice('1', 'falsch')"
+                        class="step1-btn w-full bg-slate-100 hover:bg-slate-200 border border-slate-300 px-4 py-3 rounded-lg transition text-left">C)
+                        Der Ordner, in dem die Datenbankdatei liegt.</button>
+                </div>
+                <div id="step1-feedback" class="qf hidden mt-4 p-3 rounded-lg text-center font-medium"></div>
+            </div>
+        </section>
+
+        <!-- SCHRITT 2: OOP Mapping -->
+        <section id="step-2" data-q="2"
+            class="step-section hidden bg-white border border-slate-200 rounded-2xl p-8 mb-6">
+            <div class="flex items-center gap-3 mb-6">
+                <div
+                    class="w-10 h-10 rounded-full bg-blue-500 flex items-center justify-center font-bold text-white shadow-[0_0_15px_rgba(59,130,246,0.5)]">
+                    2</div>
+                <h2 class="text-xl font-bold text-slate-900">Von Java in die Datenbank</h2>
+            </div>
+            <div class="bg-slate-100 rounded-xl p-6 mb-6">
+                <p class="text-slate-700 mb-4">
+                    Du kennst bereits Klassen, Objekte und Attribute aus der Programmierung. Relationale Datenbanken
+                    speichern exakt diese Struktur, nur verwenden sie andere Namen dafür.
+                </p>
+
+                <!-- Interaktive Tabelle -->
+                <div class="bg-slate-50 border border-slate-300 rounded-xl overflow-hidden mb-6 shadow-lg transition-all duration-300"
+                    id="interactive-table-container">
+                    <div class="bg-slate-100 px-4 py-3 border-b border-slate-300 flex justify-between items-center cursor-help transition-colors duration-300"
+                        onmouseenter="showTableTooltip('tabelle')" onmouseleave="hideTableTooltip()">
+                        <span class="font-code text-slate-700 font-bold flex items-center gap-2">
+                            <span class="material-symbols-outlined text-base">table_rows</span>
+                            Tabelle: Lehrkraft
+                        </span>
+                        <span
+                            class="text-xs bg-slate-200 text-slate-700 px-2 py-1 rounded border border-slate-300">Interaktives
+                            Beispiel</span>
+                    </div>
+
+                    <div class="p-4 overflow-x-auto">
+                        <table class="w-full text-sm text-left border-collapse">
+                            <thead>
+                                <tr>
+                                    <th class="border border-slate-300 p-2 text-slate-600 font-code hover:bg-emerald-500/20 hover:text-emerald-700 transition-colors duration-200 cursor-help"
+                                        onmouseenter="showTableTooltip('spalte')" onmouseleave="hideTableTooltip()">
+                                        Kürzel</th>
+                                    <th class="border border-slate-300 p-2 text-slate-600 font-code hover:bg-emerald-500/20 hover:text-emerald-700 transition-colors duration-200 cursor-help"
+                                        onmouseenter="showTableTooltip('spalte')" onmouseleave="hideTableTooltip()">Name
+                                    </th>
+                                    <th class="border border-slate-300 p-2 text-slate-600 font-code hover:bg-emerald-500/20 hover:text-emerald-700 transition-colors duration-200 cursor-help"
+                                        onmouseenter="showTableTooltip('spalte')" onmouseleave="hideTableTooltip()">
+                                        Vorname</th>
+                                    <th class="border border-slate-300 p-2 text-slate-600 font-code hover:bg-emerald-500/20 hover:text-emerald-700 transition-colors duration-200 cursor-help"
+                                        onmouseenter="showTableTooltip('spalte')" onmouseleave="hideTableTooltip()">
+                                        Fach1</th>
+                                    <th class="border border-slate-300 p-2 text-slate-600 font-code hover:bg-emerald-500/20 hover:text-emerald-700 transition-colors duration-200 cursor-help"
+                                        onmouseenter="showTableTooltip('spalte')" onmouseleave="hideTableTooltip()">
+                                        Fach2</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr class="hover:bg-fuchsia-500/20 transition-colors duration-200 cursor-help group"
+                                    onmouseenter="showTableTooltip('zeile')" onmouseleave="hideTableTooltip()">
+                                    <td class="border border-slate-300 p-2 text-slate-700 group-hover:text-fuchsia-800">
+                                        bab</td>
+                                    <td class="border border-slate-300 p-2 text-slate-700 group-hover:text-fuchsia-800">
+                                        Baumbart</td>
+                                    <td class="border border-slate-300 p-2 text-slate-700 group-hover:text-fuchsia-800">
+                                        Berta</td>
+                                    <td class="border border-slate-300 p-2 text-slate-700 group-hover:text-fuchsia-800">
+                                        M</td>
+                                    <td class="border border-slate-300 p-2 text-slate-700 group-hover:text-fuchsia-800">
+                                        Ph</td>
+                                </tr>
+                                <tr class="hover:bg-fuchsia-500/20 transition-colors duration-200 cursor-help group"
+                                    onmouseenter="showTableTooltip('zeile')" onmouseleave="hideTableTooltip()">
+                                    <td class="border border-slate-300 p-2 text-slate-700 group-hover:text-fuchsia-800">
+                                        sch</td>
+                                    <td class="border border-slate-300 p-2 text-slate-700 group-hover:text-fuchsia-800">
+                                        Schmidt</td>
+                                    <td class="border border-slate-300 p-2 text-slate-700 group-hover:text-fuchsia-800">
+                                        Peter</td>
+                                    <td class="border border-slate-300 p-2 text-slate-700 group-hover:text-fuchsia-800">
+                                        D</td>
+                                    <td class="border border-slate-300 p-2 text-slate-700 group-hover:text-fuchsia-800">
+                                        E</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <div id="table-tooltip"
+                        class="h-12 bg-slate-100 flex items-center justify-center text-sm font-medium text-slate-600 transition-all duration-300 px-4 text-center">
+                        <span class="material-symbols-outlined text-lg mr-2 animate-pulse">touch_app</span>
+                        Fahre mit der Maus über die Tabelle, Spalten und Zeilen!
+                    </div>
+                </div>
+
+            </div>
+
+            <div class="bg-white border border-slate-200 rounded-xl p-6">
+                <h4 class="font-semibold text-cyan-700 mb-4 flex items-center gap-2"><span
+                        class="material-symbols-outlined">edit_square</span> Lückentext</h4>
+                <p class="text-slate-700 mb-4 text-sm">Übersetze die Begriffe aus der Programmierung mithilfe der
+                    interaktiven Tabelle in die passenden Datenbankbegriffe.</p>
+
+                <div class="space-y-4 font-code text-sm">
+                    <div class="flex items-center justify-between bg-slate-50 p-3 rounded border border-slate-300">
+                        <span>Die Klasse "Lehrkraft" wird zu einer...</span>
+                        <input type="text" class="code-gap w-32" data-answer="tabelle" id="gap-2-1" placeholder="...">
+                    </div>
+                    <div class="flex items-center justify-between bg-slate-50 p-3 rounded border border-slate-300">
+                        <span>Das Attribut "Kürzel" wird zu einer...</span>
+                        <input type="text" class="code-gap w-32" data-answer="spalte" id="gap-2-2" placeholder="...">
+                    </div>
+                    <div class="flex items-center justify-between bg-slate-50 p-3 rounded border border-slate-300">
+                        <span>Ein konkretes Lehrkraft-Objekt ("bab", "Berta", ...) steht in der Tabelle in
+                            einer...</span>
+                        <input type="text" class="code-gap w-32" data-answer="zeile" id="gap-2-3" placeholder="...">
+                    </div>
+                </div>
+
+                <button onclick="checkGaps('2')"
+                    class="mt-6 w-full bg-slate-100 hover:bg-slate-200 border border-cyan-500/50 text-cyan-700 font-semibold py-3 rounded-lg transition">Begriffe
+                    prüfen</button>
+                <div id="step2-feedback" class="qf hidden mt-4 p-3 rounded-lg text-center font-medium"></div>
+            </div>
+        </section>
+
+        <!-- SCHRITT 3: Datentypen -->
+        <section id="step-3" data-q="3"
+            class="step-section hidden bg-white border border-slate-200 rounded-2xl p-8 mb-6">
+            <div class="flex items-center gap-3 mb-6">
+                <div
+                    class="w-10 h-10 rounded-full bg-blue-500 flex items-center justify-center font-bold text-white shadow-[0_0_15px_rgba(59,130,246,0.5)]">
+                    3</div>
+                <h2 class="text-xl font-bold text-slate-900">SQL Datentypen</h2>
+            </div>
+            <div class="bg-slate-100 rounded-xl p-6 mb-6">
+                <p class="text-slate-700 mb-4">
+                    Genau wie in Java (<code>int</code>, <code>String</code>) müssen wir der Datenbank beim Erstellen
+                    einer Tabelle mitteilen, welche Art von Daten in eine Spalte kommen. SQL verwendet dafür etwas
+                    andere Namen:
+                </p>
+
+                <div class="grid md:grid-cols-2 gap-4">
+                    <div class="bg-white p-4 rounded-lg border border-slate-300">
+                        <div class="text-cyan-700 font-bold font-code mb-1">INTEGER</div>
+                        <div class="text-sm text-slate-600">Ganze Zahlen. Zum Beispiel Alter oder IDs.
+                            <br><em>(entspricht <code>int</code>)</em></div>
+                    </div>
+                    <div class="bg-white p-4 rounded-lg border border-slate-300">
+                        <div class="text-cyan-700 font-bold font-code mb-1">VARCHAR(n)</div>
+                        <div class="text-sm text-slate-600">Variabler Text bis zur Maximallänge <code>n</code>. Z.B.
+                            Vorname.<br><em>(entspricht <code>String</code>)</em></div>
+                    </div>
+                    <div class="bg-white p-4 rounded-lg border border-slate-300">
+                        <div class="text-cyan-700 font-bold font-code mb-1">CHAR(n)</div>
+                        <div class="text-sm text-slate-600">Text mit <strong>fester</strong> Länge <code>n</code>.
+                            Kürzerer Text wird mit Leerzeichen aufgefüllt.</div>
+                    </div>
+                    <div class="bg-white p-4 rounded-lg border border-slate-300">
+                        <div class="text-cyan-700 font-bold font-code mb-1">DATE</div>
+                        <div class="text-sm text-slate-600">Ein Datum im Format <code>YYYY-MM-DD</code>.</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="bg-white border border-slate-200 rounded-xl p-6">
+                <h4 class="font-semibold text-cyan-700 mb-4 flex items-center gap-2"><span
+                        class="material-symbols-outlined">tune</span> Datentypen zuordnen</h4>
+                <p class="text-slate-700 mb-4 text-sm">Welcher Datentyp (INTEGER, VARCHAR, CHAR, DATE) passt am besten
+                    zu diesen Werten?</p>
+
+                <div class="space-y-3 font-code text-sm">
+                    <div class="flex items-center justify-between">
+                        <span class="text-slate-700">"Anna-Maria"</span>
+                        <input type="text" class="code-gap w-24" data-answer="varchar" id="gap-3-1" placeholder="TYP">
+                    </div>
+                    <div class="flex items-center justify-between">
+                        <span class="text-slate-700">42</span>
+                        <input type="text" class="code-gap w-24" data-answer="integer" id="gap-3-2" placeholder="TYP">
+                    </div>
+                    <div class="flex items-center justify-between">
+                        <span class="text-slate-700">"w" (Geschlecht)</span>
+                        <input type="text" class="code-gap w-24" data-answer="char" id="gap-3-3" placeholder="TYP">
+                    </div>
+                    <div class="flex items-center justify-between">
+                        <span class="text-slate-700">'2008-05-12'</span>
+                        <input type="text" class="code-gap w-24" data-answer="date" id="gap-3-4" placeholder="TYP">
+                    </div>
+                </div>
+
+                <button onclick="checkGaps('3')"
+                    class="mt-6 w-full bg-slate-100 hover:bg-slate-200 border border-cyan-500/50 text-cyan-700 font-semibold py-3 rounded-lg transition">Zuweisung
+                    prüfen</button>
+                <div id="step3-feedback" class="qf hidden mt-4 p-3 rounded-lg text-center font-medium"></div>
+            </div>
+        </section>
+
+        <!-- SCHRITT 4: Primärschlüssel -->
+        <section id="step-4" data-q="4"
+            class="step-section hidden bg-white border border-slate-200 rounded-2xl p-8 mb-6">
+            <div class="flex items-center gap-3 mb-6">
+                <div
+                    class="w-10 h-10 rounded-full bg-blue-500 flex items-center justify-center font-bold text-white shadow-[0_0_15px_rgba(59,130,246,0.5)]">
+                    4</div>
+                <h2 class="text-xl font-bold text-slate-900">Der Primärschlüssel (Primary Key)</h2>
+            </div>
+            <div class="bg-slate-100 rounded-xl p-6 mb-6 text-slate-700 leading-relaxed">
+                <p class="mb-4">
+                    Stell dir vor, es gibt in der Schule zwei Schüler, die beide "Leon Müller" heißen und am selben Tag
+                    Geburtstag haben. Wie können wir in der Datenbank sicherstellen, dass wir dem richtigen Leon die
+                    schlechte Mathe-Note eintragen?
+                </p>
+                <p class="mb-4">
+                    Jede Tabelle braucht ein Attribut, das <strong>jeden Datensatz (jede Zeile) absolut eindeutig
+                        identifiziert</strong>. Das nennt man den <strong
+                        class="text-amber-700">Primärschlüssel</strong>.
+                </p>
+                <div class="bg-amber-500/10 border border-amber-500/30 rounded-lg p-4 mb-4">
+                    <h4 class="font-bold text-amber-700 mb-2">Die zwei eisernen Regeln des Primärschlüssels:</h4>
+                    <ul class="list-disc list-inside text-sm space-y-1">
+                        <li><strong>UNIQUE:</strong> Der Wert darf in der Spalte nur ein einziges Mal existieren.</li>
+                        <li><strong>NOT NULL:</strong> Das Feld darf nicht leer gelassen werden.</li>
+                    </ul>
+                </div>
+                <p class="text-sm italic text-slate-600">Tipp: Oft nutzt man dafür künstliche Nummern (Schüler-ID,
+                    Kundennummer, Artikelnummer).</p>
+            </div>
+
+            <div class="bg-white border border-slate-200 rounded-xl p-6">
+                <h4 class="font-semibold text-cyan-700 mb-4 flex items-center gap-2"><span
+                        class="material-symbols-outlined">key</span> Finde den Schlüssel</h4>
+                <p class="text-slate-700 mb-4">Welches dieser Attribute eignet sich am <strong>besten</strong> als
+                    Primärschlüssel für eine Tabelle <code>Personen</code>?</p>
+                <div class="space-y-2">
+                    <button onclick="checkStepChoice('4', 'falsch')"
+                        class="step4-btn w-full bg-slate-100 hover:bg-slate-200 border border-slate-300 px-4 py-3 rounded-lg transition text-left">A)
+                        Vorname (Kann man gut sortieren)</button>
+                    <button onclick="checkStepChoice('4', 'falsch')"
+                        class="step4-btn w-full bg-slate-100 hover:bg-slate-200 border border-slate-300 px-4 py-3 rounded-lg transition text-left">B)
+                        E-Mail Adresse (Hat jeder eine eigene)</button>
+                    <button onclick="checkStepChoice('4', 'richtig')"
+                        class="step4-btn w-full bg-slate-100 hover:bg-slate-200 border border-slate-300 px-4 py-3 rounded-lg transition text-left">C)
+                        Personalnummer (Eine fortlaufende, eindeutige Zahl)</button>
+                </div>
+                <div id="step4-feedback" class="qf hidden mt-4 p-3 rounded-lg text-center font-medium"></div>
+            </div>
+        </section>
+
+        <!-- SCHRITT 5: Bossgegner -->
+        <section id="step-5" data-q="5"
+            class="step-section hidden bg-white border border-slate-200 rounded-2xl p-8 mb-6">
+            <div class="flex items-center gap-3 mb-6">
+                <div
+                    class="w-10 h-10 rounded-full bg-blue-500 flex items-center justify-center font-bold text-white shadow-[0_0_15px_rgba(59,130,246,0.5)]">
+                    5</div>
+                <h2 class="text-xl font-bold text-slate-900">Bossgegner: Schema lesen</h2>
+            </div>
+            <div class="bg-slate-100 rounded-xl p-6 mb-6">
+                <p class="text-slate-700 mb-4">
+                    In SQL baut man das Gerüst einer Tabelle mit dem <code>CREATE TABLE</code> Befehl auf. Analysiere
+                    diesen Code und fülle die Lücken!
+                </p>
+                <div class="bg-[#1e1e1e] p-5 rounded-lg border border-slate-300 font-code text-sm leading-relaxed mb-4">
+                    <span class="text-blue-700 font-bold">CREATE TABLE</span> <span
+                        class="text-slate-200">Videospiel</span> (<br>
+                    &nbsp;&nbsp;<span class="text-slate-200">Spiel_ID</span> <span class="text-cyan-700">INTEGER</span>
+                    <span class="text-amber-700 font-bold">PRIMARY KEY</span>,<br>
+                    &nbsp;&nbsp;<span class="text-slate-200">Titel</span> <span
+                        class="text-cyan-700">VARCHAR(100)</span>,<br>
+                    &nbsp;&nbsp;<span class="text-slate-200">Erscheinungsjahr</span> <span
+                        class="text-cyan-700">INTEGER</span>,<br>
+                    &nbsp;&nbsp;<span class="text-slate-200">Preis</span> <span class="text-cyan-700">Integer</span><br>
+                    );
+                </div>
+            </div>
+
+            <div class="bg-white border border-slate-200 rounded-xl p-6">
+                <div class="space-y-4 text-sm">
+                    <div class="flex items-center justify-between">
+                        <span class="text-slate-700">Wie lautet der Name der erstellen Relation (Tabelle)?</span>
+                        <input type="text" class="code-gap w-32" data-answer="videospiel" id="gap-5-1"
+                            placeholder="...">
+                    </div>
+                    <div class="flex items-center justify-between">
+                        <span class="text-slate-700">Welches Attribut identifiziert ein Spiel eindeutig?</span>
+                        <input type="text" class="code-gap w-32" data-answer="spiel_id" id="gap-5-2" placeholder="...">
+                    </div>
+                    <div class="flex items-center justify-between">
+                        <span class="text-slate-700">Wie viele Zeichen darf der Titel maximal lang sein?</span>
+                        <input type="text" class="code-gap w-16" data-answer="100" id="gap-5-3" placeholder="...">
+                    </div>
+                </div>
+
+                <button onclick="checkGaps('5')"
+                    class="mt-6 w-full bg-blue-600 hover:bg-blue-500 text-white font-bold py-3 rounded-lg transition shadow-lg shadow-blue-900/50">Wissen
+                    bestätigen & Modul abschließen</button>
+                <div id="step5-feedback" class="qf hidden mt-4 p-3 rounded-lg text-center font-medium"></div>
+            </div>
+        </section>
+
+        <!-- Versteckte Tracking-Anker für den ProgressTracker -->
+        <div id="tracking-anchors" class="hidden">
+            <div data-q="1"><div id="qf-1" class="qf"></div></div>
+            <div data-q="2"><div id="qf-2" class="qf"></div></div>
+            <div data-q="3"><div id="qf-3" class="qf"></div></div>
+            <div data-q="4"><div id="qf-4" class="qf"></div></div>
+            <div data-q="5"><div id="qf-5" class="qf"></div></div>
+        </div>
+
+        <!-- Abschluss-Screen -->
+        <section id="completion" class="hidden text-center py-16 fade-in">
+            <div class="text-6xl mb-6">🚀</div>
+            <h2 class="text-3xl font-bold text-cyan-700 mb-4">Grundlagen gemeistert!</h2>
+            <p class="text-slate-600 mb-8 max-w-lg mx-auto">Du kennst jetzt den Aufbau einer Datenbank, die wichtigsten
+                SQL-Datentypen und weißt, wofür ein Primärschlüssel da ist. Jetzt bist du bereit, selbst Datenbanken
+                abzufragen!</p>
+            <div class="flex justify-center">
+                <a href="../index.html"
+                    class="bg-slate-100 hover:bg-slate-200 text-slate-700 px-6 py-3 rounded-xl font-semibold transition flex items-center justify-center gap-2">
+                    <span class="material-symbols-outlined">home</span> Zur Aufgabenübersicht
+                </a>
+            </div>
+        </section>
+
+    </div>
+
+    <script>
+        let currentStep = 1;
+        const totalSteps = 5;
+        let completedSteps = new Set();
+
+        function init() {
+            let html = "";
+            for (let i = 1; i <= totalSteps; i++) {
+                html += `<div id="dot-${i}" class="w-2.5 h-2.5 rounded-full ${i === 1 ? 'bg-cyan-500 shadow-[0_0_8px_rgba(6,182,212,0.8)]' : 'bg-slate-100'} transition-all duration-300"></div>`;
+            }
+            document.getElementById("dot-container").innerHTML = html;
+        }
+
+        function updateProgress() {
+            const pct = ((currentStep - 1) / totalSteps) * 100;
+            document.getElementById('progress-bar').style.width = pct + '%';
+            document.getElementById('progress-text').textContent = `Schritt ${currentStep} von ${totalSteps}`;
+
+            for (let i = 1; i <= totalSteps; i++) {
+                const dot = document.getElementById('dot-' + i);
+                if (dot) {
+                    if (completedSteps.has(i)) {
+                        dot.className = 'w-2.5 h-2.5 rounded-full bg-blue-500 transition-all duration-300';
+                    } else if (i === currentStep) {
+                        dot.className = 'w-2.5 h-2.5 rounded-full bg-cyan-500 shadow-[0_0_8px_rgba(6,182,212,0.8)] transition-all duration-300';
+                    } else {
+                        dot.className = 'w-2.5 h-2.5 rounded-full bg-slate-300 transition-all duration-300';
+                    }
+                }
+            }
+        }
+
+        function showStep(step) {
+            document.querySelectorAll('.step-section').forEach(s => s.classList.add('hidden'));
+            const stepEl = document.getElementById('step-' + step);
+            if (stepEl) {
+                stepEl.classList.remove('hidden');
+                stepEl.classList.add('fade-in');
+            }
+            updateProgress();
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        function checkStepChoice(step, type) {
+            const fb = document.getElementById(`step${step}-feedback`);
+            fb.classList.remove('hidden', 'bg-red-500/20', 'text-red-700', 'bg-emerald-500/20', 'text-emerald-700', 'shake');
+
+            if (type === 'richtig') {
+                fb.classList.add('bg-emerald-500/20', 'text-emerald-700', 'border', 'border-emerald-500/30');
+
+                if (step === '1') {
+                    fb.innerHTML = 'Perfekt! Eine Relation ist in Datenbanken genau das: Eine strukturierte Tabelle mit Spalten und Zeilen.';
+                } else if (step === '4') {
+                    fb.innerHTML = 'Korrekt! Eine Personalnummer oder Schüler-ID wird extra dafür erstellt, eindeutig zu sein (und ändert sich auch bei Heirat etc. nicht).';
+                }
+                fb.classList.add('correct');
+
+                // Fortschritt an Tracker melden
+                const anchor = document.getElementById(`qf-${step}`);
+                if (anchor) {
+                    anchor.classList.add('correct');
+                    anchor.parentElement.style.display = 'block';
+                }
+
+                document.querySelectorAll(`.step${step}-btn`).forEach(b => {
+                    b.disabled = true;
+                    b.classList.add('opacity-50', 'cursor-not-allowed');
+                    if (b.getAttribute('onclick').includes('richtig')) {
+                        b.classList.remove('opacity-50', 'bg-slate-100');
+                        b.classList.add('bg-emerald-500/20', 'border-emerald-500', 'text-emerald-800');
+                    }
+                });
+
+                setTimeout(() => {
+                    completedSteps.add(parseInt(step));
+                    nextStep();
+                }, 2500);
+
+            } else {
+                fb.classList.add('bg-red-500/20', 'text-red-700', 'border', 'border-red-500/30', 'shake');
+
+                if (step === '4') {
+                    fb.innerHTML = 'Überlege noch mal: E-Mails können sich ändern oder fehlen, Namen gibt es oft doppelt.';
+                } else {
+                    fb.innerHTML = 'Leider falsch. Überlege noch mal, wie Daten in einer relationalen Datenbank strukturiert sind.';
+                }
+
+                setTimeout(() => fb.classList.remove('shake'), 400);
+            }
+        }
+
+        // Logic for Interactive Table tooltips
+        function showTableTooltip(type) {
+            const tt = document.getElementById('table-tooltip');
+            const container = document.getElementById('interactive-table-container');
+
+            if (type === 'tabelle') {
+                tt.innerHTML = '<span class="text-blue-700">Die gesamte Tabelle</span> entspricht einer <span class="text-blue-700 font-bold">Klasse</span> (z.B. Lehrkraft).';
+                tt.className = 'h-12 bg-blue-100 flex items-center justify-center text-sm font-medium transition-colors duration-300 px-4 text-center';
+                container.style.borderColor = '#3b82f6';
+            } else if (type === 'spalte') {
+                tt.innerHTML = '<span class="text-emerald-700">Eine Spalte</span> entspricht einem <span class="text-emerald-700 font-bold">Attribut</span> (Eigenschaft, z.B. Vorname).';
+                tt.className = 'h-12 bg-emerald-100 flex items-center justify-center text-sm font-medium transition-colors duration-300 px-4 text-center';
+                container.style.borderColor = '#10b981';
+            } else if (type === 'zeile') {
+                tt.innerHTML = '<span class="text-fuchsia-700">Eine Zeile (Datensatz)</span> entspricht einem <span class="text-fuchsia-700 font-bold">Objekt</span> (einer konkreten Lehrkraft).';
+                tt.className = 'h-12 bg-fuchsia-100 flex items-center justify-center text-sm font-medium transition-colors duration-300 px-4 text-center';
+                container.style.borderColor = '#d946ef';
+            }
+        }
+
+        function hideTableTooltip() {
+            const tt = document.getElementById('table-tooltip');
+            const container = document.getElementById('interactive-table-container');
+
+            tt.innerHTML = '<span class="material-symbols-outlined text-lg mr-2">touch_app</span> Fahre mit der Maus über die Tabelle, Spalten und Zeilen!';
+            tt.className = 'h-12 bg-slate-100 flex items-center justify-center text-sm font-medium text-slate-600 transition-colors duration-300 px-4 text-center';
+            container.style.borderColor = '#cbd5e1'; // reset to border-slate-300
+        }
+
+        function checkGaps(step) {
+            const fb = document.getElementById(`step${step}-feedback`);
+            fb.classList.remove('hidden', 'bg-red-500/20', 'text-red-700', 'border-red-500/30', 'bg-emerald-500/20', 'text-emerald-700', 'border-emerald-500/30', 'shake');
+
+            let allCorrect = true;
+            let gaps = document.querySelectorAll(`[id^=gap-${step}-]`);
+            gaps.forEach(gap => {
+                const answer = gap.dataset.answer.toLowerCase();
+                // Erlaube Synonyme für Datensatz
+                let userVal = gap.value.trim().toLowerCase();
+                if (answer === 'zeile' && (userVal === 'datensatz' || userVal === 'zeile')) {
+                    userVal = 'zeile';
+                }
+
+                if (userVal === answer) {
+                    gap.classList.add('correct');
+                    gap.classList.remove('wrong');
+                } else {
+                    gap.classList.add('wrong');
+                    gap.classList.remove('correct');
+                    allCorrect = false;
+                }
+            });
+
+            if (allCorrect) {
+                fb.classList.add('bg-emerald-500/20', 'text-emerald-700', 'border', 'border-emerald-500/30', 'correct');
+                fb.innerHTML = 'Hervorragend! Alles richtig zugeordnet.';
+
+                // Fortschritt an Tracker melden
+                const anchor = document.getElementById(`qf-${step}`);
+                if (anchor) {
+                    anchor.classList.add('correct');
+                    anchor.parentElement.style.display = 'block';
+                }
+
+                gaps.forEach(b => {
+                    b.disabled = true;
+                    b.classList.add('cursor-not-allowed');
+                });
+
+                setTimeout(() => {
+                    completedSteps.add(parseInt(step));
+                    nextStep();
+                }, 1500);
+            } else {
+                fb.classList.add('bg-red-500/20', 'text-red-700', 'border', 'border-red-500/30', 'shake');
+                fb.innerHTML = 'Einige Zuordnungen stimmen noch nicht. Korrigiere die roten Felder.';
+                setTimeout(() => fb.classList.remove('shake'), 400);
+            }
+        }
+
+        function nextStep() {
+            if (currentStep < totalSteps) {
+                currentStep++;
+                showStep(currentStep);
+            } else {
+                document.querySelectorAll('.step-section').forEach(s => s.classList.add('hidden'));
+                document.querySelector('.mb-8').classList.add('hidden'); // Hide progress bar
+                document.getElementById('completion').classList.remove('hidden');
+                document.getElementById('progress-bar').style.width = '100%';
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+            }
+        }
+
+        // Error states reset when typing
+        document.addEventListener('input', function (e) {
+            if (e.target.classList.contains('code-gap')) {
+                e.target.classList.remove('wrong', 'correct');
+            }
+        });
+
+        // Enter-Key-Support für Lückentexte
+        document.addEventListener('keydown', function (e) {
+            if (e.key === 'Enter' && e.target.classList.contains('code-gap')) {
+                const step = e.target.id.split('-')[1];
+                checkGaps(step);
+            }
+        });
+
+        init();
+    </script>
+    
+</body>
+
+</html>
