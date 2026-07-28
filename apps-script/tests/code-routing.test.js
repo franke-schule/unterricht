@@ -180,6 +180,58 @@ assert.doesNotMatch(
 );
 
 
+const interactionEvaluationJson =
+  JSON.stringify({
+    points:
+      6,
+    maxPoints:
+      6,
+    status:
+      'gut',
+    strengths: [
+      'Die Schleife ist korrekt.'
+    ],
+    missing: [],
+    feedback:
+      'Sehr gut.'
+  });
+
+assert.equal(
+  context.extractGeminiText_({
+    object:
+      'interaction',
+    status:
+      'completed',
+    steps: [
+      {
+        type:
+          'model_output',
+        content: [
+          {
+            type:
+              'text',
+            text:
+              interactionEvaluationJson
+          }
+        ]
+      }
+    ]
+  }),
+  interactionEvaluationJson
+);
+
+assert.equal(
+  context.extractGeminiText_({
+    object:
+      'interaction',
+    status:
+      'completed',
+    steps: []
+  }),
+  ''
+);
+
+
 const textGet =
   context.doGet({
     parameter: {

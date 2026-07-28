@@ -94,10 +94,14 @@ function evaluateWithGemini_(
   const text =
     extractGeminiText_(geminiResponse);
 
+  if (!text) {
+    throw new Error(
+      'Gemini hat keinen auswertbaren Bewertungstext geliefert.'
+    );
+  }
+
   const evaluation =
-    text
-      ? JSON.parse(text)
-      : geminiResponse;
+    JSON.parse(text);
 
   return applyRuleBasedMinimum_(
     normalizeEvaluation_(
@@ -219,6 +223,58 @@ function extractGeminiText_(geminiResponse) {
     geminiResponse.output_text
   ) {
     return String(geminiResponse.output_text).trim();
+  }
+
+  /**
+   * Direkte REST-Antwort der Interactions API:
+   * steps -> model_output -> content -> text
+   *
+   * output_text ist eine Komforteigenschaft der SDKs und ist in der
+   * REST-Antwort nicht zwingend enthalten.
+   */
+  if (
+    geminiResponse &&
+    Array.isArray(geminiResponse.steps)
+  ) {
+    for (
+      let index =
+        geminiResponse.steps.length - 1;
+      index >= 0;
+      index--
+    ) {
+      const step =
+        geminiResponse.steps[index];
+
+      if (
+        !step ||
+        step.type !== 'model_output' ||
+        !Array.isArray(step.content)
+      ) {
+        continue;
+      }
+
+      const stepText =
+        step.content
+          .map(function(contentItem) {
+            if (
+              !contentItem ||
+              contentItem.type !== 'text' ||
+              typeof contentItem.text === 'undefined'
+            ) {
+              return '';
+            }
+
+            return typeof contentItem.text === 'string'
+              ? contentItem.text
+              : JSON.stringify(contentItem.text);
+          })
+          .join('')
+          .trim();
+
+      if (stepText) {
+        return stepText;
+      }
+    }
   }
 
   if (
