@@ -286,6 +286,8 @@ assert.equal(
 
 
 context.window.__handleCodeEvaluationResult({
+  type:
+    'GEMINI_CODE_EVALUATION_RESULT',
   requestId:
     'code-request-client',
   pending:
@@ -332,6 +334,34 @@ assert.equal(
     }
   ),
   false
+);
+
+
+context.submitCode(
+  '10-2a'
+);
+
+context.window.__handleCodeEvaluationResult({
+  type:
+    'GEMINI_EVALUATION_RESULT',
+  requestId:
+    'code-request-client',
+  result: {
+    ok:
+      false,
+    message:
+      'Diese Aufgabe ist auf dem Auswertungsserver nicht bekannt.'
+  }
+});
+
+assert.equal(
+  resultBox.className,
+  'result error'
+);
+
+assert.match(
+  resultBox.textContent,
+  /ältere Version ohne Codekorrektur/
 );
 
 

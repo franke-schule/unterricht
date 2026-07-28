@@ -1139,6 +1139,26 @@ for (int i = 0; i &lt; 10; i++) {
         }
 
         if (
+          message.type !==
+          'GEMINI_CODE_EVALUATION_RESULT'
+        ) {
+          restoreCodeButton(
+            pending
+          );
+
+          showError(
+            pending.resultBox,
+            'Der Auswertungsserver verwendet noch eine ältere Version ohne Codekorrektur. Bitte aktualisiere die Apps-Script-Bereitstellung und versuche es danach erneut.'
+          );
+
+          cleanupCodeRequest(
+            message.requestId
+          );
+
+          return;
+        }
+
+        if (
           pending.pollScript &&
           pending.pollScript.parentNode
         ) {
