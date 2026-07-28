@@ -639,15 +639,15 @@
             const container = document.getElementById('interactive-table-container');
 
             if (type === 'tabelle') {
-                tt.innerHTML = '<span class="text-blue-700">Die gesamte Tabelle</span> entspricht einer <span class="text-blue-700 font-bold">Klasse</span> (z.B. Lehrkraft).';
+                tt.innerHTML = '<span class="text-blue-700">Die gesamte Tabelle</span>&nbsp;entspricht einer <span class="text-blue-700 font-bold">Klasse</span> (z.B. Lehrkraft).';
                 tt.className = 'h-12 bg-blue-100 flex items-center justify-center text-sm font-medium transition-colors duration-300 px-4 text-center';
                 container.style.borderColor = '#3b82f6';
             } else if (type === 'spalte') {
-                tt.innerHTML = '<span class="text-emerald-700">Eine Spalte</span> entspricht einem <span class="text-emerald-700 font-bold">Attribut</span> (Eigenschaft, z.B. Vorname).';
+                tt.innerHTML = '<span class="text-emerald-700">Eine Spalte</span>&nbsp;entspricht einem <span class="text-emerald-700 font-bold">Attribut</span> (Eigenschaft, z.B. Vorname).';
                 tt.className = 'h-12 bg-emerald-100 flex items-center justify-center text-sm font-medium transition-colors duration-300 px-4 text-center';
                 container.style.borderColor = '#10b981';
             } else if (type === 'zeile') {
-                tt.innerHTML = '<span class="text-fuchsia-700">Eine Zeile (Datensatz)</span> entspricht einem <span class="text-fuchsia-700 font-bold">Objekt</span> (einer konkreten Lehrkraft).';
+                tt.innerHTML = '<span class="text-fuchsia-700">Eine Zeile (Datensatz)</span>&nbsp;entspricht einem <span class="text-fuchsia-700 font-bold">Objekt</span> (einer konkreten Lehrkraft).';
                 tt.className = 'h-12 bg-fuchsia-100 flex items-center justify-center text-sm font-medium transition-colors duration-300 px-4 text-center';
                 container.style.borderColor = '#d946ef';
             }
