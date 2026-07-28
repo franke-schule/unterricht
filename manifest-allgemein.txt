@@ -33,6 +33,8 @@ Regeln:
   - Ordnernummer und Themenueberschrift muessen zueinander passen.
   - Pro Aufgabe eine eigene HTML-Datei verwenden.
   - Buttontext kurz halten: Aufgabennummer plus knappe Beschreibung.
+  - Aufgaben in Menues immer in aufsteigender numerischer Reihenfolge
+    auffuehren; eine spaetere Aufgabe darf nie vor einer frueheren stehen.
   - Neue Seiten analog zu vorhandenen Seiten desselben Themas aufbauen.
   - Relative Links aus Sicht der jeweiligen HTML-Datei pruefen.
   - Stylesheet mit Cache-Buster einbinden, wenn sich sichtbare CSS-Regeln
@@ -189,6 +191,7 @@ Vor Abschluss mindestens pruefen:
 
   [ ] Alle lokalen HTML-, Bild- und PDF-Links existieren.
   [ ] Aufgabe ist im richtigen Jahrgangs- und Themenmenue sichtbar.
+  [ ] Aufgaben stehen in allen Menues in aufsteigender numerischer Reihenfolge.
   [ ] Rueck- und Startseitenlink zeigen auf die richtigen Ziele.
   [ ] Dynamische Rueckmeldungen sind verstaendlich und barrierearm.
   [ ] Inline-JavaScript ist syntaktisch gueltig.
