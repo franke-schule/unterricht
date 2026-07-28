@@ -86,7 +86,7 @@ const resultBox =
 resultBox.hidden =
   true;
 
-const editedCode =
+let editedCode =
   [
     'Robot roboter = new Robot(1, 1, 15, 15);',
     'while (!roboter.istWand()) {',
@@ -362,6 +362,34 @@ assert.equal(
 assert.match(
   resultBox.textContent,
   /ältere Version ohne Codekorrektur/
+);
+
+
+editedCode =
+  [
+    'Robot roboter = new Robot(1, 1, 15, 15);',
+    'while (istWand()) {',
+    '  hinlegen();',
+    '  schritt();',
+    '}'
+  ].join('\n');
+
+context.submitCode(
+  '10-2a'
+);
+
+assert.equal(
+  resultBox.textContent,
+  'Benutze die Punktnotation. Rufe die Methoden auf einem Objekt der Klasse Roboter auf.'
+);
+
+assert.equal(
+  body.children.some(
+    function(element) {
+      return element.tagName === 'FORM';
+    }
+  ),
+  false
 );
 
 

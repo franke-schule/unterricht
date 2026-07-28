@@ -784,6 +784,14 @@ for (int i = 0; i &lt; 10; i++) {
         return;
       }
 
+      if (hasUnqualifiedRobotMethodCall(code)) {
+        showError(
+          resultBox,
+          'Benutze die Punktnotation. Rufe die Methoden auf einem Objekt der Klasse Roboter auf.'
+        );
+        return;
+      }
+
       if (
         !/\bRobot\b/.test(code) ||
         !/\.hinlegen\s*\(/.test(code)
@@ -877,6 +885,29 @@ for (int i = 0; i &lt; 10; i++) {
       scheduleCodeResultPoll(
         requestId,
         1800
+      );
+    }
+
+
+    /**
+     * Erkennt Aufrufe wie hinlegen() oder istWand(), denen die
+     * Objektvariable und der Punkt fehlen. Kommentare werden vorher
+     * entfernt, damit Beispieltexte keine Fehlermeldung ausloesen.
+     */
+    function hasUnqualifiedRobotMethodCall(code) {
+      const codeWithoutComments =
+        code
+          .replace(
+            /\/\*[\s\S]*?\*\//g,
+            ''
+          )
+          .replace(
+            /\/\/.*$/gm,
+            ''
+          );
+
+      return /(^|[^A-Za-z0-9_.])(istWand|nichtIstWand|hinlegen|schritt|rechtsDrehen|linksDrehen)\s*\(/m.test(
+        codeWithoutComments
       );
     }
 
