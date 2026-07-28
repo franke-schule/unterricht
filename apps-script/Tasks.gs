@@ -218,5 +218,95 @@ const TASKS = {
       'Durch Vererbung muss gemeinsames Actor-Verhalten nicht neu programmiert werden.',
       'Die Antwort verwendet den Fachbegriff Vererbung und bezieht ihn erkennbar auf Ball und Actor.'
     ]
+  },
+
+  '10-2a': {
+    title:
+      'Klasse 10 Aufgabe 2a: Ziegelreihe bis zur Wand',
+    grade:
+      10,
+    responseType:
+      'code',
+    maxPoints:
+      6,
+    instruction:
+      'Pruefe, ob der Programmcode eine Ziegelreihe bis zur Wand legt und vor der Wand sicher endet.',
+    program:
+      [
+        'Robot(startX, startY, worldX, worldY) erzeugt den Roboter in einer rechteckigen Welt.',
+        'istWand() prueft, ob direkt vor dem Roboter eine Wand liegt.',
+        'nichtIstWand() ist die negierte Wandabfrage.',
+        'hinlegen() legt einen Ziegel auf das Feld vor dem Roboter.',
+        'schritt() bewegt den Roboter ein Feld vorwaerts.',
+        'rechtsDrehen() und linksDrehen() drehen den Roboter um 90 Grad.'
+      ].join('\n'),
+    expectedAspects: [
+      'Ein Robot-Objekt wird mit einer sinnvollen Startposition und Weltgroesse erzeugt.',
+      'Eine Schleife wiederholt das Legen und Gehen bis zur Wand.',
+      'Die Schleifenbedingung verwendet istWand(), nichtIstWand() oder eine funktional gleichwertige sichere Wandpruefung.',
+      'Mit hinlegen() werden Ziegel fuer die Reihe abgelegt.',
+      'Mit schritt() bewegt sich der Roboter entlang der Reihe.',
+      'Die Reihenfolge der Befehle fuehrt nicht offensichtlich zu einer Wandkollision; eine staerkere Rand- oder Mauerloesung darf ebenfalls anerkannt werden.'
+    ]
+  },
+
+  '10-2b': {
+    title:
+      'Klasse 10 Aufgabe 2b: Ziegel am Rand entlang',
+    grade:
+      10,
+    responseType:
+      'code',
+    maxPoints:
+      6,
+    instruction:
+      'Pruefe, ob der Programmcode Ziegel an allen vier Seiten des Randes entlang legt und die Ecken sinnvoll behandelt.',
+    program:
+      [
+        'Robot(startX, startY, worldX, worldY) erzeugt den Roboter in einer rechteckigen Welt.',
+        'istWand() prueft, ob direkt vor dem Roboter eine Wand liegt.',
+        'nichtIstWand() ist die negierte Wandabfrage.',
+        'hinlegen() legt einen Ziegel auf das Feld vor dem Roboter.',
+        'schritt() bewegt den Roboter ein Feld vorwaerts.',
+        'rechtsDrehen() und linksDrehen() drehen den Roboter um 90 Grad.'
+      ].join('\n'),
+    expectedAspects: [
+      'Der Code bearbeitet nicht nur eine Reihe, sondern alle vier Randseiten.',
+      'Eine innere Wiederholung oder eine funktional gleichwertige Struktur bearbeitet jeweils eine Seite bis zur Wand.',
+      'An jeder Ecke wird der Roboter in die passende Richtung gedreht.',
+      'Die vier Seiten werden durch eine aeussere Schleife, vier nachvollziehbare Abschnitte oder eine gleichwertige Loesung abgedeckt.',
+      'hinlegen() und schritt() sind so angeordnet, dass entlang der Seiten Ziegel entstehen.',
+      'Es ist keine offensichtliche Wandkollision oder Endlosschleife erkennbar; eine korrekte Mauerloesung aus Teil c darf ebenfalls anerkannt werden.'
+    ]
+  },
+
+  '10-2c': {
+    title:
+      'Klasse 10 Aufgabe 2c: Ziegelmauer mit Hoehe 4',
+    grade:
+      10,
+    responseType:
+      'code',
+    maxPoints:
+      6,
+    instruction:
+      'Pruefe, ob der Programmcode am Rand entlang eine vier Ziegel hohe Mauer baut, ohne dass der Roboter auf die hohe Mauer steigen muss.',
+    program:
+      [
+        'Robot(startX, startY, worldX, worldY) erzeugt den Roboter in einer rechteckigen Welt.',
+        'hinlegen(4) legt vier Ziegel auf einmal auf das Feld vor dem Roboter.',
+        'Alternativ koennen vier einzelne hinlegen()-Aufrufe dieselbe Hoehe erzeugen.',
+        'Der Roboter kann beim schritt() hoechstens einen Ziegel hoch- oder herunterspringen.',
+        'istWand() prueft, ob direkt vor dem Roboter eine Wand liegt.',
+        'rechtsDrehen() und linksDrehen() drehen den Roboter um 90 Grad.'
+      ].join('\n'),
+    expectedAspects: [
+      'Auf jedem vorgesehenen Mauerfeld werden genau vier Ziegel gelegt, etwa mit hinlegen(4) oder vier einzelnen Aufrufen.',
+      'Der Roboter laeuft auf einer geeigneten Spur neben der vier Ziegel hohen Mauer und versucht nicht, auf sie zu steigen.',
+      'Eine Wiederholungsstruktur bearbeitet die Felder einer Seite.',
+      'Alle vier Randseiten beziehungsweise der vollstaendige geforderte Rand werden bearbeitet.',
+      'Die Ecken enthalten passende Drehungen und gegebenenfalls einen sinnvollen Spurwechsel.',
+      'Es ist keine offensichtliche Wandkollision, unzulaessige Hoehendifferenz oder Endlosschleife erkennbar.'
+    ]
   }
 };

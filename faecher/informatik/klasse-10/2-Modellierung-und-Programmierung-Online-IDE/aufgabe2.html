@@ -16,6 +16,12 @@
       --info-bg: #eef3f8;
       --success-bg: #edf7ee;
       --success-border: #7aae80;
+      --medium-bg: #fff4df;
+      --medium-border: #d99a3a;
+      --low-bg: #fff0f0;
+      --low-border: #d38181;
+      --error-bg: #fff0f0;
+      --error-border: #d38181;
       --warning-bg: #fff8df;
       --warning-border: #dfc979;
     }
@@ -100,6 +106,15 @@
 
     .intro p {
       margin: 0;
+    }
+
+    .privacy-note {
+      margin: 0 0 1rem;
+      padding: 0.85rem 1rem;
+      background: var(--warning-bg);
+      border: 1px solid var(--warning-border);
+      border-radius: 6px;
+      font-size: 0.9rem;
     }
 
     .exercise-layout {
@@ -215,11 +230,17 @@
       background: var(--accent-dark);
     }
 
+    button:disabled {
+      opacity: 0.62;
+      cursor: wait;
+    }
+
     .result {
       margin: 0.75rem 0 0;
       padding: 0.7rem 0.8rem;
+      background: var(--info-bg);
+      border: 1px solid var(--border);
       border-radius: 5px;
-      font-weight: 650;
     }
 
     .result.success {
@@ -230,6 +251,51 @@
     .result.pending {
       background: var(--warning-bg);
       border: 1px solid var(--warning-border);
+    }
+
+    .result.high {
+      background: var(--success-bg);
+      border-color: var(--success-border);
+    }
+
+    .result.medium {
+      background: var(--medium-bg);
+      border-color: var(--medium-border);
+    }
+
+    .result.low {
+      background: var(--low-bg);
+      border-color: var(--low-border);
+    }
+
+    .result.error {
+      background: var(--error-bg);
+      border-color: var(--error-border);
+    }
+
+    .result h3 {
+      margin: 0 0 0.55rem;
+      font-size: 1.02rem;
+    }
+
+    .result h4 {
+      margin: 0.85rem 0 0.3rem;
+      font-size: 0.94rem;
+    }
+
+    .result p {
+      margin: 0.3rem 0;
+    }
+
+    .result ul {
+      margin: 0.3rem 0;
+      padding-left: 1.3rem;
+    }
+
+    .feedback {
+      margin-top: 0.85rem;
+      padding-top: 0.7rem;
+      border-top: 1px solid rgb(0 0 0 / 12%);
     }
 
     .solution-download {
@@ -347,6 +413,7 @@
       <section class="ide-panel" aria-label="Online-IDE">
         <div class="ide-container">
           <iframe
+            id="robot-ide"
             title="Online-IDE zu Aufgabe 2 - Wiederholung Roboter"
             srcdoc="<script>window.jo_doc = window.frameElement.textContent;</script><script src='../../../../include/js/includeide/includeIDE.js'></script>">
             {
@@ -356,7 +423,8 @@
               'withPCode': true,
               'withConsole': false,
               'withFileList': true,
-              'withErrorList': true
+              'withErrorList': true,
+              'enableFileAccess': true
             }
 
             <script type="text/plain" title="Anleitung" data-type="hint">
@@ -390,6 +458,13 @@ for (int i = 0; i &lt; 10; i++) {
       </section>
 
       <aside class="tasks-panel" aria-label="Aufgabenschritte">
+        <div class="privacy-note">
+          <strong>Hinweis:</strong>
+          Der aktuelle Inhalt von <code>Hauptprogramm.java</code> wird zur
+          automatischen Codeanalyse an die Gemini API übertragen. Schreibe
+          keine Namen oder andere personenbezogene Daten in Kommentare.
+        </div>
+
         <section class="task-card" aria-labelledby="task-2a-title">
           <h2 id="task-2a-title">a) Ziegelreihe bis zur Wand</h2>
           <p>
@@ -401,12 +476,18 @@ for (int i = 0; i &lt; 10; i++) {
             <code>istWand()</code>, <code>hinlegen()</code> und
             <code>schritt()</code>.
           </div>
-          <label class="check-row" for="complete-2a">
-            <input id="complete-2a" type="checkbox">
-            <span>Mein Programm läuft ohne Fehler und endet an der Wand.</span>
-          </label>
-          <button type="button" onclick="checkTask('2a')">Teil a prüfen</button>
-          <p id="result-2a" class="result" aria-live="polite" hidden></p>
+          <button
+            id="button-10-2a"
+            type="button"
+            onclick="submitCode('10-2a')">
+            Meinen Code für a prüfen
+          </button>
+          <div
+            id="result-10-2a"
+            class="result"
+            aria-live="polite"
+            hidden>
+          </div>
         </section>
 
         <section class="task-card" aria-labelledby="task-2b-title">
@@ -419,12 +500,18 @@ for (int i = 0; i &lt; 10; i++) {
             Wenn der Roboter eine Wand erreicht, muss er sich drehen. Suche
             nach einer wiederholbaren Lösung für eine Seite und eine Ecke.
           </div>
-          <label class="check-row" for="complete-2b">
-            <input id="complete-2b" type="checkbox">
-            <span>Der Roboter legt die Ziegel an allen vier Seiten ab.</span>
-          </label>
-          <button type="button" onclick="checkTask('2b')">Teil b prüfen</button>
-          <p id="result-2b" class="result" aria-live="polite" hidden></p>
+          <button
+            id="button-10-2b"
+            type="button"
+            onclick="submitCode('10-2b')">
+            Meinen Code für b prüfen
+          </button>
+          <div
+            id="result-10-2b"
+            class="result"
+            aria-live="polite"
+            hidden>
+          </div>
         </section>
 
         <section class="task-card" aria-labelledby="task-2c-title">
@@ -438,12 +525,18 @@ for (int i = 0; i &lt; 10; i++) {
             <code>hinlegen(4)</code> legt vier Ziegel auf einmal. Beachte:
             Der Roboter kann höchstens einen Ziegel hoch- oder herunterspringen.
           </div>
-          <label class="check-row" for="complete-2c">
-            <input id="complete-2c" type="checkbox">
-            <span>Die Mauer ist vier Ziegel hoch und mein Code steht auf dem Arbeitsblatt.</span>
-          </label>
-          <button type="button" onclick="checkTask('2c')">Teil c prüfen</button>
-          <p id="result-2c" class="result" aria-live="polite" hidden></p>
+          <button
+            id="button-10-2c"
+            type="button"
+            onclick="submitCode('10-2c')">
+            Meinen Code für c prüfen
+          </button>
+          <div
+            id="result-10-2c"
+            class="result"
+            aria-live="polite"
+            hidden>
+          </div>
         </section>
 
         <section class="task-card" aria-labelledby="task-2d-title">
@@ -498,6 +591,850 @@ for (int i = 0; i &lt; 10; i++) {
   </main>
 
   <script>
+    const SCRIPT_SERVER_URL =
+      'https://script.google.com/macros/s/AKfycby8RWL6uYrKZyoJ6m2GRpWyRmXjwsdskyCiqzKpRhIK5-wrDl-9lWWk8CiAGaVMoy0x/exec';
+
+    const IDE_ID =
+      'Java10Aufgabe2Roboter';
+
+    const MAX_CODE_LENGTH =
+      12000;
+
+    const CODE_REQUEST_TIMEOUT =
+      120000;
+
+    const pendingCodeRequests =
+      new Map();
+
+
+    function getScriptServerUrl() {
+      return SCRIPT_SERVER_URL.trim();
+    }
+
+
+    function isValidScriptServerUrl(url) {
+      try {
+        const parsedUrl =
+          new URL(url);
+
+        return (
+          parsedUrl.protocol === 'https:' &&
+          parsedUrl.hostname === 'script.google.com' &&
+          parsedUrl.pathname.endsWith('/exec') &&
+          !url.includes('DEINE_BEREITSTELLUNGS_ID')
+        );
+      } catch (error) {
+        return false;
+      }
+    }
+
+
+    function createRequestId() {
+      if (
+        window.crypto &&
+        typeof window.crypto.randomUUID === 'function'
+      ) {
+        return window.crypto.randomUUID();
+      }
+
+      return (
+        Date.now().toString(36) +
+        '-' +
+        Math.random().toString(36).substring(2)
+      );
+    }
+
+
+    /**
+     * Liest den aktuellen Stand direkt aus Hauptprogramm.java in der IDE.
+     * Die IDE stellt diese Schnittstelle durch enableFileAccess bereit.
+     */
+    function getCurrentProgramCode() {
+      const iframe =
+        document.getElementById(
+          'robot-ide'
+        );
+
+      if (
+        !iframe ||
+        !iframe.contentWindow
+      ) {
+        throw new Error(
+          'Die Online-IDE ist noch nicht bereit.'
+        );
+      }
+
+      let access;
+
+      try {
+        access =
+          iframe.contentWindow.online_ide_access;
+      } catch (error) {
+        throw new Error(
+          'Der aktuelle Programmcode konnte nicht aus der Online-IDE gelesen werden.'
+        );
+      }
+
+      if (
+        !access ||
+        typeof access.getIDE !== 'function'
+      ) {
+        throw new Error(
+          'Die Online-IDE lädt noch. Bitte warte kurz und versuche es erneut.'
+        );
+      }
+
+      const ide =
+        access.getIDE(
+          IDE_ID
+        );
+
+      if (
+        !ide ||
+        typeof ide.getFiles !== 'function'
+      ) {
+        throw new Error(
+          'Die Programmdateien sind noch nicht verfügbar.'
+        );
+      }
+
+      const files =
+        ide.getFiles();
+
+      const mainFile =
+        files.find(
+          function(file) {
+            return (
+              typeof file.getName === 'function' &&
+              file.getName() === 'Hauptprogramm.java'
+            );
+          }
+        );
+
+      if (
+        !mainFile ||
+        typeof mainFile.getText !== 'function'
+      ) {
+        throw new Error(
+          'Hauptprogramm.java wurde in der Online-IDE nicht gefunden.'
+        );
+      }
+
+      return mainFile.getText().trim();
+    }
+
+
+    /**
+     * Startet die getrennte Codeauswertung per POST. Das lange Codefeld
+     * gelangt nicht in eine URL. Nur die kurze requestId wird danach per
+     * JSONP abgefragt.
+     */
+    function submitCode(taskId) {
+      const button =
+        document.getElementById(
+          'button-' + taskId
+        );
+
+      const resultBox =
+        document.getElementById(
+          'result-' + taskId
+        );
+
+      const scriptServerUrl =
+        getScriptServerUrl();
+
+      if (
+        !isValidScriptServerUrl(
+          scriptServerUrl
+        )
+      ) {
+        showError(
+          resultBox,
+          'Die Adresse des Auswertungsservers ist nicht gültig.'
+        );
+        return;
+      }
+
+      let code;
+
+      try {
+        code =
+          getCurrentProgramCode();
+      } catch (error) {
+        showError(
+          resultBox,
+          error.message
+        );
+        return;
+      }
+
+      if (code.length < 20) {
+        showError(
+          resultBox,
+          'Dein Programmcode ist noch zu kurz für eine Auswertung.'
+        );
+        return;
+      }
+
+      if (code.length > MAX_CODE_LENGTH) {
+        showError(
+          resultBox,
+          'Dein Programmcode ist zu lang für die automatische Auswertung.'
+        );
+        return;
+      }
+
+      if (
+        !/\bRobot\b/.test(code) ||
+        !/\.hinlegen\s*\(/.test(code)
+      ) {
+        showError(
+          resultBox,
+          'Im aktuellen Code fehlen noch ein Robot-Objekt oder ein Aufruf von hinlegen().'
+        );
+        return;
+      }
+
+      button.dataset.defaultLabel =
+        button.textContent.trim();
+
+      button.disabled =
+        true;
+
+      button.textContent =
+        'Programm wird geprüft …';
+
+      resultBox.hidden =
+        false;
+
+      resultBox.className =
+        'result';
+
+      resultBox.textContent =
+        'Der aktuelle Stand von Hauptprogramm.java wird ausgewertet.';
+
+      const requestId =
+        createRequestId();
+
+      const transport =
+        createCodePostTransport(
+          scriptServerUrl,
+          requestId,
+          taskId,
+          code
+        );
+
+      const timeoutId =
+        window.setTimeout(
+          function() {
+            const pending =
+              pendingCodeRequests.get(
+                requestId
+              );
+
+            if (!pending) {
+              return;
+            }
+
+            restoreCodeButton(
+              pending
+            );
+
+            showError(
+              pending.resultBox,
+              'Der Auswertungsserver hat nicht rechtzeitig geantwortet. Bitte versuche es erneut.'
+            );
+
+            cleanupCodeRequest(
+              requestId
+            );
+          },
+          CODE_REQUEST_TIMEOUT
+        );
+
+      pendingCodeRequests.set(
+        requestId,
+        {
+          button:
+            button,
+          resultBox:
+            resultBox,
+          form:
+            transport.form,
+          iframe:
+            transport.iframe,
+          pollScript:
+            null,
+          pollTimer:
+            null,
+          timeoutId:
+            timeoutId
+        }
+      );
+
+      transport.form.submit();
+
+      scheduleCodeResultPoll(
+        requestId,
+        1800
+      );
+    }
+
+
+    function createCodePostTransport(
+      scriptServerUrl,
+      requestId,
+      taskId,
+      code
+    ) {
+      const iframeName =
+        'code-feedback-' +
+        requestId.replace(
+          /[^a-zA-Z0-9_-]/g,
+          ''
+        );
+
+      const iframe =
+        document.createElement(
+          'iframe'
+        );
+
+      iframe.name =
+        iframeName;
+
+      iframe.title =
+        'Unsichtbarer Übertragungsrahmen für die Codeauswertung';
+
+      iframe.setAttribute(
+        'aria-hidden',
+        'true'
+      );
+
+      iframe.style.display =
+        'none';
+
+      const form =
+        document.createElement(
+          'form'
+        );
+
+      form.method =
+        'POST';
+
+      form.action =
+        scriptServerUrl;
+
+      form.target =
+        iframeName;
+
+      form.acceptCharset =
+        'UTF-8';
+
+      form.style.display =
+        'none';
+
+      appendHiddenField(
+        form,
+        'requestType',
+        'code'
+      );
+
+      appendHiddenField(
+        form,
+        'requestId',
+        requestId
+      );
+
+      appendHiddenField(
+        form,
+        'taskId',
+        taskId
+      );
+
+      appendHiddenField(
+        form,
+        'code',
+        code
+      );
+
+      document.body.appendChild(
+        iframe
+      );
+
+      document.body.appendChild(
+        form
+      );
+
+      return {
+        iframe:
+          iframe,
+        form:
+          form
+      };
+    }
+
+
+    function appendHiddenField(
+      form,
+      name,
+      value
+    ) {
+      const input =
+        document.createElement(
+          'input'
+        );
+
+      input.type =
+        'hidden';
+
+      input.name =
+        name;
+
+      input.value =
+        String(value);
+
+      form.appendChild(
+        input
+      );
+    }
+
+
+    function scheduleCodeResultPoll(
+      requestId,
+      delay
+    ) {
+      const pending =
+        pendingCodeRequests.get(
+          requestId
+        );
+
+      if (!pending) {
+        return;
+      }
+
+      window.clearTimeout(
+        pending.pollTimer
+      );
+
+      pending.pollTimer =
+        window.setTimeout(
+          function() {
+            pollCodeResult(
+              requestId
+            );
+          },
+          delay
+        );
+    }
+
+
+    function pollCodeResult(requestId) {
+      const pending =
+        pendingCodeRequests.get(
+          requestId
+        );
+
+      if (!pending) {
+        return;
+      }
+
+      if (
+        pending.pollScript &&
+        pending.pollScript.parentNode
+      ) {
+        pending.pollScript.parentNode.removeChild(
+          pending.pollScript
+        );
+      }
+
+      const script =
+        document.createElement(
+          'script'
+        );
+
+      script.async =
+        true;
+
+      script.src =
+        createJsonpUrl(
+          getScriptServerUrl(),
+          {
+            callback:
+              '__handleCodeEvaluationResult',
+            requestType:
+              'code-result',
+            requestId:
+              requestId,
+            cacheBust:
+              Date.now()
+          }
+        );
+
+      script.onerror =
+        function() {
+          const current =
+            pendingCodeRequests.get(
+              requestId
+            );
+
+          if (!current) {
+            return;
+          }
+
+          scheduleCodeResultPoll(
+            requestId,
+            3000
+          );
+        };
+
+      pending.pollScript =
+        script;
+
+      document.body.appendChild(
+        script
+      );
+    }
+
+
+    function createJsonpUrl(
+      baseUrl,
+      parameters
+    ) {
+      const url =
+        new URL(
+          baseUrl
+        );
+
+      Object.keys(
+        parameters
+      ).forEach(
+        function(key) {
+          url.searchParams.set(
+            key,
+            String(parameters[key])
+          );
+        }
+      );
+
+      return url.toString();
+    }
+
+
+    window.__handleCodeEvaluationResult =
+      function(message) {
+        if (
+          !message ||
+          !message.requestId
+        ) {
+          return;
+        }
+
+        const pending =
+          pendingCodeRequests.get(
+            message.requestId
+          );
+
+        if (!pending) {
+          return;
+        }
+
+        if (
+          pending.pollScript &&
+          pending.pollScript.parentNode
+        ) {
+          pending.pollScript.parentNode.removeChild(
+            pending.pollScript
+          );
+
+          pending.pollScript =
+            null;
+        }
+
+        if (message.pending) {
+          pending.resultBox.textContent =
+            'Der Programmcode wird noch ausgewertet.';
+
+          scheduleCodeResultPoll(
+            message.requestId,
+            2200
+          );
+
+          return;
+        }
+
+        restoreCodeButton(
+          pending
+        );
+
+        if (
+          !message.result ||
+          message.result.ok !== true
+        ) {
+          showError(
+            pending.resultBox,
+            message.result &&
+            message.result.message
+              ? message.result.message
+              : 'Die Codeauswertung konnte nicht abgeschlossen werden.'
+          );
+
+          cleanupCodeRequest(
+            message.requestId
+          );
+
+          return;
+        }
+
+        showEvaluation(
+          pending.resultBox,
+          message.result
+        );
+
+        cleanupCodeRequest(
+          message.requestId
+        );
+      };
+
+
+    function restoreCodeButton(pending) {
+      pending.button.disabled =
+        false;
+
+      pending.button.textContent =
+        pending.button.dataset.defaultLabel ||
+        'Code erneut prüfen';
+    }
+
+
+    function cleanupCodeRequest(requestId) {
+      const pending =
+        pendingCodeRequests.get(
+          requestId
+        );
+
+      if (!pending) {
+        return;
+      }
+
+      window.clearTimeout(
+        pending.timeoutId
+      );
+
+      window.clearTimeout(
+        pending.pollTimer
+      );
+
+      [
+        pending.pollScript,
+        pending.form,
+        pending.iframe
+      ].forEach(
+        function(element) {
+          if (
+            element &&
+            element.parentNode
+          ) {
+            element.parentNode.removeChild(
+              element
+            );
+          }
+        }
+      );
+
+      pendingCodeRequests.delete(
+        requestId
+      );
+    }
+
+
+    function showEvaluation(
+      resultBox,
+      result
+    ) {
+      resultBox.textContent =
+        '';
+
+      resultBox.hidden =
+        false;
+
+      resultBox.className =
+        'result ' +
+        getEvaluationLevelClass(
+          result.points,
+          result.maxPoints
+        );
+
+      const heading =
+        document.createElement(
+          'h3'
+        );
+
+      heading.textContent =
+        result.points +
+        ' von ' +
+        result.maxPoints +
+        ' Punkten – ' +
+        result.status;
+
+      resultBox.appendChild(
+        heading
+      );
+
+      appendList(
+        resultBox,
+        'Das ist dir gelungen:',
+        result.strengths,
+        'Es wurde noch kein eindeutiger richtiger Aspekt erkannt.'
+      );
+
+      appendList(
+        resultBox,
+        'Das solltest du überprüfen:',
+        result.missing,
+        'Es fehlen keine wesentlichen Aspekte.'
+      );
+
+      const feedbackContainer =
+        document.createElement(
+          'div'
+        );
+
+      feedbackContainer.className =
+        'feedback';
+
+      const feedbackHeading =
+        document.createElement(
+          'h4'
+        );
+
+      feedbackHeading.textContent =
+        'Rückmeldung zur Codeanalyse';
+
+      const feedbackText =
+        document.createElement(
+          'p'
+        );
+
+      feedbackText.textContent =
+        result.feedback ||
+        'Überprüfe deinen Programmcode noch einmal.';
+
+      feedbackContainer.appendChild(
+        feedbackHeading
+      );
+
+      feedbackContainer.appendChild(
+        feedbackText
+      );
+
+      resultBox.appendChild(
+        feedbackContainer
+      );
+    }
+
+
+    function getEvaluationLevelClass(
+      points,
+      maxPoints
+    ) {
+      const ratio =
+        Number(points) /
+        Math.max(
+          1,
+          Number(maxPoints)
+        );
+
+      if (ratio < 0.4) {
+        return 'low';
+      }
+
+      if (ratio < 0.75) {
+        return 'medium';
+      }
+
+      return 'high';
+    }
+
+
+    function appendList(
+      container,
+      headingText,
+      items,
+      emptyText
+    ) {
+      const heading =
+        document.createElement(
+          'h4'
+        );
+
+      heading.textContent =
+        headingText;
+
+      container.appendChild(
+        heading
+      );
+
+      if (
+        !Array.isArray(items) ||
+        items.length === 0
+      ) {
+        const paragraph =
+          document.createElement(
+            'p'
+          );
+
+        paragraph.textContent =
+          emptyText;
+
+        container.appendChild(
+          paragraph
+        );
+
+        return;
+      }
+
+      const list =
+        document.createElement(
+          'ul'
+        );
+
+      items.forEach(
+        function(item) {
+          const listItem =
+            document.createElement(
+              'li'
+            );
+
+          listItem.textContent =
+            String(item);
+
+          list.appendChild(
+            listItem
+          );
+        }
+      );
+
+      container.appendChild(
+        list
+      );
+    }
+
+
+    function showError(
+      resultBox,
+      message
+    ) {
+      resultBox.hidden =
+        false;
+
+      resultBox.className =
+        'result error';
+
+      resultBox.textContent =
+        message;
+    }
+
+
     function checkTask(taskId) {
       const checkbox = document.getElementById('complete-' + taskId);
       const result = document.getElementById('result-' + taskId);
