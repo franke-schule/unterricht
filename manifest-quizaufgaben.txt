@@ -1,0 +1,49 @@
+Manifest: Quizaufgaben
+======================
+
+Ziel und Geltungsbereich
+------------------------
+Dieses Manifest ergaenzt manifest-allgemein.txt fuer interaktive Quizaufgaben.
+Es gilt fuer Auswahlfragen, Lueckentexte, Zuordnungen und vergleichbare
+Aufgabenformate mit automatischer Rueckmeldung.
+
+
+1. Teilaufgaben und Sichtbarkeit
+-------------------------------
+
+  - Teilaufgaben eindeutig nummerieren oder benennen.
+  - Den aktuellen Bearbeitungsstand sichtbar machen, wenn Teilaufgaben
+    schrittweise freigeschaltet werden.
+  - Aufgaben mit mehreren Teilaufgaben, die waehrend der Bearbeitung nicht
+    zeitgleich einsehbar sind, muessen nach Abschluss stets eine Uebersicht
+    ueber alle Teilaufgaben enthalten.
+  - Diese Abschlussuebersicht muss mindestens Nummer bzw. Titel, Fragestellung
+    oder Arbeitsauftrag und das richtige Ergebnis jeder Teilaufgabe zeigen.
+  - Die Uebersicht erst nach Bearbeitung der letzten Teilaufgabe anzeigen. Sie
+    soll sich fuer die gemeinsame Besprechung im Plenum und die Projektion im
+    Klassenraum eignen.
+
+
+2. Rueckmeldungen
+-----------------
+
+  - Nach einer Eingabe konkret rueckmelden, ob und warum sie richtig oder
+    falsch ist.
+  - Richtig und falsch nie ausschliesslich durch Farbe kennzeichnen.
+  - Dynamische Rueckmeldungen mit aria-live="polite" zugaenglich machen.
+  - Nach einer falschen Eingabe eine erneute Bearbeitung ermoeglichen, sofern
+    das didaktische Konzept nichts anderes vorsieht.
+
+
+3. Abschlusspruefung
+--------------------
+
+  [ ] Alle Teilaufgaben sind eindeutig nummeriert oder benannt.
+  [ ] Fortschritt und aktuelle Teilaufgabe sind erkennbar.
+  [ ] Nicht gleichzeitig sichtbare Teilaufgaben erscheinen nach Abschluss in
+      einer gemeinsamen Uebersicht.
+  [ ] Die Abschlussuebersicht nennt jede Fragestellung und das richtige
+      Ergebnis.
+  [ ] Rueckmeldungen sind textlich verstaendlich und barrierearm.
+  [ ] Der Wechsel zwischen den Teilaufgaben und zur Abschlussuebersicht wurde
+      interaktiv getestet.
