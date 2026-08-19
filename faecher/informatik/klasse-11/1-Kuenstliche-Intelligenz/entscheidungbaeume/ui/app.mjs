@@ -13,6 +13,7 @@ import {
 } from "../logic/decision-tree.mjs";
 
 const STORAGE_PREFIX = "informatik11-decision-tree-v1";
+const VERIFIED_PREFIX = "informatik11-decision-tree-verified-v1";
 const PALETTE_MIME = "application/x-monkey-tree-palette";
 const TREE_MIME = "application/x-monkey-tree-node";
 const SOLUTION_CODE = "M4RX-DK2P";
@@ -51,6 +52,10 @@ function storageKey() {
   return `${STORAGE_PREFIX}-${state.variantId}`;
 }
 
+function verifiedKey() {
+  return `${VERIFIED_PREFIX}-${state.variantId}`;
+}
+
 function loadTree() {
   try {
     const stored = localStorage.getItem(storageKey());
@@ -87,6 +92,7 @@ function clearInteraction() {
 
 function markTreeChanged(message = "Baum geändert. Überprüfe ihn erneut, wenn du bereit bist.") {
   state.evaluation = null;
+  try { localStorage.removeItem(verifiedKey()); } catch { /* kein Zugriff */ }
   saveTree();
   clearInteraction();
   setStatus(message);
@@ -428,6 +434,12 @@ function renderFeedback() {
     next.addEventListener("click", () => switchVariant("advanced"));
     feedback.append(next);
   }
+
+  const taskTwo = document.createElement("a");
+  taskTwo.className = "dt-secondary-button dt-next-task-link";
+  taskTwo.href = `aufgabe2.html#${state.variantId}`;
+  taskTwo.textContent = "Weiter zu Aufgabe 2 – Entscheidungsbaum testen";
+  feedback.append(taskTwo);
 }
 
 function renderTabs() {
@@ -492,6 +504,11 @@ elements.reset.addEventListener("click", () => {
 
 elements.check.addEventListener("click", () => {
   state.evaluation = evaluateTree(currentVariant().dataset, state.tree);
+  if (state.evaluation.complete && state.evaluation.correct === state.evaluation.total) {
+    try {
+      localStorage.setItem(verifiedKey(), JSON.stringify({ tree: state.tree, verifiedAt: Date.now() }));
+    } catch { /* Aufgabe 2 prüft den Baum zusätzlich erneut. */ }
+  }
   clearInteraction();
   render();
   elements.feedback.scrollIntoView({ behavior: "smooth", block: "nearest" });

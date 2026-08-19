@@ -1,0 +1,104 @@
+import test from "node:test";
+import assert from "node:assert/strict";
+import { existsSync } from "node:fs";
+import {
+  ADVANCED_DATASET,
+  CLASSIFICATIONS,
+  EASY_DATASET,
+} from "../data/monkeys.mjs";
+import {
+  ADVANCED_TEST_DATA,
+  COMPARISON_TREE_A,
+  COMPARISON_TREE_B,
+  EASY_TEST_DATA,
+} from "../data/test-data.mjs";
+import { evaluateTree } from "../logic/decision-tree.mjs";
+import {
+  accuracy,
+  appendUniqueResult,
+  confusionMatrix,
+  createTestResult,
+} from "../logic/testing.mjs";
+
+const { BITES, DOES_NOT_BITE } = CLASSIFICATIONS;
+
+test("Testdaten besitzen die geforderten Größen und Klassenverteilungen", () => {
+  assert.equal(EASY_TEST_DATA.length, 8);
+  assert.equal(EASY_TEST_DATA.filter((entry) => entry.actual === BITES).length, 4);
+  assert.equal(EASY_TEST_DATA.filter((entry) => entry.actual === DOES_NOT_BITE).length, 4);
+  assert.equal(ADVANCED_TEST_DATA.length, 13);
+  assert.equal(ADVANCED_TEST_DATA.filter((entry) => entry.actual === BITES).length, 4);
+  assert.equal(ADVANCED_TEST_DATA.filter((entry) => entry.actual === DOES_NOT_BITE).length, 9);
+});
+
+test("Testdaten überschneiden sich nicht mit Trainingsdaten derselben Variante", () => {
+  for (const [training, testing] of [[EASY_DATASET, EASY_TEST_DATA], [ADVANCED_DATASET, ADVANCED_TEST_DATA]]) {
+    const trainingIds = new Set(training.map((entry) => entry.id));
+    assert.deepEqual(testing.filter((entry) => trainingIds.has(entry.id)), []);
+    assert.equal(new Set(testing.map((entry) => entry.id)).size, testing.length);
+    testing.forEach((entry) => assert.equal(
+      existsSync(new URL(`../assets/monkeys/${entry.imageFile}`, import.meta.url)),
+      true,
+      `${entry.imageFile} fehlt`,
+    ));
+  }
+});
+
+test("Konfusionsmatrix bildet TP, FP, FN und TN korrekt ab", () => {
+  const results = [
+    { monkeyId: "tp", actual: BITES, predicted: BITES },
+    { monkeyId: "fp", actual: DOES_NOT_BITE, predicted: BITES },
+    { monkeyId: "fn", actual: BITES, predicted: DOES_NOT_BITE },
+    { monkeyId: "tn", actual: DOES_NOT_BITE, predicted: DOES_NOT_BITE },
+  ];
+  assert.deepEqual(confusionMatrix(results), {
+    truePositive: 1,
+    falsePositive: 1,
+    falseNegative: 1,
+    trueNegative: 1,
+  });
+  assert.equal(accuracy(results), 0.5);
+  assert.equal(accuracy([]), null);
+});
+
+test("Ein Testdatum wird höchstens einmal aufgenommen", () => {
+  const result = { monkeyId: "03", actual: BITES, predicted: BITES };
+  const once = appendUniqueResult([], result);
+  const twice = appendUniqueResult(once, result);
+  assert.equal(once.length, 1);
+  assert.equal(twice.length, 1);
+  assert.deepEqual(confusionMatrix(twice), {
+    truePositive: 1,
+    falsePositive: 0,
+    falseNegative: 0,
+    trueNegative: 0,
+  });
+});
+
+test("Beide Vergleichsbäume erreichen 12 von 12 Trainingsdaten", () => {
+  assert.equal(evaluateTree(EASY_DATASET, COMPARISON_TREE_A).correct, 12);
+  assert.equal(evaluateTree(EASY_DATASET, COMPARISON_TREE_B).correct, 12);
+});
+
+test("Baum A erreicht 8/8, Baum B 7/8 und nur Äffchen 03 unterscheidet sich", () => {
+  const resultsA = EASY_TEST_DATA.map((monkey) => createTestResult(monkey, COMPARISON_TREE_A));
+  const resultsB = EASY_TEST_DATA.map((monkey) => createTestResult(monkey, COMPARISON_TREE_B));
+  assert.equal(resultsA.filter((result) => result.correct).length, 8);
+  assert.equal(resultsB.filter((result) => result.correct).length, 7);
+  assert.deepEqual(confusionMatrix(resultsA), {
+    truePositive: 4,
+    falsePositive: 0,
+    falseNegative: 0,
+    trueNegative: 4,
+  });
+  assert.deepEqual(confusionMatrix(resultsB), {
+    truePositive: 3,
+    falsePositive: 0,
+    falseNegative: 1,
+    trueNegative: 4,
+  });
+  assert.deepEqual(
+    resultsA.filter((result, index) => result.predicted !== resultsB[index].predicted).map((result) => result.monkeyId),
+    ["03"],
+  );
+});
