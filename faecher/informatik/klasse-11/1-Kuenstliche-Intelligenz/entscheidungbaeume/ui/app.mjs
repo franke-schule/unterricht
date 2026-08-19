@@ -15,6 +15,7 @@ import {
 const STORAGE_PREFIX = "informatik11-decision-tree-v1";
 const PALETTE_MIME = "application/x-monkey-tree-palette";
 const TREE_MIME = "application/x-monkey-tree-node";
+const SOLUTION_CODE = "M4RX-DK2P";
 
 const elements = {
   tabs: [...document.querySelectorAll("[data-variant]")],
@@ -28,6 +29,9 @@ const elements = {
   reset: document.querySelector("#reset-tree"),
   toggleExample: document.querySelector("#toggle-example"),
   exampleTree: document.querySelector("#example-tree"),
+  solutionForm: document.querySelector("#solution-code-form"),
+  solutionLink: document.querySelector("#solution-download-link"),
+  solutionMessage: document.querySelector("#solution-code-message"),
 };
 
 const state = {
@@ -442,6 +446,22 @@ function render() {
   renderFeedback();
 }
 
+function normalizeSolutionCode(value) {
+  return value.toUpperCase().replace(/[^A-Z0-9]/g, "");
+}
+
+function unlockSolution(event) {
+  event.preventDefault();
+  const enteredCode = normalizeSolutionCode(elements.solutionForm.elements["solution-code"].value);
+  const isCorrect = enteredCode === normalizeSolutionCode(SOLUTION_CODE);
+
+  elements.solutionLink.hidden = !isCorrect;
+  elements.solutionMessage.className = `solution-code-message${isCorrect ? "" : " error"}`;
+  elements.solutionMessage.textContent = isCorrect
+    ? "Code korrekt. Das Sicherungsblatt ist freigeschaltet."
+    : "Der eingegebene Code ist nicht gültig.";
+}
+
 function switchVariant(variantId) {
   state.variantId = variantId;
   state.tree = loadTree();
@@ -477,6 +497,7 @@ elements.check.addEventListener("click", () => {
   elements.feedback.scrollIntoView({ behavior: "smooth", block: "nearest" });
 });
 
+elements.solutionForm.addEventListener("submit", unlockSolution);
+
 state.tree = loadTree();
 render();
-

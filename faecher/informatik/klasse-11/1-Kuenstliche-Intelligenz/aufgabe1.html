@@ -6,8 +6,8 @@
     <meta name="robots" content="noindex, nofollow">
     <title>Aufgabe 1 – Gutes Äffchen / Böses Äffchen | Informatik 11</title>
     <link rel="stylesheet" href="../../../../styles.css?v=20260707">
-    <link rel="stylesheet" href="entscheidungbaeume/styles.css?v=20260819">
-    <script type="module" src="entscheidungbaeume/ui/app.mjs?v=20260819"></script>
+    <link rel="stylesheet" href="entscheidungbaeume/styles.css?v=20260819b">
+    <script type="module" src="entscheidungbaeume/ui/app.mjs?v=20260819b"></script>
   </head>
   <body class="decision-tree-page">
     <div class="site-backdrop" aria-hidden="true"></div>
@@ -96,7 +96,28 @@
           </section>
         </div>
       </section>
+
+      <section class="solution-download" aria-labelledby="solution-download-title">
+        <h2 id="solution-download-title">Sicherungsblatt zu Aufgabe 1</h2>
+        <details class="solution-reveal">
+          <summary>Sicherungsblatt anzeigen</summary>
+          <form id="solution-code-form" class="solution-code-form">
+            <label for="solution-code">Lehrercode eingeben</label>
+            <div class="solution-code-controls">
+              <input id="solution-code" name="solution-code" type="text"
+                maxlength="9" autocomplete="off" autocapitalize="characters"
+                spellcheck="false" required>
+              <button type="submit">Code prüfen</button>
+            </div>
+            <p id="solution-code-message" class="solution-code-message"
+              aria-live="polite"></p>
+            <a id="solution-download-link" class="download-button"
+              href="sicherungsblatt-aufgabe-1-loesungen.pdf" download hidden>
+              &#8595; Sicherungsblatt herunterladen
+            </a>
+          </form>
+        </details>
+      </section>
     </main>
   </body>
 </html>
-
