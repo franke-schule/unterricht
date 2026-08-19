@@ -1,0 +1,56 @@
+Manifest: Debugging und grosse Seitentests
+==========================================
+
+Ziel und Geltungsbereich
+------------------------
+Dieses Manifest ergaenzt manifest-allgemein.txt fuer groessere Tests,
+Umbauten und Designexperimente an bestehenden Seiten. Es soll verhindern,
+dass eine funktionierende Produktivseite waehrend eines Versuchs
+unbeabsichtigt ueberschrieben oder ihre Gestaltung dauerhaft veraendert wird.
+
+
+1. Vorschauordner fuer grosse Seitentests
+-----------------------------------------
+
+Wenn fuer eine bestehende Seite ein grosser Test oder ein umfangreiches
+Designexperiment ansteht, soll ein eigener Vorschauordner angelegt werden.
+Die bestehende HTML-Datei bleibt waehrend des Tests unveraendert.
+
+Im Vorschauordner werden verwendet:
+
+  - eine Kopie der zu testenden HTML-Seite,
+  - separate CSS-Dateien fuer die Designvarianten,
+  - nur die fuer die Vorschau benoetigten lokalen Ressourcen.
+
+Beispielstruktur:
+
+  _vorschau/
+    aufgabe2a-design-a.html
+    aufgabe2a-design-b.html
+    design-a.css
+    design-b.css
+
+Regeln:
+
+  - Der Vorschauordner darf nicht aus den regulaeren Aufgabenmenues verlinkt
+    werden.
+  - Vorschauseiten duerfen bestehende Produktivdateien nicht ueberschreiben.
+  - Designvarianten sollen eigene CSS-Dateien verwenden, damit Versuche klar
+    voneinander und vom regulaeren Stylesheet getrennt bleiben.
+  - Relative Links und Ressourcenpfade in der Vorschau muessen aus Sicht des
+    Vorschauordners geprueft werden.
+  - Erst nach Auswahl und erfolgreicher Pruefung einer Variante werden die
+    gewuenschten Aenderungen gezielt in die bestehende Seite uebernommen.
+  - Nicht mehr benoetigte Vorschauartefakte werden nach Abschluss des Tests
+    entfernt oder bewusst als dokumentierte Entwuerfe aufbewahrt.
+
+
+2. Abschlusspruefung
+--------------------
+
+  [ ] Bestehende HTML-Dateien sind fuer den Test unveraendert geblieben.
+  [ ] Vorschauseiten liegen in einem eindeutig benannten Vorschauordner.
+  [ ] Jede Designvariante verwendet eine separate CSS-Datei.
+  [ ] Der Vorschauordner ist nicht in regulaeren Aufgabenmenues verlinkt.
+  [ ] Links, Ressourcen, Desktop- und Mobilansicht wurden geprueft.
+  [ ] Eine Uebernahme in die Produktivseite erfolgt erst nach bewusster Auswahl.

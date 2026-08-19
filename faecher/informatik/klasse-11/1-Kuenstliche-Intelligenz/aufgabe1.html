@@ -1,0 +1,102 @@
+<!doctype html>
+<html lang="de">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="robots" content="noindex, nofollow">
+    <title>Aufgabe 1 – Gutes Äffchen / Böses Äffchen | Informatik 11</title>
+    <link rel="stylesheet" href="../../../../styles.css?v=20260707">
+    <link rel="stylesheet" href="entscheidungbaeume/styles.css?v=20260819">
+    <script type="module" src="entscheidungbaeume/ui/app.mjs?v=20260819"></script>
+  </head>
+  <body class="decision-tree-page">
+    <div class="site-backdrop" aria-hidden="true"></div>
+    <main class="page-shell decision-tree-shell">
+      <nav class="topbar" aria-label="Navigation">
+        <a class="back-link" href="../index.html">Zurück</a>
+        <a class="back-link" href="../../../../">Startseite</a>
+      </nav>
+
+      <header class="dt-hero">
+        <p class="dt-eyebrow">Künstliche Intelligenz · Entscheidungsbäume</p>
+        <h1>Gutes Äffchen / Böses Äffchen</h1>
+        <p class="dt-task-number">Aufgabe 1</p>
+        <p class="dt-lead"><strong>Überlege dir Regeln, mit denen du entscheiden kannst, welches Äffchen beißt und welches nicht beißt.</strong></p>
+        <p>Baue aus den Merkmalen einen Entscheidungsbaum, der die bekannten Äffchen möglichst richtig einordnet.</p>
+      </header>
+
+      <div class="dt-variant-tabs" role="tablist" aria-label="Schwierigkeitsgrad">
+        <button type="button" role="tab" data-variant="easy">1a – Einfach</button>
+        <button type="button" role="tab" data-variant="advanced">1b – Fortgeschritten</button>
+      </div>
+
+      <section class="dt-workspace" aria-label="Entscheidungsbaum-Labor">
+        <aside class="dt-training-panel" aria-labelledby="training-title">
+          <div class="dt-section-heading">
+            <span>Trainingsdaten</span>
+            <h2 id="training-title">Bekannte Äffchen</h2>
+            <p>Vergleiche die Bilder jederzeit mit deinen Regeln.</p>
+          </div>
+          <div id="training-groups"></div>
+          <details class="dt-source-note">
+            <summary>Quellen und Lizenz</summary>
+            <p>Äffchengrafiken: Annabel Lindner und Stefan Seegerer, AI Unplugged, <a href="https://creativecommons.org/licenses/by-nc/3.0/de/" target="_blank" rel="noreferrer">CC BY-NC 3.0</a>.</p>
+            <p><a href="https://www.aiunplugged.org/german.pdf" target="_blank" rel="noreferrer">Unterrichtsmaterial</a> · <a href="https://www.stefanseegerer.de/decision-tree-monkey-game/" target="_blank" rel="noreferrer">digitale Referenz</a></p>
+          </details>
+        </aside>
+
+        <div class="dt-builder-column">
+          <section class="dt-example-card" aria-labelledby="example-title">
+            <div class="dt-card-heading">
+              <div>
+                <span>Beispiel</span>
+                <h2 id="example-title">So kann ein Entscheidungsbaum aussehen</h2>
+                <p>Dieses Beispiel passt allerdings noch nicht zu allen Äffchen.</p>
+              </div>
+              <button class="dt-secondary-button" id="toggle-example" type="button" aria-expanded="true">Beispiel ausblenden</button>
+            </div>
+            <div id="example-tree" class="dt-example-tree" aria-label="Beispielbaum: Zunge raus, Ja führt zu Beißt, Nein führt zu Beißt nicht">
+              <div class="dt-demo-feature">Zunge raus?</div>
+              <div class="dt-demo-branches">
+                <div><span>Ja</span><div class="dt-demo-leaf bites">Beißt</div></div>
+                <div><span>Nein</span><div class="dt-demo-leaf safe">Beißt nicht</div></div>
+              </div>
+            </div>
+          </section>
+
+          <section class="dt-editor-card" aria-labelledby="editor-title">
+            <div class="dt-card-heading">
+              <div>
+                <span>Dein Modell</span>
+                <h2 id="editor-title">Dein Entscheidungsbaum</h2>
+                <p>Ziehe Bausteine in den Baum oder wähle erst einen Baustein und dann das Ziel.</p>
+              </div>
+              <button class="dt-danger-button" id="reset-tree" type="button">Baum zurücksetzen</button>
+            </div>
+
+            <div class="dt-palette" aria-labelledby="palette-title">
+              <div class="dt-palette-heading">
+                <h3 id="palette-title">Bausteine</h3>
+                <span>ziehen oder anklicken</span>
+              </div>
+              <div id="feature-palette"></div>
+              <div class="dt-leaf-palette" id="leaf-palette"></div>
+            </div>
+
+            <p id="interaction-status" class="dt-interaction-status" role="status" aria-live="polite">Wähle einen Baustein oder ziehe ihn in die leere Wurzel.</p>
+
+            <div class="dt-tree-viewport" aria-label="Arbeitsfläche für den Entscheidungsbaum">
+              <div id="tree-editor" class="dt-tree-editor"></div>
+            </div>
+
+            <div class="dt-check-area">
+              <button class="dt-primary-button" id="check-tree" type="button">Entscheidungsbaum überprüfen</button>
+              <div id="evaluation-feedback" class="dt-feedback" role="status" aria-live="polite" hidden></div>
+            </div>
+          </section>
+        </div>
+      </section>
+    </main>
+  </body>
+</html>
+

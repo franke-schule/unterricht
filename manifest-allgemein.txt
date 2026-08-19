@@ -9,6 +9,7 @@ Dieses Manifest enthaelt Regeln, die fuer alle Aufgabenseiten im Repo
   manifest-quizaufgaben.txt
   manifest-online-ide-programmieraufgaben.txt
   manifest-tabellenkalkulation.txt
+  manifest-debug.txt
 
 Bei einer neuen Seite gilt immer zuerst dieses allgemeine Manifest und danach
 das passende Aufgaben- oder Fachmanifest. Fachregeln duerfen allgemeine Regeln
