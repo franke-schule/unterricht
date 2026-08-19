@@ -368,6 +368,10 @@ h1 {
   background: #ffffff;
 }
 
+.spreadsheet-frame.tall-grid {
+  max-height: 76vh;
+}
+
 .spreadsheet-zoom {
   position: sticky;
   top: 0;
@@ -428,6 +432,46 @@ h1 {
 
 .mini-spreadsheet-table.invoice-spreadsheet-table {
   min-width: 1180px;
+}
+
+.spreadsheet-task-table.compact-spreadsheet-table th,
+.spreadsheet-task-table.compact-spreadsheet-table td {
+  height: 44px;
+}
+
+.spreadsheet-task-table .sheet-title-cell {
+  font-size: 1.35rem;
+  font-weight: 900;
+}
+
+.spreadsheet-task-table .workbook-section-cell,
+.spreadsheet-task-table .matrix-header-cell {
+  background: #b8d2e9;
+  font-weight: 800;
+}
+
+.spreadsheet-task-table .user-legend-cell {
+  background: #c7c7c7;
+  font-weight: 800;
+}
+
+.spreadsheet-task-table .idea-cell {
+  color: #dc2626;
+  font-weight: 800;
+}
+
+.spreadsheet-task-table .instruction-text-cell {
+  font-weight: 700;
+}
+
+.spreadsheet-task-table .matrix-header-cell {
+  background: #8cb3df;
+  font-size: 1.05rem;
+  text-align: center;
+}
+
+.spreadsheet-task-table.multiplication-spreadsheet-table td {
+  height: 50px;
 }
 
 .invoice-spreadsheet-table col.row-number-column {
@@ -595,6 +639,10 @@ h1 {
   box-shadow: 0 0 0 1px #1d4ed8;
   cursor: ns-resize;
   touch-action: none;
+}
+
+.spreadsheet-fill-handle.rectangle-fill-handle {
+  cursor: nwse-resize;
 }
 
 .spreadsheet-fill-handle:hover,
