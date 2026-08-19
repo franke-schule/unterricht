@@ -59,6 +59,7 @@ const cdp = await connect(target.webSocketDebuggerUrl);
 await cdp.send("Page.enable");
 await cdp.send("Runtime.enable");
 await cdp.send("Emulation.setEmulatedMedia", { features: [{ name: "prefers-reduced-motion", value: "reduce" }] });
+await cdp.send("Emulation.setDeviceMetricsOverride", { width: 1366, height: 768, deviceScaleFactor: 1, mobile: false });
 const loaded = cdp.waitFor("Page.loadEventFired");
 await cdp.send("Page.navigate", { url: pageUrl });
 await loaded;
@@ -91,6 +92,15 @@ await evaluate(`(async () => {
 await reload();
 assert(await evaluate("Boolean(document.querySelector('#start-own-test'))"), "Startansicht des eigenen Testlaufs fehlt.");
 await evaluate("document.querySelector('#start-own-test').click()");
+await evaluate("new Promise(resolve => requestAnimationFrame(() => requestAnimationFrame(resolve)))");
+const ownTreeFit = await evaluate(`(() => {
+  const viewport = document.querySelector('.dt-readonly-viewport');
+  const tree = viewport.querySelector(':scope > .dt-readonly-subtree');
+  const outer = viewport.getBoundingClientRect();
+  const inner = tree.getBoundingClientRect();
+  return { contained: inner.left >= outer.left - 1 && inner.right <= outer.right + 1 && inner.top >= outer.top - 1 && inner.bottom <= outer.bottom + 1, viewportHeight: outer.height, scale: viewport.dataset.treeScale, style: tree.getAttribute('style'), transform: getComputedStyle(tree).transform, natural: { width: tree.scrollWidth, height: tree.scrollHeight }, outer: { left: outer.left, right: outer.right, top: outer.top, bottom: outer.bottom }, inner: { left: inner.left, right: inner.right, top: inner.top, bottom: inner.bottom } };
+})()`);
+assert(ownTreeFit.contained && ownTreeFit.viewportHeight <= 286, `Eigener Baum passt nicht vollständig in den Laptop-Bereich: ${JSON.stringify(ownTreeFit)}`);
 
 async function finishCurrentOwnDataset(total) {
   for (let index = 0; index < total; index += 1) {
@@ -107,6 +117,18 @@ await finishCurrentOwnDataset(8);
 const easySummary = await evaluate("document.querySelector('#task2-own').innerText");
 assert(easySummary.includes("8 von 8 richtig") && easySummary.includes("100 %"), "Einfache Zusammenfassung ist falsch.");
 await evaluate("document.querySelector('#open-comparison').click(); document.querySelector('#start-comparison').click()");
+await evaluate("new Promise(resolve => requestAnimationFrame(() => requestAnimationFrame(resolve)))");
+const comparisonTreeFit = await evaluate(`[...document.querySelectorAll('#task2-compare .dt-readonly-viewport')].map(viewport => {
+  const tree = viewport.querySelector(':scope > .dt-readonly-subtree');
+  const outer = viewport.getBoundingClientRect();
+  const inner = tree.getBoundingClientRect();
+  return { contained: inner.left >= outer.left - 1 && inner.right <= outer.right + 1 && inner.top >= outer.top - 1 && inner.bottom <= outer.bottom + 1, viewportHeight: outer.height, scale: viewport.dataset.treeScale };
+})`);
+assert(comparisonTreeFit.length === 2 && comparisonTreeFit.every(result => result.contained && result.viewportHeight <= 232), `Vergleichsbäume passen nicht vollständig in den Laptop-Bereich: ${JSON.stringify(comparisonTreeFit)}`);
+await evaluate("document.querySelector('#task2-compare').scrollIntoView({ block: 'start' }); new Promise(resolve => setTimeout(resolve, 30))");
+const treeScreenshot = await cdp.send("Page.captureScreenshot", { format: "png", captureBeyondViewport: false });
+const treeScreenshotPath = join(tmpdir(), "entscheidungbaeume-aufgabe2-laptop.png");
+await writeFile(treeScreenshotPath, Buffer.from(treeScreenshot.data, "base64"));
 
 for (let index = 0; index < 8; index += 1) {
   await evaluate("document.querySelector('#classify-both').click(); new Promise(resolve => setTimeout(resolve, 15))");
@@ -133,8 +155,8 @@ await writeFile(screenshotPath, Buffer.from(screenshot.data, "base64"));
 const viewportResults = [];
 for (const viewport of [{ width: 1366, height: 768 }, { width: 1024, height: 768 }, { width: 768, height: 1024 }]) {
   await cdp.send("Emulation.setDeviceMetricsOverride", { ...viewport, deviceScaleFactor: 1, mobile: false });
-  const layout = await evaluate("({ innerWidth, scrollWidth: document.documentElement.scrollWidth })");
-  assert(layout.scrollWidth <= layout.innerWidth, `${viewport.width}px: horizontales Seitenscrolling.`);
+  const layout = await evaluate(`({ innerWidth, scrollWidth: document.documentElement.scrollWidth, shell: (() => { const element = document.querySelector('.decision-tree-shell'); const rect = element.getBoundingClientRect(); return { left: rect.left, right: rect.right, width: rect.width, cssWidth: getComputedStyle(element).width, minWidth: getComputedStyle(element).minWidth }; })(), overflow: [...document.querySelectorAll('body *')].map(element => { const style = getComputedStyle(element); const rect = element.getBoundingClientRect(); return { tag: element.tagName, className: element.className, right: rect.right, width: rect.width, cssWidth: style.width, transform: style.transform, zoom: style.zoom }; }).filter(item => item.right > innerWidth + 1).sort((a, b) => b.right - a.right).slice(0, 3) })`);
+  assert(layout.scrollWidth <= layout.innerWidth, `${viewport.width}px: horizontales Seitenscrolling (${JSON.stringify(layout)}).`);
   viewportResults.push({ ...viewport, ...layout });
 }
 
@@ -167,5 +189,5 @@ assert((await evaluate("document.querySelector('#task2-own').innerText")).includ
 const imagesComplete = await evaluate("[...document.images].every(image => image.complete && image.naturalWidth > 0)");
 assert(imagesComplete, "Mindestens ein Testbild konnte nicht geladen werden.");
 
-console.log(JSON.stringify({ viewportResults, imagesComplete, screenshotPath }, null, 2));
+console.log(JSON.stringify({ ownTreeFit, comparisonTreeFit, viewportResults, imagesComplete, screenshotPath, treeScreenshotPath }, null, 2));
 cdp.socket.close();

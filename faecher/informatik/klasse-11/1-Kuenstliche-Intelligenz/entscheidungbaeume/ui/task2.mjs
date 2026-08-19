@@ -146,6 +146,33 @@ function treeMarkup(node) {
   </div>`;
 }
 
+let treeFitFrame = 0;
+
+function scheduleTreeFit() {
+  cancelAnimationFrame(treeFitFrame);
+  treeFitFrame = requestAnimationFrame(() => {
+    document.querySelectorAll(".dt-readonly-viewport").forEach((viewport) => {
+      const tree = viewport.querySelector(":scope > .dt-readonly-subtree");
+      if (!tree || viewport.clientWidth === 0) return;
+
+      tree.style.zoom = "1";
+      const naturalWidth = tree.scrollWidth;
+      const naturalHeight = tree.scrollHeight;
+      const inset = viewport.classList.contains("compact") ? 12 : 16;
+      const maximumHeight = viewport.classList.contains("compact") ? 220 : 270;
+      const scale = Math.min(
+        1,
+        (viewport.clientWidth - inset) / naturalWidth,
+        maximumHeight / naturalHeight,
+      );
+
+      tree.style.zoom = String(Math.max(0.1, scale));
+      viewport.style.height = `${Math.ceil(naturalHeight * scale + inset)}px`;
+      viewport.dataset.treeScale = scale.toFixed(2);
+    });
+  });
+}
+
 function monkeyMarkup(monkey, selectable = false) {
   const tag = selectable ? "button" : "article";
   const attrs = selectable ? `type="button" data-monkey-choice="${monkey.id}"` : "";
@@ -256,6 +283,7 @@ function renderOwnTesting() {
   document.querySelector("#skip-own")?.addEventListener("click", () => { if (state.animation) state.animation.skip = true; });
   document.querySelector("#reveal-own")?.addEventListener("click", revealOwn);
   document.querySelector("#next-own")?.addEventListener("click", nextOwn);
+  scheduleTreeFit();
 }
 
 function renderOwnSummary() {
@@ -386,6 +414,7 @@ function renderComparisonIntro() {
     saveComparison();
     render();
   });
+  scheduleTreeFit();
 }
 
 function comparisonTreeCard(name, tree, score) {
@@ -423,6 +452,7 @@ function renderComparisonTesting() {
   document.querySelector("#skip-both")?.addEventListener("click", () => { if (state.animation) state.animation.skip = true; });
   document.querySelector("#reveal-both")?.addEventListener("click", revealBoth);
   document.querySelector("#next-both")?.addEventListener("click", nextBoth);
+  scheduleTreeFit();
 }
 
 async function classifyBoth() {
@@ -585,5 +615,7 @@ elements.tabs.forEach((tab) => tab.addEventListener("click", () => {
   history.replaceState(null, "", `#${state.variantId}`);
   loadVariant();
 }));
+
+window.addEventListener("resize", scheduleTreeFit);
 
 loadVariant();
