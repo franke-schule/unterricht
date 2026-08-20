@@ -41,6 +41,7 @@
   const gridElement = document.getElementById("spreadsheet-grid");
   const viewportElement = document.getElementById("spreadsheet-viewport");
   const formulaInput = document.getElementById("formula-input");
+  const formulaFeedbackElement = document.getElementById("formula-feedback");
   const nameBox = document.getElementById("cell-name-box");
   const selectionStatus = document.getElementById("selection-status");
   const resultElement = document.getElementById("check-result");
@@ -401,6 +402,14 @@
     selectionStatus.innerHTML = cellCount === 1
       ? `Aktive Zelle: <strong>${cellName}</strong>`
       : `Auswahl: <strong>${rangeLabel(selection)}</strong> · ${cellCount} Zellen`;
+    updateFormulaFeedback();
+  }
+
+  function updateFormulaFeedback() {
+    const cellName = toCellName(activeCell.column, activeCell.row);
+    const message = feedbackMessages.get(cellName);
+    formulaFeedbackElement.hidden = !message;
+    formulaFeedbackElement.textContent = message ? `${cellName}: ${message}` : "";
   }
 
   function renderSelection() {
@@ -582,6 +591,12 @@
     cellElement.title = message;
     const dot = cellElement.querySelector(".cell-feedback-dot");
     if (dot) dot.setAttribute("aria-label", message);
+    const visibleMessage = cellElement.querySelector(".cell-feedback-message");
+    if (visibleMessage) {
+      visibleMessage.textContent = type === "error" ? message : "";
+      visibleMessage.hidden = type !== "error" || !message;
+    }
+    if (cellName === toCellName(activeCell.column, activeCell.row)) updateFormulaFeedback();
   }
 
   function clearCellFeedback() {
@@ -667,6 +682,7 @@
       const details = incorrect
         .map(({ cell }) => `${cell}: ${feedbackMessages.get(cell) || "Die Formel ist noch nicht richtig."}`)
         .join(" • ");
+      setSelection(parseCellName(incorrect[0].cell));
       showResult(details, "error");
       return;
     }
@@ -754,7 +770,13 @@
           checkCellButton.addEventListener("click", () => checkFormula(cellName, true));
           const feedbackDot = document.createElement("span");
           feedbackDot.className = "cell-feedback-dot";
-          td.append(checkCellButton, feedbackDot);
+          const feedbackMessage = document.createElement("div");
+          feedbackMessage.id = `cell-feedback-${cellName}`;
+          feedbackMessage.className = "cell-feedback-message";
+          feedbackMessage.setAttribute("role", "tooltip");
+          feedbackMessage.hidden = true;
+          checkCellButton.setAttribute("aria-describedby", feedbackMessage.id);
+          td.append(checkCellButton, feedbackDot, feedbackMessage);
         }
         tr.append(td);
       });
