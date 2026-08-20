@@ -6,7 +6,7 @@ const path = require("node:path");
 const vm = require("node:vm");
 
 const directory = __dirname;
-const engineSource = fs.readFileSync(path.join(directory, "tabellenkalkulation-neu.js"), "utf8");
+const engineSource = fs.readFileSync(path.join(directory, "tabellenkalkulation.js"), "utf8");
 const instrumentedEngine = engineSource.replace(
   /\n  formulaInput\.addEventListener[\s\S]*\n\}\)\(\);\s*$/,
   `
@@ -39,7 +39,7 @@ function loadTask(fileName) {
   };
   vm.createContext(sandbox);
   vm.runInContext(inlineScript, sandbox, { filename: fileName });
-  vm.runInContext(instrumentedEngine, sandbox, { filename: "tabellenkalkulation-neu.js" });
+  vm.runInContext(instrumentedEngine, sandbox, { filename: "tabellenkalkulation.js" });
   return sandbox.window.__spreadsheetTestApi;
 }
 

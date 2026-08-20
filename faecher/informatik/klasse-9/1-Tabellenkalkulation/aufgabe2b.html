@@ -1,211 +1,64 @@
 <!doctype html>
 <html lang="de">
   <head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Aufgabe 2b – Stundenlohn und Zuschläge</title>
-    <link rel="stylesheet" href="../../../../styles.css?v=20260819-1">
+    <link rel="stylesheet" href="../../../../styles.css?v=20260820"><link rel="stylesheet" href="tabellenkalkulation.css?v=20260820">
   </head>
   <body>
     <div class="site-backdrop" aria-hidden="true"></div>
-    <main class="page-shell spreadsheet-page">
-      <nav class="topbar" aria-label="Navigation">
-        <a class="back-link" href="../">Zurück zur Aufgabenübersicht</a>
-        <a class="back-link" href="../../../../">Startseite</a>
-      </nav>
-
-      <header class="page-header spreadsheet-header">
-        <p class="eyebrow">Tabellenkalkulation</p>
-        <h1>Aufgabe 2b</h1>
-        <p>Berechne Löhne mit festen Stundenlöhnen und einem Zuschlag für Nachtarbeit.</p>
-      </header>
-
-      <div class="spreadsheet-workspace spreadsheet-workspace-wide">
-        <section class="spreadsheet-card" aria-labelledby="spreadsheet-title">
-          <div class="card-heading">
-            <div>
-              <h2 id="spreadsheet-title">Stundenlohn und Nachtzuschlag</h2>
-              <p><strong>Arbeitsauftrag:</strong> Trage Formeln in die orangefarbenen Zellen ein. Ziehe D6 bis D13 und E23 bis E30 mit den Ausfüllkästchen nach unten. Verwende absolute Bezüge für Stundenlöhne, die beim Ausfüllen fest bleiben müssen.</p>
-            </div>
-            <span class="load-status ready" role="status">Bereit</span>
-          </div>
-
-          <div class="spreadsheet-frame tall-grid">
-            <div class="spreadsheet-zoom" aria-label="Zoomsteuerung für die Tabelle">
-              <button id="zoom-out" type="button" aria-label="Tabelle verkleinern">−</button>
-              <span id="zoom-level" aria-live="polite">100 %</span>
-              <button id="zoom-in" type="button" aria-label="Tabelle vergrößern">+</button>
-              <button id="zoom-reset" type="button">100 %</button>
-            </div>
-            <div id="spreadsheet-grid" aria-label="Mini-Tabellenkalkulation für Aufgabe 2b"></div>
-          </div>
-        </section>
-      </div>
-
-      <section class="check-panel" aria-labelledby="check-title">
-        <div>
-          <h2 id="check-title">Eingaben überprüfen</h2>
-          <p>Prüfe einzelne Formeln direkt in der Zelle oder kontrolliere alle Formeln und beide Ausfüllbereiche gemeinsam.</p>
+    <main class="page-shell spreadsheet-page spreadsheet-new-page">
+      <nav class="topbar" aria-label="Navigation"><a class="back-link" href="../">Zurück zur Aufgabenübersicht</a><a class="back-link" href="../../../../">Startseite</a></nav>
+      <header class="page-header spreadsheet-header"><p class="eyebrow">Tabellenkalkulation</p><h1>Aufgabe 2b</h1><p>Berechne Löhne mit festen Stundenlöhnen und einem Zuschlag für Nachtarbeit.</p></header>
+      <section class="spreadsheet-card" aria-labelledby="spreadsheet-title">
+        <div class="card-heading"><div><h2 id="spreadsheet-title">Stundenlohn und Nachtzuschlag</h2><p><strong>Arbeitsauftrag:</strong> Trage Formeln in die orangefarbenen Zellen ein. Ziehe D6 bis D13 und E23 bis E30 nach unten. Verwende absolute Bezüge für Stundenlöhne, die fest bleiben müssen.</p></div><span class="load-status ready" role="status">Bereit</span></div>
+        <div id="spreadsheet-app" class="spreadsheet-app">
+          <div class="spreadsheet-toolbar" aria-label="Tabellenwerkzeuge"><button id="zoom-out" type="button" aria-label="Tabelle verkleinern">−</button><span id="zoom-level" class="zoom-value">100 %</span><button id="zoom-in" type="button" aria-label="Tabelle vergrößern">+</button><button id="zoom-reset" type="button">100 %</button><span class="toolbar-spacer"></span><small>Strg + Mausrad ändert den Zoom</small></div>
+          <div class="formula-bar" aria-label="Formelleiste"><output id="cell-name-box" class="cell-name-box"></output><span class="formula-symbol" aria-hidden="true">fx</span><input id="formula-input" class="formula-input" type="text" autocomplete="off" spellcheck="false" aria-label="Inhalt oder Formel der aktiven Zelle"></div>
+          <div id="formula-feedback" class="formula-feedback" role="status" aria-live="polite" hidden></div>
+          <div id="spreadsheet-viewport" class="spreadsheet-viewport"><div id="spreadsheet-grid" class="spreadsheet-grid" aria-label="Lohntabelle"></div></div>
+          <div class="sheet-statusbar"><span id="selection-status"></span><span>Formeln beginnen mit <strong>=</strong></span></div>
         </div>
-        <div class="check-actions">
-          <button id="check-formulas" class="primary-action" type="button">Alle Formeln prüfen</button>
-          <button id="reset-formulas" class="secondary-action" type="button">Aufgabe zurücksetzen</button>
-        </div>
-        <div id="check-result" class="check-result" role="status" aria-live="polite"></div>
       </section>
-
+      <section class="check-panel" aria-labelledby="check-title"><div><h2 id="check-title">Eingaben überprüfen</h2><p>Prüfe einzelne Formeln direkt in ihrer Zelle oder beide Tabellen gemeinsam.</p></div><div class="check-actions"><button id="check-formulas" class="primary-action" type="button">Alle Formeln prüfen</button><button id="reset-formulas" class="secondary-action" type="button">Aufgabe zurücksetzen</button></div><div id="check-result" class="check-result" role="status" aria-live="polite"></div></section>
       <noscript><p class="check-result error">Für diese Aufgabe muss JavaScript aktiviert sein.</p></noscript>
     </main>
-
     <script>
       (() => {
         const names = ["Franz", "Maier", "Huber", "Anne", "Susi", "Fritz", "Ferdinand", "Georg"];
+        const hours1 = [17, 32.5, 40, 4.5, 23, 74, 21, 12.5];
         const dayHours = [23, 12.6, 34, 8.8, 23, 62, 27.5, 48];
         const nightHours = [5, 7.2, 8.9, 24, 10, 0, 20.2, 5.5];
-        const initialCells = {
-          A1: "Stundenlohn",
-          E2: "Zellen für Nutzereingaben",
-          B3: "Stundenlohn",
-          C3: 9.35,
-          E3: "Zellen für Formeln",
-          C5: "Arbeitsstunden",
-          D5: "Lohn",
-          B15: "gesamter auszuzahlender Lohn",
-          C19: "tagsüber",
-          D19: "nachts (50% Zuschlag)",
-          B20: "Stundenlohn",
-          C20: 9.35,
-          C22: "Stunden am Tag",
-          D22: "Stunden in der Nacht",
-          E22: "Lohn",
-          D32: "gesamter auszuzahlender Lohn"
-        };
-        names.forEach((name, index) => {
-          const topRow = index + 6;
-          const bottomRow = index + 23;
-          initialCells[`B${topRow}`] = name;
-          initialCells[`C${topRow}`] = [17, 32.5, 40, 4.5, 23, 74, 21, 12.5][index];
-          initialCells[`B${bottomRow}`] = name;
-          initialCells[`C${bottomRow}`] = dayHours[index];
-          initialCells[`D${bottomRow}`] = nightHours[index];
-        });
-
-        const testCases = [
-          { wage1: 9.35, hours1: [17, 32.5, 40, 4.5, 23, 74, 21, 12.5], wage2: 9.35, day: dayHours, night: nightHours },
+        const initialCells = { A1: "Stundenlohn", E2: "Eingabezellen", B3: "Stundenlohn", C3: 9.35, E3: "Formelzellen", C5: "Arbeitsstunden", D5: "Lohn", B15: "gesamter auszuzahlender Lohn", C19: "tagsüber", D19: "nachts (50 % Zuschlag)", B20: "Stundenlohn", C20: 9.35, C22: "Stunden am Tag", D22: "Stunden in der Nacht", E22: "Lohn", D32: "gesamter auszuzahlender Lohn" };
+        names.forEach((name, index) => { initialCells[`B${index + 6}`] = name; initialCells[`C${index + 6}`] = hours1[index]; initialCells[`B${index + 23}`] = name; initialCells[`C${index + 23}`] = dayHours[index]; initialCells[`D${index + 23}`] = nightHours[index]; });
+        const tests = [
+          { wage1: 9.35, hours1, wage2: 9.35, day: dayHours, night: nightHours },
           { wage1: 12.4, hours1: [8, 19.5, 37, 6.25, 41, 0, 15.75, 28], wage2: 11.8, day: [12, 7.5, 40, 0, 18.25, 31, 9, 22], night: [0, 3.5, 6, 11, 2.25, 14, 8.5, 1] },
           { wage1: 15.75, hours1: [3.5, 12, 24.25, 48, 5, 17.5, 29, 9.75], wage2: 14.2, day: [5, 16, 21.5, 38, 7, 12.25, 26, 33], night: [4, 0, 9.5, 2, 12, 6.75, 1.5, 15] }
         ];
-
-        function absoluteRule(cell, message) {
-          return { cell, columnAbsolute: true, rowAbsolute: true, message };
-        }
-
+        const absolute = (cell, message) => ({ cell, columnAbsolute: true, rowAbsolute: true, message });
         window.spreadsheetTaskConfig = {
-          columns: ["A", "B", "C", "D", "E"],
-          rowCount: 32,
-          minWidth: 1120,
-          columnWidths: [100, 230, 260, 260, 260],
-          tableClass: "wage-spreadsheet-table compact-spreadsheet-table",
-          initialCells,
-          currencyCells: [
-            "C3", "C20", "D20", "D15", "E32",
-            ...Array.from({ length: 8 }, (_, index) => `D${index + 6}`),
-            ...Array.from({ length: 8 }, (_, index) => `E${index + 23}`)
-          ],
+          columns: ["A", "B", "C", "D", "E"], rowCount: 32, minWidth: 1120, columnWidths: [100, 230, 260, 260, 260], startCell: "D6", initialCells,
+          currencyCells: ["C3", "C20", "D20", "D15", "E32", ...Array.from({ length: 8 }, (_, i) => `D${i + 6}`), ...Array.from({ length: 8 }, (_, i) => `E${i + 23}`)],
           centeredCells: ["C3", "C20"],
-          cellClasses: {
-            "sheet-title-cell": ["A1"],
-            "input-cell": ["C3", "C20"],
-            "user-legend-cell": ["E2"],
-            "instruction-cell": ["E3"],
-            "workbook-section-cell": [
-              "C5", "D5", "C19", "D19", "C22", "D22", "E22",
-              ...Array.from({ length: 8 }, (_, index) => `B${index + 6}`),
-              ...Array.from({ length: 8 }, (_, index) => `B${index + 23}`)
-            ],
-            "label-cell": ["B3", "B15", "B20", "D32"]
-          },
-          testCases,
-          applyTestCase(cells, testCase) {
-            cells.set("C3", testCase.wage1);
-            cells.set("C20", testCase.wage2);
-            testCase.hours1.forEach((value, index) => cells.set(`C${index + 6}`, value));
-            testCase.day.forEach((value, index) => cells.set(`C${index + 23}`, value));
-            testCase.night.forEach((value, index) => cells.set(`D${index + 23}`, value));
-          },
+          cellClasses: { "sheet-title-cell": ["A1"], "input-cell": ["C3", "C20"], "user-legend-cell": ["E2"], "instruction-cell": ["E3"], "workbook-section-cell": ["C5", "D5", "C19", "D19", "C22", "D22", "E22", ...Array.from({ length: 8 }, (_, i) => `B${i + 6}`), ...Array.from({ length: 8 }, (_, i) => `B${i + 23}`)], "label-cell": ["B3", "B15", "B20", "D32"] },
+          testCases: tests,
+          applyTestCase(cells, test) { cells.set("C3", test.wage1); cells.set("C20", test.wage2); test.hours1.forEach((v, i) => cells.set(`C${i + 6}`, v)); test.day.forEach((v, i) => cells.set(`C${i + 23}`, v)); test.night.forEach((v, i) => cells.set(`D${i + 23}`, v)); },
           formulaDefinitions: [
-            {
-              cell: "D6",
-              name: "Lohn von Franz",
-              requiredRefs: ["C6", "C3"],
-              referenceRules: [absoluteRule("C3", "Der Stundenlohn muss beim Ausfüllen fest bleiben. Verwende deshalb $C$3.")],
-              expected: ({ wage1, hours1 }) => hours1[0] * wage1
-            },
-            {
-              cell: "D15",
-              name: "Gesamter Lohn",
-              requiredRefs: Array.from({ length: 8 }, (_, index) => `D${index + 6}`),
-              prepare: ({ cells, testCase }) => testCase.hours1.forEach((hours, index) => cells.set(`D${index + 6}`, hours * testCase.wage1)),
-              expected: ({ wage1, hours1 }) => hours1.reduce((sum, hours) => sum + hours * wage1, 0)
-            },
-            {
-              cell: "D20",
-              name: "Stundenlohn nachts",
-              requiredRefs: ["C20"],
-              allowedNumbers: [0.5, 1, 1.5, 2],
-              expected: ({ wage2 }) => wage2 * 1.5,
-              errorMessage: "Der Nachtlohn enthält einen Zuschlag von 50 %. Prüfe die Rechnung."
-            },
-            {
-              cell: "E23",
-              name: "Lohn von Franz mit Nachtarbeit",
-              requiredRefs: ["C23", "D23", "C20", "D20"],
-              referenceRules: [
-                absoluteRule("C20", "Der Tageslohn muss beim Ausfüllen fest bleiben. Verwende deshalb $C$20."),
-                absoluteRule("D20", "Der Nachtlohn muss beim Ausfüllen fest bleiben. Verwende deshalb $D$20.")
-              ],
-              prepare: ({ cells, testCase }) => cells.set("D20", testCase.wage2 * 1.5),
-              expected: ({ wage2, day, night }) => day[0] * wage2 + night[0] * wage2 * 1.5
-            },
-            {
-              cell: "E32",
-              name: "Gesamter Lohn mit Nachtarbeit",
-              requiredRefs: Array.from({ length: 8 }, (_, index) => `E${index + 23}`),
-              prepare: ({ cells, testCase }) => testCase.day.forEach((hours, index) => {
-                cells.set(`E${index + 23}`, hours * testCase.wage2 + testCase.night[index] * testCase.wage2 * 1.5);
-              }),
-              expected: ({ wage2, day, night }) => day.reduce(
-                (sum, hours, index) => sum + hours * wage2 + night[index] * wage2 * 1.5,
-                0
-              )
-            }
+            { cell: "D6", name: "Lohn von Franz", requiredRefs: ["C6", "C3"], referenceRules: [absolute("C3", "Der Stundenlohn muss fest bleiben. Verwende $C$3.")], expected: ({ wage1, hours1 }) => hours1[0] * wage1 },
+            { cell: "D15", name: "Gesamter Lohn", requiredRefs: Array.from({ length: 8 }, (_, i) => `D${i + 6}`), prepare: ({ cells, testCase }) => testCase.hours1.forEach((hours, i) => cells.set(`D${i + 6}`, hours * testCase.wage1)), expected: ({ wage1, hours1 }) => hours1.reduce((sum, hours) => sum + hours * wage1, 0) },
+            { cell: "D20", name: "Stundenlohn nachts", requiredRefs: ["C20"], allowedNumbers: [0.5, 1, 1.5, 2], expected: ({ wage2 }) => wage2 * 1.5, errorMessage: "Der Nachtlohn enthält einen Zuschlag von 50 %." },
+            { cell: "E23", name: "Lohn mit Nachtarbeit", requiredRefs: ["C23", "D23", "C20", "D20"], referenceRules: [absolute("C20", "Der Tageslohn muss fest bleiben. Verwende $C$20."), absolute("D20", "Der Nachtlohn muss fest bleiben. Verwende $D$20.")], prepare: ({ cells, testCase }) => cells.set("D20", testCase.wage2 * 1.5), expected: ({ wage2, day, night }) => day[0] * wage2 + night[0] * wage2 * 1.5 },
+            { cell: "E32", name: "Gesamter Lohn mit Nachtarbeit", requiredRefs: Array.from({ length: 8 }, (_, i) => `E${i + 23}`), prepare: ({ cells, testCase }) => testCase.day.forEach((hours, i) => cells.set(`E${i + 23}`, hours * testCase.wage2 + testCase.night[i] * testCase.wage2 * 1.5)), expected: ({ wage2, day, night }) => day.reduce((sum, hours, i) => sum + hours * wage2 + night[i] * wage2 * 1.5, 0) }
           ],
           fillGroups: [
-            {
-              sourceCell: "D6",
-              targetCell: "D13",
-              direction: "down",
-              ariaLabel: "Formel aus D6 bis D13 ausfüllen",
-              title: "Nach unten ziehen, um D6 bis D13 auszufüllen",
-              completeMessage: "D6 wurde bis D13 ausgefüllt.",
-              incompleteMessage: "Der erste Ausfüllbereich ist noch nicht vollständig. Ziehe das Ausfüllkästchen an D6 bis D13.",
-              partialMessage: (end) => `D6 wurde erst bis D${end.row} ausgefüllt.`
-            },
-            {
-              sourceCell: "E23",
-              targetCell: "E30",
-              direction: "down",
-              ariaLabel: "Formel aus E23 bis E30 ausfüllen",
-              title: "Nach unten ziehen, um E23 bis E30 auszufüllen",
-              completeMessage: "E23 wurde bis E30 ausgefüllt.",
-              incompleteMessage: "Der zweite Ausfüllbereich ist noch nicht vollständig. Ziehe das Ausfüllkästchen an E23 bis E30.",
-              partialMessage: (end) => `E23 wurde erst bis E${end.row} ausgefüllt.`
-            }
+            { sourceRange: "D6", targetRange: "D6:D13", incompleteMessage: "Der erste Ausfüllbereich fehlt noch. Ziehe D6 bis D13." },
+            { sourceRange: "E23", targetRange: "E23:E30", incompleteMessage: "Der zweite Ausfüllbereich fehlt noch. Ziehe E23 bis E30." }
           ],
-          successMessage: "Sehr gut! Alle Lohnformeln funktionieren auch mit veränderten Werten, und beide Bereiche wurden korrekt ausgefüllt."
+          successMessage: "Sehr gut! Alle Lohnformeln sind korrekt, und beide Bereiche wurden vollständig ausgefüllt."
         };
       })();
     </script>
-    <script src="aufgabe2-tabellen.js?v=20260819-1"></script>
+    <script src="tabellenkalkulation.js?v=20260820"></script>
   </body>
 </html>

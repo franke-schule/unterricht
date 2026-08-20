@@ -1,348 +1,427 @@
 Manifest: Aufgaben zur Tabellenkalkulation
 ==========================================
 
-Ziel und Abhaengigkeit
-----------------------
-Dieses Manifest ergaenzt manifest-allgemein.txt fuer interaktive Aufgaben zur
-Tabellenkalkulation. Es beschreibt den Nachbau einer Arbeitsmappe als lokale
-Mini-Tabellenkalkulation sowie die fachlich belastbare Pruefung von Formeln.
+Ziel und Geltungsbereich
+------------------------
+Dieses Manifest ergänzt manifest-allgemein.txt für interaktive Aufgaben zur
+Tabellenkalkulation. Es beschreibt die verbindliche Standardarchitektur für
+bestehende und künftige Aufgaben.
 
-Die allgemeinen Regeln zu Menues, Navigation, Sicherungsblaettern,
-Lehrercodes, Barrierearmut und Abschlusspruefung gelten zusaetzlich.
+Maßgebliches Bedienmodell ist eine vereinfachte Tabellenkalkulation nach dem
+Vorbild von Microsoft Excel bzw. LibreOffice Calc:
+
+  - In der Zelle steht der eingegebene oder berechnete Wert.
+  - Der unveränderte Rohinhalt der aktiven Zelle steht in der Formelleiste.
+  - Formeln beginnen nur dann mit =, wenn die lernende Person dieses Zeichen
+    selbst eingibt.
+  - Zellbereiche können ausgewählt und über ein gemeinsames Ausfüllkästchen
+    weitergeführt werden.
+  - Prüfbuttons bleiben in den fachlich vorgesehenen Zellen.
+  - Fehler werden mit einer konkreten Textmeldung angezeigt. Eine Farbe oder
+    ein roter Punkt allein ist kein ausreichendes Feedback.
+
+Die allgemeinen Regeln zu Navigation, Lehrercodes, Barrierearmut und
+Abschlussprüfung gelten zusätzlich.
 
 
-1. Ausgangsdatei zuerst vollstaendig untersuchen
-------------------------------------------------
+1. Arbeitsmappe und Aufgabeninhalt untersuchen
+----------------------------------------------
 
-Vor dem HTML-Nachbau die Excel-Datei systematisch auslesen und visuell pruefen:
+Vor dem HTML-Nachbau eine vorhandene Excel-Datei vollständig auslesen und
+visuell prüfen:
 
   - Blattnamen und verwendeter Zellbereich,
-  - Zellwerte und vorhandene Formeln,
+  - Zellwerte, Formeln und Zelltypen,
   - verbundene Zellen,
-  - Spaltenbreiten und Zeilenhoehen,
-  - Zahlenformate fuer Dezimalzahlen, Prozent und Waehrung,
-  - Schrift, Rahmen und Fuellfarben,
+  - Spaltenbreiten und Zeilenhöhen,
+  - Zahlenformate für Dezimalzahlen, Prozent und Währung,
+  - Schrift, Rahmen und Füllfarben,
   - Bilder, Diagramme, Hinweise und Druckbereiche,
-  - orange/gelb markierte Ziel- oder Eingabezellen.
+  - markierte Ziel-, Eingabe- und Ausfüllbereiche.
 
-Nicht allein aus sichtbaren Werten auf Formeln schliessen. Zelltypen,
-Formeldefinitionen und Formatvorlagen aus der Arbeitsmappe beruecksichtigen.
-Die Webseite soll Inhalt, Anordnung und didaktische Markierungen der Vorlage
-erkennbar wiedergeben.
+Nicht allein aus sichtbaren Werten auf Formeln schließen. Inhalt, Anordnung und
+didaktische Markierungen der Vorlage sollen erkennbar erhalten bleiben.
 
 
-2. Aufbau der Mini-Tabellenkalkulation
---------------------------------------
+2. Gemeinsame Architektur statt Einzelimplementierungen
+--------------------------------------------------------
 
-Bevorzugt eine lokale HTML-/CSS-/JavaScript-Loesung verwenden, wenn keine echte
-externe Tabellenanwendung verlangt ist. Dadurch bleibt die Aufgabe schnell,
-offline-nah und gezielt pruefbar.
+Alle Aufgaben eines Themenbereichs verwenden dieselbe Tabellen-Engine und
+dieselbe Tabellen-Stylesheet-Datei. Im aktuellen Standard sind dies:
 
-Die Tabelle benoetigt:
+  - tabellenkalkulation.js
+  - tabellenkalkulation.css
 
-  - sichtbare Spaltenbuchstaben und Zeilennummern,
-  - stabile Zelladressen wie A1, B4 oder F10,
-  - passende Spaltenbreiten und Zellformatierung,
-  - horizontales Scrollen auf schmalen Bildschirmen,
-  - bei grossen Tabellen eine Zoomsteuerung,
-  - eindeutige aria-labels mit Zelladresse,
-  - eine interne Datenstruktur, z. B. Map<Zelladresse, Wert/Formel>.
+Eine Aufgabenseite enthält nur ihre fachliche Konfiguration, Aufgabentexte und
+den gemeinsamen HTML-Rahmen. Parser, Zellberechnung, Auswahl, Formelleiste,
+Ausfüllen, Zoom, Reset und Feedback dürfen nicht für jede Aufgabe neu kopiert
+werden.
 
-Wenn die Aufgabe freie Tabellenarbeit vorsieht, jede dargestellte Zelle
-editierbar machen, einschliesslich Leerzellen, Beschriftungen und uebertragener
-Formeln. Nur dann einzelne Zellen sperren, wenn der Arbeitsauftrag dies
-ausdruecklich verlangt.
+Die Konfiguration wird vor dem Laden der Engine zentral bereitgestellt:
+
+  window.spreadsheetTaskConfig = {
+    columns,
+    rowCount,
+    initialCells,
+    formulaDefinitions,
+    fillGroups,
+    testCases,
+    ...
+  };
+
+Aufgabenspezifische Darstellung wird über Metadaten wie cellClasses,
+currencyCells, percentCells, centeredCells, columnWidths und tableClass
+gesteuert. Keine verstreuten Fallunterscheidungen anhand eines Dateinamens in
+die gemeinsame Engine einbauen.
+
+
+3. Verbindliches Zellmodell
+---------------------------
+
+Intern mindestens diese Zustände getrennt halten:
+
+  - Rohinhalt jeder Zelle, z. B. =A2+B2,
+  - berechneter bzw. formatierter Anzeigewert, z. B. 12 oder 12,00 €,
+  - aktive Zelle,
+  - aktuelle rechteckige Auswahl,
+  - Auswahlanker,
+  - Startbereich des Auto-Ausfüllens,
+  - Vorschau- und Zielbereich des Auto-Ausfüllens,
+  - Validierungs- und Fehlermeldung je Zielzelle.
+
+Empfohlen ist eine Map<Zelladresse, Rohinhalt>. Formeln bleiben dort als Text
+mit führendem = gespeichert. Der sichtbare Wert wird aus diesem Rohinhalt
+berechnet. Formeln dürfen nicht lediglich mit CSS versteckt werden.
 
 Zellwerte typgerecht behandeln:
 
   - Zahlen intern als Zahlen speichern,
   - Prozentwerte intern als Dezimalzahl speichern (19 % = 0.19),
-  - Waehrung nur fuer die Anzeige formatieren,
-  - Formeln als Text mit fuehrendem Gleichheitszeichen speichern,
-  - deutsche Dezimalkommas bei Eingaben akzeptieren.
-
-Textueberlauf wie in einer Tabellenkalkulation darstellen:
-
-  - Text, der breiter als seine Zelle ist, vollstaendig anzeigen, wenn die
-    unmittelbar rechts angrenzende Zelle wirklich frei ist.
-  - Eine Zelle ist nicht frei, wenn sie einen Wert enthaelt oder als Formel-
-    Eingabe, Schuelereingabe, Ausfuellziel oder berechneter Ergebnisbereich
-    vorgesehen ist. Solche Zellen blockieren den Textueberlauf auch im noch
-    leeren Anfangszustand.
-  - Der Text darf leere Nachbarzellen optisch ueberlagern, ohne deren Zellwert
-    zu veraendern.
-  - Sobald eine ueberlagerte Nachbarzelle einen Wert enthaelt, muss deren Inhalt
-    und Hintergrund den ueberlaufenden Text verdecken.
-  - Zahlen, Formeln und berechnete Ergebnisse nicht als ueberlaufenden Text
-    darstellen.
-  - Den Zustand nach Eingabe, Loeschen, Ausfuellen und Reset neu bestimmen.
-  - Bei HTML-Eingabefeldern bei Bedarf eine synchronisierte, nicht interaktive
-    Textanzeige verwenden; beim Fokussieren bleibt das echte Eingabefeld
-    sichtbar und bedienbar.
+  - Währung nur für die Anzeige formatieren,
+  - deutsche Dezimalkommas bei Eingaben akzeptieren,
+  - Text unverändert speichern,
+  - leere Zellen wirklich leer speichern und anzeigen.
 
 
-3. Zielzellen und Pruefbuttons
+4. Verbindlicher Aufbau der Oberfläche
+--------------------------------------
+
+Die Tabellenoberfläche enthält in dieser Reihenfolge:
+
+  1. eine kleine Werkzeugzeile, mindestens mit Zoomsteuerung,
+  2. eine Formelleiste,
+  3. ein sichtbares Textfeedback direkt unter der Formelleiste,
+  4. das scrollbare Tabellenraster,
+  5. optional eine Statuszeile für aktive Zelle oder Auswahl.
+
+Die Formelleiste besteht aus:
+
+  - Namensfeld für aktive Zelle oder Auswahl, z. B. D6 oder E2:F6,
+  - fx-Kennzeichnung,
+  - einem Eingabefeld für den vollständigen Rohinhalt.
+
+Für leere Zellen gelten zwingend:
+
+  - kein automatisch eingefügtes =,
+  - kein = als placeholder,
+  - kein separates = vor dem Eingabefeld,
+  - kein optischer Eindruck, das = sei bereits Teil der Eingabe.
+
+Das Tabellenraster benötigt:
+
+  - sichtbare Spaltenbuchstaben und Zeilennummern,
+  - stabile Zelladressen und passende aria-labels,
+  - horizontales Scrollen auf schmalen Bildschirmen,
+  - bei großen Tabellen eine Zoomsteuerung,
+  - eine klare Markierung der aktiven Zelle und des Auswahlbereichs,
+  - eine Ergebnisanzeige ohne eingeblendete Formeltexte.
+
+
+5. Bearbeitung und Tastaturbedienung
+------------------------------------
+
+Ein Klick oder Pointer-Tap aktiviert eine Zelle. Die Formelleiste zeigt sofort
+deren Rohinhalt:
+
+  - normale Zahl: 12
+  - Text: Beispiel
+  - Formel: =A1+B1
+  - leere Zelle: leer
+
+Änderungen in der Formelleiste werden in den Rohinhalt der aktiven Zelle
+übernommen und lösen eine Neuberechnung der sichtbaren Werte aus.
+
+Zusätzlich unterstützen:
+
+  - Doppelklick auf eine Zelle zum Bearbeiten über die Formelleiste,
+  - direkte Tastatureingabe nach Zellaktivierung,
+  - Pfeiltasten zur Navigation,
+  - Umschalt+Pfeiltaste zur Bereichserweiterung,
+  - Enter und Tab zum Wechseln der aktiven Zelle,
+  - Entf/Backspace zum Leeren der Auswahl.
+
+Maus-, Touch- und Stiftbedienung möglichst über Pointer Events vereinheitlichen.
+
+
+6. Einzel- und Mehrfachauswahl
 ------------------------------
 
-Jede fachlich markierte Formel-Zielzelle erhaelt:
+Unterstützt werden mindestens:
 
-  - ein Formeleingabefeld,
-  - eine berechnete Vorschau,
-  - einen eigenen Button "<Zelle> pruefen",
-  - ein eigenes Rueckmeldungsfeld,
-  - zusaetzlich optional einen Button "Alle Formeln pruefen".
+  - einzelne Zelle A1,
+  - zusammenhängende Zeile B2:D2,
+  - zusammenhängende Spalte A1:A3,
+  - rechteckiger Bereich B2:D4.
 
-Dekorative Farbflaechen oder Hinweisbaender aus der Vorlage sind keine
-Formel-Zielzellen. Diese Unterscheidung beim Auslesen der Arbeitsmappe explizit
-dokumentieren.
+Die Auswahl erhält einen klaren Rahmen. Die aktive Zelle bleibt innerhalb der
+Auswahl unterscheidbar. Das Ausfüllkästchen sitzt unten rechts am gesamten
+Auswahlbereich, nicht nur an einer zufälligen Einzelzelle.
 
-Zielzellen zentral als Metadaten definieren, nicht ueber verteilte
-Sonderfaelle. Beispiel:
-
-  {
-    cell: "F10",
-    name: "Summe der Gesamtpreise",
-    requiredRefs: ["F2", "F3", "F4", "F5", "F6"],
-    allowedNumbers: [],
-    expected: (testData) => ...
-  }
-
-So bleiben Sollwert, benoetigte Zellbezuege und erlaubte Konstanten gemeinsam
-wartbar.
+Prüfbuttons innerhalb von Zellen dürfen durch Auswahlrahmen oder
+Ausfüllkästchen weder verdeckt noch funktionslos werden.
 
 
-4. Formelsprache und Zellberechnung
------------------------------------
+7. Auto-Ausfüllen
+-----------------
 
-Der Parser muss nur die fuer die Aufgabe benoetigte Formelsprache unterstuetzen,
-diese aber eindeutig und sicher auswerten. Typischer Umfang:
+Das Ausfüllkästchen funktioniert mit einer oder mehreren Ausgangszellen.
+Während des Ziehens wird der Zielbereich sichtbar hervorgehoben.
 
-  - fuehrendes =,
-  - Zellbezuege A1 sowie absolute/gemischte Bezuege $A$1, A$1, $A1,
-  - +, -, *, / und ^,
-  - Klammern und unaere Vorzeichen,
-  - benoetigte Funktionen wie SUMME/SUM,
-  - benoetigte Zellbereiche wie F2:F6,
-  - deutsche Dezimalkommas.
+Bei Formeln:
 
-Keine Formeln mit eval() oder Function() ausfuehren. Einen begrenzten Parser
-verwenden, damit Formeleingaben nicht als beliebiger JavaScript-Code laufen.
-
-Bei Zellberechnung:
-
-  - leere oder nichtnumerische Bezuege verstaendlich melden,
-  - Kreisbezuege erkennen,
-  - Division durch null und nicht endliche Ergebnisse abfangen,
-  - Zellbereiche korrekt expandieren,
-  - Funktionsnamen bei Bedarf deutsch und englisch akzeptieren.
-
-
-5. Mathematisch aequivalente Formeln pruefen
---------------------------------------------
-
-Formeln niemals nur als Zeichenkette mit einer Musterformel vergleichen.
-Mathematisch aequivalente Schreibweisen muessen akzeptiert werden, z. B.:
-
-  =D2+D2*$D$8
-  =D2*(1+$D$8)
-  =$D2*(100%+$D$8)       (nur falls Prozentliterale unterstuetzt werden)
-
-Robustes Pruefverfahren:
-
-  1. Formel syntaktisch parsen.
-  2. Geforderte Zellbezuege separat pruefen.
-  3. Formel mit mehreren unabhaengigen Testdatensaetzen auswerten.
-  4. Ergebnis jeweils mit einer unabhaengig programmierten Sollfunktion
-     vergleichen.
-  5. Nur akzeptieren, wenn alle Testfaelle stimmen.
-
-Testdaten muessen unterschiedliche Werte enthalten:
-
-  - verschiedene ganze Zahlen und Dezimalzahlen,
-  - unterschiedliche Prozentwerte,
-  - nach Bedarf negative Werte oder null,
-  - Werte, bei denen haeufige Fehlformeln sichtbar abweichen.
-
-Nicht nur mit den auf dem Blatt sichtbaren Ausgangswerten testen. Sonst kann
-eine hart codierte Zahl oder eine zufaellig passende Fehlformel bestehen.
-
-Vergleich mit Toleranz statt striktem ===:
-
-  tolerance = max(1, abs(expected)) * 1e-7
-  korrekt, wenn abs(actual - expected) <= tolerance
-
-Die Sollfunktion darf nicht dieselbe Parser-/Formellogik wiederverwenden, die
-geprueft wird. Sonst bestaetigt ein gemeinsamer Fehler sich selbst.
-
-
-6. Verwendung von Zellbezuegen erzwingen
------------------------------------------
-
-Wenn der Arbeitsauftrag Zellbezuege verlangt, reicht ein richtiges Ergebnis
-nicht aus. Die Formel muss die benoetigten Bezuege tatsaechlich enthalten.
-
-Vorgehen:
-
-  - Alle Zellreferenzen syntaktisch aus der Formel ermitteln.
-  - $-Zeichen fuer den Adressvergleich normalisieren.
-  - Bereiche expandieren: F2:F6 enthaelt F2, F3, F4, F5 und F6.
-  - requiredRefs der Zielzelle mit den gefundenen Referenzen vergleichen.
-  - Fehlende Bezuege konkret nennen: "Verwende Zellbezuege: D2, D8."
-
-Beispiele:
-
-  requiredRefs: ["B2", "E2"]
-    =B2*E2       -> Referenzen vorhanden
-    =2*E2        -> B2 fehlt, auch wenn der aktuelle Wert in B2 gerade 2 ist
-
-  requiredRefs: ["F2", "F3", "F4", "F5", "F6"]
-    =SUMME(F2:F6) -> alle Referenzen vorhanden
-    =SUMME(F2:F5) -> F6 fehlt
-
-Wenn ein bestimmter absoluter Bezug didaktisch verlangt ist, neben der
-normalisierten Adresse auch die Schreibweise pruefen. Beispiel:
-
-  requiredAbsoluteRefs: ["D8"]
-
-Dann reicht D8 trotz desselben aktuellen Werts nicht aus. Die Rueckmeldung soll
-den Grund erklaeren, z. B.: Ohne $-Zeichen wird D8 beim Ausfuellen zu D9, D10
-usw.; verwende deshalb $D$8.
-
-
-7. Hart codierte Zahlen und erlaubte Konstanten
-------------------------------------------------
-
-Bei Aufgaben zu Zellbezuegen hart codierte Ausgangswerte ablehnen. Zahlen in
-der Formel syntaktisch sammeln und nur explizit erlaubte Konstanten zulassen.
-
-Beispiele fuer erlaubte Konstanten:
-
-  - 2 bei Halbierung oder Umfangsformeln,
-  - 3 bei Kegel-/Pyramidenformeln,
-  - 1 bei einer fachlich sinnvollen Schreibweise wie (1 + Steuersatz).
-
-Metadaten:
-
-  allowedNumbers: [1]
-
-Wichtig:
-
-  - Ziffern aus Zelladressen nicht als Zahlenliteral zaehlen.
-  - Zahlen in Prozentliteralen passend normalisieren.
-  - Nur Konstanten erlauben, die fuer genau diese Zielzelle fachlich noetig
-    oder sinnvoll sind.
-  - Die dynamische Mehrfachauswertung bleibt trotzdem erforderlich.
-
-
-8. Relative, absolute und uebertragene Formeln
-----------------------------------------------
-
-Wenn die Vorlage das Ausfuellen/Kopieren einer Formel vorsieht, dieses Verhalten
-online nachvollziehbar nachbilden.
-
-Bei einer ausdruecklichen Uebung zur Ausfuellfunktion gilt zusaetzlich:
-
-  - Zielzellen anfangs leer lassen; Formeln nicht schon waehrend der Eingabe in
-    der Quellzelle automatisch uebertragen.
-  - Ein sichtbares Ausfuellkaestchen am unteren rechten Rand des Quellbereichs
-    anbieten und Ziehen mit Maus oder Touch ermoeglichen.
-  - Die gerade anvisierten Zielzellen waehrend des Ziehens sichtbar markieren.
-  - Nur die fachlich vorgesehene Ausfuellrichtung erlauben, wenn freie falsche
-    Richtungen keinen zusaetzlichen Lernwert haben.
-  - Vor dem Ausfuellen die Ausgangsformeln pruefen, wenn falsche Kopien die
-    weitere Bearbeitung unnoetig erschweren wuerden.
-  - Fuer Tastaturbedienung eine gleichwertige Aktion am Ausfuellkaestchen
-    bereitstellen.
-  - Die Gesamtpruefung darf erst erfolgreich sein, wenn der geforderte
-    Zielbereich tatsaechlich vollstaendig ausgefuellt wurde.
-  - Wird eine Quellformel nach dem Ausfuellen geaendert, uebertragene Formeln
-    leeren oder eindeutig als veraltet markieren, damit erneut ausgefuellt wird.
-
-Beim Uebertragen um einen Zeilen-/Spaltenversatz:
-
-  - relative Zeile und Spalte verschieben,
+  - relative Zeilen und Spalten verschieben,
   - $A$1 weder in Zeile noch Spalte verschieben,
   - A$1 nur in der Spalte verschieben,
   - $A1 nur in der Zeile verschieben.
 
-Beispiel beim Kopieren von Zeile 2 nach Zeile 3:
+Beispiele:
 
-  =D2+D2*$D$8  ->  =D3+D3*$D$8
-  =B2*E2       ->  =B3*E3
+  =D2+D2*$D$8  -> beim Kopieren nach Zeile 3: =D3+D3*$D$8
+  =$A2*B$1     -> beim Kopieren nach K11:     =$A11*K$1
 
-Uebertragene Zellen sollen bei freier Tabellenarbeit weiterhin editierbar sein.
-Bei einer ausdruecklichen Ausfuelluebung duerfen sie dagegen gesperrt werden,
-damit die Ausfuellaktion der einzige vorgesehene Uebertragungsweg ist. Eine
-reine Pruefung darf eigenstaendige Schuelereingaben niemals unbeabsichtigt
-ueberschreiben.
+Bei einer mehrzelligen Quelle wird das gesamte Muster verwendet:
 
-Bei einer ausdruecklichen Ausfuelluebung stellt ein Reset alle Ausgangswerte,
-Quellformeln, uebertragenen Formeln, Markierungen und Rueckmeldungen in den
-definierten Anfangszustand zurueck. Wenn falsche Ausfuellrichtungen ausprobiert
-werden duerfen, ist dieser vollstaendige Reset verpflichtend.
+  - zwei Formeln nebeneinander werden gemeinsam zeilenweise übertragen,
+  - ein rechteckiges Muster wird gekachelt und seine Formeln relativ angepasst,
+  - eine Zahlenreihe 1, 2 wird als 3, 4, 5 fortgesetzt,
+  - bei nicht erkennbaren Reihen werden Werte oder Texte zyklisch übernommen.
+
+Nach dem Ausfüllen zeigen alle Zielzellen die Werte bzw. Ergebnisse. Die
+übertragene Formel erscheint erst beim Aktivieren der jeweiligen Zelle in der
+Formelleiste.
+
+Aufgabenspezifisch geforderte Ausfüllbereiche werden mit fillGroups definiert:
+
+  {
+    sourceRange: "E2:F2",
+    targetRange: "E2:F6",
+    incompleteMessage: "..."
+  }
+
+Die Gesamtprüfung ist erst erfolgreich, wenn der Zielbereich vollständig und
+mit den korrekt verschobenen Formeln ausgefüllt wurde.
 
 
-9. Rueckmeldungen
------------------
+8. Formelsprache und Berechnung
+-------------------------------
 
-Rueckmeldungen sollen den Fehlertyp unterscheiden:
+Nur die benötigte Formelsprache unterstützen, diese aber sicher und eindeutig
+auswerten:
+
+  - führendes =,
+  - A1, $A$1, A$1 und $A1,
+  - +, -, *, / und ^,
+  - Klammern und unäre Vorzeichen,
+  - Zellbereiche wie F2:F6,
+  - SUMME/SUM sowie aufgabenbezogen MAX, MIN, MITTELWERT/AVERAGE und
+    PRODUKT/PRODUCT,
+  - Prozentliterale und deutsche Dezimalkommas.
+
+Keine Formeln mit eval() oder Function() ausführen. Einen begrenzten Parser
+verwenden.
+
+Bei der Zellberechnung:
+
+  - leere oder nichtnumerische Bezüge melden,
+  - Kreisbezüge erkennen,
+  - Division durch null abfangen,
+  - nicht endliche Ergebnisse abfangen,
+  - Bereiche korrekt expandieren,
+  - deutsche und englische Funktionsnamen nach Bedarf akzeptieren.
+
+
+9. Zielzellen, Prüfbuttons und Metadaten
+---------------------------------------
+
+Jede fachliche Formel-Zielzelle erhält:
+
+  - eine klare didaktische Markierung,
+  - einen eigenen Prüfbutton direkt in der Zelle,
+  - einen individuellen Validierungsstatus,
+  - eine konkrete Textmeldung bei Fehlern.
+
+Der Prüfbutton darf nicht in eine separate Toolbar verschoben werden.
+
+Zielzellen zentral definieren:
+
+  {
+    cell: "E2",
+    name: "Bruttopreis",
+    requiredRefs: ["D2", "D8"],
+    referenceRules: [{
+      cell: "D8",
+      columnAbsolute: true,
+      rowAbsolute: true,
+      message: "Der Steuersatz muss fest bleiben. Verwende $D$8."
+    }],
+    allowedNumbers: [1],
+    expected: (testData) => ...
+  }
+
+Dekorative Farbfelder und reine Hinweise sind keine Formel-Zielzellen.
+
+
+10. Fachlich robuste Formelprüfung
+----------------------------------
+
+Formeln niemals ausschließlich als Zeichenkette mit einer Musterlösung
+vergleichen. Mathematisch gleichwertige Schreibweisen müssen bestehen können.
+
+Prüfverfahren:
+
+  1. Führendes = prüfen.
+  2. Formel syntaktisch parsen.
+  3. Geforderte Zellreferenzen prüfen.
+  4. Absolute oder gemischte Schreibweise über referenceRules prüfen.
+  5. Unerlaubte hart codierte Zahlen ablehnen.
+  6. Formel mit mehreren unabhängigen Datensätzen auswerten.
+  7. Ergebnis mit einer unabhängig programmierten Sollfunktion vergleichen.
+
+Testdaten enthalten unterschiedliche ganze Zahlen, Dezimalzahlen,
+Prozentwerte und – soweit fachlich sinnvoll – null oder negative Werte.
+
+Toleranzvergleich:
+
+  tolerance = max(1, abs(expected)) * 1e-7
+  korrekt, wenn abs(actual - expected) <= tolerance
+
+Die Sollfunktion darf nicht dieselbe Parserlogik verwenden wie die zu prüfende
+Formel.
+
+
+11. Zellbezüge und Konstanten prüfen
+------------------------------------
+
+Wenn Zellbezüge verlangt werden, reicht ein momentan richtiges Ergebnis nicht.
+requiredRefs müssen tatsächlich in der Formel vorkommen.
+
+  requiredRefs: ["B2", "E2"]
+    =B2*E2  -> Referenzen vorhanden
+    =2*E2   -> B2 fehlt
+
+Bereiche vor dem Vergleich expandieren:
+
+  =SUMME(F2:F6) enthält F2, F3, F4, F5 und F6.
+
+Fehlende Bezüge konkret melden:
+
+  "Verwende Zellbezüge: C3."
+
+Wenn ein absoluter oder gemischter Bezug verlangt ist, reicht dieselbe Adresse
+ohne passende $-Zeichen nicht aus. Die Meldung erklärt den Grund und nennt die
+benötigte Schreibweise, z. B.:
+
+  "Der Stundenlohn muss fest bleiben. Verwende $C$3."
+
+Zahlenliterale aus Zelladressen nicht als Konstanten zählen. Nur in
+allowedNumbers ausdrücklich zugelassene fachliche Konstanten akzeptieren.
+
+
+12. Sichtbare und lernförderliche Rückmeldungen
+-----------------------------------------------
+
+Fehlermeldungen unterscheiden mindestens:
 
   - Gleichheitszeichen fehlt,
   - Formel kann nicht gelesen werden,
-  - benoetigte Zellbezuege fehlen,
-  - unerlaubte Zahlen wurden eingetippt,
+  - benötigter Zellbezug fehlt oder eine falsche Zelle wurde verwendet,
+  - absoluter oder gemischter Bezug ist falsch,
+  - unerlaubte Zahl wurde eingetippt,
   - Ergebnis ist mathematisch falsch,
-  - Zellbezug ist kreisfoermig oder leer.
+  - Bezug ist leer, nichtnumerisch oder kreisförmig,
+  - Ausfüllbereich ist unvollständig.
 
-Keine Musterformel sofort verraten. Zuerst einen konkreten, lernfoerderlichen
-Hinweis geben. Bei Erfolg bestaetigen, dass die Formel auch mit veraenderten
-Ausgangswerten funktioniert.
+Die vollständige Meldung wird:
 
-Jede Zielzelle erhaelt eigenes Feedback; die Gesamtpruefung fasst nur zusammen.
+  - direkt unter der Formelleiste angezeigt und
+  - zusätzlich an bzw. neben der aktiven fehlerhaften Zelle eingeblendet.
+
+Ein roter Punkt, ein roter Rahmen, ein title-Attribut oder eine ausschließlich
+globale Zusammenfassung reichen allein nicht aus.
+
+Bei einer Einzelprüfung wird die geprüfte Zelle aktiviert. Bei "Alle Formeln
+prüfen" wird die erste fehlerhafte Zelle aktiviert und deren Detailmeldung
+sichtbar gemacht. Weitere fehlerhafte Zellen behalten ihren Fehlerstatus und
+zeigen ihre Detailmeldung, sobald sie aktiviert werden.
+
+Keine Musterformel sofort verraten. Eine konkrete, lernförderliche Ursache
+nennen. Bei Erfolg bestätigen, dass die Formel auch mit veränderten Werten
+funktioniert.
 
 
-10. Spezifische Abschlusspruefung
+13. Reset und Zustandsbereinigung
 ---------------------------------
 
-Zusaetzlich zur allgemeinen Checkliste:
+Reset stellt vollständig wieder her:
 
-  [ ] Inhalt, Zellbereich und Formatierung der Excel-Vorlage wurden geprueft.
-  [ ] Alle vorgesehenen Zellen sind editierbar oder bewusst gesperrt.
-  [ ] Ueberlanger Text ueberlagert nur wirklich freie rechte Nachbarzellen und
-      wird von belegten oder fuer Eingaben/Ergebnisse reservierten Zellen
-      begrenzt.
-  [ ] Jede Formel-Zielzelle besitzt Button und eigenes Feedback.
-  [ ] Richtige Standardformeln bestehen.
-  [ ] Mindestens eine anders geschriebene, mathematisch aequivalente Formel
-      besteht ebenfalls.
-  [ ] Hart codierte aktuelle Ergebnisse werden abgelehnt.
-  [ ] Fehlende requiredRefs werden konkret gemeldet.
-  [ ] Zellbereiche werden fuer die Referenzpruefung expandiert.
-  [ ] Relative und absolute Bezuege werden beim Kopieren korrekt behandelt.
-  [ ] Ausfuell-Zielzellen sind anfangs leer und werden nur durch die vorgesehene
-      Ausfuellaktion befuellt.
-  [ ] Die Gesamtpruefung erkennt einen fehlenden oder unvollstaendigen
-      Ausfuellbereich.
-  [ ] Mehrere veraenderte Testdatensaetze wurden ausgefuehrt.
-  [ ] Falsche Rechenzeichen, falsche Klammern und unvollstaendige Bereiche
-      werden abgelehnt.
-  [ ] Reset, Einzelpruefung, Gesamtpruefung und Zoom funktionieren.
-  [ ] Inline-Skript ist syntaktisch gueltig.
-  [ ] Seite wurde nach Moeglichkeit interaktiv im Browser getestet.
+  - Ausgangswerte und Ausgangstexte,
+  - leere Formel-Zielzellen,
+  - leere Ausfüllziele,
+  - ursprüngliche Auswahl bzw. Startzelle,
+  - entfernte Fehler- und Erfolgsmeldungen,
+  - entfernte Ausfüllvorschau.
+
+Eine Änderung nach einer Prüfung entfernt veraltete Rückmeldungen. Die Prüfung
+darf niemals eigenständige Eingaben unbeabsichtigt überschreiben.
 
 
-Kurz-Checkliste Tabellenkalkulation
------------------------------------
+14. Verbindliche Tests und Abschlussprüfung
+-------------------------------------------
+
+Für die gemeinsame Tabellenlogik automatisierte Tests pflegen. Mindestens
+prüfen:
+
+  [ ] Rohformel und sichtbarer Wert sind getrennt.
+  [ ] Leere Zellen und Formelleiste enthalten kein vorgegebenes =.
+  [ ] Relative, absolute und gemischte Bezüge werden korrekt verschoben.
+  [ ] Mehrzellige Formelauswahl wird korrekt ausgefüllt.
+  [ ] Numerische Reihen mit mehreren Ausgangszellen werden fortgesetzt.
+  [ ] Nach dem Ausfüllen stehen Ergebnisse in den Zellen.
+  [ ] requiredRefs melden falsche oder fehlende Zelladressen konkret.
+  [ ] referenceRules melden fehlende $-Fixierungen konkret.
+  [ ] Einzelprüfung zeigt Detailfeedback unter der Formelleiste und an der Zelle.
+  [ ] Gesamtprüfung aktiviert die erste fehlerhafte Zelle.
+  [ ] Prüfbuttons bleiben in den vorgesehenen Zellen funktionsfähig.
+  [ ] Reset bereinigt Werte, Auswahl, Ausfüllung und Feedback.
+  [ ] Zoom, Maus-, Touch-/Pointer- und Tastaturbedienung funktionieren.
+  [ ] Alle lokalen CSS-, JavaScript-, Bild- und Navigationsverweise existieren.
+  [ ] Gemeinsame und eingebettete Skripte sind syntaktisch gültig.
+  [ ] Seite wurde nach Möglichkeit interaktiv im Browser getestet.
+
+
+Kurz-Checkliste
+---------------
 
   [ ] Allgemeines Manifest angewendet.
   [ ] Arbeitsmappe inhaltlich und visuell untersucht.
-  [ ] Tabelle mit korrekten Zelladressen nachgebaut.
-  [ ] Zielzellen als zentrale Metadaten definiert.
-  [ ] Begrenzter Formelparser implementiert.
-  [ ] Mathematische Aequivalenz mit mehreren Datensaetzen geprueft.
-  [ ] Geforderte Zellbezuege und erlaubte Konstanten geprueft.
-  [ ] Textueberlauf in leere sowie Begrenzung durch belegte Nachbarzellen
-      geprueft.
-  [ ] Falls verlangt: Ausfuellaktion, Bezugsverschiebung und Reset geprueft.
-  [ ] Einzel- und Gesamtfeedback umgesetzt.
-  [ ] Allgemeine und spezifische Abschlusspruefung ausgefuehrt.
+  [ ] Gemeinsame Engine und gemeinsames Stylesheet wiederverwendet.
+  [ ] Aufgabenspezifische Inhalte zentral konfiguriert.
+  [ ] Rohinhalt, Anzeigewert, aktive Zelle und Auswahl getrennt verwaltet.
+  [ ] Formelleiste ohne vorgegebenes = umgesetzt.
+  [ ] Zellen zeigen Werte; Formelleiste zeigt Rohformeln.
+  [ ] Einzel- und Mehrfachauswahl umgesetzt.
+  [ ] Auto-Ausfüllen für Einzel- und Mehrfachquelle umgesetzt.
+  [ ] Prüfbuttons befinden sich direkt in den Zielzellen.
+  [ ] Konkrete Detailfehler sind sichtbar, nicht nur farblich markiert.
+  [ ] Mehrere unabhängige Testdatensätze prüfen die Fachlogik.
+  [ ] Reset, Syntax, Verweise und Bedienung geprüft.

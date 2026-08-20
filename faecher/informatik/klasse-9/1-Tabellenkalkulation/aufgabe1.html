@@ -4,11 +4,12 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Aufgabe 1 – Formeln in der Tabellenkalkulation</title>
-    <link rel="stylesheet" href="../../../../styles.css?v=20260722-2">
+    <link rel="stylesheet" href="../../../../styles.css?v=20260820">
+    <link rel="stylesheet" href="tabellenkalkulation.css?v=20260820">
   </head>
   <body>
     <div class="site-backdrop" aria-hidden="true"></div>
-    <main class="page-shell spreadsheet-page">
+    <main class="page-shell spreadsheet-page spreadsheet-new-page">
       <nav class="topbar" aria-label="Navigation">
         <a class="back-link" href="../">Zurück zur Aufgabenübersicht</a>
         <a class="back-link" href="../../../../">Startseite</a>
@@ -17,671 +18,135 @@
       <header class="page-header spreadsheet-header">
         <p class="eyebrow">Tabellenkalkulation</p>
         <h1>Aufgabe 1</h1>
-        <p>Trage in den gelben Zellen F4 bis F17 passende Formeln ein.</p>
+        <p>Berechne Flächen, Umfänge und Volumen mit Formeln und Zellbezügen.</p>
       </header>
 
-      <div class="spreadsheet-workspace">
-        <section class="spreadsheet-card" aria-labelledby="spreadsheet-title">
-          <div class="card-heading">
-            <div>
-              <h2 id="spreadsheet-title">Mathematische Funktionen</h2>
-              <p><strong>Hinweis:</strong> Schreibe nur in die gelb markierten Zellen. Beginne jede Formel mit einem Gleichheitszeichen.</p>
+      <section class="spreadsheet-card" aria-labelledby="spreadsheet-title">
+        <div class="card-heading">
+          <div>
+            <h2 id="spreadsheet-title">Mathematische Funktionen</h2>
+            <p><strong>Arbeitsauftrag:</strong> Wähle eine gelbe Zelle in F4 bis F17 aus und trage die Formel oben in die Formelleiste ein. Beginne jede Formel selbst mit einem Gleichheitszeichen.</p>
+            <div class="sheet-help" aria-label="Bedienhinweise">
+              <span>Zelle anklicken, dann oben bearbeiten</span>
+              <span>Im Raster steht immer das Ergebnis</span>
+              <span>Prüfbutton bleibt in der Zelle</span>
             </div>
-            <span id="spreadsheet-status" class="load-status ready" role="status">Bereit</span>
           </div>
+          <span class="load-status ready" role="status">Bereit</span>
+        </div>
 
-          <div class="spreadsheet-frame">
-            <div class="spreadsheet-zoom" aria-label="Zoomsteuerung für die Tabelle">
-              <button id="zoom-out" type="button" aria-label="Tabelle verkleinern">−</button>
-              <span id="zoom-level" aria-live="polite">100 %</span>
-              <button id="zoom-in" type="button" aria-label="Tabelle vergrößern">+</button>
-              <button id="zoom-reset" type="button">100 %</button>
-            </div>
-            <div id="spreadsheet-grid" aria-label="Mini-Tabellenkalkulation"></div>
+        <div id="spreadsheet-app" class="spreadsheet-app">
+          <div class="spreadsheet-toolbar" aria-label="Tabellenwerkzeuge">
+            <button id="zoom-out" type="button" aria-label="Tabelle verkleinern">−</button>
+            <span id="zoom-level" class="zoom-value" aria-live="polite">100 %</span>
+            <button id="zoom-in" type="button" aria-label="Tabelle vergrößern">+</button>
+            <button id="zoom-reset" type="button">100 %</button>
+            <span class="toolbar-spacer"></span>
+            <small>Strg + Mausrad ändert den Zoom</small>
           </div>
-        </section>
-
-        <aside class="formula-card" aria-labelledby="formula-title">
-          <h2 id="formula-title">Formelsammlung</h2>
-          <img
-            src="formelsammlung.png"
-            alt="Formeln für Flächeninhalt und Volumen von Dreieck, Rechteck, Quadrat, Trapez, Kreis, Parallelogramm, Würfel, Quader, Prisma, Zylinder, Kegel und Pyramide"
-          >
-          <p>Die Grundfläche eines Körpers muss zunächst mit der passenden Flächenformel berechnet werden.</p>
-        </aside>
-      </div>
+          <div class="formula-bar" aria-label="Formelleiste">
+            <output id="cell-name-box" class="cell-name-box" aria-label="Ausgewählter Zellbereich"></output>
+            <span class="formula-symbol" aria-hidden="true">fx</span>
+            <input id="formula-input" class="formula-input" type="text" autocomplete="off" spellcheck="false" aria-label="Inhalt oder Formel der aktiven Zelle">
+          </div>
+          <div id="formula-feedback" class="formula-feedback" role="status" aria-live="polite" hidden></div>
+          <div id="spreadsheet-viewport" class="spreadsheet-viewport">
+            <div id="spreadsheet-grid" class="spreadsheet-grid" aria-label="Tabellenkalkulation für Aufgabe 1"></div>
+          </div>
+          <div class="sheet-statusbar">
+            <span id="selection-status"></span>
+            <span>Formeln beginnen mit <strong>=</strong></span>
+          </div>
+        </div>
+      </section>
 
       <section class="check-panel" aria-labelledby="check-title">
         <div>
           <h2 id="check-title">Eingaben überprüfen</h2>
-          <p>Prüfe jede Formel mit dem Button direkt in der gelben Zelle. Dabei wird besonders kontrolliert, ob du Zellbezüge statt eingetippter Ausgangswerte verwendest.</p>
+          <p>Nutze die kleinen Prüfbuttons in den gelben Zellen oder kontrolliere alle Formeln gemeinsam.</p>
         </div>
         <div class="check-actions">
           <button id="check-formulas" class="primary-action" type="button">Alle Formeln prüfen</button>
-          <button id="reset-formulas" class="secondary-action" type="button">Ergebnisse leeren</button>
+          <button id="reset-formulas" class="secondary-action" type="button">Aufgabe zurücksetzen</button>
         </div>
         <div id="check-result" class="check-result" role="status" aria-live="polite"></div>
       </section>
 
-      <noscript>
-        <p class="check-result error">Für diese Aufgabe muss JavaScript aktiviert sein.</p>
-      </noscript>
+      <aside class="formula-reference-card" aria-labelledby="formula-reference-title">
+        <h2 id="formula-reference-title">Formelsammlung</h2>
+        <img src="formelsammlung.png" alt="Formeln für Flächeninhalt und Volumen verschiedener Flächen und Körper">
+      </aside>
+
+      <noscript><p class="check-result error">Für diese Aufgabe muss JavaScript aktiviert sein.</p></noscript>
     </main>
 
     <script>
       (() => {
-        "use strict";
-
-        const columns = ["A", "B", "C", "D", "E", "F"];
-        const rowCount = 17;
         const PI_VALUE = 3.1415;
-        const outputCells = [
-          { cell: "F4", name: "Fläche Dreieck", requiredRefs: ["B4", "B8"], expected: ({ a, h }) => a * h / 2 },
-          { cell: "F5", name: "Fläche Rechteck", requiredRefs: ["B4", "B5"], expected: ({ a, b }) => a * b },
-          { cell: "F6", name: "Fläche Quadrat", requiredRefs: ["B4"], expected: ({ a }) => a ** 2 },
-          { cell: "F7", name: "Fläche Trapez", requiredRefs: ["B4", "B6", "B8"], expected: ({ a, c, h }) => (a + c) * h / 2 },
-          { cell: "F8", name: "Fläche Kreis", requiredRefs: ["B9", "B10"], expected: ({ r }) => r ** 2 * PI_VALUE },
-          { cell: "F9", name: "Fläche Parallelogramm", requiredRefs: ["B4", "B8"], expected: ({ a, h }) => a * h },
-          { cell: "F10", name: "Umfang Kreis", requiredRefs: ["B9", "B10"], expected: ({ r }) => 2 * r * PI_VALUE },
-          { cell: "F11", name: "Volumen Würfel", requiredRefs: ["B4"], expected: ({ a }) => a ** 3 },
-          { cell: "F12", name: "Volumen Quader", requiredRefs: ["B4", "B5", "B6"], expected: ({ a, b, c }) => a * b * c },
-          { cell: "F13", name: "Oberfläche Quader", requiredRefs: ["B4", "B5", "B6"], expected: ({ a, b, c }) => 2 * a * b + 2 * a * c + 2 * b * c },
-          { cell: "F14", name: "Volumen dreiseitiges Prisma", requiredRefs: ["B4", "B7", "B8"], expected: ({ a, d, h }) => a * h / 2 * d },
-          { cell: "F15", name: "Volumen Zylinder", requiredRefs: ["B8", "B9", "B10"], expected: ({ r, h }) => r ** 2 * PI_VALUE * h },
-          { cell: "F16", name: "Volumen Kegel", requiredRefs: ["B8", "B9", "B10"], expected: ({ r, h }) => r ** 2 * PI_VALUE * h / 3 },
-          { cell: "F17", name: "Volumen Pyramide", requiredRefs: ["B4", "B8"], expected: ({ a, h }) => a ** 2 * h / 3 }
-        ];
-
-        const testCases = [
+        const initialCells = {
+          A1: "Mathematische Funktionen",
+          A2: "Trage in F4 bis F17 Formeln ein.",
+          A4: "Seite a / Grundseite g:", B4: 3,
+          A5: "Seite b:", B5: 4,
+          A6: "Seite c:", B6: 5,
+          A7: "Seite d / Körperhöhe:", B7: 6,
+          A8: "Höhe h:", B8: 7,
+          A9: "Radius r:", B9: 3,
+          A10: "Pi:", B10: PI_VALUE,
+          A12: "Grundflächen bei Körpern",
+          A13: "zuerst extra berechnen!",
+          E4: "A_Dreieck =", E5: "A_Rechteck =", E6: "A_Quadrat =",
+          E7: "A_Trapez =", E8: "A_Kreis =", E9: "A_Parallelogramm =",
+          E10: "U_Kreis =", E11: "V_Würfel =", E12: "V_Quader =",
+          E13: "O_Quader =", E14: "V_dreiseitiges Prisma =", E15: "V_Zylinder =",
+          E16: "V_Kegel =", E17: "V_Pyramide ="
+        };
+        const tests = [
           { a: 3, b: 4, c: 5, d: 6, h: 7, r: 3 },
           { a: 4, b: 6, c: 8, d: 5, h: 3, r: 2 },
           { a: 7, b: 2, c: 9, d: 4, h: 5, r: 6 },
           { a: 2.5, b: 7.5, c: 4.5, d: 8, h: 3.5, r: 1.5 }
         ];
-
-        const inputCells = {
-          a: "B4",
-          b: "B5",
-          c: "B6",
-          d: "B7",
-          h: "B8",
-          r: "B9"
+        window.spreadsheetTaskConfig = {
+          columns: ["A", "B", "C", "D", "E", "F"],
+          rowCount: 17,
+          minWidth: 1060,
+          columnWidths: [250, 135, 120, 120, 260, 230],
+          startCell: "F4",
+          initialCells,
+          centeredCells: ["B4", "B5", "B6", "B7", "B8", "B9", "B10"],
+          cellClasses: {
+            "sheet-title-cell": ["A1"],
+            "instruction-text-cell": ["A2", "A12", "A13"],
+            "input-cell": ["B4", "B5", "B6", "B7", "B8", "B9", "B10"],
+            "label-cell": Array.from({ length: 14 }, (_, index) => `E${index + 4}`)
+          },
+          testCases: tests,
+          applyTestCase(cells, test) {
+            cells.set("B4", test.a); cells.set("B5", test.b); cells.set("B6", test.c);
+            cells.set("B7", test.d); cells.set("B8", test.h); cells.set("B9", test.r);
+            cells.set("B10", PI_VALUE);
+          },
+          formulaDefinitions: [
+            { cell: "F4", name: "Fläche Dreieck", requiredRefs: ["B4", "B8"], allowedNumbers: [2], expected: ({ a, h }) => a * h / 2 },
+            { cell: "F5", name: "Fläche Rechteck", requiredRefs: ["B4", "B5"], expected: ({ a, b }) => a * b },
+            { cell: "F6", name: "Fläche Quadrat", requiredRefs: ["B4"], allowedNumbers: [2], expected: ({ a }) => a ** 2 },
+            { cell: "F7", name: "Fläche Trapez", requiredRefs: ["B4", "B6", "B8"], allowedNumbers: [2], expected: ({ a, c, h }) => (a + c) * h / 2 },
+            { cell: "F8", name: "Fläche Kreis", requiredRefs: ["B9", "B10"], allowedNumbers: [2], expected: ({ r }) => r ** 2 * PI_VALUE },
+            { cell: "F9", name: "Fläche Parallelogramm", requiredRefs: ["B4", "B8"], expected: ({ a, h }) => a * h },
+            { cell: "F10", name: "Umfang Kreis", requiredRefs: ["B9", "B10"], allowedNumbers: [2], expected: ({ r }) => 2 * r * PI_VALUE },
+            { cell: "F11", name: "Volumen Würfel", requiredRefs: ["B4"], allowedNumbers: [3], expected: ({ a }) => a ** 3 },
+            { cell: "F12", name: "Volumen Quader", requiredRefs: ["B4", "B5", "B6"], expected: ({ a, b, c }) => a * b * c },
+            { cell: "F13", name: "Oberfläche Quader", requiredRefs: ["B4", "B5", "B6"], allowedNumbers: [2], expected: ({ a, b, c }) => 2 * a * b + 2 * a * c + 2 * b * c },
+            { cell: "F14", name: "Volumen Prisma", requiredRefs: ["B4", "B7", "B8"], allowedNumbers: [2], expected: ({ a, d, h }) => a * h / 2 * d },
+            { cell: "F15", name: "Volumen Zylinder", requiredRefs: ["B8", "B9", "B10"], allowedNumbers: [2], expected: ({ r, h }) => r ** 2 * PI_VALUE * h },
+            { cell: "F16", name: "Volumen Kegel", requiredRefs: ["B8", "B9", "B10"], allowedNumbers: [2, 3], expected: ({ r, h }) => r ** 2 * PI_VALUE * h / 3 },
+            { cell: "F17", name: "Volumen Pyramide", requiredRefs: ["B4", "B8"], allowedNumbers: [2, 3], expected: ({ a, h }) => a ** 2 * h / 3 }
+          ],
+          successMessage: "Sehr gut! Alle Formeln verwenden Zellbezüge und funktionieren auch mit veränderten Ausgangswerten."
         };
-
-        const initialCells = {
-          A1: "Mathematische Funktionen",
-          A2: "Trage in F4 bis F17 Formeln ein.",
-          A4: "Seite a / Grundseite g:",
-          B4: 3,
-          A5: "Seite b:",
-          B5: 4,
-          A6: "Seite c:",
-          B6: 5,
-          A7: "Seite d / Körperhöhe:",
-          B7: 6,
-          A8: "Höhe h:",
-          B8: 7,
-          A9: "Radius r:",
-          B9: 3,
-          A10: "Pi:",
-          B10: PI_VALUE,
-          A12: "Grundflächen bei Körpern",
-          A13: "zuerst extra berechnen!",
-          E4: "A_Dreieck =",
-          E5: "A_Rechteck =",
-          E6: "A_Quadrat =",
-          E7: "A_Trapez =",
-          E8: "A_Kreis =",
-          E9: "A_Parallelogramm =",
-          E10: "U_Kreis =",
-          E11: "V_Würfel =",
-          E12: "V_Quader =",
-          E13: "O_Quader =",
-          E14: "V_dreiseitiges Prisma =",
-          E15: "V_Zylinder =",
-          E16: "V_Kegel =",
-          E17: "V_Pyramide ="
-        };
-
-        const formulaCells = new Set(outputCells.map(({ cell }) => cell));
-        const inputCellSet = new Set(Object.values(inputCells).concat("B10"));
-        const textOverflowBlockerCells = new Set([...formulaCells, ...inputCellSet]);
-        const noteCells = new Set(["A1", "A2", "A12", "A13"]);
-        const cells = new Map(Object.entries(initialCells).map(([cell, value]) => [cell, value]));
-        outputCells.forEach(({ cell }) => cells.set(cell, ""));
-
-        const gridElement = document.getElementById("spreadsheet-grid");
-        const checkButton = document.getElementById("check-formulas");
-        const resetButton = document.getElementById("reset-formulas");
-        const resultElement = document.getElementById("check-result");
-        const spreadsheetFrame = document.querySelector(".spreadsheet-frame");
-        const zoomOutButton = document.getElementById("zoom-out");
-        const zoomInButton = document.getElementById("zoom-in");
-        const zoomResetButton = document.getElementById("zoom-reset");
-        const zoomLevelElement = document.getElementById("zoom-level");
-        let zoomLevel = 1;
-
-        function normalizeCellName(cell) {
-          return String(cell).trim().toUpperCase();
-        }
-
-        function setInputs(values) {
-          Object.entries(inputCells).forEach(([key, cell]) => {
-            cells.set(cell, values[key]);
-          });
-        }
-
-        function isClose(actual, expected) {
-          const tolerance = Math.max(1, Math.abs(expected)) * 1e-7;
-          return Number.isFinite(actual) && Math.abs(actual - expected) <= tolerance;
-        }
-
-        function formatNumber(value) {
-          return value.toLocaleString("de-DE", {
-            maximumFractionDigits: 6
-          });
-        }
-
-        function displayStaticValue(cell, value) {
-          if (typeof value === "number") {
-            return formatNumber(value);
-          }
-
-          return value || "";
-        }
-
-        function analyzeFormulaReferences(formula, { requiredRefs }) {
-          const source = String(formula ?? "").trim();
-          const foundRefs = new Set((source.match(/[A-Za-z]+[0-9]+/g) || []).map(normalizeCellName));
-          const missingRefs = requiredRefs.filter((cell) => !foundRefs.has(cell));
-
-          return {
-            missingRefs
-          };
-        }
-
-        function parseFormula(source, lookupValue) {
-          const formula = source.trim().replace(/^=/, "");
-          let index = 0;
-
-          function skipSpaces() {
-            while (formula[index] === " ") {
-              index += 1;
-            }
-          }
-
-          function match(character) {
-            skipSpaces();
-            if (formula[index] === character) {
-              index += 1;
-              return true;
-            }
-            return false;
-          }
-
-          function parseExpression() {
-            let value = parseTerm();
-
-            while (true) {
-              if (match("+")) {
-                value += parseTerm();
-              } else if (match("-")) {
-                value -= parseTerm();
-              } else {
-                return value;
-              }
-            }
-          }
-
-          function parseTerm() {
-            let value = parsePower();
-
-            while (true) {
-              if (match("*")) {
-                value *= parsePower();
-              } else if (match("/")) {
-                value /= parsePower();
-              } else {
-                return value;
-              }
-            }
-          }
-
-          function parsePower() {
-            const base = parseUnary();
-            if (match("^")) {
-              return base ** parsePower();
-            }
-            return base;
-          }
-
-          function parseUnary() {
-            if (match("+")) {
-              return parseUnary();
-            }
-            if (match("-")) {
-              return -parseUnary();
-            }
-            return parsePrimary();
-          }
-
-          function parsePrimary() {
-            skipSpaces();
-
-            if (match("(")) {
-              const value = parseExpression();
-              if (!match(")")) {
-                throw new Error("Schließende Klammer fehlt.");
-              }
-              return value;
-            }
-
-            if (/\d|,|\./.test(formula[index])) {
-              return parseNumber();
-            }
-
-            if (/[A-Za-zÄÖÜäöü]/.test(formula[index] || "") || formula[index] === "π") {
-              return parseIdentifier();
-            }
-
-            throw new Error("Unerwartetes Zeichen.");
-          }
-
-          function parseNumber() {
-            let text = "";
-
-            while (/\d|,|\./.test(formula[index] || "")) {
-              text += formula[index];
-              index += 1;
-            }
-
-            const value = Number(text.replace(",", "."));
-            if (!Number.isFinite(value)) {
-              throw new Error("Zahl konnte nicht gelesen werden.");
-            }
-            return value;
-          }
-
-          function parseIdentifier() {
-            let text = "";
-
-            while (/[A-Za-zÄÖÜäöü0-9_]/.test(formula[index] || "") || formula[index] === "π") {
-              text += formula[index];
-              index += 1;
-            }
-
-            const normalized = text.toUpperCase();
-            if (normalized === "PI" || text === "π") {
-              if (match("(") && !match(")")) {
-                throw new Error("PI braucht keine Argumente.");
-              }
-              return PI_VALUE;
-            }
-
-            if (/^[A-Z]+[0-9]+$/.test(normalized)) {
-              return lookupValue(normalized);
-            }
-
-            throw new Error("Unbekannter Name.");
-          }
-
-          const result = parseExpression();
-          skipSpaces();
-
-          if (index !== formula.length) {
-            throw new Error("Formel konnte nicht vollständig gelesen werden.");
-          }
-
-          return result;
-        }
-
-        function evaluateCell(cell, visiting = new Set()) {
-          const normalized = normalizeCellName(cell);
-
-          if (visiting.has(normalized)) {
-            throw new Error("Zellbezug enthält einen Kreis.");
-          }
-
-          const value = cells.get(normalized);
-
-          if (typeof value === "number") {
-            return value;
-          }
-
-          const text = String(value ?? "").trim();
-          if (!text) {
-            throw new Error("Zelle ist leer.");
-          }
-
-          if (!text.startsWith("=")) {
-            const numberValue = Number(text.replace(",", "."));
-            if (Number.isFinite(numberValue)) {
-              return numberValue;
-            }
-            throw new Error("Zelle enthält keinen Zahlenwert.");
-          }
-
-          visiting.add(normalized);
-          try {
-            return parseFormula(text, (referencedCell) => evaluateCell(referencedCell, visiting));
-          } finally {
-            visiting.delete(normalized);
-          }
-        }
-
-        function evaluateOutputCell(cell) {
-          const formula = String(cells.get(cell) ?? "").trim();
-          if (!formula.startsWith("=")) {
-            throw new Error("Formel muss mit = beginnen.");
-          }
-          return evaluateCell(cell);
-        }
-
-        function cellHasContent(value) {
-          return value !== undefined && value !== null && String(value).trim() !== "";
-        }
-
-        function refreshTextOverflow() {
-          gridElement.querySelectorAll("td[data-cell]").forEach((cellElement) => {
-            const cell = cellElement.dataset.cell;
-            const value = cells.get(cell);
-            const overflowText = cellElement.querySelector(".cell-overflow-text");
-            cellElement.classList.toggle("cell-has-content", cellHasContent(value));
-
-            if (!overflowText) {
-              cellElement.classList.remove("text-overflow-source");
-              return;
-            }
-
-            const match = cell.match(/^([A-Z]+)(\d+)$/);
-            const columnIndex = match ? columns.indexOf(match[1]) : -1;
-            const nextColumn = columns[columnIndex + 1];
-            const nextCell = nextColumn && match ? `${nextColumn}${match[2]}` : null;
-            const text = typeof value === "string" ? value : "";
-            const canOverflow = Boolean(
-              text.trim() &&
-              !text.trim().startsWith("=") &&
-              nextCell &&
-              !cellHasContent(cells.get(nextCell)) &&
-              !textOverflowBlockerCells.has(nextCell)
-            );
-
-            cellElement.classList.toggle("text-overflow-source", canOverflow);
-            overflowText.textContent = canOverflow ? text : "";
-          });
-        }
-
-        function createGrid() {
-          const table = document.createElement("table");
-          table.className = "mini-spreadsheet-table";
-
-          const thead = document.createElement("thead");
-          const headRow = document.createElement("tr");
-          headRow.append(document.createElement("th"));
-          columns.forEach((column) => {
-            const heading = document.createElement("th");
-            heading.scope = "col";
-            heading.textContent = column;
-            headRow.append(heading);
-          });
-          thead.append(headRow);
-          table.append(thead);
-
-          const tbody = document.createElement("tbody");
-          for (let row = 1; row <= rowCount; row += 1) {
-            const tr = document.createElement("tr");
-            const rowHeading = document.createElement("th");
-            rowHeading.scope = "row";
-            rowHeading.textContent = row;
-            tr.append(rowHeading);
-
-            columns.forEach((column) => {
-              const cellName = `${column}${row}`;
-              const td = document.createElement("td");
-              td.dataset.cell = cellName;
-
-              if (formulaCells.has(cellName)) {
-                td.className = "spreadsheet-cell formula-cell";
-
-                const input = document.createElement("input");
-                input.type = "text";
-                input.inputMode = "text";
-                input.autocomplete = "off";
-                input.spellcheck = false;
-                input.value = cells.get(cellName);
-                input.placeholder = "=";
-                input.setAttribute("aria-label", `Formel für ${cellName}`);
-                input.addEventListener("input", () => {
-                  cells.set(cellName, input.value);
-                  refreshComputedValues();
-                  clearResult();
-                });
-
-                const output = document.createElement("output");
-                output.className = "cell-result";
-                output.dataset.resultFor = cellName;
-
-                const feedback = document.createElement("div");
-                feedback.className = "cell-feedback";
-                feedback.dataset.feedbackFor = cellName;
-
-                const checkCellButton = document.createElement("button");
-                checkCellButton.className = "cell-check-button";
-                checkCellButton.type = "button";
-                checkCellButton.textContent = "Diese Formel prüfen";
-                checkCellButton.addEventListener("click", () => checkFormula(cellName, true));
-
-                td.append(input, output, checkCellButton, feedback);
-              } else {
-                const value = cells.get(cellName);
-                td.className = "spreadsheet-cell";
-                if (noteCells.has(cellName)) {
-                  td.classList.add("note-cell");
-                }
-                if (inputCellSet.has(cellName)) {
-                  td.classList.add("input-cell");
-                }
-                if (column === "E" && row >= 4) {
-                  td.classList.add("label-cell");
-                }
-                const input = document.createElement("input");
-                input.type = "text";
-                input.autocomplete = "off";
-                input.spellcheck = false;
-                input.value = displayStaticValue(cellName, value);
-                input.setAttribute("aria-label", `Zelle ${cellName}`);
-                input.addEventListener("input", () => {
-                  const enteredValue = input.value.trim();
-                  const numberValue = Number(enteredValue.replace(",", "."));
-                  cells.set(cellName, enteredValue !== "" && Number.isFinite(numberValue) ? numberValue : input.value);
-                  refreshComputedValues();
-                  clearResult();
-                });
-                const overflowText = document.createElement("span");
-                overflowText.className = "cell-overflow-text";
-                overflowText.setAttribute("aria-hidden", "true");
-                td.append(input, overflowText);
-              }
-
-              tr.append(td);
-            });
-
-            tbody.append(tr);
-          }
-
-          table.append(tbody);
-          gridElement.append(table);
-          refreshComputedValues();
-        }
-
-        function refreshComputedValues() {
-          formulaCells.forEach((cell) => {
-            const resultOutput = gridElement.querySelector(`[data-result-for="${cell}"]`);
-            const cellElement = gridElement.querySelector(`[data-cell="${cell}"]`);
-            if (!resultOutput || !cellElement) {
-              return;
-            }
-
-            const formula = String(cells.get(cell) ?? "").trim();
-            cellElement.classList.remove("has-error", "is-correct");
-
-            if (!formula) {
-              resultOutput.textContent = "";
-              return;
-            }
-
-            if (!formula.startsWith("=")) {
-              resultOutput.textContent = "";
-              return;
-            }
-
-            try {
-              resultOutput.textContent = formatNumber(evaluateOutputCell(cell));
-            } catch (error) {
-              resultOutput.textContent = "";
-            }
-          });
-          refreshTextOverflow();
-        }
-
-        function setCellFeedback(cell, message, type) {
-          const feedbackElement = gridElement.querySelector(`[data-feedback-for="${cell}"]`);
-          const cellElement = gridElement.querySelector(`[data-cell="${cell}"]`);
-          if (!feedbackElement || !cellElement) {
-            return;
-          }
-
-          feedbackElement.textContent = message;
-          feedbackElement.className = type ? `cell-feedback ${type}` : "cell-feedback";
-          cellElement.classList.toggle("has-error", type === "error");
-          cellElement.classList.toggle("is-correct", type === "success");
-        }
-
-        function clearCellFeedback() {
-          formulaCells.forEach((cell) => {
-            setCellFeedback(cell, "", "");
-          });
-        }
-
-        function refreshInputs() {
-          cells.forEach((value, cell) => {
-            const input = gridElement.querySelector(`[data-cell="${cell}"] input`);
-            if (input) {
-              input.value = formulaCells.has(cell) ? value : displayStaticValue(cell, value);
-            }
-          });
-          refreshComputedValues();
-        }
-
-        function checkFormula(cell, showSummary = false) {
-          const definition = outputCells.find((entry) => entry.cell === cell);
-          if (!definition) {
-            return false;
-          }
-
-          const formula = String(cells.get(cell) ?? "").trim();
-          let message = "Richtig.";
-          let correct = true;
-
-          if (!formula.startsWith("=")) {
-            correct = false;
-            message = "Beginne die Formel mit =.";
-          } else {
-            const analysis = analyzeFormulaReferences(formula, definition);
-            const messages = [];
-            if (analysis.missingRefs.length > 0) {
-              messages.push(`Verwende Zellbezüge: ${analysis.missingRefs.join(", ")}.`);
-            }
-            if (messages.length > 0) {
-              correct = false;
-              message = messages.join(" ");
-            }
-          }
-
-          const originalInputs = {};
-          Object.entries(inputCells).forEach(([key, inputCell]) => {
-            originalInputs[key] = cells.get(inputCell);
-          });
-
-          try {
-            if (correct) {
-              for (const testCase of testCases) {
-                setInputs(testCase);
-                if (!isClose(evaluateOutputCell(cell), definition.expected(testCase))) {
-                  correct = false;
-                  message = "Das Ergebnis passt noch nicht. Prüfe Rechenzeichen, Klammern und Zellbezüge.";
-                  break;
-                }
-              }
-            }
-          } catch (error) {
-            correct = false;
-            message = "Die Formel konnte nicht berechnet werden. Prüfe Rechenzeichen, Klammern und Zellbezüge.";
-          } finally {
-            setInputs(originalInputs);
-            refreshComputedValues();
-          }
-
-          setCellFeedback(cell, message, correct ? "success" : "error");
-          if (showSummary) {
-            showResult(`${cell} (${definition.name}): ${message}`, correct ? "success" : "error");
-          }
-          return correct;
-        }
-
-        function checkFormulas() {
-          const incorrect = outputCells.filter(({ cell }) => !checkFormula(cell));
-
-          if (incorrect.length === 0) {
-            showResult("Sehr gut! Alle Formeln berechnen auch mit veränderten Ausgangswerten das richtige Ergebnis.", "success");
-            return;
-          }
-
-          showResult(`${incorrect.length} Formel${incorrect.length === 1 ? " ist" : "n sind"} noch nicht richtig. Beachte die Hinweise direkt in den gelben Zellen.`, "error");
-        }
-
-        function resetFormulas() {
-          outputCells.forEach(({ cell }) => {
-            cells.set(cell, "");
-          });
-          refreshInputs();
-          clearResult();
-        }
-
-        function clearResult() {
-          resultElement.className = "check-result";
-          resultElement.textContent = "";
-          clearCellFeedback();
-        }
-
-        function showResult(message, type) {
-          resultElement.className = `check-result ${type}`;
-          resultElement.textContent = message;
-        }
-
-        function setZoom(nextZoom) {
-          zoomLevel = Math.min(1.3, Math.max(0.6, Math.round(nextZoom * 10) / 10));
-          gridElement.style.zoom = zoomLevel;
-          zoomLevelElement.textContent = `${Math.round(zoomLevel * 100)} %`;
-          zoomOutButton.disabled = zoomLevel <= 0.6;
-          zoomInButton.disabled = zoomLevel >= 1.3;
-        }
-
-        checkButton.addEventListener("click", checkFormulas);
-        resetButton.addEventListener("click", resetFormulas);
-        zoomOutButton.addEventListener("click", () => setZoom(zoomLevel - 0.1));
-        zoomInButton.addEventListener("click", () => setZoom(zoomLevel + 0.1));
-        zoomResetButton.addEventListener("click", () => setZoom(1));
-        spreadsheetFrame.addEventListener("wheel", (event) => {
-          if (!event.ctrlKey) {
-            return;
-          }
-          event.preventDefault();
-          setZoom(zoomLevel + (event.deltaY < 0 ? 0.1 : -0.1));
-        }, { passive: false });
-        createGrid();
-        setZoom(1);
       })();
     </script>
+    <script src="tabellenkalkulation.js?v=20260820"></script>
   </body>
 </html>
