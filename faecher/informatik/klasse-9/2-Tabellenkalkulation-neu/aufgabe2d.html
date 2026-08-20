@@ -1,0 +1,46 @@
+<!doctype html>
+<html lang="de">
+  <head>
+    <meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>Aufgabe 2d – Einmaleins</title>
+    <link rel="stylesheet" href="../../../../styles.css?v=20260820"><link rel="stylesheet" href="tabellenkalkulation-neu.css?v=20260820">
+  </head>
+  <body>
+    <div class="site-backdrop" aria-hidden="true"></div>
+    <main class="page-shell spreadsheet-page spreadsheet-new-page">
+      <nav class="topbar" aria-label="Navigation"><a class="back-link" href="../">Zurück zur Aufgabenübersicht</a><a class="back-link" href="../../../../">Startseite</a></nav>
+      <header class="page-header spreadsheet-header"><p class="eyebrow">Tabellenkalkulation · neue Oberfläche</p><h1>Aufgabe 2d</h1><p>Fülle eine Einmaleins-Tabelle mit einer einzigen Formel und gemischten Zellbezügen.</p></header>
+      <section class="spreadsheet-card" aria-labelledby="spreadsheet-title">
+        <div class="card-heading"><div><h2 id="spreadsheet-title">Das kleine Einmaleins</h2><p><strong>Arbeitsauftrag:</strong> Multipliziere in B2 die linke Zeilenüberschrift mit der oberen Spaltenüberschrift. Setze die $-Zeichen so, dass du die Formel bis K11 nach rechts und unten ausfüllen kannst.</p><div class="sheet-help"><span>Spalte A passend fixieren</span><span>Zeile 1 passend fixieren</span><span>Ausfüllkästchen bis K11 ziehen</span></div></div><span class="load-status ready" role="status">Bereit</span></div>
+        <div id="spreadsheet-app" class="spreadsheet-app">
+          <div class="spreadsheet-toolbar"><button id="zoom-out" type="button" aria-label="Tabelle verkleinern">−</button><span id="zoom-level" class="zoom-value">100 %</span><button id="zoom-in" type="button" aria-label="Tabelle vergrößern">+</button><button id="zoom-reset" type="button">100 %</button><span class="toolbar-spacer"></span><small>Strg + Mausrad ändert den Zoom</small></div>
+          <div class="formula-bar" aria-label="Formelleiste"><output id="cell-name-box" class="cell-name-box"></output><span class="formula-symbol" aria-hidden="true">fx</span><input id="formula-input" class="formula-input" type="text" autocomplete="off" spellcheck="false" aria-label="Inhalt oder Formel der aktiven Zelle"></div>
+          <div id="spreadsheet-viewport" class="spreadsheet-viewport"><div id="spreadsheet-grid" class="spreadsheet-grid" aria-label="Einmaleins-Tabelle"></div></div>
+          <div class="sheet-statusbar"><span id="selection-status"></span><span>Formeln beginnen mit <strong>=</strong></span></div>
+        </div>
+      </section>
+      <section class="check-panel"><div><h2>Einmaleins überprüfen</h2><p>Prüfe die Formel in B2 oder die vollständig ausgefüllte Tabelle.</p></div><div class="check-actions"><button id="check-formulas" class="primary-action" type="button">Formel und Tabelle prüfen</button><button id="reset-formulas" class="secondary-action" type="button">Aufgabe zurücksetzen</button></div><div id="check-result" class="check-result" role="status" aria-live="polite"></div></section>
+    </main>
+    <script>
+      (() => {
+        const initialCells = { N2: "Formel in B2 eintragen" };
+        for (let number = 1; number <= 10; number += 1) { initialCells[`${String.fromCharCode(65 + number)}1`] = number; initialCells[`A${number + 1}`] = number; }
+        window.spreadsheetTaskConfig = {
+          columns: ["A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M", "N"], rowCount: 12, minWidth: 1550,
+          columnWidths: [95, 135, 105, 105, 105, 105, 105, 105, 105, 105, 105, 105, 105, 220], startCell: "B2", initialCells,
+          centeredCells: [...Array.from({ length: 10 }, (_, i) => `${String.fromCharCode(66 + i)}1`), ...Array.from({ length: 10 }, (_, i) => `A${i + 2}`), ...Array.from({ length: 100 }, (_, i) => `${String.fromCharCode(66 + i % 10)}${Math.floor(i / 10) + 2}`)],
+          cellClasses: { "matrix-header-cell": [...Array.from({ length: 10 }, (_, i) => `${String.fromCharCode(66 + i)}1`), ...Array.from({ length: 10 }, (_, i) => `A${i + 2}`)], "instruction-cell": ["N2"] },
+          testCases: [
+            { rowHeaders: [1,2,3,4,5,6,7,8,9,10], columnHeaders: [1,2,3,4,5,6,7,8,9,10] },
+            { rowHeaders: [2.5,4,7,9,12,15,18,21,24,30], columnHeaders: [3,5,8,11,13,17,19,23,27,31] },
+            { rowHeaders: [-2,0,1.5,4,6,8,10,12,14,16], columnHeaders: [7,-3,2,5,9,12,15,18,20,25] }
+          ],
+          applyTestCase(cells, test) { test.columnHeaders.forEach((value, i) => cells.set(`${String.fromCharCode(66 + i)}1`, value)); test.rowHeaders.forEach((value, i) => cells.set(`A${i + 2}`, value)); },
+          formulaDefinitions: [{ cell: "B2", name: "Produkt der Überschriften", requiredRefs: ["A2", "B1"], referenceRules: [{ cell: "A2", columnAbsolute: true, rowAbsolute: false, message: "Fixiere nur die Spalte A: $A2." }, { cell: "B1", columnAbsolute: false, rowAbsolute: true, message: "Fixiere nur die Zeile 1: B$1." }], expected: ({ rowHeaders, columnHeaders }) => rowHeaders[0] * columnHeaders[0], errorMessage: "Multipliziere die linke mit der oberen Überschrift." }],
+          fillGroups: [{ sourceRange: "B2", targetRange: "B2:K11", incompleteMessage: "Die Einmaleins-Tabelle ist noch nicht vollständig. Ziehe das Ausfüllkästchen an B2 bis K11." }],
+          successMessage: "Sehr gut! Die gemischten Bezüge bleiben beim Ausfüllen an der richtigen Zeile und Spalte."
+        };
+      })();
+    </script>
+    <script src="tabellenkalkulation-neu.js?v=20260820"></script>
+  </body>
+</html>

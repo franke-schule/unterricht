@@ -1,0 +1,151 @@
+<!doctype html>
+<html lang="de">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Aufgabe 1 – Formeln in der Tabellenkalkulation</title>
+    <link rel="stylesheet" href="../../../../styles.css?v=20260820">
+    <link rel="stylesheet" href="tabellenkalkulation-neu.css?v=20260820">
+  </head>
+  <body>
+    <div class="site-backdrop" aria-hidden="true"></div>
+    <main class="page-shell spreadsheet-page spreadsheet-new-page">
+      <nav class="topbar" aria-label="Navigation">
+        <a class="back-link" href="../">Zurück zur Aufgabenübersicht</a>
+        <a class="back-link" href="../../../../">Startseite</a>
+      </nav>
+
+      <header class="page-header spreadsheet-header">
+        <p class="eyebrow">Tabellenkalkulation · neue Oberfläche</p>
+        <h1>Aufgabe 1</h1>
+        <p>Berechne Flächen, Umfänge und Volumen mit Formeln und Zellbezügen.</p>
+      </header>
+
+      <section class="spreadsheet-card" aria-labelledby="spreadsheet-title">
+        <div class="card-heading">
+          <div>
+            <h2 id="spreadsheet-title">Mathematische Funktionen</h2>
+            <p><strong>Arbeitsauftrag:</strong> Wähle eine gelbe Zelle in F4 bis F17 aus und trage die Formel oben in die Formelleiste ein. Beginne jede Formel selbst mit einem Gleichheitszeichen.</p>
+            <div class="sheet-help" aria-label="Bedienhinweise">
+              <span>Zelle anklicken, dann oben bearbeiten</span>
+              <span>Im Raster steht immer das Ergebnis</span>
+              <span>Prüfbutton bleibt in der Zelle</span>
+            </div>
+          </div>
+          <span class="load-status ready" role="status">Bereit</span>
+        </div>
+
+        <div id="spreadsheet-app" class="spreadsheet-app">
+          <div class="spreadsheet-toolbar" aria-label="Tabellenwerkzeuge">
+            <button id="zoom-out" type="button" aria-label="Tabelle verkleinern">−</button>
+            <span id="zoom-level" class="zoom-value" aria-live="polite">100 %</span>
+            <button id="zoom-in" type="button" aria-label="Tabelle vergrößern">+</button>
+            <button id="zoom-reset" type="button">100 %</button>
+            <span class="toolbar-spacer"></span>
+            <small>Strg + Mausrad ändert den Zoom</small>
+          </div>
+          <div class="formula-bar" aria-label="Formelleiste">
+            <output id="cell-name-box" class="cell-name-box" aria-label="Ausgewählter Zellbereich"></output>
+            <span class="formula-symbol" aria-hidden="true">fx</span>
+            <input id="formula-input" class="formula-input" type="text" autocomplete="off" spellcheck="false" aria-label="Inhalt oder Formel der aktiven Zelle">
+          </div>
+          <div id="spreadsheet-viewport" class="spreadsheet-viewport">
+            <div id="spreadsheet-grid" class="spreadsheet-grid" aria-label="Tabellenkalkulation für Aufgabe 1"></div>
+          </div>
+          <div class="sheet-statusbar">
+            <span id="selection-status"></span>
+            <span>Formeln beginnen mit <strong>=</strong></span>
+          </div>
+        </div>
+      </section>
+
+      <section class="check-panel" aria-labelledby="check-title">
+        <div>
+          <h2 id="check-title">Eingaben überprüfen</h2>
+          <p>Nutze die kleinen Prüfbuttons in den gelben Zellen oder kontrolliere alle Formeln gemeinsam.</p>
+        </div>
+        <div class="check-actions">
+          <button id="check-formulas" class="primary-action" type="button">Alle Formeln prüfen</button>
+          <button id="reset-formulas" class="secondary-action" type="button">Aufgabe zurücksetzen</button>
+        </div>
+        <div id="check-result" class="check-result" role="status" aria-live="polite"></div>
+      </section>
+
+      <aside class="formula-reference-card" aria-labelledby="formula-reference-title">
+        <h2 id="formula-reference-title">Formelsammlung</h2>
+        <img src="../1-Tabellenkalkulation/formelsammlung.png" alt="Formeln für Flächeninhalt und Volumen verschiedener Flächen und Körper">
+      </aside>
+
+      <noscript><p class="check-result error">Für diese Aufgabe muss JavaScript aktiviert sein.</p></noscript>
+    </main>
+
+    <script>
+      (() => {
+        const PI_VALUE = 3.1415;
+        const initialCells = {
+          A1: "Mathematische Funktionen",
+          A2: "Trage in F4 bis F17 Formeln ein.",
+          A4: "Seite a / Grundseite g:", B4: 3,
+          A5: "Seite b:", B5: 4,
+          A6: "Seite c:", B6: 5,
+          A7: "Seite d / Körperhöhe:", B7: 6,
+          A8: "Höhe h:", B8: 7,
+          A9: "Radius r:", B9: 3,
+          A10: "Pi:", B10: PI_VALUE,
+          A12: "Grundflächen bei Körpern",
+          A13: "zuerst extra berechnen!",
+          E4: "A_Dreieck =", E5: "A_Rechteck =", E6: "A_Quadrat =",
+          E7: "A_Trapez =", E8: "A_Kreis =", E9: "A_Parallelogramm =",
+          E10: "U_Kreis =", E11: "V_Würfel =", E12: "V_Quader =",
+          E13: "O_Quader =", E14: "V_dreiseitiges Prisma =", E15: "V_Zylinder =",
+          E16: "V_Kegel =", E17: "V_Pyramide ="
+        };
+        const tests = [
+          { a: 3, b: 4, c: 5, d: 6, h: 7, r: 3 },
+          { a: 4, b: 6, c: 8, d: 5, h: 3, r: 2 },
+          { a: 7, b: 2, c: 9, d: 4, h: 5, r: 6 },
+          { a: 2.5, b: 7.5, c: 4.5, d: 8, h: 3.5, r: 1.5 }
+        ];
+        window.spreadsheetTaskConfig = {
+          columns: ["A", "B", "C", "D", "E", "F"],
+          rowCount: 17,
+          minWidth: 1060,
+          columnWidths: [250, 135, 120, 120, 260, 230],
+          startCell: "F4",
+          initialCells,
+          centeredCells: ["B4", "B5", "B6", "B7", "B8", "B9", "B10"],
+          cellClasses: {
+            "sheet-title-cell": ["A1"],
+            "instruction-text-cell": ["A2", "A12", "A13"],
+            "input-cell": ["B4", "B5", "B6", "B7", "B8", "B9", "B10"],
+            "label-cell": Array.from({ length: 14 }, (_, index) => `E${index + 4}`)
+          },
+          testCases: tests,
+          applyTestCase(cells, test) {
+            cells.set("B4", test.a); cells.set("B5", test.b); cells.set("B6", test.c);
+            cells.set("B7", test.d); cells.set("B8", test.h); cells.set("B9", test.r);
+            cells.set("B10", PI_VALUE);
+          },
+          formulaDefinitions: [
+            { cell: "F4", name: "Fläche Dreieck", requiredRefs: ["B4", "B8"], allowedNumbers: [2], expected: ({ a, h }) => a * h / 2 },
+            { cell: "F5", name: "Fläche Rechteck", requiredRefs: ["B4", "B5"], expected: ({ a, b }) => a * b },
+            { cell: "F6", name: "Fläche Quadrat", requiredRefs: ["B4"], allowedNumbers: [2], expected: ({ a }) => a ** 2 },
+            { cell: "F7", name: "Fläche Trapez", requiredRefs: ["B4", "B6", "B8"], allowedNumbers: [2], expected: ({ a, c, h }) => (a + c) * h / 2 },
+            { cell: "F8", name: "Fläche Kreis", requiredRefs: ["B9", "B10"], allowedNumbers: [2], expected: ({ r }) => r ** 2 * PI_VALUE },
+            { cell: "F9", name: "Fläche Parallelogramm", requiredRefs: ["B4", "B8"], expected: ({ a, h }) => a * h },
+            { cell: "F10", name: "Umfang Kreis", requiredRefs: ["B9", "B10"], allowedNumbers: [2], expected: ({ r }) => 2 * r * PI_VALUE },
+            { cell: "F11", name: "Volumen Würfel", requiredRefs: ["B4"], allowedNumbers: [3], expected: ({ a }) => a ** 3 },
+            { cell: "F12", name: "Volumen Quader", requiredRefs: ["B4", "B5", "B6"], expected: ({ a, b, c }) => a * b * c },
+            { cell: "F13", name: "Oberfläche Quader", requiredRefs: ["B4", "B5", "B6"], allowedNumbers: [2], expected: ({ a, b, c }) => 2 * a * b + 2 * a * c + 2 * b * c },
+            { cell: "F14", name: "Volumen Prisma", requiredRefs: ["B4", "B7", "B8"], allowedNumbers: [2], expected: ({ a, d, h }) => a * h / 2 * d },
+            { cell: "F15", name: "Volumen Zylinder", requiredRefs: ["B8", "B9", "B10"], allowedNumbers: [2], expected: ({ r, h }) => r ** 2 * PI_VALUE * h },
+            { cell: "F16", name: "Volumen Kegel", requiredRefs: ["B8", "B9", "B10"], allowedNumbers: [2, 3], expected: ({ r, h }) => r ** 2 * PI_VALUE * h / 3 },
+            { cell: "F17", name: "Volumen Pyramide", requiredRefs: ["B4", "B8"], allowedNumbers: [2, 3], expected: ({ a, h }) => a ** 2 * h / 3 }
+          ],
+          successMessage: "Sehr gut! Alle Formeln verwenden Zellbezüge und funktionieren auch mit veränderten Ausgangswerten."
+        };
+      })();
+    </script>
+    <script src="tabellenkalkulation-neu.js?v=20260820"></script>
+  </body>
+</html>

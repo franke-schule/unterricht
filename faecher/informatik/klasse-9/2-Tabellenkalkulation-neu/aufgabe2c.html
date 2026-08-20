@@ -1,0 +1,38 @@
+<!doctype html>
+<html lang="de">
+  <head>
+    <meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>Aufgabe 2c – Fibonacci-Folge</title>
+    <link rel="stylesheet" href="../../../../styles.css?v=20260820"><link rel="stylesheet" href="tabellenkalkulation-neu.css?v=20260820">
+  </head>
+  <body>
+    <div class="site-backdrop" aria-hidden="true"></div>
+    <main class="page-shell spreadsheet-page spreadsheet-new-page">
+      <nav class="topbar" aria-label="Navigation"><a class="back-link" href="../">Zurück zur Aufgabenübersicht</a><a class="back-link" href="../../../../">Startseite</a></nav>
+      <header class="page-header spreadsheet-header"><p class="eyebrow">Tabellenkalkulation · neue Oberfläche</p><h1>Aufgabe 2c</h1><p>Erzeuge die Fibonacci-Folge mit relativen Zellbezügen und der Ausfüllfunktion.</p></header>
+      <section class="spreadsheet-card" aria-labelledby="spreadsheet-title">
+        <div class="card-heading"><div><h2 id="spreadsheet-title">Fibonacci-Zahlen</h2><p><strong>Arbeitsauftrag:</strong> Trage in B9 eine Formel ein, die die beiden Vorgänger addiert. Ziehe das Ausfüllkästchen danach bis B37 nach unten.</p><div class="sheet-help"><span>B9 auswählen und Formel oben eingeben</span><span>Blaues Kästchen bis B37 ziehen</span><span>Ergebnisse im Raster prüfen</span></div></div><span class="load-status ready" role="status">Bereit</span></div>
+        <div id="spreadsheet-app" class="spreadsheet-app">
+          <div class="spreadsheet-toolbar"><button id="zoom-out" type="button" aria-label="Tabelle verkleinern">−</button><span id="zoom-level" class="zoom-value">100 %</span><button id="zoom-in" type="button" aria-label="Tabelle vergrößern">+</button><button id="zoom-reset" type="button">100 %</button><span class="toolbar-spacer"></span><small>Strg + Mausrad ändert den Zoom</small></div>
+          <div class="formula-bar" aria-label="Formelleiste"><output id="cell-name-box" class="cell-name-box"></output><span class="formula-symbol" aria-hidden="true">fx</span><input id="formula-input" class="formula-input" type="text" autocomplete="off" spellcheck="false" aria-label="Inhalt oder Formel der aktiven Zelle"></div>
+          <div id="spreadsheet-viewport" class="spreadsheet-viewport"><div id="spreadsheet-grid" class="spreadsheet-grid" aria-label="Fibonacci-Tabelle"></div></div>
+          <div class="sheet-statusbar"><span id="selection-status"></span><span>Formeln beginnen mit <strong>=</strong></span></div>
+        </div>
+      </section>
+      <section class="check-panel"><div><h2>Folge überprüfen</h2><p>Prüfe die Ausgangsformel in B9 oder die vollständige Folge.</p></div><div class="check-actions"><button id="check-formulas" class="primary-action" type="button">Formel und Folge prüfen</button><button id="reset-formulas" class="secondary-action" type="button">Aufgabe zurücksetzen</button></div><div id="check-result" class="check-result" role="status" aria-live="polite"></div></section>
+    </main>
+    <script>
+      window.spreadsheetTaskConfig = {
+        columns: ["A", "B", "C", "D", "E", "F", "G", "H"], rowCount: 37, minWidth: 900, columnWidths: [160, 120, 110, 110, 110, 110, 110, 110], startCell: "B9",
+        initialCells: { A1: "Fibonacci-Zahlen", A3: "Idee:", A4: "Die ersten beiden Zahlen sind 0 und 1.", A5: "Jede weitere Zahl entsteht aus der Addition ihrer beiden Vorgänger.", B7: 0, B8: 1 },
+        centeredCells: ["B7", "B8", ...Array.from({ length: 29 }, (_, i) => `B${i + 9}`)],
+        cellClasses: { "sheet-title-cell": ["A1"], "idea-cell": ["A3"], "instruction-text-cell": ["A4", "A5"] },
+        testCases: [{ first: 0, second: 1 }, { first: 2.5, second: 4 }, { first: -3, second: 7.25 }],
+        applyTestCase(cells, test) { cells.set("B7", test.first); cells.set("B8", test.second); },
+        formulaDefinitions: [{ cell: "B9", name: "Nächste Fibonacci-Zahl", requiredRefs: ["B7", "B8"], expected: ({ first, second }) => first + second, errorMessage: "Addiere die beiden unmittelbar vorhergehenden Zellen." }],
+        fillGroups: [{ sourceRange: "B9", targetRange: "B9:B37", incompleteMessage: "Die Fibonacci-Folge ist noch nicht vollständig. Ziehe das Ausfüllkästchen an B9 bis B37." }],
+        successMessage: "Sehr gut! Die relative Formel erzeugt die Fibonacci-Folge vollständig bis B37."
+      };
+    </script>
+    <script src="tabellenkalkulation-neu.js?v=20260820"></script>
+  </body>
+</html>
