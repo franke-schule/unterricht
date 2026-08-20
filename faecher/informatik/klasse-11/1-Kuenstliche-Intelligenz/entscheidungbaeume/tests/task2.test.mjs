@@ -12,7 +12,11 @@ import {
   COMPARISON_TREE_B,
   EASY_TEST_DATA,
 } from "../data/test-data.mjs";
-import { evaluateTree } from "../logic/decision-tree.mjs";
+import {
+  createFeatureNode,
+  createLeafNode,
+  evaluateTree,
+} from "../logic/decision-tree.mjs";
 import {
   accuracy,
   appendUniqueResult,
@@ -21,6 +25,14 @@ import {
 } from "../logic/testing.mjs";
 
 const { BITES, DOES_NOT_BITE } = CLASSIFICATIONS;
+
+function easyReferenceTree() {
+  return createFeatureNode(
+    "smilingMouth",
+    createLeafNode(BITES),
+    createFeatureNode("xEyes", createLeafNode(BITES), createLeafNode(DOES_NOT_BITE)),
+  );
+}
 
 test("Testdaten besitzen die geforderten Größen und Klassenverteilungen", () => {
   assert.equal(EASY_TEST_DATA.length, 8);
@@ -78,6 +90,25 @@ test("Ein Testdatum wird höchstens einmal aufgenommen", () => {
 test("Beide Vergleichsbäume erreichen 12 von 12 Trainingsdaten", () => {
   assert.equal(evaluateTree(EASY_DATASET, COMPARISON_TREE_A).correct, 12);
   assert.equal(evaluateTree(EASY_DATASET, COMPARISON_TREE_B).correct, 12);
+});
+
+test("Originaler Easy-Zweimerkmal-Baum klassifiziert 8 von 8 Testaffen korrekt", () => {
+  const tree = easyReferenceTree();
+  const results = EASY_TEST_DATA.map((monkey) => createTestResult(monkey, tree));
+  assert.equal(results.filter((result) => result.correct).length, 8);
+  assert.deepEqual(
+    results.map((result) => [result.monkeyId, result.predicted]),
+    [
+      ["03", BITES],
+      ["05", BITES],
+      ["10", DOES_NOT_BITE],
+      ["11", BITES],
+      ["13", DOES_NOT_BITE],
+      ["16", DOES_NOT_BITE],
+      ["19", BITES],
+      ["20", DOES_NOT_BITE],
+    ],
+  );
 });
 
 test("Baum A erreicht 8/8, Baum B 7/8 und nur Äffchen 03 unterscheidet sich", () => {

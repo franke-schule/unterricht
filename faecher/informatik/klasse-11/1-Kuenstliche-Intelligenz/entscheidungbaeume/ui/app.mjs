@@ -11,9 +11,12 @@ import {
   moveSubtree,
   setNodeAtPath,
 } from "../logic/decision-tree.mjs";
+import {
+  TREE_STORAGE_PREFIX,
+  VERIFIED_STORAGE_PREFIX,
+  variantStorageKey,
+} from "../logic/storage-keys.mjs";
 
-const STORAGE_PREFIX = "informatik11-decision-tree-v1";
-const VERIFIED_PREFIX = "informatik11-decision-tree-verified-v1";
 const PALETTE_MIME = "application/x-monkey-tree-palette";
 const TREE_MIME = "application/x-monkey-tree-node";
 const SOLUTION_CODE = "M4RX-DK2P";
@@ -49,11 +52,11 @@ function currentVariant() {
 }
 
 function storageKey() {
-  return `${STORAGE_PREFIX}-${state.variantId}`;
+  return variantStorageKey(TREE_STORAGE_PREFIX, state.variantId);
 }
 
 function verifiedKey() {
-  return `${VERIFIED_PREFIX}-${state.variantId}`;
+  return variantStorageKey(VERIFIED_STORAGE_PREFIX, state.variantId);
 }
 
 function loadTree() {
@@ -190,11 +193,18 @@ function renderPalettes() {
     heading.textContent = label;
     const buttons = document.createElement("div");
     buttons.className = "dt-palette-buttons";
-    keys.forEach((key) => buttons.append(toolButton(
-      { kind: "feature", feature: key },
-      FEATURE_DEFINITIONS[key].label,
-      "feature",
-    )));
+    keys.forEach((key) => {
+      const button = toolButton(
+        { kind: "feature", feature: key },
+        FEATURE_DEFINITIONS[key].label,
+        "feature",
+      );
+      if (FEATURE_DEFINITIONS[key].description) {
+        button.title = FEATURE_DEFINITIONS[key].description;
+        button.setAttribute("aria-description", FEATURE_DEFINITIONS[key].description);
+      }
+      buttons.append(button);
+    });
     group.append(heading, buttons);
     elements.featurePalette.append(group);
   };

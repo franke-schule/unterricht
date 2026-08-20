@@ -20,11 +20,15 @@ import {
   confusionMatrix,
   createTestResult,
 } from "../logic/testing.mjs";
+import {
+  TEST_RUN_STORAGE_PREFIX,
+  TREE_STORAGE_PREFIX,
+  VERIFIED_STORAGE_PREFIX,
+  comparisonStorageKey,
+  variantStorageKey,
+} from "../logic/storage-keys.mjs";
 
-const TREE_STORAGE_PREFIX = "informatik11-decision-tree-v1";
-const VERIFIED_PREFIX = "informatik11-decision-tree-verified-v1";
-const RUN_PREFIX = "informatik11-decision-tree-test-v1";
-const COMPARISON_KEY = "informatik11-decision-tree-comparison-v1";
+const COMPARISON_KEY = comparisonStorageKey();
 const reducedMotion = matchMedia("(prefers-reduced-motion: reduce)").matches;
 
 const elements = {
@@ -60,12 +64,12 @@ function removeStored(key) {
 }
 
 function runKey() {
-  return `${RUN_PREFIX}-${state.variantId}`;
+  return variantStorageKey(TEST_RUN_STORAGE_PREFIX, state.variantId);
 }
 
 function verifiedTree() {
-  const verified = readJson(`${VERIFIED_PREFIX}-${state.variantId}`);
-  const storedTree = readJson(`${TREE_STORAGE_PREFIX}-${state.variantId}`);
+  const verified = readJson(variantStorageKey(VERIFIED_STORAGE_PREFIX, state.variantId));
+  const storedTree = readJson(variantStorageKey(TREE_STORAGE_PREFIX, state.variantId));
   if (!verified?.tree || !storedTree) return null;
   if (JSON.stringify(verified.tree) !== JSON.stringify(storedTree)) return null;
   const evaluation = evaluateTree(VARIANTS[state.variantId].dataset, verified.tree);

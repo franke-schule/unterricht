@@ -11,6 +11,7 @@ import {
   EASY_DATASET,
   EASY_DOES_NOT_BITE_IDS,
   EASY_FEATURE_KEYS,
+  getMonkeyById,
 } from "../data/monkeys.mjs";
 import {
   classifyMonkey,
@@ -20,9 +21,24 @@ import {
   findIndistinguishableOpposites,
   validateTree,
 } from "../logic/decision-tree.mjs";
+import {
+  TEST_RUN_STORAGE_PREFIX,
+  TREE_STORAGE_PREFIX,
+  VERIFIED_STORAGE_PREFIX,
+  comparisonStorageKey,
+  variantStorageKey,
+} from "../logic/storage-keys.mjs";
 
 const bitesLeaf = () => createLeafNode(CLASSIFICATIONS.BITES);
 const safeLeaf = () => createLeafNode(CLASSIFICATIONS.DOES_NOT_BITE);
+
+function easyReferenceTree() {
+  return createFeatureNode(
+    "smilingMouth",
+    bitesLeaf(),
+    createFeatureNode("xEyes", bitesLeaf(), safeLeaf()),
+  );
+}
 
 function buildSeparatingTree(dataset, featureKeys, defaultClass = CLASSIFICATIONS.DOES_NOT_BITE) {
   if (dataset.length === 0) return createLeafNode(defaultClass);
@@ -98,6 +114,65 @@ test("Unterschiedliche Klassen sind im jeweiligen Merkmalsraum unterscheidbar", 
   assert.deepEqual(findIndistinguishableOpposites(ADVANCED_DATASET, ADVANCED_FEATURE_KEYS), []);
 });
 
+test("Easy-Trainingsdaten sind allein mit Lächeln und X-Augen widerspruchsfrei", () => {
+  assert.deepEqual(findIndistinguishableOpposites(EASY_DATASET, ["smilingMouth", "xEyes"]), []);
+});
+
+test("Originaler Easy-Zweimerkmal-Baum klassifiziert 12 von 12 Trainingsaffen korrekt", () => {
+  const result = evaluateTree(EASY_DATASET, easyReferenceTree());
+  assert.equal(result.complete, true);
+  assert.equal(result.correct, 12);
+  assert.equal(result.total, 12);
+  assert.equal(result.accuracy, 1);
+});
+
+test("Zungen-Affen gehören nicht zur Merkmalsklasse Lächeln", () => {
+  const tongueIds = ["17", "18", "19", "20", "37", "38", "39", "40"];
+  for (const id of tongueIds) {
+    const monkey = getMonkeyById(id);
+    assert.equal(monkey.features.tongueOut, true, `${id} muss eine sichtbare Zunge haben`);
+    assert.equal(monkey.features.smilingMouth, false, `${id} darf nicht als lächelnd gelten`);
+  }
+
+  assert.deepEqual(
+    EASY_DATASET.filter((monkey) => ["17", "18"].includes(monkey.id)).map((monkey) => ({
+      id: monkey.id,
+      smilingMouth: monkey.features.smilingMouth,
+      tongueOut: monkey.features.tongueOut,
+    })),
+    [
+      { id: "18", smilingMouth: false, tongueOut: true },
+      { id: "17", smilingMouth: false, tongueOut: true },
+    ],
+  );
+});
+
+test("Lächelnde Mundform ist von Zunge und sichtbaren Zähnen getrennt", () => {
+  const smilingIds = ["05", "06", "08", "21", "25", "28"];
+  assert.deepEqual(
+    Array.from({ length: 40 }, (_, index) => getMonkeyById(String(index + 1).padStart(2, "0")))
+      .filter((monkey) => monkey.features.smilingMouth)
+      .map((monkey) => monkey.id),
+    smilingIds,
+  );
+
+  for (const id of ["01", "02", "03", "04", "22", "23", "24"]) {
+    const monkey = getMonkeyById(id);
+    assert.equal(monkey.features.teethVisible, true);
+    assert.equal(monkey.features.smilingMouth, false);
+  }
+});
+
+test("Nur die Easy-Speicherung wird durch Datensatzversion 2 invalidiert", () => {
+  assert.equal(variantStorageKey(TREE_STORAGE_PREFIX, "easy"), "informatik11-decision-tree-v1-easy-data-v2");
+  assert.equal(variantStorageKey(VERIFIED_STORAGE_PREFIX, "easy"), "informatik11-decision-tree-verified-v1-easy-data-v2");
+  assert.equal(variantStorageKey(TEST_RUN_STORAGE_PREFIX, "easy"), "informatik11-decision-tree-test-v1-easy-data-v2");
+  assert.equal(comparisonStorageKey(), "informatik11-decision-tree-comparison-v1-data-v2");
+  assert.equal(variantStorageKey(TREE_STORAGE_PREFIX, "advanced"), "informatik11-decision-tree-v1-advanced");
+  assert.equal(variantStorageKey(VERIFIED_STORAGE_PREFIX, "advanced"), "informatik11-decision-tree-verified-v1-advanced");
+  assert.equal(variantStorageKey(TEST_RUN_STORAGE_PREFIX, "advanced"), "informatik11-decision-tree-test-v1-advanced");
+});
+
 test("Auswertung deckt vollständig, teilweise und komplett falsch ab", () => {
   const solution = buildSeparatingTree(EASY_DATASET, EASY_FEATURE_KEYS);
   const perfect = evaluateTree(EASY_DATASET, solution);
@@ -121,4 +196,3 @@ test("Auch die fortgeschrittenen Trainingsdaten lassen sich vollständig trennen
   const solution = buildSeparatingTree(ADVANCED_DATASET, ADVANCED_FEATURE_KEYS);
   assert.equal(evaluateTree(ADVANCED_DATASET, solution).accuracy, 1);
 });
-

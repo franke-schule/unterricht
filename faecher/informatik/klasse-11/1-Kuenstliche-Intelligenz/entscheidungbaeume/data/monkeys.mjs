@@ -8,6 +8,7 @@ export const FEATURE_DEFINITIONS = Object.freeze({
     key: "smilingMouth",
     label: "Lächelt der Mund?",
     group: "additional",
+    description: "Gemeint ist die lächelnde Mundform. Eine herausgestreckte Zunge zählt dabei nicht als Lächeln.",
   },
   xEyes: {
     key: "xEyes",
@@ -80,10 +81,10 @@ function monkey(id, features) {
 // Die Merkmale wurden einmalig anhand der Originalgrafiken erfasst. Zur Laufzeit
 // findet bewusst keine Bilderkennung statt. Frisuren zählen nicht als Accessoire.
 export const MONKEYS = Object.freeze([
-  monkey("01", { openMouth: true, eyeOpen: true, teethVisible: true, smilingMouth: true }),
-  monkey("02", { openMouth: true, eyeOpen: true, teethVisible: true, smilingMouth: true }),
-  monkey("03", { openMouth: true, teethVisible: true, smilingMouth: true, xEyes: true }),
-  monkey("04", { openMouth: true, teethVisible: true, smilingMouth: true }),
+  monkey("01", { openMouth: true, eyeOpen: true, teethVisible: true }),
+  monkey("02", { openMouth: true, eyeOpen: true, teethVisible: true }),
+  monkey("03", { openMouth: true, teethVisible: true, xEyes: true }),
+  monkey("04", { openMouth: true, teethVisible: true }),
   monkey("05", { eyeOpen: true, smilingMouth: true }),
   monkey("06", { eyeOpen: true, smilingMouth: true }),
   monkey("07", { xEyes: true }),
@@ -96,14 +97,14 @@ export const MONKEYS = Object.freeze([
   monkey("14", { openMouth: true, eyeOpen: true }),
   monkey("15", { openMouth: true, xEyes: true }),
   monkey("16", { openMouth: true }),
-  monkey("17", { openMouth: true, eyeOpen: true, tongueOut: true, smilingMouth: true }),
-  monkey("18", { openMouth: true, eyeOpen: true, tongueOut: true, smilingMouth: true }),
-  monkey("19", { openMouth: true, tongueOut: true, smilingMouth: true, xEyes: true }),
-  monkey("20", { openMouth: true, tongueOut: true, smilingMouth: true }),
+  monkey("17", { openMouth: true, eyeOpen: true, tongueOut: true }),
+  monkey("18", { openMouth: true, eyeOpen: true, tongueOut: true }),
+  monkey("19", { openMouth: true, tongueOut: true, xEyes: true }),
+  monkey("20", { openMouth: true, tongueOut: true }),
   monkey("21", { accessory: true, smilingMouth: true }),
-  monkey("22", { openMouth: true, eyeOpen: true, accessory: true, teethVisible: true, smilingMouth: true }),
-  monkey("23", { openMouth: true, accessory: true, teethVisible: true, smilingMouth: true, xEyes: true }),
-  monkey("24", { openMouth: true, teethVisible: true, smilingMouth: true }),
+  monkey("22", { openMouth: true, eyeOpen: true, accessory: true, teethVisible: true }),
+  monkey("23", { openMouth: true, accessory: true, teethVisible: true, xEyes: true }),
+  monkey("24", { openMouth: true, teethVisible: true }),
   monkey("25", { eyeOpen: true, accessory: true, smilingMouth: true }),
   monkey("26", { eyeOpen: true, accessory: true }),
   monkey("27", { xEyes: true }),
@@ -116,10 +117,10 @@ export const MONKEYS = Object.freeze([
   monkey("34", { openMouth: true, eyeOpen: true, accessory: true }),
   monkey("35", { openMouth: true, xEyes: true }),
   monkey("36", { openMouth: true, accessory: true }),
-  monkey("37", { openMouth: true, eyeOpen: true, accessory: true, tongueOut: true, smilingMouth: true }),
-  monkey("38", { openMouth: true, eyeOpen: true, accessory: true, tongueOut: true, smilingMouth: true }),
-  monkey("39", { openMouth: true, accessory: true, tongueOut: true, smilingMouth: true, xEyes: true }),
-  monkey("40", { openMouth: true, tongueOut: true, smilingMouth: true }),
+  monkey("37", { openMouth: true, eyeOpen: true, accessory: true, tongueOut: true }),
+  monkey("38", { openMouth: true, eyeOpen: true, accessory: true, tongueOut: true }),
+  monkey("39", { openMouth: true, accessory: true, tongueOut: true, xEyes: true }),
+  monkey("40", { openMouth: true, tongueOut: true }),
 ]);
 
 const MONKEYS_BY_ID = new Map(MONKEYS.map((entry) => [entry.id, entry]));
@@ -154,6 +155,7 @@ export const ADVANCED_DATASET = createDataset(ADVANCED_BITES_IDS, ADVANCED_DOES_
 export const VARIANTS = Object.freeze({
   easy: Object.freeze({
     id: "easy",
+    datasetVersion: 2,
     shortLabel: "1a – Einfach",
     heading: "Einfache Variante",
     dataset: EASY_DATASET,
@@ -161,6 +163,7 @@ export const VARIANTS = Object.freeze({
   }),
   advanced: Object.freeze({
     id: "advanced",
+    datasetVersion: 1,
     shortLabel: "1b – Fortgeschritten",
     heading: "Fortgeschrittene Variante",
     dataset: ADVANCED_DATASET,

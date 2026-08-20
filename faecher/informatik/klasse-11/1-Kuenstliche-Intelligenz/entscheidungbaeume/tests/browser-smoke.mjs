@@ -87,7 +87,7 @@ async function evaluate(expression) {
 
 await evaluate("new Promise(resolve => setTimeout(resolve, 250))");
 await evaluate(`(() => {
-  localStorage.removeItem('informatik11-decision-tree-v1-easy');
+  localStorage.removeItem('informatik11-decision-tree-v1-easy-data-v2');
   localStorage.removeItem('informatik11-decision-tree-v1-advanced');
 })()`);
 const reloaded = cdp.waitFor("Page.loadEventFired");
@@ -125,7 +125,7 @@ await evaluate(`(() => {
 const evaluated = await evaluate(`(() => ({
   feedback: document.querySelector('#evaluation-feedback').textContent,
   wrongCards: document.querySelectorAll('.dt-monkey-card.is-wrong').length,
-  saved: Boolean(localStorage.getItem('informatik11-decision-tree-v1-easy')),
+  saved: Boolean(localStorage.getItem('informatik11-decision-tree-v1-easy-data-v2')),
 }))()`);
 assert(evaluated.feedback.includes("von 12 Äffchen richtig"), "Vollständiger Beispielbaum wurde nicht ausgewertet.");
 assert(evaluated.wrongCards > 0, "Falsch klassifizierte Äffchen wurden nicht markiert.");

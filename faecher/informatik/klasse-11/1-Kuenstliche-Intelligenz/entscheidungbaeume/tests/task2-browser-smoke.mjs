@@ -86,8 +86,8 @@ assert(initialGate, "Aufgabe 2 muss ohne erfolgreich geprüften Baum gesperrt se
 await evaluate(`(async () => {
   const { COMPARISON_TREE_A } = await import('./entscheidungbaeume/data/test-data.mjs');
   localStorage.clear();
-  localStorage.setItem('informatik11-decision-tree-v1-easy', JSON.stringify(COMPARISON_TREE_A));
-  localStorage.setItem('informatik11-decision-tree-verified-v1-easy', JSON.stringify({ tree: COMPARISON_TREE_A, verifiedAt: Date.now() }));
+  localStorage.setItem('informatik11-decision-tree-v1-easy-data-v2', JSON.stringify(COMPARISON_TREE_A));
+  localStorage.setItem('informatik11-decision-tree-verified-v1-easy-data-v2', JSON.stringify({ tree: COMPARISON_TREE_A, verifiedAt: Date.now() }));
 })()`);
 await reload();
 assert(await evaluate("Boolean(document.querySelector('#start-own-test'))"), "Startansicht des eigenen Testlaufs fehlt.");
