@@ -129,11 +129,13 @@ assert(ownTreeFit.contained && ownTreeFit.viewportHeight <= 286, `Eigener Baum p
 
 async function finishCurrentOwnDataset(total) {
   for (let index = 0; index < total; index += 1) {
+    assert(await evaluate("Boolean(document.querySelector('#classify-own')?.closest('.dt-monkey-stage'))"), `Testaktion ${index + 1} steht nicht beim Affenbild.`);
     await evaluate("document.querySelector('#classify-own').click(); new Promise(resolve => setTimeout(resolve, 15))");
-    assert(await evaluate("Boolean(document.querySelector('#reveal-own'))"), `Vorhersage ${index + 1} wurde nicht getrennt angezeigt.`);
+    assert(await evaluate("Boolean(document.querySelector('#reveal-own')?.closest('.dt-monkey-stage'))"), `Vorhersage ${index + 1} wurde nicht beim Affenbild angezeigt.`);
     await evaluate("document.querySelector('#reveal-own').click()");
     const matrixTotal = await evaluate("[...document.querySelectorAll('.dt-confusion-matrix td strong')].reduce((sum, node) => sum + Number(node.textContent), 0)");
     assert(matrixTotal === index + 1, `Testdatum ${index + 1} wurde nicht exakt einmal gezählt.`);
+    assert(await evaluate("Boolean(document.querySelector('#next-own')?.closest('.dt-monkey-stage'))"), `Weiter-Schaltfläche ${index + 1} steht nicht beim Affenbild.`);
     await evaluate("document.querySelector('#next-own').click()");
   }
 }
@@ -156,9 +158,12 @@ const treeScreenshotPath = join(tmpdir(), "entscheidungbaeume-aufgabe2-laptop.pn
 await writeFile(treeScreenshotPath, Buffer.from(treeScreenshot.data, "base64"));
 
 for (let index = 0; index < 8; index += 1) {
+  assert(await evaluate("Boolean(document.querySelector('#classify-both')?.closest('.dt-monkey-stage'))"), `Vergleichsaktion ${index + 1} steht nicht beim Affenbild.`);
   await evaluate("document.querySelector('#classify-both').click(); new Promise(resolve => setTimeout(resolve, 15))");
-  assert(await evaluate("Boolean(document.querySelector('#reveal-both'))"), `Vergleichsvorhersage ${index + 1} fehlt.`);
-  await evaluate("document.querySelector('#reveal-both').click(); document.querySelector('#next-both').click()");
+  assert(await evaluate("Boolean(document.querySelector('#reveal-both')?.closest('.dt-monkey-stage'))"), `Vergleichsvorhersage ${index + 1} fehlt beim Affenbild.`);
+  await evaluate("document.querySelector('#reveal-both').click()");
+  assert(await evaluate("Boolean(document.querySelector('#next-both')?.closest('.dt-monkey-stage'))"), `Vergleichs-Weiter-Schaltfläche ${index + 1} steht nicht beim Affenbild.`);
+  await evaluate("document.querySelector('#next-both').click()");
 }
 
 const questionText = await evaluate("document.querySelector('#task2-compare').innerText");

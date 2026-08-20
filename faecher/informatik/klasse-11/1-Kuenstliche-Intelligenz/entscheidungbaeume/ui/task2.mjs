@@ -294,15 +294,14 @@ function renderOwnTesting() {
   elements.own.innerHTML = `
     <div class="dt-test-toolbar"><p class="dt-progress">Testdatum <strong>${state.run.currentIndex + 1} von ${data.length}</strong></p>
       <button class="dt-danger-button" id="restart-own" type="button">Testphase neu starten</button></div>
-    <div class="dt-monkey-stage">${monkeyMarkup(monkey)}${prediction}${actual}</div>
+    <div class="dt-monkey-stage">${monkeyMarkup(monkey)}${prediction}${actual}<div class="dt-inline-test-action">${action}</div></div>
     <div class="dt-model-grid">
       <section><h2>Dein Entscheidungsbaum <span class="dt-lock">🔒 eingefroren</span></h2>
         <div class="dt-readonly-viewport">${treeMarkup(state.run.frozenTree)}</div>
         <details class="dt-test-info"><summary>Warum ist der Baum gesperrt?</summary><p>Testdaten sollen prüfen, wie gut ein bereits fertiges Modell mit unbekannten Daten funktioniert. Deshalb verändern wir den Baum während des Tests nicht mehr.</p></details>
       </section>
       <section>${matrixMarkup(state.run.results, changedCell)}</section>
-    </div>
-    <div class="dt-test-action">${action}</div>`;
+    </div>`;
 
   document.querySelector("#restart-own").addEventListener("click", restartOwn);
   document.querySelector("#classify-own")?.addEventListener("click", classifyOwn);
@@ -478,11 +477,11 @@ function renderComparisonTesting() {
   elements.compare.innerHTML = `
     <div class="dt-test-toolbar"><p class="dt-progress">Vergleich <strong>${state.comparison.currentIndex + 1} von ${EASY_TEST_DATA.length}</strong></p>
       <button class="dt-danger-button" id="restart-comparison" type="button">Vergleich neu starten</button></div>
-    <div class="dt-monkey-stage">${monkeyMarkup(monkey)}${predicted}${revealed}</div>
+    <div class="dt-monkey-stage">${monkeyMarkup(monkey)}${predicted}${revealed}<div class="dt-inline-test-action">${action}</div></div>
     <div class="dt-compare-grid">
       <section class="dt-compare-tree"><h2>Baum A</h2><p class="dt-training-score">Training: <strong>${trainingA} / ${trainingTotal} – ${percent(trainingA / trainingTotal)}</strong></p><div class="dt-readonly-viewport compact">${treeMarkup(COMPARISON_TREE_A)}</div>${matrixMarkup(state.comparison.resultsA, changedA, "A")}</section>
       <section class="dt-compare-tree"><h2>Baum B</h2><p class="dt-training-score">Training: <strong>${trainingB} / ${trainingTotal} – ${percent(trainingB / trainingTotal)}</strong></p><div class="dt-readonly-viewport compact">${treeMarkup(COMPARISON_TREE_B)}</div>${matrixMarkup(state.comparison.resultsB, changedB, "B")}</section>
-    </div><div class="dt-test-action">${action}</div>`;
+    </div>`;
   document.querySelector("#restart-comparison").addEventListener("click", restartComparison);
   document.querySelector("#classify-both")?.addEventListener("click", classifyBoth);
   document.querySelector("#skip-both")?.addEventListener("click", () => { if (state.animation) state.animation.skip = true; });

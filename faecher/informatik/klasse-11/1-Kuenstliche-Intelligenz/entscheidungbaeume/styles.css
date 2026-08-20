@@ -780,6 +780,8 @@ a:focus-visible {
 .dt-test-info { margin-top: 12px; color: var(--dt-muted); font-size: 0.86rem; }
 .dt-test-info summary { color: var(--dt-blue); font-weight: 800; cursor: pointer; }
 .dt-test-action { max-width: 620px; margin: 22px auto 0; }
+.dt-inline-test-action { display: flex; min-width: min(250px, 100%); align-items: center; }
+.dt-inline-test-action > button { width: 100%; }
 
 .dt-readonly-viewport {
   position: relative;
