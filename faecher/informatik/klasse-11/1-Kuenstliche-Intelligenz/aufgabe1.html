@@ -6,8 +6,8 @@
     <meta name="robots" content="noindex, nofollow">
     <title>Aufgabe 1 – Gutes Äffchen / Böses Äffchen | Informatik 11</title>
     <link rel="stylesheet" href="../../../../styles.css?v=20260707">
-    <link rel="stylesheet" href="entscheidungbaeume/styles.css?v=20260820b">
-    <script type="module" src="entscheidungbaeume/ui/app.mjs?v=20260820a"></script>
+    <link rel="stylesheet" href="entscheidungbaeume/styles.css?v=20260820g">
+    <script type="module" src="entscheidungbaeume/ui/app.mjs?v=20260820d"></script>
   </head>
   <body class="decision-tree-page">
     <div class="site-backdrop" aria-hidden="true"></div>
@@ -57,10 +57,10 @@
               <button class="dt-secondary-button" id="toggle-example" type="button" aria-expanded="true">Beispiel ausblenden</button>
             </div>
             <div id="example-tree" class="dt-example-tree" aria-label="Beispielbaum: Zunge raus, Ja führt zu Beißt, Nein führt zu Beißt nicht">
-              <div class="dt-demo-feature">Zunge raus?</div>
+              <div class="dt-demo-feature" data-tree-node-key="example-root">Zunge raus?</div>
               <div class="dt-demo-branches">
-                <div><span>Ja</span><div class="dt-demo-leaf bites">Beißt</div></div>
-                <div><span>Nein</span><div class="dt-demo-leaf safe">Beißt nicht</div></div>
+                <div><span>Ja</span><div class="dt-demo-leaf bites" data-tree-node-key="example-yes" data-tree-parent-key="example-root">Beißt</div></div>
+                <div><span>Nein</span><div class="dt-demo-leaf safe" data-tree-node-key="example-no" data-tree-parent-key="example-root">Beißt nicht</div></div>
               </div>
             </div>
           </section>

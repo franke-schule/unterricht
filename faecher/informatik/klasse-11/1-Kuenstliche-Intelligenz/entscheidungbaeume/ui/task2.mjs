@@ -27,8 +27,10 @@ import {
   comparisonStorageKey,
   variantStorageKey,
 } from "../logic/storage-keys.mjs";
+import { renderTreeEdges } from "./tree-edges.mjs?v=20260820d";
 
 const COMPARISON_KEY = comparisonStorageKey();
+const SOLUTION_CODE = "M6BW-DJPR";
 const reducedMotion = matchMedia("(prefers-reduced-motion: reduce)").matches;
 
 const elements = {
@@ -41,6 +43,9 @@ const elements = {
   lead: document.querySelector("#task2-lead"),
   description: document.querySelector("#task2-description"),
   comparisonLink: document.querySelector("#direct-comparison-link"),
+  solutionForm: document.querySelector("#solution-code-form"),
+  solutionLink: document.querySelector("#solution-download-link"),
+  solutionMessage: document.querySelector("#solution-code-message"),
 };
 
 const state = {
@@ -67,6 +72,22 @@ function writeJson(key, value) {
 
 function removeStored(key) {
   try { localStorage.removeItem(key); } catch { /* lokal nicht verfügbar */ }
+}
+
+function normalizeSolutionCode(value) {
+  return value.toUpperCase().replace(/[^A-Z0-9]/g, "");
+}
+
+function unlockSolution(event) {
+  event.preventDefault();
+  const enteredCode = normalizeSolutionCode(elements.solutionForm.elements["solution-code"].value);
+  const isCorrect = enteredCode === normalizeSolutionCode(SOLUTION_CODE);
+
+  elements.solutionLink.hidden = !isCorrect;
+  elements.solutionMessage.className = `solution-code-message${isCorrect ? "" : " error"}`;
+  elements.solutionMessage.textContent = isCorrect
+    ? "Code korrekt. Das Sicherungsblatt ist freigeschaltet."
+    : "Der eingegebene Code ist nicht gültig.";
 }
 
 function runKey() {
@@ -137,20 +158,25 @@ function activeClass(id, kind) {
   return "";
 }
 
-function treeMarkup(node) {
+function edgeAttributes(nodeId, parentId, activeEdge) {
+  return ` data-tree-node-key="${escapeHtml(nodeId)}"${parentId ? ` data-tree-parent-key="${escapeHtml(parentId)}"` : ""}${activeEdge ? " data-tree-edge-active=\"true\"" : ""}`;
+}
+
+function treeMarkup(node, parentId = "", activeEdge = false) {
   if (node.type === "leaf") {
     const typeClass = node.prediction === CLASSIFICATIONS.BITES ? "bites" : "safe";
-    return `<div class="dt-readonly-node leaf ${typeClass}${activeClass(node.id, "leaf")}" data-node-id="${node.id}">
+    return `<div class="dt-readonly-node leaf ${typeClass}${activeClass(node.id, "leaf")}" data-node-id="${node.id}"${edgeAttributes(node.id, parentId, activeEdge)}>
       <span class="dt-node-symbol" aria-hidden="true">${node.prediction === CLASSIFICATIONS.BITES ? "!" : "✓"}</span>
       <strong>${label(node.prediction)}</strong></div>`;
   }
   const branch = (key, branchLabel) => {
     const branchId = `${node.id}:${key}`;
+    const branchIsActive = Boolean(state.animation?.branches?.includes(branchId));
     return `<section class="dt-readonly-branch${activeClass(branchId, "branch")}" data-branch-id="${branchId}">
-      <span class="dt-readonly-branch-label">${branchLabel}</span>${treeMarkup(node[key])}</section>`;
+      <span class="dt-readonly-branch-label">${branchLabel}</span>${treeMarkup(node[key], node.id, branchIsActive)}</section>`;
   };
   return `<div class="dt-readonly-subtree">
-    <div class="dt-readonly-node feature${activeClass(node.id, "node")}" data-node-id="${node.id}">
+    <div class="dt-readonly-node feature${activeClass(node.id, "node")}" data-node-id="${node.id}"${edgeAttributes(node.id, parentId, activeEdge)}>
       <strong>${escapeHtml(FEATURE_DEFINITIONS[node.feature]?.label ?? node.feature)}</strong></div>
     <div class="dt-readonly-branches">${branch("yes", "Ja")}${branch("no", "Nein")}</div>
   </div>`;
@@ -165,7 +191,10 @@ function scheduleTreeFit() {
       const tree = viewport.querySelector(":scope > .dt-readonly-subtree");
       if (!tree || viewport.clientWidth === 0) return;
 
-      tree.style.zoom = "1";
+      tree.style.zoom = "";
+      tree.style.transform = "none";
+      tree.style.transformOrigin = "top center";
+      renderTreeEdges(tree);
       const naturalWidth = tree.scrollWidth;
       const naturalHeight = tree.scrollHeight;
       const inset = viewport.classList.contains("compact") ? 12 : 16;
@@ -176,9 +205,10 @@ function scheduleTreeFit() {
         maximumHeight / naturalHeight,
       );
 
-      tree.style.zoom = String(Math.max(0.1, scale));
+      tree.style.transform = `scale(${Math.max(0.1, scale)})`;
       viewport.style.height = `${Math.ceil(naturalHeight * scale + inset)}px`;
       viewport.dataset.treeScale = scale.toFixed(2);
+      renderTreeEdges(tree);
     });
   });
 }
@@ -743,6 +773,8 @@ elements.tabs.forEach((tab) => tab.addEventListener("click", () => {
   history.replaceState(null, "", `#${state.variantId}`);
   loadVariant();
 }));
+
+elements.solutionForm.addEventListener("submit", unlockSolution);
 
 window.addEventListener("resize", scheduleTreeFit);
 window.addEventListener("hashchange", () => {

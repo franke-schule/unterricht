@@ -45,6 +45,32 @@ function assert(condition, message) {
   if (!condition) throw new Error(message);
 }
 
+function edgeGeometryExpression(rootSelector) {
+  return `[...document.querySelectorAll(${JSON.stringify(rootSelector)})].map(root => {
+    const svg = root.querySelector(':scope > .dt-tree-edge-layer > .dt-tree-edges');
+    if (!svg) return { pathCount: 0, connectionCount: 0, activeCount: 0, maximumDelta: Infinity };
+    const matrix = svg.getScreenCTM();
+    const paths = [...svg.querySelectorAll('.dt-tree-edge')];
+    const deltas = paths.flatMap(path => {
+      const parent = root.querySelector('[data-tree-node-key="' + CSS.escape(path.dataset.treeEdgeFrom) + '"]');
+      const child = root.querySelector('[data-tree-node-key="' + CSS.escape(path.dataset.treeEdgeTo) + '"]');
+      const localStart = path.getPointAtLength(0);
+      const localEnd = path.getPointAtLength(path.getTotalLength());
+      const start = new DOMPoint(localStart.x, localStart.y).matrixTransform(matrix);
+      const end = new DOMPoint(localEnd.x, localEnd.y).matrixTransform(matrix);
+      const parentRect = parent.getBoundingClientRect();
+      const childRect = child.getBoundingClientRect();
+      return [
+        Math.abs(start.x - (parentRect.left + parentRect.width / 2)),
+        Math.abs(start.y - parentRect.bottom),
+        Math.abs(end.x - (childRect.left + childRect.width / 2)),
+        Math.abs(end.y - childRect.top),
+      ];
+    });
+    return { pathCount: paths.length, connectionCount: root.querySelectorAll('[data-tree-parent-key]').length, activeCount: paths.filter(path => path.classList.contains('is-active')).length, maximumDelta: Math.max(0, ...deltas) };
+  })`;
+}
+
 async function connect(webSocketDebuggerUrl) {
   const socket = new WebSocket(webSocketDebuggerUrl);
   await new Promise((resolve, reject) => {
@@ -80,6 +106,24 @@ async function reload() {
 await evaluate("new Promise(resolve => setTimeout(resolve, 100))");
 await evaluate("localStorage.clear()");
 await reload();
+const solutionInitial = await evaluate(`(() => ({
+  hidden: document.querySelector('#solution-download-link').hidden,
+  href: document.querySelector('#solution-download-link').getAttribute('href'),
+  labeled: document.querySelector('label[for="solution-code"]')?.textContent,
+}))()`);
+assert(solutionInitial.hidden && solutionInitial.href === "sicherungsblatt-aufgabe-2-loesungen.pdf" && solutionInitial.labeled.includes("Lehrercode"), `Sicherungsblatt ist nicht korrekt geschützt eingebunden: ${JSON.stringify(solutionInitial)}`);
+await evaluate(`(() => {
+  const form = document.querySelector('#solution-code-form');
+  form.elements['solution-code'].value = 'falsch';
+  form.requestSubmit();
+})()`);
+assert(await evaluate("document.querySelector('#solution-download-link').hidden && document.querySelector('#solution-code-message').textContent.includes('nicht gültig')"), "Ein falscher Lehrercode darf das Sicherungsblatt nicht freischalten.");
+await evaluate(`(() => {
+  const form = document.querySelector('#solution-code-form');
+  form.elements['solution-code'].value = 'm6bw djpr';
+  form.requestSubmit();
+})()`);
+assert(await evaluate("!document.querySelector('#solution-download-link').hidden && document.querySelector('#solution-code-message').textContent.includes('freigeschaltet')"), "Der gültige Lehrercode muss normalisiert und akzeptiert werden.");
 const initialGate = await evaluate("!document.querySelector('#task2-gate').hidden && document.querySelector('#task2-gate').innerText.includes('brauchst zuerst')");
 assert(initialGate, "Aufgabe 2.1 muss ohne erfolgreich geprüften Baum gesperrt sein.");
 
@@ -149,9 +193,12 @@ const comparisonTreeFit = await evaluate(`[...document.querySelectorAll('#task2-
   const tree = viewport.querySelector(':scope > .dt-readonly-subtree');
   const outer = viewport.getBoundingClientRect();
   const inner = tree.getBoundingClientRect();
-  return { contained: inner.left >= outer.left - 1 && inner.right <= outer.right + 1 && inner.top >= outer.top - 1 && inner.bottom <= outer.bottom + 1, viewportHeight: outer.height, scale: viewport.dataset.treeScale, outer: { left: outer.left, right: outer.right, top: outer.top, bottom: outer.bottom }, inner: { left: inner.left, right: inner.right, top: inner.top, bottom: inner.bottom } };
+  const svg = tree.querySelector(':scope > .dt-tree-edge-layer > .dt-tree-edges');
+  return { contained: inner.left >= outer.left - 1 && inner.right <= outer.right + 1 && inner.top >= outer.top - 1 && inner.bottom <= outer.bottom + 1, viewportHeight: outer.height, scale: viewport.dataset.treeScale, zoom: { inline: tree.style.zoom, computed: getComputedStyle(tree).zoom }, natural: { width: tree.offsetWidth, height: tree.offsetHeight, scrollWidth: tree.scrollWidth, scrollHeight: tree.scrollHeight }, svg: svg && { width: svg.getAttribute('width'), height: svg.getAttribute('height'), rect: svg.getBoundingClientRect().toJSON() }, outer: { left: outer.left, right: outer.right, top: outer.top, bottom: outer.bottom }, inner: { left: inner.left, right: inner.right, top: inner.top, bottom: inner.bottom } };
 })`);
 assert(comparisonTreeFit.length === 2 && comparisonTreeFit.every(result => result.contained && result.viewportHeight <= 232), `Vergleichsbäume passen nicht vollständig in den Laptop-Bereich: ${JSON.stringify(comparisonTreeFit)}`);
+const comparisonEdgeGeometry = await evaluate(edgeGeometryExpression("#task2-compare .dt-readonly-viewport > .dt-readonly-subtree"));
+assert(comparisonEdgeGeometry.length === 2 && comparisonEdgeGeometry.every(result => result.pathCount === 8 && result.pathCount === result.connectionCount && result.maximumDelta <= 1), `Vergleichsbaumkanten berühren Parent oder Child nicht exakt: ${JSON.stringify(comparisonEdgeGeometry)}`);
 await evaluate("document.querySelector('#task2-compare').scrollIntoView({ block: 'start' }); new Promise(resolve => setTimeout(resolve, 30))");
 const treeScreenshot = await cdp.send("Page.captureScreenshot", { format: "png", captureBeyondViewport: false });
 const treeScreenshotPath = join(tmpdir(), "entscheidungbaeume-aufgabe2-laptop.png");
@@ -214,6 +261,14 @@ const pathAnalysis = await evaluate(`(() => ({
 assert(pathAnalysis.heading === "Die Pfade von Äffchen 03" && pathAnalysis.monkey03 === "Äffchen 03", `Pfadanalyse zeigt Äffchen 03 nicht: ${JSON.stringify(pathAnalysis)}`);
 assert(pathAnalysis.treeNodeCounts.length === 2 && pathAnalysis.treeNodeCounts.every(count => count === 9), `Pfadanalyse zeigt nicht beide vollständigen Bäume: ${JSON.stringify(pathAnalysis)}`);
 assert(pathAnalysis.activeNodes === 4 && pathAnalysis.activeBranches === 2 && pathAnalysis.causeAnswers === 4, `Pfade oder Ursachenfrage sind unvollständig: ${JSON.stringify(pathAnalysis)}`);
+const highlightedEdgeGeometry = await evaluate(edgeGeometryExpression("[data-analysis-tree] .dt-readonly-viewport > .dt-readonly-subtree"));
+assert(highlightedEdgeGeometry.length === 2 && highlightedEdgeGeometry.every(result => result.pathCount === 8 && result.pathCount === result.connectionCount && result.maximumDelta <= 1) && highlightedEdgeGeometry.reduce((sum, result) => sum + result.activeCount, 0) === 2, `Hervorgehobene Pfade verwenden nicht dieselben vollständigen Kanten: ${JSON.stringify(highlightedEdgeGeometry)}`);
+for (const zoom of [0.8, 1, 1.25, 1.5]) {
+  await evaluate(`document.body.style.zoom = '${zoom}'; new Promise(resolve => requestAnimationFrame(() => requestAnimationFrame(resolve)))`);
+  const zoomGeometry = await evaluate(edgeGeometryExpression("[data-analysis-tree] .dt-readonly-viewport > .dt-readonly-subtree"));
+  assert(zoomGeometry.every(result => result.pathCount === result.connectionCount && result.maximumDelta <= 1.25), `${zoom * 100} % Zoom verschiebt Kanten von den Knoten: ${JSON.stringify(zoomGeometry)}`);
+}
+await evaluate("document.body.style.zoom = ''; new Promise(resolve => requestAnimationFrame(() => requestAnimationFrame(resolve)))");
 await evaluate("document.querySelector('#task2-compare').scrollIntoView({ block: 'start' }); new Promise(resolve => setTimeout(resolve, 30))");
 const pathScreenshot = await cdp.send("Page.captureScreenshot", { format: "png", captureBeyondViewport: true });
 const pathScreenshotPath = join(tmpdir(), "entscheidungbaeume-aufgabe2-pfadanalyse.png");

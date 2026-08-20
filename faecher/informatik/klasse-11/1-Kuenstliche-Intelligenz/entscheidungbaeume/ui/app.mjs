@@ -16,6 +16,7 @@ import {
   VERIFIED_STORAGE_PREFIX,
   variantStorageKey,
 } from "../logic/storage-keys.mjs";
+import { renderTreeEdges } from "./tree-edges.mjs?v=20260820d";
 
 const PALETTE_MIME = "application/x-monkey-tree-palette";
 const TREE_MIME = "application/x-monkey-tree-node";
@@ -297,10 +298,11 @@ function nodeAction(label, className, action) {
   return button;
 }
 
-function renderSlot(node, path, isRoot = false) {
+function renderSlot(node, path, isRoot = false, parentKey = "") {
   const slot = document.createElement("div");
   slot.className = "dt-tree-slot";
   slot.dataset.path = path;
+  const nodeKey = path || "root";
   slot.addEventListener("dragover", (event) => {
     event.preventDefault();
     event.stopPropagation();
@@ -313,6 +315,8 @@ function renderSlot(node, path, isRoot = false) {
     dropZone.type = "button";
     dropZone.className = `dt-drop-zone${isRoot ? " root" : ""}${state.pendingTargetPath === path ? " is-selected" : ""}`;
     dropZone.textContent = isRoot ? "Ziehe hier dein erstes Merkmal oder ein Blatt hinein." : "Baustein hier ablegen";
+    dropZone.dataset.treeNodeKey = nodeKey;
+    if (parentKey) dropZone.dataset.treeParentKey = parentKey;
     dropZone.addEventListener("click", () => chooseTarget(path));
     slot.append(dropZone);
     return slot;
@@ -323,6 +327,8 @@ function renderSlot(node, path, isRoot = false) {
     ? ` leaf ${node.prediction === CLASSIFICATIONS.BITES ? "bites" : "safe"}`
     : " feature";
   article.className = `dt-tree-node${leafClass}${state.movingSourcePath === path ? " is-moving" : ""}`;
+  article.dataset.treeNodeKey = nodeKey;
+  if (parentKey) article.dataset.treeParentKey = parentKey;
   article.draggable = true;
   article.tabIndex = 0;
   article.addEventListener("dragstart", (event) => {
@@ -385,7 +391,7 @@ function renderSlot(node, path, isRoot = false) {
       label.className = "dt-branch-label";
       label.textContent = branch.label;
       const childPath = path ? `${path}.${branch.key}` : branch.key;
-      branchElement.append(label, renderSlot(node[branch.key], childPath));
+      branchElement.append(label, renderSlot(node[branch.key], childPath, false, nodeKey));
       branches.append(branchElement);
     });
     slot.append(branches);
@@ -395,6 +401,8 @@ function renderSlot(node, path, isRoot = false) {
 
 function renderTree() {
   elements.treeEditor.replaceChildren(renderSlot(state.tree, "", true));
+  renderTreeEdges(elements.treeEditor);
+  renderTreeEdges(elements.exampleTree);
 }
 
 function renderFeedback() {
@@ -502,6 +510,7 @@ elements.toggleExample.addEventListener("click", () => {
   elements.exampleTree.hidden = !isHidden;
   elements.toggleExample.textContent = isHidden ? "Beispiel ausblenden" : "Beispiel einblenden";
   elements.toggleExample.setAttribute("aria-expanded", String(isHidden));
+  if (isHidden) renderTreeEdges(elements.exampleTree);
 });
 
 elements.reset.addEventListener("click", () => {

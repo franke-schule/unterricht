@@ -283,6 +283,7 @@ html { overflow-x: clip; }
 .dt-danger-button { color: #a32d35; }
 
 .dt-example-tree {
+  position: relative;
   width: min(560px, 100%);
   margin: 26px auto 4px;
   text-align: center;
@@ -298,6 +299,8 @@ html { overflow-x: clip; }
 }
 
 .dt-demo-feature {
+  position: relative;
+  z-index: 2;
   width: fit-content;
   margin: auto;
   padding: 12px 20px;
@@ -315,16 +318,6 @@ html { overflow-x: clip; }
 .dt-demo-branches > div {
   position: relative;
   padding-top: 32px;
-}
-
-.dt-demo-branches > div::before {
-  position: absolute;
-  top: 0;
-  left: 50%;
-  width: 1px;
-  height: 27px;
-  background: #97a0b1;
-  content: "";
 }
 
 .dt-demo-branches span,
@@ -345,6 +338,8 @@ html { overflow-x: clip; }
 }
 
 .dt-demo-leaf {
+  position: relative;
+  z-index: 2;
   margin-top: 5px;
   padding: 11px 16px;
 }
@@ -428,6 +423,7 @@ html { overflow-x: clip; }
 }
 
 .dt-tree-editor {
+  position: relative;
   display: grid;
   place-items: start center;
   width: max-content;
@@ -443,6 +439,7 @@ html { overflow-x: clip; }
 
 .dt-tree-node {
   position: relative;
+  z-index: 2;
   width: 180px;
   padding: 11px;
   border-radius: 13px;
@@ -482,31 +479,11 @@ html { overflow-x: clip; }
   padding-top: 36px;
 }
 
-.dt-branches::before {
-  position: absolute;
-  top: 13px;
-  left: 25%;
-  width: 50%;
-  height: 1px;
-  background: #8f9bae;
-  content: "";
-}
-
 .dt-branch {
   position: relative;
   display: grid;
   justify-items: center;
   padding-top: 9px;
-}
-
-.dt-branch::before {
-  position: absolute;
-  top: -23px;
-  left: 50%;
-  width: 1px;
-  height: 34px;
-  background: #8f9bae;
-  content: "";
 }
 
 .dt-branch-label {
@@ -517,6 +494,8 @@ html { overflow-x: clip; }
 }
 
 .dt-drop-zone {
+  position: relative;
+  z-index: 2;
   display: grid;
   place-items: center;
   width: 170px;
@@ -799,8 +778,10 @@ a:focus-visible {
   position: relative;
   flex: 0 0 auto;
 }
-.dt-readonly-subtree { display: grid; min-width: max-content; justify-items: center; }
+.dt-readonly-subtree { position: relative; display: grid; min-width: max-content; justify-items: center; transition: none !important; }
 .dt-readonly-node {
+  position: relative;
+  z-index: 2;
   display: flex;
   width: 118px;
   min-height: 40px;
@@ -837,18 +818,36 @@ a:focus-visible {
 }
 .compact .dt-readonly-branches { grid-template-columns: repeat(2, minmax(98px, max-content)); gap: 6px; padding-top: 17px; }
 .dt-readonly-branch { position: relative; display: grid; justify-items: center; gap: 3px; padding-top: 4px; }
-.dt-readonly-branch::before { position: absolute; top: -12px; left: 50%; width: 2px; height: 18px; background: #aab4c4; content: ""; }
-.dt-readonly-branch::after { position: absolute; top: -12px; height: 2px; background: #aab4c4; content: ""; }
-.dt-readonly-branch:first-child::after { right: -5px; left: 50%; }
-.dt-readonly-branch:last-child::after { right: 50%; left: -5px; }
-.compact .dt-readonly-branch::before { top: -10px; height: 15px; }
-.compact .dt-readonly-branch::after { top: -10px; }
-.compact .dt-readonly-branch:first-child::after { right: -3px; }
-.compact .dt-readonly-branch:last-child::after { left: -3px; }
 .dt-readonly-branch-label { position: relative; z-index: 1; padding: 1px 6px; border-radius: 99px; color: #556276; background: #fff; font-size: 0.72rem; font-weight: 900; }
 .dt-readonly-branch.is-active > .dt-readonly-branch-label { color: #6d4b00; background: var(--dt-test-yellow); }
-.dt-readonly-branch.is-active::before { width: 4px; background: #d39000; }
-.dt-readonly-branch.is-active::after { height: 4px; background: #d39000; }
+
+.dt-tree-edge-layer {
+  position: absolute;
+  z-index: 0;
+  inset: 0;
+  overflow: visible;
+  pointer-events: none;
+}
+
+.dt-tree-edges {
+  display: block;
+  width: 100%;
+  height: 100%;
+  overflow: visible;
+}
+
+.dt-tree-edge {
+  fill: none;
+  stroke: #8f9bae;
+  stroke-width: 2;
+  stroke-linecap: square;
+  stroke-linejoin: miter;
+}
+
+.dt-tree-edge.is-active {
+  stroke: #d39000;
+  stroke-width: 4;
+}
 
 .dt-confusion-matrix { width: 100%; border-collapse: separate; border-spacing: 4px; color: var(--dt-ink); font-size: 0.78rem; }
 .dt-confusion-matrix caption { margin-bottom: 9px; font-size: 1.05rem; font-weight: 900; text-align: left; }

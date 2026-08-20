@@ -63,6 +63,33 @@ function assert(condition, message) {
   if (!condition) throw new Error(message);
 }
 
+function edgeGeometryExpression(rootSelector) {
+  return `(() => {
+    const root = document.querySelector(${JSON.stringify(rootSelector)});
+    const svg = root?.querySelector(':scope > .dt-tree-edge-layer > .dt-tree-edges');
+    if (!svg) return { pathCount: 0, connectionCount: 0, maximumDelta: Infinity };
+    const matrix = svg.getScreenCTM();
+    const paths = [...svg.querySelectorAll('.dt-tree-edge')];
+    const deltas = paths.flatMap(path => {
+      const parent = root.querySelector('[data-tree-node-key="' + CSS.escape(path.dataset.treeEdgeFrom) + '"]');
+      const child = root.querySelector('[data-tree-node-key="' + CSS.escape(path.dataset.treeEdgeTo) + '"]');
+      const localStart = path.getPointAtLength(0);
+      const localEnd = path.getPointAtLength(path.getTotalLength());
+      const start = new DOMPoint(localStart.x, localStart.y).matrixTransform(matrix);
+      const end = new DOMPoint(localEnd.x, localEnd.y).matrixTransform(matrix);
+      const parentRect = parent.getBoundingClientRect();
+      const childRect = child.getBoundingClientRect();
+      return [
+        Math.abs(start.x - (parentRect.left + parentRect.width / 2)),
+        Math.abs(start.y - parentRect.bottom),
+        Math.abs(end.x - (childRect.left + childRect.width / 2)),
+        Math.abs(end.y - childRect.top),
+      ];
+    });
+    return { pathCount: paths.length, connectionCount: root.querySelectorAll('[data-tree-parent-key]').length, maximumDelta: Math.max(0, ...deltas) };
+  })()`;
+}
+
 const target = await fetch(`${debuggingUrl}/json/new?${encodeURIComponent(pageUrl)}`, { method: "PUT" }).then((response) => {
   if (!response.ok) throw new Error(`Browserziel konnte nicht erstellt werden: ${response.status}`);
   return response.json();
@@ -118,6 +145,12 @@ await evaluate(`(() => {
   const tool = label => [...document.querySelectorAll('.dt-tool')].find(button => button.textContent.trim() === label);
   tool('Zunge raus?').click();
   document.querySelector('.dt-drop-zone.root').click();
+})()`);
+await evaluate("new Promise(resolve => requestAnimationFrame(() => requestAnimationFrame(resolve)))");
+const dropZoneEdges = await evaluate(edgeGeometryExpression("#tree-editor"));
+assert(dropZoneEdges.pathCount === 2 && dropZoneEdges.pathCount === dropZoneEdges.connectionCount && dropZoneEdges.maximumDelta <= 1, `Kanten zu leeren Drop-Zones sind nicht geschlossen: ${JSON.stringify(dropZoneEdges)}`);
+await evaluate(`(() => {
+  const tool = label => [...document.querySelectorAll('.dt-tool')].find(button => button.textContent.trim() === label);
   tool('Beißt').click();
   document.querySelector('.dt-drop-zone').click();
   tool('Beißt nicht').click();
@@ -132,6 +165,19 @@ const evaluated = await evaluate(`(() => ({
 assert(evaluated.feedback.includes("von 12 Äffchen richtig"), "Vollständiger Beispielbaum wurde nicht ausgewertet.");
 assert(evaluated.wrongCards > 0, "Falsch klassifizierte Äffchen wurden nicht markiert.");
 assert(evaluated.saved, "Der Baum wurde nicht lokal gespeichert.");
+await evaluate("new Promise(resolve => requestAnimationFrame(() => requestAnimationFrame(resolve)))");
+const exampleEdges = await evaluate(edgeGeometryExpression("#example-tree"));
+const editorEdges = await evaluate(edgeGeometryExpression("#tree-editor"));
+assert(exampleEdges.pathCount === 2 && exampleEdges.pathCount === exampleEdges.connectionCount && exampleEdges.maximumDelta <= 1, `Beispielkanten berühren ihre Knoten nicht exakt: ${JSON.stringify(exampleEdges)}`);
+assert(editorEdges.pathCount === 2 && editorEdges.pathCount === editorEdges.connectionCount && editorEdges.maximumDelta <= 1, `Editorkanten berühren ihre Knoten nicht exakt: ${JSON.stringify(editorEdges)}`);
+await evaluate("document.querySelector('.dt-builder-column').scrollIntoView({ block: 'start' }); new Promise(resolve => setTimeout(resolve, 30))");
+const treeScreenshot = await cdp.send("Page.captureScreenshot", { format: "png", captureBeyondViewport: false });
+const treeScreenshotPath = join(tmpdir(), "entscheidungbaeume-aufgabe1-baeume.png");
+await writeFile(treeScreenshotPath, Buffer.from(treeScreenshot.data, "base64"));
+await evaluate("document.querySelector('.dt-tree-viewport').scrollIntoView({ block: 'center' }); new Promise(resolve => setTimeout(resolve, 30))");
+const editorScreenshot = await cdp.send("Page.captureScreenshot", { format: "png", captureBeyondViewport: false });
+const editorScreenshotPath = join(tmpdir(), "entscheidungbaeume-aufgabe1-editor.png");
+await writeFile(editorScreenshotPath, Buffer.from(editorScreenshot.data, "base64"));
 
 await evaluate("document.querySelector('#toggle-example').click()");
 assert(await evaluate("document.querySelector('#example-tree').hidden") === true, "Beispielbaum ließ sich nicht ausblenden.");
@@ -195,5 +241,5 @@ const runtime = await evaluate(`(() => ({
 assert(runtime.imagesComplete, "Mindestens ein Äffchenbild konnte nicht geladen werden.");
 assert(Math.abs(runtime.firstCard.imageWidth - runtime.firstCard.imageHeight) <= 1, `Äffchenbilder werden nicht quadratisch dargestellt: ${JSON.stringify(runtime.firstCard)}`);
 
-console.log(JSON.stringify({ initial, evaluated, advanced, viewportResults, runtime, screenshotPath }, null, 2));
+console.log(JSON.stringify({ initial, evaluated, advanced, viewportResults, runtime, screenshotPath, treeScreenshotPath, editorScreenshotPath }, null, 2));
 cdp.socket.close();

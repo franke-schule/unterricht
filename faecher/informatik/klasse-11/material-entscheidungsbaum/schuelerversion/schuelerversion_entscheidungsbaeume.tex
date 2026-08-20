@@ -69,7 +69,7 @@
 
 Ein \fach{Entscheidungsbaum} ist ein Modell zur \fach{Klassifikation}: Er ordnet neue Daten anhand ihrer
 Merkmale einer Klasse zu. Entscheidungsbäume können durch \fach{überwachtes Lernen} aus Beispielen mit
-bekanntem Ergebnis erzeugt werden.
+bekanntem Ergebnis erzeugt werden. Sie werden immer von unten nach oben durchlaufen.
 
 \begin{definition}[title=Definition: Überwachtes Lernen]
 Beim \fach{überwachten Lernen} wird aus \fach{gelabelten Daten} ein Modell erzeugt. Gelabelte Daten besitzen
@@ -86,10 +86,6 @@ mit denen es anschließend neue Eingaben klassifizieren kann.
 \sectionline{2. Aufbau eines Entscheidungsbaums}
 
 \begingroup\small
-Ein Datensatz besteht aus \fach{Attributen} (Merkmalen), zum Beispiel Mundform oder Augenstellung. Der
-konkrete Wert eines Attributs heißt \fach{Merkmalsausprägung}, etwa \emph{Zähne sichtbar} beim Attribut
-Mundform.
-
 \begin{center}
 \begin{tikzpicture}[scale=0.82,transform shape,>=Latex,font=\small,every node/.style={align=center},
   decision/.style={draw=navy,fill=lightblue,rounded corners=1mm,minimum width=27mm,minimum height=9mm},
@@ -121,7 +117,7 @@ Mundform.
 \end{itemize}
 
 \begin{beispiel}[title=Beispiel: eine Vorhersage]
-Ein Äffchen mit \emph{Mundform = offen} und \emph{Augenstellung = X} folgt im vereinfachten Baum zweimal der
+Ein Äffchen mit \emph{Mundform = offen} und \emph{Augenstellung = X} folgt im obigen Baum zweimal der
 passenden Kante. Es erreicht das Blatt \emph{beißt}; dies ist die Vorhersage des Modells.
 \end{beispiel}
 \endgroup
@@ -133,8 +129,8 @@ passenden Kante. Es erreicht das Blatt \emph{beißt}; dies ist die Vorhersage de
 Die verfügbaren gelabelten Daten werden getrennt verwendet:
 
 \begin{itemize}
-  \item \fach{Trainingsdaten} werden zur Erzeugung des Modells verwendet.
-  \item \fach{Testdaten} werden zur Beurteilung der Vorhersagequalität verwendet.
+  \item \fach{Trainingsdaten} sind gelabelt bzw. beschriftet und werden zur Erzeugung des Modells verwendet.
+  \item \fach{Testdaten} sind gelabelt bzw. beschriftet und werden zur Beurteilung der Vorhersagequalität verwendet.
 \end{itemize}
 
 \begin{beispiel}[title=Beispiel: gelabelte Trainingsdaten]
@@ -150,7 +146,10 @@ Beispielen kann ein Entscheidungsbaum Regeln für die Klassifikation neuer Äffc
 
 \begin{merke}
 Die Trennung verhindert, dass ein Modell nur an bereits bekannten Daten gut wirkt. Erst neue Testdaten zeigen,
-wie zuverlässig seine \fach{Vorhersagen} sind.
+wie zuverlässig seine \fach{Vorhersagen} sind. \\
+Zwei Entscheidungsbäume können dieselben Trainingsdaten vollständig richtig klassifizieren und bei unbekannten
+Testdaten trotzdem unterschiedlich gut funktionieren. \\ Die Trainingsdaten müssen nicht jede mögliche
+Merkmalskombination enthalten.
 \end{merke}
 
 \newpage\thispagestyle{fancy}
