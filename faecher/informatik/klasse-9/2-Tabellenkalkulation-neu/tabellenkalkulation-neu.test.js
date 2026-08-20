@@ -12,11 +12,13 @@ const instrumentedEngine = engineSource.replace(
   `
   window.__spreadsheetTestApi = {
     rawCells,
+    formulaDefinitions,
     fillGroups,
     parseRange,
     translateFormula,
     evaluateCell,
     displayValue,
+    analyzeFormula,
     fillSelection,
     fillGroupIsComplete
   };
@@ -73,6 +75,11 @@ function closeTo(actual, expected) {
 
 {
   const api = loadTask("aufgabe2b.html");
+  const wageDefinition = api.formulaDefinitions.find(({ cell }) => cell === "D6");
+  const relativeReference = api.analyzeFormula("=C6*C3", wageDefinition);
+  assert.equal(relativeReference.missingReferenceRules[0].message, "Der Stundenlohn muss fest bleiben. Verwende $C$3.");
+  const wrongReference = api.analyzeFormula("=C7*$C$3", wageDefinition);
+  assert.deepEqual(Array.from(wrongReference.missingRefs), ["C6"]);
   api.rawCells.set("D6", "=C6*$C$3");
   api.fillSelection(api.parseRange("D6"), api.parseRange("D6:D13"));
   assert.equal(api.rawCells.get("D13"), "=C13*$C$3");

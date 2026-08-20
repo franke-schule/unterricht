@@ -8,6 +8,7 @@
   const rowCount = config.rowCount;
   const formulaDefinitions = config.formulaDefinitions || [];
   const definitionByCell = new Map(formulaDefinitions.map((definition) => [definition.cell, definition]));
+  const feedbackMessages = new Map();
   const formulaCells = new Set(definitionByCell.keys());
   const currencyCells = new Set(config.currencyCells || []);
   const percentCells = new Set(config.percentCells || []);
@@ -574,6 +575,8 @@
   function setCellFeedback(cellName, message, type) {
     const cellElement = gridElement.querySelector(`[data-cell="${cellName}"]`);
     if (!cellElement) return;
+    if (type === "error" && message) feedbackMessages.set(cellName, message);
+    else feedbackMessages.delete(cellName);
     cellElement.classList.toggle("is-correct", type === "success");
     cellElement.classList.toggle("has-error", type === "error");
     cellElement.title = message;
@@ -658,11 +661,16 @@
     const incompleteFill = fillGroups.find((group) => !fillGroupIsComplete(group));
     if (incorrect.length === 0 && !incompleteFill) {
       showResult(config.successMessage || "Sehr gut! Alle Formeln und Ausfüllbereiche sind richtig.", "success");
-    } else if (incompleteFill) {
-      showResult(incompleteFill.incompleteMessage || `Fülle den Bereich ${rangeLabel(incompleteFill.target)} vollständig aus.`, "error");
-    } else {
-      showResult(`${incorrect.length} Formel${incorrect.length === 1 ? " ist" : "n sind"} noch nicht richtig. Nutze die Prüfbuttons direkt in den markierten Zellen.`, "error");
+      return;
     }
+    if (incorrect.length > 0) {
+      const details = incorrect
+        .map(({ cell }) => `${cell}: ${feedbackMessages.get(cell) || "Die Formel ist noch nicht richtig."}`)
+        .join(" • ");
+      showResult(details, "error");
+      return;
+    }
+    showResult(incompleteFill.incompleteMessage || `Fülle den Bereich ${rangeLabel(incompleteFill.target)} vollständig aus.`, "error");
   }
 
   function clearResult() {
