@@ -103,10 +103,12 @@ const initial = await evaluate(`(() => ({
   rootDropZone: Boolean(document.querySelector('.dt-drop-zone.root')),
   exampleVisible: !document.querySelector('#example-tree').hidden,
   moduleLoaded: Boolean(document.querySelector('.dt-tool')),
+  featureHints: [...document.querySelectorAll('.dt-feature-hint')].map(element => element.textContent.trim()),
 }))()`);
 assert(initial.activeTab === "1a – Einfach", "Beim Start muss Variante 1a aktiv sein.");
 assert(initial.monkeyCount === 12 && initial.imageCount === 12, "Variante 1a muss 12 Bilder zeigen.");
 assert(initial.rootDropZone && initial.exampleVisible && initial.moduleLoaded, "Editor oder Beispielbaum wurde nicht geladen.");
+assert(initial.featureHints.length === 2 && initial.featureHints.every(text => text.includes("herausgestreckter Zunge") && text.includes("sichtbaren Zähnen") && text.includes("nicht als lächelnd")), "Der Merkmals-Hinweis fehlt an einer der beiden vorgesehenen Stellen.");
 
 await evaluate("document.querySelector('#check-tree').click()");
 const incompleteFeedback = await evaluate("document.querySelector('#evaluation-feedback').textContent");

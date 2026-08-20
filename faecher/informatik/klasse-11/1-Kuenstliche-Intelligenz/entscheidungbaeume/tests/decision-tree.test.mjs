@@ -167,7 +167,7 @@ test("Nur die Easy-Speicherung wird durch Datensatzversion 2 invalidiert", () =>
   assert.equal(variantStorageKey(TREE_STORAGE_PREFIX, "easy"), "informatik11-decision-tree-v1-easy-data-v2");
   assert.equal(variantStorageKey(VERIFIED_STORAGE_PREFIX, "easy"), "informatik11-decision-tree-verified-v1-easy-data-v2");
   assert.equal(variantStorageKey(TEST_RUN_STORAGE_PREFIX, "easy"), "informatik11-decision-tree-test-v1-easy-data-v2");
-  assert.equal(comparisonStorageKey(), "informatik11-decision-tree-comparison-v1-data-v2");
+  assert.equal(comparisonStorageKey(), "informatik11-decision-tree-comparison-v2-data-v2");
   assert.equal(variantStorageKey(TREE_STORAGE_PREFIX, "advanced"), "informatik11-decision-tree-v1-advanced");
   assert.equal(variantStorageKey(VERIFIED_STORAGE_PREFIX, "advanced"), "informatik11-decision-tree-verified-v1-advanced");
   assert.equal(variantStorageKey(TEST_RUN_STORAGE_PREFIX, "advanced"), "informatik11-decision-tree-test-v1-advanced");

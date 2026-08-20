@@ -6,29 +6,33 @@
     <meta name="robots" content="noindex, nofollow">
     <title>Aufgabe 2 – Entscheidungsbaum testen | Informatik 11</title>
     <link rel="stylesheet" href="../../../../styles.css?v=20260707">
-    <link rel="stylesheet" href="entscheidungbaeume/styles.css?v=20260819d">
-    <script type="module" src="entscheidungbaeume/ui/task2.mjs?v=20260820a"></script>
+    <link rel="stylesheet" href="entscheidungbaeume/styles.css?v=20260820b">
+    <script type="module" src="entscheidungbaeume/ui/task2.mjs?v=20260820b"></script>
   </head>
   <body class="decision-tree-page dt-test-page">
     <div class="site-backdrop" aria-hidden="true"></div>
     <main class="page-shell decision-tree-shell">
       <nav class="topbar" aria-label="Navigation">
-        <a class="back-link" href="aufgabe1.html">Zurück zu Aufgabe 1</a>
+        <a class="back-link" href="../index.html">Zur Aufgabenübersicht</a>
+        <a class="back-link" href="aufgabe1.html">Zu Aufgabe 1</a>
         <a class="back-link" href="../../../../">Startseite</a>
       </nav>
 
       <header class="dt-hero dt-test-hero">
         <p class="dt-eyebrow">Künstliche Intelligenz · Entscheidungsbäume</p>
-        <h1>Wie gut ist dein Entscheidungsbaum?</h1>
-        <p class="dt-task-number">Aufgabe 2</p>
-        <p class="dt-lead"><strong>Dein Entscheidungsbaum kennt bisher nur die Trainingsdaten.</strong></p>
-        <p>Jetzt bekommt er Äffchen zu sehen, die er noch nicht kennt.</p>
+        <h1 id="task2-title">Wie gut ist dein Entscheidungsbaum?</h1>
+        <p class="dt-task-number" id="task2-number">Aufgabe 2.1</p>
+        <p class="dt-lead"><strong id="task2-lead">Dein Entscheidungsbaum kennt bisher nur die Trainingsdaten.</strong></p>
+        <p id="task2-description">Jetzt bekommt er Äffchen zu sehen, die er noch nicht kennt.</p>
       </header>
 
       <div class="dt-variant-tabs" role="tablist" aria-label="Schwierigkeitsgrad">
         <button type="button" role="tab" data-test-variant="easy">2a – Einfach</button>
         <button type="button" role="tab" data-test-variant="advanced">2b – Fortgeschritten</button>
       </div>
+      <nav class="dt-task-links" aria-label="Teilaufgaben">
+        <a class="dt-secondary-button" id="direct-comparison-link" href="#vergleich">Aufgabe 2.2 – Zwei Bäume im Vergleich</a>
+      </nav>
 
       <section id="task2-gate" class="dt-test-card dt-gate" hidden></section>
       <section id="task2-own" class="dt-test-card" aria-live="polite"></section>

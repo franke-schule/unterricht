@@ -92,6 +92,20 @@ test("Beide Vergleichsbäume erreichen 12 von 12 Trainingsdaten", () => {
   assert.equal(evaluateTree(EASY_DATASET, COMPARISON_TREE_B).correct, 12);
 });
 
+test("Vergleichsbäume behalten die unterschiedliche Reihenfolge ihrer ersten Merkmale", () => {
+  assert.equal(COMPARISON_TREE_A.feature, "xEyes");
+  assert.equal(COMPARISON_TREE_A.no.feature, "teethVisible");
+  assert.equal(COMPARISON_TREE_B.feature, "teethVisible");
+  assert.equal(COMPARISON_TREE_B.no.feature, "xEyes");
+});
+
+test("Äffchen 03 enthält die im Training unbekannte Kombination aus X-Augen und sichtbaren Zähnen", () => {
+  const monkey = EASY_TEST_DATA.find((entry) => entry.id === "03");
+  assert.equal(monkey.features.xEyes, true);
+  assert.equal(monkey.features.teethVisible, true);
+  assert.equal(EASY_DATASET.some((entry) => entry.features.xEyes && entry.features.teethVisible), false);
+});
+
 test("Originaler Easy-Zweimerkmal-Baum klassifiziert 8 von 8 Testaffen korrekt", () => {
   const tree = easyReferenceTree();
   const results = EASY_TEST_DATA.map((monkey) => createTestResult(monkey, tree));

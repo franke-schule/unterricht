@@ -36,9 +36,15 @@ const elements = {
   gate: document.querySelector("#task2-gate"),
   own: document.querySelector("#task2-own"),
   compare: document.querySelector("#task2-compare"),
+  title: document.querySelector("#task2-title"),
+  taskNumber: document.querySelector("#task2-number"),
+  lead: document.querySelector("#task2-lead"),
+  description: document.querySelector("#task2-description"),
+  comparisonLink: document.querySelector("#direct-comparison-link"),
 };
 
 const state = {
+  mode: location.hash === "#vergleich" ? "comparison" : "own",
   variantId: location.hash === "#advanced" ? "advanced" : "easy",
   run: null,
   comparison: null,
@@ -177,13 +183,11 @@ function scheduleTreeFit() {
   });
 }
 
-function monkeyMarkup(monkey, selectable = false) {
-  const tag = selectable ? "button" : "article";
-  const attrs = selectable ? `type="button" data-monkey-choice="${monkey.id}"` : "";
-  return `<${tag} class="dt-current-monkey${selectable ? " selectable" : ""}" ${attrs}>
+function monkeyMarkup(monkey) {
+  return `<article class="dt-current-monkey">
     <img src="${monkey.image}" alt="Äffchen ${monkey.id}" width="400" height="400">
     <strong>Äffchen ${monkey.id}</strong>
-  </${tag}>`;
+  </article>`;
 }
 
 function loadVariant() {
@@ -191,6 +195,9 @@ function loadVariant() {
   state.animation = null;
   state.run = readJson(runKey());
   state.comparison = readJson(COMPARISON_KEY);
+  if (state.mode === "comparison" && !state.comparison) {
+    state.comparison = comparisonInitialState();
+  }
   if (state.run?.step === "animating") {
     state.run.step = state.run.pendingResult ? "predicted" : "ready";
     saveRun();
@@ -216,10 +223,25 @@ function currentTestData() {
 
 function renderTabs() {
   elements.tabs.forEach((tab) => {
-    const selected = tab.dataset.testVariant === state.variantId;
+    const selected = state.mode === "own" && tab.dataset.testVariant === state.variantId;
     tab.setAttribute("aria-selected", String(selected));
     tab.tabIndex = selected ? 0 : -1;
   });
+  elements.comparisonLink.setAttribute("aria-current", state.mode === "comparison" ? "page" : "false");
+}
+
+function renderHeader() {
+  if (state.mode === "comparison") {
+    elements.title.textContent = "Zwei Bäume im Vergleich";
+    elements.taskNumber.textContent = "Aufgabe 2.2";
+    elements.lead.textContent = "Zwei Entscheidungsbäume können im Training gleich gut sein und sich bei unbekannten Daten unterscheiden.";
+    elements.description.textContent = "Teste beide vorgegebenen Bäume und untersuche anschließend Äffchen 03.";
+    return;
+  }
+  elements.title.textContent = "Wie gut ist dein Entscheidungsbaum?";
+  elements.taskNumber.textContent = "Aufgabe 2.1";
+  elements.lead.textContent = "Dein Entscheidungsbaum kennt bisher nur die Trainingsdaten.";
+  elements.description.textContent = "Jetzt bekommt er Äffchen zu sehen, die er noch nicht kennt.";
 }
 
 function renderGate() {
@@ -307,7 +329,9 @@ function renderOwnSummary() {
     </div>`;
   document.querySelector("#restart-own").addEventListener("click", restartOwn);
   document.querySelector("#open-comparison").addEventListener("click", () => {
-    if (!state.comparison) state.comparison = { phase: "intro", resultsA: [], resultsB: [], currentIndex: 0, step: "ready" };
+    state.mode = "comparison";
+    history.replaceState(null, "", "#vergleich");
+    if (!state.comparison) state.comparison = comparisonInitialState();
     saveComparison();
     render();
     elements.compare.scrollIntoView({ behavior: reducedMotion ? "auto" : "smooth" });
@@ -401,6 +425,10 @@ function compareTrainingScore(tree) {
   return evaluateTree(COMPARISON_TRAINING_DATA, tree).correct;
 }
 
+function comparisonInitialState() {
+  return { phase: "intro", resultsA: [], resultsB: [], currentIndex: 0, step: "ready", pendingA: null, pendingB: null };
+}
+
 function renderComparisonIntro() {
   const scoreA = compareTrainingScore(COMPARISON_TREE_A);
   const scoreB = compareTrainingScore(COMPARISON_TREE_B);
@@ -414,7 +442,7 @@ function renderComparisonIntro() {
     </div>
     <button class="dt-primary-button" id="start-comparison" type="button">Beide Bäume testen</button>`;
   document.querySelector("#start-comparison").addEventListener("click", () => {
-    state.comparison = { phase: "testing", resultsA: [], resultsB: [], currentIndex: 0, step: "ready", pendingA: null, pendingB: null };
+    state.comparison = { ...comparisonInitialState(), phase: "testing" };
     saveComparison();
     render();
   });
@@ -422,7 +450,8 @@ function renderComparisonIntro() {
 }
 
 function comparisonTreeCard(name, tree, score) {
-  return `<section class="dt-compare-tree"><h3>Baum ${name}</h3><p class="dt-training-score">Trainingsdaten: <strong>${score} / 12 – ${percent(score / 12)}</strong></p>
+  const total = COMPARISON_TRAINING_DATA.length;
+  return `<section class="dt-compare-tree"><h3>Baum ${name}</h3><p class="dt-training-score">Trainingsdaten: <strong>${score} / ${total} – ${percent(score / total)}</strong></p>
     <div class="dt-readonly-viewport compact">${treeMarkup(tree)}</div></section>`;
 }
 
@@ -442,14 +471,17 @@ function renderComparisonTesting() {
   if (state.comparison.step === "revealed") action = `<button class="dt-primary-button" id="next-both" type="button">${state.comparison.currentIndex === EASY_TEST_DATA.length - 1 ? "Ergebnisse vergleichen" : "Nächstes Testdatum"}</button>`;
   const changedA = state.comparison.step === "revealed" ? resultCell(state.comparison.pendingA) : null;
   const changedB = state.comparison.step === "revealed" ? resultCell(state.comparison.pendingB) : null;
+  const trainingTotal = COMPARISON_TRAINING_DATA.length;
+  const trainingA = compareTrainingScore(COMPARISON_TREE_A);
+  const trainingB = compareTrainingScore(COMPARISON_TREE_B);
 
   elements.compare.innerHTML = `
     <div class="dt-test-toolbar"><p class="dt-progress">Vergleich <strong>${state.comparison.currentIndex + 1} von ${EASY_TEST_DATA.length}</strong></p>
       <button class="dt-danger-button" id="restart-comparison" type="button">Vergleich neu starten</button></div>
     <div class="dt-monkey-stage">${monkeyMarkup(monkey)}${predicted}${revealed}</div>
     <div class="dt-compare-grid">
-      <section class="dt-compare-tree"><h2>Baum A</h2><p class="dt-training-score">Training: <strong>12 / 12 – 100 %</strong></p><div class="dt-readonly-viewport compact">${treeMarkup(COMPARISON_TREE_A)}</div>${matrixMarkup(state.comparison.resultsA, changedA, "A")}</section>
-      <section class="dt-compare-tree"><h2>Baum B</h2><p class="dt-training-score">Training: <strong>12 / 12 – 100 %</strong></p><div class="dt-readonly-viewport compact">${treeMarkup(COMPARISON_TREE_B)}</div>${matrixMarkup(state.comparison.resultsB, changedB, "B")}</section>
+      <section class="dt-compare-tree"><h2>Baum A</h2><p class="dt-training-score">Training: <strong>${trainingA} / ${trainingTotal} – ${percent(trainingA / trainingTotal)}</strong></p><div class="dt-readonly-viewport compact">${treeMarkup(COMPARISON_TREE_A)}</div>${matrixMarkup(state.comparison.resultsA, changedA, "A")}</section>
+      <section class="dt-compare-tree"><h2>Baum B</h2><p class="dt-training-score">Training: <strong>${trainingB} / ${trainingTotal} – ${percent(trainingB / trainingTotal)}</strong></p><div class="dt-readonly-viewport compact">${treeMarkup(COMPARISON_TREE_B)}</div>${matrixMarkup(state.comparison.resultsB, changedB, "B")}</section>
     </div><div class="dt-test-action">${action}</div>`;
   document.querySelector("#restart-comparison").addEventListener("click", restartComparison);
   document.querySelector("#classify-both")?.addEventListener("click", classifyBoth);
@@ -487,7 +519,7 @@ function revealBoth() {
 
 function nextBoth() {
   if (state.comparison.currentIndex === EASY_TEST_DATA.length - 1) {
-    state.comparison.phase = "questions";
+    state.comparison.phase = "results";
   } else {
     state.comparison.currentIndex += 1;
     state.comparison.step = "ready";
@@ -503,87 +535,170 @@ function restartComparison() {
   if (!confirm("Möchtest du den Vergleich wirklich neu starten?")) return;
   state.animationToken += 1;
   state.animation = null;
-  state.comparison = { phase: "intro", resultsA: [], resultsB: [], currentIndex: 0, step: "ready" };
+  state.comparison = comparisonInitialState();
   saveComparison();
   render();
 }
 
-function renderQuestions() {
-  const correctA = state.comparison.resultsA.filter((result) => result.correct).length;
-  const correctB = state.comparison.resultsB.filter((result) => result.correct).length;
+function comparisonScores() {
+  const trainingTotal = COMPARISON_TRAINING_DATA.length;
+  const testTotal = EASY_TEST_DATA.length;
+  const testA = state.comparison.resultsA.filter((result) => result.correct).length;
+  const testB = state.comparison.resultsB.filter((result) => result.correct).length;
+  return {
+    trainingTotal,
+    trainingA: compareTrainingScore(COMPARISON_TREE_A),
+    trainingB: compareTrainingScore(COMPARISON_TREE_B),
+    testTotal,
+    testA,
+    testB,
+  };
+}
+
+function scoreCard(title, correct, total) {
+  return `<div><span>${title}</span><strong>${correct} von ${total} richtig</strong><em>${percent(correct / total)}</em></div>`;
+}
+
+function renderComparisonResults() {
+  state.animation = null;
+  const scores = comparisonScores();
   elements.compare.innerHTML = `
-    <p class="dt-kicker">Entdeckende Auswertung</p><h2>Vergleiche die beiden Bäume</h2>
-    <div class="dt-result-comparison"><div><span>Baum A · Testdaten</span><strong>${correctA} von 8 richtig</strong><em>${percent(correctA / 8)}</em></div>
-      <div><span>Baum B · Testdaten</span><strong>${correctB} von 8 richtig</strong><em>${percent(correctB / 8)}</em></div></div>
-    <form id="discovery-form" class="dt-discovery-form">
-      <fieldset><legend>1. Welcher Baum funktioniert bei den Testdaten besser?</legend>
-        ${radio("better", "a", "Baum A")}${radio("better", "b", "Baum B")}${radio("better", "same", "Beide gleich gut")}</fieldset>
-      <fieldset><legend>2. Was wurde an den Bäumen verändert?</legend>
-        ${radio("change", "training", "Die Trainingsdaten")}${radio("change", "features", "Die verwendeten Merkmale")}${radio("change", "order", "Die Reihenfolge der ersten beiden Merkmale")}${radio("change", "classes", "Die Klassen")}</fieldset>
-      <fieldset><legend>3. Bei welchem Testäffchen liefern die Bäume unterschiedliche Vorhersagen?</legend>
-        <div class="dt-choice-monkeys">${EASY_TEST_DATA.map((monkey) => monkeyMarkup(monkey, true)).join("")}</div>
-        <input type="hidden" name="monkey" id="selected-monkey"></fieldset>
-      <fieldset><legend>4. Welche zwei Merkmale treffen gleichzeitig auf Äffchen 03 zu?</legend>
-        <div class="dt-feature-choices">
-          ${checkbox("xEyes", "X-Augen")}${checkbox("teethVisible", "Zähne sichtbar")}${checkbox("tongueOut", "Zunge raus")}
-          ${checkbox("accessory", "Accessoire")}${checkbox("eyeOpen", "mindestens ein Auge offen")}${checkbox("openMouth", "offener Mund")}
-        </div></fieldset>
-      <p id="discovery-feedback" class="dt-form-feedback" role="status"></p>
-      <button class="dt-primary-button" type="submit">Antworten prüfen</button>
-    </form>`;
-  document.querySelectorAll("[data-monkey-choice]").forEach((button) => button.addEventListener("click", () => {
-    document.querySelectorAll("[data-monkey-choice]").forEach((choice) => choice.classList.remove("is-selected"));
-    button.classList.add("is-selected");
-    document.querySelector("#selected-monkey").value = button.dataset.monkeyChoice;
-  }));
-  document.querySelector("#discovery-form").addEventListener("submit", checkDiscovery);
+    <p class="dt-kicker">Testergebnis</p><h2>Gleich gut im Training – unterschiedlich im Test</h2>
+    <h3>Trainingsdaten</h3>
+    <div class="dt-result-comparison">${scoreCard("Baum A", scores.trainingA, scores.trainingTotal)}${scoreCard("Baum B", scores.trainingB, scores.trainingTotal)}</div>
+    <h3>Testdaten</h3>
+    <div class="dt-result-comparison">${scoreCard("Baum A", scores.testA, scores.testTotal)}${scoreCard("Baum B", scores.testB, scores.testTotal)}</div>
+    <div class="dt-observation"><h3>Was verursacht den Unterschied?</h3><p>Untersuche jetzt gezielt ein Äffchen, bei dem die Reihenfolge der Entscheidungen wichtig wird.</p></div>
+    <button class="dt-primary-button" id="inspect-monkey03" type="button">Äffchen 03 untersuchen</button>`;
+  document.querySelector("#inspect-monkey03").addEventListener("click", () => {
+    state.comparison.phase = "monkey03";
+    saveComparison();
+    render();
+  });
+}
+
+function monkey03() {
+  return EASY_TEST_DATA.find((monkey) => monkey.id === "03");
+}
+
+function monkey03Results() {
+  const monkey = monkey03();
+  return {
+    resultA: createTestResult(monkey, COMPARISON_TREE_A),
+    resultB: createTestResult(monkey, COMPARISON_TREE_B),
+  };
+}
+
+function analysisTreeCard(name, tree) {
+  return `<section class="dt-compare-tree dt-analysis-tree" data-analysis-tree="${name.toLowerCase()}">
+    <h3>Baum ${name}</h3><div class="dt-readonly-viewport">${treeMarkup(tree)}</div></section>`;
 }
 
 function radio(name, value, text) {
   return `<label><input type="radio" name="${name}" value="${value}" required> ${text}</label>`;
 }
 
-function checkbox(value, text) {
-  return `<label><input type="checkbox" name="features" value="${value}"> ${text}</label>`;
+function renderMonkey03Question() {
+  state.animation = null;
+  elements.compare.innerHTML = `
+    <p class="dt-kicker">Ergebnisse selbst bestimmen</p><h2>Schau dir Äffchen 03 genauer an</h2>
+    <p class="dt-analysis-prompt"><strong>Zu welchem Ergebnis gelangt Baum A und zu welchem Ergebnis gelangt Baum B für dieses Äffchen?</strong><br>Schau dir sowohl das Äffchen als auch die Reihenfolge der Entscheidungen genau an.</p>
+    <div class="dt-focus-monkey large">${monkeyMarkup(monkey03())}</div>
+    <div class="dt-compare-grid dt-analysis-grid">${analysisTreeCard("A", COMPARISON_TREE_A)}${analysisTreeCard("B", COMPARISON_TREE_B)}</div>
+    <form id="monkey03-form" class="dt-discovery-form dt-tree-answer-form">
+      <fieldset><legend>Baum A sagt:</legend>${radio("prediction-a", CLASSIFICATIONS.BITES, "Beißt")}${radio("prediction-a", CLASSIFICATIONS.DOES_NOT_BITE, "Beißt nicht")}</fieldset>
+      <fieldset><legend>Baum B sagt:</legend>${radio("prediction-b", CLASSIFICATIONS.BITES, "Beißt")}${radio("prediction-b", CLASSIFICATIONS.DOES_NOT_BITE, "Beißt nicht")}</fieldset>
+      <p id="monkey03-feedback" class="dt-form-feedback" role="status"></p>
+      <button class="dt-primary-button" type="submit">Antwort prüfen</button>
+    </form>`;
+  document.querySelector("#monkey03-form").addEventListener("submit", checkMonkey03Predictions);
+  scheduleTreeFit();
 }
 
-function checkDiscovery(event) {
+function checkMonkey03Predictions(event) {
   event.preventDefault();
   const data = new FormData(event.currentTarget);
-  const selectedFeatures = data.getAll("features").sort();
-  const correct = data.get("better") === "a"
-    && data.get("change") === "order"
-    && data.get("monkey") === "03"
-    && JSON.stringify(selectedFeatures) === JSON.stringify(["teethVisible", "xEyes"]);
-  const feedback = document.querySelector("#discovery-feedback");
+  const { resultA, resultB } = monkey03Results();
+  const correct = data.get("prediction-a") === resultA.predicted && data.get("prediction-b") === resultB.predicted;
+  const feedback = document.querySelector("#monkey03-feedback");
   if (!correct) {
-    feedback.textContent = "Noch nicht ganz. Vergleiche Ergebnisse, erste Knoten und Äffchenbilder noch einmal.";
+    feedback.textContent = "Noch nicht ganz. Beginne bei der Wurzel jedes Baums und stoppe, sobald du ein Blatt erreichst.";
     feedback.className = "dt-form-feedback wrong";
     return;
   }
-  state.comparison.phase = "paths";
+  state.comparison.phase = "path-analysis";
   saveComparison();
   render();
 }
 
-function renderPathsAndLesson() {
+function activateMonkey03Paths() {
+  const { resultA, resultB } = monkey03Results();
+  const results = [resultA, resultB];
+  const trees = [COMPARISON_TREE_A, COMPARISON_TREE_B];
+  state.animation = { nodes: [], branches: [], leaves: [], skip: true };
+  results.forEach((result, index) => {
+    result.path.forEach((step) => {
+      state.animation.nodes.push(step.nodeId);
+      state.animation.branches.push(`${step.nodeId}:${step.branch}`);
+    });
+    state.animation.leaves.push(leafReached(trees[index], result.path).id);
+  });
+}
+
+function renderPathAnalysis() {
+  activateMonkey03Paths();
   elements.compare.innerHTML = `
     <p class="dt-kicker">Ursache untersuchen</p><h2>Die Pfade von Äffchen 03</h2>
-    <div class="dt-focus-monkey">${monkeyMarkup(EASY_TEST_DATA[0])}</div>
+    <div class="dt-focus-monkey large">${monkeyMarkup(monkey03())}</div>
+    <div class="dt-compare-grid dt-analysis-grid dt-highlighted-trees">${analysisTreeCard("A", COMPARISON_TREE_A)}${analysisTreeCard("B", COMPARISON_TREE_B)}</div>
+    <form id="cause-form" class="dt-discovery-form">
+      <fieldset><legend>Warum gelangen die beiden Entscheidungsbäume beim selben Äffchen zu unterschiedlichen Ergebnissen?</legend>
+        ${radio("cause", "training", "Weil die beiden Bäume unterschiedliche Trainingsdaten verwenden.")}
+        ${radio("cause", "features", "Weil die beiden Bäume unterschiedliche Merkmale verwenden.")}
+        ${radio("cause", "early-leaf", "Weil die Merkmale in einer anderen Reihenfolge geprüft werden und bereits vorher ein Blatt erreicht wird.")}
+        ${radio("cause", "unknown-test", "Weil Baum B keine Testdaten kennt.")}
+      </fieldset>
+      <p id="cause-feedback" class="dt-form-feedback" role="status"></p>
+      <button class="dt-primary-button" type="submit">Begründung prüfen</button>
+    </form>`;
+  document.querySelector("#cause-form").addEventListener("submit", checkCause);
+  scheduleTreeFit();
+}
+
+function checkCause(event) {
+  event.preventDefault();
+  const data = new FormData(event.currentTarget);
+  const feedback = document.querySelector("#cause-feedback");
+  if (data.get("cause") !== "early-leaf") {
+    feedback.textContent = "Noch nicht ganz. Achte darauf, welches Merkmal zuerst geprüft und wann bereits ein Blatt erreicht wird.";
+    feedback.className = "dt-form-feedback wrong";
+    return;
+  }
+  state.comparison.phase = "summary";
+  state.animation = null;
+  saveComparison();
+  render();
+}
+
+function renderComparisonSummary() {
+  state.animation = null;
+  const scores = comparisonScores();
+  elements.compare.innerHTML = `
+    <p class="dt-kicker">Erkenntnis sichern</p><h2>Warum unterscheiden sich die Vorhersagen?</h2>
+    <div class="dt-focus-monkey large">${monkeyMarkup(monkey03())}</div>
+    <div class="dt-monkey-features"><h3>Äffchen 03</h3><p><strong>X-Augen:</strong> Ja</p><p><strong>Zähne sichtbar:</strong> Ja</p></div>
     <div class="dt-path-comparison">
-      <div><h3>Baum A</h3><p><strong>X-Augen?</strong><br>↓ Ja<br><span class="dt-outcome bites">Beißt</span></p></div>
-      <div><h3>Baum B</h3><p><strong>Zähne sichtbar?</strong><br>↓ Ja<br><span class="dt-outcome safe">Beißt nicht</span></p></div>
+      <div><h3>Baum A</h3><ol><li>X-Augen? → Ja</li><li>Blatt „Beißt“ erreicht</li><li>Zähne werden nicht mehr geprüft</li></ol></div>
+      <div><h3>Baum B</h3><ol><li>Zähne sichtbar? → Ja</li><li>Blatt „Beißt nicht“ erreicht</li><li>X-Augen werden nicht mehr geprüft</li></ol></div>
     </div>
-    <div class="dt-explanation"><p>In einem Entscheidungsbaum werden nicht immer alle Merkmale überprüft. Sobald ein Blatt erreicht wird, steht die Vorhersage fest.</p>
-      <p><strong>Warum können die beiden Bäume deshalb für dasselbe unbekannte Äffchen zu unterschiedlichen Ergebnissen kommen?</strong></p></div>
+    <h3>Trainingsdaten</h3><div class="dt-result-comparison">${scoreCard("Baum A", scores.trainingA, scores.trainingTotal)}${scoreCard("Baum B", scores.trainingB, scores.trainingTotal)}</div>
+    <h3>Testdaten</h3><div class="dt-result-comparison">${scoreCard("Baum A", scores.testA, scores.testTotal)}${scoreCard("Baum B", scores.testB, scores.testTotal)}</div>
     <div class="dt-remember"><h2>Merke</h2>
-      <p><strong>Trainingsdaten</strong> werden verwendet, um ein Modell zu erstellen. <strong>Testdaten</strong> prüfen anschließend, wie gut das fertige Modell mit unbekannten Daten funktioniert.</p>
-      <p>Ein Entscheidungsbaum kann die Trainingsdaten zu <strong>100 % richtig</strong> klassifizieren und bei neuen Daten trotzdem Fehler machen.</p>
-      <p>Verschiedene Entscheidungsbäume können auf denselben Trainingsdaten gleich gut sein und sich bei unbekannten Daten trotzdem unterschiedlich verhalten.</p>
-      <p class="dt-fine-print">Die Reihenfolge von Merkmalen führt nicht automatisch immer zu anderen Ergebnissen. Sie kann aber entscheidend sein, wenn unterschiedliche Wege früher zu einem Blatt führen und eine Merkmalskombination in den Trainingsdaten noch nicht vorkam.</p>
+      <p>Zwei Entscheidungsbäume können dieselben Trainingsdaten vollständig richtig klassifizieren und bei unbekannten Testdaten trotzdem unterschiedlich gut funktionieren.</p>
+      <p>Die Trainingsdaten müssen nicht jede mögliche Merkmalskombination enthalten. Bei Äffchen 03 treten <strong>X-Augen und sichtbare Zähne gleichzeitig</strong> auf; diese Kombination kam in den Trainingsdaten nicht vor.</p>
+      <p><strong>Welches Merkmal zuerst geprüft wird, kann wichtig sein. Sobald ein Blatt erreicht ist, werden die weiteren Merkmale nicht mehr betrachtet.</strong></p>
     </div>
-    <div class="dt-definition"><h3>Was sind Testdaten?</h3><p><strong>Testdaten sind gelabelte Daten, die nicht zum Erstellen des Modells verwendet wurden. Sie dienen dazu, die Qualität des fertigen Modells zu beurteilen.</strong></p>
-      <ul><li>Das tatsächliche Label ist für die Auswertung bekannt.</li><li>Das Modell bekommt dieses Label während der Vorhersage nicht.</li><li>Die Testdaten werden nicht zum Optimieren desselben Testlaufs verwendet.</li></ul></div>
+    <div class="dt-definition"><h3>Was sind Testdaten?</h3><p><strong>Testdaten sind gelabelte Daten, die nicht zum Erstellen des Modells verwendet wurden. Sie dienen dazu, die Qualität des fertigen Modells zu beurteilen.</strong></p></div>
     <button class="dt-primary-button" id="finish-task" type="button">Aufgabe abgeschlossen</button>`;
   document.querySelector("#finish-task").addEventListener("click", () => {
     state.comparison.phase = "done";
@@ -597,29 +712,44 @@ function renderDone() {
 }
 
 function renderComparison() {
-  const available = state.run?.phase === "summary" && state.comparison;
+  const available = state.mode === "comparison" && state.comparison;
   elements.compare.hidden = !available;
   if (!available) return;
   if (state.comparison.phase === "intro") return renderComparisonIntro();
   if (state.comparison.phase === "testing") return renderComparisonTesting();
-  if (state.comparison.phase === "questions") return renderQuestions();
-  if (state.comparison.phase === "paths") return renderPathsAndLesson();
+  if (state.comparison.phase === "results") return renderComparisonResults();
+  if (state.comparison.phase === "monkey03") return renderMonkey03Question();
+  if (state.comparison.phase === "path-analysis") return renderPathAnalysis();
+  if (state.comparison.phase === "summary") return renderComparisonSummary();
   return renderDone();
 }
 
 function render() {
+  renderHeader();
   renderTabs();
+  if (state.mode === "comparison") {
+    elements.gate.hidden = true;
+    elements.own.hidden = true;
+    renderComparison();
+    return;
+  }
+  elements.compare.hidden = true;
   if (!renderGate()) return;
   renderOwn();
-  renderComparison();
 }
 
 elements.tabs.forEach((tab) => tab.addEventListener("click", () => {
+  state.mode = "own";
   state.variantId = tab.dataset.testVariant;
   history.replaceState(null, "", `#${state.variantId}`);
   loadVariant();
 }));
 
 window.addEventListener("resize", scheduleTreeFit);
+window.addEventListener("hashchange", () => {
+  state.mode = location.hash === "#vergleich" ? "comparison" : "own";
+  state.variantId = location.hash === "#advanced" ? "advanced" : "easy";
+  loadVariant();
+});
 
 loadVariant();

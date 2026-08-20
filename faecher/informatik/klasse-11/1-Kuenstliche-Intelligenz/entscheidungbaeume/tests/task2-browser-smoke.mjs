@@ -81,7 +81,32 @@ await evaluate("new Promise(resolve => setTimeout(resolve, 100))");
 await evaluate("localStorage.clear()");
 await reload();
 const initialGate = await evaluate("!document.querySelector('#task2-gate').hidden && document.querySelector('#task2-gate').innerText.includes('brauchst zuerst')");
-assert(initialGate, "Aufgabe 2 muss ohne erfolgreich geprüften Baum gesperrt sein.");
+assert(initialGate, "Aufgabe 2.1 muss ohne erfolgreich geprüften Baum gesperrt sein.");
+
+await evaluate("location.hash = '#vergleich'");
+await evaluate("new Promise(resolve => setTimeout(resolve, 100))");
+const directComparison = await evaluate(`(async () => {
+  const menuHtml = await fetch('../index.html').then(response => response.text());
+  const menu = new DOMParser().parseFromString(menuHtml, 'text/html');
+  return {
+    hash: location.hash,
+    title: document.querySelector('#task2-title').textContent,
+    taskNumber: document.querySelector('#task2-number').textContent,
+    gateHidden: document.querySelector('#task2-gate').hidden,
+    ownHidden: document.querySelector('#task2-own').hidden,
+    comparisonVisible: !document.querySelector('#task2-compare').hidden,
+    startButton: Boolean(document.querySelector('#start-comparison')),
+    missingTreeMessage: document.body.innerText.includes('brauchst zuerst'),
+    menuDirectLink: Boolean(menu.querySelector('a[href="1-Kuenstliche-Intelligenz/aufgabe2.html#vergleich"]')),
+  };
+})()`);
+assert(directComparison.hash === "#vergleich" && directComparison.taskNumber === "Aufgabe 2.2", `Deep-Link wurde nicht korrekt initialisiert: ${JSON.stringify(directComparison)}`);
+assert(directComparison.gateHidden && directComparison.ownHidden && directComparison.comparisonVisible && directComparison.startButton, `Aufgabe 2.2 ist bei leerem Speicher nicht unabhängig zugänglich: ${JSON.stringify(directComparison)}`);
+assert(!directComparison.missingTreeMessage && directComparison.menuDirectLink, `Voraussetzungstext oder Menülink ist fehlerhaft: ${JSON.stringify(directComparison)}`);
+
+await evaluate("location.hash = '#easy'");
+await evaluate("new Promise(resolve => setTimeout(resolve, 100))");
+assert(await evaluate("!document.querySelector('#task2-gate').hidden"), "Aufgabe 2.1 muss nach dem direkten Vergleich weiterhin ihr Gate verwenden.");
 
 await evaluate(`(async () => {
   const { COMPARISON_TREE_A } = await import('./entscheidungbaeume/data/test-data.mjs');
@@ -122,7 +147,7 @@ const comparisonTreeFit = await evaluate(`[...document.querySelectorAll('#task2-
   const tree = viewport.querySelector(':scope > .dt-readonly-subtree');
   const outer = viewport.getBoundingClientRect();
   const inner = tree.getBoundingClientRect();
-  return { contained: inner.left >= outer.left - 1 && inner.right <= outer.right + 1 && inner.top >= outer.top - 1 && inner.bottom <= outer.bottom + 1, viewportHeight: outer.height, scale: viewport.dataset.treeScale };
+  return { contained: inner.left >= outer.left - 1 && inner.right <= outer.right + 1 && inner.top >= outer.top - 1 && inner.bottom <= outer.bottom + 1, viewportHeight: outer.height, scale: viewport.dataset.treeScale, outer: { left: outer.left, right: outer.right, top: outer.top, bottom: outer.bottom }, inner: { left: inner.left, right: inner.right, top: inner.top, bottom: inner.bottom } };
 })`);
 assert(comparisonTreeFit.length === 2 && comparisonTreeFit.every(result => result.contained && result.viewportHeight <= 232), `Vergleichsbäume passen nicht vollständig in den Laptop-Bereich: ${JSON.stringify(comparisonTreeFit)}`);
 await evaluate("document.querySelector('#task2-compare').scrollIntoView({ block: 'start' }); new Promise(resolve => setTimeout(resolve, 30))");
@@ -138,16 +163,63 @@ for (let index = 0; index < 8; index += 1) {
 
 const questionText = await evaluate("document.querySelector('#task2-compare').innerText");
 assert(questionText.includes("8 von 8 richtig") && questionText.includes("7 von 8 richtig"), "Vergleichsergebnis 8/8 zu 7/8 fehlt.");
+await evaluate("document.querySelector('#inspect-monkey03').click(); new Promise(resolve => requestAnimationFrame(() => requestAnimationFrame(resolve)))");
+const monkeyQuestion = await evaluate(`(() => ({
+  heading: document.querySelector('#task2-compare h2').textContent,
+  monkey03: document.querySelector('.dt-focus-monkey img')?.alt,
+  answerCount: document.querySelectorAll('#monkey03-form input[type=radio]').length,
+  treeNodeCounts: [...document.querySelectorAll('[data-analysis-tree]')].map(tree => tree.querySelectorAll('[data-node-id]').length),
+}))()`);
+assert(monkeyQuestion.heading.includes("Äffchen 03") && monkeyQuestion.monkey03 === "Äffchen 03", `Äffchen-03-Frage fehlt: ${JSON.stringify(monkeyQuestion)}`);
+assert(monkeyQuestion.answerCount === 4 && monkeyQuestion.treeNodeCounts.length === 2 && monkeyQuestion.treeNodeCounts.every(count => count === 9), `Antwortfelder oder vollständige Bäume fehlen: ${JSON.stringify(monkeyQuestion)}`);
+
+const analysisViewportResults = [];
+for (const viewport of [{ width: 1366, height: 768 }, { width: 1024, height: 768 }, { width: 768, height: 1024 }]) {
+  await cdp.send("Emulation.setDeviceMetricsOverride", { ...viewport, deviceScaleFactor: 1, mobile: false });
+  await evaluate("new Promise(resolve => requestAnimationFrame(() => requestAnimationFrame(resolve)))");
+  const layout = await evaluate(`(() => {
+    const grid = document.querySelector('.dt-analysis-grid');
+    const trees = [...grid.querySelectorAll('.dt-readonly-viewport')].map(tree => {
+      const outer = tree.getBoundingClientRect();
+      const inner = tree.querySelector(':scope > .dt-readonly-subtree').getBoundingClientRect();
+      return { scale: Number(tree.dataset.treeScale), contained: inner.left >= outer.left - 1 && inner.right <= outer.right + 1 && inner.top >= outer.top - 1 && inner.bottom <= outer.bottom + 1 };
+    });
+    return { scrollWidth: document.documentElement.scrollWidth, innerWidth, columns: getComputedStyle(grid).gridTemplateColumns.split(' ').length, trees };
+  })()`);
+  assert(layout.scrollWidth <= layout.innerWidth && layout.trees.every(tree => tree.contained && tree.scale >= 0.6), `${viewport.width}px: Analysebäume sind zu klein oder laufen über: ${JSON.stringify(layout)}`);
+  assert(layout.columns === (viewport.width <= 1050 ? 1 : 2), `${viewport.width}px: unerwartete Baum-Anordnung: ${JSON.stringify(layout)}`);
+  analysisViewportResults.push({ ...viewport, ...layout });
+}
+await cdp.send("Emulation.setDeviceMetricsOverride", { width: 1366, height: 768, deviceScaleFactor: 1, mobile: false });
+
 await evaluate(`(() => {
-  document.querySelector('input[name=better][value=a]').checked = true;
-  document.querySelector('input[name=change][value=order]').checked = true;
-  document.querySelector('[data-monkey-choice="03"]').click();
-  document.querySelector('input[name=features][value=xEyes]').checked = true;
-  document.querySelector('input[name=features][value=teethVisible]').checked = true;
-  document.querySelector('#discovery-form').requestSubmit();
+  document.querySelector('input[name="prediction-a"][value="bites"]').checked = true;
+  document.querySelector('input[name="prediction-b"][value="does-not-bite"]').checked = true;
+  document.querySelector('#monkey03-form').requestSubmit();
+})()`);
+await evaluate("new Promise(resolve => requestAnimationFrame(() => requestAnimationFrame(resolve)))");
+const pathAnalysis = await evaluate(`(() => ({
+  heading: document.querySelector('#task2-compare h2').textContent,
+  monkey03: document.querySelector('.dt-focus-monkey img')?.alt,
+  treeNodeCounts: [...document.querySelectorAll('[data-analysis-tree]')].map(tree => tree.querySelectorAll('[data-node-id]').length),
+  activeNodes: document.querySelectorAll('[data-analysis-tree] .dt-readonly-node.is-active').length,
+  activeBranches: document.querySelectorAll('[data-analysis-tree] .dt-readonly-branch.is-active').length,
+  causeAnswers: document.querySelectorAll('#cause-form input[type=radio]').length,
+}))()`);
+assert(pathAnalysis.heading === "Die Pfade von Äffchen 03" && pathAnalysis.monkey03 === "Äffchen 03", `Pfadanalyse zeigt Äffchen 03 nicht: ${JSON.stringify(pathAnalysis)}`);
+assert(pathAnalysis.treeNodeCounts.length === 2 && pathAnalysis.treeNodeCounts.every(count => count === 9), `Pfadanalyse zeigt nicht beide vollständigen Bäume: ${JSON.stringify(pathAnalysis)}`);
+assert(pathAnalysis.activeNodes === 4 && pathAnalysis.activeBranches === 2 && pathAnalysis.causeAnswers === 4, `Pfade oder Ursachenfrage sind unvollständig: ${JSON.stringify(pathAnalysis)}`);
+await evaluate("document.querySelector('#task2-compare').scrollIntoView({ block: 'start' }); new Promise(resolve => setTimeout(resolve, 30))");
+const pathScreenshot = await cdp.send("Page.captureScreenshot", { format: "png", captureBeyondViewport: true });
+const pathScreenshotPath = join(tmpdir(), "entscheidungbaeume-aufgabe2-pfadanalyse.png");
+await writeFile(pathScreenshotPath, Buffer.from(pathScreenshot.data, "base64"));
+
+await evaluate(`(() => {
+  document.querySelector('input[name="cause"][value="early-leaf"]').checked = true;
+  document.querySelector('#cause-form').requestSubmit();
 })()`);
 const lesson = await evaluate("document.querySelector('#task2-compare').innerText");
-assert(lesson.includes("Die Pfade von Äffchen 03") && lesson.includes("Was sind Testdaten?"), "Entdeckende Auswertung wurde nicht freigeschaltet.");
+assert(lesson.includes("X-Augen: Ja") && lesson.includes("Zähne sichtbar: Ja") && lesson.includes("12 von 12 richtig") && lesson.includes("8 von 8 richtig") && lesson.includes("7 von 8 richtig") && lesson.includes("Was sind Testdaten?"), "Abschließende Erkenntnissicherung ist unvollständig.");
 const screenshot = await cdp.send("Page.captureScreenshot", { format: "png", captureBeyondViewport: true });
 const screenshotPath = join(tmpdir(), "entscheidungbaeume-aufgabe2.png");
 await writeFile(screenshotPath, Buffer.from(screenshot.data, "base64"));
@@ -189,5 +261,5 @@ assert((await evaluate("document.querySelector('#task2-own').innerText")).includ
 const imagesComplete = await evaluate("[...document.images].every(image => image.complete && image.naturalWidth > 0)");
 assert(imagesComplete, "Mindestens ein Testbild konnte nicht geladen werden.");
 
-console.log(JSON.stringify({ ownTreeFit, comparisonTreeFit, viewportResults, imagesComplete, screenshotPath, treeScreenshotPath }, null, 2));
+console.log(JSON.stringify({ directComparison, ownTreeFit, comparisonTreeFit, monkeyQuestion, analysisViewportResults, pathAnalysis, viewportResults, imagesComplete, screenshotPath, treeScreenshotPath, pathScreenshotPath }, null, 2));
 cdp.socket.close();
