@@ -114,6 +114,20 @@ Die Tabellenoberfläche enthält in dieser Reihenfolge:
   4. das scrollbare Tabellenraster,
   5. optional eine Statuszeile für aktive Zelle oder Auswahl.
 
+Der eigentliche Arbeitsauftrag wird unmittelbar über der Tabelle als farblich
+hervorgehobene Aufgabenbox dargestellt, im aktuellen Standard mit der Klasse
+work-order. Auf eine zusätzliche Leiste mit drei allgemeinen Bedienhinweisen
+und blauen Kästchen wird verzichtet, sofern die Aufgabe solche Hinweise nicht
+fachlich benötigt.
+
+Die Zoomsteuerung bleibt kompakt. Ein zusätzlicher Text wie "Strg + Mausrad
+ändert den Zoom" wird nicht neben den Zoombuttons angezeigt.
+
+Gehört eine Formelsammlung oder ein anderes kompaktes Referenzmaterial zur
+Aufgabe, wird es auf ausreichend breiten Bildschirmen direkt neben der Tabelle
+platziert. Auf schmalen Bildschirmen darf es responsiv unter die Tabelle
+wechseln.
+
 Die Formelleiste besteht aus:
 
   - Namensfeld für aktive Zelle oder Auswahl, z. B. D6 oder E2:F6,

@@ -34,23 +34,30 @@
   max-width: 78ch;
 }
 
-.sheet-help {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 0.45rem 1rem;
-  margin-top: 0.75rem;
-  color: #475569;
-  font-size: 0.86rem;
+.work-order {
+  margin: 0.8rem 0 0;
+  padding: 0.8rem 0.95rem;
+  border: 1px solid #f3c76a;
+  border-left: 5px solid #d97706;
+  border-radius: 9px;
+  background: linear-gradient(135deg, #fff7d6, #fffaf0);
+  color: #713f12;
+  line-height: 1.55;
 }
 
-.sheet-help span::before {
-  content: "";
-  display: inline-block;
-  width: 0.55rem;
-  height: 0.55rem;
-  margin-right: 0.4rem;
-  border-radius: 2px;
-  background: var(--sheet-accent);
+.work-order strong {
+  color: #92400e;
+}
+
+.spreadsheet-task-layout {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(270px, 350px);
+  align-items: start;
+  gap: 1.25rem;
+}
+
+.spreadsheet-task-layout .spreadsheet-card {
+  min-width: 0;
 }
 
 .spreadsheet-app {
@@ -460,7 +467,9 @@
 }
 
 .formula-reference-card {
-  margin-top: 1.25rem;
+  position: sticky;
+  top: 1rem;
+  margin-top: 0;
   padding: 1rem;
   border: 1px solid #dbe2ea;
   border-radius: 14px;
@@ -472,6 +481,16 @@
   max-width: 100%;
   height: auto;
   margin-inline: auto;
+}
+
+@media (max-width: 1080px) {
+  .spreadsheet-task-layout {
+    grid-template-columns: 1fr;
+  }
+
+  .formula-reference-card {
+    position: static;
+  }
 }
 
 body.is-selecting-sheet,

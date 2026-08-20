@@ -21,16 +21,12 @@
         <p>Berechne Flächen, Umfänge und Volumen mit Formeln und Zellbezügen.</p>
       </header>
 
+      <div class="spreadsheet-task-layout">
       <section class="spreadsheet-card" aria-labelledby="spreadsheet-title">
         <div class="card-heading">
           <div>
             <h2 id="spreadsheet-title">Mathematische Funktionen</h2>
-            <p><strong>Arbeitsauftrag:</strong> Wähle eine gelbe Zelle in F4 bis F17 aus und trage die Formel oben in die Formelleiste ein. Beginne jede Formel selbst mit einem Gleichheitszeichen.</p>
-            <div class="sheet-help" aria-label="Bedienhinweise">
-              <span>Zelle anklicken, dann oben bearbeiten</span>
-              <span>Im Raster steht immer das Ergebnis</span>
-              <span>Prüfbutton bleibt in der Zelle</span>
-            </div>
+            <p class="work-order"><strong>Arbeitsauftrag:</strong> Wähle eine gelbe Zelle in F4 bis F17 aus und trage die Formel oben in die Formelleiste ein. Beginne jede Formel selbst mit einem Gleichheitszeichen.</p>
           </div>
           <span class="load-status ready" role="status">Bereit</span>
         </div>
@@ -42,7 +38,6 @@
             <button id="zoom-in" type="button" aria-label="Tabelle vergrößern">+</button>
             <button id="zoom-reset" type="button">100 %</button>
             <span class="toolbar-spacer"></span>
-            <small>Strg + Mausrad ändert den Zoom</small>
           </div>
           <div class="formula-bar" aria-label="Formelleiste">
             <output id="cell-name-box" class="cell-name-box" aria-label="Ausgewählter Zellbereich"></output>
@@ -60,6 +55,12 @@
         </div>
       </section>
 
+      <aside class="formula-reference-card" aria-labelledby="formula-reference-title">
+        <h2 id="formula-reference-title">Formelsammlung</h2>
+        <img src="formelsammlung.png" alt="Formeln für Flächeninhalt und Volumen verschiedener Flächen und Körper">
+      </aside>
+      </div>
+
       <section class="check-panel" aria-labelledby="check-title">
         <div>
           <h2 id="check-title">Eingaben überprüfen</h2>
@@ -71,11 +72,6 @@
         </div>
         <div id="check-result" class="check-result" role="status" aria-live="polite"></div>
       </section>
-
-      <aside class="formula-reference-card" aria-labelledby="formula-reference-title">
-        <h2 id="formula-reference-title">Formelsammlung</h2>
-        <img src="formelsammlung.png" alt="Formeln für Flächeninhalt und Volumen verschiedener Flächen und Körper">
-      </aside>
 
       <noscript><p class="check-result error">Für diese Aufgabe muss JavaScript aktiviert sein.</p></noscript>
     </main>
