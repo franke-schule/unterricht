@@ -308,5 +308,29 @@ const TASKS = {
       'Die Ecken enthalten passende Drehungen und gegebenenfalls einen sinnvollen Spurwechsel.',
       'Es ist keine offensichtliche Wandkollision, unzulaessige Hoehendifferenz oder Endlosschleife erkennbar.'
     ]
+  },
+
+  '11-3a-f': {
+    title:
+      'Klasse 11 Aufgabe 3a: Algorithmus fuer einen Entscheidungsbaum formulieren',
+    grade:
+      11,
+    maxPoints:
+      9,
+    instruction:
+      'Bewerte semantisch, ob die Schuelerantwort einen nachvollziehbaren rekursiven Algorithmus zum Erstellen eines Entscheidungsbaums aus gelabelten Trainingsdaten beschreibt. Verlange keine bestimmte Musterformulierung. Benenne konkret, welche Schritte bereits richtig sind und welcher wesentliche Schritt noch fehlt.',
+    program:
+      'Kontext: Als Splitkriterium wurde im Lernmodul der Informationsgewinn aus der Verringerung von Fehlklassifikationen verwendet. Fachlich gleichwertige Formulierungen und sinnvolle andere Splitkriterien duerfen anerkannt werden.',
+    expectedAspects: [
+      'Ausgangspunkt ist eine aktuelle Menge gelabelter Trainingsdaten.',
+      'Fuer moegliche Attribute wird untersucht, wie gut sie die Daten in Teilmengen aufteilen.',
+      'Die Guete kann ueber den Informationsgewinn anhand der Verringerung von Fehlklassifikationen bestimmt werden.',
+      'Das Attribut mit dem groessten Informationsgewinn beziehungsweise dem besten Splitkriterium wird ausgewaehlt.',
+      'Das gewaehlte Attribut wird als Entscheidungsknoten verwendet und seine Attributwerte bilden die Aeste.',
+      'Die Trainingsdaten werden entsprechend der Attributwerte in Teilmengen aufgeteilt.',
+      'Das Verfahren wird fuer jede noch nicht eindeutige Teilmenge mit verbleibenden Attributen rekursiv wiederholt.',
+      'Enthaelt eine Teilmenge nur Daten desselben Labels, wird ein Blatt mit diesem Label erzeugt.',
+      'Das Verfahren endet, wenn keine weitere sinnvolle Aufteilung notwendig oder moeglich ist.'
+    ]
   }
 };

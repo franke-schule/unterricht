@@ -1,0 +1,206 @@
+<!doctype html>
+<html lang="de">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="robots" content="noindex, nofollow">
+    <title>Aufgabe 3 – Entscheidungsbaum erstellen | Informatik 11</title>
+    <link rel="stylesheet" href="../../../../styles.css?v=20260707">
+    <link rel="stylesheet" href="entscheidungbaeume/styles.css?v=20260820g">
+    <link rel="stylesheet" href="entscheidungbaeume/task3.css?v=20260820a">
+    <script type="module" src="entscheidungbaeume/ui/task3.mjs?v=20260820a"></script>
+  </head>
+  <body class="decision-tree-page dt-fish-page">
+    <div class="site-backdrop" aria-hidden="true"></div>
+    <main class="page-shell decision-tree-shell">
+      <nav class="topbar" aria-label="Navigation">
+        <a class="back-link" href="../index.html">Zur Aufgabenübersicht</a>
+        <a class="back-link" href="aufgabe2.html">Zu Aufgabe 2</a>
+        <a class="back-link" href="../../../../">Startseite</a>
+      </nav>
+
+      <header class="dt-hero dt-fish-hero">
+        <p class="dt-eyebrow">Künstliche Intelligenz · Entscheidungsbäume</p>
+        <h1>Einen Entscheidungsbaum erstellen</h1>
+        <p class="dt-task-number">Aufgabe 3a</p>
+        <p class="dt-lead"><strong>Finde Schritt für Schritt heraus, wie aus gelabelten Fischdaten ein Entscheidungsbaum entsteht.</strong></p>
+        <p>Zähle Fehlklassifikationen, vergleiche den Informationsgewinn und baue daraus dein Modell.</p>
+      </header>
+
+      <nav class="fish-progress" aria-label="Fortschritt Aufgabe 3a">
+        <a href="#erster-split" data-progress="tables"><span>1</span>Erster Split</a>
+        <a href="#teilmengen" data-progress="subsets"><span>2</span>Teilmengen</a>
+        <a href="#baum-bauen" data-progress="tree"><span>3</span>Baum bauen</a>
+        <a href="#algorithmus" data-progress="algorithm"><span>4</span>Algorithmus</a>
+      </nav>
+      <p id="save-status" class="fish-save-status" role="status" aria-live="polite">Dein Bearbeitungsstand wird in diesem Browser gespeichert.</p>
+
+      <section id="erster-split" class="fish-step" aria-labelledby="first-title">
+        <div class="fish-step-heading">
+          <span class="fish-step-number">Schritt 1</span>
+          <div>
+            <h2 id="first-title">Welches Attribut trennt die Daten am besten?</h2>
+            <p>Untersuche alle neun Trainingsfische. Für jede Gruppe gilt: Der Baum wählt das häufigere Label; die kleinere Gruppe zählt als Fehler.</p>
+          </div>
+        </div>
+        <div class="fish-dataset-summary" aria-label="Gesamtdatensatz">
+          <strong>9 Trainingsfische</strong><span>4 friedlich</span><span>5 feindselig</span><span>4 Fehler ohne Split</span>
+        </div>
+        <div id="fish-all" class="fish-grid" aria-label="Alle Trainingsfische"></div>
+        <div id="tables-all" class="fish-table-grid"></div>
+        <div class="fish-step-actions">
+          <button class="dt-primary-button" id="check-all-tables" type="button">Eingaben überprüfen</button>
+          <div id="all-tables-feedback" class="dt-feedback" role="status" aria-live="polite" hidden></div>
+        </div>
+
+        <section id="root-choice" class="fish-choice-card" aria-labelledby="root-choice-title" hidden>
+          <p class="fish-kicker">Auswertung anwenden</p>
+          <h3 id="root-choice-title">Welches Attribut ist für den ersten Knoten am besten geeignet?</h3>
+          <div class="fish-choice-grid" role="group" aria-label="Attribut für den ersten Knoten">
+            <button type="button" data-root-choice="scalesBlue">Schuppenfarbe <small>IG 1</small></button>
+            <button type="button" data-root-choice="patternNone">Muster <small>IG 0</small></button>
+            <button type="button" data-root-choice="bellyBlack">Bauchfarbe <small>IG 0</small></button>
+            <button type="button" data-root-choice="finsYellow">Flossenfarbe <small>IG 0</small></button>
+          </div>
+          <p id="root-feedback" class="fish-inline-feedback" role="status" aria-live="polite"></p>
+        </section>
+      </section>
+
+      <section id="teilmengen" class="fish-step" aria-labelledby="subsets-title" hidden>
+        <div class="fish-step-heading">
+          <span class="fish-step-number">Schritt 2</span>
+          <div>
+            <h2 id="subsets-title">Die Teilmengen erneut untersuchen</h2>
+            <p>Der erste Knoten ist <strong>Schuppenfarbe</strong>. Berechne nun für Blau und Orange den besten nächsten Split.</p>
+          </div>
+        </div>
+        <div class="fish-subset-layout">
+          <article class="fish-subset-card blue">
+            <header><div><p class="fish-kicker">Teilmenge Blau</p><h3>5 Fische · 2 Fehler vorher</h3></div><span class="fish-color-dot blue" aria-hidden="true"></span></header>
+            <div id="fish-blue" class="fish-grid compact" aria-label="Blaue Trainingsfische"></div>
+            <div id="tables-blue" class="fish-table-grid compact"></div>
+            <button class="dt-primary-button" id="check-blue-tables" type="button">Blaue Teilmenge überprüfen</button>
+            <div id="blue-tables-feedback" class="dt-feedback" role="status" aria-live="polite" hidden></div>
+          </article>
+          <article class="fish-subset-card orange">
+            <header><div><p class="fish-kicker">Teilmenge Orange</p><h3>4 Fische · 1 Fehler vorher</h3></div><span class="fish-color-dot orange" aria-hidden="true"></span></header>
+            <div id="fish-orange" class="fish-grid compact" aria-label="Orange Trainingsfische"></div>
+            <div id="tables-orange" class="fish-table-grid compact"></div>
+            <button class="dt-primary-button" id="check-orange-tables" type="button">Orange Teilmenge überprüfen</button>
+            <div id="orange-tables-feedback" class="dt-feedback" role="status" aria-live="polite" hidden></div>
+          </article>
+        </div>
+
+        <section id="deep-split" class="fish-deep-card" aria-labelledby="deep-title" hidden>
+          <div>
+            <p class="fish-kicker">Noch nicht rein</p>
+            <h3 id="deep-title">Blau und Muster = Punkte</h3>
+            <p>Bei <strong>Muster = Ohne</strong> sind beide Fische friedlich: Dort entsteht sofort ein Blatt. Die drei Fische mit Punkten benötigen noch einen Split.</p>
+          </div>
+          <div id="fish-blue-points" class="fish-grid compact" aria-label="Blaue Fische mit Punkten"></div>
+          <div id="tables-blue-points" class="fish-table-grid compact"></div>
+          <button class="dt-primary-button" id="check-deep-tables" type="button">Letzten Split überprüfen</button>
+          <div id="deep-tables-feedback" class="dt-feedback" role="status" aria-live="polite" hidden></div>
+        </section>
+      </section>
+
+      <section id="baum-bauen" class="fish-step" aria-labelledby="tree-title" hidden>
+        <div class="fish-step-heading">
+          <span class="fish-step-number">Schritt 3</span>
+          <div>
+            <h2 id="tree-title">Den Entscheidungsbaum aufbauen</h2>
+            <p>Nutze dieselbe Bedienung wie beim Affenspiel: Ziehe Bausteine in den Baum oder wähle zuerst einen Baustein und dann ein Ziel. Die Prüfung bewertet die logische Struktur, nicht die Bildschirmposition.</p>
+          </div>
+        </div>
+        <div class="fish-tree-reference" aria-label="Ermittelte Splits">
+          <span><strong>Wurzel:</strong> Schuppenfarbe</span>
+          <span><strong>Blau:</strong> Muster oder Bauchfarbe (Gleichstand)</span>
+          <span><strong>Orange:</strong> Bauchfarbe</span>
+        </div>
+        <section class="dt-editor-card fish-tree-editor-card" aria-label="Baumeditor">
+          <div class="dt-card-heading">
+            <div><span>Dein Modell</span><h2>Fisch-Entscheidungsbaum</h2></div>
+            <button class="dt-danger-button" id="reset-fish-tree" type="button">Baum zurücksetzen</button>
+          </div>
+          <div class="dt-palette">
+            <div class="dt-palette-heading"><h3>Bausteine</h3><span>ziehen oder anklicken</span></div>
+            <div id="fish-feature-palette" class="dt-palette-buttons"></div>
+            <div id="fish-leaf-palette" class="dt-leaf-palette"></div>
+          </div>
+          <p id="fish-tree-status" class="dt-interaction-status" role="status" aria-live="polite">Wähle einen Baustein oder ziehe ihn in die leere Wurzel.</p>
+          <div class="dt-tree-viewport fish-tree-viewport" aria-label="Arbeitsfläche für den Fisch-Entscheidungsbaum">
+            <div id="fish-tree-editor" class="dt-tree-editor"></div>
+          </div>
+          <div class="dt-check-area">
+            <button class="dt-primary-button" id="check-fish-tree" type="button">Entscheidungsbaum überprüfen</button>
+            <div id="fish-tree-feedback" class="dt-feedback" role="status" aria-live="polite" hidden></div>
+          </div>
+        </section>
+      </section>
+
+      <section id="algorithmus" class="fish-step" aria-labelledby="algorithm-title" hidden>
+        <div class="fish-step-heading">
+          <span class="fish-step-number">Schritt 4</span>
+          <div>
+            <h2 id="algorithm-title">Formuliere einen Algorithmus</h2>
+            <p>Formuliere in eigenen Worten einen Algorithmus, mit dem aus einer Menge gelabelter Trainingsdaten ein Entscheidungsbaum erstellt werden kann.</p>
+          </div>
+        </div>
+        <label class="fish-text-label" for="algorithm-answer">Deine Beschreibung</label>
+        <textarea id="algorithm-answer" maxlength="3000" rows="9" placeholder="Beginne zum Beispiel mit der Untersuchung möglicher Attribute …"></textarea>
+        <div class="fish-text-meta"><span id="algorithm-count">0 von 3000 Zeichen</span><span>Die Antwort wird semantisch ausgewertet.</span></div>
+        <button class="dt-primary-button" id="check-algorithm" type="button">Antwort überprüfen</button>
+        <div id="algorithm-feedback" class="fish-semantic-feedback" role="status" aria-live="polite" hidden></div>
+        <details class="fish-help-details">
+          <summary>Hilfe zum Algorithmus</summary>
+          <p>Denke an diese drei Fragen: Wie wird ein Attribut ausgewählt? Was geschieht mit den entstehenden Teilmengen? Wann wird ein Blatt erzeugt?</p>
+        </details>
+      </section>
+
+      <section id="task3a-complete" class="dt-remember fish-complete" hidden aria-labelledby="complete-title">
+        <p class="fish-kicker">Merke</p>
+        <h2 id="complete-title">Aufgabe 3a abgeschlossen</h2>
+        <p>Ein Entscheidungsbaum entsteht schrittweise. In jedem Knoten wird ein möglichst geeignetes Attribut ausgewählt. In diesem Beispiel ist das Attribut am besten geeignet, das die Anzahl der Fehlklassifikationen am stärksten reduziert. Anschließend wird das Verfahren für die entstandenen Teilmengen wiederholt.</p>
+        <a class="dt-secondary-button" href="#entropie">Optional weiter zu Aufgabe 3b</a>
+      </section>
+
+      <section id="entropie" class="fish-step fish-extension" aria-labelledby="entropy-title">
+        <div class="fish-extension-badge">Optional · Für die Schnellen</div>
+        <div class="fish-step-heading">
+          <span class="fish-step-number">Aufgabe 3b</span>
+          <div><h2 id="entropy-title">Entropie als alternatives Splitkriterium</h2><p>Diese Vertiefung ist freiwillig und blockiert den regulären Lernpfad nicht.</p></div>
+        </div>
+        <div class="entropy-intro">
+          <div>
+            <h3>Warum ein weiteres Splitkriterium?</h3>
+            <p>In Aufgabe 3a wurde eine Aufteilung anhand der Fehlklassifikationen bewertet. In der Praxis wird oft die <strong>Entropie</strong> genutzt. Sie beschreibt, wie stark verschiedene Klassen in einer Datenmenge miteinander vermischt sind.</p>
+          </div>
+          <div class="entropy-extremes">
+            <article class="pure"><span aria-hidden="true">● ● ● ●</span><h4>Reine Datenmenge</h4><p>8 friedlich · 0 feindselig</p><strong>E(X) = 0</strong><small>minimale Unsicherheit</small></article>
+            <article class="mixed"><span aria-hidden="true">● ● ● ●</span><h4>Gleichmäßig gemischt</h4><p>5 friedlich · 5 feindselig</p><strong>E(X) = 1</strong><small>maximale Unsicherheit</small></article>
+          </div>
+        </div>
+        <div class="entropy-formula-grid">
+          <article><p class="fish-kicker">Entropie</p><div class="math-display" role="math" aria-label="E von X ist minus die Summe über p i mal Logarithmus zur Basis 2 von p i">E(X) = −∑ p<sub>i</sub> · log<sub>2</sub>(p<sub>i</sub>)</div><p><var>p<sub>i</sub></var> ist der Anteil einer Klasse an der Datenmenge.</p><details><summary>Hinweis für p = 0</summary><p>Kommt eine Klasse gar nicht vor, wird ihr Beitrag als 0 betrachtet.</p></details></article>
+          <article><p class="fish-kicker">Informationsgewinn</p><div class="math-display" role="math" aria-label="Informationsgewinn ist Entropie vor dem Split minus gewichtete Entropie der Teilmengen">IG = E(X) − ∑ |X<sub>j</sub>| / |X| · E(X<sub>j</sub>)</div><p>Je größer der Informationsgewinn, desto besser trennt das Attribut die Daten.</p></article>
+        </div>
+        <article class="entropy-example">
+          <div><p class="fish-kicker">Beispiel aus dem Arbeitsheft</p><h3>20 Daten: 10 aus Klasse 1, 10 aus Klasse 2</h3><p>Vor dem Split gilt <strong>E(X) = 1</strong>. Danach entstehen eine reine Gruppe mit 7 Daten und eine gemischte Gruppe mit 13 Daten (3 zu 10).</p></div>
+          <div class="entropy-calculation"><span>E(X₁) = 0</span><span>E(X₂) ≈ 0,78</span><strong>IG = 1 − 7/20 · 0 − 13/20 · 0,78 ≈ 0,493</strong></div>
+          <blockquote>Je stärker ein Attribut gemischte Daten in reine Teilmengen zerlegt, desto größer ist sein Informationsgewinn.</blockquote>
+        </article>
+
+        <section class="entropy-quiz" aria-labelledby="quiz-title">
+          <div class="entropy-quiz-heading"><div><p class="fish-kicker">Abschlussquiz</p><h3 id="quiz-title">Prüfe dein Verständnis</h3></div><p id="quiz-progress">0 von 5 beantwortet</p></div>
+          <form id="entropy-quiz-form"><div id="entropy-questions"></div><button class="dt-primary-button" type="submit">Quiz auswerten</button></form>
+          <div id="quiz-feedback" class="dt-feedback" role="status" aria-live="polite" hidden></div>
+          <div id="quiz-summary" class="quiz-summary" hidden></div>
+        </section>
+        <section id="task3b-complete" class="dt-remember fish-complete" hidden>
+          <p class="fish-kicker">Merke</p><h2>Vertiefungsaufgabe abgeschlossen</h2>
+          <p>Fehlklassifikationsrate und Entropie sind unterschiedliche Möglichkeiten, die Qualität eines Splits zu beurteilen. Beide verfolgen dasselbe Grundziel: Es sollen möglichst homogene Teilmengen entstehen.</p>
+        </section>
+      </section>
+    </main>
+  </body>
+</html>
