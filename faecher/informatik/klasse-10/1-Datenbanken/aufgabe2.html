@@ -1,0 +1,209 @@
+<!doctype html>
+<html lang="de">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="robots" content="noindex, nofollow">
+    <title>Aufgabe 2 – Redundanzen in Datenbanken | Informatik 10</title>
+    <link rel="stylesheet" href="../../../../styles.css?v=20260709">
+    <link rel="stylesheet" href="redundanzen.css?v=20260822a">
+    <script type="module" src="redundanzen.js?v=20260822b"></script>
+  </head>
+  <body class="redundancy-page">
+    <div class="site-backdrop" aria-hidden="true"></div>
+    <main class="learning-shell">
+      <nav class="module-topbar" aria-label="Seitennavigation">
+        <a class="back-link" href="../index.html">Zur Aufgabenübersicht</a>
+        <a class="back-link" href="../../../../index.html">Startseite</a>
+      </nav>
+
+      <header class="module-header">
+        <div class="eyebrow"><span aria-hidden="true">◎</span> InstaHub-Datenbanklabor</div>
+        <h1>Redundanzen in Datenbanken</h1>
+        <p>Untersuche eine scheinbar einfache Tabellenidee und finde heraus, warum InstaHub seine Daten anders speichert.</p>
+      </header>
+
+      <section id="data-status" class="data-status" role="status" aria-live="polite">
+        <span class="status-spinner" aria-hidden="true"></span>
+        <span>InstaHub-Daten werden geladen …</span>
+      </section>
+
+      <section id="learning-module" hidden>
+        <div class="progress-card" aria-label="Bearbeitungsfortschritt">
+          <div class="progress-copy">
+            <span id="progress-label">Schritt 1 von 7</span>
+            <strong id="progress-percent">0 % bearbeitet</strong>
+          </div>
+          <div class="progress-track" aria-hidden="true"><span id="progress-bar"></span></div>
+        </div>
+
+        <nav id="step-tabs" class="step-tabs" aria-label="Lernschritte" role="tablist"></nav>
+
+        <section id="step-1" class="step-panel" role="tabpanel" aria-labelledby="tab-1">
+          <div class="step-heading">
+            <span class="step-number">1</span>
+            <div><p class="step-kicker">Eine einfache Idee</p><h2>Alles in einer Tabelle?</h2></div>
+          </div>
+          <div class="scenario-card">
+            <p>In InstaHub besitzt jeder Benutzer ein Profil und kann mehrere Fotos hochladen.</p>
+            <p><strong>Die Idee:</strong> Wir speichern Benutzer- und Fotoinformationen gemeinsam in einer Tabelle.</p>
+          </div>
+          <div id="redundant-table-step1"></div>
+          <div class="task-card">
+            <h3>Deine Aufgabe</h3>
+            <p>Welche Informationen kommen mehrfach vor? Markiere die passenden Spaltenüberschriften.</p>
+            <div class="action-row"><button class="primary-button" id="check-step1" type="button">Markierung prüfen</button></div>
+            <p id="feedback-step1" class="feedback" aria-live="polite"></p>
+          </div>
+        </section>
+
+        <section id="step-2" class="step-panel" role="tabpanel" aria-labelledby="tab-2" hidden>
+          <div class="step-heading">
+            <span class="step-number">2</span>
+            <div><p class="step-kicker">Eine kleine Änderung …</p><h2>Eine neue E-Mail-Adresse</h2></div>
+          </div>
+          <div class="scenario-card accent">
+            <p><strong id="email-user-label">Der Benutzer</strong> ändert seine E-Mail-Adresse.</p>
+            <p>Trage in allen Datensätzen die neue Adresse <code id="target-email"></code> ein.</p>
+          </div>
+          <div id="email-table"></div>
+          <div id="inconsistency-alert" class="aha-alert" hidden aria-live="polite"></div>
+          <div class="task-card">
+            <h3>Welches Problem ist entstanden?</h3>
+            <p>Wähle alle passenden Aussagen aus.</p>
+            <div id="step2-problems" class="choice-list"></div>
+            <div class="action-row">
+              <button class="primary-button" id="check-step2-problem" type="button">Problem prüfen</button>
+            </div>
+            <p id="feedback-step2" class="feedback" aria-live="polite"></p>
+          </div>
+          <div id="concept-reveal" class="concept-reveal" hidden>
+            <div><span>Redundanz</span><p>Gleiche Informationen werden mehrfach gespeichert.</p></div>
+            <div class="concept-arrow" aria-hidden="true">→</div>
+            <div><span>Inkonsistenz</span><p>Zusammengehörige Informationen widersprechen sich.</p></div>
+          </div>
+        </section>
+
+        <section id="step-3" class="step-panel" role="tabpanel" aria-labelledby="tab-3" hidden>
+          <div class="step-heading">
+            <span class="step-number">3</span>
+            <div><p class="step-kicker">Folgen untersuchen</p><h2>Welche Probleme entstehen?</h2></div>
+          </div>
+          <div class="task-card prominent">
+            <h3>Wähle alle zutreffenden Aussagen aus.</h3>
+            <p>Was kann passieren, wenn Benutzerinformationen bei jedem Foto erneut gespeichert werden?</p>
+            <div id="step3-choices" class="choice-list"></div>
+            <div class="action-row"><button class="primary-button" id="check-step3" type="button">Antworten prüfen</button></div>
+            <p id="feedback-step3" class="feedback" aria-live="polite"></p>
+          </div>
+          <div id="step3-summary" class="short-summary" hidden>
+            <strong>Merke:</strong> Wiederholte Daten brauchen mehr Speicher und machen Änderungen unnötig aufwendig und fehleranfällig.
+          </div>
+        </section>
+
+        <section id="step-4" class="step-panel" role="tabpanel" aria-labelledby="tab-4" hidden>
+          <div class="step-heading">
+            <span class="step-number">4</span>
+            <div><p class="step-kicker">Struktur verbessern</p><h2>Zwei Aufgaben, zwei Tabellen</h2></div>
+          </div>
+          <div class="scenario-card">
+            <p>Welche Attribute beschreiben einen <strong>Benutzer</strong> und welche ein <strong>Foto</strong>?</p>
+            <p>Ziehe die Karten in eine Tabelle oder verschiebe sie per Klick.</p>
+          </div>
+          <div id="attribute-assignment" class="assignment-workspace"></div>
+          <div class="action-row"><button class="primary-button" id="check-step4" type="button">Aufteilung prüfen</button></div>
+          <p id="feedback-step4" class="feedback" aria-live="polite"></p>
+          <div id="split-visual" class="split-visual" hidden aria-live="polite">
+            <span>eine große Tabelle</span><strong aria-hidden="true">→</strong><span><code>users</code> + <code>photos</code></span>
+          </div>
+        </section>
+
+        <section id="step-5" class="step-panel" role="tabpanel" aria-labelledby="tab-5" hidden>
+          <div class="step-heading">
+            <span class="step-number">5</span>
+            <div><p class="step-kicker">Klassenkarten</p><h2>Vervollständige <code>photos</code></h2></div>
+          </div>
+          <div class="class-card-layout">
+            <article class="class-card" aria-label="Klassenkarte users">
+              <h3>users</h3>
+              <ul><li>id</li><li>username</li><li>email</li></ul>
+            </article>
+            <div class="class-card-task">
+              <p>Wähle alle Attribute aus, die zur Klassenkarte <code>photos</code> gehören.</p>
+              <div id="class-card-options" class="attribute-bank"></div>
+              <button class="primary-button" id="check-step5" type="button">Klassenkarte prüfen</button>
+              <p id="feedback-step5" class="feedback" aria-live="polite"></p>
+            </div>
+            <article class="class-card photos-card" aria-label="Klassenkarte photos">
+              <h3>photos</h3>
+              <ul id="photos-class-list"><li class="placeholder-row">Attribute auswählen …</li></ul>
+            </article>
+          </div>
+        </section>
+
+        <section id="step-6" class="step-panel" role="tabpanel" aria-labelledby="tab-6" hidden>
+          <div class="step-heading">
+            <span class="step-number">6</span>
+            <div><p class="step-kicker">Tabellen verbinden</p><h2>Zu wem gehört das Foto?</h2></div>
+          </div>
+          <div id="relation-tables" class="relation-stage"></div>
+          <div class="task-card">
+            <h3>Woran erkennt die Datenbank, wer ein Foto hochgeladen hat?</h3>
+            <div id="step6-options" class="choice-list"></div>
+            <div class="action-row"><button class="primary-button" id="check-step6" type="button">Verbindung prüfen</button></div>
+            <p id="feedback-step6" class="feedback" aria-live="polite"></p>
+          </div>
+          <div id="relation-reveal" class="relation-reveal" hidden>
+            <code>users.id</code><span aria-hidden="true">↔</span><code>photos.user_id</code>
+            <p>Beim Foto speichern wir nur, zu welchem Benutzer es gehört.</p>
+          </div>
+        </section>
+
+        <section id="step-7" class="step-panel" role="tabpanel" aria-labelledby="tab-7" hidden>
+          <div class="step-heading">
+            <span class="step-number">7</span>
+            <div><p class="step-kicker">Sicherung</p><h2>Was hast du herausgefunden?</h2></div>
+          </div>
+          <form id="final-quiz" class="final-quiz" novalidate>
+            <fieldset>
+              <legend><span>1</span> Was versteht man unter Redundanz?</legend>
+              <div id="final-definition" class="choice-list"></div>
+            </fieldset>
+            <fieldset>
+              <legend><span>2</span> Warum können Redundanzen problematisch sein?</legend>
+              <div id="final-problems" class="choice-list"></div>
+            </fieldset>
+            <fieldset>
+              <legend><span>3</span> Wie wurde das Problem bei InstaHub gelöst?</legend>
+              <div id="final-solution" class="choice-list"></div>
+            </fieldset>
+            <fieldset>
+              <legend><span>4</span> Ordne die vier Attribute zu.</legend>
+              <div id="final-assignment" class="mini-assignment"></div>
+            </fieldset>
+            <div class="action-row"><button class="primary-button" type="submit">Sicherung auswerten</button></div>
+            <p id="feedback-step7" class="feedback" aria-live="polite"></p>
+          </form>
+        </section>
+
+        <section id="step-summary" class="step-panel summary-panel" role="tabpanel" aria-labelledby="tab-summary" hidden>
+          <div class="step-heading">
+            <span class="step-number complete">✓</span>
+            <div><p class="step-kicker">Abschlussansicht</p><h2>Deine vollständige Auswertung</h2></div>
+          </div>
+          <p class="summary-intro">Hier siehst du alle Eingaben und Ergebnisse aus den sieben Lernschritten.</p>
+          <div id="answer-summary" class="answer-summary"></div>
+          <div class="summary-actions">
+            <button class="secondary-button" id="print-summary" type="button">Auswertung drucken</button>
+            <button class="danger-button" id="reset-module" type="button">Alle Eingaben zurücksetzen</button>
+          </div>
+        </section>
+
+        <nav class="bottom-navigation" aria-label="Schrittnavigation">
+          <button id="previous-step" class="secondary-button" type="button">← Zurück</button>
+          <button id="next-step" class="primary-button" type="button">Weiter →</button>
+        </nav>
+      </section>
+    </main>
+  </body>
+</html>
