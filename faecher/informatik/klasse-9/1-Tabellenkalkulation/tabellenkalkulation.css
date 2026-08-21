@@ -49,6 +49,15 @@
   color: #92400e;
 }
 
+.work-order ul {
+  margin: 0.45rem 0 0 1.15rem;
+  padding: 0;
+}
+
+.work-order li + li {
+  margin-top: 0.2rem;
+}
+
 .spreadsheet-task-layout {
   display: grid;
   grid-template-columns: minmax(0, 1fr) minmax(270px, 350px);
@@ -291,6 +300,13 @@
   font-weight: 650;
 }
 
+.sheet-cell.wrapped-note-cell .cell-display {
+  overflow: auto;
+  white-space: normal;
+  text-overflow: clip;
+  line-height: 1.35;
+}
+
 .sheet-cell.task-formula-cell,
 .sheet-cell.fill-target-cell {
   background: var(--sheet-task);
@@ -483,12 +499,177 @@
   margin-inline: auto;
 }
 
+.adjacent-task-nav {
+  display: flex;
+  justify-content: space-between;
+  gap: 1rem;
+  margin-top: 1.25rem;
+}
+
+.adjacent-task-nav a {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  text-decoration: none;
+}
+
+.if-intro-card {
+  margin-bottom: 1.25rem;
+  padding: clamp(1rem, 2.5vw, 1.5rem);
+  border: 1px solid #cbdcf5;
+  border-radius: 16px;
+  background: linear-gradient(135deg, #eff6ff, #ffffff 52%, #f0fdf4);
+  box-shadow: 0 18px 42px rgba(30, 64, 175, 0.08);
+}
+
+.if-intro-heading h2 {
+  margin: 0.25rem 0 1rem;
+}
+
+.if-flow {
+  display: grid;
+  grid-template-columns: minmax(220px, 1fr) minmax(300px, 1.45fr);
+  gap: 0.85rem;
+  align-items: stretch;
+}
+
+.if-step,
+.if-formula {
+  opacity: 0;
+  transform: translateY(8px);
+  animation: if-reveal 6s ease-in-out infinite;
+}
+
+.if-step {
+  display: grid;
+  align-content: center;
+  min-height: 82px;
+  padding: 0.85rem 1rem;
+  border: 1px solid #bfdbfe;
+  border-radius: 12px;
+  background: #fff;
+}
+
+.if-step span {
+  color: #475569;
+  font-size: 0.78rem;
+  font-weight: 750;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.if-step strong {
+  margin-top: 0.3rem;
+  color: #172554;
+  font-size: 1rem;
+}
+
+.if-condition {
+  grid-row: 1;
+  border-color: #93c5fd;
+  background: #eff6ff;
+  animation-delay: 0s;
+}
+
+.if-branches {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.85rem;
+}
+
+.if-true {
+  border-color: #86efac;
+  background: #f0fdf4;
+  animation-delay: 0.8s;
+}
+
+.if-false {
+  border-color: #fdba74;
+  background: #fff7ed;
+  animation-delay: 1.45s;
+}
+
+.if-formula {
+  grid-column: 1 / -1;
+  display: block;
+  padding: 0.85rem 1rem;
+  border: 1px solid #cbd5e1;
+  border-radius: 10px;
+  background: #172033;
+  color: #f8fafc;
+  font: 650 0.95rem/1.45 ui-monospace, SFMono-Regular, Consolas, monospace;
+  overflow-wrap: anywhere;
+  animation-delay: 2.1s;
+}
+
+@keyframes if-reveal {
+  0%, 8% { opacity: 0; transform: translateY(8px); }
+  18%, 86% { opacity: 1; transform: translateY(0); }
+  100% { opacity: 0; transform: translateY(0); }
+}
+
+.discount-reference-card {
+  position: sticky;
+  top: 1rem;
+  padding: 1.25rem;
+  border: 2px solid #334155;
+  border-radius: 12px;
+  background: #f5f0e8;
+  box-shadow: 5px 6px 0 rgba(51, 65, 85, 0.14);
+  color: #1f2937;
+  text-align: center;
+}
+
+.discount-reference-card h2 {
+  margin: 0.15rem 0 1rem;
+  font-size: 1.65rem;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+.discount-reference-card dl {
+  display: grid;
+  gap: 0.65rem;
+  margin: 0;
+}
+
+.discount-reference-card dl div {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 0.7rem 0.8rem;
+  border: 1px solid #64748b;
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.58);
+}
+
+.discount-reference-card dt,
+.discount-reference-card dd {
+  margin: 0;
+  font-weight: 800;
+}
+
+.discount-reference-card dd {
+  font-size: 1.25rem;
+}
+
+.discount-cash {
+  margin: 1rem 0 0;
+  padding-top: 1rem;
+  border-top: 1px dashed #64748b;
+}
+
 @media (max-width: 1080px) {
   .spreadsheet-task-layout {
     grid-template-columns: 1fr;
   }
 
   .formula-reference-card {
+    position: static;
+  }
+
+  .discount-reference-card {
     position: static;
   }
 }
@@ -515,6 +696,16 @@ body.is-filling-sheet {
   .sheet-statusbar {
     display: block;
   }
+
+  .adjacent-task-nav,
+  .if-flow,
+  .if-branches {
+    grid-template-columns: 1fr;
+  }
+
+  .adjacent-task-nav {
+    display: grid;
+  }
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -523,5 +714,12 @@ body.is-filling-sheet {
   .spreadsheet-new-page *::after {
     scroll-behavior: auto !important;
     transition: none !important;
+  }
+
+  .if-step,
+  .if-formula {
+    opacity: 1;
+    transform: none;
+    animation: none !important;
   }
 }

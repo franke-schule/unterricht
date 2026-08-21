@@ -1,0 +1,206 @@
+<!doctype html>
+<html lang="de">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Aufgabe 4c – Alkoholrechner</title>
+    <link rel="stylesheet" href="../../../../styles.css?v=20260821">
+    <link rel="stylesheet" href="tabellenkalkulation.css?v=20260821">
+  </head>
+  <body>
+    <div class="site-backdrop" aria-hidden="true"></div>
+    <main class="page-shell spreadsheet-page spreadsheet-new-page">
+      <nav class="topbar" aria-label="Navigation">
+        <a class="back-link" href="../">Zurück zur Aufgabenübersicht</a>
+        <a class="back-link" href="../../../../">Startseite</a>
+      </nav>
+
+      <header class="page-header spreadsheet-header">
+        <p class="eyebrow">Tabellenkalkulation · WENN</p>
+        <h1>Aufgabe 4c</h1>
+        <p>Verbinde Umrechnungen, Summen und mehrere Fallunterscheidungen.</p>
+      </header>
+
+      <section class="spreadsheet-card" aria-labelledby="spreadsheet-title">
+        <div class="card-heading">
+          <div>
+            <h2 id="spreadsheet-title">Alkoholrechner</h2>
+            <div class="work-order"><strong>Arbeitsauftrag:</strong>
+              <ul>
+                <li>Berechne D8 und E8 und fülle beide Formeln bis Zeile 11 aus.</li>
+                <li>Berechne danach E13, E15 und E19 mit Zellbezügen und WENN.</li>
+                <li>Der Wert in E19 darf nicht unter 0 ‰ fallen.</li>
+              </ul>
+            </div>
+          </div>
+          <span class="load-status ready" role="status">Bereit</span>
+        </div>
+
+        <div id="spreadsheet-app" class="spreadsheet-app">
+          <div class="spreadsheet-toolbar" aria-label="Tabellenwerkzeuge">
+            <button id="zoom-out" type="button" aria-label="Tabelle verkleinern">−</button>
+            <span id="zoom-level" class="zoom-value" aria-live="polite">100 %</span>
+            <button id="zoom-in" type="button" aria-label="Tabelle vergrößern">+</button>
+            <button id="zoom-reset" type="button">100 %</button>
+            <span class="toolbar-spacer"></span>
+          </div>
+          <div class="formula-bar" aria-label="Formelleiste">
+            <output id="cell-name-box" class="cell-name-box" aria-label="Ausgewählter Zellbereich"></output>
+            <span class="formula-symbol" aria-hidden="true">fx</span>
+            <input id="formula-input" class="formula-input" type="text" autocomplete="off" spellcheck="false" aria-label="Inhalt oder Formel der aktiven Zelle">
+          </div>
+          <div id="formula-feedback" class="formula-feedback" role="status" aria-live="polite" hidden></div>
+          <div id="spreadsheet-viewport" class="spreadsheet-viewport">
+            <div id="spreadsheet-grid" class="spreadsheet-grid" aria-label="Alkoholrechner und Orientierungswerte"></div>
+          </div>
+          <div class="sheet-statusbar">
+            <span id="selection-status"></span>
+            <span>Formeln beginnen mit <strong>=</strong></span>
+          </div>
+        </div>
+      </section>
+
+      <section class="check-panel" aria-labelledby="check-title">
+        <div><h2 id="check-title">Alkoholrechner überprüfen</h2><p>Prüfe die fünf Formeln und den ausgefüllten Getränkebereich.</p></div>
+        <div class="check-actions">
+          <button id="check-formulas" class="primary-action" type="button">Rechner prüfen</button>
+          <button id="reset-formulas" class="secondary-action" type="button">Aufgabe zurücksetzen</button>
+        </div>
+        <div id="check-result" class="check-result" role="status" aria-live="polite"></div>
+      </section>
+
+      <nav class="adjacent-task-nav" aria-label="Vorherige und nächste Aufgabe">
+        <a class="secondary-action" href="aufgabe4b.html">← Aufgabe 4b</a>
+        <a class="primary-action" href="../">Zur Aufgabenübersicht →</a>
+      </nav>
+    </main>
+
+    <script>
+      (() => {
+        const initialCells = {
+          A1: "Alkoholrechner",
+          B3: "Formeln:",
+          C3: "D8: Liter in Zentiliter umrechnen",
+          E3: "E8: Berechne die Masse des Alkohols. Das Getränk besteht nicht zu 100 % aus Alkohol.",
+          E4: "Dichte = Masse / Volumen",
+          H4: "Dichte des Alkohols", H5: 7.893,
+          B6: "Anteil an Alkohol in den Getränken",
+          A7: "Getränk", B7: "Volumenprozent %", C7: "Volumen in l", D7: "Volumen in cl", E7: "Alkohol in g",
+          G7: "Geschlecht", H7: "Gewicht",
+          A8: "Bier:", B8: 0.05, C8: 2, G8: "w", H8: 50,
+          A9: "Wein:", B9: 0.12, C9: 0,
+          A10: "Schnaps:", B10: 0.4, C10: 0,
+          A11: "Sonstiges:", B11: 0.2, C11: 0,
+          I11: "Nutzereingabe", I12: "Formeln benötigt",
+          D13: "gesamter Alkohol:",
+          G14: "E15: Blutalkohol = Alkoholmenge / (Gewicht × Verteilungsfaktor)",
+          D15: "Promille:", G15: "Verteilungsfaktor", I15: 0.7, J15: "bei Männern",
+          G16: "Fallunterscheidung je nach Geschlecht", I16: 0.6, J16: "bei Frauen",
+          D17: "Zeitraum in h:", E17: 10,
+          G18: "E19: Ziehe den stündlichen Abbau je nach Geschlecht ab.",
+          D19: "Promille:", G19: "Frauen bauen im Schnitt", I19: 0.13, J19: "‰ pro Stunde ab",
+          G20: "Männer bauen im Schnitt", I20: 0.15, J20: "‰ pro Stunde ab",
+          G21: "Fallunterscheidung je nach Geschlecht",
+          B23: "ORIENTIERUNGSWERTE ZUR ALKOHOLWIRKUNG (BEI ERWACHSENEN)",
+          G23: "E19 Zusatzaufgabe: Bei einem großen Zeitraum soll der Wert nicht unter 0 fallen.",
+          B24: "AB 0,1 PROMILLE",
+          B25: "Schon kleine Mengen Alkohol wirken enthemmend. Wir werden kontaktfreudiger, unsere Stimmung ist gelöst. Was uns noch nicht auffällt: Bereits jetzt schätzen wir Entfernungen falsch ein.",
+          B27: "AB 0,3 PROMILLE",
+          B28: "Bei diesem Wert tritt häufig eine leichte Verminderung der Sehleistung ein. Unsere Aufmerksamkeit und das Reaktionsvermögen lassen nach, unsere Kritikfähigkeit ist herabgesetzt und die Risikobereitschaft steigt.",
+          B30: "AB 0,5 PROMILLE",
+          B31: "Wir sehen immer schlechter, etwa 15% Sehleistung haben wir bei diesem Promillewert schon eingebüßt. Auch das Hören ist beeinträchtigt und wir können Geschwindigkeiten nicht mehr richtig einschätzen. Da kann es durchaus passieren, dass wir beim Vorbeigehen versehentlich jemanden anrempeln.",
+          B32: "Nicht selten werden wir dann sauer, weil wir reizbarer sind, als im nüchternen Zustand.",
+          B33: "AB 0,8 PROMILLE",
+          B34: "Wir können uns kaum noch konzentrieren und es kommt zum Tunnelblick. So nennt man es, wenn unser Blickfeld um etwa ein Viertel eingeschränkt ist. Mit diesem Promillewert verlängert sich unsere Reaktionszeit um etwa 30 bis 50 Prozent und wir haben mit Gleichgewichtsstörungen zu kämpfen.",
+          B35: "Gleichzeitig werden viele euphorisch, enthemmt und überschätzen sich, eine gefährliche Kombination. Der Rausch ist für unser Umfeld kaum noch zu übersehen.",
+          B36: "1,0 BIS 2,0 PROMILLE: RAUSCHSTADIUM",
+          B37: "Im sogenannten Rauschstadium kommt es zur weiteren Verschlechterung der Sehfähigkeit und vor allem des räumlichen Sehens. Wir sind verwirrt und haben deutliche Sprech-, Reaktions-, Gleichgewichts- und Orientierungsstörungen. Wer so viel Alkohol im Blut hat, hat auch seine Kritikfähigkeit meist verloren.",
+          B38: "Das sind deutliche Warnsignale für eine Alkoholvergiftung.",
+          B39: "2,0 BIS 3,0 PROMILLE: BETÄUBUNGSSTADIUM",
+          B40: "Bei diesem Promillewert ist professionelle Hilfe gefragt. Wer das Betäubungsstadium erreicht, reagiert kaum noch und bewegt sich unkoordiniert. Durch Erbrechen versucht der Körper, sich zumindest des Alkohols im Magen zu entledigen. Gleichzeitig kann es zur Muskelerschlaffung kommen.",
+          B42: "AB 3,0 PROMILLE: LÄHMUNGSSTADIUM",
+          B43: "Wer so viel Alkohol zu sich nimmt, bringt das eigene Leben in Gefahr. Bewusst- und Reflexlosigkeit, Gedächtnisverlust und schwache Atmung sind die Symptome einer gefährlichen Alkoholvergiftung. Es drohen Lähmungen, Koma, Atemstillstand und Tod."
+        };
+        const drinkRows = [8, 9, 10, 11];
+        const promille = (test) => {
+          const alcohol = test.volumes.reduce((total, volume, index) => total + volume * 100 * test.percentages[index] * test.density, 0);
+          const factor = test.gender.toLowerCase() === "m" ? test.maleFactor : test.femaleFactor;
+          return alcohol / (test.weight * factor);
+        };
+        window.spreadsheetTaskConfig = {
+          columns: ["A", "B", "C", "D", "E", "F", "G", "H", "I", "J"],
+          rowCount: 43,
+          minWidth: 1840,
+          columnWidths: [150, 390, 210, 220, 270, 40, 270, 210, 175, 210],
+          rowHeights: { 3: 82, 14: 68, 18: 68, 23: 78, 25: 88, 28: 82, 31: 82, 34: 88, 37: 88, 40: 82, 43: 88 },
+          startCell: "D8",
+          initialCells,
+          percentCells: drinkRows.map((row) => `B${row}`),
+          fractionDigits: { D8: 1, D9: 1, D10: 1, D11: 1, E8: 3, E9: 3, E10: 3, E11: 3, E13: 3, E15: 3, E19: 3, H5: 3, H8: 1, E17: 1 },
+          suffixes: { D8: "cl", D9: "cl", D10: "cl", D11: "cl", E8: "g", E9: "g", E10: "g", E11: "g", E13: "g", E15: "‰", E19: "‰", H5: "g/cl", H8: "kg", E17: "h" },
+          centeredCells: [...drinkRows.flatMap((row) => [`B${row}`, `C${row}`, `D${row}`, `E${row}`]), "G8", "H8", "E13", "E15", "E17", "E19"],
+          cellClasses: {
+            "sheet-title-cell": ["A1"],
+            "matrix-header-cell": ["A7", "B7", "C7", "D7", "E7", "G7", "H7"],
+            "input-cell": [...drinkRows.flatMap((row) => [`B${row}`, `C${row}`]), "G8", "H8", "E17"],
+            "instruction-cell": ["I11"],
+            "user-legend-cell": ["I12"],
+            "label-cell": ["D13", "D15", "D17", "D19", "G15", "G16", "G19", "G20", "G21"],
+            "wrapped-note-cell": ["C3", "E3", "G14", "G18", "G23", "B25", "B28", "B31", "B32", "B34", "B35", "B37", "B38", "B40", "B43"],
+            "workbook-section-cell": ["B3", "B6", "B23", "B24", "B27", "B30", "B33", "B36", "B39", "B42"]
+          },
+          testCases: [
+            { percentages: [0.05, 0.12, 0.4, 0.2], volumes: [2, 0, 0, 0], density: 7.893, gender: "w", weight: 50, hours: 10, maleFactor: 0.7, femaleFactor: 0.6, femaleRate: 0.13, maleRate: 0.15 },
+            { percentages: [0.05, 0.12, 0.4, 0.18], volumes: [0.5, 0.2, 0.04, 0], density: 7.9, gender: "m", weight: 82, hours: 2, maleFactor: 0.7, femaleFactor: 0.6, femaleRate: 0.13, maleRate: 0.15 },
+            { percentages: [0.04, 0.11, 0.38, 0.16], volumes: [0.2, 0, 0, 0], density: 7.85, gender: "w", weight: 64, hours: 30, maleFactor: 0.7, femaleFactor: 0.6, femaleRate: 0.13, maleRate: 0.15 }
+          ],
+          applyTestCase(cells, test) {
+            test.percentages.forEach((value, index) => cells.set(`B${index + 8}`, value));
+            test.volumes.forEach((value, index) => cells.set(`C${index + 8}`, value));
+            cells.set("H5", test.density); cells.set("G8", test.gender); cells.set("H8", test.weight); cells.set("E17", test.hours);
+            cells.set("I15", test.maleFactor); cells.set("I16", test.femaleFactor); cells.set("I19", test.femaleRate); cells.set("I20", test.maleRate);
+          },
+          formulaDefinitions: [
+            {
+              cell: "D8", name: "Volumen in Zentilitern", requiredRefs: ["C8"], allowedNumbers: [100],
+              expected: ({ volumes }) => volumes[0] * 100,
+              errorMessage: "Ein Liter entspricht 100 Zentilitern. Verwende den Wert aus C8."
+            },
+            {
+              cell: "E8", name: "Masse des Alkohols", requiredRefs: ["B8", "D8", "H5"],
+              referenceRules: [{ cell: "H5", columnAbsolute: true, rowAbsolute: true, message: "Die Dichte muss beim Ausfüllen fest bleiben. Verwende $H$5." }],
+              expected: (test) => test.percentages[0] * test.volumes[0] * 100 * test.density,
+              errorMessage: "Berücksichtige Volumen, Alkoholanteil und Dichte des Alkohols."
+            },
+            {
+              cell: "E13", name: "Gesamter Alkohol", requiredRefs: ["E8", "E11"],
+              functionRules: [{ names: ["SUMME", "SUM"], message: "Addiere E8:E11 mit SUMME." }],
+              expected: (test) => test.volumes.reduce((total, volume, index) => total + volume * 100 * test.percentages[index] * test.density, 0),
+              errorMessage: "Addiere die Alkoholmengen aller vier Getränke."
+            },
+            {
+              cell: "E15", name: "Blutalkohol", requiredRefs: ["E13", "G8", "H8", "I15", "I16"],
+              functionRules: [{ names: ["WENN", "IF"], message: "Wähle den Verteilungsfaktor mit WENN aus." }],
+              expected: (test) => promille(test),
+              errorMessage: "Wähle den Verteilungsfaktor passend zum Geschlecht und berücksichtige das Gewicht."
+            },
+            {
+              cell: "E19", name: "Blutalkohol nach Zeit", requiredRefs: ["E15", "E17", "G8", "I19", "I20"], allowedNumbers: [0],
+              functionRules: [{ names: ["WENN", "IF"], minCount: 2, message: "Nutze WENN für Geschlecht und die Untergrenze 0." }],
+              expected: (test) => Math.max(0, promille(test) - test.hours * (test.gender.toLowerCase() === "m" ? test.maleRate : test.femaleRate)),
+              errorMessage: "Ziehe den passenden stündlichen Abbau ab und begrenze das Ergebnis auf mindestens 0."
+            }
+          ],
+          fillGroups: [{
+            sourceRange: "D8:E8",
+            targetRange: "D8:E11",
+            highlightTarget: false,
+            incompleteMessage: "Markiere D8:E8 und fülle beide Formeln gemeinsam bis E11 aus."
+          }],
+          successMessage: "Sehr gut! Umrechnung, Alkoholmenge und beide geschlechtsabhängigen WENN-Entscheidungen sind korrekt."
+        };
+      })();
+    </script>
+    <script src="tabellenkalkulation.js?v=20260821"></script>
+  </body>
+</html>

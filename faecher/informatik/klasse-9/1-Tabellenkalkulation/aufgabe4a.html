@@ -1,0 +1,139 @@
+<!doctype html>
+<html lang="de">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Aufgabe 4a – GGT mit WENN</title>
+    <link rel="stylesheet" href="../../../../styles.css?v=20260821">
+    <link rel="stylesheet" href="tabellenkalkulation.css?v=20260821">
+  </head>
+  <body>
+    <div class="site-backdrop" aria-hidden="true"></div>
+    <main class="page-shell spreadsheet-page spreadsheet-new-page">
+      <nav class="topbar" aria-label="Navigation">
+        <a class="back-link" href="../">Zurück zur Aufgabenübersicht</a>
+        <a class="back-link" href="../../../../">Startseite</a>
+      </nav>
+
+      <header class="page-header spreadsheet-header">
+        <p class="eyebrow">Tabellenkalkulation · WENN</p>
+        <h1>Aufgabe 4a</h1>
+        <p>Berechne den größten gemeinsamen Teiler schrittweise.</p>
+      </header>
+
+      <section class="spreadsheet-card" aria-labelledby="spreadsheet-title">
+        <div class="card-heading">
+          <div>
+            <h2 id="spreadsheet-title">GGT zweier Zahlen</h2>
+            <p class="work-order"><strong>Arbeitsauftrag:</strong> Ergänze B11 und C11 mit den beschriebenen WENN-Entscheidungen. Markiere beide Formeln und fülle sie gemeinsam bis Zeile 83 aus.</p>
+          </div>
+          <span class="load-status ready" role="status">Bereit</span>
+        </div>
+
+        <div id="spreadsheet-app" class="spreadsheet-app">
+          <div class="spreadsheet-toolbar" aria-label="Tabellenwerkzeuge">
+            <button id="zoom-out" type="button" aria-label="Tabelle verkleinern">−</button>
+            <span id="zoom-level" class="zoom-value" aria-live="polite">100 %</span>
+            <button id="zoom-in" type="button" aria-label="Tabelle vergrößern">+</button>
+            <button id="zoom-reset" type="button">100 %</button>
+            <span class="toolbar-spacer"></span>
+          </div>
+          <div class="formula-bar" aria-label="Formelleiste">
+            <output id="cell-name-box" class="cell-name-box" aria-label="Ausgewählter Zellbereich"></output>
+            <span class="formula-symbol" aria-hidden="true">fx</span>
+            <input id="formula-input" class="formula-input" type="text" autocomplete="off" spellcheck="false" aria-label="Inhalt oder Formel der aktiven Zelle">
+          </div>
+          <div id="formula-feedback" class="formula-feedback" role="status" aria-live="polite" hidden></div>
+          <div id="spreadsheet-viewport" class="spreadsheet-viewport">
+            <div id="spreadsheet-grid" class="spreadsheet-grid" aria-label="GGT-Berechnung mit zwei Zahlenspalten"></div>
+          </div>
+          <div class="sheet-statusbar">
+            <span id="selection-status"></span>
+            <span>Formeln beginnen mit <strong>=</strong></span>
+          </div>
+        </div>
+      </section>
+
+      <section class="check-panel" aria-labelledby="check-title">
+        <div><h2 id="check-title">GGT-Berechnung überprüfen</h2><p>Prüfe beide Startformeln und den ausgefüllten Bereich.</p></div>
+        <div class="check-actions">
+          <button id="check-formulas" class="primary-action" type="button">Formeln und Bereich prüfen</button>
+          <button id="reset-formulas" class="secondary-action" type="button">Aufgabe zurücksetzen</button>
+        </div>
+        <div id="check-result" class="check-result" role="status" aria-live="polite"></div>
+      </section>
+
+      <nav class="adjacent-task-nav" aria-label="Vorherige und nächste Aufgabe">
+        <a class="secondary-action" href="aufgabe4.html">← Aufgabe 4</a>
+        <a class="primary-action" href="aufgabe4b.html">Aufgabe 4b →</a>
+      </nav>
+    </main>
+
+    <script>
+      (() => {
+        const rows = Array.from({ length: 74 }, (_, index) => index + 10);
+        window.spreadsheetTaskConfig = {
+          columns: ["A", "B", "C", "D", "E", "F", "G"],
+          rowCount: 83,
+          minWidth: 1170,
+          columnWidths: [360, 155, 185, 45, 45, 210, 145],
+          startCell: "B11",
+          initialCells: {
+            A1: "GGT zweier Zahlen",
+            A2: "Größter gemeinsamer Teiler zweier Zahlen",
+            A4: "Idee:",
+            A5: "Gegeben sind zwei Zahlen.",
+            A6: "B11: Ist Zahl 1 größer, ziehe Zahl 2 ab; sonst übernimm Zahl 1.",
+            A7: "C11: Ist Zahl 2 größer, ziehe Zahl 1 ab; sonst übernimm Zahl 2.",
+            B9: "Zahl 1", C9: "Zahl 2",
+            B10: 24, C10: 56,
+            F10: "Nutzereingabe", G10: "",
+            F11: "Formeln benötigt", G11: ""
+          },
+          centeredCells: [...rows.map((row) => `B${row}`), ...rows.map((row) => `C${row}`)],
+          cellClasses: {
+            "sheet-title-cell": ["A1"],
+            "idea-cell": ["A4", "A5", "A6", "A7"],
+            "matrix-header-cell": ["B9", "C9"],
+            "input-cell": ["B10", "C10", "G10"],
+            "instruction-cell": ["F10", "G10"],
+            "user-legend-cell": ["F11", "G11"]
+          },
+          testCases: [
+            { first: 24, second: 56 },
+            { first: 81, second: 27 },
+            { first: 19, second: 19 },
+            { first: 17.5, second: 42.5 }
+          ],
+          applyTestCase(cells, test) { cells.set("B10", test.first); cells.set("C10", test.second); },
+          formulaDefinitions: [
+            {
+              cell: "B11",
+              name: "Neue Zahl 1",
+              requiredRefs: ["B10", "C10"],
+              functionRules: [{ names: ["WENN", "IF"], message: "Verwende in B11 eine WENN-Funktion." }],
+              expected: ({ first, second }) => first > second ? first - second : first,
+              errorMessage: "Ziehe Zahl 2 nur dann von Zahl 1 ab, wenn Zahl 1 größer ist."
+            },
+            {
+              cell: "C11",
+              name: "Neue Zahl 2",
+              requiredRefs: ["B10", "C10"],
+              functionRules: [{ names: ["WENN", "IF"], message: "Verwende in C11 eine WENN-Funktion." }],
+              expected: ({ first, second }) => second > first ? second - first : second,
+              errorMessage: "Ziehe Zahl 1 nur dann von Zahl 2 ab, wenn Zahl 2 größer ist."
+            }
+          ],
+          fillGroups: [{
+            sourceRange: "B11:C11",
+            targetRange: "B11:C83",
+            highlightTarget: false,
+            incompleteMessage: "Markiere B11:C11 und ziehe das gemeinsame Ausfüllkästchen bis C83."
+          }],
+          successMessage: "Sehr gut! Beide WENN-Formeln bilden den GGT-Algorithmus korrekt ab und wurden gemeinsam ausgefüllt."
+        };
+      })();
+    </script>
+    <script src="tabellenkalkulation.js?v=20260821"></script>
+  </body>
+</html>

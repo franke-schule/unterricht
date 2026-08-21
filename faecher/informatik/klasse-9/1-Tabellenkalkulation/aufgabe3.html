@@ -1,0 +1,241 @@
+<!doctype html>
+<html lang="de">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Aufgabe 3 – Vorgefertigte Funktionen</title>
+    <link rel="stylesheet" href="../../../../styles.css?v=20260821">
+    <link rel="stylesheet" href="tabellenkalkulation.css?v=20260821">
+  </head>
+  <body>
+    <div class="site-backdrop" aria-hidden="true"></div>
+    <main class="page-shell spreadsheet-page spreadsheet-new-page">
+      <nav class="topbar" aria-label="Navigation">
+        <a class="back-link" href="../">Zurück zur Aufgabenübersicht</a>
+        <a class="back-link" href="../../../../">Startseite</a>
+      </nav>
+
+      <header class="page-header spreadsheet-header">
+        <p class="eyebrow">Tabellenkalkulation</p>
+        <h1>Aufgabe 3</h1>
+        <p>Werte Tabellen mit vorgefertigten Funktionen aus.</p>
+      </header>
+
+      <section class="spreadsheet-card" aria-labelledby="spreadsheet-title">
+        <div class="card-heading">
+          <div>
+            <h2 id="spreadsheet-title">Vorgefertigte Funktionen in Excel</h2>
+            <p class="work-order"><strong>Arbeitsauftrag:</strong> Ergänze alle orange markierten Ergebniszellen mit passenden Funktionen und Zellbereichen. Die Beispiele rechts helfen dir bei der Auswahl der Funktion.</p>
+          </div>
+          <span class="load-status ready" role="status">Bereit</span>
+        </div>
+
+        <div id="spreadsheet-app" class="spreadsheet-app">
+          <div class="spreadsheet-toolbar" aria-label="Tabellenwerkzeuge">
+            <button id="zoom-out" type="button" aria-label="Tabelle verkleinern">−</button>
+            <span id="zoom-level" class="zoom-value" aria-live="polite">100 %</span>
+            <button id="zoom-in" type="button" aria-label="Tabelle vergrößern">+</button>
+            <button id="zoom-reset" type="button">100 %</button>
+            <span class="toolbar-spacer"></span>
+          </div>
+          <div class="formula-bar" aria-label="Formelleiste">
+            <output id="cell-name-box" class="cell-name-box" aria-label="Ausgewählter Zellbereich"></output>
+            <span class="formula-symbol" aria-hidden="true">fx</span>
+            <input id="formula-input" class="formula-input" type="text" autocomplete="off" spellcheck="false" aria-label="Inhalt oder Formel der aktiven Zelle">
+          </div>
+          <div id="formula-feedback" class="formula-feedback" role="status" aria-live="polite" hidden></div>
+          <div id="spreadsheet-viewport" class="spreadsheet-viewport">
+            <div id="spreadsheet-grid" class="spreadsheet-grid" aria-label="Supermarktumsätze und Funktionsbeispiele"></div>
+          </div>
+          <div class="sheet-statusbar">
+            <span id="selection-status"></span>
+            <span>Formeln beginnen mit <strong>=</strong></span>
+          </div>
+        </div>
+      </section>
+
+      <section class="check-panel" aria-labelledby="check-title">
+        <div>
+          <h2 id="check-title">Funktionen überprüfen</h2>
+          <p>Prüfe einzelne Ergebniszellen oder alle Funktionen gemeinsam.</p>
+        </div>
+        <div class="check-actions">
+          <button id="check-formulas" class="primary-action" type="button">Alle Funktionen prüfen</button>
+          <button id="reset-formulas" class="secondary-action" type="button">Aufgabe zurücksetzen</button>
+        </div>
+        <div id="check-result" class="check-result" role="status" aria-live="polite"></div>
+      </section>
+
+      <nav class="adjacent-task-nav" aria-label="Vorherige und nächste Aufgabe">
+        <a class="secondary-action" href="aufgabe2d.html">← Aufgabe 2d</a>
+        <a class="primary-action" href="aufgabe4.html">Aufgabe 4 →</a>
+      </nav>
+    </main>
+
+    <script>
+      (() => {
+        const range = (column, start, end) => Array.from({ length: end - start + 1 }, (_, index) => `${column}${start + index}`);
+        const initialSales = [
+          814.19, "", 378.32, 500.51, 678.78, 920.13, 809.23, 747.13, "", 956.12,
+          515.21, 780.51, 332.75, 982.24, 519.38, "", 741.1, 500.82, 326.16, 663.77,
+          596.61, 733.19, "", 983.17, 888, 943.61, 875.7, 411.92, 728.99, "", 375.65
+        ];
+        const weekdays = ["Samstag", "Sonntag", "Montag", "Dienstag", "Mittwoch", "Donnerstag", "Freitag"];
+        const initialCells = {
+          A1: "Vorgefertigte Funktionen in Excel",
+          A3: "Umsätze eines Supermarktes",
+          E3: "Beispiele",
+          A4: "Datum", B4: "Wochentag", C4: "Umsatz",
+          E4: "Artikel", F4: "Menge",
+          E5: "Bananen", F5: 125,
+          E6: "Wurst", F6: 99,
+          E7: "Äpfel", F7: 52,
+          E8: "Kiwi", F8: 33,
+          E9: "Summe", E10: "Mittelwert",
+          E11: "MW runde auf 1 Nachkommastelle",
+          E12: "MW abgerundet auf 1 Nachkommastelle",
+          E13: "MW aufgerundet auf volle 10",
+          E14: "Maximaler Wert", E15: "Minimaler Wert",
+          E17: "Mitarbeiter", F17: "Müller",
+          E18: "Montag", F18: "Anwesend",
+          E19: "Dienstag", F19: "Frei",
+          E20: "Mittwoch", F20: "",
+          E21: "Donnerstag", F21: "Anwesend",
+          E22: "Freitag", F22: "",
+          E23: "Samstag", F23: "Frei",
+          E24: "Sonntag", F24: "Frei",
+          E25: "Anzahl klare Fälle", E26: "Anzahl unklare Fälle",
+          F28: "Arbeits", F29: "Stunden",
+          E30: "Montag", F30: 3,
+          E31: "Dienstag", F31: 5,
+          E32: "Mittwoch", F32: "",
+          E33: "Donnerstag", F33: "Urlaub",
+          E34: "Freitag", F34: 5,
+          E35: "Samstag", F35: 4,
+          E36: "Sonntag", F36: "Urlaub",
+          E37: "Anzahl Tage mit Arbeit",
+          E38: "Anzahl Tage mit Arbeit und Urlaub",
+          E39: "Anzahl Tage mit Urlaub",
+          A36: "Summe", A37: "Max (Höchster Wert)", A38: "Min (Kleinster Wert)",
+          A39: "Mittelwert (Tagesumsatz)", A40: "MW runde auf 1 Nachkommastelle",
+          A41: "MW runde auf 3 Nachkommastellen", A42: "MW runde auf 10 €",
+          A43: "MW aufgerundet volle 10 €", A44: "MW abgerundet volle 100 €",
+          A45: "MW runde volle 1000 €", A46: "MW abgerundet volle 1000 €",
+          A47: "Anzahl (geschlossene Tage)", A48: "Anzahl (geöffnete Tage)",
+          A49: "Anzahl Tage des Monats", A50: "Summe / Anzahl Tage (MW über alle Tage)",
+          H9: "Zellen für Formeln"
+        };
+        initialSales.forEach((value, index) => {
+          initialCells[`A${index + 5}`] = 39508 + index;
+          initialCells[`B${index + 5}`] = weekdays[index % weekdays.length];
+          initialCells[`C${index + 5}`] = value;
+        });
+
+        const tests = [
+          {
+            quantities: [125, 99, 52, 33],
+            schedule: ["Anwesend", "Frei", "", "Anwesend", "", "Frei", "Frei"],
+            hours: [3, 5, "", "Urlaub", 5, 4, "Urlaub"],
+            sales: initialSales
+          },
+          {
+            quantities: [10, 15, 25, 50],
+            schedule: ["Frei", "", "Anwesend", "", "Frei", "", "Anwesend"],
+            hours: [2.5, "Urlaub", 6, "", 7.5, "Urlaub", 1],
+            sales: Array.from({ length: 31 }, (_, index) => index % 6 === 0 ? "" : (index + 1) * 37.25)
+          },
+          {
+            quantities: [2.5, 7.5, 12.5, 17.5],
+            schedule: ["", "Frei", "Frei", "Anwesend", "", "", "Urlaub"],
+            hours: ["", 3.25, "Urlaub", 8, "", 2.75, "Urlaub"],
+            sales: Array.from({ length: 31 }, (_, index) => [5, 12, 19, 26].includes(index) ? "" : 120.4 + index * 19.17)
+          }
+        ];
+        const numbers = (values) => values.filter((value) => typeof value === "number");
+        const sum = (values) => numbers(values).reduce((total, value) => total + value, 0);
+        const average = (values) => sum(values) / numbers(values).length;
+        const roundTo = (value, digits) => {
+          const factor = 10 ** digits;
+          const scaled = value * factor;
+          return Math.sign(scaled) * Math.floor(Math.abs(scaled) + 0.5) / factor;
+        };
+        const roundUp = (value, digits) => {
+          const factor = 10 ** digits;
+          const scaled = value * factor;
+          return Math.sign(scaled) * Math.ceil(Math.abs(scaled)) / factor;
+        };
+        const roundDown = (value, digits) => {
+          const factor = 10 ** digits;
+          const scaled = value * factor;
+          return Math.sign(scaled) * Math.floor(Math.abs(scaled)) / factor;
+        };
+        const functionRule = (names, label, minCount = 1) => ({ names, minCount, message: `Verwende die Funktion ${label}.` });
+        const quantityRefs = range("F", 5, 8);
+        const salesEdgeRefs = ["C5", "C35"];
+        const definitions = [
+          { cell: "F9", name: "Summe der Mengen", requiredRefs: quantityRefs, functionRules: [functionRule(["SUMME", "SUM"], "SUMME")], expected: ({ quantities }) => sum(quantities) },
+          { cell: "F10", name: "Mittelwert der Mengen", requiredRefs: quantityRefs, functionRules: [functionRule(["MITTELWERT", "AVERAGE"], "MITTELWERT")], expected: ({ quantities }) => average(quantities) },
+          { cell: "F11", name: "Gerundeter Mittelwert", allowedNumbers: [1], functionRules: [functionRule(["RUNDEN", "ROUND"], "RUNDEN")], expected: ({ quantities }) => roundTo(average(quantities), 1) },
+          { cell: "F12", name: "Abgerundeter Mittelwert", allowedNumbers: [1], functionRules: [functionRule(["ABRUNDEN", "ROUNDDOWN"], "ABRUNDEN")], expected: ({ quantities }) => roundDown(average(quantities), 1) },
+          { cell: "F13", name: "Aufgerundeter Mittelwert", allowedNumbers: [1], functionRules: [functionRule(["AUFRUNDEN", "ROUNDUP"], "AUFRUNDEN")], expected: ({ quantities }) => roundUp(average(quantities), -1) },
+          { cell: "F14", name: "Maximale Menge", requiredRefs: quantityRefs, functionRules: [functionRule(["MAX"], "MAX")], expected: ({ quantities }) => Math.max(...quantities) },
+          { cell: "F15", name: "Minimale Menge", requiredRefs: quantityRefs, functionRules: [functionRule(["MIN"], "MIN")], expected: ({ quantities }) => Math.min(...quantities) },
+          { cell: "F25", name: "Klare Anwesenheitsfälle", requiredRefs: ["F18", "F24"], functionRules: [functionRule(["ANZAHL2", "COUNTA"], "ANZAHL2")], expected: ({ schedule }) => schedule.filter((value) => value !== "").length },
+          { cell: "F26", name: "Unklare Anwesenheitsfälle", requiredRefs: ["F18", "F24"], functionRules: [functionRule(["ANZAHLLEEREZELLEN", "COUNTBLANK"], "ANZAHLLEEREZELLEN")], expected: ({ schedule }) => schedule.filter((value) => value === "").length },
+          { cell: "C36", name: "Summe der Umsätze", requiredRefs: salesEdgeRefs, functionRules: [functionRule(["SUMME", "SUM"], "SUMME")], expected: ({ sales }) => sum(sales) },
+          { cell: "C37", name: "Höchster Umsatz", requiredRefs: salesEdgeRefs, functionRules: [functionRule(["MAX"], "MAX")], expected: ({ sales }) => Math.max(...numbers(sales)) },
+          { cell: "C38", name: "Kleinster Umsatz", requiredRefs: salesEdgeRefs, functionRules: [functionRule(["MIN"], "MIN")], expected: ({ sales }) => Math.min(...numbers(sales)) },
+          { cell: "C39", name: "Mittlerer Tagesumsatz", requiredRefs: salesEdgeRefs, functionRules: [functionRule(["MITTELWERT", "AVERAGE"], "MITTELWERT")], expected: ({ sales }) => average(sales) },
+          { cell: "C40", name: "Mittelwert mit einer Nachkommastelle", allowedNumbers: [1], functionRules: [functionRule(["RUNDEN", "ROUND"], "RUNDEN")], expected: ({ sales }) => roundTo(average(sales), 1) },
+          { cell: "C41", name: "Mittelwert mit drei Nachkommastellen", allowedNumbers: [3], functionRules: [functionRule(["RUNDEN", "ROUND"], "RUNDEN")], expected: ({ sales }) => roundTo(average(sales), 3) },
+          { cell: "C42", name: "Mittelwert auf volle Zehner", allowedNumbers: [1], functionRules: [functionRule(["RUNDEN", "ROUND"], "RUNDEN")], expected: ({ sales }) => roundTo(average(sales), -1) },
+          { cell: "C43", name: "Mittelwert auf volle Zehner aufgerundet", allowedNumbers: [1], functionRules: [functionRule(["AUFRUNDEN", "ROUNDUP"], "AUFRUNDEN")], expected: ({ sales }) => roundUp(average(sales), -1) },
+          { cell: "C44", name: "Mittelwert auf volle Hunderter abgerundet", allowedNumbers: [2], functionRules: [functionRule(["ABRUNDEN", "ROUNDDOWN"], "ABRUNDEN")], expected: ({ sales }) => roundDown(average(sales), -2) },
+          { cell: "C45", name: "Mittelwert auf volle Tausender", allowedNumbers: [3], functionRules: [functionRule(["RUNDEN", "ROUND"], "RUNDEN")], expected: ({ sales }) => roundTo(average(sales), -3) },
+          { cell: "C46", name: "Mittelwert auf volle Tausender abgerundet", allowedNumbers: [3], functionRules: [functionRule(["ABRUNDEN", "ROUNDDOWN"], "ABRUNDEN")], expected: ({ sales }) => roundDown(average(sales), -3) },
+          { cell: "C47", name: "Geschlossene Tage", requiredRefs: salesEdgeRefs, functionRules: [functionRule(["ANZAHLLEEREZELLEN", "COUNTBLANK"], "ANZAHLLEEREZELLEN")], expected: ({ sales }) => sales.filter((value) => value === "").length },
+          { cell: "C48", name: "Geöffnete Tage", requiredRefs: salesEdgeRefs, functionRules: [functionRule(["ANZAHL", "COUNT"], "ANZAHL")], expected: ({ sales }) => numbers(sales).length },
+          { cell: "C49", name: "Tage des Monats", requiredRefs: ["A5", "A35"], functionRules: [functionRule(["ANZAHL", "COUNT"], "ANZAHL")], expected: () => 31 },
+          { cell: "C50", name: "Mittelwert über alle Kalendertage", expected: ({ sales }) => sum(sales) / 31 },
+          { cell: "F37", name: "Tage mit Arbeit", requiredRefs: ["F30", "F36"], functionRules: [functionRule(["ANZAHL", "COUNT"], "ANZAHL")], expected: ({ hours }) => numbers(hours).length },
+          { cell: "F38", name: "Tage mit Arbeit oder Urlaub", requiredRefs: ["F30", "F36"], functionRules: [functionRule(["ANZAHL2", "COUNTA"], "ANZAHL2")], expected: ({ hours }) => hours.filter((value) => value !== "").length },
+          { cell: "F39", name: "Urlaubstage", requiredRefs: ["F30", "F36"], functionRules: [functionRule(["ZÄHLENWENN", "COUNTIF"], "ZÄHLENWENN")], expected: ({ hours }) => hours.filter((value) => value === "Urlaub").length }
+        ];
+
+        window.spreadsheetTaskConfig = {
+          columns: ["A", "B", "C", "D", "E", "F", "G", "H", "I"],
+          rowCount: 50,
+          minWidth: 1370,
+          columnWidths: [270, 150, 165, 30, 300, 165, 30, 190, 90],
+          startCell: "F9",
+          initialCells,
+          dateCells: range("A", 5, 35),
+          currencyCells: [...range("C", 5, 46), "C50"],
+          fractionDigits: { F10: 3, F11: 3, F12: 3, F13: 3, C41: 4 },
+          suffixes: { C47: "Tage", C48: "Tage", C49: "Tage" },
+          centeredCells: [...range("A", 5, 35), ...range("F", 5, 15), ...range("F", 17, 39)],
+          cellClasses: {
+            "sheet-title-cell": ["A1"],
+            "workbook-section-cell": ["A3", "E3", "E17", "F28", "F29"],
+            "matrix-header-cell": ["A4", "B4", "C4", "E4", "F4", "E17", "F17"],
+            "label-cell": [...range("A", 36, 50), ...range("E", 9, 15), "E25", "E26", "E37", "E38", "E39"],
+            "instruction-cell": ["H9", "I9"]
+          },
+          testCases: tests,
+          applyTestCase(cells, test) {
+            test.sales.forEach((value, index) => {
+              cells.set(`A${index + 5}`, 41000 + index);
+              cells.set(`C${index + 5}`, value);
+            });
+            test.quantities.forEach((value, index) => cells.set(`F${index + 5}`, value));
+            test.schedule.forEach((value, index) => cells.set(`F${index + 18}`, value));
+            test.hours.forEach((value, index) => cells.set(`F${index + 30}`, value));
+          },
+          formulaDefinitions: definitions,
+          successMessage: "Sehr gut! Alle Funktionen werten die Bereiche auch mit veränderten Daten richtig aus."
+        };
+      })();
+    </script>
+    <script src="tabellenkalkulation.js?v=20260821"></script>
+  </body>
+</html>

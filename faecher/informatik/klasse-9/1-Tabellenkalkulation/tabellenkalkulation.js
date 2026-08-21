@@ -12,6 +12,9 @@
   const formulaCells = new Set(definitionByCell.keys());
   const currencyCells = new Set(config.currencyCells || []);
   const percentCells = new Set(config.percentCells || []);
+  const dateCells = new Set(config.dateCells || []);
+  const fractionDigitsByCell = new Map(Object.entries(config.fractionDigits || {}));
+  const suffixByCell = new Map(Object.entries(config.suffixes || {}));
   const centeredCells = new Set(config.centeredCells || []);
   const rawCells = new Map(Object.entries(config.initialCells || {}));
   const initialCells = new Map(rawCells);
@@ -33,7 +36,7 @@
 
   formulaCells.forEach((cellName) => rawCells.set(cellName, ""));
   fillGroups.forEach((group) => forEachCell(group.target, (cellName) => {
-    fillTargetCells.add(cellName);
+    if (group.highlightTarget !== false) fillTargetCells.add(cellName);
     if (!containsCell(group.source, parseCellName(cellName))) rawCells.set(cellName, "");
   }));
 
@@ -132,9 +135,14 @@
     return Number.isFinite(actual) && Math.abs(actual - expected) <= tolerance;
   }
 
+  function valuesEqual(actual, expected) {
+    if (typeof expected === "number") return isClose(actual, expected);
+    return String(actual).trim().toLocaleLowerCase("de-DE") === String(expected).trim().toLocaleLowerCase("de-DE");
+  }
+
   function translateFormula(formula, rowOffset, columnOffset) {
     return String(formula || "").replace(
-      /(\$?)([A-Za-z]+)(\$?)(\d+)/g,
+      /(?<![A-Za-zÄÖÜäöü])(\$?)([A-Za-z]{1,3})(\$?)(\d+)(?![A-Za-z0-9_])/g,
       (match, absoluteColumn, column, absoluteRow, row) => {
         const nextColumnNumber = absoluteColumn
           ? columnToNumber(column.toUpperCase())
@@ -161,11 +169,43 @@
       return true;
     }
 
+    function matchText(text) {
+      skipSpaces();
+      if (!formula.startsWith(text, index)) return false;
+      index += text.length;
+      return true;
+    }
+
+    function requireNumber(value) {
+      if (typeof value !== "number" || !Number.isFinite(value)) throw new Error("Für diese Berechnung wird eine Zahl benötigt.");
+      return value;
+    }
+
+    function comparableValue(value) {
+      return typeof value === "string" ? value.toLocaleLowerCase("de-DE") : value;
+    }
+
+    function parseComparison() {
+      let value = parseExpression();
+      const operators = ["<>", "<=", ">=", "=", "<", ">"];
+      const operator = operators.find((candidate) => matchText(candidate));
+      if (!operator) return value;
+      const right = parseExpression();
+      const leftComparable = comparableValue(value);
+      const rightComparable = comparableValue(right);
+      if (operator === "=") return leftComparable === rightComparable;
+      if (operator === "<>") return leftComparable !== rightComparable;
+      if (operator === "<=") return leftComparable <= rightComparable;
+      if (operator === ">=") return leftComparable >= rightComparable;
+      if (operator === "<") return leftComparable < rightComparable;
+      return leftComparable > rightComparable;
+    }
+
     function parseExpression() {
       let value = parseTerm();
       while (true) {
-        if (match("+")) value += parseTerm();
-        else if (match("-")) value -= parseTerm();
+        if (match("+")) value = requireNumber(value) + requireNumber(parseTerm());
+        else if (match("-")) value = requireNumber(value) - requireNumber(parseTerm());
         else return value;
       }
     }
@@ -173,18 +213,18 @@
     function parseTerm() {
       let value = parsePower();
       while (true) {
-        if (match("*")) value *= parsePower();
+        if (match("*")) value = requireNumber(value) * requireNumber(parsePower());
         else if (match("/")) {
-          const divisor = parsePower();
+          const divisor = requireNumber(parsePower());
           if (divisor === 0) throw new Error("Division durch null.");
-          value /= divisor;
+          value = requireNumber(value) / divisor;
         } else return value;
       }
     }
 
     function parsePower() {
       const base = parseUnary();
-      return match("^") ? base ** parsePower() : base;
+      return match("^") ? requireNumber(base) ** requireNumber(parsePower()) : base;
     }
 
     function parseUnary() {
@@ -196,13 +236,34 @@
     function parsePrimary() {
       skipSpaces();
       if (match("(")) {
-        const value = parseExpression();
+        const value = parseComparison();
         if (!match(")")) throw new Error("Schließende Klammer fehlt.");
         return value;
       }
+      if (formula[index] === '"') return parseString();
       if (/\d|,|\./.test(formula[index] || "")) return parseNumber();
       if (/[A-Za-zÄÖÜäöü$]/.test(formula[index] || "")) return parseIdentifier();
       throw new Error("Unerwartetes Zeichen.");
+    }
+
+    function parseString() {
+      index += 1;
+      let value = "";
+      while (index < formula.length) {
+        if (formula[index] !== '"') {
+          value += formula[index];
+          index += 1;
+          continue;
+        }
+        if (formula[index + 1] === '"') {
+          value += '"';
+          index += 2;
+          continue;
+        }
+        index += 1;
+        return value;
+      }
+      throw new Error("Schließendes Anführungszeichen fehlt.");
     }
 
     function parseNumber() {
@@ -219,7 +280,7 @@
 
     function parseCellReference() {
       skipSpaces();
-      const cellMatch = formula.slice(index).match(/^\$?([A-Za-z]+)\$?(\d+)/);
+      const cellMatch = formula.slice(index).match(/^\$?([A-Za-z]{1,3})\$?(\d+)/);
       if (!cellMatch) throw new Error("Zellbezug erwartet.");
       index += cellMatch[0].length;
       return `${cellMatch[1].toUpperCase()}${cellMatch[2]}`;
@@ -227,49 +288,106 @@
 
     function parseIdentifier() {
       skipSpaces();
-      const functionMatch = formula.slice(index).match(/^([A-Za-zÄÖÜäöü]+)\s*\(/);
+      const functionMatch = formula.slice(index).match(/^([A-Za-zÄÖÜäöü][A-Za-zÄÖÜäöü0-9]*)\s*\(/);
       if (!functionMatch) return lookupValue(parseCellReference());
       const functionName = functionMatch[1].toUpperCase();
-      const functions = {
-        SUM: (values) => values.reduce((sum, value) => sum + value, 0),
-        SUMME: (values) => values.reduce((sum, value) => sum + value, 0),
-        MAX: (values) => Math.max(...values),
-        MIN: (values) => Math.min(...values),
-        MITTELWERT: (values) => values.reduce((sum, value) => sum + value, 0) / values.length,
-        AVERAGE: (values) => values.reduce((sum, value) => sum + value, 0) / values.length,
-        PRODUKT: (values) => values.reduce((product, value) => product * value, 1),
-        PRODUCT: (values) => values.reduce((product, value) => product * value, 1)
-      };
-      if (!functions[functionName]) throw new Error("Unbekannte Funktion.");
       index += functionMatch[0].length;
       let depth = 1;
       let end = index;
+      let inString = false;
       while (end < formula.length && depth > 0) {
-        if (formula[end] === "(") depth += 1;
-        if (formula[end] === ")") depth -= 1;
+        if (formula[end] === '"') {
+          if (inString && formula[end + 1] === '"') end += 1;
+          else inString = !inString;
+        } else if (!inString && formula[end] === "(") depth += 1;
+        else if (!inString && formula[end] === ")") depth -= 1;
         if (depth > 0) end += 1;
       }
       if (depth !== 0) throw new Error("Schließende Klammer fehlt.");
       const body = formula.slice(index, end).trim();
       index = end + 1;
-      const values = [];
-      body.split(";").map((part) => part.trim()).filter(Boolean).forEach((part) => {
-        const rangeMatch = part.match(/^\$?([A-Za-z]+)\$?(\d+)\s*:\s*\$?([A-Za-z]+)\$?(\d+)$/);
-        if (rangeMatch) {
-          expandRange(`${rangeMatch[1]}${rangeMatch[2]}`, `${rangeMatch[3]}${rangeMatch[4]}`)
-            .forEach((cellName) => values.push(lookupValue(cellName)));
-        } else {
-          values.push(parseFormula(`=${part}`, lookupValue));
+
+      const parts = [];
+      let partStart = 0;
+      let partDepth = 0;
+      inString = false;
+      for (let bodyIndex = 0; bodyIndex <= body.length; bodyIndex += 1) {
+        const character = body[bodyIndex];
+        if (character === '"') {
+          if (inString && body[bodyIndex + 1] === '"') bodyIndex += 1;
+          else inString = !inString;
+        } else if (!inString && character === "(") partDepth += 1;
+        else if (!inString && character === ")") partDepth -= 1;
+        if (bodyIndex === body.length || (!inString && partDepth === 0 && character === ";")) {
+          parts.push(body.slice(partStart, bodyIndex).trim());
+          partStart = bodyIndex + 1;
         }
+      }
+      if (parts.length === 1 && parts[0] === "") parts.length = 0;
+
+      if (functionName === "WENN" || functionName === "IF") {
+        if (parts.length !== 3) throw new Error("WENN benötigt Bedingung, WAHR-Wert und FALSCH-Wert.");
+        const condition = parseFormula(`=${parts[0]}`, lookupValue);
+        return parseFormula(`=${condition ? parts[1] : parts[2]}`, lookupValue);
+      }
+
+      const values = parts.map((part) => {
+        const rangeMatch = part.match(/^\$?([A-Za-z]{1,3})\$?(\d+)\s*:\s*\$?([A-Za-z]{1,3})\$?(\d+)$/);
+        if (rangeMatch) {
+          return expandRange(`${rangeMatch[1]}${rangeMatch[2]}`, `${rangeMatch[3]}${rangeMatch[4]}`)
+            .map((cellName) => lookupValue(cellName));
+        }
+        return parseFormula(`=${part}`, lookupValue);
       });
-      if (values.length === 0) throw new Error("Funktion benötigt Werte.");
-      return functions[functionName](values);
+      const flatValues = values.flat();
+      const numberValues = flatValues.filter((value) => typeof value === "number" && Number.isFinite(value));
+      const requireValues = () => {
+        if (numberValues.length === 0) throw new Error("Funktion benötigt Zahlenwerte.");
+        return numberValues;
+      };
+      const roundTo = (value, digits, mode = "nearest") => {
+        const factor = 10 ** requireNumber(digits);
+        const scaled = requireNumber(value) * factor;
+        if (mode === "up") return Math.sign(scaled) * Math.ceil(Math.abs(scaled)) / factor;
+        if (mode === "down") return Math.sign(scaled) * Math.floor(Math.abs(scaled)) / factor;
+        return Math.sign(scaled) * Math.floor(Math.abs(scaled) + 0.5) / factor;
+      };
+      const aggregateFunctions = {
+        SUM: () => numberValues.reduce((sum, value) => sum + value, 0),
+        SUMME: () => numberValues.reduce((sum, value) => sum + value, 0),
+        MAX: () => Math.max(...requireValues()),
+        MIN: () => Math.min(...requireValues()),
+        MITTELWERT: () => requireValues().reduce((sum, value) => sum + value, 0) / numberValues.length,
+        AVERAGE: () => requireValues().reduce((sum, value) => sum + value, 0) / numberValues.length,
+        PRODUKT: () => requireValues().reduce((product, value) => product * value, 1),
+        PRODUCT: () => requireValues().reduce((product, value) => product * value, 1),
+        ANZAHL: () => numberValues.length,
+        COUNT: () => numberValues.length,
+        ANZAHL2: () => flatValues.filter((value) => value !== "").length,
+        COUNTA: () => flatValues.filter((value) => value !== "").length,
+        ANZAHLLEEREZELLEN: () => flatValues.filter((value) => value === "").length,
+        COUNTBLANK: () => flatValues.filter((value) => value === "").length
+      };
+      if (aggregateFunctions[functionName]) return aggregateFunctions[functionName]();
+      if (["RUNDEN", "ROUND", "AUFRUNDEN", "ROUNDUP", "ABRUNDEN", "ROUNDDOWN"].includes(functionName)) {
+        if (values.length !== 2 || Array.isArray(values[0]) || Array.isArray(values[1])) throw new Error("Rundungsfunktion benötigt Wert und Stellenzahl.");
+        const mode = ["AUFRUNDEN", "ROUNDUP"].includes(functionName)
+          ? "up"
+          : (["ABRUNDEN", "ROUNDDOWN"].includes(functionName) ? "down" : "nearest");
+        return roundTo(values[0], values[1], mode);
+      }
+      if (functionName === "ZÄHLENWENN" || functionName === "COUNTIF") {
+        if (values.length !== 2 || !Array.isArray(values[0]) || Array.isArray(values[1])) throw new Error("ZÄHLENWENN benötigt einen Bereich und ein Kriterium.");
+        const criterion = values[1];
+        return values[0].filter((value) => valuesEqual(value, criterion)).length;
+      }
+      throw new Error("Unbekannte Funktion.");
     }
 
-    const result = parseExpression();
+    const result = parseComparison();
     skipSpaces();
     if (index !== formula.length) throw new Error("Formel konnte nicht vollständig gelesen werden.");
-    if (!Number.isFinite(result)) throw new Error("Das Ergebnis ist nicht endlich.");
+    if (typeof result === "number" && !Number.isFinite(result)) throw new Error("Das Ergebnis ist nicht endlich.");
     return result;
   }
 
@@ -279,11 +397,11 @@
     const rawValue = rawCells.get(normalized);
     if (typeof rawValue === "number") return rawValue;
     const text = String(rawValue ?? "").trim();
-    if (!text) throw new Error(`Zelle ${normalized} ist leer.`);
+    if (!text) return "";
     if (!text.startsWith("=")) {
       const number = Number(text.replace(",", "."));
       if (Number.isFinite(number)) return number;
-      throw new Error(`Zelle ${normalized} enthält keinen Zahlenwert.`);
+      return text;
     }
     visiting.add(normalized);
     try {
@@ -309,16 +427,35 @@
       }
     }
     if (typeof value !== "number") return String(value);
+    const fractionDigits = fractionDigitsByCell.has(cellName) ? Number(fractionDigitsByCell.get(cellName)) : null;
+    if (dateCells.has(cellName)) {
+      const date = new Date(Date.UTC(1899, 11, 30) + value * 86400000);
+      return new Intl.DateTimeFormat("de-DE", { day: "2-digit", month: "2-digit", year: "numeric", timeZone: "UTC" }).format(date);
+    }
     if (percentCells.has(cellName)) {
-      return value.toLocaleString("de-DE", { style: "percent", maximumFractionDigits: 2 });
+      return value.toLocaleString("de-DE", {
+        style: "percent",
+        minimumFractionDigits: fractionDigits ?? 0,
+        maximumFractionDigits: fractionDigits ?? 2
+      });
     }
     if (currencyCells.has(cellName)) {
       return value.toLocaleString("de-DE", {
         style: "currency",
         currency: "EUR",
-        minimumFractionDigits: 2,
-        maximumFractionDigits: 2
+        minimumFractionDigits: fractionDigits ?? 2,
+        maximumFractionDigits: fractionDigits ?? 2
       });
+    }
+    if (suffixByCell.has(cellName)) {
+      const formatted = value.toLocaleString("de-DE", {
+        minimumFractionDigits: fractionDigits ?? 0,
+        maximumFractionDigits: fractionDigits ?? 8
+      });
+      return `${formatted} ${suffixByCell.get(cellName)}`;
+    }
+    if (fractionDigits !== null) {
+      return value.toLocaleString("de-DE", { minimumFractionDigits: fractionDigits, maximumFractionDigits: fractionDigits });
     }
     return formatNumber(value);
   }
@@ -339,18 +476,18 @@
   function findFormulaReferences(formula) {
     const references = new Set();
     const source = String(formula || "").toUpperCase();
-    const rangePattern = /(\$?[A-Z]+\$?\d+)\s*:\s*(\$?[A-Z]+\$?\d+)/g;
+    const rangePattern = /(?<![A-ZÄÖÜ])(\$?[A-Z]{1,3}\$?\d+)\s*:\s*(\$?[A-Z]{1,3}\$?\d+)(?![A-Z0-9_])/g;
     let rangeMatch;
     while ((rangeMatch = rangePattern.exec(source)) !== null) {
       expandRange(rangeMatch[1], rangeMatch[2]).forEach((cellName) => references.add(cellName));
     }
-    (source.match(/\$?[A-Z]+\$?\d+/g) || []).forEach((cellName) => references.add(normalizeCellName(cellName)));
+    (source.match(/(?<![A-ZÄÖÜ])\$?[A-Z]{1,3}\$?\d+(?![A-Z0-9_])/g) || []).forEach((cellName) => references.add(normalizeCellName(cellName)));
     return references;
   }
 
   function findReferenceTokens(formula) {
-    return (String(formula || "").toUpperCase().match(/\$?[A-Z]+\$?\d+/g) || []).map((token) => {
-      const match = token.match(/^(\$?)([A-Z]+)(\$?)(\d+)$/);
+    return (String(formula || "").toUpperCase().match(/(?<![A-ZÄÖÜ])\$?[A-Z]{1,3}\$?\d+(?![A-Z0-9_])/g) || []).map((token) => {
+      const match = token.match(/^(\$?)([A-Z]{1,3})(\$?)(\d+)$/);
       return {
         cell: `${match[2]}${match[4]}`,
         columnAbsolute: match[1] === "$",
@@ -360,7 +497,9 @@
   }
 
   function findNumberLiterals(formula) {
-    const withoutReferences = String(formula || "").replace(/\$?[A-Za-z]+\$?\d+/g, " ");
+    const withoutReferences = String(formula || "")
+      .replace(/(?<![A-Za-zÄÖÜäöü])\$?[A-Za-z]{1,3}\$?\d+(?![A-Za-z0-9_])/g, " ")
+      .replace(/[A-Za-zÄÖÜäöü][A-Za-zÄÖÜäöü0-9]*\s*(?=\()/g, " ");
     return (withoutReferences.match(/(?:\d+(?:[.,]\d+)?|[.,]\d+)\s*%?/g) || []).map((literal) => {
       const percent = literal.includes("%");
       const value = Number(literal.replace("%", "").trim().replace(",", "."));
@@ -381,7 +520,16 @@
     const forbiddenNumbers = findNumberLiterals(formula).filter(
       (number) => !allowedNumbers.some((allowed) => isClose(number, allowed))
     );
-    return { missingRefs, missingReferenceRules, forbiddenNumbers };
+    const functionNames = [];
+    const functionPattern = /([A-Za-zÄÖÜäöü][A-Za-zÄÖÜäöü0-9]*)\s*\(/g;
+    let functionMatch;
+    while ((functionMatch = functionPattern.exec(String(formula || ""))) !== null) functionNames.push(functionMatch[1].toUpperCase());
+    const missingFunctionRules = (definition.functionRules || []).filter((rule) => {
+      const names = (rule.names || [rule.name]).map((name) => name.toUpperCase());
+      const count = functionNames.filter((name) => names.includes(name)).length;
+      return count < (rule.minCount || 1);
+    });
+    return { missingRefs, missingReferenceRules, forbiddenNumbers, missingFunctionRules };
   }
 
   function refreshGrid() {
@@ -625,6 +773,9 @@
       } else if (analysis.missingReferenceRules.length > 0) {
         correct = false;
         message = analysis.missingReferenceRules[0].message;
+      } else if (analysis.missingFunctionRules.length > 0) {
+        correct = false;
+        message = analysis.missingFunctionRules[0].message || "Verwende die geforderte Tabellenfunktion.";
       } else if (analysis.forbiddenNumbers.length > 0) {
         correct = false;
         message = "Verwende die Werte aus den Zellen statt fest eingetippter Zahlen.";
@@ -636,7 +787,7 @@
         for (const testCase of config.testCases || []) {
           applyTestCase(testCase);
           definition.prepare?.({ cells: rawCells, testCase });
-          if (!isClose(evaluateCell(cellName), definition.expected(testCase))) {
+          if (!valuesEqual(evaluateCell(cellName), definition.expected(testCase))) {
             correct = false;
             message = definition.errorMessage || "Das Ergebnis passt noch nicht. Prüfe Rechenzeichen und Zellbezüge.";
             break;
@@ -732,6 +883,7 @@
     const tbody = document.createElement("tbody");
     for (let row = 1; row <= rowCount; row += 1) {
       const tr = document.createElement("tr");
+      if (config.rowHeights?.[row]) tr.style.height = `${config.rowHeights[row]}px`;
       const rowHeading = document.createElement("th");
       rowHeading.scope = "row";
       rowHeading.textContent = row;

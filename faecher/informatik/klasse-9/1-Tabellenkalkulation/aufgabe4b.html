@@ -1,0 +1,170 @@
+<!doctype html>
+<html lang="de">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Aufgabe 4b – Teppichaktion</title>
+    <link rel="stylesheet" href="../../../../styles.css?v=20260821">
+    <link rel="stylesheet" href="tabellenkalkulation.css?v=20260821">
+  </head>
+  <body>
+    <div class="site-backdrop" aria-hidden="true"></div>
+    <main class="page-shell spreadsheet-page spreadsheet-new-page">
+      <nav class="topbar" aria-label="Navigation">
+        <a class="back-link" href="../">Zurück zur Aufgabenübersicht</a>
+        <a class="back-link" href="../../../../">Startseite</a>
+      </nav>
+
+      <header class="page-header spreadsheet-header">
+        <p class="eyebrow">Tabellenkalkulation · WENN</p>
+        <h1>Aufgabe 4b</h1>
+        <p>Kombiniere verschachtelte Entscheidungen mit einem Barzahlungsrabatt.</p>
+      </header>
+
+      <div class="spreadsheet-task-layout discount-task-layout">
+        <section class="spreadsheet-card" aria-labelledby="spreadsheet-title">
+          <div class="card-heading">
+            <div>
+              <h2 id="spreadsheet-title">Teppichaktion</h2>
+              <div class="work-order"><strong>Arbeitsauftrag:</strong>
+                <ul>
+                  <li>Berechne den Rabattpreis in D5 mit verschachteltem WENN.</li>
+                  <li>Ziehe bei „ja“ in F5 zusätzlich 3 % Skonto ab.</li>
+                  <li>Fülle beide Formeln bis Zeile 34 aus.</li>
+                </ul>
+              </div>
+            </div>
+            <span class="load-status ready" role="status">Bereit</span>
+          </div>
+
+          <div id="spreadsheet-app" class="spreadsheet-app">
+            <div class="spreadsheet-toolbar" aria-label="Tabellenwerkzeuge">
+              <button id="zoom-out" type="button" aria-label="Tabelle verkleinern">−</button>
+              <span id="zoom-level" class="zoom-value" aria-live="polite">100 %</span>
+              <button id="zoom-in" type="button" aria-label="Tabelle vergrößern">+</button>
+              <button id="zoom-reset" type="button">100 %</button>
+              <span class="toolbar-spacer"></span>
+            </div>
+            <div class="formula-bar" aria-label="Formelleiste">
+              <output id="cell-name-box" class="cell-name-box" aria-label="Ausgewählter Zellbereich"></output>
+              <span class="formula-symbol" aria-hidden="true">fx</span>
+              <input id="formula-input" class="formula-input" type="text" autocomplete="off" spellcheck="false" aria-label="Inhalt oder Formel der aktiven Zelle">
+            </div>
+            <div id="formula-feedback" class="formula-feedback" role="status" aria-live="polite" hidden></div>
+            <div id="spreadsheet-viewport" class="spreadsheet-viewport">
+              <div id="spreadsheet-grid" class="spreadsheet-grid" aria-label="Preisliste der Teppichaktion"></div>
+            </div>
+            <div class="sheet-statusbar">
+              <span id="selection-status"></span>
+              <span>Formeln beginnen mit <strong>=</strong></span>
+            </div>
+          </div>
+        </section>
+
+        <aside class="discount-reference-card" aria-labelledby="discount-title">
+          <p class="eyebrow">Sonderrabatt</p>
+          <h2 id="discount-title">Teppichaktion</h2>
+          <dl>
+            <div><dt>ab 500 €</dt><dd>30 %</dd></div>
+            <div><dt>ab 1000 €</dt><dd>50 %</dd></div>
+          </dl>
+          <p class="discount-cash">Bei Barzahlung zusätzlich <strong>3 % Skonto</strong></p>
+        </aside>
+      </div>
+
+      <section class="check-panel" aria-labelledby="check-title">
+        <div><h2 id="check-title">Rabatte überprüfen</h2><p>Prüfe beide Startformeln und die ausgefüllten Preisspalten.</p></div>
+        <div class="check-actions">
+          <button id="check-formulas" class="primary-action" type="button">Formeln und Spalten prüfen</button>
+          <button id="reset-formulas" class="secondary-action" type="button">Aufgabe zurücksetzen</button>
+        </div>
+        <div id="check-result" class="check-result" role="status" aria-live="polite"></div>
+      </section>
+
+      <nav class="adjacent-task-nav" aria-label="Vorherige und nächste Aufgabe">
+        <a class="secondary-action" href="aufgabe4a.html">← Aufgabe 4a</a>
+        <a class="primary-action" href="aufgabe4c.html">Aufgabe 4c →</a>
+      </nav>
+    </main>
+
+    <script>
+      (() => {
+        const prices = [
+          926.44, 315.14, 1153.37, 1148.84, 1219.25, 592.8, 802.88, 1118.57, 752.84, 1150.28,
+          514.4, 891.41, 1276.59, 260.99, 360.11, 1259.72, 210.13, 319.69, 549.21, 320.46,
+          396.3, 1089.9, 740.05, 255.88, 894.35, 1099.85, 726.74, 583.66, 613.58, 546.73
+        ];
+        const cash = [
+          "ja", "nein", "nein", "nein", "ja", "ja", "ja", "ja", "nein", "ja",
+          "nein", "nein", "ja", "nein", "ja", "nein", "nein", "ja", "ja", "nein",
+          "ja", "nein", "nein", "nein", "nein", "ja", "nein", "ja", "ja", "ja"
+        ];
+        const initialCells = {
+          A1: "Teppichaktion",
+          B4: "Teppiche", C4: "Preis", D4: "Preis nach Rabatt", E4: "Barzahlung", F4: "Endpreis",
+          H3: "Formeln", H5: "3 Fallunterscheidungen:", H6: "ab 1000 €", H7: "ab 500 €", H8: "unter 500 €",
+          H10: "D5: Nutze eine verschachtelte WENN-Funktion.",
+          H12: "F5: Skonto bedeutet Rabatt bei Barzahlung."
+        };
+        prices.forEach((price, index) => {
+          const row = index + 5;
+          initialCells[`B${row}`] = `Teppich ${index + 1}`;
+          initialCells[`C${row}`] = price;
+          initialCells[`E${row}`] = cash[index];
+        });
+        const rows = Array.from({ length: 30 }, (_, index) => index + 5);
+        const discountPrice = (price) => price >= 1000 ? price * 0.5 : (price >= 500 ? price * 0.7 : price);
+        window.spreadsheetTaskConfig = {
+          columns: ["A", "B", "C", "D", "E", "F", "G", "H"],
+          rowCount: 34,
+          minWidth: 1360,
+          columnWidths: [45, 150, 150, 210, 145, 175, 35, 360],
+          startCell: "D5",
+          initialCells,
+          currencyCells: [...rows.map((row) => `C${row}`), ...rows.map((row) => `D${row}`), ...rows.map((row) => `F${row}`)],
+          centeredCells: [...rows.flatMap((row) => [`B${row}`, `C${row}`, `D${row}`, `E${row}`, `F${row}`])],
+          cellClasses: {
+            "sheet-title-cell": ["A1"],
+            "matrix-header-cell": ["B4", "C4", "D4", "E4", "F4"],
+            "instruction-cell": ["H3"],
+            "idea-cell": ["H5", "H6", "H7", "H8", "H10", "H12"]
+          },
+          testCases: [
+            { price: 315.14, cash: "nein" },
+            { price: 500, cash: "ja" },
+            { price: 999.99, cash: "nein" },
+            { price: 1000, cash: "ja" },
+            { price: 1276.59, cash: "nein" }
+          ],
+          applyTestCase(cells, test) { cells.set("C5", test.price); cells.set("E5", test.cash); },
+          formulaDefinitions: [
+            {
+              cell: "D5",
+              name: "Preis nach Sonderrabatt",
+              requiredRefs: ["C5"],
+              allowedNumbers: [0.3, 0.5, 0.7, 1, 500, 1000],
+              functionRules: [{ names: ["WENN", "IF"], minCount: 2, message: "Verwende zwei ineinander verschachtelte WENN-Funktionen." }],
+              expected: ({ price }) => discountPrice(price),
+              errorMessage: "Prüfe die drei Preisbereiche und die Rabatte von 30 % beziehungsweise 50 %."
+            },
+            {
+              cell: "F5",
+              name: "Endpreis mit Skonto",
+              requiredRefs: ["D5", "E5"],
+              allowedNumbers: [0.03, 0.97, 1],
+              functionRules: [{ names: ["WENN", "IF"], message: "Verwende für den Skonto eine WENN-Funktion." }],
+              expected: ({ price, cash }) => discountPrice(price) * (cash.toLowerCase() === "ja" ? 0.97 : 1),
+              errorMessage: "Ziehe 3 % nur bei Barzahlung ab und verwende den Rabattpreis aus D5."
+            }
+          ],
+          fillGroups: [
+            { sourceRange: "D5", targetRange: "D5:D34", highlightTarget: false, incompleteMessage: "Fülle die Rabattformel aus D5 bis D34 aus." },
+            { sourceRange: "F5", targetRange: "F5:F34", highlightTarget: false, incompleteMessage: "Fülle die Skontoformel aus F5 bis F34 aus." }
+          ],
+          successMessage: "Sehr gut! Sonderrabatt und Skonto werden für alle Teppiche richtig berechnet."
+        };
+      })();
+    </script>
+    <script src="tabellenkalkulation.js?v=20260821"></script>
+  </body>
+</html>
