@@ -145,9 +145,10 @@ test("Aufgabe 3 ist verlinkt und nutzt die vorhandene semantische Aufgaben-ID", 
 
 test("Aufgabenseite besitzt eindeutige IDs, gültige lokale Links und responsive Breakpoints", async () => {
   const pageUrl = new URL("../../aufgabe3.html", import.meta.url);
-  const [page, css] = await Promise.all([
+  const [page, css, script] = await Promise.all([
     readFile(pageUrl, "utf8"),
     readFile(new URL("../task3.css", import.meta.url), "utf8"),
+    readFile(new URL("../ui/task3.mjs", import.meta.url), "utf8"),
   ]);
   const ids = [...page.matchAll(/\bid="([^"]+)"/g)].map((match) => match[1]);
   assert.equal(new Set(ids).size, ids.length, "HTML-IDs müssen eindeutig sein");
@@ -164,4 +165,18 @@ test("Aufgabenseite besitzt eindeutige IDs, gültige lokale Links und responsive
   }
 
   ["1050px", "760px", "430px"].forEach((breakpoint) => assert.match(css, new RegExp(breakpoint)));
+  assert.match(page, /id="split-intro"/);
+  assert.match(page, /id="erster-split"[^>]*hidden/);
+  assert.match(page, /id="intro-before"/);
+  assert.match(page, /id="intro-blue-errors"/);
+  assert.match(page, /id="intro-orange-errors"/);
+  assert.match(page, /class="fish-tree-builder-layout"/);
+  assert.match(page, /class="fish-tree-toolbox"/);
+  assert.match(css, /@keyframes intro-separate/);
+  assert.match(css, /\.fish-tree-toolbox \{ position: sticky;/);
+  assert.match(css, /\.fish-tree-viewport \{ height: calc\(100vh - 125px\);/);
+  assert.match(script, /renderIntroUnsplit\(true\)/);
+  assert.match(script, /renderIntroSplit\("blue"\)/);
+  assert.match(script, /renderIntroSplit\("orange"\)/);
+  assert.match(script, /queueIntro\(13700, finishIntro\)/);
 });

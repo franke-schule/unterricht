@@ -10,7 +10,7 @@
     <link rel="stylesheet" href="entscheidungbaeume/task3.css?v=20260820a">
     <script type="module" src="entscheidungbaeume/ui/task3.mjs?v=20260820a"></script>
   </head>
-  <body class="decision-tree-page dt-fish-page">
+  <body class="decision-tree-page dt-fish-page is-intro-active">
     <div class="site-backdrop" aria-hidden="true"></div>
     <main class="page-shell decision-tree-shell">
       <nav class="topbar" aria-label="Navigation">
@@ -27,6 +27,48 @@
         <p>Zähle Fehlklassifikationen, vergleiche den Informationsgewinn und baue daraus dein Modell.</p>
       </header>
 
+      <section id="split-intro" class="fish-intro" aria-labelledby="split-intro-title">
+        <div class="fish-intro-heading">
+          <div>
+            <p class="fish-kicker">Vorbereitung auf Schritt 1</p>
+            <h2 id="split-intro-title">Wie entsteht die Fehlerzahl?</h2>
+            <p id="intro-explanation" aria-live="polite">Zuerst betrachtet der Baum alle Trainingsfische als eine einzige Gruppe.</p>
+          </div>
+          <button id="skip-intro" class="dt-secondary-button" type="button">Animation überspringen</button>
+        </div>
+
+        <div class="fish-intro-progress" aria-label="Ablauf der Erklärung">
+          <span data-intro-progress="unsplit">1 · Ohne Split</span>
+          <span data-intro-progress="split">2 · Schuppenfarbe</span>
+          <span data-intro-progress="table">3 · Tabelle ausfüllen</span>
+        </div>
+
+        <div class="fish-intro-workspace">
+          <div class="fish-intro-visual">
+            <div id="intro-tree" class="intro-tree" aria-label="Entscheidungsbaum während der Erklärung"></div>
+            <div id="intro-fish-stage" class="intro-fish-stage" aria-label="Trainingsfische während der Erklärung"></div>
+          </div>
+
+          <div class="intro-table-card">
+            <p class="fish-kicker">Beispieltabelle</p>
+            <h3>Schuppenfarbe</h3>
+            <div class="fish-table-scroll">
+              <table class="fish-table intro-table">
+                <thead><tr><th>Attributwert / Label</th><th>Friedlich</th><th>Feindselig</th><th>Fehler</th></tr></thead>
+                <tbody>
+                  <tr><th colspan="3">Fehler vor dem Aufteilen</th><td id="intro-before" data-intro-cell>–</td></tr>
+                  <tr><th>Blau</th><td id="intro-blue-peaceful" data-intro-cell>–</td><td id="intro-blue-hostile" data-intro-cell>–</td><td id="intro-blue-errors" data-intro-cell>–</td></tr>
+                  <tr><th>Orange</th><td id="intro-orange-peaceful" data-intro-cell>–</td><td id="intro-orange-hostile" data-intro-cell>–</td><td id="intro-orange-errors" data-intro-cell>–</td></tr>
+                  <tr><th colspan="3">Gesamtfehler nach dem Aufteilen</th><td id="intro-after" data-intro-cell>–</td></tr>
+                </tbody>
+              </table>
+            </div>
+            <div class="intro-gain">Informationsgewinn: <strong id="intro-gain" data-intro-cell>–</strong></div>
+            <p id="intro-table-note" class="intro-table-note">Die Tabelle wird passend zur Animation ausgefüllt.</p>
+          </div>
+        </div>
+      </section>
+
       <nav class="fish-progress" aria-label="Fortschritt Aufgabe 3a">
         <a href="#erster-split" data-progress="tables"><span>1</span>Erster Split</a>
         <a href="#teilmengen" data-progress="subsets"><span>2</span>Teilmengen</a>
@@ -35,22 +77,32 @@
       </nav>
       <p id="save-status" class="fish-save-status" role="status" aria-live="polite">Dein Bearbeitungsstand wird in diesem Browser gespeichert.</p>
 
-      <section id="erster-split" class="fish-step" aria-labelledby="first-title">
+      <section id="erster-split" class="fish-step" aria-labelledby="first-title" hidden>
         <div class="fish-step-heading">
-          <span class="fish-step-number">Schritt 1</span>
+          <div class="fish-step-labels">
+            <span class="fish-step-number">Schritt 1</span>
+            <button id="replay-intro" class="fish-replay-button" type="button">Erklärung wiederholen</button>
+          </div>
           <div>
             <h2 id="first-title">Welches Attribut trennt die Daten am besten?</h2>
             <p>Untersuche alle neun Trainingsfische. Für jede Gruppe gilt: Der Baum wählt das häufigere Label; die kleinere Gruppe zählt als Fehler.</p>
           </div>
         </div>
-        <div class="fish-dataset-summary" aria-label="Gesamtdatensatz">
-          <strong>9 Trainingsfische</strong><span>4 friedlich</span><span>5 feindselig</span><span>4 Fehler ohne Split</span>
-        </div>
-        <div id="fish-all" class="fish-grid" aria-label="Alle Trainingsfische"></div>
-        <div id="tables-all" class="fish-table-grid"></div>
-        <div class="fish-step-actions">
-          <button class="dt-primary-button" id="check-all-tables" type="button">Eingaben überprüfen</button>
-          <div id="all-tables-feedback" class="dt-feedback" role="status" aria-live="polite" hidden></div>
+        <div class="fish-first-layout">
+          <aside class="fish-training-sticky" aria-labelledby="training-fish-title">
+            <p class="fish-kicker">Beim Ausfüllen sichtbar</p>
+            <h3 id="training-fish-title">Trainingsfische</h3>
+            <div class="fish-dataset-summary" aria-label="Gesamtdatensatz">
+              <strong>9 Trainingsfische</strong><span>4 friedlich</span><span>5 feindselig</span><span>4 Fehler ohne Split</span>
+            </div>
+            <div id="fish-all" class="fish-grid" aria-label="Alle Trainingsfische"></div>
+          </aside>
+          <div class="fish-first-tables">
+            <div id="tables-all" class="fish-table-grid"></div>
+            <div class="fish-step-actions">
+              <div id="all-tables-feedback" class="dt-feedback" role="status" aria-live="polite" hidden></div>
+            </div>
+          </div>
         </div>
 
         <section id="root-choice" class="fish-choice-card" aria-labelledby="root-choice-title" hidden>
@@ -122,14 +174,21 @@
             <div><span>Dein Modell</span><h2>Fisch-Entscheidungsbaum</h2></div>
             <button class="dt-danger-button" id="reset-fish-tree" type="button">Baum zurücksetzen</button>
           </div>
-          <div class="dt-palette">
-            <div class="dt-palette-heading"><h3>Bausteine</h3><span>ziehen oder anklicken</span></div>
-            <div id="fish-feature-palette" class="dt-palette-buttons"></div>
-            <div id="fish-leaf-palette" class="dt-leaf-palette"></div>
-          </div>
-          <p id="fish-tree-status" class="dt-interaction-status" role="status" aria-live="polite">Wähle einen Baustein oder ziehe ihn in die leere Wurzel.</p>
-          <div class="dt-tree-viewport fish-tree-viewport" aria-label="Arbeitsfläche für den Fisch-Entscheidungsbaum">
-            <div id="fish-tree-editor" class="dt-tree-editor"></div>
+          <div class="fish-tree-builder-layout">
+            <aside class="fish-tree-toolbox" aria-labelledby="fish-toolbox-title">
+              <div class="dt-palette">
+                <div class="dt-palette-heading"><h3 id="fish-toolbox-title">Bausteine</h3><span>ziehen oder anklicken</span></div>
+                <div id="fish-feature-palette" class="dt-palette-buttons"></div>
+                <div id="fish-leaf-palette" class="dt-leaf-palette"></div>
+              </div>
+              <p class="fish-toolbox-hint">Die Werkzeugleiste bleibt beim Scrollen des Baums erreichbar.</p>
+              <p id="fish-tree-status" class="dt-interaction-status" role="status" aria-live="polite">Wähle einen Baustein oder ziehe ihn in die leere Wurzel.</p>
+            </aside>
+            <div class="fish-tree-canvas">
+              <div class="dt-tree-viewport fish-tree-viewport" aria-label="Arbeitsfläche für den Fisch-Entscheidungsbaum">
+                <div id="fish-tree-editor" class="dt-tree-editor"></div>
+              </div>
+            </div>
           </div>
           <div class="dt-check-area">
             <button class="dt-primary-button" id="check-fish-tree" type="button">Entscheidungsbaum überprüfen</button>

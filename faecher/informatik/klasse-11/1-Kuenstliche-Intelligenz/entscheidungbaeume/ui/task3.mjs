@@ -39,6 +39,7 @@ const tableGroups = Object.freeze({
 });
 
 const blankState = () => ({
+  introComplete: false,
   answers: {},
   hints: {},
   completedTables: {},
@@ -62,6 +63,7 @@ function loadState() {
 
 const state = loadState();
 const treeInteraction = { selectedTool: null, pendingTargetPath: null, movingSourcePath: null };
+let introTimers = [];
 
 function saveState(message = "Bearbeitungsstand gespeichert.") {
   try {
@@ -72,9 +74,7 @@ function saveState(message = "Bearbeitungsstand gespeichert.") {
   }
 }
 
-function fishCard(entry) {
-  const card = document.createElement("article");
-  card.className = "fish-card";
+function createFishShape(entry) {
   const shape = document.createElement("div");
   shape.className = `fish-shape${entry.features.patternNone ? "" : " has-points"}`;
   shape.style.setProperty("--scale-color", entry.features.scalesBlue ? "var(--fish-blue)" : "var(--fish-orange)");
@@ -82,6 +82,13 @@ function fishCard(entry) {
   shape.style.setProperty("--fin-color", entry.features.finsYellow ? "var(--fish-yellow)" : "var(--fish-red)");
   shape.setAttribute("role", "img");
   shape.setAttribute("aria-label", `${entry.values.scalesBlue}, ${entry.values.patternNone === "Punkte" ? "mit Punkten" : "ohne Muster"}, Bauch ${entry.values.bellyBlack}, Flossen ${entry.values.finsYellow}`);
+  return shape;
+}
+
+function fishCard(entry) {
+  const card = document.createElement("article");
+  card.className = "fish-card";
+  const shape = createFishShape(entry);
   const label = document.createElement("span");
   label.className = `fish-card-label ${entry.classification === FISH_LABELS.PEACEFUL ? "peaceful" : "hostile"}`;
   label.textContent = entry.classification;
@@ -94,6 +101,147 @@ function fishCard(entry) {
 function renderFish(containerId, dataset) {
   const container = document.querySelector(`#${containerId}`);
   container.replaceChildren(...dataset.map(fishCard));
+}
+
+function introFishToken(entry, markErrors = false) {
+  const token = document.createElement("div");
+  token.className = `intro-fish-token${markErrors && entry.classification === FISH_LABELS.PEACEFUL ? " is-error" : ""}`;
+  const label = document.createElement("small");
+  label.textContent = `${entry.id} · ${entry.classification}`;
+  token.append(createFishShape(entry), label);
+  return token;
+}
+
+function setIntroProgress(activeStep) {
+  const order = ["unsplit", "split", "table"];
+  const activeIndex = order.indexOf(activeStep);
+  document.querySelectorAll("[data-intro-progress]").forEach((item) => {
+    const index = order.indexOf(item.dataset.introProgress);
+    item.classList.toggle("is-active", index === activeIndex);
+    item.classList.toggle("is-complete", index < activeIndex);
+  });
+}
+
+function resetIntroTable() {
+  document.querySelectorAll("[data-intro-cell]").forEach((cell) => {
+    cell.textContent = "–";
+    cell.classList.remove("is-filled", "is-current");
+  });
+  document.querySelector("#intro-table-note").textContent = "Die Tabelle wird passend zur Animation ausgefüllt.";
+}
+
+function fillIntroCells(values, note) {
+  document.querySelectorAll("[data-intro-cell]").forEach((cell) => cell.classList.remove("is-current"));
+  Object.entries(values).forEach(([id, value]) => {
+    const cell = document.querySelector(`#${id}`);
+    cell.textContent = value;
+    cell.classList.add("is-filled", "is-current");
+  });
+  document.querySelector("#intro-table-note").textContent = note;
+}
+
+function renderIntroUnsplit(markErrors = false) {
+  document.querySelector("#intro-tree").innerHTML = `
+    <div class="intro-tree-unsplit">
+      <div class="intro-tree-node">Alle 9 Fische</div>
+      <span class="intro-tree-arrow" aria-hidden="true">→</span>
+      <div class="intro-tree-leaf">Mehrheit: feindselig</div>
+    </div>`;
+  const group = document.createElement("div");
+  group.className = "intro-fish-group";
+  group.append(...FISH_DATASET.map((entry) => introFishToken(entry, markErrors)));
+  document.querySelector("#intro-fish-stage").replaceChildren(group);
+}
+
+function introFishGroup(title, dataset, className) {
+  const group = document.createElement("section");
+  group.className = `intro-fish-group ${className}`;
+  const heading = document.createElement("h3");
+  heading.className = "intro-group-title";
+  heading.textContent = `${title} · ${dataset.length} Fische`;
+  group.append(heading, ...dataset.map((entry) => introFishToken(entry)));
+  return group;
+}
+
+function renderIntroSplit(focus = "") {
+  document.querySelector("#intro-tree").innerHTML = `
+    <div class="intro-tree-split">
+      <div class="intro-tree-node">Schuppenfarbe</div>
+      <div class="intro-tree-branches"><span class="intro-tree-branch">Blau</span><span class="intro-tree-branch">Orange</span></div>
+    </div>`;
+  const groups = document.createElement("div");
+  groups.className = "intro-fish-groups";
+  const blue = introFishGroup("Blau", subsets.blue, "blue");
+  const orange = introFishGroup("Orange", subsets.orange, "orange");
+  if (focus === "blue") blue.classList.add("is-focus");
+  if (focus === "orange") orange.classList.add("is-focus");
+  groups.append(blue, orange);
+  document.querySelector("#intro-fish-stage").replaceChildren(groups);
+}
+
+function clearIntroTimers() {
+  introTimers.forEach((timer) => clearTimeout(timer));
+  introTimers = [];
+}
+
+function queueIntro(delay, action) {
+  const reducedMotion = matchMedia("(prefers-reduced-motion: reduce)").matches;
+  introTimers.push(setTimeout(action, delay * (reducedMotion ? 0.35 : 1)));
+}
+
+function finishIntro() {
+  clearIntroTimers();
+  state.introComplete = true;
+  saveState("Einführung abgeschlossen. Dein Bearbeitungsstand wird gespeichert.");
+  document.body.classList.remove("is-intro-active");
+  document.querySelector("#split-intro").hidden = true;
+  const firstStep = document.querySelector("#erster-split");
+  firstStep.hidden = false;
+  updateUnlocks();
+  const behavior = matchMedia("(prefers-reduced-motion: reduce)").matches ? "auto" : "smooth";
+  requestAnimationFrame(() => firstStep.scrollIntoView({ behavior, block: "start" }));
+}
+
+function startIntro() {
+  clearIntroTimers();
+  state.introComplete = false;
+  saveState("Einführung wird gezeigt.");
+  document.body.classList.add("is-intro-active");
+  document.querySelector("#split-intro").hidden = false;
+  document.querySelector("#erster-split").hidden = true;
+  resetIntroTable();
+  setIntroProgress("unsplit");
+  renderIntroUnsplit();
+  document.querySelector("#intro-explanation").textContent = "Ohne Split gehören alle neun Fische zu einer Gruppe. Die Mehrheit ist feindselig: 5 zu 4.";
+
+  queueIntro(1800, () => {
+    renderIntroUnsplit(true);
+    fillIntroCells({ "intro-before": 4 }, "Die vier friedlichen Fische wären mit dem Mehrheitslabel falsch eingeordnet. Deshalb tragen wir oben 4 Fehler ein.");
+    document.querySelector("#intro-explanation").textContent = "Der Baum würde ohne Aufteilung immer „feindselig“ vorhersagen. Die vier friedlichen Fische sind dadurch Fehlklassifikationen.";
+  });
+  queueIntro(4800, () => {
+    setIntroProgress("split");
+    renderIntroSplit();
+    document.querySelector("#intro-explanation").textContent = "Nun teilt der Knoten Schuppenfarbe die Fische in eine blaue und eine orange Teilmenge.";
+    document.querySelector("#intro-table-note").textContent = "Die Fehler vor dem Split bleiben 4. Jetzt zählen wir die beiden neuen Gruppen getrennt.";
+  });
+  queueIntro(6900, () => {
+    setIntroProgress("table");
+    renderIntroSplit("blue");
+    fillIntroCells({ "intro-blue-peaceful": 3, "intro-blue-hostile": 2, "intro-blue-errors": 2 }, "Blau: 3 friedlich, 2 feindselig. Die kleinere Gruppe liefert 2 Fehler.");
+    document.querySelector("#intro-explanation").textContent = "Bei den blauen Fischen ist friedlich das Mehrheitslabel. Zwei feindselige Fische würden falsch eingeordnet.";
+  });
+  queueIntro(9000, () => {
+    renderIntroSplit("orange");
+    fillIntroCells({ "intro-orange-peaceful": 1, "intro-orange-hostile": 3, "intro-orange-errors": 1 }, "Orange: 1 friedlich, 3 feindselig. Die kleinere Gruppe liefert 1 Fehler.");
+    document.querySelector("#intro-explanation").textContent = "Bei den orangen Fischen ist feindselig das Mehrheitslabel. Hier entsteht nur ein Fehler.";
+  });
+  queueIntro(11100, () => {
+    renderIntroSplit();
+    fillIntroCells({ "intro-after": 3, "intro-gain": 1 }, "Nach dem Split entstehen 2 + 1 = 3 Fehler. Der Informationsgewinn beträgt 4 − 3 = 1.");
+    document.querySelector("#intro-explanation").textContent = "Der Split senkt die Fehlerzahl von 4 auf 3. Genau diese Verringerung ist hier der Informationsgewinn.";
+  });
+  queueIntro(13700, finishIntro);
 }
 
 const fields = [
@@ -125,6 +273,13 @@ function numericInput(groupId, featureKey, field, label) {
     if (groupId === "all") state.rootComplete = false;
     else state.treeComplete = false;
     input.classList.remove("is-correct", "is-wrong");
+    const tableCard = document.querySelector(`[data-table-key="${groupId}.${featureKey}"]`);
+    const check = tableCard?.querySelector("[data-table-check]");
+    if (check) {
+      check.checked = false;
+      check.disabled = false;
+    }
+    tableCard?.classList.remove("is-complete");
     saveState();
     updateUnlocks();
   });
@@ -201,7 +356,25 @@ function renderTable(groupId, featureKey) {
   feedback.className = "fish-field-feedback";
   feedback.dataset.tableFeedback = `${groupId}.${featureKey}`;
   if (state.completedTables[`${groupId}.${featureKey}`]) feedback.textContent = `✓ Vollständig richtig: Informationsgewinn ${expected.informationGain}.`;
-  card.append(header, help, scroll, gainRow, feedback);
+  card.append(header, help, scroll, gainRow);
+  if (groupId === "all") {
+    const checkLabel = document.createElement("label");
+    checkLabel.className = "fish-table-check";
+    const check = document.createElement("input");
+    check.type = "checkbox";
+    check.checked = Boolean(state.completedTables[`${groupId}.${featureKey}`]);
+    check.disabled = check.checked;
+    check.dataset.tableCheck = `${groupId}.${featureKey}`;
+    check.addEventListener("change", () => {
+      if (!check.checked) return;
+      checkSingleTable(groupId, featureKey, check);
+    });
+    const checkText = document.createElement("span");
+    checkText.textContent = "Tabelle überprüfen";
+    checkLabel.append(check, checkText);
+    card.append(checkLabel);
+  }
+  card.append(feedback);
   return card;
 }
 
@@ -252,6 +425,25 @@ function checkTableGroup(groupId, feedbackId) {
   saveState();
   updateUnlocks();
   return complete;
+}
+
+function checkSingleTable(groupId, featureKey, checkbox) {
+  const complete = checkTable(groupId, featureKey);
+  checkbox.checked = complete;
+  checkbox.disabled = complete;
+  const completedCount = tableGroups[groupId].features.filter(
+    (feature) => state.completedTables[`${groupId}.${feature}`],
+  ).length;
+  const feedback = document.querySelector("#all-tables-feedback");
+  feedback.hidden = false;
+  feedback.className = `dt-feedback ${groupComplete(groupId) ? "success" : complete ? "incomplete" : "wrong"}`;
+  feedback.textContent = groupComplete(groupId)
+    ? "Alle vier Tabellen sind korrekt. Vergleiche nun die Informationsgewinne."
+    : complete
+      ? `Diese Tabelle stimmt. ${completedCount} von ${tableGroups[groupId].features.length} Tabellen sind vollständig geprüft.`
+      : "Die Tabelle enthält noch abweichende Werte. Korrigiere die rot markierten Felder und aktiviere die Checkbox danach erneut.";
+  saveState();
+  updateUnlocks();
 }
 
 function groupComplete(groupId) {
@@ -620,7 +812,6 @@ document.querySelector("#algorithm-answer").addEventListener("input", (event) =>
   saveState();
   updateUnlocks();
 });
-document.querySelector("#check-all-tables").addEventListener("click", () => checkTableGroup("all", "all-tables-feedback"));
 document.querySelector("#check-blue-tables").addEventListener("click", () => checkTableGroup("blue", "blue-tables-feedback"));
 document.querySelector("#check-orange-tables").addEventListener("click", () => checkTableGroup("orange", "orange-tables-feedback"));
 document.querySelector("#check-deep-tables").addEventListener("click", () => checkTableGroup("bluePoints", "deep-tables-feedback"));
@@ -631,6 +822,19 @@ document.querySelector("#reset-fish-tree").addEventListener("click", () => {
 document.querySelector("#check-fish-tree").addEventListener("click", checkFishTree);
 document.querySelector("#check-algorithm").addEventListener("click", checkAlgorithm);
 document.querySelector("#entropy-quiz-form").addEventListener("submit", checkQuiz);
+document.querySelector("#skip-intro").addEventListener("click", finishIntro);
+document.querySelector("#replay-intro").addEventListener("click", () => {
+  startIntro();
+  document.querySelector("#split-intro").scrollIntoView({ behavior: "smooth", block: "start" });
+});
+window.addEventListener("pagehide", clearIntroTimers);
 renderFishTree();
 renderQuiz();
 updateUnlocks();
+if (!state.introComplete && location.hash !== "#entropie") {
+  startIntro();
+} else {
+  document.body.classList.remove("is-intro-active");
+  document.querySelector("#split-intro").hidden = true;
+  document.querySelector("#erster-split").hidden = false;
+}

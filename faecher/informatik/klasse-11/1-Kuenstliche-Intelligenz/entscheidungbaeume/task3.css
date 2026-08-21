@@ -8,6 +8,70 @@
 .dt-fish-hero { margin-bottom: 20px; }
 .dt-fish-hero h1 { font-size: clamp(2.1rem, 5.4vw, 4.7rem); }
 
+.is-intro-active .fish-progress,
+.is-intro-active .fish-save-status,
+.is-intro-active #entropie { display: none; }
+
+.fish-intro {
+  width: min(1220px, 100%);
+  margin: 0 auto 32px;
+  padding: clamp(20px, 3vw, 32px);
+  border: 1px solid #cad6e8;
+  border-radius: 22px;
+  background: linear-gradient(145deg, rgba(247, 250, 255, 0.98), rgba(251, 247, 255, 0.98));
+  box-shadow: 0 22px 54px rgba(30, 41, 59, 0.11);
+}
+
+.fish-intro[hidden] { display: none; }
+.fish-intro-heading { display: flex; align-items: flex-start; justify-content: space-between; gap: 20px; }
+.fish-intro-heading h2 { margin: 0; font-size: clamp(1.7rem, 3.4vw, 2.6rem); letter-spacing: -0.03em; }
+.fish-intro-heading p:not(.fish-kicker) { max-width: 760px; margin: 8px 0 0; color: var(--dt-muted); font-size: 1.02rem; line-height: 1.55; }
+.fish-intro-progress { display: grid; grid-template-columns: repeat(3, 1fr); gap: 7px; margin: 22px 0 18px; }
+.fish-intro-progress span { padding: 8px 10px; border-radius: 9px; color: #6b7483; background: #e7ebf2; font-size: 0.75rem; font-weight: 900; text-align: center; }
+.fish-intro-progress span.is-active { color: #fff; background: linear-gradient(135deg, var(--dt-blue), var(--dt-violet)); }
+.fish-intro-progress span.is-complete { color: #08705a; background: #dff5ed; }
+
+.fish-intro-workspace { display: grid; grid-template-columns: minmax(0, 1.15fr) minmax(390px, 0.85fr); gap: 18px; align-items: stretch; }
+.fish-intro-visual, .intro-table-card { min-width: 0; padding: 18px; border: 1px solid #d6dfeb; border-radius: 17px; background: rgba(255, 255, 255, 0.94); }
+.fish-intro-visual { display: grid; grid-template-rows: auto 1fr; gap: 16px; }
+.intro-tree { min-height: 105px; display: grid; place-items: center; padding: 10px; border-radius: 13px; background: #f0f4fb; }
+.intro-tree-unsplit { display: flex; align-items: center; gap: 12px; animation: intro-appear 450ms ease both; }
+.intro-tree-arrow { color: #7b8798; font-size: 1.5rem; font-weight: 900; }
+.intro-tree-node, .intro-tree-leaf { padding: 9px 14px; border: 2px solid #9cafdb; border-radius: 11px; color: #243d77; background: #fff; font-weight: 900; text-align: center; }
+.intro-tree-leaf { color: #8b222b; border-color: #e0a0a5; background: #fff1f2; }
+.intro-tree-split { display: grid; justify-items: center; animation: intro-appear 550ms ease both; }
+.intro-tree-branches { position: relative; display: grid; grid-template-columns: repeat(2, minmax(100px, 1fr)); gap: 55px; padding-top: 27px; }
+.intro-tree-branches::before { content: ""; position: absolute; top: 9px; left: 25%; right: 25%; height: 18px; border-top: 2px solid #8090a8; border-left: 2px solid #8090a8; border-right: 2px solid #8090a8; }
+.intro-tree-branch { position: relative; z-index: 1; padding: 5px 12px; border-radius: 999px; color: #42516a; background: #fff; font-size: 0.76rem; font-weight: 900; text-align: center; }
+
+.intro-fish-stage { min-height: 270px; display: grid; align-items: stretch; }
+.intro-fish-group { display: grid; grid-template-columns: repeat(5, minmax(64px, 1fr)); gap: 8px; align-content: center; padding: 12px; border: 2px solid #ccd5e2; border-radius: 15px; background: #fafcff; }
+.intro-fish-groups { display: grid; grid-template-columns: 5fr 4fr; gap: 12px; }
+.intro-fish-groups .intro-fish-group { grid-template-columns: repeat(2, minmax(62px, 1fr)); align-content: start; animation: intro-separate 700ms cubic-bezier(.2,.75,.25,1) both; }
+.intro-fish-groups .intro-fish-group.orange { animation-delay: 120ms; }
+.intro-group-title { grid-column: 1 / -1; margin: 0 0 2px; font-size: 0.85rem; text-align: center; }
+.intro-fish-token { position: relative; display: grid; min-height: 82px; place-items: center; border: 2px solid transparent; border-radius: 12px; background: #f2f5fa; transition: opacity 350ms ease, transform 350ms ease, border-color 350ms ease; }
+.intro-fish-token .fish-shape { margin: 5px 0 10px; transform: scale(0.7); }
+.intro-fish-token small { position: absolute; right: 4px; bottom: 3px; left: 4px; overflow: hidden; color: var(--dt-muted); font-size: 0.6rem; font-weight: 850; text-align: center; text-overflow: ellipsis; white-space: nowrap; }
+.intro-fish-token.is-error { border-color: #d94f55; background: #fff0f0; animation: intro-error-pulse 700ms ease both; }
+.intro-fish-token.is-error::after { content: "Fehler"; position: absolute; top: 3px; right: 3px; padding: 2px 5px; border-radius: 999px; color: #fff; background: #c63f49; font-size: 0.53rem; font-weight: 900; }
+.intro-fish-group.is-focus { border-color: var(--dt-blue); box-shadow: 0 0 0 4px rgba(40, 86, 198, 0.11); }
+
+.intro-table-card h3 { margin: 0 0 12px; }
+.intro-table td[data-intro-cell], .intro-gain strong { min-width: 48px; color: #8a94a3; background: #f1f3f6; font-size: 1rem; font-weight: 950; }
+.intro-table td[data-intro-cell].is-filled, .intro-gain strong.is-filled { color: #174e9a; background: #e5efff; animation: intro-cell-pop 500ms cubic-bezier(.2,.8,.25,1.2) both; }
+.intro-table td[data-intro-cell].is-current, .intro-gain strong.is-current { outline: 3px solid #e1ad32; outline-offset: -3px; background: #fff6d9; }
+.intro-gain { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-top: 12px; font-weight: 900; }
+.intro-gain strong { display: inline-grid; min-width: 70px; min-height: 38px; place-items: center; border-radius: 8px; }
+.intro-table-note { min-height: 2.7rem; margin: 12px 0 0; color: var(--dt-muted); font-size: 0.8rem; line-height: 1.45; }
+.fish-step-labels { display: grid; justify-items: start; gap: 7px; flex: 0 0 auto; }
+.fish-replay-button { padding: 0; border: 0; color: var(--dt-blue); background: transparent; font: inherit; font-size: 0.7rem; font-weight: 850; text-decoration: underline; cursor: pointer; }
+
+@keyframes intro-appear { from { opacity: 0; transform: translateY(-8px); } to { opacity: 1; transform: none; } }
+@keyframes intro-separate { from { opacity: 0; transform: translateX(18px) scale(0.96); } to { opacity: 1; transform: none; } }
+@keyframes intro-error-pulse { 0% { transform: scale(1); } 45% { transform: scale(1.07); } 100% { transform: scale(1); } }
+@keyframes intro-cell-pop { from { opacity: 0.2; transform: scale(0.75); } to { opacity: 1; transform: scale(1); } }
+
 .fish-progress {
   position: sticky;
   z-index: 20;
@@ -99,6 +163,33 @@
   font-size: 0.83rem;
 }
 
+.fish-first-layout {
+  display: grid;
+  grid-template-columns: minmax(310px, 350px) minmax(0, 1fr);
+  gap: 18px;
+  align-items: start;
+}
+
+.fish-training-sticky {
+  position: sticky;
+  top: 92px;
+  max-height: calc(100vh - 110px);
+  overflow-y: auto;
+  padding: 16px;
+  border: 1px solid #d8e0eb;
+  border-radius: 17px;
+  background: linear-gradient(180deg, #f7faff, #fff);
+  scrollbar-width: thin;
+}
+
+.fish-training-sticky h3 { margin: 0 0 13px; font-size: 1.2rem; }
+.fish-training-sticky .fish-dataset-summary { gap: 6px; margin-bottom: 14px; }
+.fish-training-sticky .fish-dataset-summary > * { padding: 6px 9px; font-size: 0.72rem; }
+.fish-training-sticky .fish-grid { grid-template-columns: repeat(3, minmax(76px, 1fr)); gap: 7px; margin-bottom: 0; }
+.fish-training-sticky .fish-card { min-height: 120px; padding-inline: 5px; }
+.fish-training-sticky .fish-shape { transform: scale(0.88); }
+.fish-first-tables { min-width: 0; }
+
 .fish-grid { display: grid; grid-template-columns: repeat(9, minmax(82px, 1fr)); gap: 9px; margin-bottom: 25px; }
 .fish-grid.compact { grid-template-columns: repeat(auto-fit, minmax(90px, 1fr)); margin-bottom: 18px; }
 .fish-card {
@@ -177,6 +268,26 @@
 .fish-number-input.is-wrong { border-color: #d24e58; background: #fff1f2; }
 .fish-number-input:focus { outline: 3px solid rgba(40, 86, 198, 0.18); border-color: var(--dt-blue); }
 .fish-gain-row { display: grid; grid-template-columns: 1fr 100px; align-items: center; gap: 12px; margin-top: 12px; font-weight: 850; }
+.fish-table-check {
+  display: flex;
+  min-height: 46px;
+  align-items: center;
+  gap: 10px;
+  margin-top: 14px;
+  padding: 10px 13px;
+  border: 1px solid #b9c7dc;
+  border-radius: 11px;
+  color: var(--dt-blue);
+  background: #fff;
+  font-size: 0.84rem;
+  font-weight: 900;
+  cursor: pointer;
+}
+.fish-table-check:hover { border-color: var(--dt-blue); background: var(--dt-blue-soft); }
+.fish-table-check:focus-within { outline: 3px solid rgba(40, 86, 198, 0.18); }
+.fish-table-check input { width: 20px; height: 20px; flex: 0 0 auto; accent-color: var(--dt-safe); cursor: pointer; }
+.fish-table-check input:disabled { cursor: default; }
+.fish-table-card.is-complete .fish-table-check { color: #08705a; border-color: #70bca8; background: #ebfaf5; }
 .fish-field-feedback { min-height: 1.2rem; margin: 10px 0 0; color: var(--dt-muted); font-size: 0.77rem; line-height: 1.45; }
 .fish-step-actions { margin-top: 20px; }
 .fish-step-actions .dt-feedback, .fish-subset-card .dt-feedback, .fish-deep-card .dt-feedback { margin-top: 12px; }
@@ -207,7 +318,13 @@
 
 .fish-tree-editor-card { padding: 20px; }
 .fish-tree-reference span { border-radius: 11px; }
-.fish-tree-viewport { min-height: 570px; }
+.fish-tree-builder-layout { display: grid; grid-template-columns: minmax(220px, 270px) minmax(0, 1fr); gap: 18px; align-items: start; }
+.fish-tree-toolbox { position: sticky; top: 92px; max-height: calc(100vh - 110px); overflow-y: auto; scrollbar-width: thin; }
+.fish-tree-toolbox .dt-palette { margin: 0; }
+.fish-toolbox-hint { margin: 10px 4px 0; color: var(--dt-muted); font-size: 0.75rem; line-height: 1.45; }
+.fish-tree-toolbox .dt-interaction-status { margin: 10px 0 0; }
+.fish-tree-canvas { min-width: 0; }
+.fish-tree-viewport { height: calc(100vh - 125px); min-height: 570px; max-height: 720px; }
 .fish-tree-viewport .dt-tree-editor { min-height: 520px; }
 .fish-tree-editor-card .dt-tree-node.leaf.peaceful { color: #08705a; border-color: #87cbb9; background: #edfaf6; }
 .fish-tree-editor-card .dt-tree-node.leaf.hostile { color: #8b222b; border-color: #e0a0a5; background: #fff1f2; }
@@ -268,25 +385,53 @@
 .quiz-summary strong { display: block; color: #3151a1; }
 
 @media (max-width: 1050px) {
+  .fish-intro-workspace { grid-template-columns: 1fr; }
+  .intro-fish-stage { min-height: 230px; }
+  .fish-first-layout { grid-template-columns: 1fr; }
+  .fish-training-sticky { position: static; max-height: none; overflow: visible; }
+  .fish-training-sticky .fish-grid { grid-template-columns: repeat(5, minmax(86px, 1fr)); }
   .fish-grid { grid-template-columns: repeat(5, minmax(86px, 1fr)); }
   .fish-subset-layout, .entropy-intro { grid-template-columns: 1fr; }
 }
 
+@media (max-width: 900px) {
+  .fish-tree-builder-layout { grid-template-columns: 1fr; }
+  .fish-tree-toolbox { position: static; max-height: none; overflow: visible; }
+  .fish-tree-toolbox .dt-palette-buttons { display: flex; flex-wrap: wrap; }
+  .fish-tree-viewport { height: 560px; min-height: 480px; }
+}
+
 @media (max-width: 760px) {
+  .fish-intro-heading { display: grid; }
+  .fish-intro-heading .dt-secondary-button { justify-self: start; }
+  .fish-intro-progress { grid-template-columns: 1fr; }
+  .intro-fish-group { grid-template-columns: repeat(3, minmax(64px, 1fr)); }
+  .intro-fish-groups { grid-template-columns: 1fr; }
+  .intro-fish-groups .intro-fish-group { grid-template-columns: repeat(3, minmax(62px, 1fr)); }
   .fish-progress a { justify-content: center; padding: 8px; font-size: 0; }
   .fish-progress a span { font-size: 0.8rem; }
   .fish-step { padding: 18px 14px; border-radius: 17px; }
   .fish-step-heading { display: grid; gap: 10px; }
+  .fish-training-sticky .fish-grid { grid-template-columns: repeat(3, minmax(82px, 1fr)); }
   .fish-grid { grid-template-columns: repeat(3, minmax(82px, 1fr)); }
   .fish-table-grid, .fish-choice-grid, .entropy-formula-grid, .entropy-example { grid-template-columns: 1fr; }
   .entropy-example blockquote { grid-column: auto; }
   .fish-text-meta { display: grid; }
-  .fish-tree-viewport { min-height: 480px; }
+  .fish-tree-viewport { height: 500px; min-height: 440px; }
 }
 
 @media (max-width: 430px) {
+  .fish-training-sticky .fish-grid { grid-template-columns: repeat(2, minmax(80px, 1fr)); }
   .fish-grid { grid-template-columns: repeat(2, minmax(80px, 1fr)); }
   .entropy-extremes { grid-template-columns: 1fr; }
   .fish-subset-card, .fish-choice-card, .fish-deep-card, .entropy-quiz { padding: 14px; }
 }
 
+@media (prefers-reduced-motion: reduce) {
+  .intro-tree-unsplit,
+  .intro-tree-split,
+  .intro-fish-groups .intro-fish-group,
+  .intro-fish-token.is-error,
+  .intro-table td[data-intro-cell].is-filled,
+  .intro-gain strong.is-filled { animation: none; }
+}
