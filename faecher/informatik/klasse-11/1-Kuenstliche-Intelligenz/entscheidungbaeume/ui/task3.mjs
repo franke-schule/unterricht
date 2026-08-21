@@ -38,8 +38,19 @@ const tableGroups = Object.freeze({
   bluePoints: { container: "tables-blue-points", features: ["bellyBlack", "finsYellow"] },
 });
 
+const STEP_DEFINITIONS = Object.freeze([
+  { id: "tables", panelId: "erster-split" },
+  { id: "blue", panelId: "teilmenge-blau" },
+  { id: "orange", panelId: "teilmenge-orange" },
+  { id: "deep", panelId: "letzter-split" },
+  { id: "tree", panelId: "baum-bauen" },
+  { id: "algorithm", panelId: "algorithmus" },
+  { id: "entropy", panelId: "entropie" },
+]);
+
 const blankState = () => ({
   introComplete: false,
+  activeStep: "tables",
   answers: {},
   hints: {},
   completedTables: {},
@@ -192,14 +203,14 @@ function queueIntro(delay, action) {
 function finishIntro() {
   clearIntroTimers();
   state.introComplete = true;
+  state.activeStep = "tables";
   saveState("Einführung abgeschlossen. Dein Bearbeitungsstand wird gespeichert.");
   document.body.classList.remove("is-intro-active");
+  document.body.classList.add("tabs-ready");
   document.querySelector("#split-intro").hidden = true;
-  const firstStep = document.querySelector("#erster-split");
-  firstStep.hidden = false;
   updateUnlocks();
   const behavior = matchMedia("(prefers-reduced-motion: reduce)").matches ? "auto" : "smooth";
-  requestAnimationFrame(() => firstStep.scrollIntoView({ behavior, block: "start" }));
+  requestAnimationFrame(() => document.querySelector(".fish-progress").scrollIntoView({ behavior, block: "start" }));
 }
 
 function startIntro() {
@@ -207,8 +218,9 @@ function startIntro() {
   state.introComplete = false;
   saveState("Einführung wird gezeigt.");
   document.body.classList.add("is-intro-active");
+  document.body.classList.remove("tabs-ready");
   document.querySelector("#split-intro").hidden = false;
-  document.querySelector("#erster-split").hidden = true;
+  document.querySelectorAll("[data-step-panel]").forEach((panel) => { panel.hidden = true; });
   resetIntroTable();
   setIntroProgress("unsplit");
   renderIntroUnsplit();
@@ -450,33 +462,65 @@ function groupComplete(groupId) {
   return tableGroups[groupId].features.every((feature) => state.completedTables[`${groupId}.${feature}`]);
 }
 
-function updateProgress() {
-  const stages = {
-    tables: groupComplete("all") && state.rootComplete,
-    subsets: groupComplete("blue") && groupComplete("orange") && groupComplete("bluePoints"),
-    tree: state.treeComplete,
-    algorithm: state.algorithmComplete,
-  };
-  let foundCurrent = false;
-  document.querySelectorAll("[data-progress]").forEach((link) => {
-    const complete = stages[link.dataset.progress];
-    link.classList.toggle("is-complete", complete);
-    const current = !complete && !foundCurrent;
-    link.classList.toggle("is-current", current);
-    if (current) foundCurrent = true;
+function stepIsAvailable(stepId) {
+  if (stepId === "tables" || stepId === "entropy") return true;
+  if (stepId === "blue") return state.rootComplete;
+  if (stepId === "orange") return state.rootComplete && groupComplete("blue");
+  if (stepId === "deep") return state.rootComplete && groupComplete("blue") && groupComplete("orange");
+  if (stepId === "tree") return state.rootComplete && groupComplete("blue") && groupComplete("orange") && groupComplete("bluePoints");
+  if (stepId === "algorithm") return state.treeComplete;
+  return false;
+}
+
+function stepIsComplete(stepId) {
+  if (stepId === "tables") return groupComplete("all") && state.rootComplete;
+  if (stepId === "blue") return groupComplete("blue");
+  if (stepId === "orange") return groupComplete("orange");
+  if (stepId === "deep") return groupComplete("bluePoints");
+  if (stepId === "tree") return state.treeComplete;
+  if (stepId === "algorithm") return state.algorithmComplete;
+  if (stepId === "entropy") return state.quizComplete;
+  return false;
+}
+
+function latestAvailableRegularStep() {
+  return [...STEP_DEFINITIONS]
+    .filter((step) => step.id !== "entropy" && stepIsAvailable(step.id))
+    .at(-1)?.id ?? "tables";
+}
+
+function renderStepTabs() {
+  if (!stepIsAvailable(state.activeStep)) state.activeStep = latestAvailableRegularStep();
+  const introActive = document.body.classList.contains("is-intro-active");
+  document.querySelectorAll("[data-step-tab]").forEach((tab) => {
+    const stepId = tab.dataset.stepTab;
+    const active = !introActive && stepId === state.activeStep;
+    tab.disabled = !stepIsAvailable(stepId);
+    tab.setAttribute("aria-selected", String(active));
+    tab.tabIndex = active ? 0 : -1;
+    tab.classList.toggle("is-complete", stepIsComplete(stepId));
   });
+  document.querySelectorAll("[data-step-panel]").forEach((panel) => {
+    panel.hidden = introActive || panel.dataset.stepPanel !== state.activeStep;
+  });
+}
+
+function showStep(stepId, { updateHash = true } = {}) {
+  if (!stepIsAvailable(stepId)) return;
+  state.activeStep = stepId;
+  saveState(`Reiter ${stepId} geöffnet.`);
+  renderStepTabs();
+  const definition = STEP_DEFINITIONS.find((step) => step.id === stepId);
+  const panel = document.querySelector(`#${definition.panelId}`);
+  panel.scrollTop = 0;
+  if (updateHash) history.replaceState(null, "", `#${definition.panelId}`);
 }
 
 function updateUnlocks() {
   const allComplete = groupComplete("all");
   document.querySelector("#root-choice").hidden = !allComplete;
-  document.querySelector("#teilmengen").hidden = !state.rootComplete;
-  const subsetComplete = groupComplete("blue") && groupComplete("orange");
-  document.querySelector("#deep-split").hidden = !subsetComplete;
-  document.querySelector("#baum-bauen").hidden = !(subsetComplete && groupComplete("bluePoints"));
-  document.querySelector("#algorithmus").hidden = !state.treeComplete;
   document.querySelector("#task3a-complete").hidden = !(state.treeComplete && state.algorithmComplete);
-  updateProgress();
+  renderStepTabs();
 }
 
 function chooseRoot(event) {
@@ -822,6 +866,25 @@ document.querySelector("#reset-fish-tree").addEventListener("click", () => {
 document.querySelector("#check-fish-tree").addEventListener("click", checkFishTree);
 document.querySelector("#check-algorithm").addEventListener("click", checkAlgorithm);
 document.querySelector("#entropy-quiz-form").addEventListener("submit", checkQuiz);
+document.querySelectorAll("[data-step-tab]").forEach((tab) => {
+  tab.addEventListener("click", () => showStep(tab.dataset.stepTab));
+  tab.addEventListener("keydown", (event) => {
+    if (!["ArrowLeft", "ArrowRight", "Home", "End"].includes(event.key)) return;
+    const enabledTabs = [...document.querySelectorAll("[data-step-tab]:not(:disabled)")];
+    const currentIndex = enabledTabs.indexOf(tab);
+    const nextIndex = event.key === "Home"
+      ? 0
+      : event.key === "End"
+        ? enabledTabs.length - 1
+        : (currentIndex + (event.key === "ArrowRight" ? 1 : -1) + enabledTabs.length) % enabledTabs.length;
+    event.preventDefault();
+    enabledTabs[nextIndex]?.focus();
+    enabledTabs[nextIndex]?.click();
+  });
+});
+document.querySelectorAll("[data-open-step]").forEach((button) => {
+  button.addEventListener("click", () => showStep(button.dataset.openStep));
+});
 document.querySelector("#skip-intro").addEventListener("click", finishIntro);
 document.querySelector("#replay-intro").addEventListener("click", () => {
   startIntro();
@@ -835,6 +898,10 @@ if (!state.introComplete && location.hash !== "#entropie") {
   startIntro();
 } else {
   document.body.classList.remove("is-intro-active");
+  document.body.classList.add("tabs-ready");
   document.querySelector("#split-intro").hidden = true;
-  document.querySelector("#erster-split").hidden = false;
+  const requestedStep = STEP_DEFINITIONS.find((step) => `#${step.panelId}` === location.hash)?.id;
+  if (requestedStep && stepIsAvailable(requestedStep)) state.activeStep = requestedStep;
+  if (!stepIsAvailable(state.activeStep)) state.activeStep = latestAvailableRegularStep();
+  renderStepTabs();
 }

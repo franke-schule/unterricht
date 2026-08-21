@@ -7,8 +7,8 @@
     <title>Aufgabe 3 – Entscheidungsbaum erstellen | Informatik 11</title>
     <link rel="stylesheet" href="../../../../styles.css?v=20260707">
     <link rel="stylesheet" href="entscheidungbaeume/styles.css?v=20260820g">
-    <link rel="stylesheet" href="entscheidungbaeume/task3.css?v=20260820a">
-    <script type="module" src="entscheidungbaeume/ui/task3.mjs?v=20260820a"></script>
+    <link rel="stylesheet" href="entscheidungbaeume/task3.css?v=20260821b">
+    <script type="module" src="entscheidungbaeume/ui/task3.mjs?v=20260821b"></script>
   </head>
   <body class="decision-tree-page dt-fish-page is-intro-active">
     <div class="site-backdrop" aria-hidden="true"></div>
@@ -69,15 +69,18 @@
         </div>
       </section>
 
-      <nav class="fish-progress" aria-label="Fortschritt Aufgabe 3a">
-        <a href="#erster-split" data-progress="tables"><span>1</span>Erster Split</a>
-        <a href="#teilmengen" data-progress="subsets"><span>2</span>Teilmengen</a>
-        <a href="#baum-bauen" data-progress="tree"><span>3</span>Baum bauen</a>
-        <a href="#algorithmus" data-progress="algorithm"><span>4</span>Algorithmus</a>
+      <nav class="fish-progress" role="tablist" aria-label="Arbeitsschritte Aufgabe 3">
+        <button id="tab-tables" type="button" role="tab" data-step-tab="tables" aria-controls="erster-split"><span>1</span>Erster Split</button>
+        <button id="tab-blue" type="button" role="tab" data-step-tab="blue" aria-controls="teilmenge-blau"><span>2a</span>Blau</button>
+        <button id="tab-orange" type="button" role="tab" data-step-tab="orange" aria-controls="teilmenge-orange"><span>2b</span>Orange</button>
+        <button id="tab-deep" type="button" role="tab" data-step-tab="deep" aria-controls="letzter-split"><span>2c</span>Letzter Split</button>
+        <button id="tab-tree" type="button" role="tab" data-step-tab="tree" aria-controls="baum-bauen"><span>3</span>Baum</button>
+        <button id="tab-algorithm" type="button" role="tab" data-step-tab="algorithm" aria-controls="algorithmus"><span>4</span>Algorithmus</button>
+        <button id="tab-entropy" type="button" role="tab" data-step-tab="entropy" aria-controls="entropie"><span>3b</span>Entropie</button>
       </nav>
       <p id="save-status" class="fish-save-status" role="status" aria-live="polite">Dein Bearbeitungsstand wird in diesem Browser gespeichert.</p>
 
-      <section id="erster-split" class="fish-step" aria-labelledby="first-title" hidden>
+      <section id="erster-split" class="fish-step fish-tab-panel" role="tabpanel" tabindex="0" aria-labelledby="tab-tables first-title" data-step-panel="tables" hidden>
         <div class="fish-step-heading">
           <div class="fish-step-labels">
             <span class="fish-step-number">Schritt 1</span>
@@ -118,37 +121,47 @@
         </section>
       </section>
 
-      <section id="teilmengen" class="fish-step" aria-labelledby="subsets-title" hidden>
+      <section id="teilmenge-blau" class="fish-step fish-tab-panel fish-subset-panel" role="tabpanel" tabindex="0" aria-labelledby="tab-blue blue-subset-title" data-step-panel="blue" hidden>
         <div class="fish-step-heading">
-          <span class="fish-step-number">Schritt 2</span>
+          <span class="fish-step-number">Schritt 2a</span>
           <div>
-            <h2 id="subsets-title">Die Teilmengen erneut untersuchen</h2>
-            <p>Der erste Knoten ist <strong>Schuppenfarbe</strong>. Berechne nun für Blau und Orange den besten nächsten Split.</p>
+            <h2 id="blue-subset-title">Die blaue Teilmenge untersuchen</h2>
+            <p>Der erste Knoten ist <strong>Schuppenfarbe</strong>. Berechne für die fünf blauen Fische den besten nächsten Split.</p>
           </div>
         </div>
-        <div class="fish-subset-layout">
-          <article class="fish-subset-card blue">
-            <header><div><p class="fish-kicker">Teilmenge Blau</p><h3>5 Fische · 2 Fehler vorher</h3></div><span class="fish-color-dot blue" aria-hidden="true"></span></header>
-            <div id="fish-blue" class="fish-grid compact" aria-label="Blaue Trainingsfische"></div>
-            <div id="tables-blue" class="fish-table-grid compact"></div>
-            <button class="dt-primary-button" id="check-blue-tables" type="button">Blaue Teilmenge überprüfen</button>
-            <div id="blue-tables-feedback" class="dt-feedback" role="status" aria-live="polite" hidden></div>
-          </article>
-          <article class="fish-subset-card orange">
-            <header><div><p class="fish-kicker">Teilmenge Orange</p><h3>4 Fische · 1 Fehler vorher</h3></div><span class="fish-color-dot orange" aria-hidden="true"></span></header>
-            <div id="fish-orange" class="fish-grid compact" aria-label="Orange Trainingsfische"></div>
-            <div id="tables-orange" class="fish-table-grid compact"></div>
-            <button class="dt-primary-button" id="check-orange-tables" type="button">Orange Teilmenge überprüfen</button>
-            <div id="orange-tables-feedback" class="dt-feedback" role="status" aria-live="polite" hidden></div>
-          </article>
-        </div>
+        <article class="fish-subset-card blue">
+          <header><div><p class="fish-kicker">Teilmenge Blau</p><h3>5 Fische · 2 Fehler vorher</h3></div><span class="fish-color-dot blue" aria-hidden="true"></span></header>
+          <div id="fish-blue" class="fish-grid compact" aria-label="Blaue Trainingsfische"></div>
+          <div id="tables-blue" class="fish-table-grid compact"></div>
+          <button class="dt-primary-button" id="check-blue-tables" type="button">Blaue Teilmenge überprüfen</button>
+          <div id="blue-tables-feedback" class="dt-feedback" role="status" aria-live="polite" hidden></div>
+        </article>
+      </section>
 
-        <section id="deep-split" class="fish-deep-card" aria-labelledby="deep-title" hidden>
+      <section id="teilmenge-orange" class="fish-step fish-tab-panel fish-subset-panel" role="tabpanel" tabindex="0" aria-labelledby="tab-orange orange-subset-title" data-step-panel="orange" hidden>
+        <div class="fish-step-heading">
+          <span class="fish-step-number">Schritt 2b</span>
           <div>
-            <p class="fish-kicker">Noch nicht rein</p>
-            <h3 id="deep-title">Blau und Muster = Punkte</h3>
-            <p>Bei <strong>Muster = Ohne</strong> sind beide Fische friedlich: Dort entsteht sofort ein Blatt. Die drei Fische mit Punkten benötigen noch einen Split.</p>
+            <h2 id="orange-subset-title">Die orange Teilmenge untersuchen</h2>
+            <p>Berechne für die vier orangen Fische den besten nächsten Split.</p>
           </div>
+        </div>
+        <article class="fish-subset-card orange">
+          <header><div><p class="fish-kicker">Teilmenge Orange</p><h3>4 Fische · 1 Fehler vorher</h3></div><span class="fish-color-dot orange" aria-hidden="true"></span></header>
+          <div id="fish-orange" class="fish-grid compact" aria-label="Orange Trainingsfische"></div>
+          <div id="tables-orange" class="fish-table-grid compact"></div>
+          <button class="dt-primary-button" id="check-orange-tables" type="button">Orange Teilmenge überprüfen</button>
+          <div id="orange-tables-feedback" class="dt-feedback" role="status" aria-live="polite" hidden></div>
+        </article>
+      </section>
+
+      <section id="letzter-split" class="fish-step fish-tab-panel" role="tabpanel" tabindex="0" aria-labelledby="tab-deep deep-title" data-step-panel="deep" hidden>
+        <div class="fish-step-heading">
+          <span class="fish-step-number">Schritt 2c</span>
+          <div><h2 id="deep-title">Blau und Muster = Punkte</h2><p>Entscheide, wann ein Blatt genügt und wo noch einmal aufgeteilt werden muss.</p></div>
+        </div>
+        <section class="fish-deep-card">
+          <div><p class="fish-kicker">Noch nicht rein</p><p>Bei <strong>Muster = Ohne</strong> sind beide Fische friedlich: Dort entsteht sofort ein Blatt. Die drei Fische mit Punkten benötigen noch einen Split.</p></div>
           <div id="fish-blue-points" class="fish-grid compact" aria-label="Blaue Fische mit Punkten"></div>
           <div id="tables-blue-points" class="fish-table-grid compact"></div>
           <button class="dt-primary-button" id="check-deep-tables" type="button">Letzten Split überprüfen</button>
@@ -156,7 +169,7 @@
         </section>
       </section>
 
-      <section id="baum-bauen" class="fish-step" aria-labelledby="tree-title" hidden>
+      <section id="baum-bauen" class="fish-step fish-tab-panel" role="tabpanel" tabindex="0" aria-labelledby="tab-tree tree-title" data-step-panel="tree" hidden>
         <div class="fish-step-heading">
           <span class="fish-step-number">Schritt 3</span>
           <div>
@@ -197,7 +210,7 @@
         </section>
       </section>
 
-      <section id="algorithmus" class="fish-step" aria-labelledby="algorithm-title" hidden>
+      <section id="algorithmus" class="fish-step fish-tab-panel" role="tabpanel" tabindex="0" aria-labelledby="tab-algorithm algorithm-title" data-step-panel="algorithm" hidden>
         <div class="fish-step-heading">
           <span class="fish-step-number">Schritt 4</span>
           <div>
@@ -214,16 +227,15 @@
           <summary>Hilfe zum Algorithmus</summary>
           <p>Denke an diese drei Fragen: Wie wird ein Attribut ausgewählt? Was geschieht mit den entstehenden Teilmengen? Wann wird ein Blatt erzeugt?</p>
         </details>
+        <section id="task3a-complete" class="dt-remember fish-complete" hidden aria-labelledby="complete-title">
+          <p class="fish-kicker">Merke</p>
+          <h2 id="complete-title">Aufgabe 3a abgeschlossen</h2>
+          <p>Ein Entscheidungsbaum entsteht schrittweise. In jedem Knoten wird ein möglichst geeignetes Attribut ausgewählt. Anschließend wird das Verfahren für die entstandenen Teilmengen wiederholt.</p>
+          <button class="dt-secondary-button" type="button" data-open-step="entropy">Optional weiter zu Aufgabe 3b</button>
+        </section>
       </section>
 
-      <section id="task3a-complete" class="dt-remember fish-complete" hidden aria-labelledby="complete-title">
-        <p class="fish-kicker">Merke</p>
-        <h2 id="complete-title">Aufgabe 3a abgeschlossen</h2>
-        <p>Ein Entscheidungsbaum entsteht schrittweise. In jedem Knoten wird ein möglichst geeignetes Attribut ausgewählt. In diesem Beispiel ist das Attribut am besten geeignet, das die Anzahl der Fehlklassifikationen am stärksten reduziert. Anschließend wird das Verfahren für die entstandenen Teilmengen wiederholt.</p>
-        <a class="dt-secondary-button" href="#entropie">Optional weiter zu Aufgabe 3b</a>
-      </section>
-
-      <section id="entropie" class="fish-step fish-extension" aria-labelledby="entropy-title">
+      <section id="entropie" class="fish-step fish-extension fish-tab-panel" role="tabpanel" tabindex="0" aria-labelledby="tab-entropy entropy-title" data-step-panel="entropy" hidden>
         <div class="fish-extension-badge">Optional · Für die Schnellen</div>
         <div class="fish-step-heading">
           <span class="fish-step-number">Aufgabe 3b</span>

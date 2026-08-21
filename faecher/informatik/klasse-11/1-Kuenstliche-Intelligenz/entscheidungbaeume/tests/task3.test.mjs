@@ -166,6 +166,9 @@ test("Aufgabenseite besitzt eindeutige IDs, gültige lokale Links und responsive
 
   ["1050px", "760px", "430px"].forEach((breakpoint) => assert.match(css, new RegExp(breakpoint)));
   assert.match(page, /id="split-intro"/);
+  assert.match(page, /class="fish-progress" role="tablist"/);
+  assert.equal([...page.matchAll(/data-step-tab="[^"]+"/g)].length, 7);
+  assert.equal([...page.matchAll(/data-step-panel="[^"]+"/g)].length, 7);
   assert.match(page, /id="erster-split"[^>]*hidden/);
   assert.match(page, /id="intro-before"/);
   assert.match(page, /id="intro-blue-errors"/);
@@ -175,6 +178,8 @@ test("Aufgabenseite besitzt eindeutige IDs, gültige lokale Links und responsive
   assert.match(css, /@keyframes intro-separate/);
   assert.match(css, /\.fish-tree-toolbox \{ position: sticky;/);
   assert.match(css, /\.fish-tree-viewport \{ height: calc\(100vh - 125px\);/);
+  assert.match(css, /\.tabs-ready \.fish-tab-panel/);
+  assert.match(script, /function showStep\(stepId/);
   assert.match(script, /renderIntroUnsplit\(true\)/);
   assert.match(script, /renderIntroSplit\("blue"\)/);
   assert.match(script, /renderIntroSplit\("orange"\)/);
