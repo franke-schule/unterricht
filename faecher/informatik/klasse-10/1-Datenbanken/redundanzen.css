@@ -139,11 +139,13 @@ code { font-family: "SFMono-Regular", Consolas, "Liberation Mono", monospace; }
 @keyframes split-in { from { opacity: 0; transform: scale(0.96); } }
 
 .class-card-layout { display: grid; grid-template-columns: minmax(190px, 0.7fr) minmax(300px, 1.5fr) minmax(190px, 0.7fr); align-items: start; gap: 22px; }
-.class-card { overflow: hidden; border: 2px solid #526a84; border-radius: 8px; background: white; box-shadow: 0 12px 24px rgba(31, 55, 84, 0.1); }
+.class-card { overflow: hidden; border: 2px solid #526a84; border-radius: 0; background: white; box-shadow: 0 12px 24px rgba(31, 55, 84, 0.1); }
 .class-card h3 { margin: 0; padding: 11px 14px; border-bottom: 2px solid #526a84; background: #edf3f9; text-align: center; font-family: "SFMono-Regular", Consolas, monospace; }
 .class-card ul { list-style: none; padding: 0; margin: 0; }
 .class-card li { padding: 9px 13px; border-bottom: 1px solid #dce3eb; font-family: "SFMono-Regular", Consolas, monospace; font-size: 0.86rem; }
 .class-card li:last-child { border-bottom: 0; }
+.class-card .fixed-attribute { display: flex; align-items: center; justify-content: space-between; gap: 8px; background: #f2f6fa; color: #1f4568; font-weight: 800; }
+.class-card .fixed-attribute span { color: #6b7c90; font-family: Inter, ui-sans-serif, system-ui, sans-serif; font-size: 0.66rem; font-weight: 700; letter-spacing: 0.035em; text-transform: uppercase; }
 .placeholder-row { color: #8a97a7; font-style: italic; }
 .class-card-task { padding: 20px; border: 1px solid var(--db-line); border-radius: 16px; background: var(--db-soft); }
 .class-card-task p { margin-top: 0; line-height: 1.5; }

@@ -5,7 +5,7 @@ const STEP_TITLES = [
   "Probleme",
   "Tabellen aufteilen",
   "Klassenkarte",
-  "Tabellen verbinden",
+  "Datensätze korrekt verbinden",
   "Sicherung",
 ];
 
@@ -25,19 +25,17 @@ const STEP3_CHOICES = [
 ];
 
 const ASSIGNMENT_FIELDS = [
-  { key: "userId", label: "id", target: "users" },
   { key: "username", label: "username", target: "users" },
   { key: "email", label: "email", target: "users" },
-  { key: "photoId", label: "id", target: "photos" },
-  { key: "user_id", label: "user_id", target: "photos" },
   { key: "description", label: "description", target: "photos" },
   { key: "url", label: "url", target: "photos" },
   { key: "created_at", label: "created_at", target: "photos" },
   { key: "updated_at", label: "updated_at", target: "photos" },
 ];
 
-const PHOTO_FIELDS = ["id", "user_id", "description", "url", "created_at", "updated_at"];
-const CLASS_CARD_OPTIONS = [...PHOTO_FIELDS, "username", "email", "city"];
+const FIXED_PHOTO_FIELDS = ["id", "user_id[users]"];
+const SELECTABLE_PHOTO_FIELDS = ["description", "url", "created_at", "updated_at"];
+const CLASS_CARD_OPTIONS = [...SELECTABLE_PHOTO_FIELDS, "username", "email", "city"];
 
 const DEFAULT_STATE = {
   currentStep: 1,
@@ -59,6 +57,7 @@ const DEFAULT_STATE = {
 };
 
 let state = loadState();
+state.step5.selected = state.step5.selected.filter((field) => CLASS_CARD_OPTIONS.includes(field));
 let example = null;
 let draggedAttribute = null;
 
@@ -460,7 +459,7 @@ function renderStep4() {
       document.getElementById("split-visual").hidden = false;
       markComplete(4);
     } else if (wrong.some((field) => !state.step4.assignments[field.key] || state.step4.assignments[field.key] === "pool")) {
-      setFeedback(4, "hint", "Ordne zuerst alle Karten zu. Tipp: user_id verrät beim Foto, zu welchem Benutzer es gehört.");
+      setFeedback(4, "hint", "Ordne zuerst alle Karten zu. Frage dich: Beschreibt das Attribut den Benutzer oder ein einzelnes Foto?");
     } else {
       setFeedback(4, "hint", "Noch nicht ganz. Frage bei jeder Karte: Beschreibt dieses Attribut die Person oder ein einzelnes Foto?");
     }
@@ -483,23 +482,24 @@ function renderStep5() {
     renderStep5();
   }));
   const selected = CLASS_CARD_OPTIONS.filter((field) => state.step5.selected.includes(field));
-  document.getElementById("photos-class-list").innerHTML = selected.length
+  const fixedRows = FIXED_PHOTO_FIELDS.map((field) => `<li class="fixed-attribute">${field} <span>vorgegeben</span></li>`).join("");
+  document.getElementById("photos-class-list").innerHTML = fixedRows + (selected.length
     ? selected.map((field) => `<li>${field}</li>`).join("")
-    : '<li class="placeholder-row">Attribute auswählen …</li>';
+    : '<li class="placeholder-row">Weitere Attribute auswählen …</li>');
   document.getElementById("check-step5").onclick = () => {
     state.step5.checked = true;
-    const correct = PHOTO_FIELDS.every((field) => state.step5.selected.includes(field)) && state.step5.selected.every((field) => PHOTO_FIELDS.includes(field));
+    const correct = SELECTABLE_PHOTO_FIELDS.every((field) => state.step5.selected.includes(field)) && state.step5.selected.every((field) => SELECTABLE_PHOTO_FIELDS.includes(field));
     if (correct) {
-      setFeedback(5, "success", "Klassenkarte vollständig: Jedes Foto erhält eine eigene id und verweist mit user_id auf seinen Benutzer.");
+      setFeedback(5, "success", "Klassenkarte vollständig: Die vier übrigen Fotoattribute sind richtig ergänzt.");
       markComplete(5);
     } else if (state.step5.selected.some((field) => ["username", "email", "city"].includes(field))) {
       setFeedback(5, "hint", "Einige ausgewählte Attribute beschreiben den Benutzer. Sie gehören bereits in die Klassenkarte users.");
     } else {
-      setFeedback(5, "hint", "Es fehlen noch Fotoattribute. Denke neben Beschreibung und URL auch an Kennnummer, Zuordnung und Zeitpunkte.");
+      setFeedback(5, "hint", "Es fehlen noch Fotoattribute. Denke neben Beschreibung und URL auch an Erstellungs- und Aktualisierungszeitpunkt.");
     }
     saveState();
   };
-  if (state.step5.checked && state.completed.includes(5)) setFeedback(5, "success", "Klassenkarte vollständig: Jedes Foto erhält eine eigene id und verweist mit user_id auf seinen Benutzer.");
+  if (state.step5.checked && state.completed.includes(5)) setFeedback(5, "success", "Klassenkarte vollständig: Die vier übrigen Fotoattribute sind richtig ergänzt.");
 }
 
 function renderStep6() {
@@ -641,13 +641,14 @@ function renderSummary() {
     ]),
     summarySection(4, "Tabellen aufteilen", "Ordne die Attribute users oder photos zu.", [
       ["Deine Zuordnung", groupedAssignments],
-      ["Richtiges Ergebnis", "users: id, username, email | photos: id, user_id, description, url, created_at, updated_at"],
+      ["Richtiges Ergebnis", "users: username, email | photos: description, url, created_at, updated_at"],
     ]),
     summarySection(5, "Klassenkarte", "Vervollständige die Klassenkarte photos.", [
       ["Deine Auswahl", state.step5.selected.join(", ") || "Noch keine Auswahl"],
-      ["Richtiges Ergebnis", PHOTO_FIELDS.join(", ")],
+      ["Fest vorgegeben", FIXED_PHOTO_FIELDS.join(", ")],
+      ["Richtiges Ergebnis", SELECTABLE_PHOTO_FIELDS.join(", ")],
     ]),
-    summarySection(6, "Verbindung der Tabellen", "Woran erkennt die Datenbank den Benutzer eines Fotos?", [
+    summarySection(6, "Datensätze korrekt verbinden", "Woran erkennt die Datenbank den Benutzer eines Fotos?", [
       ["Deine Antwort", labelsFor(state.step6.answer ? [state.step6.answer] : [], [["email", "erneut gespeicherte E-Mail"], ["photo-id", "photos.id"], ["user-id", "photos.user_id ↔ users.id"]])],
       ["Richtiges Ergebnis", "users.id ↔ photos.user_id"],
     ]),

@@ -40,6 +40,11 @@ a {
   text-decoration: none;
 }
 
+/* Klassenkarten sind im gesamten Projekt eckig; Rundungen kennzeichnen Objektkarten. */
+:where(.class-card, .uml-card, [data-card-kind="class"]) {
+  border-radius: 0 !important;
+}
+
 .site-backdrop {
   position: fixed;
   inset: 0;

@@ -5,9 +5,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="robots" content="noindex, nofollow">
     <title>Aufgabe 2 – Redundanzen in Datenbanken | Informatik 10</title>
-    <link rel="stylesheet" href="../../../../styles.css?v=20260709">
-    <link rel="stylesheet" href="redundanzen.css?v=20260822a">
-    <script type="module" src="redundanzen.js?v=20260822b"></script>
+    <link rel="stylesheet" href="../../../../styles.css?v=20260822">
+    <link rel="stylesheet" href="redundanzen.css?v=20260822b">
+    <script type="module" src="redundanzen.js?v=20260822c"></script>
   </head>
   <body class="redundancy-page">
     <div class="site-backdrop" aria-hidden="true"></div>
@@ -129,14 +129,18 @@
               <ul><li>id</li><li>username</li><li>email</li></ul>
             </article>
             <div class="class-card-task">
-              <p>Wähle alle Attribute aus, die zur Klassenkarte <code>photos</code> gehören.</p>
+              <p><code>id</code> und <code>user_id[users]</code> sind bereits vorgegeben. Wähle nur die übrigen Attribute von <code>photos</code> aus.</p>
               <div id="class-card-options" class="attribute-bank"></div>
               <button class="primary-button" id="check-step5" type="button">Klassenkarte prüfen</button>
               <p id="feedback-step5" class="feedback" aria-live="polite"></p>
             </div>
             <article class="class-card photos-card" aria-label="Klassenkarte photos">
               <h3>photos</h3>
-              <ul id="photos-class-list"><li class="placeholder-row">Attribute auswählen …</li></ul>
+              <ul id="photos-class-list">
+                <li class="fixed-attribute">id <span>vorgegeben</span></li>
+                <li class="fixed-attribute">user_id[users] <span>vorgegeben</span></li>
+                <li class="placeholder-row">Weitere Attribute auswählen …</li>
+              </ul>
             </article>
           </div>
         </section>
@@ -144,7 +148,7 @@
         <section id="step-6" class="step-panel" role="tabpanel" aria-labelledby="tab-6" hidden>
           <div class="step-heading">
             <span class="step-number">6</span>
-            <div><p class="step-kicker">Tabellen verbinden</p><h2>Zu wem gehört das Foto?</h2></div>
+            <div><p class="step-kicker">Zu wem gehört das Foto?</p><h2>Datensätze korrekt verbinden</h2></div>
           </div>
           <div id="relation-tables" class="relation-stage"></div>
           <div class="task-card">

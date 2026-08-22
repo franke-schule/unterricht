@@ -170,7 +170,21 @@ Alle anderen Positionen sind Tarn-/Pruefzeichen. Bei neuen Codes:
   - Uebereinstimmung zwischen HTML und Dekodier-PDF pruefen.
 
 
-5. Barrierearmut und Rueckmeldungen
+5. Klassenkarten und Objektkarten
+---------------------------------
+
+Klassenkarten und Objektkarten muessen visuell eindeutig unterscheidbar sein:
+
+  - Klassenkarten besitzen immer eckige Ecken (`border-radius: 0`).
+  - Objektkarten duerfen und sollen abgerundete Ecken besitzen.
+  - Fuer Klassenkarten bevorzugt die gemeinsamen Selektoren `.class-card`,
+    `.uml-card` oder das Attribut `data-card-kind="class"` verwenden.
+  - Eine lokale Komponentenregel darf die eckigen Ecken einer Klassenkarte
+    nicht wieder ueberschreiben.
+  - Neue oder geaenderte Klassenkarten und Objektkarten visuell pruefen.
+
+
+6. Barrierearmut und Rueckmeldungen
 ----------------------------------
 
 Beibehalten:
@@ -187,7 +201,7 @@ Richtig/falsch darf nicht ausschliesslich durch Farbe vermittelt werden. Immer
 zusaetzlich eine konkrete Textmeldung anzeigen.
 
 
-6. Abschlusspruefung
+7. Abschlusspruefung
 --------------------
 
 Vor Abschluss mindestens pruefen:
