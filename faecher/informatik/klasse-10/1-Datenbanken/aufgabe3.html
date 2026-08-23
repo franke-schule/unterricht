@@ -1,0 +1,962 @@
+<!doctype html>
+<html lang="de">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="robots" content="noindex, nofollow">
+    <title>Aufgabe 3 – 1:n-Beziehungen und Fremdschlüssel | Informatik 10</title>
+    <link rel="stylesheet" href="../../../../styles.css?v=20260822">
+    <link rel="stylesheet" href="redundanzen.css?v=20260822c">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Fira+Code:wght@400;500;700&display=swap" rel="stylesheet">
+    <style>
+      /* Zusätzliches CSS für Aufgabe 3 */
+      .class-diagram {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 20px;
+        margin: 30px 0;
+        font-family: 'Fira Code', monospace;
+      }
+      .diagram-box {
+        border: 2px solid var(--db-blue);
+        border-radius: 8px;
+        background: white;
+        min-width: 200px;
+      }
+      .diagram-box h3 {
+        margin: 0;
+        padding: 10px;
+        background: #edf3f9;
+        border-bottom: 2px solid var(--db-blue);
+        text-align: center;
+        color: #1f4568;
+      }
+      .diagram-box ul {
+        list-style: none;
+        padding: 0;
+        margin: 0;
+      }
+      .diagram-box li {
+        padding: 8px 12px;
+        border-bottom: 1px solid var(--db-line);
+        font-size: 0.9rem;
+      }
+      .diagram-box li:last-child {
+        border-bottom: none;
+      }
+      .diagram-connection {
+        display: flex;
+        align-items: center;
+        flex-grow: 1;
+        position: relative;
+        height: 2px;
+        background: var(--db-blue);
+        min-width: 100px;
+      }
+      .diagram-connection::after {
+        content: '';
+        position: absolute;
+        right: 0;
+        top: -4px;
+        border-left: 10px solid var(--db-blue);
+        border-top: 5px solid transparent;
+        border-bottom: 5px solid transparent;
+      }
+      .diagram-label {
+        position: absolute;
+        top: -25px;
+        font-weight: bold;
+        color: var(--db-blue);
+      }
+      .diagram-label.left { left: 10px; }
+      .diagram-label.right { right: 10px; }
+      
+      .table-container {
+        display: flex;
+        gap: 20px;
+        align-items: flex-start;
+        margin-bottom: 20px;
+        flex-wrap: wrap;
+      }
+      .code-gap {
+        background: #ffffff;
+        border: none;
+        border-bottom: 2px solid #64748b;
+        color: #92400e;
+        font-family: 'Fira Code', monospace;
+        padding: 2px 6px;
+        text-align: center;
+        outline: none;
+        width: 100px;
+      }
+      .code-gap.correct {
+        border-bottom-color: #22c55e;
+        color: #22c55e;
+        background: rgba(34, 197, 94, 0.1);
+      }
+      .code-gap.wrong {
+        border-bottom-color: #ef4444;
+      }
+      
+      /* Animation FK */
+      .fk-animation-container {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 30px;
+        margin: 30px 0;
+        position: relative;
+        flex-wrap: wrap;
+      }
+      .anim-table {
+        border-collapse: collapse;
+        background: white;
+      }
+      .anim-table th, .anim-table td {
+        border: 1px solid var(--db-line);
+        padding: 8px 12px;
+        font-family: 'Fira Code', monospace;
+        font-size: 0.85rem;
+      }
+      .anim-table th { background: #fafcff; }
+      .highlight-pk { background: #fff8df; border: 2px solid var(--db-gold) !important; font-weight: bold;}
+      .highlight-fk { background: #eef6ff; border: 2px solid var(--db-blue) !important; font-weight: bold;}
+      
+      .animated-arrow {
+        font-size: 2rem;
+        color: var(--db-blue);
+        animation: arrowPulse 1.5s ease-in-out infinite;
+      }
+      @keyframes arrowPulse {
+        0% { transform: translateX(0); opacity: 0.3; }
+        50% { transform: translateX(-15px); opacity: 1; }
+        100% { transform: translateX(0); opacity: 0.3; }
+      }
+      
+      /* 1:n Visualisierung */
+      .relation-anim {
+        display: flex;
+        justify-content: center;
+        gap: 50px;
+        margin: 30px 0;
+      }
+      .rel-user, .rel-photo {
+        padding: 10px 15px;
+        border: 1px solid var(--db-line);
+        border-radius: 8px;
+        background: white;
+        margin-bottom: 10px;
+        font-size: 0.9rem;
+      }
+      .rel-user { border-left: 4px solid var(--db-gold); }
+      .rel-photo { border-left: 4px solid var(--db-blue); }
+      .rel-lines {
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        gap: 15px;
+      }
+      .rel-lines span {
+        color: var(--db-blue);
+        animation: fadeInOut 3s infinite;
+        opacity: 0;
+      }
+      .rel-lines span:nth-child(1) { animation-delay: 0s; }
+      .rel-lines span:nth-child(2) { animation-delay: 1s; }
+      .rel-lines span:nth-child(3) { animation-delay: 2s; }
+      
+      @keyframes fadeInOut {
+        0% { opacity: 0; }
+        30% { opacity: 1; }
+        70% { opacity: 1; }
+        100% { opacity: 0; }
+      }
+      
+      /* Assignment */
+      .assignment-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+        gap: 15px;
+        margin-bottom: 20px;
+      }
+      .photo-card {
+        padding: 15px;
+        border: 1px solid var(--db-line);
+        border-radius: 12px;
+        background: white;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+      }
+      .photo-card.correct {
+        border-color: var(--db-green);
+        background: #f1fff8;
+      }
+      .photo-card.wrong {
+        border-color: var(--db-red);
+        background: #fff7f8;
+      }
+      .photo-card select {
+        width: 100%;
+        margin-top: 10px;
+        padding: 8px;
+        border: 1px solid var(--db-line);
+        border-radius: 6px;
+      }
+      
+      .mini-table {
+        border-collapse: collapse;
+        font-family: 'Fira Code', monospace;
+        font-size: 0.8rem;
+        background: white;
+      }
+      .mini-table th, .mini-table td {
+        border: 1px solid var(--db-line);
+        padding: 4px 8px;
+      }
+      .mini-table th { background: #fafcff; }
+      
+      .mt-4 { margin-top: 1rem; }
+    </style>
+  </head>
+  <body class="redundancy-page">
+    <div class="site-backdrop" aria-hidden="true"></div>
+    <main class="learning-shell">
+      <nav class="module-topbar" aria-label="Seitennavigation">
+        <a class="back-link" href="../index.html">Zur Aufgabenübersicht</a>
+        <a class="back-link" href="../../../../index.html">Startseite</a>
+      </nav>
+
+      <header class="module-header">
+        <div class="eyebrow"><span aria-hidden="true">◎</span> InstaHub-Datenbanklabor</div>
+        <h1>Aufgabe 3: 1:n-Beziehungen und Fremdschlüssel</h1>
+        <p>Erforsche, wie Tabellen in einer relationalen Datenbank miteinander verbunden werden.</p>
+      </header>
+
+      <section id="learning-module">
+        <div class="progress-card" aria-label="Bearbeitungsfortschritt">
+          <div class="progress-copy">
+            <span id="progress-label">Schritt 1 von 6</span>
+            <strong id="progress-percent">0 % bearbeitet</strong>
+          </div>
+          <div class="progress-track" aria-hidden="true"><span id="progress-bar"></span></div>
+        </div>
+
+        <nav id="step-tabs" class="step-tabs" aria-label="Lernschritte" role="tablist">
+          <!-- Generated by JS -->
+        </nav>
+        
+        <!-- Step 1 -->
+        <section id="step-1" class="step-panel" role="tabpanel" aria-labelledby="tab-1">
+          <div class="step-heading">
+            <span class="step-number">1</span>
+            <div><p class="step-kicker">Wer hat das Foto hochgeladen?</p><h2>Zwei Tabellen im Zusammenspiel</h2></div>
+          </div>
+          
+          <div class="table-container">
+            <div>
+              <h4 style="margin-top:0;">Tabelle: users</h4>
+              <table class="mini-table">
+                <tr><th>id</th><th>username</th><th>email</th><th>city</th></tr>
+                <tr><td>1</td><td>peterschmidt</td><td>peter@example.com</td><td>Berlin</td></tr>
+                <tr><td>2</td><td>inahoffmann</td><td>ina@example.com</td><td>München</td></tr>
+                <tr style="background:#fff8df;"><td>3</td><td>lukasmayer</td><td>lukas@example.com</td><td>Hamburg</td></tr>
+                <tr><td>4</td><td>annabecker</td><td>anna@example.com</td><td>Köln</td></tr>
+              </table>
+            </div>
+            <div>
+              <h4 style="margin-top:0;">Tabelle: photos</h4>
+              <table class="mini-table">
+                <tr><th>id</th><th>user_id</th><th>description</th></tr>
+                <tr><td>1</td><td>1</td><td>Sonnenuntergang am See</td></tr>
+                <tr><td>2</td><td>1</td><td>Mein Frühstück heute</td></tr>
+                <tr><td>3</td><td>2</td><td>Stadtspaziergang</td></tr>
+                <tr style="background:#eef6ff;"><td>4</td><td><strong>3</strong></td><td>Wanderung im Schwarzwald</td></tr>
+                <tr><td>5</td><td>3</td><td>Aussicht vom Gipfel</td></tr>
+                <tr><td>6</td><td>3</td><td>Berghütte</td></tr>
+                <tr><td>7</td><td>4</td><td>Kuchenrezept ausprobiert</td></tr>
+                <tr><td>8</td><td>2</td><td>Café-Ecke</td></tr>
+              </table>
+            </div>
+          </div>
+          
+          <div class="task-card">
+            <h3>Von wem stammt Foto Nr. 4 (Wanderung im Schwarzwald)?</h3>
+            <div id="step1-options" class="choice-list">
+              <label class="choice-option"><input type="radio" name="step1" value="peterschmidt"> <span>peterschmidt</span></label>
+              <label class="choice-option"><input type="radio" name="step1" value="lukasmayer"> <span>lukasmayer</span></label>
+              <label class="choice-option"><input type="radio" name="step1" value="annabecker"> <span>annabecker</span></label>
+            </div>
+            <div class="action-row"><button class="primary-button" id="btn-step1">Antwort prüfen</button></div>
+            <p id="fb-step1" class="feedback" aria-live="polite"></p>
+          </div>
+        </section>
+
+        <!-- Step 2 -->
+        <section id="step-2" class="step-panel" role="tabpanel" aria-labelledby="tab-2" hidden>
+          <div class="step-heading">
+            <span class="step-number">2</span>
+            <div><p class="step-kicker">Der Fremdschlüssel</p><h2>Begriff einführen</h2></div>
+          </div>
+          
+          <div class="scenario-card">
+            <p>Die Spalte <code>user_id</code> in <code>photos</code> ist kein normales Attribut – sie ist ein <strong>Fremdschlüssel</strong> (englisch: <em>Foreign Key</em>). Sie speichert nicht direkt einen Benutzernamen oder eine E-Mail, sondern <strong>die ID eines Datensatzes aus einer anderen Tabelle</strong>.</p>
+          </div>
+          
+          <div class="fk-animation-container">
+            <table class="anim-table">
+              <tr><th colspan="2">users</th></tr>
+              <tr><th class="highlight-pk">id (PK)</th><th>username</th></tr>
+              <tr><td class="highlight-pk">3</td><td>lukasmayer</td></tr>
+            </table>
+            
+            <div class="animated-arrow">←</div>
+            
+            <table class="anim-table">
+              <tr><th colspan="3">photos</th></tr>
+              <tr><th>id</th><th class="highlight-fk">user_id (FK)</th><th>description</th></tr>
+              <tr><td>4</td><td class="highlight-fk">3</td><td>Wanderung...</td></tr>
+            </table>
+          </div>
+          
+          <div class="concept-reveal" style="grid-template-columns: 1fr;">
+            <div><span>Fremdschlüssel</span><p>Eine Spalte, die auf den Primärschlüssel einer anderen Tabelle verweist und so eine Verbindung zwischen zwei Tabellen herstellt.</p></div>
+          </div>
+          
+          <div class="task-card mt-4">
+            <h3>Lückentext</h3>
+            <p>Die Spalte <input type="text" id="s2-gap1" class="code-gap" placeholder="..." aria-label="Spaltenname"> in der Tabelle <code>photos</code> ist ein <input type="text" id="s2-gap2" class="code-gap" style="width: 150px;" placeholder="..." aria-label="Fachbegriff">.</p>
+            <div class="action-row"><button class="primary-button" id="btn-step2">Prüfen</button></div>
+            <p id="fb-step2" class="feedback" aria-live="polite"></p>
+          </div>
+        </section>
+        
+        <!-- Step 3 -->
+        <section id="step-3" class="step-panel" role="tabpanel" aria-labelledby="tab-3" hidden>
+          <div class="step-heading">
+            <span class="step-number">3</span>
+            <div><p class="step-kicker">Was bedeutet 1:n?</p><h2>Beziehungen verstehen</h2></div>
+          </div>
+          
+          <div class="scenario-card">
+            <p>Ein Benutzer kann viele Fotos hochladen. Aber jedes Foto gehört <strong>genau einem</strong> Benutzer.</p>
+          </div>
+          
+          <div class="relation-anim">
+            <div>
+              <h4>1 Benutzer</h4>
+              <div class="rel-user"><strong>lukasmayer</strong> (id: 3)</div>
+            </div>
+            <div class="rel-lines">
+              <span>→</span>
+              <span>→</span>
+              <span>→</span>
+            </div>
+            <div>
+              <h4>n Fotos</h4>
+              <div class="rel-photo">Wanderung im Schwarzwald (id: 4)</div>
+              <div class="rel-photo">Aussicht vom Gipfel (id: 5)</div>
+              <div class="rel-photo">Berghütte (id: 6)</div>
+            </div>
+          </div>
+          
+          <div class="concept-reveal">
+            <div><span>1 (users)</span></div>
+            <div class="concept-arrow" aria-hidden="true">→</div>
+            <div><span>n (photos)</span></div>
+            <div style="grid-column: 1 / -1; padding-top: 0;"><p>Zu einem Benutzer können beliebig viele Fotos gehören – aber jedes Foto hat genau einen Benutzer.</p></div>
+          </div>
+          
+          <div class="task-card">
+            <h3>Wie viele Benutzer kann ein Foto haben?</h3>
+            <div id="step3-options" class="choice-list">
+              <label class="choice-option"><input type="radio" name="step3" value="A"> <span>A) Beliebig viele</span></label>
+              <label class="choice-option"><input type="radio" name="step3" value="B"> <span>B) Genau einen</span></label>
+              <label class="choice-option"><input type="radio" name="step3" value="C"> <span>C) Keinen – Fotos existieren unabhängig</span></label>
+            </div>
+            <div class="action-row"><button class="primary-button" id="btn-step3">Antwort prüfen</button></div>
+            <p id="fb-step3" class="feedback" aria-live="polite"></p>
+          </div>
+        </section>
+
+        <!-- Step 4 -->
+        <section id="step-4" class="step-panel" role="tabpanel" aria-labelledby="tab-4" hidden>
+          <div class="step-heading">
+            <span class="step-number">4</span>
+            <div><p class="step-kicker">Das Klassendiagramm</p><h2>Struktur visualisieren</h2></div>
+          </div>
+          
+          <div class="scenario-card">
+            <p>In der Informatik stellen wir solche Beziehungen in einem <strong>Klassendiagramm</strong> dar.</p>
+          </div>
+          
+          <div class="class-diagram">
+            <div class="diagram-box">
+              <h3>users</h3>
+              <ul>
+                <li>id (PK)</li>
+                <li>username</li>
+                <li>email</li>
+                <li>city</li>
+              </ul>
+            </div>
+            
+            <div class="diagram-connection">
+              <span class="diagram-label left"><input type="text" id="s4-gap1" class="code-gap" style="width:40px; margin-top:-20px;" placeholder="..." aria-label="Beziehung links"></span>
+              <span class="diagram-label right"><input type="text" id="s4-gap2" class="code-gap" style="width:40px; margin-top:-20px;" placeholder="..." aria-label="Beziehung rechts"></span>
+            </div>
+            
+            <div class="diagram-box">
+              <h3>photos</h3>
+              <ul>
+                <li>id (PK)</li>
+                <li>user_id (<input type="text" id="s4-gap3" class="code-gap" style="width:40px;" placeholder="..." aria-label="Schlüsselkürzel">)</li>
+                <li>description</li>
+                <li>url</li>
+              </ul>
+            </div>
+          </div>
+          
+          <div class="task-card">
+            <h3>Vervollständige das Klassendiagramm!</h3>
+            <p>Fülle die Lücken im Diagramm oben aus. Welche Zahlen/Zeichen gehören an den Pfeil, und welches Kürzel steht für den Fremdschlüssel?</p>
+            <div class="action-row"><button class="primary-button" id="btn-step4">Prüfen</button></div>
+            <p id="fb-step4" class="feedback" aria-live="polite"></p>
+          </div>
+        </section>
+
+        <!-- Step 5 -->
+        <section id="step-5" class="step-panel" role="tabpanel" aria-labelledby="tab-5" hidden>
+          <div class="step-heading">
+            <span class="step-number">5</span>
+            <div><p class="step-kicker">Zuordnungsaufgabe</p><h2>Datensätze verbinden</h2></div>
+          </div>
+          
+          <div class="scenario-card accent">
+            <p>Verbinde jeden Foto-Datensatz mit dem richtigen Benutzer, indem du den Fremdschlüssel <code>user_id</code> verwendest!</p>
+          </div>
+          
+          <div id="assignment-area" class="assignment-grid">
+            <!-- Injected via JS -->
+          </div>
+          
+          <div class="action-row"><button class="primary-button" id="btn-step5">Zuordnungen prüfen</button></div>
+          <p id="fb-step5" class="feedback" aria-live="polite"></p>
+        </section>
+        
+        <!-- Step 6 -->
+        <section id="step-6" class="step-panel" role="tabpanel" aria-labelledby="tab-6" hidden>
+          <div class="step-heading">
+            <span class="step-number">6</span>
+            <div><p class="step-kicker">Sicherung</p><h2>Wissen festigen</h2></div>
+          </div>
+          
+          <form id="final-quiz" class="final-quiz" novalidate>
+            <fieldset>
+              <legend><span>1</span> Was ist ein Fremdschlüssel?</legend>
+              <div class="choice-list">
+                <label class="choice-option"><input type="radio" name="q1" value="A"> <span>A) Ein verschlüsselter Primärschlüssel</span></label>
+                <label class="choice-option"><input type="radio" name="q1" value="B"> <span>B) Eine Spalte, die auf den Primärschlüssel einer anderen Tabelle verweist</span></label>
+                <label class="choice-option"><input type="radio" name="q1" value="C"> <span>C) Ein Ersatzschlüssel, wenn der Primärschlüssel fehlt</span></label>
+              </div>
+            </fieldset>
+            
+            <fieldset>
+              <legend><span>2</span> Was bedeutet „1:n-Beziehung“ bei users und photos?</legend>
+              <div class="choice-list">
+                <label class="choice-option"><input type="radio" name="q2" value="A"> <span>A) Jeder User hat genau ein Foto</span></label>
+                <label class="choice-option"><input type="radio" name="q2" value="B"> <span>B) Jedes Foto kann mehreren Usern gehören</span></label>
+                <label class="choice-option"><input type="radio" name="q2" value="C"> <span>C) Ein User kann viele Fotos haben, aber jedes Foto gehört genau einem User</span></label>
+              </div>
+            </fieldset>
+            
+            <fieldset>
+              <legend><span>3</span> Welche Spalte in <code>photos</code> ist der Fremdschlüssel?</legend>
+              <div class="choice-list">
+                <label class="choice-option"><input type="radio" name="q3" value="A"> <span>A) id</span></label>
+                <label class="choice-option"><input type="radio" name="q3" value="B"> <span>B) user_id</span></label>
+                <label class="choice-option"><input type="radio" name="q3" value="C"> <span>C) description</span></label>
+              </div>
+            </fieldset>
+            
+            <fieldset>
+              <legend><span>4</span> Welches Symbol steht im Klassendiagramm auf der „viele“-Seite einer 1:n-Beziehung?</legend>
+              <div class="choice-list">
+                <label class="choice-option"><input type="radio" name="q4" value="A"> <span>A) 1</span></label>
+                <label class="choice-option"><input type="radio" name="q4" value="B"> <span>B) n</span></label>
+                <label class="choice-option"><input type="radio" name="q4" value="C"> <span>C) *</span></label>
+              </div>
+            </fieldset>
+            
+            <div class="action-row"><button class="primary-button" type="button" id="btn-step6">Sicherung auswerten</button></div>
+            <p id="fb-step6" class="feedback" aria-live="polite"></p>
+          </form>
+        </section>
+
+        <!-- Summary -->
+        <section id="step-summary" class="step-panel summary-panel" role="tabpanel" aria-labelledby="tab-summary" hidden>
+          <div class="step-heading">
+            <span class="step-number complete">✓</span>
+            <div><p class="step-kicker">Abschlussansicht</p><h2>Deine vollständige Auswertung</h2></div>
+          </div>
+          
+          <div class="concept-reveal" style="grid-template-columns: 1fr;">
+            <div>
+              <p><strong>Fremdschlüssel</strong> verbinden zwei Tabellen. In einer <strong>1:n-Beziehung</strong> verweisen viele Datensätze der einen Tabelle auf genau einen Datensatz der anderen.</p>
+            </div>
+          </div>
+          
+          <div id="answer-summary" class="answer-summary"></div>
+          
+          <div class="summary-actions">
+            <button class="secondary-button" id="print-summary" type="button">Auswertung drucken</button>
+            <button class="danger-button" id="reset-module" type="button">Alle Eingaben zurücksetzen</button>
+          </div>
+          
+          <section class="solution-download">
+            <h2 style="margin: 0; color: #174a80; font-size: 1.15rem;">Sicherungsblatt zu Aufgabe 3</h2>
+            <details class="solution-reveal">
+              <summary>Sicherungsblatt anzeigen</summary>
+              <form class="solution-code-form" onsubmit="unlockSolution(event, 'FK3N-WXYZ', 'solution-download-link', 'solution-code-message')">
+                <label for="solution-code">Lehrercode eingeben</label>
+                <div class="solution-code-controls">
+                  <input id="solution-code" name="solution-code" type="text" maxlength="9" autocomplete="off" autocapitalize="characters" spellcheck="false" required>
+                  <button class="secondary-button" type="submit">Code prüfen</button>
+                </div>
+                <p id="solution-code-message" class="solution-code-message" aria-live="polite"></p>
+                <a id="solution-download-link" class="download-button" href="sicherungsblatt-aufgabe-3-loesungen.pdf" download hidden>
+                  &#8595; Sicherungsblatt herunterladen
+                </a>
+              </form>
+            </details>
+          </section>
+        </section>
+
+        <nav class="bottom-navigation" aria-label="Schrittnavigation">
+          <button id="previous-step" class="secondary-button" type="button" disabled>← Zurück</button>
+          <button id="next-step" class="primary-button" type="button">Weiter →</button>
+        </nav>
+      </section>
+    </main>
+    
+    <script>
+      const STORAGE_KEY = "informatik10-datenbanken-aufgabe3-v1";
+      const totalSteps = 6;
+      
+      const users = [
+        { id: 1, username: "peterschmidt" },
+        { id: 2, username: "inahoffmann" },
+        { id: 3, username: "lukasmayer" },
+        { id: 4, username: "annabecker" }
+      ];
+      
+      const photos = [
+        { id: 1, user_id: 1, description: "Sonnenuntergang am See" },
+        { id: 2, user_id: 1, description: "Mein Frühstück heute" },
+        { id: 3, user_id: 2, description: "Stadtspaziergang" },
+        { id: 4, user_id: 3, description: "Wanderung im Schwarzwald" },
+        { id: 5, user_id: 3, description: "Aussicht vom Gipfel" },
+        { id: 6, user_id: 3, description: "Berghütte" },
+        { id: 7, user_id: 4, description: "Kuchenrezept ausprobiert" },
+        { id: 8, user_id: 2, description: "Café-Ecke" }
+      ];
+      
+      const STEP_TITLES = [
+        "Motivation",
+        "Der Fremdschlüssel",
+        "1:n Beziehung",
+        "Klassendiagramm",
+        "Zuordnung",
+        "Sicherung"
+      ];
+      
+      let state = {
+        currentStep: 1,
+        completed: [],
+        step1: "",
+        step2: { gap1: "", gap2: "" },
+        step3: "",
+        step4: { gap1: "", gap2: "", gap3: "" },
+        step5: {},
+        step6: { q1: "", q2: "", q3: "", q4: "" },
+        summaryUnlocked: false
+      };
+      
+      function init() {
+        const saved = localStorage.getItem(STORAGE_KEY);
+        if (saved) {
+          try {
+            state = { ...state, ...JSON.parse(saved) };
+          } catch(e) { console.error(e); }
+        }
+        
+        renderTabs();
+        buildAssignmentArea();
+        restoreUI();
+        updateUI();
+        
+        document.getElementById('next-step').addEventListener('click', () => {
+          if(state.summaryUnlocked && state.currentStep === totalSteps) {
+            goToStep('summary');
+          } else if (state.currentStep < totalSteps) {
+            goToStep(state.currentStep + 1);
+          }
+        });
+        
+        document.getElementById('previous-step').addEventListener('click', () => {
+          if (state.currentStep === 'summary') {
+            goToStep(totalSteps);
+          } else if (state.currentStep > 1) {
+            goToStep(state.currentStep - 1);
+          }
+        });
+        
+        // Step 1
+        document.getElementById('btn-step1').addEventListener('click', () => {
+          const selected = document.querySelector('input[name="step1"]:checked');
+          const fb = document.getElementById('fb-step1');
+          if (!selected) return;
+          
+          if (selected.value === 'lukasmayer') {
+            fb.textContent = "Richtig! user_id = 3 verweist auf id = 3 in der users-Tabelle – das ist lukasmayer.";
+            fb.className = "feedback success";
+            markComplete(1);
+            state.step1 = selected.value;
+            saveState();
+          } else {
+            fb.textContent = "Schau nochmal: Welche Zahl steht in der Spalte user_id bei Foto Nr. 4?";
+            fb.className = "feedback error";
+          }
+        });
+        
+        // Step 2
+        document.getElementById('btn-step2').addEventListener('click', () => {
+          const g1 = document.getElementById('s2-gap1').value.trim().toLowerCase();
+          const g2 = document.getElementById('s2-gap2').value.trim().toLowerCase();
+          const fb = document.getElementById('fb-step2');
+          
+          let ok = true;
+          if (g1 === 'user_id') { document.getElementById('s2-gap1').className = "code-gap correct"; } else { document.getElementById('s2-gap1').className = "code-gap wrong"; ok = false; }
+          if (g2 === 'fremdschlüssel') { document.getElementById('s2-gap2').className = "code-gap correct"; } else { document.getElementById('s2-gap2').className = "code-gap wrong"; ok = false; }
+          
+          if (ok) {
+            fb.textContent = "Korrekt! user_id ist der Fremdschlüssel.";
+            fb.className = "feedback success";
+            markComplete(2);
+            state.step2 = { gap1: g1, gap2: g2 };
+            saveState();
+          } else {
+            fb.textContent = "Das stimmt noch nicht ganz.";
+            fb.className = "feedback error";
+          }
+        });
+        
+        // Step 3
+        document.getElementById('btn-step3').addEventListener('click', () => {
+          const selected = document.querySelector('input[name="step3"]:checked');
+          const fb = document.getElementById('fb-step3');
+          if (!selected) return;
+          
+          if (selected.value === 'B') {
+            fb.textContent = "Richtig! Jedes Foto gehört genau einem Benutzer.";
+            fb.className = "feedback success";
+            markComplete(3);
+            state.step3 = selected.value;
+            saveState();
+          } else {
+            fb.textContent = "Denk an das Beispiel: Kann ein Foto von zwei Leuten gleichzeitig hochgeladen werden?";
+            fb.className = "feedback error";
+          }
+        });
+        
+        // Step 4
+        document.getElementById('btn-step4').addEventListener('click', () => {
+          const g1 = document.getElementById('s4-gap1').value.trim();
+          const g2 = document.getElementById('s4-gap2').value.trim().toLowerCase();
+          const g3 = document.getElementById('s4-gap3').value.trim().toUpperCase();
+          const fb = document.getElementById('fb-step4');
+          
+          let ok = true;
+          if (g1 === '1') { document.getElementById('s4-gap1').className = "code-gap correct"; } else { document.getElementById('s4-gap1').className = "code-gap wrong"; ok = false; }
+          if (g2 === 'n') { document.getElementById('s4-gap2').className = "code-gap correct"; } else { document.getElementById('s4-gap2').className = "code-gap wrong"; ok = false; }
+          if (g3 === 'FK') { document.getElementById('s4-gap3').className = "code-gap correct"; } else { document.getElementById('s4-gap3').className = "code-gap wrong"; ok = false; }
+          
+          if (ok) {
+            fb.textContent = "Perfekt! Das Klassendiagramm ist komplett.";
+            fb.className = "feedback success";
+            markComplete(4);
+            state.step4 = { gap1: g1, gap2: g2, gap3: g3 };
+            saveState();
+          } else {
+            fb.textContent = "Überprüfe die markierten Lücken.";
+            fb.className = "feedback error";
+          }
+        });
+        
+        // Step 5
+        document.getElementById('btn-step5').addEventListener('click', () => {
+          let allCorrect = true;
+          let anyMissing = false;
+          const fb = document.getElementById('fb-step5');
+          
+          photos.forEach(p => {
+            const sel = document.getElementById('photo-sel-' + p.id);
+            const card = document.getElementById('photo-card-' + p.id);
+            const val = parseInt(sel.value);
+            
+            if (isNaN(val)) anyMissing = true;
+            
+            state.step5[p.id] = val;
+            
+            if (!isNaN(val) && val === p.user_id) {
+              card.className = "photo-card correct";
+            } else {
+              card.className = "photo-card wrong";
+              allCorrect = false;
+            }
+          });
+          
+          if (anyMissing) {
+            fb.textContent = "Bitte ordne jedem Foto einen Benutzer zu!";
+            fb.className = "feedback error";
+            return;
+          }
+          
+          if (allCorrect) {
+            fb.textContent = "Super! Du hast alle Fotos korrekt verbunden. Der Fremdschlüssel user_id macht das möglich – er verweist direkt auf die id des Benutzers.";
+            fb.className = "feedback success";
+            markComplete(5);
+            saveState();
+          } else {
+            fb.textContent = "Einige Zuordnungen sind falsch (rot markiert). Überprüfe die user_id!";
+            fb.className = "feedback error";
+          }
+        });
+        
+        // Step 6
+        document.getElementById('btn-step6').addEventListener('click', () => {
+          const q1 = document.querySelector('input[name="q1"]:checked')?.value;
+          const q2 = document.querySelector('input[name="q2"]:checked')?.value;
+          const q3 = document.querySelector('input[name="q3"]:checked')?.value;
+          const q4 = document.querySelector('input[name="q4"]:checked')?.value;
+          const fb = document.getElementById('fb-step6');
+          
+          if (!q1 || !q2 || !q3 || !q4) {
+            fb.textContent = "Bitte beantworte alle Fragen.";
+            fb.className = "feedback error";
+            return;
+          }
+          
+          if (q1==='B' && q2==='C' && q3==='B' && q4==='B') {
+            fb.textContent = "Hervorragend! Alles richtig beantwortet.";
+            fb.className = "feedback success";
+            markComplete(6);
+            state.step6 = { q1, q2, q3, q4 };
+            state.summaryUnlocked = true;
+            saveState();
+            
+            buildSummary();
+            setTimeout(() => goToStep('summary'), 1500);
+          } else {
+            fb.textContent = "Mindestens eine Antwort ist falsch. Überprüfe deine Auswahl.";
+            fb.className = "feedback error";
+          }
+        });
+        
+        document.getElementById('reset-module').addEventListener('click', () => {
+          if(confirm("Willst du wirklich alle Antworten löschen?")) {
+            localStorage.removeItem(STORAGE_KEY);
+            location.reload();
+          }
+        });
+        
+        document.getElementById('print-summary').addEventListener('click', () => {
+          window.print();
+        });
+      }
+      
+      function buildAssignmentArea() {
+        const area = document.getElementById('assignment-area');
+        let html = '';
+        
+        const optionsHtml = `<option value="">-- Benutzer auswählen --</option>` + 
+          users.map(u => `<option value="${u.id}">${u.id} - ${u.username}</option>`).join('');
+          
+        photos.forEach(p => {
+          html += `
+            <div class="photo-card" id="photo-card-${p.id}">
+              <div style="font-family:'Fira Code',monospace; font-size:0.8rem; color:var(--db-muted); margin-bottom:5px;">id: ${p.id} | user_id: <strong>${p.user_id}</strong></div>
+              <div style="font-weight:bold; margin-bottom:10px;">${p.description}</div>
+              <select id="photo-sel-${p.id}" aria-label="Benutzer für Foto ${p.id}">
+                ${optionsHtml}
+              </select>
+            </div>
+          `;
+        });
+        
+        area.innerHTML = html;
+      }
+      
+      function renderTabs() {
+        const tabsContainer = document.getElementById('step-tabs');
+        let html = '';
+        for (let i = 1; i <= totalSteps; i++) {
+          const isComplete = state.completed.includes(i);
+          html += `
+            <button class="step-tab ${isComplete ? 'is-complete' : ''}" role="tab" aria-selected="${state.currentStep === i}" id="tab-${i}" onclick="goToStep(${i})">
+              <span>Schritt ${i}</span>
+              <small>${STEP_TITLES[i-1]}</small>
+            </button>
+          `;
+        }
+        if (state.summaryUnlocked) {
+           html += `
+            <button class="step-tab" role="tab" aria-selected="${state.currentStep === 'summary'}" id="tab-summary" onclick="goToStep('summary')">
+              <span>Auswertung</span>
+              <small>Zusammenfassung</small>
+            </button>
+          `;
+        }
+        tabsContainer.innerHTML = html;
+      }
+      
+      function goToStep(step) {
+        if (step !== 'summary' && step > 1) {
+          if (!state.completed.includes(step - 1) && step > Math.max(0, ...state.completed) + 1) {
+            return;
+          }
+        }
+        
+        document.querySelectorAll('.step-panel').forEach(p => p.hidden = true);
+        if (step === 'summary') {
+          document.getElementById('step-summary').hidden = false;
+          buildSummary();
+        } else {
+          document.getElementById(`step-${step}`).hidden = false;
+        }
+        
+        state.currentStep = step;
+        saveState();
+        updateUI();
+        window.scrollTo(0,0);
+      }
+      
+      function markComplete(step) {
+        if (!state.completed.includes(step)) {
+          state.completed.push(step);
+        }
+        renderTabs();
+        updateProgress();
+      }
+      
+      function saveState() {
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+      }
+      
+      function restoreUI() {
+        if (state.step1) {
+          const el = document.querySelector(`input[name="step1"][value="${state.step1}"]`);
+          if (el) el.checked = true;
+        }
+        if (state.step2.gap1) document.getElementById('s2-gap1').value = state.step2.gap1;
+        if (state.step2.gap2) document.getElementById('s2-gap2').value = state.step2.gap2;
+        if (state.step3) {
+          const el = document.querySelector(`input[name="step3"][value="${state.step3}"]`);
+          if (el) el.checked = true;
+        }
+        if (state.step4.gap1) document.getElementById('s4-gap1').value = state.step4.gap1;
+        if (state.step4.gap2) document.getElementById('s4-gap2').value = state.step4.gap2;
+        if (state.step4.gap3) document.getElementById('s4-gap3').value = state.step4.gap3;
+        
+        if (state.step5) {
+          Object.keys(state.step5).forEach(id => {
+            const el = document.getElementById('photo-sel-' + id);
+            if (el && !isNaN(state.step5[id])) el.value = state.step5[id];
+          });
+        }
+        
+        if (state.step6.q1) {
+          ['q1','q2','q3','q4'].forEach(q => {
+             const el = document.querySelector(`input[name="${q}"][value="${state.step6[q]}"]`);
+             if(el) el.checked = true;
+          });
+        }
+        
+        if (state.currentStep === 'summary' && !state.summaryUnlocked) {
+          state.currentStep = 1;
+        }
+        goToStep(state.currentStep);
+      }
+      
+      function updateUI() {
+        renderTabs();
+        updateProgress();
+        
+        const prevBtn = document.getElementById('previous-step');
+        const nextBtn = document.getElementById('next-step');
+        
+        prevBtn.disabled = state.currentStep === 1;
+        
+        if (state.currentStep === 'summary') {
+          nextBtn.disabled = true;
+        } else if (state.currentStep === totalSteps && !state.summaryUnlocked) {
+          nextBtn.disabled = true;
+        } else {
+          nextBtn.disabled = false;
+        }
+      }
+      
+      function updateProgress() {
+        let numericStep = state.currentStep === 'summary' ? totalSteps : state.currentStep;
+        let pct = Math.round((state.completed.length / totalSteps) * 100);
+        document.getElementById('progress-bar').style.width = pct + '%';
+        document.getElementById('progress-percent').textContent = pct + ' % bearbeitet';
+        document.getElementById('progress-label').textContent = state.currentStep === 'summary' ? 'Auswertung' : `Schritt ${numericStep} von ${totalSteps}`;
+      }
+      
+      function buildSummary() {
+        const area = document.getElementById('answer-summary');
+        area.innerHTML = `
+          <div class="summary-section">
+            <h3 style="margin: 0 0 5px; color: #1c4c7e;">Schritt 1: Wer hat das Foto hochgeladen?</h3>
+            <p>Deine Antwort: <strong>${state.step1}</strong> (Korrekt: lukasmayer)</p>
+          </div>
+          <div class="summary-section mt-4">
+            <h3 style="margin: 0 0 5px; color: #1c4c7e;">Schritt 2: Der Fremdschlüssel</h3>
+            <p>Die Spalte <strong>${state.step2.gap1}</strong> in der Tabelle photos ist ein <strong>${state.step2.gap2}</strong>.</p>
+          </div>
+          <div class="summary-section mt-4">
+            <h3 style="margin: 0 0 5px; color: #1c4c7e;">Schritt 3: Was bedeutet 1:n?</h3>
+            <p>Wie viele Benutzer kann ein Foto haben? <strong>${state.step3 === 'B' ? 'Genau einen' : state.step3}</strong></p>
+          </div>
+          <div class="summary-section mt-4">
+            <h3 style="margin: 0 0 5px; color: #1c4c7e;">Schritt 4: Das Klassendiagramm</h3>
+            <p>Pfeilbeschriftung: <strong>${state.step4.gap1}</strong> zu <strong>${state.step4.gap2}</strong>. Kürzel für Fremdschlüssel: <strong>${state.step4.gap3}</strong></p>
+          </div>
+          <div class="summary-section mt-4">
+            <h3 style="margin: 0 0 5px; color: #1c4c7e;">Schritt 6: Sicherung</h3>
+            <p>Erfolgreich abgeschlossen (4/4 korrekt).</p>
+          </div>
+        `;
+      }
+      
+      window.unlockSolution = function(e, correctCode, linkId, msgId) {
+        e.preventDefault();
+        const input = document.getElementById('solution-code').value.trim().toUpperCase();
+        const msg = document.getElementById(msgId);
+        const link = document.getElementById(linkId);
+        
+        if (input === correctCode) {
+          msg.textContent = "Code korrekt! Der Download wurde freigeschaltet.";
+          msg.className = "solution-code-message";
+          link.hidden = false;
+        } else {
+          msg.textContent = "Code ungültig.";
+          msg.className = "solution-code-message error";
+          link.hidden = true;
+        }
+      }
+
+      document.addEventListener('DOMContentLoaded', init);
+    </script>
+  </body>
+</html>
