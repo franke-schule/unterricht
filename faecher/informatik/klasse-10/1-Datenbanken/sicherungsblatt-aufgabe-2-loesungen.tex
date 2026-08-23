@@ -1,0 +1,145 @@
+\documentclass[10pt,a4paper]{article}
+
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage[ngerman]{babel}
+\usepackage[a4paper,margin=14mm]{geometry}
+\usepackage{lmodern}
+\usepackage[table]{xcolor}
+\usepackage{tabularx}
+\usepackage{array}
+\usepackage{microtype}
+\usepackage[most]{tcolorbox}
+
+\pagestyle{empty}
+\setlength{\parindent}{0pt}
+\setlength{\parskip}{0pt}
+\renewcommand{\familydefault}{\sfdefault}
+
+\definecolor{Navy}{HTML}{17324D}
+\definecolor{Blue}{HTML}{3B6EA5}
+\definecolor{Sky}{HTML}{EAF3FA}
+\definecolor{Mint}{HTML}{E8F5EF}
+\definecolor{Gold}{HTML}{F3B33D}
+\definecolor{Ink}{HTML}{1E2935}
+\definecolor{Muted}{HTML}{617080}
+\definecolor{Line}{HTML}{D8E1E8}
+\definecolor{CodeBg}{HTML}{F5F7F9}
+
+\color{Ink}
+
+\newcommand{\sectiontitle}[1]{%
+  \vspace{2.3mm}
+  {\color{Blue}\bfseries\large #1}\par
+  \vspace{0.8mm}
+  {\color{Blue}\rule{\linewidth}{0.7pt}}\par
+  \vspace{1.2mm}
+}
+
+\newcommand{\classcard}[2]{%
+  \fcolorbox{Blue}{white}{%
+    \parbox{63mm}{%
+      \centering\vspace{1mm}{\large\bfseries\texttt{#1}}\par
+      \vspace{1mm}{\color{Blue}\rule{\linewidth}{0.6pt}}\par
+      \vspace{1mm}\raggedright\ttfamily\small #2\vspace{1mm}
+    }%
+  }%
+}
+
+\begin{document}
+
+\colorbox{Navy}{%
+  \parbox{\dimexpr\linewidth-2\fboxsep\relax}{%
+    \vspace{3mm}\color{white}
+    \begin{tabularx}{\linewidth}{@{}Xr@{}}
+      {\small\bfseries INFORMATIK · KLASSE 10} &
+      \colorbox{Gold}{\color{Navy}\small\bfseries\strut LÖSUNGEN}
+    \end{tabularx}
+    \vspace{2.5mm}
+
+    {\fontsize{22}{25}\selectfont\bfseries Sicherungsblatt: Aufgabe 2}\par
+    \vspace{1mm}
+    {\large Redundanzen in Datenbanken}
+    \vspace{3mm}
+  }%
+}
+
+\vspace{3mm}
+\colorbox{Sky}{%
+  \parbox{\dimexpr\linewidth-2\fboxsep\relax}{%
+    \vspace{1.8mm}
+    \textcolor{Blue}{\bfseries Ziel:}
+    Du erkennst redundante Daten, erklärst ihre Probleme und kannst Daten
+    sinnvoll auf mehrere Tabellen aufteilen.
+    \vspace{1.8mm}
+  }%
+}
+
+\sectiontitle{1 · Redundanz erkennen}
+
+\textbf{Redundanz} bedeutet: \textbf{Dieselbe Information wird mehrfach gespeichert.}
+
+\vspace{1.5mm}
+\renewcommand{\arraystretch}{1.2}
+\begin{tabularx}{\linewidth}{@{}>{\ttfamily\small}p{16mm}>{\ttfamily\small}p{25mm}>{\ttfamily\small}p{47mm}X@{}}
+  \rowcolor{Sky}\bfseries photo\_id & \bfseries username & \bfseries email & \bfseries description \\
+  41 & mia & mia@example.org & Sonnenuntergang \\
+  \rowcolor{CodeBg}42 & mia & mia@example.org & Mein Fahrrad \\
+  43 & mia & mia@example.org & Ausflug am See \\
+\end{tabularx}
+
+\vspace{1.4mm}
+\colorbox{CodeBg}{\parbox{\dimexpr\linewidth-2\fboxsep\relax}{%
+  \texttt{username} und \texttt{email} werden für jedes Foto wiederholt gespeichert.
+  Das ist redundant.
+}}
+
+\sectiontitle{2 · Warum sind redundante Daten problematisch?}
+
+\begin{tabularx}{\linewidth}{@{}p{7mm}X p{7mm}X@{}}
+  \textcolor{Gold}{\Large\bfseries !} & Daten werden unnötig mehrfach gespeichert. &
+  \textcolor{Gold}{\Large\bfseries !} & Speicher- und Pflegeaufwand steigen. \\[1mm]
+  \textcolor{Gold}{\Large\bfseries !} & Änderungen müssen an mehreren Stellen erfolgen. &
+  \textcolor{Gold}{\Large\bfseries !} & Vergessene Änderungen führen zu widersprüchlichen, inkonsistenten Daten. \\
+\end{tabularx}
+
+\vspace{1.5mm}
+\colorbox{Sky}{\parbox{\dimexpr\linewidth-2\fboxsep\relax}{%
+  \textcolor{Blue}{\bfseries Beispiel:}
+  Ändert Mia ihre E-Mail-Adresse nur bei einem Foto, stehen anschließend für
+  dieselbe Benutzerin verschiedene E-Mail-Adressen in der Tabelle.
+}}
+
+\sectiontitle{3 · Bessere Lösung: Daten auf zwei Tabellen aufteilen}
+
+\begin{center}
+  \classcard{users}{id\par username\par email}
+  \hspace{18mm}
+  \classcard{photos}{id\par user\_id[users]\par description\par url\par created\_at\par updated\_at}
+\end{center}
+
+\vspace{1mm}
+\begin{tabularx}{\linewidth}{@{}X X@{}}
+  \textcolor{Blue}{\bfseries \texttt{users}:} Benutzerinformationen werden hier einmal gespeichert. &
+  \textcolor{Blue}{\bfseries \texttt{photos}:} Jedes Foto enthält nur seine Fotoinformationen und die passende Zuordnung. \\
+\end{tabularx}
+
+\sectiontitle{4 · Merke}
+
+\begin{tcolorbox}[colback=white,colframe=Line,arc=3mm,boxrule=0.7pt,left=3mm,right=3mm,top=2mm,bottom=2mm]
+  - Daten von Fotos werden in einer separaten Tabelle gespeichert, um
+  Redundanzen innerhalb der Tabelle \texttt{users} zu vermeiden.\par
+  - Jeder Sachverhalt wird möglichst nur einmal gespeichert.\par
+  - Benutzerinformationen gehören in \texttt{users}, Fotoinformationen in \texttt{photos}.\par
+  - Über \texttt{users.id} und \texttt{photos.user\_id} lassen sich passende Datensätze wieder zuordnen.
+\end{tcolorbox}
+
+\vfill
+{\color{Line}\rule{\linewidth}{0.5pt}}\par
+\vspace{1.5mm}
+\begin{tabularx}{\linewidth}{@{}Xr@{}}
+  {\small\color{Muted}Klasse 10 · Datenbanken} &
+  {\small\color{Muted}Sicherungsblatt · Aufgabe 2}
+\end{tabularx}
+
+\end{document}

@@ -185,6 +185,21 @@ code { font-family: "SFMono-Regular", Consolas, "Liberation Mono", monospace; }
 .summary-result.complete { color: #0b7053; background: #e1f8ef; }
 .summary-result.open { color: #8a570e; background: #fff1d8; }
 .summary-actions { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 12px; margin-top: 24px; }
+.solution-download { margin-top: 26px; padding: 20px 22px; border: 1px solid var(--db-line); border-left: 5px solid var(--db-blue); border-radius: 8px; background: white; box-shadow: 0 2px 8px rgba(30, 52, 85, 0.06); }
+.solution-download h2 { margin: 0; color: #174a80; font-size: 1.15rem; }
+.solution-reveal { margin-top: 13px; }
+.solution-reveal summary { width: fit-content; cursor: pointer; color: #174a80; font-weight: 800; }
+.solution-reveal[open] summary { margin-bottom: 14px; }
+.solution-code-form { display: grid; gap: 11px; max-width: 480px; }
+.solution-code-form label { font-weight: 800; }
+.solution-code-controls { display: flex; gap: 10px; }
+.solution-code-controls input { min-width: 0; flex: 1 1 190px; padding: 11px 12px; border: 1px solid #b8c7d9; border-radius: 5px; color: var(--db-ink); letter-spacing: 0.08em; text-transform: uppercase; }
+.solution-code-controls button { flex: 0 0 auto; }
+.solution-code-message { min-height: 1.3rem; margin: 0; color: var(--db-muted); }
+.solution-code-message.error { color: var(--db-red); }
+.download-button { display: inline-flex; width: fit-content; align-items: center; gap: 8px; padding: 12px 18px; border-radius: 5px; background: var(--db-blue); color: white; font-weight: 800; text-decoration: none; }
+.download-button:hover, .download-button:focus-visible { background: #104da9; outline: 3px solid rgba(23, 99, 213, 0.25); outline-offset: 2px; }
+.download-button[hidden] { display: none; }
 .bottom-navigation { display: flex; justify-content: space-between; gap: 12px; margin-top: 18px; }
 .bottom-navigation button:disabled { opacity: 0.45; cursor: not-allowed; transform: none; }
 
@@ -208,6 +223,7 @@ button:focus-visible, input:focus-visible, select:focus-visible, [role="tab"]:fo
   .attribute-zone[data-zone="pool"] { grid-column: auto; }
   .class-card-task { grid-column: auto; grid-row: auto; }
   .mini-assignment-row, .summary-grid { grid-template-columns: 1fr; }
+  .solution-code-controls { align-items: stretch; flex-direction: column; }
   .summary-grid dt { margin-top: 5px; }
   .bottom-navigation button { flex: 1; }
 }
@@ -218,7 +234,7 @@ button:focus-visible, input:focus-visible, select:focus-visible, [role="tab"]:fo
 
 @media print {
   body.redundancy-page { background: white; }
-  .site-backdrop, .module-topbar, .module-header, .progress-card, .step-tabs, .bottom-navigation, .summary-actions, #data-status { display: none !important; }
+  .site-backdrop, .module-topbar, .module-header, .progress-card, .step-tabs, .bottom-navigation, .summary-actions, .solution-download, #data-status { display: none !important; }
   .learning-shell { width: 100%; padding: 0; }
   .step-panel { display: none !important; box-shadow: none; border: 0; padding: 0; }
   #step-summary { display: block !important; }
