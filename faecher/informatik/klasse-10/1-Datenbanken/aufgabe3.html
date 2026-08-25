@@ -7,8 +7,8 @@
     <title>Aufgabe 3 – Beziehungen und Fremdschlüssel | Informatik 10</title>
     <link rel="stylesheet" href="../../../../styles.css?v=20260825">
     <link rel="stylesheet" href="redundanzen.css?v=20260822c">
-    <link rel="stylesheet" href="beziehungen.css?v=20260825b">
-    <script type="module" src="beziehungen.js?v=20260825b"></script>
+    <link rel="stylesheet" href="beziehungen.css?v=20260825c">
+    <script type="module" src="beziehungen.js?v=20260825c"></script>
   </head>
   <body class="redundancy-page relation-page">
     <div class="site-backdrop" aria-hidden="true"></div>
@@ -38,7 +38,8 @@
         <section id="step-1" class="step-panel" role="tabpanel" aria-labelledby="tab-1">
           <div class="step-heading"><span class="step-number">1</span><div><p class="step-kicker">Entdecken</p><h2>Welche Fotos gehören zusammen?</h2></div></div>
           <div class="scenario-card"><p>Vergleiche bei jedem Foto <code>user_id</code> mit der <code>id</code> eines Benutzers.</p><p>Ein Benutzer darf dabei mehrmals gewählt werden.</p></div>
-          <div id="user-records" class="user-records" aria-label="Ausgewählte Datensätze aus users"></div>
+          <div id="step1-table-excerpts" class="table-excerpts" aria-label="Tabellenauszüge für die Zuordnung"></div>
+          <h3 class="assignment-heading">Ordne jedes Foto einem Benutzer zu.</h3>
           <div id="record-assignment" class="record-assignment" aria-live="polite"></div>
           <div class="action-row"><button id="check-step1" class="primary-button" type="button">Zuordnung prüfen</button></div>
           <p id="feedback-step1" class="feedback" aria-live="polite"></p>
@@ -53,8 +54,12 @@
             <p id="feedback-step2" class="feedback" aria-live="polite"></p>
           </div>
           <div id="relationship-reveal" class="concept-reveal relation-concept" hidden>
-            <div><span>1:n-Beziehung</span><p>Ein Benutzer kann mehrere Fotos besitzen. Ein Foto gehört genau einem Benutzer.</p></div>
-            <div class="concept-arrow" aria-hidden="true">→</div><div class="notation-chip"><code>users&nbsp; 1 ───── n&nbsp; photos</code></div>
+            <div class="relationship-copy"><span>1:n-Beziehung</span><p>Ein Benutzer kann mehrere Fotos besitzen. Ein Foto gehört genau einem Benutzer.</p></div>
+            <div class="uml-relationship" role="img" aria-label="Klassendiagramm: users 1 zu n photos">
+              <article class="class-card diagram-class-card"><h3>users</h3><div class="empty-class-body" aria-hidden="true"></div></article>
+              <div class="association-connector fixed-cardinalities" aria-hidden="true"><span>1</span><i></i><span>n</span></div>
+              <article class="class-card diagram-class-card"><h3>photos</h3><div class="empty-class-body" aria-hidden="true"></div></article>
+            </div>
           </div>
         </section>
 
@@ -80,8 +85,16 @@
         <section id="step-5" class="step-panel" role="tabpanel" aria-labelledby="tab-5" hidden>
           <div class="step-heading"><span class="step-number">5</span><div><p class="step-kicker">Übertragen vorbereiten</p><h2>Erst ein anderes Beispiel</h2></div></div>
           <div class="scenario-card"><p>Eine Schulklasse hat viele Schülerinnen und Schüler.</p><p>Ein einzelner Schüler gehört genau einer Schulklasse.</p></div>
-          <div class="cardinality-demo" role="group" aria-label="Beziehung zwischen Schulklasse und Schülern"><article class="class-card"><h3>Schulklasse</h3><ul><li>beispiel: 10a</li></ul></article><div class="simple-connector"><span id="school-left-label">?</span><i aria-hidden="true"></i><span id="school-right-label">?</span></div><article class="class-card"><h3>Schüler</h3><ul><li>Amira</li><li>Jonas</li><li>Lea</li></ul></article></div>
-          <div class="task-card"><h3>Was sagen die Zeichen aus?</h3><div id="step5-choices" class="choice-list"></div><div class="action-row"><button id="check-step5" class="primary-button" type="button">Beispiel prüfen</button></div><p id="feedback-step5" class="feedback" aria-live="polite"></p></div>
+          <div class="cardinality-demo" role="group" aria-label="Klassendiagramm mit Lücken bei Schulklasse und Schüler">
+            <article class="class-card diagram-class-card"><h3>Schulklasse</h3><div class="empty-class-body" aria-hidden="true"></div></article>
+            <div class="association-connector">
+              <label class="cardinality-gap"><span class="sr-only">Kardinalität direkt bei Schulklasse</span><input id="school-cardinality" type="text" maxlength="1" inputmode="text" autocomplete="off" aria-label="Kardinalität direkt bei Schulklasse" placeholder="?"></label>
+              <i aria-hidden="true"></i>
+              <label class="cardinality-gap"><span class="sr-only">Kardinalität direkt bei Schüler</span><input id="pupils-cardinality" type="text" maxlength="1" inputmode="text" autocomplete="off" aria-label="Kardinalität direkt bei Schüler" placeholder="?"></label>
+            </div>
+            <article class="class-card diagram-class-card"><h3>Schüler</h3><div class="empty-class-body" aria-hidden="true"></div></article>
+          </div>
+          <div class="task-card"><h3>Kardinalitäten ergänzen</h3><p>Trage <code>1</code> oder <code>n</code> direkt in beide Lücken ein.</p><div class="action-row"><button id="check-step5" class="primary-button" type="button">Beispiel prüfen</button></div><p id="feedback-step5" class="feedback" aria-live="polite"></p></div>
           <div id="cardinality-reveal" class="foreign-key-reveal" hidden><strong>Kardinalität</strong><p>Kardinalitäten geben an, wie viele Objekte einer Klasse mit einem Objekt einer anderen Klasse in Beziehung stehen können.</p><p>Hier: <code>Schulklasse&nbsp; 1 ───── n&nbsp; Schüler</code></p></div>
         </section>
 
@@ -89,9 +102,13 @@
           <div class="step-heading"><span class="step-number">6</span><div><p class="step-kicker">Übertragen</p><h2>Kardinalitäten im Klassendiagramm</h2></div></div>
           <div class="scenario-card"><p>Die Verbindung zwischen den Klassen ist schon eingezeichnet.</p><p>Ergänze an beiden Enden die passende Kardinalität.</p></div>
           <div class="relation-diagram" role="group" aria-label="Klassendiagramm mit fehlenden Kardinalitäten">
-            <article class="class-card"><h3>users</h3><ul><li>id</li><li>username</li></ul></article>
-            <div class="diagram-connector"><label><span class="sr-only">Kardinalität bei users</span><select id="users-cardinality" aria-label="Kardinalität bei users"><option value="">?</option><option value="1">1</option><option value="n">n</option></select></label><i aria-hidden="true"></i><label><span class="sr-only">Kardinalität bei photos</span><select id="photos-cardinality" aria-label="Kardinalität bei photos"><option value="">?</option><option value="1">1</option><option value="n">n</option></select></label></div>
-            <article class="class-card"><h3>photos</h3><ul><li>id</li><li>user_id[users]</li></ul></article>
+            <article class="class-card diagram-class-card"><h3>users</h3><div class="empty-class-body" aria-hidden="true"></div></article>
+            <div class="association-connector">
+              <label class="cardinality-gap"><span class="sr-only">Kardinalität direkt bei users</span><input id="users-cardinality" type="text" maxlength="1" inputmode="text" autocomplete="off" aria-label="Kardinalität direkt bei users" placeholder="?"></label>
+              <i aria-hidden="true"></i>
+              <label class="cardinality-gap"><span class="sr-only">Kardinalität direkt bei photos</span><input id="photos-cardinality" type="text" maxlength="1" inputmode="text" autocomplete="off" aria-label="Kardinalität direkt bei photos" placeholder="?"></label>
+            </div>
+            <article class="class-card diagram-class-card"><h3>photos</h3><div class="empty-class-body" aria-hidden="true"></div></article>
           </div>
           <div class="action-row"><button id="check-step6" class="primary-button" type="button">Kardinalitäten prüfen</button></div><p id="feedback-step6" class="feedback" aria-live="polite"></p>
           <div id="diagram-reveal" class="short-summary" hidden><strong>Richtig:</strong> <code>users&nbsp; 1 ───── n&nbsp; photos</code></div>

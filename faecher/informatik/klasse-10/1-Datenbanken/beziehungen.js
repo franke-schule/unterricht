@@ -100,6 +100,10 @@ function clearFeedback(step) {
   feedback.textContent = "";
 }
 
+function normalizeCardinality(value) {
+  return value.trim().toLowerCase();
+}
+
 function markComplete(step) {
   if (!state.completed.includes(step)) state.completed.push(step);
   saveState(); updateNavigation(); renderTabs();
@@ -154,10 +158,16 @@ function shortDescription(photo) {
   return text.length > 94 ? `${text.slice(0, 91).trim()} …` : text;
 }
 
+function tableExcerptMarkup(highlightLink = false) {
+  const usersRows = lesson.users.map((user) => `<tr><td class="${highlightLink ? "link-column" : ""}">${escapeHtml(user.id)}</td><td>${escapeHtml(user.name)}</td><td>${escapeHtml(user.username)}</td></tr>`).join("");
+  const photosRows = lesson.photos.map((photo) => `<tr><td>${escapeHtml(photo.id)}</td><td class="${highlightLink ? "link-column" : ""}">${escapeHtml(photo.user_id)}</td><td>${escapeHtml(shortDescription(photo))}</td></tr>`).join("");
+  return `<section class="table-shell"><div class="table-caption"><strong>users</strong><span>Tabellenauszug</span></div><div class="table-scroll"><table class="data-table relation-data-table"><thead><tr><th scope="col" class="${highlightLink ? "link-column" : ""}">id</th><th scope="col">name</th><th scope="col">username</th></tr></thead><tbody>${usersRows}</tbody></table></div></section><section class="table-shell"><div class="table-caption"><strong>photos</strong><span>Tabellenauszug</span></div><div class="table-scroll"><table class="data-table relation-data-table"><thead><tr><th scope="col">id</th><th scope="col" class="${highlightLink ? "link-column" : ""}">user_id</th><th scope="col">description</th></tr></thead><tbody>${photosRows}</tbody></table></div></section>`;
+}
+
 function renderData() {
-  const userOptions = lesson.users.map((user) => `<option value="${escapeHtml(user.id)}">ID ${escapeHtml(user.id)} · ${escapeHtml(user.name)} (${escapeHtml(user.username)})</option>`).join("");
-  document.getElementById("user-records").innerHTML = lesson.users.map((user) => `<article class="user-record"><h3>${escapeHtml(user.name)}</h3><code>users.id: ${escapeHtml(user.id)}</code><p>${escapeHtml(user.username)}</p></article>`).join("");
-  document.getElementById("record-assignment").innerHTML = lesson.photos.map((photo) => `<article id="photo-card-${photo.id}" class="record-card"><h3>Foto #${escapeHtml(photo.id)}</h3><div class="record-key"><code>photos.user_id: ${escapeHtml(photo.user_id)}</code></div><p>${escapeHtml(shortDescription(photo))}</p><label for="photo-owner-${photo.id}">Gehört zu<select id="photo-owner-${photo.id}" data-photo-id="${escapeHtml(photo.id)}"><option value="">Benutzer wählen</option>${userOptions}</select></label></article>`).join("");
+  const userOptions = lesson.users.map((user) => `<option value="${escapeHtml(user.id)}">ID ${escapeHtml(user.id)} · ${escapeHtml(user.name)}</option>`).join("");
+  document.getElementById("step1-table-excerpts").innerHTML = tableExcerptMarkup();
+  document.getElementById("record-assignment").innerHTML = lesson.photos.map((photo) => `<label id="photo-card-${photo.id}" class="assignment-row" for="photo-owner-${photo.id}"><span><strong>Foto #${escapeHtml(photo.id)}</strong><small>photos.user_id = ${escapeHtml(photo.user_id)}</small></span><select id="photo-owner-${photo.id}" data-photo-id="${escapeHtml(photo.id)}"><option value="">Benutzer wählen</option>${userOptions}</select></label>`).join("");
   document.querySelectorAll("[data-photo-id]").forEach((select) => {
     select.value = state.step1.assignments[select.dataset.photoId] ?? "";
     select.addEventListener("change", () => { state.step1.assignments[select.dataset.photoId] = select.value; state.step1.checked = false; clearFeedback(1); saveState(); });
@@ -166,14 +176,11 @@ function renderData() {
   radioList("step2-choices", "photos-per-user", [["mehrere", "Ein Benutzer kann mehrere Fotos besitzen."], ["eines", "Ein Benutzer kann nur ein Foto besitzen."]], state.step2.photos);
   radioList("step3-choices", "foreign-column", [["id", "photos.id"], ["user_id", "photos.user_id"], ["description", "photos.description"]], state.step3.answer);
   document.getElementById("step2-choices").insertAdjacentHTML("beforeend", `<div class="choice-list"><p><strong>Ein einzelnes Foto gehört …</strong></p><label class="choice-option"><input type="radio" name="users-per-photo" value="einem" ${state.step2.users === "einem" ? "checked" : ""}><span>… genau einem Benutzer.</span></label><label class="choice-option"><input type="radio" name="users-per-photo" value="mehreren" ${state.step2.users === "mehreren" ? "checked" : ""}><span>… mehreren Benutzern.</span></label></div>`);
-  const photo = lesson.examplePhoto; const user = lesson.primaryUser;
-  document.getElementById("key-comparison").innerHTML = `<article class="key-card"><h3>users</h3><p class="primary">id: ${escapeHtml(user.id)}</p></article><div class="key-arrow" aria-hidden="true">←</div><article class="key-card"><h3>photos</h3><p>id: ${escapeHtml(photo.id)}</p><p class="foreign">user_id: ${escapeHtml(photo.user_id)}</p></article>`;
+  document.getElementById("key-comparison").innerHTML = tableExcerptMarkup(true);
   radioList("step4a-choices", "step4-key", [["photos.id", "photos.id"], ["photos.user_id", "photos.user_id"], ["users.username", "users.username"]], state.step4.key);
   document.getElementById("new-photo-task").innerHTML = `<h3>B. Fremdschlüssel anwenden</h3><p>Ein neues Foto soll zu <strong>${escapeHtml(lesson.targetUser.name)}</strong> gehören. In <code>users</code> hat diese Person die <code>id</code> <strong>${escapeHtml(lesson.targetUser.id)}</strong>.</p><label for="new-photo-user-id">Trage den Wert für <code>user_id</code> im neuen Foto #${lesson.newPhotoId} ein.</label><input id="new-photo-user-id" class="inline-input" type="number" min="1" step="1" inputmode="numeric" value="${escapeHtml(state.step4.value)}" aria-label="Wert für user_id im neuen Foto">`;
-  radioList("step5-choices", "school-cardinality", [["1", "Bei Schulklasse steht 1: Ein Schüler gehört genau einer Schulklasse."], ["n", "Bei Schulklasse steht n: Ein Schüler gehört zu vielen Schulklassen."]], state.step5.school);
-  document.getElementById("step5-choices").insertAdjacentHTML("beforeend", `<div class="choice-list"><p><strong>Bei Schüler steht …</strong></p><label class="choice-option"><input type="radio" name="pupils-cardinality" value="n" ${state.step5.pupils === "n" ? "checked" : ""}><span>n: Eine Schulklasse hat mehrere Schüler.</span></label><label class="choice-option"><input type="radio" name="pupils-cardinality" value="1" ${state.step5.pupils === "1" ? "checked" : ""}><span>1: Eine Schulklasse hat nur einen Schüler.</span></label></div>`);
-  document.getElementById("school-left-label").textContent = state.step5.school || "?";
-  document.getElementById("school-right-label").textContent = state.step5.pupils || "?";
+  document.getElementById("school-cardinality").value = state.step5.school;
+  document.getElementById("pupils-cardinality").value = state.step5.pupils;
   document.getElementById("users-cardinality").value = state.step6.users;
   document.getElementById("photos-cardinality").value = state.step6.photos;
   radioList("quiz-one", "quiz-one", [["one-n", "Ein Benutzer kann mehrere Fotos besitzen; ein Foto gehört genau einem Benutzer."], ["n-one", "Ein Benutzer gehört zu mehreren Fotos; ein Foto besitzt mehrere Benutzer."], ["one-one", "Jeder Benutzer besitzt genau ein Foto."]], state.step7.one);
@@ -190,7 +197,7 @@ function checkStep1() {
   const wrong = lesson.photos.filter((photo) => state.step1.assignments[photo.id] && state.step1.assignments[photo.id] !== photo.user_id);
   const assignedCount = lesson.photos.filter((photo) => state.step1.assignments[photo.id]).length;
   const correctCount = assignedCount - wrong.length;
-  lesson.photos.forEach((photo) => document.getElementById(`photo-card-${photo.id}`).className = `record-card ${wrong.some((item) => item.id === photo.id) ? "is-wrong" : state.step1.assignments[photo.id] ? "is-correct" : ""}`);
+  lesson.photos.forEach((photo) => document.getElementById(`photo-card-${photo.id}`).className = `assignment-row ${wrong.some((item) => item.id === photo.id) ? "is-wrong" : state.step1.assignments[photo.id] ? "is-correct" : ""}`);
   state.step1.checked = true;
   if (missing && correctCount > 0) setFeedback(1, "hint", `${correctCount} Zuordnung${correctCount === 1 ? " stimmt" : "en stimmen"} schon. Ordne auch die übrigen Fotos zu.`);
   else if (missing) setFeedback(1, "hint", "Ordne zuerst jedem Foto einen Benutzer zu.");
@@ -236,26 +243,32 @@ function checkStep4() {
 }
 
 function checkStep5() {
-  state.step5.school = document.querySelector('input[name="school-cardinality"]:checked')?.value ?? "";
-  state.step5.pupils = document.querySelector('input[name="pupils-cardinality"]:checked')?.value ?? ""; state.step5.checked = true;
-  document.getElementById("school-left-label").textContent = state.step5.school || "?"; document.getElementById("school-right-label").textContent = state.step5.pupils || "?";
+  state.step5.school = normalizeCardinality(document.getElementById("school-cardinality").value);
+  state.step5.pupils = normalizeCardinality(document.getElementById("pupils-cardinality").value); state.step5.checked = true;
+  document.getElementById("school-cardinality").value = state.step5.school;
+  document.getElementById("pupils-cardinality").value = state.step5.pupils;
   const schoolCorrect = state.step5.school === "1";
   const pupilsCorrect = state.step5.pupils === "n";
   if (schoolCorrect && pupilsCorrect) { setFeedback(5, "success", "Richtig gelesen. Jetzt hat die Schreibweise einen Namen: Kardinalität."); markComplete(5); document.getElementById("cardinality-reveal").hidden = false; }
-  else if (!state.step5.school || !state.step5.pupils) setFeedback(5, "hint", "Wähle zu beiden Enden der Verbindung eine Aussage.");
-  else if (schoolCorrect || pupilsCorrect) setFeedback(5, "hint", "Ein Ende stimmt schon. Prüfe, wie viele Objekte jeweils auf der anderen Seite möglich sind.");
-  else setFeedback(5, "hint", "Denke in beide Richtungen: Zu wie vielen Schulklassen gehört ein Schüler? Wie viele Schüler hat eine Schulklasse?");
+  else if (!state.step5.school || !state.step5.pupils) setFeedback(5, "hint", "Trage in beide Lücken 1 oder n ein.");
+  else if (!schoolCorrect && pupilsCorrect) setFeedback(5, "hint", "Die Lücke bei Schüler stimmt. Prüfe die Lücke direkt bei Schulklasse: Zu wie vielen Schulklassen gehört ein Schüler?");
+  else if (schoolCorrect && !pupilsCorrect) setFeedback(5, "hint", "Die Lücke bei Schulklasse stimmt. Prüfe die Lücke direkt bei Schüler: Wie viele Schüler kann eine Schulklasse haben?");
+  else setFeedback(5, "hint", "Beide Lücken sind noch nicht korrekt. Prüfe: Ein Schüler gehört zu genau einer Schulklasse; eine Schulklasse kann mehrere Schüler haben.");
   saveState();
 }
 
 function checkStep6() {
-  state.step6.users = document.getElementById("users-cardinality").value; state.step6.photos = document.getElementById("photos-cardinality").value; state.step6.checked = true;
+  state.step6.users = normalizeCardinality(document.getElementById("users-cardinality").value);
+  state.step6.photos = normalizeCardinality(document.getElementById("photos-cardinality").value); state.step6.checked = true;
+  document.getElementById("users-cardinality").value = state.step6.users;
+  document.getElementById("photos-cardinality").value = state.step6.photos;
   const usersCorrect = state.step6.users === "1";
   const photosCorrect = state.step6.photos === "n";
   if (usersCorrect && photosCorrect) { setFeedback(6, "success", "Richtig: Ein users-Datensatz kann mit vielen photos-Datensätzen verbunden sein."); markComplete(6); document.getElementById("diagram-reveal").hidden = false; }
-  else if (!state.step6.users || !state.step6.photos) setFeedback(6, "hint", "Wähle an beiden Enden der Verbindung eine Kardinalität.");
-  else if (usersCorrect || photosCorrect) setFeedback(6, "hint", "Eine Kardinalität stimmt schon. Übertrage die 1:n-Beziehung aus Schritt 2 noch einmal.");
-  else setFeedback(6, "hint", "Übertrage die Beobachtung aus Schritt 2: Ein Benutzer kann mehrere Fotos besitzen.");
+  else if (!state.step6.users || !state.step6.photos) setFeedback(6, "hint", "Trage in beide Lücken 1 oder n ein.");
+  else if (!usersCorrect && photosCorrect) setFeedback(6, "hint", "Die Lücke bei photos stimmt. Prüfe die Lücke direkt bei users: Zu wie vielen Benutzern gehört ein Foto?");
+  else if (usersCorrect && !photosCorrect) setFeedback(6, "hint", "Die Lücke bei users stimmt. Prüfe die Lücke direkt bei photos: Wie viele Fotos kann ein Benutzer besitzen?");
+  else setFeedback(6, "hint", "Beide Lücken sind noch nicht korrekt. Nutze die Beziehung: Ein Foto gehört genau einem Benutzer; ein Benutzer kann mehrere Fotos besitzen.");
   saveState();
 }
 
@@ -321,14 +334,12 @@ function bindEvents() {
   };
   document.querySelectorAll('input[name="step4-key"]').forEach((input) => input.addEventListener("change", persistStep4));
   document.getElementById("new-photo-user-id").addEventListener("input", persistStep4);
-  document.querySelectorAll('input[name="school-cardinality"], input[name="pupils-cardinality"]').forEach((input) => input.addEventListener("change", () => {
-    state.step5.school = document.querySelector('input[name="school-cardinality"]:checked')?.value ?? "";
-    state.step5.pupils = document.querySelector('input[name="pupils-cardinality"]:checked')?.value ?? "";
-    document.getElementById("school-left-label").textContent = state.step5.school || "?";
-    document.getElementById("school-right-label").textContent = state.step5.pupils || "?";
+  document.querySelectorAll('#school-cardinality, #pupils-cardinality').forEach((input) => input.addEventListener("input", () => {
+    state.step5.school = document.getElementById("school-cardinality").value;
+    state.step5.pupils = document.getElementById("pupils-cardinality").value;
     state.step5.checked = false; clearFeedback(5); saveState();
   }));
-  document.querySelectorAll('#users-cardinality, #photos-cardinality').forEach((select) => select.addEventListener("change", () => {
+  document.querySelectorAll('#users-cardinality, #photos-cardinality').forEach((input) => input.addEventListener("input", () => {
     state.step6.users = document.getElementById("users-cardinality").value;
     state.step6.photos = document.getElementById("photos-cardinality").value;
     state.step6.checked = false; clearFeedback(6); saveState();
