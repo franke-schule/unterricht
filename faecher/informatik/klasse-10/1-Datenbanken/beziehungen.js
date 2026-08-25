@@ -178,7 +178,7 @@ function renderData() {
   document.getElementById("step2-choices").insertAdjacentHTML("beforeend", `<div class="choice-list"><p><strong>Ein einzelnes Foto gehört …</strong></p><label class="choice-option"><input type="radio" name="users-per-photo" value="einem" ${state.step2.users === "einem" ? "checked" : ""}><span>… genau einem Benutzer.</span></label><label class="choice-option"><input type="radio" name="users-per-photo" value="mehreren" ${state.step2.users === "mehreren" ? "checked" : ""}><span>… mehreren Benutzern.</span></label></div>`);
   document.getElementById("key-comparison").innerHTML = tableExcerptMarkup(true);
   radioList("step4a-choices", "step4-key", [["photos.id", "photos.id"], ["photos.user_id", "photos.user_id"], ["users.username", "users.username"]], state.step4.key);
-  document.getElementById("new-photo-task").innerHTML = `<h3>B. Fremdschlüssel anwenden</h3><p>Ein neues Foto soll zu <strong>${escapeHtml(lesson.targetUser.name)}</strong> gehören. In <code>users</code> hat diese Person die <code>id</code> <strong>${escapeHtml(lesson.targetUser.id)}</strong>.</p><label for="new-photo-user-id">Trage den Wert für <code>user_id</code> im neuen Foto #${lesson.newPhotoId} ein.</label><input id="new-photo-user-id" class="inline-input" type="number" min="1" step="1" inputmode="numeric" value="${escapeHtml(state.step4.value)}" aria-label="Wert für user_id im neuen Foto">`;
+  document.getElementById("new-photo-task").innerHTML = `<h3>B. Fremdschlüssel anwenden</h3><p>Ein neues Foto soll zu <strong>${escapeHtml(lesson.targetUser.name)}</strong> gehören. In <code>users</code> hat diese Person die <code>id</code> <strong>${escapeHtml(lesson.targetUser.id)}</strong>.</p><p>Das neue Foto besitzt die ID <strong>4</strong>.</p><label for="new-photo-user-id">Trage den Wert für <code>user_id</code> im neuen Foto #4 ein.</label><input id="new-photo-user-id" class="inline-input" type="number" min="1" step="1" inputmode="numeric" value="${escapeHtml(state.step4.value)}" aria-label="Wert für user_id im neuen Foto">`;
   document.getElementById("school-cardinality").value = state.step5.school;
   document.getElementById("pupils-cardinality").value = state.step5.pupils;
   document.getElementById("users-cardinality").value = state.step6.users;
@@ -236,6 +236,7 @@ function checkStep4() {
   const valueCorrect = state.step4.value !== "" && Number(state.step4.value) === Number(lesson.targetUser.id);
   if (keyCorrect && valueCorrect) { setFeedback(4, "success", "Beide Aufgaben sind richtig: photos.user_id ist der Fremdschlüssel und übernimmt die id des Benutzers."); markComplete(4); }
   else if (!state.step4.key || !state.step4.value) setFeedback(4, "hint", "Bearbeite beide Teilaufgaben.");
+  else if (Number(state.step4.value) === 4) setFeedback(4, "hint", "Achtung: Verwechsle nicht user_id und photo_id!");
   else if (keyCorrect) setFeedback(4, "hint", "Teil A stimmt. Übernimm für Teil B die id des genannten Benutzers.");
   else if (valueCorrect) setFeedback(4, "hint", "Teil B stimmt. Welche Spalte in photos verweist auf users.id?");
   else setFeedback(4, "hint", "Prüfe A: Die Verbindungs-Spalte steht in photos. Prüfe B: Übernimm die id des genannten Benutzers.");
