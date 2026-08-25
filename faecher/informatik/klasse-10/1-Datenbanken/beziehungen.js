@@ -155,8 +155,9 @@ function shortDescription(photo) {
 }
 
 function renderData() {
-  const userOptions = lesson.users.map((user) => `<option value="${escapeHtml(user.id)}">${escapeHtml(user.name)} (${escapeHtml(user.username)})</option>`).join("");
-  document.getElementById("record-assignment").innerHTML = lesson.photos.map((photo) => `<article id="photo-card-${photo.id}" class="record-card"><h3>Foto #${escapeHtml(photo.id)}</h3><p>${escapeHtml(shortDescription(photo))}</p><label for="photo-owner-${photo.id}">Gehört zu<select id="photo-owner-${photo.id}" data-photo-id="${escapeHtml(photo.id)}"><option value="">Benutzer wählen</option>${userOptions}</select></label></article>`).join("");
+  const userOptions = lesson.users.map((user) => `<option value="${escapeHtml(user.id)}">ID ${escapeHtml(user.id)} · ${escapeHtml(user.name)} (${escapeHtml(user.username)})</option>`).join("");
+  document.getElementById("user-records").innerHTML = lesson.users.map((user) => `<article class="user-record"><h3>${escapeHtml(user.name)}</h3><code>users.id: ${escapeHtml(user.id)}</code><p>${escapeHtml(user.username)}</p></article>`).join("");
+  document.getElementById("record-assignment").innerHTML = lesson.photos.map((photo) => `<article id="photo-card-${photo.id}" class="record-card"><h3>Foto #${escapeHtml(photo.id)}</h3><div class="record-key"><code>photos.user_id: ${escapeHtml(photo.user_id)}</code></div><p>${escapeHtml(shortDescription(photo))}</p><label for="photo-owner-${photo.id}">Gehört zu<select id="photo-owner-${photo.id}" data-photo-id="${escapeHtml(photo.id)}"><option value="">Benutzer wählen</option>${userOptions}</select></label></article>`).join("");
   document.querySelectorAll("[data-photo-id]").forEach((select) => {
     select.value = state.step1.assignments[select.dataset.photoId] ?? "";
     select.addEventListener("change", () => { state.step1.assignments[select.dataset.photoId] = select.value; state.step1.checked = false; clearFeedback(1); saveState(); });
