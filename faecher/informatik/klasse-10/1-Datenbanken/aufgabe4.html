@@ -1,0 +1,90 @@
+<!doctype html>
+<html lang="de">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="robots" content="noindex, nofollow">
+    <title>Aufgabe 4 – Klassenkarte und Tabellenschema | Informatik 10</title>
+    <link rel="stylesheet" href="../../../../styles.css?v=20260825">
+    <link rel="stylesheet" href="redundanzen.css?v=20260822c">
+    <link rel="stylesheet" href="tabellenschema.css?v=20260825a">
+    <script type="module" src="tabellenschema.js?v=20260825b"></script>
+  </head>
+  <body class="redundancy-page schema-page">
+    <div class="site-backdrop" aria-hidden="true"></div>
+    <main class="learning-shell">
+      <nav class="module-topbar" aria-label="Seitennavigation">
+        <a class="back-link" href="../index.html">Zur Aufgabenübersicht</a>
+        <a class="back-link" href="../../../../index.html">Startseite</a>
+      </nav>
+
+      <header class="module-header">
+        <div class="eyebrow"><span aria-hidden="true">◎</span> InstaHub-Datenbanklabor</div>
+        <h1>Klassenkarte und Tabellenschema</h1>
+        <p>Übertrage dieselben Informationen zwischen dem objektorientierten und dem relationalen Modell.</p>
+      </header>
+
+      <section id="learning-module">
+        <div class="progress-card" aria-label="Bearbeitungsfortschritt">
+          <div class="progress-copy"><span id="progress-label">Schritt 1 von 6</span><strong id="progress-percent">0 % bearbeitet</strong></div>
+          <div class="progress-track" aria-hidden="true"><span id="progress-bar"></span></div>
+        </div>
+        <nav id="step-tabs" class="step-tabs schema-tabs" aria-label="Lernschritte" role="tablist"></nav>
+
+        <section id="step-1" class="step-panel" role="tabpanel" aria-labelledby="tab-1">
+          <div class="step-heading"><span class="step-number">1</span><div><p class="step-kicker">Einstieg</p><h2>Zwei Ansichten derselben Information</h2></div></div>
+          <div class="scenario-card accent"><p>Eine <strong>Klassenkarte</strong> zeigt eine Klasse mit ihren Attributen. Ein <strong>Tabellenschema</strong> zeigt dieselbe Struktur als Tabelle mit Spalten.</p><p>Für jede Spalte wird zusätzlich festgelegt, welche Art von Wert sie speichern darf.</p></div>
+          <section class="datatype-card" aria-labelledby="datatype-title"><h3 id="datatype-title">Datentypen kurz wiederholt</h3><dl><div><dt><code>varchar(255)</code></dt><dd>Text mit höchstens 255 Zeichen, z. B. ein Benutzername.</dd></div><div><dt><code>int</code></dt><dd>Ganze Zahl, z. B. eine ID.</dd></div><div><dt><code>char</code></dt><dd>Text mit fester Länge, z. B. ein zweistelliger Ländercode wie <code>DE</code>.</dd></div><div><dt><code>date</code></dt><dd>Ein Datum, z. B. ein Geburtstag.</dd></div></dl></section>
+          <section class="task-card"><h3>Datentypen zuordnen</h3><p>Wähle für jede Eigenschaft den passenden Datentyp.</p><div id="datatype-assignment" class="mini-assignment"></div><div class="action-row"><button id="check-step1" class="primary-button" type="button">Zuordnung prüfen</button></div><p id="feedback-step1" class="feedback" aria-live="polite"></p></section>
+        </section>
+
+        <section id="step-2" class="step-panel" role="tabpanel" aria-labelledby="tab-2" hidden>
+          <div class="step-heading"><span class="step-number">2</span><div><p class="step-kicker">Beispiel</p><h2>So wird umgewandelt</h2></div></div>
+          <div class="scenario-card"><p>Das Beispiel ist bewusst einfacher als die nächsten Aufgaben: Eine Bibliothek verwaltet Bücher.</p></div>
+          <div class="example-flow" aria-label="Beispiel: Klassenkarte Buch wird zum Tabellenschema Buch"><article class="class-card"><h3>Buch</h3><ul><li>titel</li><li>erscheinungsjahr</li></ul></article><div class="flow-arrow" aria-hidden="true">→<small>umwandeln</small></div><article class="schema-card"><h3>buch</h3><dl><div><dt>titel</dt><dd>varchar(255)</dd></div><div><dt>erscheinungsjahr</dt><dd>int</dd></div></dl></article></div>
+          <div class="mapping-card"><p><strong>Merke die drei Schritte:</strong></p><ol><li>Klassenname wird Tabellenname.</li><li>Attribute werden Spalten.</li><li>Jede Spalte erhält einen passenden Datentyp.</li></ol></div>
+          <section class="task-card"><h3>Beispiel verstehen</h3><p>Wähle die zutreffende Aussage.</p><div id="example-choice" class="choice-list"></div><div class="action-row"><button id="check-step2" class="primary-button" type="button">Aussage prüfen</button></div><p id="feedback-step2" class="feedback" aria-live="polite"></p></section>
+        </section>
+
+        <section id="step-3" class="step-panel" role="tabpanel" aria-labelledby="tab-3" hidden>
+          <div class="step-heading"><span class="step-number">3</span><div><p class="step-kicker">Anwenden</p><h2>Klassenkarte <code>users</code></h2></div></div>
+          <div class="scenario-card"><p>Erstelle aus dieser Klassenkarte ein Tabellenschema. Die Reihenfolge der Zeilen ist egal.</p></div>
+          <div class="conversion-layout"><article class="class-card source-card"><h3>users</h3><ul><li>id</li><li>username</li><li>birthday</li><li>created_at</li><li>updated_at</li></ul></article><section class="schema-editor-card"><h3>Dein Tabellenschema</h3><div id="users-editor"></div></section></div>
+          <div class="help-stack"><details><summary>Hilfe 1</summary><p>Vergleiche jeden Attributwert mit den Beispielen aus der Datentyp-Wiederholung.</p></details><details><summary>Hilfe 2</summary><p><code>id</code> ist eine ganze Zahl; ein Geburtstag ist ein Datum.</p></details><details><summary>Hilfe 3</summary><p>Für Namen und Zeitangaben brauchst du noch Text bzw. Datum. Prüfe außerdem, ob der Tabellenname der Klassenname ist.</p></details></div>
+          <div class="action-row"><button id="check-step3" class="primary-button" type="button">Tabellenschema prüfen</button></div><p id="feedback-step3" class="feedback" aria-live="polite"></p>
+        </section>
+
+        <section id="step-4" class="step-panel" role="tabpanel" aria-labelledby="tab-4" hidden>
+          <div class="step-heading"><span class="step-number">4</span><div><p class="step-kicker">Anwenden</p><h2>Klassenkarte <code>photos</code></h2></div></div>
+          <div class="scenario-card"><p>Erstelle nun ein Tabellenschema für Fotos. Auch hier ist die Reihenfolge der Zeilen egal.</p></div>
+          <div class="conversion-layout"><article class="class-card source-card"><h3>photos</h3><ul><li>id</li><li>description</li><li>url</li><li>created_at</li><li>updated_at</li></ul></article><section class="schema-editor-card"><h3>Dein Tabellenschema</h3><div id="photos-editor"></div></section></div>
+          <div class="help-stack"><details><summary>Hilfe 1</summary><p>Eine Beschreibung und eine URL bestehen aus Text; die ID ist eine Zahl.</p></details><details><summary>Hilfe 2</summary><p>Die beiden Attribute mit <code>_at</code> enthalten Datumsangaben.</p></details><details><summary>Hilfe 3</summary><p>Übertrage alle fünf Attribute. Prüfe danach, ob jedes genau einmal vorkommt.</p></details></div>
+          <div class="action-row"><button id="check-step4" class="primary-button" type="button">Tabellenschema prüfen</button></div><p id="feedback-step4" class="feedback" aria-live="polite"></p>
+        </section>
+
+        <section id="step-5" class="step-panel" role="tabpanel" aria-labelledby="tab-5" hidden>
+          <div class="step-heading"><span class="step-number">5</span><div><p class="step-kicker">Gegenrichtung</p><h2>Vom Schema zur Klassenkarte</h2></div></div>
+          <div class="scenario-card"><p>Dieses Tabellenschema enthält schon die Datentypen. Erstelle daraus eine Klassenkarte – dort stehen nur Klassenname und Attribute.</p></div>
+          <div class="conversion-layout reverse"><article class="schema-card source-schema"><h3>photos</h3><dl><div><dt>id</dt><dd>int</dd></div><div><dt>description</dt><dd>varchar(255)</dd></div><div><dt>url</dt><dd>varchar(255)</dd></div><div><dt>created_at</dt><dd>date</dd></div><div><dt>updated_at</dt><dd>date</dd></div></dl></article><section class="schema-editor-card"><h3>Deine Klassenkarte</h3><div id="class-editor"></div></section></div>
+          <div class="help-stack"><details><summary>Hilfe 1</summary><p>Übernimm den Tabellennamen als Klassennamen.</p></details><details><summary>Hilfe 2</summary><p>Die Datentypen gehören nicht in die Klassenkarte.</p></details><details><summary>Hilfe 3</summary><p>Die Klassenkarte enthält genau fünf Attribute – jedes ohne Datentyp.</p></details></div>
+          <div class="action-row"><button id="check-step5" class="primary-button" type="button">Klassenkarte prüfen</button></div><p id="feedback-step5" class="feedback" aria-live="polite"></p>
+        </section>
+
+        <section id="step-6" class="step-panel" role="tabpanel" aria-labelledby="tab-6" hidden>
+          <div class="step-heading"><span class="step-number">6</span><div><p class="step-kicker">Sicherung</p><h2>Deine Merkhilfe</h2></div></div>
+          <div class="scenario-card"><p>Wähle die Merkhilfe, die die Umwandlung vollständig beschreibt.</p></div>
+          <form id="final-quiz" class="final-quiz" novalidate><fieldset><legend><span>✓</span> Klassenkarte und Tabellenschema</legend><div id="final-choice" class="choice-list"></div></fieldset><div class="action-row"><button class="primary-button" type="submit">Merkhilfe prüfen</button></div><p id="feedback-step6" class="feedback" aria-live="polite"></p></form>
+        </section>
+
+        <section id="step-summary" class="step-panel summary-panel" role="tabpanel" aria-labelledby="tab-summary" hidden>
+          <div class="step-heading"><span class="step-number complete">✓</span><div><p class="step-kicker">Abschlussübersicht</p><h2>Das nimmst du mit</h2></div></div>
+          <div class="short-summary"><strong>Merkhilfe:</strong> Klassenname → Tabellenname, Attribute → Spalten, für jede Spalte ein passender Datentyp.</div>
+          <div id="answer-summary" class="answer-summary"></div>
+          <div class="summary-actions"><button id="reset-module" class="secondary-button" type="button">Modul neu beginnen</button><a class="secondary-button" href="../index.html">Zur Aufgabenübersicht</a></div>
+        </section>
+
+        <nav class="bottom-navigation" aria-label="Navigation zwischen den Lernschritten"><button id="previous-step" class="secondary-button" type="button">← Zurück</button><button id="next-step" class="primary-button" type="button">Weiter →</button></nav>
+      </section>
+    </main>
+  </body>
+</html>
