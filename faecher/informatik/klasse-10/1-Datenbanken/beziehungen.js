@@ -16,6 +16,28 @@ const DEFAULT_STATE = {
 let state = loadState();
 let lesson = null;
 
+function unlockSolution(event, expectedCode, downloadLinkId, messageId) {
+  event.preventDefault();
+  const form = event.currentTarget;
+  const enteredCode = form.elements["solution-code"].value.toUpperCase().replace(/[^A-Z0-9]/g, "");
+  const normalizedExpectedCode = expectedCode.replace(/[^A-Z0-9]/g, "");
+  const downloadLink = document.getElementById(downloadLinkId);
+  const message = document.getElementById(messageId);
+
+  if (enteredCode === normalizedExpectedCode) {
+    downloadLink.hidden = false;
+    message.className = "solution-code-message";
+    message.textContent = "Code korrekt. Das Sicherungsblatt ist freigeschaltet.";
+    return;
+  }
+
+  downloadLink.hidden = true;
+  message.className = "solution-code-message error";
+  message.textContent = "Der eingegebene Code ist nicht gültig.";
+}
+
+window.unlockSolution = unlockSolution;
+
 function cloneDefaultState() { return JSON.parse(JSON.stringify(DEFAULT_STATE)); }
 
 function loadState() {

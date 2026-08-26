@@ -1,0 +1,186 @@
+\documentclass[10pt,a4paper]{article}
+
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage[ngerman]{babel}
+\usepackage[a4paper,margin=14mm]{geometry}
+\usepackage{lmodern}
+\usepackage[table]{xcolor}
+\usepackage{tabularx}
+\usepackage{array}
+\usepackage{microtype}
+\usepackage[most]{tcolorbox}
+\usepackage{tikz}
+\usetikzlibrary{arrows.meta,calc,positioning}
+
+\pagestyle{empty}
+\setlength{\parindent}{0pt}
+\setlength{\parskip}{0pt}
+\renewcommand{\familydefault}{\sfdefault}
+\renewcommand{\arraystretch}{1.18}
+
+\definecolor{Navy}{HTML}{17324D}
+\definecolor{Blue}{HTML}{3B6EA5}
+\definecolor{Sky}{HTML}{EAF3FA}
+\definecolor{Mint}{HTML}{E8F5EF}
+\definecolor{Gold}{HTML}{F3B33D}
+\definecolor{Ink}{HTML}{1E2935}
+\definecolor{Muted}{HTML}{617080}
+\definecolor{Line}{HTML}{D8E1E8}
+\definecolor{CodeBg}{HTML}{F5F7F9}
+\definecolor{KeyBg}{HTML}{FFF3D6}
+\definecolor{KeyLine}{HTML}{B87810}
+
+\color{Ink}
+
+\newcommand{\sectiontitle}[1]{%
+  \vspace{2.2mm}
+  {\color{Blue}\bfseries\large #1}\par
+  \vspace{0.7mm}
+  {\color{Blue}\rule{\linewidth}{0.7pt}}\par
+  \vspace{1.1mm}
+}
+
+\newcommand{\dbtable}[4]{%
+  \begin{tabular}{@{}#1@{}}
+    \rowcolor{Sky}#2\\
+    #3\\
+    #4
+  \end{tabular}%
+}
+
+\begin{document}
+
+\colorbox{Navy}{%
+  \parbox{\dimexpr\linewidth-2\fboxsep\relax}{%
+    \vspace{3mm}\color{white}
+    \begin{tabularx}{\linewidth}{@{}Xr@{}}
+      {\small\bfseries INFORMATIK · KLASSE 10} &
+      \colorbox{Gold}{\color{Navy}\small\bfseries\strut LÖSUNGEN}
+    \end{tabularx}
+    \vspace{2.4mm}
+
+    {\fontsize{21}{24}\selectfont\bfseries 1:n-Beziehungen und Fremdschlüssel}\par
+    \vspace{0.8mm}
+    {\large Beispiel: InstaHub -- \texttt{users} und \texttt{photos}}
+    \vspace{2.8mm}
+  }%
+}
+
+\vspace{2.5mm}
+\colorbox{Sky}{%
+  \parbox{\dimexpr\linewidth-2\fboxsep\relax}{%
+    \vspace{1.6mm}
+    \textcolor{Blue}{\bfseries Ziel:}
+    Du erkennst eine 1:n-Beziehung und erklärst, wie ein Fremdschlüssel zwei
+    Tabellen über passende IDs verbindet.
+    \vspace{1.6mm}
+  }%
+}
+
+\sectiontitle{1 · Ein Benutzer, mehrere Fotos}
+
+\begin{center}
+\begin{tabular}{@{}c@{\hspace{6mm}}c@{}}
+  \begin{minipage}[t]{48mm}
+  \centering
+  \textcolor{Blue}{\bfseries\texttt{users}}\par\vspace{0.8mm}
+  \begin{tabular}{|>{\ttfamily\small}r|>{\ttfamily\small}l|}\hline
+    \rowcolor{Sky}\textbf{id} & \textbf{username}\\\hline
+    \cellcolor{KeyBg}\textbf{3} & bergcoder\\\hline
+  \end{tabular}
+  \end{minipage}
+  &
+  \begin{minipage}[t]{96mm}
+  \centering
+  \textcolor{Blue}{\bfseries\texttt{photos}}\par\vspace{0.8mm}
+  \begin{tabular}{|>{\ttfamily\small}r|>{\ttfamily\small}r|>{\ttfamily\small}p{37mm}|}\hline
+    \rowcolor{Sky}\textbf{id} & \textbf{user\_id} & \textbf{description}\\\hline
+    11 & \cellcolor{KeyBg}\textbf{3} & Heute draußen im Wald programmiert …\\\hline
+    12 & \cellcolor{KeyBg}\textbf{3} & Bin gerade am Debuggen mitten im Wald …\\\hline
+    13 & \cellcolor{KeyBg}\textbf{3} & Ein neuer Pfad, ein neuer Gedanke …\\\hline
+  \end{tabular}
+  \end{minipage}
+\end{tabular}
+\end{center}
+
+\vspace{1.7mm}
+\begin{center}
+\begin{tikzpicture}[
+  classcard/.style={draw=Blue, line width=0.8pt, minimum width=49mm, minimum height=20mm, inner sep=0pt}
+]
+  \node[classcard] (usersclass) {};
+  \node[classcard, right=58mm of usersclass] (photosclass) {};
+  \draw[Blue, line width=0.8pt]
+    ([yshift=-7mm]usersclass.north west) -- ([yshift=-7mm]usersclass.north east);
+  \draw[Blue, line width=0.8pt]
+    ([yshift=-7mm]photosclass.north west) -- ([yshift=-7mm]photosclass.north east);
+  \draw[Blue, line width=0.8pt]
+    ([yshift=-7mm]usersclass.north east) -- ([yshift=-7mm]photosclass.north west);
+  \node[font=\large\bfseries\ttfamily] at ([yshift=-3.5mm]usersclass.north) {users};
+  \node[font=\large\bfseries\ttfamily] at ([yshift=-3.5mm]photosclass.north) {photos};
+  \node[font=\large\bfseries] at ([xshift=9mm,yshift=-4mm]usersclass.north east) {1};
+  \node[font=\large\bfseries] at ([xshift=-9mm,yshift=-4mm]photosclass.north west) {n};
+\end{tikzpicture}\\[-0.3mm]
+{\small\color{Muted}Ein Benutzer kann mehreren Fotos zugeordnet sein.}
+\end{center}
+
+\begin{tcolorbox}[colback=white,colframe=Line,arc=2mm,boxrule=0.7pt,left=2.5mm,right=2.5mm,top=1.5mm,bottom=1.5mm]
+  \textbf{1:n-Beziehung:} Bei einer 1:n-Beziehung kann einem Datensatz der
+  einen Tabelle mehr als ein Datensatz der anderen Tabelle zugeordnet sein.
+  \par\smallskip
+  Beispiel: \textbf{Ein Benutzer kann mehrere Fotos hochladen. Jedes Foto gehört
+  zu genau einem Benutzer.}
+\end{tcolorbox}
+
+\sectiontitle{2 · Der Fremdschlüssel stellt die Verbindung her}
+
+\begin{center}
+\begin{tikzpicture}[>=Latex, every node/.style={font=\small},
+  key/.style={draw=KeyLine, fill=KeyBg, rounded corners=1.2pt, inner sep=2.4pt, line width=0.8pt},
+  note/.style={draw=Blue, fill=Sky, rounded corners=1.2pt, inner sep=2pt, align=center}]
+  \node[key] (uid) {\texttt{users.id = 3}};
+  \node[key, right=42mm of uid] (fk) {\texttt{photos.user\_id = 3}};
+  \draw[->, line width=0.9pt, Blue] (fk) -- node[above, fill=white, inner sep=1.3pt] {verweist auf} (uid);
+  \node[note, below=7mm of $(uid)!0.5!(fk)$] (meaning) {\textbf{Verbindung über die Benutzer-ID}\\[-1pt]{\scriptsize Das Foto gehört zu dem Benutzer mit id 3.}};
+\end{tikzpicture}
+\end{center}
+
+\vspace{0.4mm}
+\begin{tabularx}{\linewidth}{@{}p{38mm}X@{}}
+  \colorbox{KeyBg}{\parbox{34mm}{\centering\textbf{Fremdschlüssel}\par\small\texttt{photos.user\_id}}}
+  &
+  \textbf{Ein Fremdschlüssel ist ein Attribut, das auf den Primärschlüssel
+  eines Datensatzes in einer anderen Tabelle verweist und dadurch die Tabellen
+  miteinander verbindet.}
+\end{tabularx}
+
+\vspace{1.4mm}
+\begin{tabularx}{\linewidth}{@{}X X@{}}
+  \textcolor{Blue}{\bfseries\texttt{users.id}}\par
+  identifiziert den Benutzer und ist hier der Primärschlüssel. &
+  \textcolor{Blue}{\bfseries\texttt{photos.user\_id}}\par
+  enthält dessen ID und ist der Fremdschlüssel.
+\end{tabularx}
+
+\vspace{1.7mm}
+\colorbox{Mint}{%
+  \parbox{\dimexpr\linewidth-2\fboxsep\relax}{%
+    \vspace{1.5mm}
+    \textcolor{Blue}{\bfseries Merke:}
+    Eine Benutzer-ID kann in der Tabelle \texttt{photos} in mehreren Zeilen
+    vorkommen. Jedes einzelne Foto verweist mit genau einer
+    \texttt{user\_id} auf seinen Benutzer.
+    \vspace{1.5mm}
+  }%
+}
+
+\vfill
+{\color{Line}\rule{\linewidth}{0.5pt}}\par
+\vspace{1.3mm}
+\begin{tabularx}{\linewidth}{@{}Xr@{}}
+  {\small\color{Muted}Klasse 10 · Datenbanken} &
+  {\small\color{Muted}Sicherungsblatt · Aufgabe 3}
+\end{tabularx}
+
+\end{document}

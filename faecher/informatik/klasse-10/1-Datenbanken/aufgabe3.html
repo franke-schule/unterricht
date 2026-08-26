@@ -7,7 +7,7 @@
     <title>Aufgabe 3 – Beziehungen und Fremdschlüssel | Informatik 10</title>
     <link rel="stylesheet" href="../../../../styles.css?v=20260825">
     <link rel="stylesheet" href="redundanzen.css?v=20260822c">
-    <link rel="stylesheet" href="beziehungen.css?v=20260825c">
+    <link rel="stylesheet" href="beziehungen.css?v=20260826b">
     <script type="module" src="beziehungen.js?v=20260825d"></script>
   </head>
   <body class="redundancy-page relation-page">
@@ -129,6 +129,23 @@
           <div class="summary-key-points"><article><h3>1:n-Beziehung</h3><p>Ein Benutzer kann mehrere Fotos besitzen. Ein Foto gehört genau einem Benutzer.</p><code>users&nbsp; 1 ───── n&nbsp; photos</code></article><article><h3>Fremdschlüssel</h3><code>users.id ← photos.user_id</code><p><code>photos.user_id</code> verweist auf den passenden Benutzer in <code>users</code>.</p></article><article><h3>Kardinalität</h3><p>Kardinalitäten geben an, wie viele Objekte bzw. Datensätze miteinander in Beziehung stehen können.</p></article></div>
           <div id="answer-summary" class="answer-summary"></div>
           <div class="summary-actions"><button id="reset-module" class="secondary-button" type="button">Modul neu beginnen</button><a class="secondary-button" href="../index.html">Zur Aufgabenübersicht</a></div>
+          <section class="solution-download" aria-labelledby="solution-download-title">
+            <h2 id="solution-download-title">Sicherungsblatt zu Aufgabe 3</h2>
+            <details class="solution-reveal">
+              <summary>Sicherungsblatt anzeigen</summary>
+              <form class="solution-code-form" onsubmit="unlockSolution(event, 'M7QK-X2M9', 'solution-download-link', 'solution-code-message')">
+                <label for="solution-code">Lehrercode eingeben</label>
+                <div class="solution-code-controls">
+                  <input id="solution-code" name="solution-code" type="text" maxlength="9" autocomplete="off" autocapitalize="characters" spellcheck="false" required>
+                  <button class="secondary-button" type="submit">Code prüfen</button>
+                </div>
+                <p id="solution-code-message" class="solution-code-message" aria-live="polite"></p>
+                <a id="solution-download-link" class="download-button" href="sicherungsblatt-aufgabe-3-loesungen.pdf" download hidden>
+                  &#8595; Sicherungsblatt herunterladen
+                </a>
+              </form>
+            </details>
+          </section>
         </section>
 
         <nav class="bottom-navigation" aria-label="Navigation zwischen den Lernschritten">
