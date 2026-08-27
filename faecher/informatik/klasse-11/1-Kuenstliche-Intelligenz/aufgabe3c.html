@@ -1,0 +1,97 @@
+<!doctype html>
+<html lang="de">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="robots" content="noindex, nofollow">
+    <title>Aufgabe 3c - Klassifikation der Testdaten - Fischdaten | Informatik 11</title>
+    <link rel="stylesheet" href="../../../../styles.css?v=20260707">
+    <link rel="stylesheet" href="entscheidungbaeume/styles.css?v=20260820g">
+    <link rel="stylesheet" href="entscheidungbaeume/task3.css?v=20260821b">
+    <link rel="stylesheet" href="entscheidungbaeume/task3c.css?v=20260827a">
+    <script type="module" src="entscheidungbaeume/ui/task3c.mjs?v=20260827a"></script>
+  </head>
+  <body class="decision-tree-page dt-fish-page task3c-page tabs-ready">
+    <div class="site-backdrop" aria-hidden="true"></div>
+    <main class="page-shell decision-tree-shell">
+      <nav class="topbar" aria-label="Navigation">
+        <a class="back-link" href="../index.html">Zur Aufgabenübersicht</a>
+        <a class="back-link" href="aufgabe3.html">Zu Aufgabe 3a</a>
+        <a class="back-link" href="../../../../">Startseite</a>
+      </nav>
+
+      <header class="dt-hero dt-fish-hero">
+        <p class="dt-eyebrow">Künstliche Intelligenz · Entscheidungsbäume</p>
+        <h1>Klassifikation der Testdaten</h1>
+        <p class="dt-task-number">Aufgabe 3c · Fischdaten</p>
+        <p class="dt-lead"><strong>Prüfe mit neuen Fischdaten, wie gut der Entscheidungsbaum vorhersagt.</strong></p>
+      </header>
+
+      <section class="task3c-progress-card" aria-label="Bearbeitungsfortschritt">
+        <div><span id="progress-label">Schritt 1 von 7</span><strong id="progress-percent">0 % bearbeitet</strong></div>
+        <div class="task3c-progress-track" aria-hidden="true"><span id="progress-bar"></span></div>
+      </section>
+
+      <nav class="fish-progress task3c-tabs" role="tablist" aria-label="Lernschritte Aufgabe 3c">
+        <button id="tab-test" type="button" role="tab" aria-controls="testdaten" data-step-tab="test"><span>1</span>Testdaten</button>
+        <button id="tab-matrix" type="button" role="tab" aria-controls="konfusionsmatrix" data-step-tab="matrix"><span>2</span>Matrix</button>
+        <button id="tab-accuracy-intro" type="button" role="tab" aria-controls="genauigkeit-einfuehrung" data-step-tab="accuracy-intro"><span>3</span>Genauigkeit</button>
+        <button id="tab-classify" type="button" role="tab" aria-controls="klassifizieren" data-step-tab="classify"><span>4</span>Klassifizieren</button>
+        <button id="tab-fill-matrix" type="button" role="tab" aria-controls="matrix-ausfuellen" data-step-tab="fill-matrix"><span>5</span>Matrix füllen</button>
+        <button id="tab-evaluate" type="button" role="tab" aria-controls="bewerten" data-step-tab="evaluate"><span>6</span>Bewerten</button>
+        <button id="tab-quiz" type="button" role="tab" aria-controls="quiz" data-step-tab="quiz"><span>7</span>Quiz</button>
+      </nav>
+      <p id="save-status" class="fish-save-status" role="status" aria-live="polite">Dein Bearbeitungsstand wird nur für Aufgabe 3c in diesem Browser gespeichert.</p>
+
+      <section id="testdaten" class="fish-step fish-tab-panel" role="tabpanel" tabindex="0" aria-labelledby="tab-test" data-step-panel="test">
+        <div class="fish-step-heading"><span class="fish-step-number">Schritt 1</span><div><h2>Testdaten prüfen</h2><p>Ein Entscheidungsbaum entsteht aus Trainingsdaten. Mit neuen Testdaten prüfen wir anschließend seine Vorhersagequalität.</p></div></div>
+        <article class="task3c-concept-card">
+          <h3>Wichtig für den Test</h3>
+          <ul><li>Die fünf Testfische wurden nicht zum Erstellen des Baums verwendet.</li><li>Ihre tatsächlichen Labels sind bekannt, bleiben jetzt aber noch verborgen.</li><li>Du vergleichst später Vorhersage und tatsächliches Label.</li></ul>
+        </article>
+      </section>
+
+      <section id="konfusionsmatrix" class="fish-step fish-tab-panel" role="tabpanel" tabindex="0" aria-labelledby="tab-matrix" data-step-panel="matrix" hidden>
+        <div class="fish-step-heading"><span class="fish-step-number">Schritt 2</span><div><h2>Die Konfusionsmatrix</h2><p>Sie ordnet richtige und falsche Klassifikationen übersichtlich. Lies zuerst Zeile und Spalte eines Feldes.</p></div></div>
+        <div class="task3c-matrix-explanation">
+          <article><h3>Zeilen: erwartetes Label</h3><p>Das tatsächliche Label des Testfischs.</p></article>
+          <article><h3>Spalten: berechnetes Label</h3><p>Die Vorhersage des Entscheidungsbaums.</p></article>
+        </div>
+        <p class="task3c-positive-note"><strong>Festlegung für dieses Modul:</strong> „friedlich“ ist die <strong>positive</strong> Klasse; „feindselig“ ist die <strong>negative</strong> Klasse.</p>
+        <div class="fish-table-scroll"><table class="fish-table task3c-explanation-table"><caption>Beispiel einer binären Konfusionsmatrix</caption><thead><tr><th scope="col">Erwartet \ berechnet</th><th scope="col">Friedlich</th><th scope="col">Feindselig</th></tr></thead><tbody><tr><th scope="row">Friedlich</th><td><strong>Richtig positiv</strong><span>tatsächlich und berechnet friedlich</span></td><td><strong>Falsch negativ</strong><span>friedlich, aber feindselig berechnet</span></td></tr><tr><th scope="row">Feindselig</th><td><strong>Falsch positiv</strong><span>feindselig, aber friedlich berechnet</span></td><td><strong>Richtig negativ</strong><span>tatsächlich und berechnet feindselig</span></td></tr></tbody></table></div>
+        <details class="fish-help-details"><summary>Hilfe: Wie lese ich ein Feld?</summary><p>Lies immer zuerst die Zeile (tatsächlich) und danach die Spalte (berechnet). So bedeutet Zeile „feindselig“, Spalte „friedlich“: falsch positiv.</p></details>
+      </section>
+
+      <section id="genauigkeit-einfuehrung" class="fish-step fish-tab-panel" role="tabpanel" tabindex="0" aria-labelledby="tab-accuracy-intro" data-step-panel="accuracy-intro" hidden>
+        <div class="fish-step-heading"><span class="fish-step-number">Schritt 3</span><div><h2>Genauigkeit verstehen</h2><p>Die Genauigkeit ist der Anteil richtig klassifizierter Testdaten an allen Testdaten.</p></div></div>
+        <article class="task3c-formula-card"><p>Richtig sind die beiden Diagonalfelder: richtig positiv und richtig negativ.</p><div class="math-display" aria-label="Ein plus drei geteilt durch eins plus eins plus drei plus null gleich vier Fünftel gleich achtzig Prozent">(1 + 3) / (1 + 1 + 3 + 0) = 4 / 5 = 80 %</div><p>Im Beispiel wurden also vier von fünf Testdaten richtig klassifiziert.</p></article>
+      </section>
+
+      <section id="klassifizieren" class="fish-step fish-tab-panel" role="tabpanel" tabindex="0" aria-labelledby="tab-classify" data-step-panel="classify" hidden>
+        <div class="fish-step-heading"><span class="fish-step-number">Schritt 4</span><div><h2>Testfische klassifizieren</h2><p>Folge für jeden Fisch dem Baum. Gib nur das vom Baum berechnete Label an.</p></div></div>
+        <div class="task3c-classification-layout">
+          <article class="task3c-tree-card"><h3>Entscheidungsbaum aus Aufgabe 3a</h3><p>Beginne bei <strong>Schuppenfarbe</strong>.</p><div id="reference-tree" class="dt-tree-editor task3c-reference-tree" role="img" aria-label="Entscheidungsbaum: Schuppenfarbe, Muster und Bauchfarbe führen zu den Blättern friedlich oder feindselig"></div></article>
+          <form id="classification-form" class="task3c-answer-card" novalidate><h3>Deine Vorhersagen</h3><div id="test-fish-list" class="task3c-test-fish-list"></div><button class="dt-primary-button" type="submit">Klassifikationen prüfen</button><div id="classification-feedback" class="dt-feedback" role="status" aria-live="polite" hidden></div></form>
+        </div>
+      </section>
+
+      <section id="matrix-ausfuellen" class="fish-step fish-tab-panel" role="tabpanel" tabindex="0" aria-labelledby="tab-fill-matrix" data-step-panel="fill-matrix" hidden>
+        <div class="fish-step-heading"><span class="fish-step-number">Schritt 5</span><div><h2>Konfusionsmatrix ausfüllen</h2><p>Übertrage die fünf Klassifikationsergebnisse. Ergänze auch die Summen.</p></div></div>
+        <form id="matrix-form" novalidate><div class="fish-table-scroll"><table class="fish-table task3c-input-matrix"><caption>Konfusionsmatrix der fünf Testfische</caption><thead><tr><th scope="col">Erwartetes Label \ berechnetes Label</th><th scope="col">Friedlich</th><th scope="col">Feindselig</th><th scope="col">Summe</th></tr></thead><tbody><tr><th scope="row">Friedlich</th><td><label><span class="sr-only">Friedlich erwartet, friedlich berechnet</span><input class="fish-number-input" name="peaceful-peaceful" inputmode="numeric" autocomplete="off"></label></td><td><label><span class="sr-only">Friedlich erwartet, feindselig berechnet</span><input class="fish-number-input" name="peaceful-hostile" inputmode="numeric" autocomplete="off"></label></td><td><label><span class="sr-only">Summe erwartetes Label friedlich</span><input class="fish-number-input" name="peaceful-total" inputmode="numeric" autocomplete="off"></label></td></tr><tr><th scope="row">Feindselig</th><td><label><span class="sr-only">Feindselig erwartet, friedlich berechnet</span><input class="fish-number-input" name="hostile-peaceful" inputmode="numeric" autocomplete="off"></label></td><td><label><span class="sr-only">Feindselig erwartet, feindselig berechnet</span><input class="fish-number-input" name="hostile-hostile" inputmode="numeric" autocomplete="off"></label></td><td><label><span class="sr-only">Summe erwartetes Label feindselig</span><input class="fish-number-input" name="hostile-total" inputmode="numeric" autocomplete="off"></label></td></tr><tr><th scope="row">Summe</th><td><label><span class="sr-only">Summe berechnetes Label friedlich</span><input class="fish-number-input" name="predicted-peaceful-total" inputmode="numeric" autocomplete="off"></label></td><td><label><span class="sr-only">Summe berechnetes Label feindselig</span><input class="fish-number-input" name="predicted-hostile-total" inputmode="numeric" autocomplete="off"></label></td><td><label><span class="sr-only">Gesamtzahl der Testfische</span><input class="fish-number-input" name="total" inputmode="numeric" autocomplete="off"></label></td></tr></tbody></table></div><button class="dt-primary-button" type="submit">Matrix prüfen</button><div id="matrix-feedback" class="dt-feedback" role="status" aria-live="polite" hidden></div></form>
+      </section>
+
+      <section id="bewerten" class="fish-step fish-tab-panel" role="tabpanel" tabindex="0" aria-labelledby="tab-evaluate" data-step-panel="evaluate" hidden>
+        <div class="fish-step-heading"><span class="fish-step-number">Schritt 6</span><div><h2>Genauigkeit bestimmen und bewerten</h2><p>Nutze deine Matrix, um die Vorhersagequalität dieser fünf Testfische zu beurteilen.</p></div></div>
+        <form id="accuracy-form" class="task3c-accuracy-form" novalidate><label>Richtig klassifizierte Fische<input name="correct" inputmode="numeric" autocomplete="off" aria-label="Anzahl richtig klassifizierter Fische"></label><label>Alle Testfische<input name="total" inputmode="numeric" autocomplete="off" aria-label="Anzahl aller Testfische"></label><label>Genauigkeit in Prozent<input name="percent" inputmode="numeric" autocomplete="off" aria-label="Genauigkeit in Prozent"></label><fieldset><legend>Wähle die passende Beurteilung.</legend><label class="task3c-choice"><input type="radio" name="judgement" value="correct">Der Baum klassifiziert in diesem Test vier von fünf Fischen richtig. Die Genauigkeit beschreibt nur diese fünf Testdaten.</label><label class="task3c-choice"><input type="radio" name="judgement" value="wrong-all">80 % bedeutet: Der Baum wird immer 80 % aller Fische richtig klassifizieren.</label><label class="task3c-choice"><input type="radio" name="judgement" value="wrong-training">Die Genauigkeit zeigt, wie gut der Baum die neun Trainingsfische gelernt hat.</label></fieldset><button class="dt-primary-button" type="submit">Bewertung prüfen</button><div id="accuracy-feedback" class="dt-feedback" role="status" aria-live="polite" hidden></div></form>
+      </section>
+
+      <section id="quiz" class="fish-step fish-tab-panel" role="tabpanel" tabindex="0" aria-labelledby="tab-quiz" data-step-panel="quiz" hidden>
+        <div class="fish-step-heading"><span class="fish-step-number">Schritt 7</span><div><h2>Quiz: Testdaten und Qualität</h2><p>Pro Frage sind mindestens zwei Antworten richtig. Markiere alle passenden Aussagen.</p></div></div>
+        <form id="quiz-form" class="entropy-quiz task3c-quiz" novalidate><div id="quiz-questions"></div><button class="dt-primary-button" type="submit">Quiz prüfen</button><div id="quiz-feedback" class="dt-feedback" role="status" aria-live="polite" hidden></div></form>
+        <section id="quiz-summary" class="quiz-summary" hidden aria-labelledby="quiz-summary-title"></section>
+      </section>
+
+      <nav class="task3c-bottom-nav" aria-label="Navigation zwischen den Lernschritten"><button id="previous-step" class="dt-secondary-button" type="button">← Zurück</button><button id="next-step" class="dt-primary-button" type="button">Weiter →</button></nav>
+    </main>
+  </body>
+</html>

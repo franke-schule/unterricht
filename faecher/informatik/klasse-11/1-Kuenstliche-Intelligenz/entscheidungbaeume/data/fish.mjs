@@ -40,5 +40,14 @@ export const FISH_DATASET = Object.freeze([
   fish("F9", "Punkte", "Schwarz", "Orange", "Rot", FISH_LABELS.PEACEFUL),
 ]);
 
-export const FISH_FEATURE_KEYS = Object.freeze(Object.keys(FISH_FEATURES));
+// Quelle: Datensatz_Fische_Einstieg_Testdaten.csv im Unterrichtsmaterial.
+// Die Labels bleiben im Lernmodul bis zur Auswertung verborgen.
+export const FISH_TEST_DATASET = Object.freeze([
+  fish("T1", "Ohne", "Schwarz", "Blau", "Rot", FISH_LABELS.PEACEFUL),
+  fish("T2", "Punkte", "Weiß", "Orange", "Rot", FISH_LABELS.HOSTILE),
+  fish("T3", "Ohne", "Schwarz", "Orange", "Gelb", FISH_LABELS.PEACEFUL),
+  fish("T4", "Punkte", "Schwarz", "Orange", "Gelb", FISH_LABELS.HOSTILE),
+  fish("T5", "Ohne", "Weiß", "Blau", "Rot", FISH_LABELS.PEACEFUL),
+]);
 
+export const FISH_FEATURE_KEYS = Object.freeze(Object.keys(FISH_FEATURES));
