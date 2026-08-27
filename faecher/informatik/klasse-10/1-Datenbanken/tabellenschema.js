@@ -66,6 +66,22 @@ export function evaluateClassCard(answer, expected) {
 }
 
 function setFeedback(step, kind, message) { const node = document.getElementById(`feedback-step${step}`); node.className = `feedback ${kind}`; node.textContent = message; }
+function unlockSolution(event, expectedCode, downloadLinkId, messageId) {
+  event.preventDefault();
+  const enteredCode = event.currentTarget.elements["solution-code"].value.toUpperCase().replace(/[^A-Z0-9]/g, "");
+  const downloadLink = document.getElementById(downloadLinkId);
+  const message = document.getElementById(messageId);
+  if (enteredCode === expectedCode.replace(/[^A-Z0-9]/g, "")) {
+    downloadLink.hidden = false;
+    message.className = "solution-code-message";
+    message.textContent = "Code korrekt. Das Sicherungsblatt ist freigeschaltet.";
+    return;
+  }
+  downloadLink.hidden = true;
+  message.className = "solution-code-message error";
+  message.textContent = "Der eingegebene Code ist nicht gültig.";
+}
+window.unlockSolution = unlockSolution;
 function clearFeedback(step) { setFeedback(step, "", ""); }
 function markComplete(step) { if (!state.completed.includes(step)) state.completed.push(step); saveState(); renderTabs(); updateNavigation(); }
 function optionMarkup(selected) { return `<option value="">Datentyp wählen</option>${TYPES.map((type) => `<option value="${type}" ${selected === type ? "selected" : ""}>${type}</option>`).join("")}`; }

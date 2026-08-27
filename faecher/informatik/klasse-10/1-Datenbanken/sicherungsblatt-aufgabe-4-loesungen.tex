@@ -1,0 +1,107 @@
+\documentclass[10pt,a4paper]{article}
+
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage[ngerman]{babel}
+\usepackage[a4paper,margin=14mm]{geometry}
+\usepackage{lmodern}
+\usepackage[table]{xcolor}
+\usepackage{tabularx}
+\usepackage{array}
+\usepackage{microtype}
+\usepackage{graphicx}
+\usepackage[most]{tcolorbox}
+\usepackage{tikz}
+\usetikzlibrary{positioning,calc}
+
+\pagestyle{empty}
+\setlength{\parindent}{0pt}
+\setlength{\parskip}{0pt}
+\renewcommand{\familydefault}{\sfdefault}
+\renewcommand{\arraystretch}{1.16}
+
+\definecolor{Navy}{HTML}{17324D}
+\definecolor{Blue}{HTML}{3B6EA5}
+\definecolor{Sky}{HTML}{EAF3FA}
+\definecolor{Mint}{HTML}{E8F5EF}
+\definecolor{Gold}{HTML}{F3B33D}
+\definecolor{Ink}{HTML}{1E2935}
+\definecolor{Muted}{HTML}{617080}
+\definecolor{Line}{HTML}{D8E1E8}
+\definecolor{CodeBg}{HTML}{F5F7F9}
+\definecolor{KeyBg}{HTML}{FFF3D6}
+\definecolor{KeyLine}{HTML}{B87810}
+
+\color{Ink}
+\newcommand{\sectiontitle}[1]{%
+  \vspace{2.2mm}{\color{Blue}\bfseries\large #1}\par
+  \vspace{0.7mm}{\color{Blue}\rule{\linewidth}{0.7pt}}\par\vspace{1.1mm}}
+\newcommand{\classcard}[2]{%
+  \fcolorbox{Blue}{white}{\parbox{55mm}{\centering\vspace{1mm}{\large\bfseries\ttfamily #1}\par
+  \vspace{1mm}{\color{Blue}\rule{\linewidth}{0.6pt}}\par\vspace{1mm}\raggedright\ttfamily\small #2\vspace{1mm}}}}
+
+\begin{document}
+
+\colorbox{Navy}{\parbox{\dimexpr\linewidth-2\fboxsep\relax}{%
+  \vspace{3mm}\color{white}\begin{tabularx}{\linewidth}{@{}Xr@{}}
+  {\small\bfseries INFORMATIK · KLASSE 10} & \colorbox{Gold}{\color{Navy}\small\bfseries\strut LÖSUNGEN}\end{tabularx}
+  \vspace{2.4mm}{\fontsize{18}{21}\selectfont\bfseries Aufgabe 4 -- Klassenkarte und Tabellenschema}\par
+  \vspace{0.8mm}{\large Sicherungsblatt}\vspace{2.8mm}}}
+
+\vspace{2.5mm}
+\colorbox{Sky}{\parbox{\dimexpr\linewidth-2\fboxsep\relax}{\vspace{1.6mm}
+\textcolor{Blue}{\bfseries Ziel:} Du wandelst Tabellenschemata und Klassenkarten um und stellst eine 1:n-Beziehung fachlich korrekt dar.\vspace{1.6mm}}}
+
+\sectiontitle{1 · Zwei Umwandlungsrichtungen}
+{\small\color{Muted}\textbf{Klassenkarte → Tabellenschema:} Attribute werden zu Spalten; Datentypen werden ergänzt.}\par\vspace{1.5mm}
+\begin{minipage}[t]{0.43\linewidth}
+\textcolor{Blue}{\bfseries Tabellenschema}\par\vspace{1mm}
+\colorbox{CodeBg}{\parbox{\dimexpr\linewidth-2\fboxsep\relax}{\ttfamily\small
+users (\par
+\quad id: int\par
+\quad username: varchar(255)\par
+\quad created\_at: date\par
+\quad updated\_at: date\par
+)\par\medskip
+photos (\par
+\quad id: int\par
+\colorbox{KeyBg}{\strut\quad user\_id: int}\par
+\quad description: varchar(255)\par
+\quad url: varchar(255)\par
+\quad created\_at: date\par
+\quad updated\_at: date\par
+)}}
+\par\vspace{1mm}
+\fcolorbox{KeyLine}{KeyBg}{\strut\scriptsize\textbf{Fremdschlüssel:} \texttt{photos.user\_id}}
+\end{minipage}
+\hfill
+\begin{minipage}[t]{0.54\linewidth}
+\centering
+\textcolor{Blue}{\bfseries Klassendiagramm}\par\vspace{5mm}
+\begin{tikzpicture}[every node/.style={inner sep=0pt}]
+\node (users) {\resizebox{38mm}{!}{\classcard{users}{id\par username\par created\_at\par updated\_at}}};
+\node[right=25mm of users] (photos) {\resizebox{38mm}{!}{\classcard{photos}{description\par url\par created\_at\par updated\_at}}};
+\draw[Blue,line width=.8pt] (users.east) -- node[midway,fill=white,inner sep=1pt,font=\scriptsize] {hochgeladen von} (photos.west);
+\node[above=1mm of $(users.east)!0.10!(photos.west)$,font=\bfseries] {1};
+\node[above=1mm of $(users.east)!0.90!(photos.west)$,font=\bfseries] {n};
+\end{tikzpicture}
+\par\vspace{4mm}
+{\scriptsize\color{Muted}\textbf{Tabellenschema → Klassendiagramm:} Datentypen entfallen; der Fremdschlüssel wird durch die Beziehung mit 1 und n dargestellt.}
+\end{minipage}
+
+\sectiontitle{2 · Die Beziehung lesen}
+\begin{tcolorbox}[colback=white,colframe=Line,arc=2mm,boxrule=.7pt,left=2.5mm,right=2.5mm,top=1.5mm,bottom=1.5mm]
+\textbf{1:n-Beziehung:} Ein \texttt{user} kann mehrere \texttt{photos} hochladen. Jedes \texttt{photo} gehört zu genau einem \texttt{user}.\par\smallskip
+Die Kardinalität \textbf{1} steht bei \texttt{users}; die Kardinalität \textbf{n} steht bei \texttt{photos}.
+\end{tcolorbox}
+
+\sectiontitle{3. Merke: 1:n-Beziehung im Tabellenschema und im Klassendiagramm}
+\begin{tcolorbox}[colback=Mint,colframe=Blue,arc=2mm,boxrule=.8pt,left=3mm,right=3mm,top=2mm,bottom=2mm]
+Der Fremdschlüssel (hier: \texttt{photos.user\_id}) wird nicht als Attribut in die Klassenkarte (hier: \texttt{photos}) übernommen. Im Klassendiagramm zeigt stattdessen die Beziehung (hier: zwischen \texttt{users} und \texttt{photos}) mit \textbf{1} und \textbf{n} diese Information.\par\smallskip
+\textbf{Fremdschlüssel:} \texttt{photos.user\_id}\par
+Er verweist im Tabellenschema auf \texttt{users.id}.
+\end{tcolorbox}
+
+\vfill{\color{Line}\rule{\linewidth}{.5pt}}\par\vspace{1.5mm}
+\begin{tabularx}{\linewidth}{@{}Xr@{}}{\small\color{Muted}Klasse 10 · Datenbanken} & {\small\color{Muted}Sicherungsblatt · Aufgabe 4}\end{tabularx}
+\end{document}
