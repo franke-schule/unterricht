@@ -1,4 +1,4 @@
-.schema-page .step-tabs { grid-template-columns: repeat(7, minmax(92px, 1fr)); }
+.schema-page .step-tabs { grid-template-columns: repeat(8, minmax(92px, 1fr)); }
 .datatype-card, .mapping-card { margin: 0 0 22px; padding: 18px 20px; border: 1px solid #cbe0f0; border-radius: 16px; background: #f4fbff; }
 .datatype-card h3 { margin: 0 0 13px; color: #1b426f; }
 .datatype-card dl { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 11px; margin: 0; }
@@ -34,6 +34,25 @@
 .help-stack summary { cursor: pointer; color: #80530d; font-weight: 900; }
 .help-stack p { margin: 9px 0 0; color: #6f5527; line-height: 1.45; }
 .source-card, .source-schema { position: sticky; top: 102px; }
+.schema-comparison { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 24px; margin: 0 0 22px; }
+.schema-comparison .schema-syntax { padding: 12px 18px; border-left: 4px solid #8aa6c4; background: #f8fbff; }
+.relationship-discovery fieldset { min-width: 0; margin: 18px 0 0; padding: 0; border: 0; }
+.relationship-discovery legend { margin-bottom: 10px; color: #1b426f; font-weight: 900; line-height: 1.45; }
+.cardinality-fields { display: flex; flex-wrap: wrap; gap: 12px 20px; }
+.cardinality-fields legend { width: 100%; }
+.cardinality-fields label { display: grid; grid-template-columns: auto minmax(90px, 130px); align-items: center; gap: 10px; min-height: 44px; color: #38566f; font-weight: 800; }
+.cardinality-fields select { min-height: 44px; border: 1px solid #afc4d8; border-radius: 9px; padding: 7px 10px; color: #172033; background: white; font: inherit; }
+.cardinality-fields select:focus-visible { outline: 3px solid rgba(23, 99, 213, .35); outline-offset: 2px; }
+.relationship-result { margin: 24px 0 0; padding: 20px; border: 1px solid #cbe0f0; border-radius: 16px; background: #f4fbff; }
+.relationship-result h3 { margin: 0 0 8px; color: #1b426f; }
+.relationship-result > p { margin: 0 0 20px; color: #38566f; line-height: 1.55; }
+.relationship-diagram { display: grid; grid-template-columns: minmax(190px, 1fr) minmax(180px, .8fr) minmax(190px, 1fr); align-items: center; gap: 0; }
+.relationship-diagram .class-card { width: 100%; min-width: 0; }
+.relationship-connector { position: relative; height: 2px; background: #526a84; }
+.relationship-label { position: absolute; left: 50%; bottom: 12px; width: max-content; max-width: 165px; transform: translateX(-50%); color: #273a50; font-size: .86rem; font-weight: 800; text-align: center; }
+.cardinality { position: absolute; bottom: 9px; padding: 0 4px; color: #172033; background: #f4fbff; font-size: 1.05rem; font-weight: 900; }
+.cardinality-users { left: 5px; }
+.cardinality-photos { right: 5px; }
 .feedback.partial { color: #9a5b0d; }
-@media (max-width: 860px) { .schema-page .step-tabs { grid-template-columns: repeat(7, 104px); } .conversion-layout { grid-template-columns: 1fr; } .source-card, .source-schema { position: static; width: min(100%, 340px); } }
-@media (max-width: 650px) { .datatype-card dl, .example-flow { grid-template-columns: 1fr; } .flow-arrow { transform: rotate(90deg); } .schema-textarea { min-height: 320px; padding-inline: 12px; font-size: .84rem; } }
+@media (max-width: 860px) { .schema-page .step-tabs { grid-template-columns: repeat(8, 104px); } .conversion-layout { grid-template-columns: 1fr; } .source-card, .source-schema { position: static; width: min(100%, 340px); } .schema-comparison { grid-template-columns: 1fr; } }
+@media (max-width: 650px) { .datatype-card dl, .example-flow { grid-template-columns: 1fr; } .flow-arrow { transform: rotate(90deg); } .schema-textarea { min-height: 320px; padding-inline: 12px; font-size: .84rem; } .relationship-result { padding-inline: 14px; } .relationship-diagram { grid-template-columns: minmax(0, 1fr); justify-items: stretch; } .relationship-connector { justify-self: center; width: 2px; height: 92px; } .relationship-label { left: 14px; bottom: 50%; width: 150px; transform: translateY(50%); text-align: left; } .cardinality { left: 9px; right: auto; bottom: auto; } .cardinality-users { top: 4px; } .cardinality-photos { top: auto; bottom: 4px; } }

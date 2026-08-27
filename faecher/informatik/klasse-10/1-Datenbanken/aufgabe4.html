@@ -7,8 +7,8 @@
     <title>Aufgabe 4 – Klassenkarte und Tabellenschema | Informatik 10</title>
     <link rel="stylesheet" href="../../../../styles.css?v=20260825">
     <link rel="stylesheet" href="redundanzen.css?v=20260822c">
-    <link rel="stylesheet" href="tabellenschema.css?v=20260825b">
-    <script type="module" src="tabellenschema.js?v=20260826"></script>
+    <link rel="stylesheet" href="tabellenschema.css?v=20260827">
+    <script type="module" src="tabellenschema.js?v=20260827"></script>
   </head>
   <body class="redundancy-page schema-page">
     <div class="site-backdrop" aria-hidden="true"></div>
@@ -26,7 +26,7 @@
 
       <section id="learning-module">
         <div class="progress-card" aria-label="Bearbeitungsfortschritt">
-          <div class="progress-copy"><span id="progress-label">Schritt 1 von 6</span><strong id="progress-percent">0 % bearbeitet</strong></div>
+          <div class="progress-copy"><span id="progress-label">Schritt 1 von 7</span><strong id="progress-percent">0 % bearbeitet</strong></div>
           <div class="progress-track" aria-hidden="true"><span id="progress-bar"></span></div>
         </div>
         <nav id="step-tabs" class="step-tabs schema-tabs" aria-label="Lernschritte" role="tablist"></nav>
@@ -45,15 +45,15 @@
   titel: varchar(255)
   erscheinungsjahr: int
 )</code></pre></div></div>
-          <div class="mapping-card"><p><strong>Merke die Syntax:</strong></p><ol><li>Der Tabellenname steht vor den runden Klammern.</li><li>In jeder eingerückten Zeile folgt auf den Attributnamen ein Doppelpunkt.</li><li>Hinter dem Doppelpunkt steht der Datentyp.</li></ol></div>
+          <div class="mapping-card"><p><strong>Merke die Syntax:</strong></p><ol><li>Der Tabellenname steht vor den runden Klammern.</li><li>In jeder Attributzeile folgt auf den Attributnamen ein Doppelpunkt.</li><li>Hinter dem Doppelpunkt steht der Datentyp. Die Zeilen dürfen eingerückt sein, müssen es aber nicht.</li></ol></div>
           <section class="task-card"><h3>Beispiel verstehen</h3><p>Wähle die zutreffende Aussage.</p><div id="example-choice" class="choice-list"></div><div class="action-row"><button id="check-step2" class="primary-button" type="button">Aussage prüfen</button></div><p id="feedback-step2" class="feedback" aria-live="polite"></p></section>
         </section>
 
         <section id="step-3" class="step-panel" role="tabpanel" aria-labelledby="tab-3" hidden>
           <div class="step-heading"><span class="step-number">3</span><div><p class="step-kicker">Anwenden</p><h2>Klassenkarte <code>users</code></h2></div></div>
-          <div class="scenario-card"><p>Schreibe das vollständige Tabellenschema. Nutze Klammern, Einrückungen und Doppelpunkte; die Attributreihenfolge ist egal.</p></div>
+          <div class="scenario-card"><p>Schreibe das vollständige Tabellenschema. Nutze Klammern und Doppelpunkte; Einrückung und Attributreihenfolge sind frei.</p></div>
           <div class="conversion-layout"><article class="class-card source-card"><h3>users</h3><ul><li>id</li><li>username</li><li>birthday</li><li>created_at</li><li>updated_at</li></ul></article><section class="schema-editor-card"><h3>Dein Tabellenschema</h3><div id="users-editor"></div></section></div>
-          <div class="help-stack"><details><summary>Hilfe 1</summary><p>Beginne mit dem Tabellennamen und <code>(</code>. Beende das Schema mit <code>)</code>.</p></details><details><summary>Hilfe 2</summary><p>Rücke jede Attributzeile mit zwei Leerzeichen ein und setze einen Doppelpunkt vor den Datentyp.</p></details><details><summary>Hilfe 3</summary><p><code>id</code> ist eine ganze Zahl; Namen sind Text und Zeitangaben werden hier als Datum gespeichert.</p></details></div>
+          <div class="help-stack"><details><summary>Hilfe 1</summary><p>Beginne mit dem Tabellennamen und <code>(</code>. Beende das Schema mit <code>)</code>.</p></details><details><summary>Hilfe 2</summary><p>Setze in jeder Attributzeile einen Doppelpunkt vor den Datentyp. Leerzeichen am Zeilenanfang sind freiwillig.</p></details><details><summary>Hilfe 3</summary><p><code>id</code> ist eine ganze Zahl; Namen sind Text und Zeitangaben werden hier als Datum gespeichert.</p></details></div>
           <div class="action-row"><button id="check-step3" class="primary-button" type="button">Tabellenschema prüfen</button></div><p id="feedback-step3" class="feedback" aria-live="polite"></p>
         </section>
 
@@ -66,28 +66,68 @@
         </section>
 
         <section id="step-5" class="step-panel" role="tabpanel" aria-labelledby="tab-5" hidden>
-          <div class="step-heading"><span class="step-number">5</span><div><p class="step-kicker">Gegenrichtung</p><h2>Vom Schema zur Klassenkarte</h2></div></div>
-          <div class="scenario-card"><p>Dieses Tabellenschema enthält schon die Datentypen. Erstelle daraus eine Klassenkarte – dort stehen nur Klassenname und Attribute.</p></div>
+          <div class="step-heading"><span class="step-number">5</span><div><p class="step-kicker">Entdecken</p><h2>Wo steckt die Beziehung?</h2></div></div>
+          <div class="scenario-card"><p>Vergleiche die beiden vollständigen Tabellenschemata. Eine Zeile in <code>photos</code> verweist auf <code>users</code>.</p></div>
+          <div class="schema-comparison" aria-label="Tabellenschemata users und photos mit Fremdschlüssel">
+            <div class="schema-syntax"><pre><code>users(
+  id: int
+  username: varchar(255)
+  birthday: date
+  created_at: date
+  updated_at: date
+)</code></pre></div>
+            <div class="schema-syntax"><pre><code>photos(
+  id: int
+  description: varchar(255)
+  url: varchar(255)
+  user_id[users]: int
+  created_at: date
+  updated_at: date
+)</code></pre></div>
+          </div>
+          <section class="task-card relationship-discovery" aria-labelledby="relationship-task-title">
+            <h3 id="relationship-task-title">Beziehung entschlüsseln</h3>
+            <fieldset><legend>1. Welche Zeile verbindet <code>photos</code> mit <code>users</code>?</legend><div id="foreign-key-choice" class="choice-list"></div></fieldset>
+            <fieldset><legend>2. Was wird beim Klassendiagramm aus dieser Zeile?</legend><div id="relation-mapping-choice" class="choice-list"></div></fieldset>
+            <fieldset class="cardinality-fields"><legend>3. Ergänze die Kardinalitäten.</legend><label><span>Bei <code>users</code></span><select id="users-cardinality"><option value="">auswählen</option><option value="1">1</option><option value="n">n</option></select></label><label><span>Bei <code>photos</code></span><select id="photos-cardinality"><option value="">auswählen</option><option value="1">1</option><option value="n">n</option></select></label></fieldset>
+            <div class="help-stack"><details><summary>Hilfe 1</summary><p>Achte auf den Namen in den eckigen Klammern.</p></details><details><summary>Hilfe 2</summary><p>Ein Benutzer kann mehrere Fotos hochladen. Jedes Foto gehört zu genau einem Benutzer.</p></details></div>
+            <div class="action-row"><button id="check-step5" class="primary-button" type="button">Beziehung prüfen</button></div><p id="feedback-step5" class="feedback" aria-live="polite"></p>
+          </section>
+          <section id="relationship-result" class="relationship-result" aria-labelledby="relationship-result-title" hidden>
+            <h3 id="relationship-result-title">Vom Fremdschlüssel zur 1:n-Beziehung</h3>
+            <p><code>user_id[users]</code> ist der Fremdschlüssel. Im Klassendiagramm wird er nicht als Attribut übernommen: Die Verbindung erscheint als <strong>1:n-Beziehung</strong>.</p>
+            <div class="relationship-diagram" aria-label="Klassendiagramm: Ein Benutzer kann mehrere Fotos hochladen">
+              <article class="class-card"><h3>users</h3><ul><li>id</li><li>username</li><li>birthday</li><li>created_at</li><li>updated_at</li></ul></article>
+              <div class="relationship-connector" aria-hidden="true"><span class="cardinality cardinality-users">1</span><span class="relationship-label">← wurde hochgeladen von</span><span class="cardinality cardinality-photos">n</span></div>
+              <article class="class-card"><h3>photos</h3><ul><li>id</li><li>description</li><li>url</li><li>created_at</li><li>updated_at</li></ul></article>
+            </div>
+          </section>
+        </section>
+
+        <section id="step-6" class="step-panel" role="tabpanel" aria-labelledby="tab-6" hidden>
+          <div class="step-heading"><span class="step-number">6</span><div><p class="step-kicker">Gegenrichtung</p><h2>Vom Schema zur Klassenkarte</h2></div></div>
+          <div class="scenario-card"><p>Erstelle aus dem Tabellenschema die Klassenkarte. Entscheide dabei, welche Zeilen Attribute der Klasse werden.</p></div>
           <div class="conversion-layout reverse"><div class="schema-syntax source-schema" aria-label="Tabellenschema photos"><pre><code>photos(
   id: int
   description: varchar(255)
   url: varchar(255)
+  user_id[users]: int
   created_at: date
   updated_at: date
 )</code></pre></div><section class="direct-class-task"><h3>Deine Klassenkarte</h3><div id="class-editor"></div></section></div>
-          <div class="help-stack"><details><summary>Hilfe 1</summary><p>Übernimm den Tabellennamen als Klassennamen.</p></details><details><summary>Hilfe 2</summary><p>Die Datentypen gehören nicht in die Klassenkarte.</p></details><details><summary>Hilfe 3</summary><p>Die Klassenkarte enthält genau fünf Attribute – jedes ohne Datentyp.</p></details></div>
-          <div class="action-row"><button id="check-step5" class="primary-button" type="button">Klassenkarte prüfen</button></div><p id="feedback-step5" class="feedback" aria-live="polite"></p>
+          <div class="help-stack"><details><summary>Hilfe 1</summary><p>Übernimm den Tabellennamen als Klassennamen.</p></details><details><summary>Hilfe 2</summary><p>Datentypen gehören nicht in die Klassenkarte. Prüfe außerdem die Zeile mit den eckigen Klammern.</p></details><details><summary>Hilfe 3</summary><p>Der Fremdschlüssel beschreibt die Beziehung und wird nicht als Attribut übernommen. Fünf Attribute bleiben übrig.</p></details></div>
+          <div class="action-row"><button id="check-step6" class="primary-button" type="button">Klassenkarte prüfen</button></div><p id="feedback-step6" class="feedback" aria-live="polite"></p>
         </section>
 
-        <section id="step-6" class="step-panel" role="tabpanel" aria-labelledby="tab-6" hidden>
-          <div class="step-heading"><span class="step-number">6</span><div><p class="step-kicker">Sicherung</p><h2>Deine Merkhilfe</h2></div></div>
-          <div class="scenario-card"><p>Wähle die Merkhilfe, die die Umwandlung vollständig beschreibt.</p></div>
-          <form id="final-quiz" class="final-quiz" novalidate><fieldset><legend><span>✓</span> Klassenkarte und Tabellenschema</legend><div id="final-choice" class="choice-list"></div></fieldset><div class="action-row"><button class="primary-button" type="submit">Merkhilfe prüfen</button></div><p id="feedback-step6" class="feedback" aria-live="polite"></p></form>
+        <section id="step-7" class="step-panel" role="tabpanel" aria-labelledby="tab-7" hidden>
+          <div class="step-heading"><span class="step-number">7</span><div><p class="step-kicker">Sicherung</p><h2>Deine Merkhilfe</h2></div></div>
+          <div class="scenario-card"><p>Wähle für beide Umwandlungen die passende Merkhilfe.</p></div>
+          <form id="final-quiz" class="final-quiz" novalidate><fieldset><legend><span>✓</span> Klassenkarte und Tabellenschema</legend><div id="final-choice" class="choice-list"></div></fieldset><fieldset><legend><span>✓</span> Fremdschlüssel und Klassendiagramm</legend><div id="final-relation-choice" class="choice-list"></div></fieldset><div class="action-row"><button class="primary-button" type="submit">Merkhilfen prüfen</button></div><p id="feedback-step7" class="feedback" aria-live="polite"></p></form>
         </section>
 
         <section id="step-summary" class="step-panel summary-panel" role="tabpanel" aria-labelledby="tab-summary" hidden>
           <div class="step-heading"><span class="step-number complete">✓</span><div><p class="step-kicker">Abschlussübersicht</p><h2>Das nimmst du mit</h2></div></div>
-          <div class="short-summary"><strong>Merkhilfe:</strong> <code>tabellenname(</code>, danach eingerückt <code>attribut: datentyp</code>, zum Schluss <code>)</code>.</div>
+          <div class="short-summary"><strong>Merkhilfe:</strong> <code>tabellenname(</code>, danach <code>attribut: datentyp</code>, zum Schluss <code>)</code>. Einrückungen sind erlaubt, aber freiwillig.</div>
           <div id="answer-summary" class="answer-summary"></div>
           <section class="solution-download" aria-labelledby="solution-download-title">
             <h2 id="solution-download-title">Sicherungsblatt zu Aufgabe 4</h2>
