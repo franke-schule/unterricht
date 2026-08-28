@@ -106,3 +106,14 @@ export const ENTROPY_QUIZ = Object.freeze([
   }),
 ]);
 
+// Ergebnisse der mit ENTER Online erstellten Bäume. Die Tiefe zählt die
+// Entscheidungsebenen und bildet die gemeinsame Grundlage für Aufgabe 4.
+export const FISH_TREE_DEPTH_RESULTS = Object.freeze([
+  Object.freeze({ depth: 1, trainingCorrect: 6, trainingTotal: 9, testCorrect: 4, testTotal: 5, wrongTestFish: "T3" }),
+  Object.freeze({ depth: 2, trainingCorrect: 8, trainingTotal: 9, testCorrect: 4, testTotal: 5, wrongTestFish: "T4" }),
+  Object.freeze({ depth: 3, trainingCorrect: 9, trainingTotal: 9, testCorrect: 4, testTotal: 5, wrongTestFish: "T4" }),
+]);
+
+export function percentageFor(correct, total) {
+  return total === 0 ? 0 : (correct / total) * 100;
+}

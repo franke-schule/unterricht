@@ -332,5 +332,60 @@ const TASKS = {
       'Enthaelt eine Teilmenge nur Daten desselben Labels, wird ein Blatt mit diesem Label erzeugt.',
       'Das Verfahren endet, wenn keine weitere sinnvolle Aufteilung notwendig oder moeglich ist.'
     ]
+  },
+
+  '11-4-1': {
+    title:
+      'Klasse 11 Aufgabe 4.1: Entscheidungsbaum der Tiefe 1 begruenden',
+    grade:
+      11,
+    maxPoints:
+      3,
+    instruction:
+      'Bewerte eine kurze Begruendung zu den Fisch-Trainingsdaten. Erwartetes Niveau: Die Schuelerin oder der Schueler benennt die Schuppenfarbe als ersten Split und erklaert in eigenen Worten, warum bei maximaler Baumtiefe 1 nicht alle Trainingsfische korrekt klassifiziert werden. Es genuegt eine kurze, fachlich nachvollziehbare Begruendung; keine Fachsprache ueber das Lernniveau hinaus verlangen.',
+    program:
+      'Kontext: Nach dem Split Schuppenfarbe enthalten sowohl die blaue als auch die orange Teilmenge friedliche und feindselige Trainingsfische. Daher sind weitere Aufteilungen erforderlich.',
+    expectedAspects: [
+      'Schuppenfarbe wird als Attribut des ersten Entscheidungsknotens genannt.',
+      'Es wird klar entschieden, dass bei Baumtiefe 1 nicht alle Trainingsdaten richtig klassifiziert werden koennen.',
+      'Die Begruendung verweist auf weiterhin gemischte Teilmengen, Fehlklassifikationen oder notwendige weitere Aufteilungen.'
+    ]
+  },
+
+  '11-4-2': {
+    title:
+      'Klasse 11 Aufgabe 4.2: Baumtiefe und Genauigkeit beschreiben',
+    grade:
+      11,
+    maxPoints:
+      4,
+    instruction:
+      'Bewerte eine Beschreibung der Baeume mit maximaler Tiefe 1, 2 und 3. Erwartetes Niveau: kurze, begruendete Beobachtung. Anerkenne verschiedene passende Formulierungen. Wesentlich sind: Mit zunehmender Tiefe wird der Baum komplexer, die Trainingsgenauigkeit steigt, die Testgenauigkeit ist nicht automatisch besser, und die Wahl der Tiefe soll sich an unbekannten Testdaten orientieren.',
+    program:
+      'Kontext: Bei den Fischdaten steigen die Trainingsgenauigkeiten von 66,7 % ueber 88,9 % auf 100 %. Die Testgenauigkeit bleibt bei allen drei Tiefen 80 %. Tiefe 1 klassifiziert T3 falsch; Tiefe 2 und 3 klassifizieren T4 falsch.',
+    expectedAspects: [
+      'Der Baum wird beim Erhoehen der maximalen Tiefe komplexer oder erhaelt weitere Aufteilungen.',
+      'Die Trainingsdaten werden mit groesserer Tiefe besser klassifiziert beziehungsweise die Trainingsgenauigkeit steigt.',
+      'Die Testgenauigkeit verbessert sich hier nicht automatisch; sie bleibt bei 80 %.',
+      'Eine Baumtiefe wird mit Bezug auf die Testdaten, Generalisierung oder eine passende Balance begruendet gewaehlt.'
+    ]
+  },
+
+  '11-4-3': {
+    title:
+      'Klasse 11 Aufgabe 4.3: Gleiche Genauigkeit und unterschiedliche Fehler',
+    grade:
+      11,
+    maxPoints:
+      3,
+    instruction:
+      'Bewerte eine kurze Beschreibung zum Vergleich der Fischbaeume der Tiefe 1 und 2. Erwartetes Niveau: Die Schuelerin oder der Schueler erkennt, dass gleiche Genauigkeit nicht dieselben richtig oder falsch klassifizierten Fische bedeutet. Im Datensatz wird bei Tiefe 1 T3 falsch und bei Tiefe 2 T4 falsch klassifiziert. Anerkenne Beschreibungen ueber unterschiedliche Fische oder unterschiedliche Klassen; die exakte Fischkennung ist nicht zwingend.',
+    program:
+      'Kontext: Beide Baeume haben auf den Testdaten 80 % Genauigkeit. Der Baum der Tiefe 1 klassifiziert T3 falsch; der Baum der Tiefe 2 klassifiziert T4 falsch.',
+    expectedAspects: [
+      'Beide Baeume werden als gleich genau (80 % auf den Testdaten) erkannt.',
+      'Es wird erklaert, dass unterschiedliche Fische oder Klassen falsch klassifiziert werden koennen; hier T3 bei Tiefe 1 und T4 bei Tiefe 2.',
+      'Die Genauigkeit wird als alleinige Kennzahl kritisch eingeordnet, weil sie die Art oder Verteilung der Fehler nicht zeigt.'
+    ]
   }
 };

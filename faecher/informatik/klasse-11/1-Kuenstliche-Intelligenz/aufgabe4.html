@@ -1,0 +1,106 @@
+<!doctype html>
+<html lang="de">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="robots" content="noindex, nofollow">
+    <title>Aufgabe 4 – Entscheidungsbäume untersuchen | Informatik 11</title>
+    <link rel="stylesheet" href="../../../../styles.css?v=20260707">
+    <link rel="stylesheet" href="entscheidungbaeume/styles.css?v=20260820g">
+    <link rel="stylesheet" href="entscheidungbaeume/task3.css?v=20260821b">
+    <link rel="stylesheet" href="entscheidungbaeume/task4.css?v=20260828a">
+    <script type="module" src="entscheidungbaeume/ui/task4.mjs?v=20260828a"></script>
+  </head>
+  <body class="decision-tree-page dt-fish-page task4-page">
+    <div class="site-backdrop" aria-hidden="true"></div>
+    <main class="page-shell decision-tree-shell">
+      <nav class="topbar" aria-label="Navigation">
+        <a class="back-link" href="../index.html">Zur Aufgabenübersicht</a>
+        <a class="back-link" href="aufgabe3c.html">Zu Aufgabe 3c</a>
+        <a class="back-link" href="../../../../">Startseite</a>
+      </nav>
+
+      <header class="dt-hero dt-fish-hero">
+        <p class="dt-eyebrow">Künstliche Intelligenz · Entscheidungsbäume</p>
+        <h1>Entscheidungsbäume untersuchen</h1>
+        <p class="dt-task-number">Aufgabe 4</p>
+        <p class="dt-lead"><strong>Vergleiche unterschiedlich tiefe Bäume mit Trainings- und Testdaten.</strong></p>
+      </header>
+
+      <section class="task4-materials" aria-labelledby="material-title">
+        <h2 id="material-title">Arbeitsmaterial und Werkzeug</h2>
+        <p>Öffne <a href="https://kex.fim.uni-passau.de/ENTER_Online/html/ENTER_Online.html" target="_blank" rel="noopener noreferrer">ENTER Online</a> und lade die passenden Fischdaten herunter.</p>
+        <nav class="task4-material-links" aria-label="Fischdatensätze herunterladen">
+          <a href="../material-entscheidungsbaum/Material_Entscheidungsbaum-20240227/Datensatz_Fische_Einstieg_Trainingsdaten.csv" download>↓ Fisch-Trainingsdaten</a>
+          <a href="../material-entscheidungsbaum/Material_Entscheidungsbaum-20240227/Datensatz_Fische_Einstieg_Testdaten.csv" download>↓ Fisch-Testdaten</a>
+          <a href="../material-entscheidungsbaum/Material_Entscheidungsbaum-20240227/Datensatz_Fische_Kleiner_Datensatz.csv" download>↓ Kleiner Fischdatensatz</a>
+          <a href="../material-entscheidungsbaum/Material_Entscheidungsbaum-20240227/Datensatz_Fische_Großer_Datensatz.csv" download>↓ Großer Fischdatensatz</a>
+        </nav>
+      </section>
+
+      <div class="task4-sections">
+        <section class="task4-card" aria-labelledby="task41-title">
+          <div class="fish-step-heading"><span class="fish-step-number">4.1</span><div><h2 id="task41-title">Begründen</h2><p>Nenne das Attribut, nach welchem aufgeteilt wird. Entscheide begründet, ob alle Trainingsdaten richtig klassifiziert werden können.</p></div></div>
+          <p class="task4-data-boundary"><strong>Datenbasis:</strong> Verwende für diese Begründung ausschließlich die neun Fisch-Trainingsdaten. Die Testdaten werden erst in Aufgabe 4.2 eingesetzt.</p>
+          <label class="fish-text-label" for="depth-one-answer">Deine Begründung</label>
+          <textarea id="depth-one-answer" class="task4-answer" maxlength="3000" rows="7" placeholder="Der erste Knoten teilt nach …"></textarea>
+          <p class="task4-privacy"><strong>Hinweis:</strong> Gib keine Namen, E-Mail-Adressen oder andere personenbezogene Informationen ein. Deine fachliche Antwort wird zur automatischen Auswertung an den Skriptserver und dort an die Gemini API übertragen.</p>
+          <div class="task4-text-actions"><div class="fish-text-meta"><span id="depth-one-count">0 von 3000 Zeichen</span><span>Die Antwort wird semantisch ausgewertet.</span></div><button id="check-depth-one" class="dt-primary-button" type="button">Antwort überprüfen</button></div>
+          <div id="depth-one-feedback" class="fish-semantic-feedback" role="status" aria-live="polite" hidden></div>
+          <details class="fish-help-details"><summary>Hilfe 1: Wo beginnt der Baum?</summary><p>Schau auf den ersten Knoten des Fischbaums.</p></details>
+          <details class="fish-help-details"><summary>Hilfe 2: Betrachte beide Gruppen.</summary><p>Prüfe, ob nach dem ersten Split in einer Gruppe noch friedliche und feindselige Fische zusammen vorkommen.</p></details>
+          <details class="fish-help-details"><summary>Hilfe 3: Formuliere die Ursache.</summary><p>Gemischte Teilmengen brauchen weitere Aufteilungen; ein Baum der Tiefe 1 darf noch keine weiteren Knoten haben.</p></details>
+        </section>
+
+        <section class="task4-card" aria-labelledby="task42-title">
+          <div class="fish-step-heading"><span class="fish-step-number">4.2</span><div><h2 id="task42-title">Baumtiefe untersuchen</h2><p>Erstelle mit den Fisch-Trainingsdaten Entscheidungsbäume der Tiefe 1, 2 und 3. Teste jeden Baum anschließend ausschließlich mit den Fisch-Testdaten.</p></div></div>
+          <p class="task4-data-boundary"><strong>Reihenfolge:</strong> Trainingsdaten zum Erstellen verwenden, danach die Testdaten nur zum Testen und Eintragen der Ergebnisse öffnen.</p>
+          <form id="depth-table-form" novalidate>
+            <div class="fish-table-scroll"><table class="fish-table task4-depth-table"><caption>Ergebnisse der drei Entscheidungsbäume</caption><thead><tr><th scope="col">maximale Baumtiefe</th><th scope="col">Genauigkeit Trainingsdaten</th><th scope="col">Genauigkeit Testdaten</th><th scope="col">falsch klassifizierte Testfische</th></tr></thead><tbody>
+              <tr><th scope="row">1</th><td><label><span class="sr-only">Trainingsgenauigkeit Tiefe 1</span><input class="task4-table-input" data-depth="1" data-field="training" inputmode="decimal" autocomplete="off"></label></td><td><label><span class="sr-only">Testgenauigkeit Tiefe 1</span><input class="task4-table-input" data-depth="1" data-field="test" inputmode="decimal" autocomplete="off"></label></td><td><label><span class="sr-only">Falsch klassifizierter Testfisch Tiefe 1</span><input class="task4-table-input" data-kind="fish" data-depth="1" data-field="wrong" autocomplete="off"></label></td></tr>
+              <tr><th scope="row">2</th><td><label><span class="sr-only">Trainingsgenauigkeit Tiefe 2</span><input class="task4-table-input" data-depth="2" data-field="training" inputmode="decimal" autocomplete="off"></label></td><td><label><span class="sr-only">Testgenauigkeit Tiefe 2</span><input class="task4-table-input" data-depth="2" data-field="test" inputmode="decimal" autocomplete="off"></label></td><td><label><span class="sr-only">Falsch klassifizierter Testfisch Tiefe 2</span><input class="task4-table-input" data-kind="fish" data-depth="2" data-field="wrong" autocomplete="off"></label></td></tr>
+              <tr><th scope="row">3</th><td><label><span class="sr-only">Trainingsgenauigkeit Tiefe 3</span><input class="task4-table-input" data-depth="3" data-field="training" inputmode="decimal" autocomplete="off"></label></td><td><label><span class="sr-only">Testgenauigkeit Tiefe 3</span><input class="task4-table-input" data-depth="3" data-field="test" inputmode="decimal" autocomplete="off"></label></td><td><label><span class="sr-only">Falsch klassifizierter Testfisch Tiefe 3</span><input class="task4-table-input" data-kind="fish" data-depth="3" data-field="wrong" autocomplete="off"></label></td></tr>
+            </tbody></table></div>
+            <button class="dt-primary-button" type="submit">Tabelle überprüfen</button>
+            <div id="depth-table-feedback" class="dt-feedback" role="status" aria-live="polite" hidden></div>
+          </form>
+          <details class="fish-help-details"><summary>Hilfe 1: Daten sauber trennen</summary><p>Erstelle den Baum nur mit den Trainingsdaten. Erst danach öffnest du die Testdaten.</p></details>
+          <details class="fish-help-details"><summary>Hilfe 2: Genauigkeit ablesen</summary><p>Notiere jeweils die von ENTER Online angezeigte Genauigkeit für Trainings- und Testdaten.</p></details>
+          <details class="fish-help-details"><summary>Hilfe 3: Fehler vergleichen</summary><p>Notiere nicht nur die Prozentzahl, sondern auch den Testfisch, der falsch klassifiziert wird.</p></details>
+
+          <div class="task4-card" aria-labelledby="depth-description-title">
+            <h3 id="depth-description-title">Beschreiben und entscheiden</h3>
+            <p class="task4-work-order">Beschreibe, wie sich der Baum und seine Genauigkeit beim Erhöhen der maximalen Baumtiefe verändern. Entscheide anschließend, welche Baumtiefe du verwenden würdest.</p>
+            <label class="fish-text-label" for="depth-description-answer">Deine Beschreibung</label>
+            <textarea id="depth-description-answer" class="task4-answer" maxlength="3000" rows="7" placeholder="Mit größerer Baumtiefe …"></textarea>
+            <p class="task4-privacy"><strong>Hinweis:</strong> Gib keine Namen, E-Mail-Adressen oder andere personenbezogene Informationen ein. Deine fachliche Antwort wird zur automatischen Auswertung an den Skriptserver und dort an die Gemini API übertragen.</p>
+            <div class="task4-text-actions"><div class="fish-text-meta"><span id="depth-description-count">0 von 3000 Zeichen</span><span>Die Antwort wird semantisch ausgewertet.</span></div><button id="check-depth-description" class="dt-primary-button" type="button">Antwort überprüfen</button></div>
+            <p id="depth-learning-note" class="task4-learning-note" role="status" aria-live="polite" hidden></p>
+            <div id="depth-description-feedback" class="fish-semantic-feedback" role="status" aria-live="polite" hidden></div>
+          </div>
+        </section>
+
+        <section class="task4-card" aria-labelledby="task43-title">
+          <div class="fish-step-heading"><span class="fish-step-number">4.3</span><div><h2 id="task43-title">Gleiche Genauigkeit, unterschiedliche Fehler</h2><p>Erstelle Entscheidungsbäume mit Baumtiefe 1 und 2. Vergleiche die Genauigkeiten: Werden die gleichen Fische korrekt bzw. falsch klassifiziert? Beschreibe.</p></div></div>
+          <label class="fish-text-label" for="equal-accuracy-answer">Deine Beschreibung</label>
+          <textarea id="equal-accuracy-answer" class="task4-answer" maxlength="3000" rows="7" placeholder="Die Genauigkeiten sind gleich, aber …"></textarea>
+          <p class="task4-privacy"><strong>Hinweis:</strong> Gib keine Namen, E-Mail-Adressen oder andere personenbezogene Informationen ein. Deine fachliche Antwort wird zur automatischen Auswertung an den Skriptserver und dort an die Gemini API übertragen.</p>
+          <div class="task4-text-actions"><div class="fish-text-meta"><span id="equal-accuracy-count">0 von 3000 Zeichen</span><span>Die Antwort wird semantisch ausgewertet.</span></div><button id="check-equal-accuracy" class="dt-primary-button" type="button">Antwort überprüfen</button></div>
+          <div id="equal-accuracy-feedback" class="fish-semantic-feedback" role="status" aria-live="polite" hidden></div>
+          <details class="fish-help-details"><summary>Hilfe 1: Vergleiche zuerst die Prozentwerte.</summary><p>Schreibe auf, wie viele von fünf Testfischen jeder Baum richtig klassifiziert.</p></details>
+          <details class="fish-help-details"><summary>Hilfe 2: Vergleiche dann die Fehler.</summary><p>Prüfe bei jedem Baum, welcher Testfisch nicht zum Blatt passt.</p></details>
+          <details class="fish-help-details"><summary>Hilfe 3: Was sagt eine Prozentzahl nicht?</summary><p>Die Genauigkeit zählt richtige Vorhersagen, nennt aber nicht, bei welchen Fischen und Klassen Fehler passieren.</p></details>
+        </section>
+
+        <section class="task4-extension" aria-labelledby="extension-title">
+          <p class="fish-kicker">Vertiefung für Schnelle</p><h2 id="extension-title">Mit einem größeren Datensatz weiterarbeiten</h2>
+          <div class="task4-extension-grid">
+            <article><h3>Aufgabe 4a</h3><p>Nutze den großen Fischdatensatz. Aktiviere die automatische Datenaufteilung mit 75 % Trainingsdaten und verwende Entropie als Split-Kriterium. Erstelle einen Baum der Tiefe 1 und beurteile, ob er die Zusammenhänge im Datensatz ausreichend abbildet.</p></article>
+            <article><h3>Aufgabe 4b</h3><p>Erstelle mit derselben Datenaufteilung Entscheidungsbäume der Tiefen 1 bis 8. Notiere Trainings- und Testgenauigkeit. Bestimme eine geeignete Baumtiefe und begründe, weshalb nicht automatisch der tiefste Baum gewählt werden sollte.</p></article>
+            <article><h3>Aufgabe 4c</h3><p>Vergleiche einen Baum der Tiefe 4 mit einem Baum der Tiefe 8. Erkläre mithilfe der Begriffe Trainingsdaten, Testdaten, Generalisierung und Überanpassung, weshalb ein tieferer Baum bei unbekannten Daten schlechter abschneiden kann.</p></article>
+          </div>
+        </section>
+      </div>
+    </main>
+  </body>
+</html>

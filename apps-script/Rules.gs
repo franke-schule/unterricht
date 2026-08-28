@@ -33,8 +33,31 @@ function applyRuleBasedMinimum_(
       );
   }
 
+  if (task === TASKS['11-4-1']) {
+    ruleBasedEvaluation = evaluateFishDepthOneByRules_(answer, task.maxPoints);
+  }
+
+  if (task === TASKS['11-4-2']) {
+    ruleBasedEvaluation = evaluateFishDepthDevelopmentByRules_(answer, task.maxPoints);
+  }
+
+  if (task === TASKS['11-4-3']) {
+    ruleBasedEvaluation = evaluateFishEqualAccuracyByRules_(answer, task.maxPoints);
+  }
+
   if (!ruleBasedEvaluation) {
     return evaluation;
+  }
+
+  if (
+    task === TASKS['11-4-1'] ||
+    task === TASKS['11-4-2'] ||
+    task === TASKS['11-4-3']
+  ) {
+    // Die drei Fischaufgaben haben wenige, klar überprüfbare Kernaspekte.
+    // Diese Regelbewertung sichert konsistentes, fachlich nachvollziehbares
+    // Feedback auch dann, wenn die semantische Modellbewertung abweicht.
+    return ruleBasedEvaluation;
   }
 
   if (
@@ -45,6 +68,69 @@ function applyRuleBasedMinimum_(
   }
 
   return evaluation;
+}
+
+
+function createFishRuleEvaluation_(points, maxPoints, strengths, missing, feedback) {
+  return {
+    ok: true,
+    points: clampNumber_(points, 0, maxPoints),
+    maxPoints: maxPoints,
+    status: points >= maxPoints * 0.75 ? 'gut' : points >= maxPoints * 0.4 ? 'teilweise richtig' : 'noch unvollstaendig',
+    strengths: strengths.slice(0, 4),
+    missing: missing.slice(0, 4),
+    feedback: feedback
+  };
+}
+
+
+function evaluateFishDepthOneByRules_(answer, maxPoints) {
+  const text = normalizeGermanText_(answer);
+  const strengths = [];
+  const missing = [];
+  let points = 0;
+  if (containsAny_(text, ['schuppenfarbe', 'schuppen farbe'])) { points++; strengths.push('Du nennst die Schuppenfarbe als Aufteilungsattribut.'); }
+  else { missing.push('Nenne die Schuppenfarbe als Attribut des ersten Splits.'); }
+  if (containsAny_(text, ['nein', 'nicht alle', 'nicht vollstaendig', 'nicht vollständig', 'koennen nicht alle', 'kann nicht alle', 'fehler bleiben', 'fehlklass', '6 von 9', '66,7', '66.7'])) { points++; strengths.push('Du erkennst die Grenze eines Baums der Tiefe 1.'); }
+  else { missing.push('Entscheide klar, dass bei Tiefe 1 nicht alle Trainingsfische richtig klassifiziert werden.'); }
+  if (containsAny_(text, ['gemischt', 'teilmeng', 'weitere aufteilung', 'weiter aufteil', 'weiterer split', 'noch ein split', 'fehlklass', 'beide klassen', 'nicht rein', 'unrein']) || (text.includes('friedlich') && text.includes('feindselig'))) { points++; strengths.push('Du begruendest die notwendige weitere Aufteilung.'); }
+  else { missing.push('Begruende mit weiterhin gemischten Teilmengen oder notwendigen weiteren Aufteilungen.'); }
+  return createFishRuleEvaluation_(points, maxPoints, strengths, missing, points === maxPoints ? 'Deine Begruendung trifft Attribut, Entscheidung und Ursache.' : 'Ergaenze deine Begruendung mit den noch fehlenden fachlichen Aspekten.');
+}
+
+
+function evaluateFishDepthDevelopmentByRules_(answer, maxPoints) {
+  const text = normalizeGermanText_(answer);
+  const strengths = [];
+  const missing = [];
+  let points = 0;
+  if (containsAny_(text, ['komplex', 'tiefer', 'mehr aufteilung', 'mehr split', 'mehr knoten', 'mehr ebenen', 'zusaetzliche knoten', 'zusätzliche knoten', 'groesserer baum', 'größerer baum'])) { points++; strengths.push('Du beschreibst, dass der Baum mit groesserer Tiefe umfangreicher wird.'); }
+  else { missing.push('Beschreibe, dass ein tieferer Baum weitere Aufteilungen erhaelt.'); }
+  if (containsAny_(text, ['trainingsgenauigkeit', 'trainingsdaten besser', 'trainingsdaten richtig', 'trainingsdaten korrekt', '66,7', '88,9', '100'])) { points++; strengths.push('Du erkennst die steigende Genauigkeit auf den Trainingsdaten.'); }
+  else { missing.push('Erklaere, dass die Trainingsdaten mit zunehmender Tiefe besser klassifiziert werden.'); }
+  if (containsAny_(text, ['testgenauigkeit', 'testdaten']) && containsAny_(text, ['80', 'bleibt gleich', 'bleiben gleich', 'nicht besser', 'verbessert sich nicht', 'steigt nicht'])) { points++; strengths.push('Du beziehst die Beobachtung auf die Testdaten.'); }
+  else { missing.push('Beruecksichtige, dass sich die Testgenauigkeit hier nicht verbessert.'); }
+  if (containsAny_(text, ['wuerde', 'würde', 'waehle', 'wähle', 'entscheide', 'verwende', 'nehme', 'auswaehl', 'auswähl', 'nicht tiefste']) && containsAny_(text, ['testdaten', 'unbekannt', 'generalisier'])) { points++; strengths.push('Du begruendest eine Modellwahl mit Blick auf unbekannte Daten.'); }
+  else { missing.push('Entscheide eine Baumtiefe und begruende sie mit der Leistung auf Testdaten.'); }
+  return createFishRuleEvaluation_(points, maxPoints, strengths, missing, points === maxPoints ? 'Du unterscheidest treffend zwischen Trainings- und Testgenauigkeit.' : 'Ergaenze den Zusammenhang zwischen Baumtiefe, Trainingsdaten und Testdaten.');
+}
+
+
+function evaluateFishEqualAccuracyByRules_(answer, maxPoints) {
+  const text = normalizeGermanText_(answer);
+  const strengths = [];
+  const missing = [];
+  let points = 0;
+  if (containsAny_(text, ['gleich genau', 'gleiche genauigkeit', 'dieselbe genauigkeit', 'beide 80', 'beide haben 80', 'je 80', 'beide vier von fuenf', 'beide vier von fünf']) || (text.includes('beide') && text.includes('80'))) { points++; strengths.push('Du erkennst die gleiche Genauigkeit der beiden Baeume.'); }
+  else { missing.push('Nenne, dass beide Baeume auf den Testdaten dieselbe Genauigkeit haben.'); }
+  const mentionsBothFish =
+    containsAny_(text, ['t3', 'testfisch 3', 'fisch 3']) &&
+    containsAny_(text, ['t4', 'testfisch 4', 'fisch 4']);
+  if (containsAny_(text, ['unterschiedlich', 'andere fisch', 'nicht dieselben', 'verschiedene fehler']) || mentionsBothFish) { points++; strengths.push('Du beschreibst unterschiedliche Fehlklassifikationen.'); }
+  else { missing.push('Erklaere, dass die falsch klassifizierten Fische trotz gleicher Genauigkeit verschieden sein koennen.'); }
+  if (containsAny_(text, ['allein', 'nicht genug', 'nicht ausreichend', 'zeigt nicht', 'art der fehler', 'welche fehler', 'verteilung'])) { points++; strengths.push('Du ordnest die Genauigkeit als begrenztes Guetemass ein.'); }
+  else { missing.push('Erklaere, warum die Genauigkeit allein die Art der Fehler nicht zeigt.'); }
+  return createFishRuleEvaluation_(points, maxPoints, strengths, missing, points === maxPoints ? 'Du zeigst klar, warum gleiche Genauigkeit nicht dieselben Fehler bedeutet.' : 'Vergleiche neben der Genauigkeit auch, welche Fische falsch klassifiziert werden.');
 }
 
 
