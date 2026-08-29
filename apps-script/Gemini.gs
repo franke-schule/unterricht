@@ -106,7 +106,7 @@ function evaluateWithGemini_(
   return applyRuleBasedMinimum_(
     normalizeEvaluation_(
       evaluation,
-      task.maxPoints
+      task
     ),
     task,
     answer
@@ -127,12 +127,14 @@ function buildPrompt_(
   }
 
   return [
-    'Du bist eine hilfreiche, faire Informatik-Lehrkraft.',
-    'Bewerte eine kurze Schuelerantwort zu einem Java-/LearnJ-Programm.',
+    task.systemInstruction || 'Du bist eine hilfreiche, faire Informatik-Lehrkraft.',
+    task.systemInstruction
+      ? 'Bewerte eine kurze Schuelerantwort fachlich und wohlwollend.'
+      : 'Bewerte eine kurze Schuelerantwort zu einem Java-/LearnJ-Programm.',
     'Jahrgangsstufe: Klasse ' + task.grade + '.',
     '',
-    'Programm:',
-    task.program,
+    task.context ? 'Kontext:' : 'Programm:',
+    task.context || task.program || 'Kein weiterer Kontext erforderlich.',
     '',
     'Aufgabe:',
     task.title,
@@ -145,6 +147,22 @@ function buildPrompt_(
       })
       .join('\n'),
     '',
+    task.rubric
+      ? 'Bewertungsrubrik:\n' + task.rubric
+        .map(function(item, index) {
+          return (index + 1) + '. ' + item;
+        })
+        .join('\n')
+      : '',
+    '',
+    task.feedbackHints
+      ? 'Hinweise für die Rückmeldung:\n' + task.feedbackHints
+        .map(function(item, index) {
+          return (index + 1) + '. ' + item;
+        })
+        .join('\n')
+      : '',
+    '',
     'Bewerte fachlich wohlwollend, aber nicht beliebig.',
     'Gib keine personenbezogenen Daten aus.',
     'Erfinde keine zusaetzlichen Informationen.',
@@ -154,7 +172,9 @@ function buildPrompt_(
     '{',
     '  "points": Zahl von 0 bis ' + task.maxPoints + ',',
     '  "maxPoints": ' + task.maxPoints + ',',
-    '  "status": kurze Bewertung wie "gut", "teilweise richtig" oder "noch unvollstaendig",',
+    '  "status": ' + (task.statusLabels
+      ? 'genau einer der Werte "' + task.statusLabels.correct + '", "' + task.statusLabels.partial + '" oder "' + task.statusLabels.incorrect + '"'
+      : 'kurze Bewertung wie "gut", "teilweise richtig" oder "noch unvollstaendig"') + ',',
     '  "strengths": Array mit 0 bis 4 kurzen Strings,',
     '  "missing": Array mit 0 bis 4 kurzen Strings,',
     '  "feedback": ein kurzer, motivierender Feedbacktext',

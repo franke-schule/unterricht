@@ -31,8 +31,10 @@ function containsAny_(
 
 function normalizeEvaluation_(
   evaluation,
-  maxPoints
+  task
 ) {
+  const maxPoints =
+    task.maxPoints;
   const points =
     clampNumber_(
       evaluation.points,
@@ -48,14 +50,20 @@ function normalizeEvaluation_(
     maxPoints:
       maxPoints,
     status:
-      cleanText_(
-        evaluation.status,
-        points >= maxPoints * 0.75
-          ? 'gut'
-          : points >= maxPoints * 0.4
-            ? 'teilweise richtig'
-            : 'noch unvollstaendig'
-      ),
+      task.statusLabels
+        ? points === maxPoints
+          ? task.statusLabels.correct
+          : points > 0
+            ? task.statusLabels.partial
+            : task.statusLabels.incorrect
+        : cleanText_(
+          evaluation.status,
+          points >= maxPoints * 0.75
+            ? 'gut'
+            : points >= maxPoints * 0.4
+              ? 'teilweise richtig'
+              : 'noch unvollstaendig'
+        ),
     strengths:
       cleanStringArray_(
         evaluation.strengths

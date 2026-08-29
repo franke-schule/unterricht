@@ -1,0 +1,761 @@
+.physics-revision-shell {
+  width: min(1120px, calc(100% - 28px));
+}
+
+.physics-revision-hero {
+  width: min(780px, 100%);
+  margin: 20px auto 34px;
+  text-align: center;
+}
+
+.physics-revision-hero h1 {
+  font-size: clamp(2.45rem, 7vw, 5.4rem);
+}
+
+.physics-revision-hero > p:last-child {
+  margin: 12px auto 0;
+  color: var(--muted);
+  font-size: clamp(1rem, 2vw, 1.16rem);
+}
+
+.physics-revision-panels {
+  width: min(100%, 1020px);
+  margin: 0 auto;
+}
+
+.physics-revision-panel {
+  display: grid;
+  gap: 20px;
+}
+
+.physics-card-heading,
+.physics-task-card,
+.physics-info-card,
+.physics-summary {
+  border: 1px solid rgba(203, 213, 225, 0.9);
+  border-radius: 16px;
+  background: rgba(255, 255, 255, 0.94);
+  box-shadow: var(--shadow-light);
+}
+
+.physics-card-heading,
+.physics-task-card,
+.physics-summary {
+  padding: clamp(18px, 3vw, 28px);
+}
+
+.physics-card-heading h2,
+.physics-task-card h3,
+.physics-task-card h4,
+.physics-summary h2,
+.physics-summary h3 {
+  margin: 0;
+  color: #1e293b;
+}
+
+.physics-card-heading h2 {
+  font-size: clamp(1.6rem, 4vw, 2.4rem);
+}
+
+.physics-card-heading > p:last-child,
+.physics-task-card > p,
+.physics-task-card h3 + p {
+  margin: 8px 0 0;
+  color: var(--muted);
+}
+
+.physics-info-grid,
+.physics-vector-grid-layout,
+.physics-summary-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 16px;
+}
+
+.physics-info-card {
+  padding: 18px;
+}
+
+.physics-info-card h3 {
+  margin-bottom: 6px;
+  color: var(--blue);
+}
+
+.physics-info-card p {
+  margin: 0;
+  color: #475569;
+}
+
+.physics-table-scroll {
+  overflow-x: auto;
+  margin: 16px 0;
+}
+
+.physics-input-table {
+  width: 100%;
+  min-width: 640px;
+  border-collapse: collapse;
+}
+
+.physics-input-table caption {
+  margin-bottom: 8px;
+  color: #475569;
+  font-weight: 800;
+  text-align: left;
+}
+
+.physics-input-table th,
+.physics-input-table td {
+  border: 1px solid #cbd5e1;
+  padding: 10px;
+  text-align: left;
+}
+
+.physics-input-table thead th {
+  color: #1e3a8a;
+  background: #dbeafe;
+}
+
+.physics-input-table tbody th {
+  background: #f8fafc;
+}
+
+.physics-input-table label {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.physics-input-table input,
+.physics-number-entry input,
+.physics-choice-grid select,
+.description-match-list select,
+.other-match-row select {
+  min-height: 42px;
+  border: 2px solid #cbd5e1;
+  border-radius: 8px;
+  padding: 7px 9px;
+  color: #1e293b;
+  background: #ffffff;
+  font: inherit;
+}
+
+.physics-input-table input {
+  width: 110px;
+}
+
+.physics-input-table input.is-correct,
+.physics-number-entry input.is-correct,
+.physics-input-table select.is-correct {
+  border-color: #059669;
+  background: #ecfdf5;
+}
+
+.physics-input-table input.is-wrong,
+.physics-number-entry input.is-wrong {
+  border-color: #dc2626;
+  background: #fef2f2;
+}
+
+.physics-primary-button {
+  min-height: 44px;
+  margin-top: 14px;
+  border: 0;
+  border-radius: 9px;
+  padding: 9px 16px;
+  color: #ffffff;
+  background: linear-gradient(135deg, var(--blue), var(--violet));
+  font: inherit;
+  font-weight: 850;
+  cursor: pointer;
+}
+
+.physics-primary-button:hover,
+.physics-primary-button:focus-visible {
+  filter: brightness(1.08);
+}
+
+.physics-feedback {
+  margin-top: 14px;
+  border-left: 5px solid #2563eb;
+  border-radius: 9px;
+  padding: 13px 15px;
+  color: #1e3a8a;
+  background: #eff6ff;
+  font-weight: 700;
+}
+
+.physics-feedback.success {
+  border-left-color: #059669;
+  color: #065f46;
+  background: #ecfdf5;
+}
+
+.physics-feedback.partial {
+  border-left-color: #d97706;
+  color: #78350f;
+  background: #fffbeb;
+}
+
+.physics-feedback.error {
+  border-left-color: #dc2626;
+  color: #991b1b;
+  background: #fef2f2;
+}
+
+.physics-help-stack {
+  display: grid;
+  gap: 8px;
+  margin-top: 16px;
+}
+
+.physics-help-stack details,
+.physics-resolution,
+.notebook-task {
+  border: 1px solid #cbd5e1;
+  border-radius: 9px;
+  padding: 11px 13px;
+  background: #f8fafc;
+}
+
+.physics-help-stack summary {
+  color: #1e3a8a;
+  font-weight: 800;
+  cursor: pointer;
+}
+
+.physics-help-stack p,
+.physics-resolution p,
+.notebook-task p {
+  margin: 8px 0 0;
+  color: #475569;
+}
+
+.physics-choice-grid,
+.physics-number-entry {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 14px;
+  margin-top: 16px;
+}
+
+.physics-choice-grid label,
+.physics-number-entry label {
+  display: grid;
+  gap: 7px;
+  color: #334155;
+  font-weight: 800;
+}
+
+.physics-choice-grid select {
+  width: 100%;
+}
+
+.physics-number-entry {
+  grid-template-columns: minmax(0, 1fr) 150px;
+  align-items: end;
+}
+
+.physics-number-entry input,
+.physics-number-entry select {
+  min-height: 44px;
+  border: 2px solid #cbd5e1;
+  border-radius: 8px;
+  padding: 8px 10px;
+  font: inherit;
+}
+
+.physics-vector-grid-layout .physics-task-card {
+  min-width: 0;
+}
+
+.vector-grid-host {
+  min-width: 0;
+  margin-top: 14px;
+  overflow-x: auto;
+}
+
+.vector-task .point-vector-grid {
+  padding: 10px;
+  box-shadow: none;
+}
+
+.vector-task .point-vector-grid svg {
+  min-width: 0;
+  min-height: 0;
+}
+
+.diagram-bank,
+.description-match-list,
+.other-match-list {
+  display: grid;
+  gap: 12px;
+  margin-top: 16px;
+}
+
+.diagram-bank {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
+.diagram-card {
+  display: grid;
+  gap: 8px;
+  border: 1px solid #cbd5e1;
+  border-radius: 11px;
+  padding: 10px;
+  background: #f8fafc;
+}
+
+.diagram-card h4 {
+  color: #1e3a8a;
+  font-size: 1.1rem;
+}
+
+.diagram-card svg,
+.mini-position svg {
+  display: block;
+  width: 100%;
+  height: auto;
+  border: 1px solid #dbe4f0;
+  border-radius: 6px;
+  background: #ffffff;
+}
+
+.chart-axis {
+  stroke: #64748b;
+  stroke-width: 1.5;
+}
+
+.chart-plot {
+  fill: none;
+  stroke: #2563eb;
+  stroke-width: 4;
+}
+
+.given-vt-plot {
+  stroke: #7c3aed;
+  stroke-width: 5;
+}
+
+.diagram-card label,
+.other-match-row label {
+  display: grid;
+  gap: 5px;
+  color: #334155;
+  font-size: 0.86rem;
+  font-weight: 800;
+}
+
+.diagram-card select,
+.other-match-row select {
+  width: 100%;
+}
+
+.large-chart {
+  overflow-x: auto;
+  margin-top: 16px;
+}
+
+.large-chart svg {
+  display: block;
+  width: min(100%, 760px);
+  min-width: 620px;
+  height: auto;
+  margin: 0 auto;
+  border: 1px solid #dbe4f0;
+  border-radius: 8px;
+  background: #ffffff;
+}
+
+.physics-semantic-task,
+.notebook-task,
+.way-task {
+  margin-top: 20px;
+  border-top: 1px solid #e2e8f0;
+  padding-top: 18px;
+}
+
+.physics-semantic-task label {
+  display: block;
+  margin-top: 12px;
+  color: #334155;
+  font-weight: 800;
+}
+
+.physics-semantic-task .privacy-note {
+  margin: 10px 0 0;
+  color: #64748b;
+  font-size: 0.86rem;
+}
+
+.description-match-list {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.description-match-list label {
+  min-height: 94px;
+  border: 1px solid #cbd5e1;
+  border-radius: 10px;
+  padding: 11px;
+  background: #f8fafc;
+}
+
+.diagram-bank-wide {
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+}
+
+.diagram-bank-wide h4 {
+  grid-column: 1 / -1;
+}
+
+.mini-diagram {
+  display: grid;
+  gap: 5px;
+}
+
+.other-match-row {
+  display: grid;
+  grid-template-columns: 180px repeat(2, minmax(0, 1fr));
+  align-items: center;
+  gap: 14px;
+  border: 1px solid #cbd5e1;
+  border-radius: 10px;
+  padding: 10px;
+  background: #f8fafc;
+}
+
+.mini-position {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+}
+
+.physics-quiz-question {
+  margin-top: 14px;
+  border-top: 1px solid #e2e8f0;
+  padding-top: 14px;
+}
+
+.physics-quiz-question p {
+  margin: 0 0 7px;
+  color: #334155;
+  font-weight: 800;
+}
+
+.physics-quiz-question label {
+  display: block;
+  margin-top: 6px;
+  color: #475569;
+}
+
+.physics-summary {
+  margin: 28px auto 0;
+}
+
+.physics-summary-grid {
+  margin-top: 16px;
+}
+
+.physics-summary-grid article {
+  border-left: 4px solid var(--blue);
+  padding: 12px 14px;
+  background: #f8fafc;
+}
+
+.physics-summary-grid p {
+  margin: 6px 0 0;
+  color: #475569;
+}
+
+/* Wiederverwendbare Reiter für Aufgabenkarten dieses Moduls. */
+.physics-step-tabs {
+  display: flex;
+  gap: 8px;
+  overflow-x: auto;
+  margin: 0 0 22px;
+  padding: 6px;
+  border: 1px solid #cbd5e1;
+  border-radius: 13px;
+  background: rgba(255, 255, 255, 0.8);
+  box-shadow: var(--shadow-light);
+}
+
+.physics-step-tabs [role="tab"] {
+  flex: 1 0 max-content;
+  min-height: 44px;
+  border: 0;
+  border-radius: 9px;
+  padding: 9px 16px;
+  color: #475569;
+  background: transparent;
+  font: inherit;
+  font-weight: 800;
+  cursor: pointer;
+}
+
+.physics-step-tabs [role="tab"][aria-selected="true"] {
+  color: #ffffff;
+  background: linear-gradient(135deg, var(--blue), var(--violet));
+}
+
+.physics-step-tabs [role="tab"]:focus-visible,
+.point-vector-grid svg:focus-visible,
+.point-vector-grid [role="button"]:focus-visible,
+.physics-semantic-task button:focus-visible {
+  outline: 3px solid rgba(37, 99, 235, 0.35);
+  outline-offset: 3px;
+}
+
+/* Wiederverwendbare Klickpunkt-Aufgabe für Vektorresultierende. */
+.point-vector-grid {
+  display: grid;
+  gap: 14px;
+  padding: clamp(14px, 3vw, 22px);
+  border: 1px solid #cbd5e1;
+  border-radius: 16px;
+  background: rgba(255, 255, 255, 0.94);
+  box-shadow: var(--shadow-light);
+}
+
+.point-vector-grid svg {
+  display: block;
+  width: 100%;
+  height: auto;
+  min-height: 0;
+  border: 1px solid #cbd5e1;
+  border-radius: 10px;
+  background: #ffffff;
+  touch-action: manipulation;
+}
+
+.point-vector-grid .grid-line {
+  stroke: #dbe4f0;
+  stroke-width: 1;
+}
+
+.point-vector-grid .axis-line {
+  stroke: #64748b;
+  stroke-width: 1.6;
+}
+
+.point-vector-grid .given-vector {
+  fill: none;
+  stroke: #2563eb;
+  stroke-width: 4;
+}
+
+.point-vector-grid .given-vector.secondary {
+  stroke: #7c3aed;
+}
+
+.point-vector-grid .result-vector {
+  fill: none;
+  stroke: #059669;
+  stroke-width: 5;
+}
+
+.point-vector-grid .vector-origin {
+  fill: #111827;
+}
+
+.point-vector-grid .grid-point {
+  fill: #ffffff;
+  stroke: #94a3b8;
+  stroke-width: 1.4;
+  cursor: pointer;
+}
+
+.point-vector-grid .grid-point:hover,
+.point-vector-grid .grid-point:focus {
+  fill: #dbeafe;
+  stroke: #2563eb;
+  stroke-width: 2.4;
+}
+
+.point-vector-grid .grid-point.is-selected {
+  fill: #d1fae5;
+  stroke: #047857;
+  stroke-width: 3;
+}
+
+.point-vector-grid .vector-grid-status {
+  margin: 0;
+  color: #334155;
+  font-weight: 700;
+}
+
+.point-vector-grid .vector-grid-actions {
+  display: flex;
+  justify-content: flex-end;
+}
+
+.point-vector-grid button {
+  min-height: 44px;
+  border: 1px solid #94a3b8;
+  border-radius: 8px;
+  padding: 8px 14px;
+  color: #1e293b;
+  background: #ffffff;
+  font: inherit;
+  font-weight: 800;
+  cursor: pointer;
+}
+
+.point-vector-grid button:disabled {
+  opacity: 0.55;
+  cursor: default;
+}
+
+/* Wiederverwendbare Darstellung der serverseitig bewerteten Beschreibung. */
+.physics-semantic-task textarea {
+  display: block;
+  width: 100%;
+  min-height: 150px;
+  resize: vertical;
+  border: 2px solid #cbd5e1;
+  border-radius: 12px;
+  padding: 14px;
+  color: var(--ink);
+  background: #ffffff;
+  font: inherit;
+  line-height: 1.55;
+}
+
+.physics-semantic-task textarea:focus {
+  outline: 3px solid rgba(37, 99, 235, 0.16);
+  border-color: var(--blue);
+}
+
+.physics-semantic-task textarea:disabled {
+  background: #f1f5f9;
+}
+
+.physics-semantic-task__actions {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 14px;
+  margin-top: 12px;
+}
+
+.physics-semantic-task__actions button {
+  min-height: 44px;
+  border: 0;
+  border-radius: 9px;
+  padding: 9px 16px;
+  color: #ffffff;
+  background: linear-gradient(135deg, var(--blue), var(--violet));
+  font: inherit;
+  font-weight: 850;
+  cursor: pointer;
+}
+
+.physics-semantic-task__actions button:disabled {
+  opacity: 0.65;
+  cursor: wait;
+}
+
+.physics-semantic-feedback {
+  margin-top: 14px;
+  border: 1px solid #bfdbfe;
+  border-left: 5px solid var(--blue);
+  border-radius: 10px;
+  padding: 14px 16px;
+  color: #1e3a8a;
+  background: #eff6ff;
+}
+
+.physics-semantic-feedback[data-status="korrekt"] {
+  border-color: #86efac;
+  border-left-color: #059669;
+  color: #065f46;
+  background: #ecfdf5;
+}
+
+.physics-semantic-feedback[data-status="teilweise korrekt"] {
+  border-color: #fcd34d;
+  border-left-color: #d97706;
+  color: #78350f;
+  background: #fffbeb;
+}
+
+.physics-semantic-feedback[data-status="noch nicht korrekt"],
+.physics-semantic-feedback.is-error {
+  border-color: #fca5a5;
+  border-left-color: #dc2626;
+  color: #991b1b;
+  background: #fef2f2;
+}
+
+.physics-semantic-feedback h3,
+.physics-semantic-feedback h4,
+.physics-semantic-feedback p {
+  margin: 0 0 8px;
+}
+
+.physics-semantic-feedback ul {
+  margin: 0 0 10px;
+  padding-left: 20px;
+}
+
+@media (max-width: 620px) {
+  .physics-revision-shell {
+    width: min(100% - 20px, 1120px);
+  }
+
+  .vector-task .point-vector-grid svg {
+    min-width: 620px;
+  }
+
+  .physics-semantic-task__actions {
+    align-items: stretch;
+    flex-direction: column;
+  }
+
+  .physics-semantic-task__actions button {
+    width: 100%;
+  }
+}
+
+@media (max-width: 760px) {
+  .physics-info-grid,
+  .physics-vector-grid-layout,
+  .physics-summary-grid,
+  .description-match-list {
+    grid-template-columns: 1fr;
+  }
+
+  .diagram-bank {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .diagram-bank-wide {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .other-match-row {
+    grid-template-columns: 1fr;
+  }
+
+  .mini-position {
+    max-width: 220px;
+  }
+}
+
+@media (max-width: 430px) {
+  .physics-card-heading,
+  .physics-task-card,
+  .physics-summary {
+    padding: 16px;
+    border-radius: 13px;
+  }
+
+  .physics-number-entry {
+    grid-template-columns: 1fr;
+  }
+
+  .diagram-bank,
+  .diagram-bank-wide {
+    grid-template-columns: 1fr;
+  }
+}
