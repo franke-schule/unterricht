@@ -342,13 +342,13 @@ const TASKS = {
     maxPoints:
       3,
     instruction:
-      'Bewerte eine kurze Begruendung zu den Fisch-Trainingsdaten. Erwartetes Niveau: Die Schuelerin oder der Schueler benennt die Schuppenfarbe als ersten Split und erklaert in eigenen Worten, warum bei maximaler Baumtiefe 1 nicht alle Trainingsfische korrekt klassifiziert werden. Es genuegt eine kurze, fachlich nachvollziehbare Begruendung; keine Fachsprache ueber das Lernniveau hinaus verlangen.',
+      'Bewerte eine kurze Beschreibung und Begruendung zum Fisch-Entscheidungsbaum mit maximaler Tiefe 1. Anerkenne unterschiedliche fachlich richtige Formulierungen. Wesentlich sind: Der resultierende Baum wird nachvollziehbar beschrieben, es wird begruendet erkannt, dass nicht alle Trainingsdaten korrekt klassifiziert werden, und eine sinnvolle Verbesserung wie eine groessere maximale Baumtiefe wird vorgeschlagen. Keine bestimmten Einzelwoerter verlangen, wenn der Inhalt sinngemaess richtig ist.',
     program:
-      'Kontext: Nach dem Split Schuppenfarbe enthalten sowohl die blaue als auch die orange Teilmenge friedliche und feindselige Trainingsfische. Daher sind weitere Aufteilungen erforderlich.',
+      'Kontext: Der Baum der Tiefe 1 teilt am Wurzelknoten nach der Schuppenfarbe in zwei Blaetter. In den Teilmengen liegen noch unterschiedlich gelabelte Trainingsfische, daher werden nur 6 von 9 korrekt klassifiziert. Eine groessere maximale Baumtiefe ermoeglicht weitere Aufteilungen.',
     expectedAspects: [
-      'Schuppenfarbe wird als Attribut des ersten Entscheidungsknotens genannt.',
-      'Es wird klar entschieden, dass bei Baumtiefe 1 nicht alle Trainingsdaten richtig klassifiziert werden koennen.',
-      'Die Begruendung verweist auf weiterhin gemischte Teilmengen, Fehlklassifikationen oder notwendige weitere Aufteilungen.'
+      'Der resultierende Baum wird fachlich nachvollziehbar beschrieben, etwa durch den Split nach Schuppenfarbe und die entstehenden Aeste oder Blaetter.',
+      'Es wird begruendet entschieden, dass bei Baumtiefe 1 nicht alle Trainingsdaten richtig klassifiziert werden koennen.',
+      'Als sinnvolle Verbesserung werden eine groessere maximale Baumtiefe oder weitere Aufteilungen vorgeschlagen.'
     ]
   },
 
@@ -358,16 +358,15 @@ const TASKS = {
     grade:
       11,
     maxPoints:
-      4,
+      3,
     instruction:
-      'Bewerte eine Beschreibung der Baeume mit maximaler Tiefe 1, 2 und 3. Erwartetes Niveau: kurze, begruendete Beobachtung. Anerkenne verschiedene passende Formulierungen. Wesentlich sind: Mit zunehmender Tiefe wird der Baum komplexer, die Trainingsgenauigkeit steigt, die Testgenauigkeit ist nicht automatisch besser, und die Wahl der Tiefe soll sich an unbekannten Testdaten orientieren.',
+      'Bewerte eine kurze Beschreibung der Baeume mit maximaler Tiefe 1, 2 und 3 bewusst grosszuegig. Anerkenne verschiedene sinngleiche Formulierungen. Wesentlich sind: Die Zahl falsch klassifizierter Trainingsdaten sinkt und ist bei Tiefe 3 null, die Genauigkeit nach der Testphase bleibt bei allen drei Tiefen gleich beziehungsweise steigt nicht, und Tiefe 3 wird sinnvoll gewaehlt, weil sie alle Trainingsdaten korrekt einordnet.',
     program:
-      'Kontext: Bei den Fischdaten steigen die Trainingsgenauigkeiten von 66,7 % ueber 88,9 % auf 100 %. Die Testgenauigkeit bleibt bei allen drei Tiefen 80 %. Tiefe 1 klassifiziert T3 falsch; Tiefe 2 und 3 klassifizieren T4 falsch.',
+      'Kontext: Die Zahl falsch klassifizierter Trainingsdaten sinkt von 3 ueber 1 auf 0. Die Genauigkeit nach der Testphase bleibt bei allen drei Tiefen 80 %. Damit ist Tiefe 3 eine nachvollziehbare Wahl, weil dort alle Trainingsdaten korrekt eingeordnet werden.',
     expectedAspects: [
-      'Der Baum wird beim Erhoehen der maximalen Tiefe komplexer oder erhaelt weitere Aufteilungen.',
-      'Die Trainingsdaten werden mit groesserer Tiefe besser klassifiziert beziehungsweise die Trainingsgenauigkeit steigt.',
-      'Die Testgenauigkeit verbessert sich hier nicht automatisch; sie bleibt bei 80 %.',
-      'Eine Baumtiefe wird mit Bezug auf die Testdaten, Generalisierung oder eine passende Balance begruendet gewaehlt.'
+      'Mit wachsender Baumtiefe sinkt die Zahl falsch klassifizierter Trainingsdaten beziehungsweise betraegt bei Tiefe 3 null.',
+      'Die Genauigkeit nach der Testphase bleibt bei allen drei Tiefen gleich beziehungsweise steigt nicht.',
+      'Tiefe 3 wird gewaehlt und damit begruendet, dass alle Trainingsdaten korrekt eingeordnet werden.'
     ]
   },
 

@@ -50,17 +50,6 @@ function applyRuleBasedMinimum_(
   }
 
   if (
-    task === TASKS['11-4-1'] ||
-    task === TASKS['11-4-2'] ||
-    task === TASKS['11-4-3']
-  ) {
-    // Die drei Fischaufgaben haben wenige, klar überprüfbare Kernaspekte.
-    // Diese Regelbewertung sichert konsistentes, fachlich nachvollziehbares
-    // Feedback auch dann, wenn die semantische Modellbewertung abweicht.
-    return ruleBasedEvaluation;
-  }
-
-  if (
     ruleBasedEvaluation.points >
     evaluation.points
   ) {
@@ -89,13 +78,18 @@ function evaluateFishDepthOneByRules_(answer, maxPoints) {
   const strengths = [];
   const missing = [];
   let points = 0;
-  if (containsAny_(text, ['schuppenfarbe', 'schuppen farbe'])) { points++; strengths.push('Du nennst die Schuppenfarbe als Aufteilungsattribut.'); }
-  else { missing.push('Nenne die Schuppenfarbe als Attribut des ersten Splits.'); }
-  if (containsAny_(text, ['nein', 'nicht alle', 'nicht vollstaendig', 'nicht vollständig', 'koennen nicht alle', 'kann nicht alle', 'fehler bleiben', 'fehlklass', '6 von 9', '66,7', '66.7'])) { points++; strengths.push('Du erkennst die Grenze eines Baums der Tiefe 1.'); }
-  else { missing.push('Entscheide klar, dass bei Tiefe 1 nicht alle Trainingsfische richtig klassifiziert werden.'); }
-  if (containsAny_(text, ['gemischt', 'teilmeng', 'weitere aufteilung', 'weiter aufteil', 'weiterer split', 'noch ein split', 'fehlklass', 'beide klassen', 'nicht rein', 'unrein']) || (text.includes('friedlich') && text.includes('feindselig'))) { points++; strengths.push('Du begruendest die notwendige weitere Aufteilung.'); }
-  else { missing.push('Begruende mit weiterhin gemischten Teilmengen oder notwendigen weiteren Aufteilungen.'); }
-  return createFishRuleEvaluation_(points, maxPoints, strengths, missing, points === maxPoints ? 'Deine Begruendung trifft Attribut, Entscheidung und Ursache.' : 'Ergaenze deine Begruendung mit den noch fehlenden fachlichen Aspekten.');
+  const describesTree =
+    containsAny_(text, ['schuppenfarbe', 'schuppen farbe']) ||
+    (containsAny_(text, ['baum', 'wurzel', 'knoten']) && containsAny_(text, ['ast', 'aeste', 'äste', 'blatt', 'blaetter', 'blätter', 'teilt', 'aufteilung']));
+  if (describesTree) { points++; strengths.push('Du beschreibst den resultierenden Baum nachvollziehbar.'); }
+  else { missing.push('Beschreibe den resultierenden Baum, zum Beispiel seinen ersten Split und die entstehenden Aeste oder Blaetter.'); }
+  const rejectsPerfectClassification = containsAny_(text, ['nein', 'nicht alle', 'nicht vollstaendig', 'nicht vollständig', 'koennen nicht alle', 'kann nicht alle', 'fehler bleiben', 'fehlklass', '3 falsch', '6 von 9', '66,7', '66.7']);
+  const givesReason = containsAny_(text, ['gemischt', 'teilmeng', 'beide klassen', 'nicht rein', 'unrein', 'tiefe 1', 'nur ein split', 'nur eine aufteilung']) || (text.includes('friedlich') && text.includes('feindselig'));
+  if (rejectsPerfectClassification && givesReason) { points++; strengths.push('Du begruendest, warum nicht alle Trainingsdaten korrekt klassifiziert werden.'); }
+  else { missing.push('Entscheide begruendet, ob bei Tiefe 1 alle Trainingsdaten richtig klassifiziert werden.'); }
+  if (containsAny_(text, ['groessere baumtiefe', 'größere baumtiefe', 'baumtiefe erhoehen', 'baumtiefe erhöhen', 'tiefe erhoehen', 'tiefe erhöhen', 'tieferer baum', 'mehr ebenen', 'weitere aufteilung', 'weiter aufteil', 'weiterer split', 'mehr knoten'])) { points++; strengths.push('Du schlaegst eine sinnvolle Verbesserung vor.'); }
+  else { missing.push('Schlage eine sinnvolle Verbesserung vor, etwa eine groessere maximale Baumtiefe.'); }
+  return createFishRuleEvaluation_(points, maxPoints, strengths, missing, points === maxPoints ? 'Du beschreibst den Baum, begruendest seine Grenze und nennst eine passende Verbesserung.' : 'Ergaenze die noch fehlenden Teile zu Beschreibung, Begruendung oder Verbesserung.');
 }
 
 
@@ -104,15 +98,18 @@ function evaluateFishDepthDevelopmentByRules_(answer, maxPoints) {
   const strengths = [];
   const missing = [];
   let points = 0;
-  if (containsAny_(text, ['komplex', 'tiefer', 'mehr aufteilung', 'mehr split', 'mehr knoten', 'mehr ebenen', 'zusaetzliche knoten', 'zusätzliche knoten', 'groesserer baum', 'größerer baum'])) { points++; strengths.push('Du beschreibst, dass der Baum mit groesserer Tiefe umfangreicher wird.'); }
-  else { missing.push('Beschreibe, dass ein tieferer Baum weitere Aufteilungen erhaelt.'); }
-  if (containsAny_(text, ['trainingsgenauigkeit', 'trainingsdaten besser', 'trainingsdaten richtig', 'trainingsdaten korrekt', '66,7', '88,9', '100'])) { points++; strengths.push('Du erkennst die steigende Genauigkeit auf den Trainingsdaten.'); }
-  else { missing.push('Erklaere, dass die Trainingsdaten mit zunehmender Tiefe besser klassifiziert werden.'); }
-  if (containsAny_(text, ['testgenauigkeit', 'testdaten']) && containsAny_(text, ['80', 'bleibt gleich', 'bleiben gleich', 'nicht besser', 'verbessert sich nicht', 'steigt nicht'])) { points++; strengths.push('Du beziehst die Beobachtung auf die Testdaten.'); }
-  else { missing.push('Beruecksichtige, dass sich die Testgenauigkeit hier nicht verbessert.'); }
-  if (containsAny_(text, ['wuerde', 'würde', 'waehle', 'wähle', 'entscheide', 'verwende', 'nehme', 'auswaehl', 'auswähl', 'nicht tiefste']) && containsAny_(text, ['testdaten', 'unbekannt', 'generalisier'])) { points++; strengths.push('Du begruendest eine Modellwahl mit Blick auf unbekannte Daten.'); }
-  else { missing.push('Entscheide eine Baumtiefe und begruende sie mit der Leistung auf Testdaten.'); }
-  return createFishRuleEvaluation_(points, maxPoints, strengths, missing, points === maxPoints ? 'Du unterscheidest treffend zwischen Trainings- und Testgenauigkeit.' : 'Ergaenze den Zusammenhang zwischen Baumtiefe, Trainingsdaten und Testdaten.');
+  const decreasingErrors =
+    containsAny_(text, ['weniger falsch', 'fehler sink', 'fehler werden weniger', 'fehlklassifizierte trainingsdaten sink', 'falsch klassifizierten trainingsdaten sink', '3 1 0']) ||
+    (containsAny_(text, ['tiefe 3', 'baumtiefe 3']) && containsAny_(text, ['keine trainingsdaten falsch', 'kein trainingsfisch falsch', 'null fehler', '0 fehler', 'alle trainingsdaten korrekt', 'alle trainingsdaten richtig']));
+  if (decreasingErrors) { points++; strengths.push('Du beschreibst die sinkende Zahl falsch klassifizierter Trainingsdaten.'); }
+  else { missing.push('Beschreibe, dass die Zahl falsch klassifizierter Trainingsdaten sinkt und bei Tiefe 3 null ist.'); }
+  if (containsAny_(text, ['genauigkeit']) && containsAny_(text, ['alle drei', 'gleich', 'unveraendert', 'unverändert', 'verbessert sich nicht', 'steigt nicht', '80'])) { points++; strengths.push('Du erkennst, dass die Genauigkeit nach der Testphase gleich bleibt.'); }
+  else { missing.push('Beschreibe, dass die Genauigkeit bei allen drei Baumtiefen gleich bleibt beziehungsweise nicht steigt.'); }
+  const choosesDepthThree = containsAny_(text, ['tiefe 3', 'baumtiefe 3']) && containsAny_(text, ['waehle', 'wähle', 'verwende', 'nehmen', 'genommen', 'sinnvoll', 'sollte']);
+  const justifiesDepthThree = containsAny_(text, ['alle trainingsdaten korrekt', 'alle trainingsdaten richtig', 'keine trainingsdaten falsch', 'kein trainingsfisch falsch', 'null fehler', '0 fehler']);
+  if (choosesDepthThree && justifiesDepthThree) { points++; strengths.push('Du waehlst Tiefe 3 mit einer passenden Begruendung.'); }
+  else { missing.push('Entscheide dich begruendet fuer Tiefe 3, weil dort alle Trainingsdaten korrekt eingeordnet werden.'); }
+  return createFishRuleEvaluation_(points, maxPoints, strengths, missing, points === maxPoints ? 'Du beschreibst beide Entwicklungen und begruendest die Wahl von Baumtiefe 3.' : 'Ergaenze die noch fehlende Entwicklung oder Begruendung deiner Wahl.');
 }
 
 

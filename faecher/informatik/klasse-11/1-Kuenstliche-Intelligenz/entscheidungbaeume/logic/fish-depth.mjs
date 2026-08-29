@@ -4,9 +4,8 @@ import { FISH_TREE_DEPTH_RESULTS, percentageFor } from "./fish-learning.mjs";
 // ergänzt nur die Darstellung für die Tabelle in Aufgabe 4.
 export const FISH_DEPTH_RESULTS = Object.freeze(FISH_TREE_DEPTH_RESULTS.map((result) => Object.freeze({
   depth: result.depth,
-  trainingPercent: Math.round(percentageFor(result.trainingCorrect, result.trainingTotal) * 10) / 10,
-  testPercent: Math.round(percentageFor(result.testCorrect, result.testTotal) * 10) / 10,
-  wrongFish: result.wrongTestFish,
+  trainingErrors: result.trainingTotal - result.trainingCorrect,
+  testAccuracy: Math.round(percentageFor(result.testCorrect, result.testTotal) * 10) / 10,
 })));
 
 export function normalizeAnswerText(value) {
@@ -21,6 +20,13 @@ export function percentageMatches(value, expected) {
   if (!normalized) return false;
   const parsed = Number(normalized);
   return Number.isFinite(parsed) && Math.abs(parsed - expected) < 0.11;
+}
+
+export function numberMatches(value, expected) {
+  const normalized = String(value ?? "").trim().replace(",", ".");
+  if (!normalized) return false;
+  const parsed = Number(normalized);
+  return Number.isFinite(parsed) && parsed === expected;
 }
 
 export function wrongFishMatches(value, expectedFish) {

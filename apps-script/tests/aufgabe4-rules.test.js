@@ -26,13 +26,13 @@ taskConfigs.forEach(function(entry) {
 });
 
 const depthOneDirect = context.evaluateFishDepthOneByRules_(
-  'Das Attribut ist die Schuppenfarbe. Nein, denn in beiden Ästen kommen friedliche und feindselige Trainingsfische vor.',
+  'Der Baum teilt am ersten Knoten nach der Schuppenfarbe in zwei Blätter. Nicht alle Trainingsfische sind richtig eingeordnet, weil die Gruppen noch gemischt sind. Mit einer größeren Baumtiefe wären weitere Aufteilungen möglich.',
   3
 );
 assert.equal(depthOneDirect.points, 3);
 
 const depthOneEquivalent = context.evaluateFishDepthOneByRules_(
-  'Nach Schuppenfarbe werden nur 6 von 9 Fischen richtig eingeordnet. Die Teilmengen sind noch nicht rein.',
+  'Nach Schuppenfarbe entstehen zwei Äste. Nur 6 von 9 Fischen sind richtig eingeordnet, weil die Teilmengen noch nicht rein sind. Ein tieferer Baum mit mehr Knoten verbessert die Einordnung.',
   3
 );
 assert.equal(depthOneEquivalent.points, 3);
@@ -41,19 +41,26 @@ const depthOneWrong = context.evaluateFishDepthOneByRules_(
   'Die Schuppenfarbe reicht aus und alle Fische werden richtig klassifiziert.',
   3
 );
-assert.equal(depthOneWrong.points, 1);
+assert.equal(depthOneWrong.points < 3, true);
+
+const semanticEquivalent = context.applyRuleBasedMinimum_(
+  { ok: true, points: 3, maxPoints: 3, status: 'gut', strengths: ['Sinngemäß fachlich vollständig.'], missing: [], feedback: 'Richtig.' },
+  vm.runInContext("TASKS['11-4-1']", context),
+  'Der erzeugte Klassifikator ist hier noch zu grob und sollte flexibler werden.'
+);
+assert.equal(semanticEquivalent.points, 3, 'Eine fachlich anerkannte semantische Formulierung darf nicht durch Schlüsselwortregeln abgewertet werden.');
 
 const depthDevelopment = context.evaluateFishDepthDevelopmentByRules_(
-  'Mit größerer Tiefe entstehen zusätzliche Knoten und die Trainingsgenauigkeit steigt bis 100 Prozent. Die Testgenauigkeit bleibt bei 80 Prozent. Ich verwende Tiefe 2, weil für die Modellwahl die Testdaten entscheidend sind.',
-  4
+  'Baumtiefe 3 sortiert alle Trainingsdaten korrekt ein und sollte daher gewählt werden. Die Genauigkeit ist bei allen drei Baumtiefen gleich, verbessert sich also nicht.',
+  3
 );
-assert.equal(depthDevelopment.points, 4);
+assert.equal(depthDevelopment.points, 3);
 
 const incorrectTestClaim = context.evaluateFishDepthDevelopmentByRules_(
-  'Der Baum wird tiefer und die Trainingsgenauigkeit steigt. Die Testdaten werden mit jeder Tiefe genauer. Ich verwende deshalb Tiefe 3 für unbekannte Daten.',
-  4
+  'Die Zahl der Fehler in den Trainingsdaten sinkt bis auf null. Die Genauigkeit steigt mit jeder Tiefe. Deshalb wähle ich Tiefe 3.',
+  3
 );
-assert.equal(incorrectTestClaim.points < 4, true);
+assert.equal(incorrectTestClaim.points < 3, true);
 
 const equalAccuracy = context.evaluateFishEqualAccuracyByRules_(
   'Beide haben 80 Prozent Genauigkeit. Bei Tiefe 1 wird Fisch 3 und bei Tiefe 2 Fisch 4 falsch eingeordnet. Genauigkeit allein zeigt die Art der Fehler nicht.',
