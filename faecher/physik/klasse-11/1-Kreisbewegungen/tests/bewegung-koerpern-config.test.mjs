@@ -45,8 +45,8 @@ assert.match(css, /\.vector-grid-host[\s\S]*?overflow-x: auto/);
 assert.match(css, /\.large-chart[\s\S]*?overflow-x: auto/);
 assert.match(css, /\.physics-revision-panel\[hidden\][\s\S]*?display: none/);
 assert.match(css, /\.physics-task-card[\s\S]*?min-width: 0/);
-assert.match(html, /bewegung-koerpern\.css\?v=20260831b/);
-assert.match(html, /bewegung-koerpern\.mjs\?v=20260831b/);
+assert.match(html, /bewegung-koerpern\.css\?v=20260831c/);
+assert.match(html, /bewegung-koerpern\.mjs\?v=20260831c/);
 assert.equal((html.match(/class="physics-number-controls"/g) || []).length, 2);
 assert.match(css, /\.physics-number-controls \{[\s\S]*?grid-template-columns: minmax\(0, 1fr\) 92px;/);
 assert.equal(
@@ -103,6 +103,12 @@ assert.match(source, /Diagramm \$\{diagramLabel\} prüfen/);
 assert.match(source, /Geschwindigkeit prüfen/);
 assert.match(source, /Beschleunigung prüfen/);
 assert.equal((source.match(/class="chart-section-label"/g) || []).length, 5);
+assert.equal((source.match(/marker-end="url\(#given-vt-axis-arrow\)"/g) || []).length, 2);
+assert.match(source, /class="chart-axis-label" x="635" y="264">t in min/);
+assert.match(source, /class="chart-axis-label" x="7" y="17">v in m\/s/);
+assert.match(source, /class="chart-value-label" text-anchor="end" x="48" y="135">15 m\/s/);
+assert.match(source, /class="chart-value-label" text-anchor="end" x="48" y="75">25 m\/s/);
+assert.doesNotMatch(source, /x="190" y="122">15 m\/s|x="440" y="62">25 m\/s/);
 assert.doesNotMatch(`${html}\n${source}`, /verzöger|verzoeger/i);
 
 console.log("Nummerierung, Einzelprüfungen, Fachbegriffe und Mehrfachauswahl sind abgesichert.");

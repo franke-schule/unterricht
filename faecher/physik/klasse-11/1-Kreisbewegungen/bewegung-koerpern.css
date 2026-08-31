@@ -350,6 +350,24 @@
   stroke-width: 1.5;
 }
 
+.chart-axis-arrow {
+  fill: #64748b;
+}
+
+.chart-axis-label,
+.chart-value-label {
+  fill: #334155;
+  font-weight: 800;
+}
+
+.chart-axis-label {
+  font-size: 14px;
+}
+
+.chart-value-label {
+  font-size: 13px;
+}
+
 .chart-plot {
   fill: none;
   stroke: #2563eb;
