@@ -36,6 +36,10 @@ assert.match(prompt, /faire Physiklehrkraft/);
 assert.match(prompt, /Abschnitt V/);
 assert.match(prompt, /Bewertungsrubrik/);
 assert.match(prompt, /Hinweise für die Rückmeldung/);
+assert.match(prompt, /negative Beschleunigung/);
+assert.match(prompt, /Geschwindigkeit nimmt gleichmäßig ab/i);
+assert.match(prompt, /Verlange keine bestimmte Fachwortformulierung/);
+assert.doesNotMatch(prompt, /Verzögerung|verzögerte Bewegung/i);
 
 const full = context.normalizeEvaluation_({
   points: 5,

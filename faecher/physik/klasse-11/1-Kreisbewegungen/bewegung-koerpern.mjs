@@ -116,12 +116,21 @@ function chartSvg(kind, ariaLabel, options = {}) {
 }
 
 const vtDescriptions = [
-  "gleichförmige Bewegung mit konstanter Geschwindigkeit",
-  "gleichmäßig beschleunigte Bewegung mit Anfangsgeschwindigkeit",
-  "gleichmäßig verzögerte Bewegung bis zum Stillstand",
-  "gleichmäßig verzögerte Bewegung, danach gleichförmige Bewegung",
-  "gleichmäßig beschleunigte Bewegung, danach gleichförmige Bewegung",
-  "beschleunigte Bewegung mit immer kleinerer Beschleunigung",
+  { id: "constant", text: "gleichförmige Bewegung mit konstanter Geschwindigkeit" },
+  { id: "positive", text: "gleichmäßig beschleunigte Bewegung mit positiver Beschleunigung und Anfangsgeschwindigkeit" },
+  { id: "negative-to-rest", text: "gleichmäßig beschleunigte Bewegung mit negativer Beschleunigung bis zum Stillstand" },
+  { id: "negative-then-constant", text: "gleichmäßig beschleunigte Bewegung mit negativer Beschleunigung, danach gleichförmige Bewegung" },
+  { id: "positive-then-constant", text: "gleichmäßig beschleunigte Bewegung mit positiver Beschleunigung, danach gleichförmige Bewegung" },
+  { id: "decreasing-positive", text: "beschleunigte Bewegung mit positiver, aber immer kleinerer Beschleunigung" },
+];
+
+const vtOptionOrder = [
+  "negative-then-constant",
+  "constant",
+  "decreasing-positive",
+  "positive-then-constant",
+  "negative-to-rest",
+  "positive",
 ];
 
 function selectElement(label, options, attribute, value, optionValues = options.map((_, index) => String(index))) {
@@ -136,30 +145,69 @@ function selectElement(label, options, attribute, value, optionValues = options.
 }
 
 function setupVtMatching() {
-  const diagrams = ["constant", "accelerated", "decelerated", "deceleratedConstant", "acceleratedConstant", "softAcceleration"];
+  const diagrams = [
+    { kind: "constant", expected: "constant" },
+    { kind: "accelerated", expected: "positive" },
+    { kind: "decelerated", expected: "negative-to-rest" },
+    { kind: "deceleratedConstant", expected: "negative-then-constant" },
+    { kind: "acceleratedConstant", expected: "positive-then-constant" },
+    { kind: "softAcceleration", expected: "decreasing-positive" },
+  ];
+  const optionById = new Map(vtDescriptions.map((item) => [item.id, item]));
+  const orderedOptions = vtOptionOrder.map((id) => optionById.get(id));
   const bank = document.getElementById("vt-diagram-bank");
-  diagrams.forEach((kind, index) => {
+  diagrams.forEach(({ kind, expected }, index) => {
+    const diagramLabel = String.fromCharCode(65 + index);
+    const taskLabel = String.fromCharCode(97 + index);
     const card = document.createElement("article");
     card.className = "diagram-card";
-    card.innerHTML = `<h4>${String.fromCharCode(65 + index)}</h4>`;
-    card.append(chartSvg(kind, `v(t)-Diagramm ${String.fromCharCode(65 + index)}`));
-    card.append(selectElement(`Diagramm ${String.fromCharCode(65 + index)}: Beschreibung`, vtDescriptions, "vtAnswer", String.fromCharCode(65 + index)));
+    card.innerHTML = `<h4>Aufgabe 5${taskLabel} · Diagramm ${diagramLabel}</h4>`;
+    card.append(chartSvg(kind, `v(t)-Diagramm ${diagramLabel}`));
+    const selectLabel = selectElement(
+      `Diagramm ${diagramLabel}: Beschreibung`,
+      orderedOptions.map((item) => item.text),
+      "vtAnswer",
+      diagramLabel,
+      orderedOptions.map((item) => item.id)
+    );
+    const select = selectLabel.querySelector("select");
+    const button = document.createElement("button");
+    button.type = "button";
+    button.className = "physics-primary-button direct-check-button";
+    button.textContent = `Diagramm ${diagramLabel} prüfen`;
+    const feedback = document.createElement("div");
+    feedback.id = `vt-feedback-${diagramLabel.toLowerCase()}`;
+    feedback.className = "physics-feedback";
+    feedback.setAttribute("role", "status");
+    feedback.setAttribute("aria-live", "polite");
+    feedback.hidden = true;
+    select.addEventListener("change", () => {
+      feedback.hidden = true;
+      select.classList.remove("is-correct", "is-wrong");
+    });
+    button.addEventListener("click", () => {
+      if (!select.value) {
+        select.classList.remove("is-correct", "is-wrong");
+        setFeedback(feedback.id, "error", "Wähle zuerst eine Beschreibung aus.");
+      } else if (select.value === expected) {
+        select.classList.add("is-correct");
+        select.classList.remove("is-wrong");
+        setFeedback(feedback.id, "success", "Korrekt: Verlauf und Beschleunigung passen zu deiner Beschreibung.");
+      } else {
+        select.classList.add("is-wrong");
+        select.classList.remove("is-correct");
+        setFeedback(feedback.id, "partial", "Noch nicht korrekt. Prüfe, ob der Graph waagerecht, steigend oder fallend verläuft und ob seine Steigung konstant ist.");
+      }
+    });
+    card.append(selectLabel, button, feedback);
     bank.append(card);
-  });
-  document.getElementById("check-vt-matching").addEventListener("click", () => {
-    const expected = [1, 2, 3, 4, 5, 6];
-    const selects = [...document.querySelectorAll("[data-vt-answer]")];
-    const correct = selects.filter((select, index) => Number(select.value) === expected[index] - 1).length;
-    if (correct === 6) setFeedback("vt-matching-feedback", "success", "Korrekt: Du hast Steigung und waagerechte Verläufe passend gedeutet.");
-    else if (correct > 0) setFeedback("vt-matching-feedback", "partial", `${correct} von 6 Diagrammen stimmen. Prüfe Steigung (Beschleunigung) und waagerechte Abschnitte (konstante Geschwindigkeit).`);
-    else setFeedback("vt-matching-feedback", "error", "Noch nicht korrekt. Eine waagerechte Linie bedeutet konstante Geschwindigkeit; eine steigende oder fallende Linie zeigt Beschleunigung oder Verzögerung.");
   });
 }
 
 function setupGivenVtChart() {
   const host = document.getElementById("given-vt-chart");
   const svg = chartSvg("constant", "v(t)-Diagramm der fünf Bewegungsabschnitte", { width: 720, height: 270 });
-  svg.innerHTML = '<line x1="55" y1="220" x2="680" y2="220" class="chart-axis"/><line x1="55" y1="220" x2="55" y2="28" class="chart-axis"/><path d="M55 220 L180 130 L305 130 L430 70 L555 70 L680 220" class="chart-plot given-vt-plot"/><text x="48" y="248">0</text><text x="168" y="248">3</text><text x="293" y="248">6</text><text x="418" y="248">9</text><text x="539" y="248">12</text><text x="665" y="248">15 min</text><text x="12" y="38">v</text><text x="190" y="122">15 m/s</text><text x="440" y="62">25 m/s</text><text x="112" y="145">I</text><text x="240" y="116">II</text><text x="360" y="94">III</text><text x="485" y="56">IV</text><text x="605" y="145">V</text>';
+  svg.innerHTML = '<line x1="55" y1="220" x2="680" y2="220" class="chart-axis"/><line x1="55" y1="220" x2="55" y2="28" class="chart-axis"/><path d="M55 220 L180 130 L305 130 L430 70 L555 70 L680 220" class="chart-plot given-vt-plot"/><text x="48" y="248">0</text><text x="168" y="248">3</text><text x="293" y="248">6</text><text x="418" y="248">9</text><text x="539" y="248">12</text><text x="665" y="248">15 min</text><text x="12" y="38">v</text><text x="190" y="122">15 m/s</text><text x="440" y="62">25 m/s</text><text class="chart-section-label" text-anchor="middle" x="118" y="45">I</text><text class="chart-section-label" text-anchor="middle" x="243" y="45">II</text><text class="chart-section-label" text-anchor="middle" x="368" y="45">III</text><text class="chart-section-label" text-anchor="middle" x="493" y="45">IV</text><text class="chart-section-label" text-anchor="middle" x="618" y="45">V</text>';
   host.append(svg);
 }
 
@@ -197,38 +245,183 @@ function setupOtherMatching() {
   ["I", "II", "III", "IV"].forEach((label, index) => { const item = document.createElement("div"); item.className = "mini-diagram"; item.innerHTML = `<strong>${label}</strong>`; item.append(chartSvg(["zero", "negativeConstant", "positiveConstant", "changingAcceleration"][index], `Zeit-Beschleunigungs-Diagramm ${label}`, { width: 190, height: 110, yLabel: "a", centered: true })); accelerationCard.append(item); });
   bank.append(speedCard, accelerationCard);
   const list = document.getElementById("other-match-list");
+  const verified = new Set();
   otherData.positions.forEach((kind, index) => {
     const row = document.createElement("article");
     row.className = "other-match-row";
-    row.innerHTML = `<div class="mini-position"><strong>${index + 1}</strong></div>`;
+    const taskLabel = String.fromCharCode(97 + index);
+    row.innerHTML = `<div class="mini-position"><h4>Aufgabe 7${taskLabel} · Zeit-Ort-Diagramm ${index + 1}</h4></div>`;
     row.querySelector(".mini-position").append(chartSvg(kind, `Zeit-Ort-Diagramm ${index + 1}`, { width: 180, height: 110, yLabel: "x" }));
-    const speedLabel = selectElement(`Diagramm ${index + 1}: Geschwindigkeit`, ["A", "B", "C", "D"], "otherSpeed", String(index + 1), ["A", "B", "C", "D"]);
-    const accelerationLabel = selectElement(`Diagramm ${index + 1}: Beschleunigung`, ["I", "II", "III", "IV"], "otherAcceleration", String(index + 1), ["I", "II", "III", "IV"]);
-    row.append(speedLabel, accelerationLabel);
+    const controls = [
+      {
+        key: `speed-${index}`,
+        label: `Diagramm ${index + 1}: Geschwindigkeit`,
+        options: ["A", "B", "C", "D"],
+        attribute: "otherSpeed",
+        expected: otherData.speedExpected[index],
+        success: "Korrekt: Die Geschwindigkeitskarte passt zur Steigung des x(t)-Diagramms.",
+        hint: "Noch nicht korrekt. Vergleiche die Steigung des x(t)-Diagramms mit dem Verlauf der v(t)-Karten.",
+        button: "Geschwindigkeit prüfen",
+      },
+      {
+        key: `acceleration-${index}`,
+        label: `Diagramm ${index + 1}: Beschleunigung`,
+        options: ["I", "II", "III", "IV"],
+        attribute: "otherAcceleration",
+        expected: otherData.accelerationExpected[index],
+        success: "Korrekt: Die Beschleunigungskarte passt zur Änderung der Steigung.",
+        hint: "Noch nicht korrekt. Prüfe, ob und in welche Richtung sich die Steigung des x(t)-Diagramms ändert.",
+        button: "Beschleunigung prüfen",
+      },
+    ];
+    controls.forEach((config) => {
+      const control = document.createElement("div");
+      control.className = "direct-match-control";
+      const label = selectElement(config.label, config.options, config.attribute, String(index + 1), config.options);
+      const select = label.querySelector("select");
+      const button = document.createElement("button");
+      button.type = "button";
+      button.className = "physics-primary-button direct-check-button";
+      button.textContent = config.button;
+      const feedback = document.createElement("div");
+      feedback.id = `other-feedback-${config.key}`;
+      feedback.className = "physics-feedback compact-feedback";
+      feedback.setAttribute("role", "status");
+      feedback.setAttribute("aria-live", "polite");
+      feedback.hidden = true;
+      select.addEventListener("change", () => {
+        verified.delete(config.key);
+        feedback.hidden = true;
+        select.classList.remove("is-correct", "is-wrong");
+        document.getElementById("other-resolution").hidden = true;
+      });
+      button.addEventListener("click", () => {
+        if (!select.value) {
+          verified.delete(config.key);
+          setFeedback(feedback.id, "error", "Wähle zuerst eine Diagrammkarte aus.");
+        } else if (select.value === config.expected) {
+          verified.add(config.key);
+          select.classList.add("is-correct");
+          select.classList.remove("is-wrong");
+          setFeedback(feedback.id, "success", config.success);
+        } else {
+          verified.delete(config.key);
+          select.classList.add("is-wrong");
+          select.classList.remove("is-correct");
+          setFeedback(feedback.id, "partial", config.hint);
+        }
+        document.getElementById("other-resolution").hidden = verified.size !== 8;
+      });
+      control.append(label, button, feedback);
+      row.append(control);
+    });
     list.append(row);
-  });
-  document.getElementById("check-other-matching").addEventListener("click", () => {
-    const speedSelects = [...document.querySelectorAll("[data-other-speed]")];
-    const accelerationSelects = [...document.querySelectorAll("[data-other-acceleration]")];
-    const speedCorrect = speedSelects.filter((select, index) => select.value === otherData.speedExpected[index]).length;
-    const accelerationCorrect = accelerationSelects.filter((select, index) => select.value === otherData.accelerationExpected[index]).length;
-    const total = speedCorrect + accelerationCorrect;
-    if (total === 8) { setFeedback("other-matching-feedback", "success", "Korrekt: Die Steigung des Zeit-Ort-Diagramms und ihre Änderung erklären die Zuordnungen."); document.getElementById("other-resolution").hidden = false; }
-    else if (total > 0) setFeedback("other-matching-feedback", "partial", `${total} von 8 Zuordnungen stimmen. Mehrfachzuordnungen sind erlaubt; vergleiche jeweils Steigung und Geschwindigkeitsänderung.`);
-    else setFeedback("other-matching-feedback", "error", "Noch nicht korrekt. Bestimme zuerst die Steigung jedes Zeit-Ort-Diagramms.");
   });
 }
 
 function setupQuiz() {
-  document.getElementById("check-quiz").addEventListener("click", () => {
-    const expected = ["speed", "acceleration", "m/s2"];
-    const selected = expected.map((name, index) => document.querySelector(`input[name="quiz-${index + 1}"]:checked`));
-    const answered = selected.filter(Boolean).length;
-    if (answered < 3) { setFeedback("quiz-feedback", "error", "Beantworte zuerst alle drei Fragen."); return; }
-    const correct = selected.filter((input, index) => input.value === expected[index]).length;
-    if (correct === 3) { setFeedback("quiz-feedback", "success", "Korrekt: Du hast die zentralen Begriffe sicher wiederholt."); document.getElementById("module-summary").hidden = false; }
-    else if (correct > 0) setFeedback("quiz-feedback", "partial", `${correct} von 3 Antworten stimmen. Prüfe noch einmal Betrag, Richtung und die Bedeutung der Steigung.`);
-    else setFeedback("quiz-feedback", "error", "Noch nicht korrekt. Wiederhole den Unterschied zwischen Geschwindigkeit, Beschleunigung und Weg.");
+  const quizItems = [
+    {
+      question: "Welche Aussagen beschreiben die Geschwindigkeit korrekt?",
+      correct: ["directed", "magnitude", "direction"],
+      options: [
+        ["scalar", "Geschwindigkeit besitzt grundsätzlich keine Richtung."],
+        ["magnitude", "Ihr Betrag beschreibt, wie schnell sich ein Körper bewegt."],
+        ["acceleration-unit", "Ihre SI-Einheit ist m/s²."],
+        ["direction", "Die Pfeilrichtung beschreibt die Bewegungsrichtung."],
+        ["directed", "Geschwindigkeit ist eine gerichtete Größe."],
+      ],
+      hint: "Trenne Betrag, Richtung und die Einheit der Geschwindigkeit.",
+    },
+    {
+      question: "Welche Aussagen zu einem v(t)-Diagramm sind richtig?",
+      correct: ["slope", "horizontal", "area"],
+      options: [
+        ["height-acceleration", "Die Höhe des Graphen gibt direkt die Beschleunigung an."],
+        ["horizontal", "Ein waagerechter Abschnitt bedeutet konstante Geschwindigkeit."],
+        ["negative-speed", "Ein fallender Graph bedeutet immer eine negative Geschwindigkeit."],
+        ["area", "Die Fläche unter dem Graphen liefert bei nichtnegativer Geschwindigkeit den zurückgelegten Weg."],
+        ["slope", "Die Steigung beschreibt die Beschleunigung."],
+      ],
+      hint: "Unterscheide Höhe, Steigung und Fläche des Graphen.",
+    },
+    {
+      question: "Welche Einheiten können eine Beschleunigung beschreiben?",
+      correct: ["m-s2", "m-s-per-s", "km-h-per-s"],
+      options: [
+        ["m-s", "m/s"],
+        ["m-s2", "m/s²"],
+        ["km-h", "km/h"],
+        ["km-h-per-s", "km/h pro s"],
+        ["m-s-per-s", "m/s pro s"],
+      ],
+      hint: "Eine Beschleunigung gibt an, wie stark sich eine Geschwindigkeit pro Zeit ändert.",
+    },
+  ];
+  const target = document.getElementById("physics-quiz");
+  const verified = new Set();
+  const sameValues = (first, second) => first.length === second.length && first.every((value) => second.includes(value));
+  quizItems.forEach((item, index) => {
+    const fieldset = document.createElement("fieldset");
+    fieldset.className = "physics-quiz-question quiz-question";
+    const legend = document.createElement("legend");
+    legend.textContent = `Aufgabe 8${String.fromCharCode(97 + index)} · ${item.question}`;
+    const options = document.createElement("div");
+    options.className = "quiz-options";
+    item.options.forEach(([value, labelText]) => {
+      const label = document.createElement("label");
+      label.className = "quiz-option";
+      const input = document.createElement("input");
+      input.type = "checkbox";
+      input.name = `physics-quiz-${index}`;
+      input.value = value;
+      input.addEventListener("change", () => {
+        verified.delete(index);
+        fieldset.classList.remove("is-correct", "is-wrong");
+        fieldset.querySelector(".quiz-item-feedback").hidden = true;
+        document.getElementById("module-summary").hidden = true;
+      });
+      label.append(input, document.createTextNode(labelText));
+      options.append(label);
+    });
+    const button = document.createElement("button");
+    button.type = "button";
+    button.className = "physics-primary-button direct-check-button";
+    button.textContent = `Aufgabe 8${String.fromCharCode(97 + index)} prüfen`;
+    const feedback = document.createElement("p");
+    feedback.className = "physics-feedback quiz-item-feedback";
+    feedback.setAttribute("role", "status");
+    feedback.setAttribute("aria-live", "polite");
+    feedback.hidden = true;
+    button.addEventListener("click", () => {
+      const selected = [...fieldset.querySelectorAll("input:checked")].map((input) => input.value);
+      const correctSelected = selected.filter((value) => item.correct.includes(value));
+      const extra = selected.filter((value) => !item.correct.includes(value));
+      const valid = sameValues(selected, item.correct);
+      fieldset.classList.toggle("is-correct", valid);
+      fieldset.classList.toggle("is-wrong", !valid);
+      if (valid) {
+        verified.add(index);
+        feedback.className = "physics-feedback quiz-item-feedback success";
+        feedback.textContent = "Korrekt: Alle richtigen Aussagen und keine falsche Aussage sind ausgewählt.";
+      } else if (!selected.length) {
+        verified.delete(index);
+        feedback.className = "physics-feedback quiz-item-feedback error";
+        feedback.textContent = "Wähle mindestens zwei Aussagen aus und prüfe dann erneut.";
+      } else if (correctSelected.length && !extra.length) {
+        verified.delete(index);
+        feedback.className = "physics-feedback quiz-item-feedback partial";
+        feedback.textContent = `Teilweise korrekt: Mindestens eine richtige Aussage fehlt. ${item.hint}`;
+      } else {
+        verified.delete(index);
+        feedback.className = "physics-feedback quiz-item-feedback error";
+        feedback.textContent = `Noch nicht korrekt. ${item.hint}`;
+      }
+      feedback.hidden = false;
+      document.getElementById("module-summary").hidden = verified.size !== quizItems.length;
+    });
+    fieldset.append(legend, options, button, feedback);
+    target.append(fieldset);
   });
 }
 

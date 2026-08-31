@@ -26,6 +26,11 @@
 .physics-revision-panel {
   display: grid;
   gap: 20px;
+  min-width: 0;
+}
+
+.physics-revision-panel[hidden] {
+  display: none;
 }
 
 .physics-card-heading,
@@ -42,6 +47,10 @@
 .physics-task-card,
 .physics-summary {
   padding: clamp(18px, 3vw, 28px);
+}
+
+.physics-task-card {
+  min-width: 0;
 }
 
 .physics-card-heading h2,
@@ -300,6 +309,7 @@
 .diagram-card {
   display: grid;
   gap: 8px;
+  min-width: 0;
   border: 1px solid #cbd5e1;
   border-radius: 11px;
   padding: 10px;
@@ -337,6 +347,12 @@
   stroke-width: 5;
 }
 
+.chart-section-label {
+  fill: #334155;
+  font-size: 15px;
+  font-weight: 850;
+}
+
 .diagram-card label,
 .other-match-row label {
   display: grid;
@@ -349,9 +365,30 @@
 .diagram-card select,
 .other-match-row select {
   width: 100%;
+  min-width: 0;
+  max-width: 100%;
+}
+
+.diagram-card select.is-correct,
+.other-match-row select.is-correct {
+  border-color: #059669;
+  background: #ecfdf5;
+}
+
+.diagram-card select.is-wrong,
+.other-match-row select.is-wrong {
+  border-color: #d97706;
+  background: #fffbeb;
+}
+
+.direct-check-button {
+  justify-self: start;
+  margin-top: 0;
 }
 
 .large-chart {
+  width: 100%;
+  max-width: 100%;
   overflow-x: auto;
   margin-top: 16px;
 }
@@ -415,9 +452,10 @@
 
 .other-match-row {
   display: grid;
-  grid-template-columns: 180px repeat(2, minmax(0, 1fr));
+  grid-template-columns: 210px repeat(2, minmax(0, 1fr));
   align-items: center;
   gap: 14px;
+  min-width: 0;
   border: 1px solid #cbd5e1;
   border-radius: 10px;
   padding: 10px;
@@ -425,27 +463,85 @@
 }
 
 .mini-position {
-  display: flex;
-  align-items: center;
+  display: grid;
   gap: 7px;
 }
 
+.mini-position h4 {
+  color: #1e3a8a;
+  font-size: 0.98rem;
+}
+
+.direct-match-control {
+  display: grid;
+  align-self: stretch;
+  align-content: start;
+  gap: 8px;
+  min-width: 0;
+}
+
+.compact-feedback {
+  margin-top: 0;
+  padding: 10px 12px;
+  font-size: 0.9rem;
+}
+
+.physics-multiple-choice {
+  display: grid;
+  gap: 14px;
+  margin-top: 16px;
+}
+
 .physics-quiz-question {
-  margin-top: 14px;
-  border-top: 1px solid #e2e8f0;
-  padding-top: 14px;
+  margin: 0;
+  min-width: 0;
+  border: 1px solid #cbd5e1;
+  border-radius: 11px;
+  padding: 14px;
+  background: #f8fafc;
 }
 
-.physics-quiz-question p {
-  margin: 0 0 7px;
-  color: #334155;
-  font-weight: 800;
+.physics-quiz-question legend {
+  padding: 0 4px;
+  color: #1e3a8a;
+  font-weight: 850;
 }
 
-.physics-quiz-question label {
-  display: block;
-  margin-top: 6px;
+.physics-quiz-question .quiz-options {
+  display: grid;
+  gap: 7px;
+  margin-top: 8px;
+}
+
+.physics-quiz-question .quiz-option {
+  display: flex;
+  align-items: flex-start;
+  gap: 9px;
+  min-height: 44px;
+  border: 1px solid #dbe4f0;
+  border-radius: 8px;
+  padding: 9px 10px;
   color: #475569;
+  background: #ffffff;
+}
+
+.physics-quiz-question input[type="checkbox"] {
+  flex: 0 0 auto;
+  width: 20px;
+  height: 20px;
+  margin-top: 1px;
+}
+
+.physics-quiz-question.is-correct {
+  border-color: #059669;
+}
+
+.physics-quiz-question.is-wrong {
+  border-color: #d97706;
+}
+
+.physics-quiz-question .quiz-item-feedback {
+  margin: 10px 0 0;
 }
 
 .physics-summary {
@@ -500,8 +596,12 @@
 
 .physics-step-tabs [role="tab"]:focus-visible,
 .point-vector-grid svg:focus-visible,
-.point-vector-grid [role="button"]:focus-visible,
 .physics-semantic-task button:focus-visible {
+  outline: 3px solid rgba(37, 99, 235, 0.35);
+  outline-offset: 3px;
+}
+
+.point-vector-grid:focus-within svg {
   outline: 3px solid rgba(37, 99, 235, 0.35);
   outline-offset: 3px;
 }
@@ -559,23 +659,18 @@
 }
 
 .point-vector-grid .grid-point {
-  fill: #ffffff;
-  stroke: #94a3b8;
-  stroke-width: 1.4;
+  fill: transparent;
+  stroke: none;
+  opacity: 0;
   cursor: pointer;
 }
 
 .point-vector-grid .grid-point:hover,
-.point-vector-grid .grid-point:focus {
-  fill: #dbeafe;
-  stroke: #2563eb;
-  stroke-width: 2.4;
-}
-
+.point-vector-grid .grid-point:focus,
 .point-vector-grid .grid-point.is-selected {
-  fill: #d1fae5;
-  stroke: #047857;
-  stroke-width: 3;
+  fill: transparent;
+  stroke: none;
+  opacity: 0;
 }
 
 .point-vector-grid .vector-grid-status {
@@ -734,7 +829,7 @@
   }
 
   .other-match-row {
-    grid-template-columns: 1fr;
+    grid-template-columns: minmax(0, 1fr);
   }
 
   .mini-position {
@@ -756,6 +851,10 @@
 
   .diagram-bank,
   .diagram-bank-wide {
-    grid-template-columns: 1fr;
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .direct-check-button {
+    width: 100%;
   }
 }
