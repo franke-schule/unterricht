@@ -261,8 +261,8 @@
 }
 
 .physics-number-entry {
-  grid-template-columns: minmax(0, 1fr) 150px;
-  align-items: end;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 7px;
 }
 
 .physics-number-entry input,
@@ -272,6 +272,20 @@
   border-radius: 8px;
   padding: 8px 10px;
   font: inherit;
+}
+
+.physics-number-controls {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 92px;
+  gap: 10px;
+  align-items: center;
+  min-width: 0;
+}
+
+.physics-number-controls input,
+.physics-number-controls select {
+  width: 100%;
+  min-width: 0;
 }
 
 .physics-vector-grid-layout .physics-task-card {
@@ -845,8 +859,8 @@
     border-radius: 13px;
   }
 
-  .physics-number-entry {
-    grid-template-columns: 1fr;
+  .physics-number-controls {
+    grid-template-columns: minmax(0, 1fr) 84px;
   }
 
   .diagram-bank,

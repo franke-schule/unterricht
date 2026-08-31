@@ -20,10 +20,20 @@ assert.match(html, /Geschwindigkeit ist eine gerichtete Größe/);
 assert.match(html, /a = 2,5&nbsp;m\/s²/);
 assert.match(source, /expected: \{ x: 6, y: 2 \}/);
 assert.match(source, /expected: \{ x: 4, y: 2 \}/);
-assert.match(source, /Math\.abs\(value - 7\.5\)/);
+assert.match(html, /über <strong>3,0&nbsp;s<\/strong>/);
+assert.match(source, /unit === "m\/s" \? 7\.5 : 27/);
+assert.match(source, /significantDigitCount\(input\.value\) === 2/);
+const significantDigitsMatch = source.match(/function significantDigitCount\(value\) \{[\s\S]*?\n\}/);
+assert.ok(significantDigitsMatch);
+const significantDigitCount = vm.runInNewContext(`(${significantDigitsMatch[0]})`);
+assert.equal(significantDigitCount("7,5"), 2);
+assert.equal(significantDigitCount("27"), 2);
+assert.equal(significantDigitCount("7,50"), 3);
+assert.equal(significantDigitCount("14 000"), 2);
+assert.equal(significantDigitCount("14,4"), 3);
 assert.match(source, /M55 220 L180 130 L305 130 L430 70 L555 70 L680 220/);
-assert.match(source, /Math\.abs\(value - 14400\)/);
-assert.match(source, /Math\.abs\(value - 14\.4\)/);
+assert.match(source, /unit === "m" \? 14000 : 14/);
+assert.match(source, /unit === "m" \? 14400 : 14\.4/);
 assert.match(source, /speedExpected: \["A", "A", "B", "C"\]/);
 assert.match(source, /accelerationExpected: \["I", "I", "I", "II"\]/);
 assert.match(source, /yLabel: "x"/);
@@ -35,8 +45,10 @@ assert.match(css, /\.vector-grid-host[\s\S]*?overflow-x: auto/);
 assert.match(css, /\.large-chart[\s\S]*?overflow-x: auto/);
 assert.match(css, /\.physics-revision-panel\[hidden\][\s\S]*?display: none/);
 assert.match(css, /\.physics-task-card[\s\S]*?min-width: 0/);
-assert.match(html, /bewegung-koerpern\.css\?v=20260831/);
-assert.match(html, /bewegung-koerpern\.mjs\?v=20260831/);
+assert.match(html, /bewegung-koerpern\.css\?v=20260831b/);
+assert.match(html, /bewegung-koerpern\.mjs\?v=20260831b/);
+assert.equal((html.match(/class="physics-number-controls"/g) || []).length, 2);
+assert.match(css, /\.physics-number-controls \{[\s\S]*?grid-template-columns: minmax\(0, 1fr\) 92px;/);
 assert.equal(
   (html.match(/Wähle einen Punkt, an dem sich die Gitterlinien kreuzen, um eine Linie zu zeichnen\./g) || []).length,
   2

@@ -7,7 +7,16 @@ const SCRIPT_SERVER_URL = "https://script.google.com/macros/s/AKfycby8RWL6uYrKZy
 export { createPointVectorGrid, setupPhysicsSemanticTask, setupPhysicsStepTabs };
 
 function numberValue(value) {
-  return Number.parseFloat(String(value).trim().replace(",", "."));
+  return Number.parseFloat(String(value).trim().replace(/\s+/g, "").replace(",", "."));
+}
+
+function significantDigitCount(value) {
+  const normalized = String(value).trim().replace(/\s+/g, "").replace(",", ".");
+  if (!/^[+-]?(?:\d+(?:\.\d*)?|\.\d+)(?:e[+-]?\d+)?$/i.test(normalized)) return 0;
+  const mantissa = normalized.replace(/^[+-]/, "").split(/e/i)[0];
+  let digits = mantissa.replace(".", "").replace(/^0+/, "");
+  if (!mantissa.includes(".")) digits = digits.replace(/0+$/, "");
+  return digits.length;
 }
 
 function setFeedback(id, status, message) {
@@ -74,11 +83,20 @@ function setupVectorMeaning() {
 
 function setupAcceleration() {
   document.getElementById("check-acceleration").addEventListener("click", () => {
-    const value = numberValue(document.getElementById("acceleration-answer").value);
+    const input = document.getElementById("acceleration-answer");
+    const value = numberValue(input.value);
     const unit = document.getElementById("acceleration-unit").value;
-    if (unit === "m/s" && Number.isFinite(value) && Math.abs(value - 7.5) <= 0.1) setFeedback("acceleration-feedback", "success", "Korrekt: v = v₀ + a · t = 0 + 2,5 m/s² · 3 s = 7,5 m/s.");
-    else if (unit !== "m/s") setFeedback("acceleration-feedback", "error", "Wähle m/s. Die Beschleunigung wird mit der Zeit multipliziert; v₀ ist hier 0.");
-    else setFeedback("acceleration-feedback", "error", "Noch nicht korrekt. Nutze v = v₀ + a · t und setze v₀ = 0 ein.");
+    const target = unit === "m/s" ? 7.5 : 27;
+    const tolerance = unit === "m/s" ? 0.01 : 0.05;
+    const valueCorrect = Number.isFinite(value) && Math.abs(value - target) <= tolerance;
+    const digitsCorrect = significantDigitCount(input.value) === 2;
+    if (valueCorrect && digitsCorrect) {
+      setFeedback("acceleration-feedback", "success", "Korrekt: v = v₀ + a · t = 7,5 m/s = 27 km/h. Die Angaben 2,5 m/s² und 3,0 s besitzen jeweils zwei gültige Ziffern; deshalb hat auch das Ergebnis zwei gültige Ziffern.");
+    } else if (valueCorrect) {
+      setFeedback("acceleration-feedback", "partial", "Der Zahlenwert und die Einheit passen. Gib das Ergebnis noch mit genau zwei gültigen Ziffern an: Die ungenauesten Angaben 2,5 m/s² und 3,0 s besitzen jeweils zwei gültige Ziffern.");
+    } else {
+      setFeedback("acceleration-feedback", "error", "Noch nicht korrekt. Nutze v = v₀ + a · t mit v₀ = 0, beachte die gewählte Einheit und gib das Ergebnis mit zwei gültigen Ziffern an.");
+    }
   });
 }
 
@@ -215,13 +233,25 @@ function setupWayTask() {
   let attempts = 0;
   document.getElementById("check-way").addEventListener("click", () => {
     attempts += 1;
-    const value = numberValue(document.getElementById("way-answer").value);
+    const input = document.getElementById("way-answer");
+    const value = numberValue(input.value);
     const unit = document.getElementById("way-unit").value;
-    const valid = (unit === "m" && Math.abs(value - 14400) <= 15) || (unit === "km" && Math.abs(value - 14.4) <= 0.03);
-    if (valid) setFeedback("way-feedback", "success", "Korrekt: Die Flächen unter den fünf Abschnitten ergeben zusammen 14 400 m = 14,4 km.");
-    else if (unit !== "m" && unit !== "km") setFeedback("way-feedback", "error", "Wähle eine passende Einheit für den Weg.");
-    else if (attempts === 1) setFeedback("way-feedback", "error", "Noch nicht korrekt. Zerlege die Fläche unter dem Diagramm zuerst in Rechtecke und Dreiecke.");
-    else setFeedback("way-feedback", "error", "Noch nicht korrekt. Addiere die Teilflächen und prüfe danach die Umrechnung zwischen m und km.");
+    const target = unit === "m" ? 14000 : 14;
+    const tolerance = unit === "m" ? 50 : 0.05;
+    const exact = unit === "m" ? 14400 : 14.4;
+    const exactTolerance = unit === "m" ? 15 : 0.03;
+    const valueCorrect = Number.isFinite(value) && Math.abs(value - target) <= tolerance;
+    const exactButUnrounded = Number.isFinite(value) && Math.abs(value - exact) <= exactTolerance;
+    const digitsCorrect = significantDigitCount(input.value) === 2;
+    if (valueCorrect && digitsCorrect) {
+      setFeedback("way-feedback", "success", "Korrekt: Die Teilflächen ergeben ungerundet 14,4 km. Mit zwei gültigen Ziffern lautet das Ergebnis 14 km beziehungsweise 14 000 m.");
+    } else if (valueCorrect || exactButUnrounded) {
+      setFeedback("way-feedback", "partial", "Die Flächenberechnung passt. Runde das Ergebnis noch auf genau zwei gültige Ziffern, weil die ungenauesten Angaben ebenfalls zwei gültige Ziffern besitzen.");
+    } else if (attempts === 1) {
+      setFeedback("way-feedback", "error", "Noch nicht korrekt. Zerlege die Fläche unter dem Diagramm zuerst in Rechtecke und Dreiecke und beachte zwei gültige Ziffern.");
+    } else {
+      setFeedback("way-feedback", "error", "Noch nicht korrekt. Addiere die Teilflächen, prüfe die Umrechnung zwischen m und km und runde auf zwei gültige Ziffern.");
+    }
   });
 }
 
