@@ -42,6 +42,20 @@ function normalizeEvaluation_(
       maxPoints
     );
 
+  const feedback =
+    cleanText_(
+      evaluation.feedback,
+      'Ueberarbeite deine Antwort mithilfe der Hinweise.'
+    );
+  const feedbackNote =
+    task.feedbackNoteAboveHalf &&
+    points > maxPoints / 2
+      ? cleanText_(
+        task.feedbackNoteAboveHalf,
+        ''
+      )
+      : '';
+
   return {
     ok:
       true,
@@ -73,10 +87,10 @@ function normalizeEvaluation_(
         evaluation.missing
       ),
     feedback:
-      cleanText_(
-        evaluation.feedback,
-        'Ueberarbeite deine Antwort mithilfe der Hinweise.'
-      )
+      feedbackNote &&
+      !feedback.includes(feedbackNote)
+        ? feedback + ' ' + feedbackNote
+        : feedback
   };
 }
 

@@ -306,3 +306,189 @@ export function createPointVectorGrid(container, config) {
     },
   };
 }
+
+/**
+ * Rendert eine konfigurierbare Kraftpfeil-Aufgabe auf einem unsichtbaren Raster.
+ * Die Rasterpunkte bleiben als große, tastaturbedienbare Hitboxen erhalten,
+ * ohne die zugrunde liegende Abbildung mit Achsen, Linien oder Punkten zu
+ * überlagern.
+ *
+ * @param {HTMLElement} container Zielcontainer der Aufgabenkarten.
+ * @param {object} config Fachliche Konfiguration der Karte.
+ * @param {{x: number, y: number}} config.origin Gemeinsamer Pfeilursprung.
+ * @param {(SVGElement, {toSvgPoint: (point: {x: number, y: number}) => {x: number, y: number}, svgElement: typeof svgElement}) => void} config.renderIllustration
+ * @param {(point: {x: number, y: number}) => string} config.directionKey Ordnet einen Endpunkt einer ersetzbaren Richtung zu.
+ * @param {(point: {x: number, y: number}) => boolean} [config.isSelectablePoint]
+ * @param {number} [config.hitRadius] Radius der unsichtbaren SVG-Hitbox.
+ * @param {{min: number, max: number}} [config.xRange]
+ * @param {{min: number, max: number}} [config.yRange]
+ * @param {string} [config.label]
+ * @returns {{clear: () => void, getSelections: () => Array<{x: number, y: number, direction: string}>}}
+ */
+export function createForceArrowGrid(container, config) {
+  const {
+    origin,
+    renderIllustration,
+    directionKey,
+    isSelectablePoint = () => true,
+    hitRadius = 24,
+    xRange = { min: -4, max: 4 },
+    yRange = { min: -4, max: 4 },
+    label = "Abbildung zum Einzeichnen von Kräften",
+  } = config;
+
+  if (!container || !pointInRange(origin, xRange, yRange)) {
+    throw new Error("Für die Kraftpfeile ist ein Ursprung innerhalb des Rasters erforderlich.");
+  }
+  if (typeof renderIllustration !== "function" || typeof directionKey !== "function" || typeof isSelectablePoint !== "function") {
+    throw new Error("Die Kraftpfeile benötigen eine Abbildung und eine Richtungszuordnung.");
+  }
+
+  const width = VIEW_WIDTH - PADDING * 2;
+  const height = VIEW_HEIGHT - PADDING * 2;
+  const scaleX = width / (xRange.max - xRange.min);
+  const scaleY = height / (yRange.max - yRange.min);
+  const toSvgPoint = (point) => ({
+    x: PADDING + (point.x - xRange.min) * scaleX,
+    y: VIEW_HEIGHT - PADDING - (point.y - yRange.min) * scaleY,
+  });
+  const originSvg = toSvgPoint(origin);
+  const svgId = `force-arrow-grid-${Math.random().toString(36).slice(2)}`;
+  const selections = new Map();
+
+  const wrapper = document.createElement("section");
+  wrapper.className = "point-vector-grid force-arrow-grid";
+  wrapper.setAttribute("aria-label", label);
+
+  const svg = svgElement("svg", {
+    viewBox: `0 0 ${VIEW_WIDTH} ${VIEW_HEIGHT}`,
+    role: "group",
+    "aria-label": `${label}. Wähle die Endpunkte der Kraftpfeile auf unsichtbaren Rasterpunkten.`,
+  });
+  const title = svgElement("title");
+  title.textContent = label;
+  svg.append(title);
+
+  const definitions = svgElement("defs");
+  createMarker(definitions, `${svgId}-first`, "#2563eb");
+  createMarker(definitions, `${svgId}-second`, "#7c3aed");
+  svg.append(definitions);
+
+  const illustrationLayer = svgElement("g", { "aria-hidden": "true", class: "force-illustration" });
+  renderIllustration(illustrationLayer, { toSvgPoint, svgElement });
+  svg.append(illustrationLayer);
+
+  const resultLayer = svgElement("g", { "aria-hidden": "true", class: "force-arrow-results" });
+  svg.append(resultLayer);
+
+  const pointLayer = svgElement("g");
+  const selectablePoints = rangePoints(xRange, yRange)
+    .filter((point) => gridPointKey(point) !== gridPointKey(origin) && isSelectablePoint(point));
+
+  const status = document.createElement("p");
+  status.className = "vector-grid-status force-arrow-status";
+  status.setAttribute("role", "status");
+  status.setAttribute("aria-live", "polite");
+
+  const clearButton = document.createElement("button");
+  clearButton.type = "button";
+  clearButton.textContent = "Kraftpfeile löschen";
+  clearButton.disabled = true;
+  const actions = document.createElement("div");
+  actions.className = "vector-grid-actions";
+  actions.append(clearButton);
+
+  function values() {
+    return [...selections.entries()].map(([direction, point]) => ({ ...point, direction }));
+  }
+
+  function render() {
+    resultLayer.replaceChildren();
+    values().forEach((selection, index) => {
+      const selectedSvg = toSvgPoint(selection);
+      resultLayer.append(svgElement("line", {
+        x1: originSvg.x,
+        y1: originSvg.y,
+        x2: selectedSvg.x,
+        y2: selectedSvg.y,
+        class: `result-vector force-arrow force-arrow-${index + 1}`,
+        "marker-end": `url(#${svgId}-${index === 0 ? "first" : "second"})`,
+      }));
+    });
+
+    clearButton.disabled = selections.size === 0;
+    status.textContent = selections.size
+      ? `${selections.size} von 2 Kraftpfeilen eingezeichnet. Ein Klick in dieselbe Richtung ersetzt den dortigen Pfeil.`
+      : "Wähle die Endpunkte von bis zu zwei Kraftpfeilen. Die Pfeile beginnen am markierten Bezugspunkt der Abbildung.";
+  }
+
+  function selectPoint(point) {
+    const direction = String(directionKey(point));
+    if (!selections.has(direction) && selections.size >= 2) {
+      selections.delete(selections.keys().next().value);
+    }
+    selections.set(direction, { x: point.x, y: point.y });
+    render();
+  }
+
+  function focusGridPoint(point) {
+    const target = pointLayer.querySelector(`[data-point-key="${gridPointKey(point)}"]`);
+    if (!target) return;
+    pointLayer.querySelectorAll(".grid-point").forEach((element) => element.setAttribute("tabindex", "-1"));
+    target.setAttribute("tabindex", "0");
+    target.focus();
+  }
+
+  selectablePoints.forEach((point, index) => {
+    const svgPoint = toSvgPoint(point);
+    const control = svgElement("circle", {
+      cx: svgPoint.x,
+      cy: svgPoint.y,
+      r: Math.max(hitRadius, Math.min(scaleX, scaleY) * 0.42),
+      class: "grid-point force-arrow-grid-point",
+      role: "button",
+      tabindex: index === 0 ? 0 : -1,
+      "aria-label": `Kraftpfeil mit Endpunkt bei (${point.x}|${point.y}) wählen`,
+      "data-point-key": gridPointKey(point),
+    });
+    control.addEventListener("click", () => selectPoint(point));
+    control.addEventListener("keydown", (event) => {
+      if (event.key === "Enter" || event.key === " ") {
+        event.preventDefault();
+        selectPoint(point);
+        return;
+      }
+      const direction = {
+        ArrowLeft: { x: -1, y: 0 },
+        ArrowRight: { x: 1, y: 0 },
+        ArrowDown: { x: 0, y: -1 },
+        ArrowUp: { x: 0, y: 1 },
+      }[event.key];
+      if (direction) {
+        event.preventDefault();
+        focusGridPoint(nextSelectablePoint(point, direction, origin));
+      }
+    });
+    pointLayer.append(control);
+  });
+  svg.append(pointLayer);
+
+  clearButton.addEventListener("click", () => {
+    selections.clear();
+    render();
+  });
+
+  wrapper.append(svg, status, actions);
+  container.replaceChildren(wrapper);
+  render();
+
+  return {
+    clear() {
+      selections.clear();
+      render();
+    },
+    getSelections() {
+      return values();
+    },
+  };
+}

@@ -1,0 +1,309 @@
+/* Ergänzungen für Wiederholung 2; Grundlayout und Rückmeldungen stammen aus Wiederholung 1. */
+.force-grid-host {
+  margin: 18px 0;
+  overflow-x: auto;
+}
+
+.force-arrow-grid {
+  max-width: 720px;
+  margin-inline: auto;
+}
+
+.force-arrow-grid svg {
+  background: linear-gradient(180deg, #f8fbff, #ffffff 72%);
+}
+
+.force-arrow-grid .result-vector {
+  stroke-width: 5;
+}
+
+.force-arrow-grid .force-arrow-2 {
+  stroke: #7c3aed;
+}
+
+.force-arrow-grid .force-illustration {
+  color: #334155;
+}
+
+.force-arrow-grid .scene-outline,
+.force-arrow-grid .scene-line {
+  fill: none;
+  stroke: #475569;
+  stroke-width: 3;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.force-arrow-grid .scene-fill {
+  fill: #dbeafe;
+  stroke: #475569;
+  stroke-width: 3;
+  stroke-linejoin: round;
+}
+
+.force-arrow-grid .scene-accent {
+  fill: #c4b5fd;
+  stroke: #475569;
+  stroke-width: 3;
+}
+
+.force-arrow-grid .force-origin-marker {
+  fill: #111827;
+  stroke: #ffffff;
+  stroke-width: 2;
+}
+
+.force-situation-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 18px;
+  margin: 18px 0;
+}
+
+.force-situation {
+  margin: 0;
+  border: 1px solid #cbd5e1;
+  border-radius: 14px;
+  padding: 12px;
+  background: #f8fafc;
+}
+
+.force-situation svg {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+
+.force-situation figcaption {
+  margin-top: 8px;
+  color: #334155;
+  font-weight: 800;
+  text-align: center;
+}
+
+.scene-table {
+  fill: #cbd5e1;
+  stroke: #475569;
+  stroke-width: 3;
+}
+
+.scene-block,
+.scene-car {
+  fill: #dbeafe;
+  stroke: #475569;
+  stroke-width: 3;
+  stroke-linejoin: round;
+}
+
+.scene-wheel {
+  fill: #ffffff;
+  stroke: #475569;
+  stroke-width: 5;
+}
+
+.scene-force-guide {
+  stroke: #94a3b8;
+  stroke-width: 2;
+  stroke-dasharray: 5 5;
+}
+
+.law-term-matching {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 14px;
+  margin-top: 18px;
+}
+
+.law-term-card {
+  display: grid;
+  gap: 10px;
+  padding: 14px;
+  border: 1px solid #cbd5e1;
+  border-radius: 12px;
+  background: #f8fafc;
+}
+
+.law-term-card label,
+.law-term-card select {
+  min-width: 0;
+}
+
+.law-term-card select {
+  min-height: 42px;
+  border: 1px solid #94a3b8;
+  border-radius: 8px;
+  padding: 8px;
+  color: #0f172a;
+  background: #ffffff;
+  font: inherit;
+}
+
+.law-term-card .physics-feedback {
+  margin: 0;
+}
+
+.formula-display {
+  margin: 12px 0;
+  font-size: clamp(1.2rem, 3vw, 1.65rem);
+  text-align: center;
+}
+
+.vector-symbol {
+  position: relative;
+  display: inline-block;
+  min-width: 0.72em;
+  padding-top: 0.12em;
+  line-height: 1;
+  text-align: center;
+}
+
+.vector-symbol::before {
+  position: absolute;
+  top: -0.72em;
+  left: 50%;
+  content: "→";
+  font-size: 0.7em;
+  font-weight: 700;
+  line-height: 1;
+  transform: translateX(-50%);
+}
+
+.physics-cloze {
+  display: grid;
+  gap: 16px;
+  margin: 18px 0;
+}
+
+.cloze-term-bank {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.cloze-token {
+  min-height: 42px;
+  border: 1px solid #93c5fd;
+  border-radius: 9px;
+  padding: 8px 12px;
+  color: #1e3a8a;
+  background: #eff6ff;
+  font: inherit;
+  font-weight: 750;
+  cursor: grab;
+}
+
+.cloze-token:disabled {
+  opacity: 0.45;
+  cursor: default;
+}
+
+.cloze-sentence {
+  margin: 0;
+  line-height: 2.6;
+}
+
+.cloze-sentence select {
+  min-height: 42px;
+  max-width: 100%;
+  margin: 0 4px;
+  border: 1px solid #94a3b8;
+  border-radius: 8px;
+  padding: 6px 8px;
+  color: #0f172a;
+  background: #ffffff;
+  font: inherit;
+}
+
+.cloze-sentence select.is-drop-target {
+  outline: 3px solid rgba(37, 99, 235, 0.22);
+  border-color: #2563eb;
+}
+
+.cloze-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.cloze-actions .secondary-button {
+  color: #1e3a8a;
+  background: #ffffff;
+  border: 1px solid #93c5fd;
+}
+
+.sortable-help {
+  margin-top: 18px;
+  border-top: 1px solid #e2e8f0;
+  padding-top: 14px;
+}
+
+.sortable-help > summary {
+  cursor: pointer;
+  font-weight: 800;
+}
+
+.sortable-steps {
+  display: grid;
+  gap: 9px;
+  margin: 14px 0;
+}
+
+.sortable-step {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  min-height: 52px;
+  border: 1px solid #cbd5e1;
+  border-radius: 10px;
+  padding: 8px 10px 8px 14px;
+  background: #f8fafc;
+  cursor: grab;
+}
+
+.sortable-step:focus-visible,
+.sortable-step.is-drop-target {
+  outline: 3px solid rgba(37, 99, 235, 0.22);
+  border-color: #2563eb;
+}
+
+.sortable-step-controls {
+  display: flex;
+  flex-shrink: 0;
+  gap: 5px;
+}
+
+.sort-step-button {
+  min-width: 42px;
+  min-height: 38px;
+  border: 1px solid #94a3b8;
+  border-radius: 7px;
+  color: #1e293b;
+  background: #ffffff;
+  font: inherit;
+  font-weight: 850;
+  cursor: pointer;
+}
+
+@media (max-width: 520px) {
+  .cloze-sentence select {
+    width: 100%;
+    margin: 4px 0;
+  }
+
+  .sortable-step {
+    align-items: stretch;
+    flex-direction: column;
+  }
+
+  .sortable-step-controls {
+    justify-content: flex-end;
+  }
+}
+
+@media (max-width: 760px) {
+  .force-situation-grid,
+  .law-term-matching {
+    grid-template-columns: 1fr;
+  }
+}

@@ -1,0 +1,87 @@
+<!doctype html>
+<html lang="de">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="robots" content="noindex, nofollow">
+    <title>Wiederholung 2 – Kräfte und Bewegung | Physik 11</title>
+    <link rel="stylesheet" href="../../../../styles.css?v=20260828">
+    <link rel="stylesheet" href="bewegung-koerpern.css?v=20260831c">
+    <link rel="stylesheet" href="kraefte-bewegung.css?v=20260901b">
+    <script type="module" src="kraefte-bewegung.mjs?v=20260901b"></script>
+  </head>
+  <body class="physics-revision-page force-revision-page">
+    <div class="site-backdrop" aria-hidden="true"></div>
+    <main class="page-shell physics-revision-shell">
+      <nav class="topbar" aria-label="Navigation">
+        <a class="back-link" href="../index.html">Zur Aufgabenübersicht</a>
+        <a class="back-link" href="../../../../">Startseite</a>
+      </nav>
+      <header class="physics-revision-hero">
+        <p class="eyebrow">Kreisbewegungen · Wiederholung 2</p>
+        <h1>Kräfte und Bewegung</h1>
+        <p>Wiederhole das newtonsche Grundgesetz, Kräftegleichgewicht und Wechselwirkung als Vorbereitung auf Kreisbewegungen.</p>
+      </header>
+
+      <div class="physics-step-tabs" role="tablist" aria-label="Arbeitsschritte des Lernmoduls">
+        <button id="tab-law" type="button" role="tab" aria-selected="true" aria-controls="panel-law" data-physics-tab="law">1 · Grundgesetz</button>
+        <button id="tab-parachute" type="button" role="tab" aria-selected="false" aria-controls="panel-parachute" data-physics-tab="parachute" tabindex="-1">2 · Fallschirmsprung</button>
+        <button id="tab-balance" type="button" role="tab" aria-selected="false" aria-controls="panel-balance" data-physics-tab="balance" tabindex="-1">3 · Kräftegleichgewicht</button>
+        <button id="tab-crash" type="button" role="tab" aria-selected="false" aria-controls="panel-crash" data-physics-tab="crash" tabindex="-1">4 · Crashtest</button>
+        <button id="tab-quiz" type="button" role="tab" aria-selected="false" aria-controls="panel-quiz" data-physics-tab="quiz" tabindex="-1">5 · Wiederholungsquiz</button>
+      </div>
+
+      <div class="physics-revision-panels">
+        <section id="panel-law" class="physics-revision-panel" role="tabpanel" aria-labelledby="tab-law" data-physics-panel="law">
+          <div class="physics-card-heading"><p class="eyebrow">Reiter 1</p><h2>Newtonsches Grundgesetz</h2><p>Der Kraftimpuls verändert den Bewegungsimpuls eines Körpers.</p></div>
+          <article class="physics-task-card" aria-labelledby="law-terms-title">
+            <h3 id="law-terms-title">Aufgabe 1 · Größen benennen</h3>
+            <p class="formula-display" aria-label="Vektor F mal Delta t gleich m mal Delta Vektor v"><strong><span class="vector-symbol" aria-hidden="true">F</span> · Δt = m · Δ<span class="vector-symbol" aria-hidden="true">v</span></strong></p>
+            <p>Ordne jedem Formelzeichen die passende Größe zu. Prüfe jede Zuordnung direkt.</p>
+            <div id="law-term-matching" class="law-term-matching" aria-label="Zuordnung der Größen im Grundgesetz"></div>
+          </article>
+          <article class="physics-task-card" aria-labelledby="law-cloze-title">
+            <h3 id="law-cloze-title">Aufgabe 2 · Grundgesetz interpretieren</h3>
+            <p>Setze die Begriffe in den Lückentext ein. Nutze dafür Drag-and-Drop oder die barrierearme Auswahl über die Auswahlfelder.</p>
+            <div id="law-cloze" class="physics-cloze" aria-label="Lückentext zum newtonschen Grundgesetz"></div>
+            <div class="cloze-actions">
+              <button class="physics-primary-button" id="check-law-cloze" type="button">Lückentext prüfen</button>
+              <button class="physics-primary-button secondary-button" id="reset-law-cloze" type="button">Lückentext zurücksetzen</button>
+            </div>
+            <div id="law-cloze-feedback" class="physics-feedback" role="status" aria-live="polite" hidden></div>
+          </article>
+          <article class="physics-task-card" aria-labelledby="force-acceleration-title">
+            <h3 id="force-acceleration-title">Aufgabe 3 · Beschleunigung berechnen</h3>
+            <p>Auf einen Körper mit <strong>m = 100&nbsp;g</strong> wirkt <strong>F = 1,2&nbsp;N</strong>. Berechne mit <strong>F = m · a</strong> die Beschleunigung und gib sie mit zwei gültigen Ziffern an.</p>
+            <div class="physics-number-entry"><label for="force-acceleration-answer">Beschleunigung</label><div class="physics-number-controls"><input id="force-acceleration-answer" inputmode="decimal" autocomplete="off"><select id="force-acceleration-unit" aria-label="Einheit der Beschleunigung"><option value="">Einheit auswählen …</option><option value="m/s²">m/s²</option><option value="m/s">m/s</option><option value="N">N</option></select></div></div>
+            <button class="physics-primary-button" id="check-force-acceleration" type="button">Beschleunigung prüfen</button>
+            <div id="force-acceleration-feedback" class="physics-feedback" role="status" aria-live="polite" hidden></div>
+            <details class="sortable-help"><summary>Hilfe: Rechenschritte sortieren</summary><p>Bringe die vier Rechenschritte in die richtige Reihenfolge und prüfe sie anschließend.</p><div id="acceleration-steps" class="sortable-steps" aria-label="Sortierbare Rechenschritte"></div><button class="physics-primary-button" id="check-acceleration-steps" type="button">Reihenfolge prüfen</button><div id="acceleration-steps-feedback" class="physics-feedback" role="status" aria-live="polite" hidden></div></details>
+          </article>
+        </section>
+
+        <section id="panel-parachute" class="physics-revision-panel" role="tabpanel" aria-labelledby="tab-parachute" data-physics-panel="parachute" hidden>
+          <div class="physics-card-heading"><p class="eyebrow">Reiter 2</p><h2>Kräftegleichgewicht beim Fallschirmspringer</h2><p>Bei konstanter Sinkgeschwindigkeit sind die entgegengesetzten Kräfte gleich groß.</p></div>
+          <article class="physics-task-card" aria-labelledby="parachute-title"><h3 id="parachute-title">Aufgabe 4a · Kraftpfeile einzeichnen</h3><p>Zeichne zwei Kraftpfeile vom markierten Bezugspunkt aus ein: einen nach oben und einen nach unten.</p><div id="parachute-force-grid" class="force-grid-host"></div><button class="physics-primary-button" id="check-parachute-forces" type="button">Kraftpfeile prüfen</button><div id="parachute-feedback" class="physics-feedback" role="status" aria-live="polite" hidden></div><div class="physics-help-stack"><details><summary>Hilfe 1: Bewegungszustand</summary><p>Die Sinkgeschwindigkeit bleibt konstant. Die resultierende Kraft ist daher null.</p></details><details><summary>Hilfe 2: Kräfte vergleichen</summary><p>Betrachte Gewichtskraft und Luftwiderstandskraft. Sie zeigen in entgegengesetzte Richtungen.</p></details></div></article>
+          <article class="physics-task-card" aria-labelledby="parachute-choice-title"><h3 id="parachute-choice-title">Aufgabe 4b · Aussagen zum Fallschirmspringer</h3><p>Welche Aussagen treffen in diesem Szenario zu? Wähle alle richtigen Antworten aus.</p><div id="parachute-multiple-choice" class="physics-multiple-choice" aria-label="Mehrfachauswahl zum Fallschirmsprung"></div></article>
+        </section>
+
+        <section id="panel-balance" class="physics-revision-panel" role="tabpanel" aria-labelledby="tab-balance" data-physics-panel="balance" hidden>
+          <div class="physics-card-heading"><p class="eyebrow">Reiter 3</p><h2>Kräftegleichgewicht vergleichen</h2><p>Vergleiche die Kräfte an einem ruhenden Körper und an einem Auto mit konstanter Geschwindigkeit.</p></div>
+          <article class="physics-task-card" aria-labelledby="balance-description-title"><h3 id="balance-description-title">Aufgabe 5 · Kräfte vergleichen und begründen</h3><p>Vergleiche die wirkenden Kräfte in beiden Bildern. Begründe, ob jeweils ein Kräftegleichgewicht vorliegt.</p><div class="force-situation-grid" aria-label="Zwei Situationen zum Kräftegleichgewicht"><figure class="force-situation"><svg viewBox="0 0 260 150" role="img" aria-label="Ruhender Körper auf einem Tisch"><rect x="62" y="100" width="148" height="14" class="scene-table"/><rect x="102" y="48" width="68" height="52" rx="4" class="scene-block"/><line x1="136" y1="34" x2="136" y2="132" class="scene-force-guide"/><text x="148" y="42">?</text><text x="148" y="130">?</text></svg><figcaption>Ruhender Körper auf einem Tisch</figcaption></figure><figure class="force-situation"><svg viewBox="0 0 260 150" role="img" aria-label="Auto mit konstanter Geschwindigkeit"><path d="M54 95 L82 65 L165 65 L197 95 Z" class="scene-car"/><circle cx="89" cy="102" r="14" class="scene-wheel"/><circle cx="165" cy="102" r="14" class="scene-wheel"/><line x1="38" y1="82" x2="218" y2="82" class="scene-force-guide"/><text x="42" y="72">?</text><text x="207" y="72">?</text></svg><figcaption>Auto mit konstanter Geschwindigkeit</figcaption></figure></div><section class="physics-semantic-task" aria-labelledby="force-description-answer-title"><h4 id="force-description-answer-title">Begründung</h4><label for="force-balance-answer">Begründung für beide Abbildungen</label><textarea id="force-balance-answer" maxlength="3000" rows="7" placeholder="In beiden Bildern …"></textarea><div class="physics-semantic-task__actions"><span id="force-balance-count">0 von 3000 Zeichen</span><button id="check-force-balance" type="button">Antwort prüfen</button></div><p class="privacy-note"><strong>Hinweis:</strong> Gib keine personenbezogenen Informationen ein. Die fachliche Antwort wird zur automatischen Bewertung an den Skriptserver übertragen.</p><div id="force-balance-feedback" class="physics-semantic-feedback" role="status" aria-live="polite" hidden></div></section></article>
+        </section>
+
+        <section id="panel-crash" class="physics-revision-panel" role="tabpanel" aria-labelledby="tab-crash" data-physics-panel="crash" hidden>
+          <div class="physics-card-heading"><p class="eyebrow">Reiter 4</p><h2>Kräfte beim Crashtest</h2><p>Wechselwirkungskräfte sind gleich groß und entgegengesetzt, wirken aber auf verschiedene Körper.</p></div>
+          <article class="physics-task-card" aria-labelledby="crash-title"><h3 id="crash-title">Aufgabe 6a · Wechselwirkungskräfte einzeichnen</h3><p>Zeichne am Kontaktpunkt von Auto und Wand einen Pfeil in jede waagerechte Richtung.</p><div id="crash-force-grid" class="force-grid-host"></div><button class="physics-primary-button" id="check-crash-forces" type="button">Kraftpfeile prüfen</button><div id="crash-feedback" class="physics-feedback" role="status" aria-live="polite" hidden></div><div class="physics-help-stack"><details><summary>Hilfe 1: Kontaktpunkt</summary><p>Beide Pfeile starten am gleichen Kontaktpunkt zwischen Auto und Wand.</p></details><details><summary>Hilfe 2: Drittes Newtonsches Gesetz</summary><p>Die Kräfte sind gleich groß und entgegengesetzt gerichtet, aber auf zwei verschiedene Körper verteilt.</p></details></div></article>
+          <article class="physics-task-card" aria-labelledby="crash-choice-title"><h3 id="crash-choice-title">Aufgabe 6b · Kräfte beurteilen</h3><p>Welche Aussagen über die beiden Kräfte beim Zusammenstoß sind richtig? Wähle alle richtigen Antworten aus.</p><div id="crash-multiple-choice" class="physics-multiple-choice" aria-label="Mehrfachauswahl zum Crashtest"></div></article>
+        </section>
+
+        <section id="panel-quiz" class="physics-revision-panel" role="tabpanel" aria-labelledby="tab-quiz" data-physics-panel="quiz" hidden>
+          <div class="physics-card-heading"><p class="eyebrow">Reiter 5</p><h2>Wiederholungsquiz</h2><p>Wähle bei jeder Frage alle richtigen Antworten aus. Es sind jeweils mehrere Antworten richtig.</p></div>
+          <article class="physics-task-card" aria-labelledby="quiz-title"><h3 id="quiz-title">Aufgabe 7 · Kräfte und Bewegung sichern</h3><div id="physics-quiz" class="physics-multiple-choice" aria-label="Multiple-Choice-Wiederholungsquiz"></div></article>
+        </section>
+      </div>
+    </main>
+  </body>
+</html>
