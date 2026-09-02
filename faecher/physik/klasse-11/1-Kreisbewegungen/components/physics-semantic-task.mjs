@@ -15,7 +15,7 @@ function appendFeedbackList(container, title, items, fallback) {
   container.append(heading, list);
 }
 
-function renderSemanticResult(container, result) {
+function renderSemanticResult(container, result, feedbackBuilder) {
   container.replaceChildren();
   container.hidden = false;
   container.className = "physics-semantic-feedback";
@@ -28,9 +28,14 @@ function renderSemanticResult(container, result) {
   container.append(heading, score);
   appendFeedbackList(container, "Das ist dir gelungen:", result.strengths, "Noch kein Aspekt wurde eindeutig erkannt.");
   appendFeedbackList(container, "Das kannst du ergänzen:", result.missing, "Es fehlen keine wesentlichen Aspekte.");
-  const feedback = document.createElement("p");
-  feedback.textContent = result.feedback || "Überprüfe deine Beschreibung noch einmal.";
-  container.append(feedback);
+  if (typeof feedbackBuilder === "function") {
+    const feedbackContent = feedbackBuilder(result);
+    if (feedbackContent) container.append(feedbackContent);
+  } else {
+    const feedback = document.createElement("p");
+    feedback.textContent = result.feedback || "Überprüfe deine Beschreibung noch einmal.";
+    container.append(feedback);
+  }
 }
 
 /**
@@ -45,6 +50,10 @@ export function setupPhysicsSemanticTask({
   countId,
   taskId,
   serverUrl = SCRIPT_SERVER_URL,
+  feedbackBuilder,
+  minimumLength = 30,
+  fallbackMaxPoints = 0,
+  evaluationFunction = evaluateSemanticAnswer,
 }) {
   const textarea = document.getElementById(answerId);
   const button = document.getElementById(buttonId);
@@ -64,7 +73,19 @@ export function setupPhysicsSemanticTask({
 
   button.addEventListener("click", async () => {
     const answer = textarea.value.trim();
-    if (answer.length < 30) {
+    if (answer.length < minimumLength) {
+      if (typeof feedbackBuilder === "function") {
+        renderSemanticResult(feedback, {
+          status: "noch nicht korrekt",
+          points: 0,
+          maxPoints: fallbackMaxPoints,
+          strengths: [],
+          missing: ["Formuliere eine etwas ausführlichere Beschreibung der beiden Vektoren."],
+          feedback: ""
+        }, feedbackBuilder);
+        textarea.focus();
+        return;
+      }
       feedback.hidden = false;
       feedback.className = "physics-semantic-feedback is-error";
       feedback.dataset.status = "noch nicht korrekt";
@@ -82,13 +103,27 @@ export function setupPhysicsSemanticTask({
     feedback.textContent = "Deine Antwort wird mit dem Erwartungshorizont verglichen.";
 
     try {
-      const result = await evaluateSemanticAnswer({
+      const result = await evaluationFunction({
         serverUrl,
         taskId,
         answer,
       });
-      renderSemanticResult(feedback, result);
+      renderSemanticResult(feedback, result, feedbackBuilder);
     } catch (error) {
+      if (typeof feedbackBuilder === "function") {
+        feedback.replaceChildren();
+        feedback.hidden = false;
+        feedback.className = "physics-semantic-feedback is-error";
+        feedback.dataset.status = "nicht geprüft";
+        const heading = document.createElement("h3");
+        heading.textContent = "Automatische Prüfung nicht erreichbar";
+        const message = document.createElement("p");
+        message.textContent = error.message || "Die Antwort konnte gerade nicht geprüft werden. Bitte versuche es erneut.";
+        feedback.append(heading, message);
+        const comparison = feedbackBuilder({ status: "nicht geprüft", points: 0, maxPoints: fallbackMaxPoints, context: "server-error" });
+        if (comparison) feedback.append(comparison);
+        return;
+      }
       feedback.className = "physics-semantic-feedback is-error";
       feedback.dataset.status = "noch nicht korrekt";
       feedback.textContent = error.message;

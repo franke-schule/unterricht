@@ -1,0 +1,81 @@
+<!doctype html>
+<html lang="de">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="robots" content="noindex, nofollow">
+    <title>Winkelgeschwindigkeit und Ursache der Kreisbewegung | Physik 11</title>
+    <link rel="stylesheet" href="../../../../styles.css?v=20260828">
+    <link rel="stylesheet" href="bewegung-koerpern.css?v=20260831c">
+    <link rel="stylesheet" href="kraefte-bewegung.css?v=20260901b">
+    <link rel="stylesheet" href="winkelgeschwindigkeit-kreisbewegung.css?v=20260903a">
+    <script type="module" src="winkelgeschwindigkeit-kreisbewegung.mjs?v=20260903a"></script>
+  </head>
+  <body class="physics-revision-page circular-motion-page">
+    <div class="site-backdrop" aria-hidden="true"></div>
+    <main class="page-shell physics-revision-shell">
+      <nav class="topbar" aria-label="Navigation">
+        <a class="back-link" href="../index.html">Zur Aufgabenübersicht</a>
+        <a class="back-link" href="../../../../">Startseite</a>
+      </nav>
+      <header class="physics-revision-hero">
+        <p class="eyebrow">Kreisbewegungen · Lernmodul</p>
+        <h1>Winkelgeschwindigkeit und Ursache der Kreisbewegung</h1>
+        <p>Entdecke, wie eine Drehbewegung beschrieben wird und warum ein Körper auf einer Kreisbahn bleibt.</p>
+      </header>
+
+      <div class="physics-step-tabs" role="tablist" aria-label="Arbeitsschritte des Lernmoduls">
+        <button id="tab-angle" type="button" role="tab" aria-selected="true" aria-controls="panel-angle" data-physics-tab="angle">1 · Winkelgeschwindigkeit</button>
+        <button id="tab-speed" type="button" role="tab" aria-selected="false" aria-controls="panel-speed" data-physics-tab="speed" tabindex="-1">2 · Bahngeschwindigkeit</button>
+        <button id="tab-frequency" type="button" role="tab" aria-selected="false" aria-controls="panel-frequency" data-physics-tab="frequency" tabindex="-1">3 · Frequenz und Umlaufdauer</button>
+        <button id="tab-force" type="button" role="tab" aria-selected="false" aria-controls="panel-force" data-physics-tab="force" tabindex="-1">4 · Ursache</button>
+        <button id="tab-summary" type="button" role="tab" aria-selected="false" aria-controls="panel-summary" data-physics-tab="summary" tabindex="-1">5 · Merksatz</button>
+        <button id="tab-quiz" type="button" role="tab" aria-selected="false" aria-controls="panel-quiz" data-physics-tab="quiz" tabindex="-1">6 · Abschlussquiz</button>
+      </div>
+
+      <div class="physics-revision-panels">
+        <section id="panel-angle" class="physics-revision-panel" role="tabpanel" aria-labelledby="tab-angle" data-physics-panel="angle">
+          <div class="physics-card-heading"><p class="eyebrow">Entdecken</p><h2>Drehwinkel und Winkelgeschwindigkeit</h2><p>Verändere Drehwinkel und Zeitintervall. Beobachte, wie sich die Winkelgeschwindigkeit ändert.</p></div>
+          <article class="physics-task-card" aria-labelledby="angle-simulation-title">
+            <h3 id="angle-simulation-title">Aufgabe 1 · Eine Drehung beschreiben</h3>
+            <div class="circle-simulation" data-circle-simulation="angle" aria-label="Kreisbewegung mit Drehwinkel und Winkelgeschwindigkeit">
+              <svg viewBox="0 0 440 330" role="img" aria-label="Kreisbahn mit Mittelpunkt, Massenpunkt, Radius und markiertem Drehwinkel"><defs><marker id="angle-arrow" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto"><path d="M0,0 L0,6 L7,3 z" fill="currentColor"/></marker></defs><circle cx="190" cy="165" r="112" class="orbit"/><path data-angle-arc class="angle-arc"/><line x1="190" y1="165" data-angle-radius class="radius-line"/><circle cx="190" cy="165" r="5" class="center-point"/><circle data-angle-body r="12" class="moving-body"/><text x="198" y="182" class="svg-label">Zentrum</text><text data-angle-label class="svg-label angle-label"></text><text x="314" y="294" class="svg-label">Δt</text><line x1="290" y1="280" x2="390" y2="280" class="time-line" marker-end="url(#angle-arrow)"/></svg>
+              <div class="simulation-readout" aria-live="polite"><strong>Δφ = <span data-angle-phi>π/2</span> rad (<span data-angle-degrees>90</span>°)</strong><strong>Δt = <span data-angle-time>1,0</span> s</strong><strong>ω = <span data-angle-omega>1,57</span> rad/s</strong></div>
+              <p class="simulation-status" data-angle-status role="status" aria-live="polite">Bereit. Die Verbindungslinie startet oben.</p>
+              <div class="simulation-controls"><label>Δφ in rad<input data-angle-input="phi" type="range" min="0.52" max="6.28" step="0.26" value="1.57"></label><label>Δt in s<input data-angle-input="time" type="range" min="0.5" max="4" step="0.5" value="1"></label></div>
+              <div class="simulation-actions"><button type="button" class="physics-primary-button" data-angle-action="start">Bewegung starten</button><button type="button" class="secondary-action" data-angle-action="pause">Pausieren</button><button type="button" class="secondary-action" data-angle-action="reset">Zurücksetzen</button></div>
+            </div>
+          </article>
+          <article class="physics-task-card"><h3>Aufgabe 2 · Formel zusammensetzen</h3><p>Ziehe die Formelzeichen in die drei Felder oder tippe eine Karte an und wähle dann ein Feld.</p><div id="formula-angle" class="formula-builder" aria-label="Formel für die Winkelgeschwindigkeit"></div></article>
+          <p id="angle-remember" class="blue-remember" hidden>Die Winkelgeschwindigkeit ω gibt an, um welchen Winkel Δφ sich die Verbindungslinie zwischen Zentrum und Massenpunkt im Zeitintervall Δt weiterdreht.</p>
+        </section>
+
+        <section id="panel-speed" class="physics-revision-panel" role="tabpanel" aria-labelledby="tab-speed" data-physics-panel="speed" hidden>
+          <div class="physics-card-heading"><p class="eyebrow">Verstehen</p><h2>Bahngeschwindigkeit untersuchen</h2><p>Verändere Radius und Winkelgeschwindigkeit unabhängig voneinander. Vergleiche den tangentialen Geschwindigkeitsvektor.</p></div>
+          <article class="physics-task-card"><h3>Aufgabe 3 · Radius und Winkelgeschwindigkeit</h3><div class="circle-simulation" data-circle-simulation="speed"><svg viewBox="0 0 440 440" role="img" aria-label="Kreisbewegung mit tangentialem Bahngeschwindigkeitsvektor"><defs><marker id="speed-arrow" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto"><path d="M0,0 L0,6 L7,3 z" fill="#2563eb"/></marker></defs><circle cx="220" cy="220" data-speed-orbit class="orbit"/><line x1="220" y1="220" data-speed-radius class="radius-line"/><circle cx="220" cy="220" r="5" class="center-point"/><circle data-speed-body r="12" class="moving-body"/><line data-speed-vector class="speed-vector" marker-end="url(#speed-arrow)"/><text x="228" y="237" class="svg-label">Zentrum</text><text data-speed-vector-label class="svg-label"></text></svg><div class="simulation-readout" aria-live="polite"><strong>r = <span data-speed-radius-value>2,0</span> m</strong><strong>ω = <span data-speed-omega-value>2,0</span> rad/s</strong><strong>v<sub>B</sub> = <span data-speed-v-value>4,0</span> m/s</strong></div><p class="simulation-note">Darstellungsmaßstab: 1&nbsp;m Radius entspricht 30 SVG-Einheiten. Die Pfeillänge veranschaulicht Änderungen von v<sub>B</sub>.</p><p class="formula-display">v<sub>B</sub> = ω · r</p><p class="simulation-status" data-speed-status role="status" aria-live="polite">Bereit. Der Körper startet oben; der Geschwindigkeitsvektor zeigt tangential nach rechts.</p><div class="simulation-controls"><label>r in m<input data-speed-input="radius" type="range" min="0.5" max="4" step="0.5" value="2"></label><label>ω in rad/s<input data-speed-input="omega" type="range" min="0.5" max="4" step="0.5" value="2"></label></div><div class="simulation-actions"><button type="button" class="physics-primary-button" data-speed-action="start">Bewegung starten</button><button type="button" class="secondary-action" data-speed-action="pause">Pausieren</button><button type="button" class="secondary-action" data-speed-action="reset">Zurücksetzen</button></div></div></article>
+          <article class="physics-task-card"><h3>Aufgabe 4 · Formel zusammensetzen</h3><p>Ordne die Karten zu einer Formel für die Bahngeschwindigkeit.</p><div id="formula-speed" class="formula-builder" aria-label="Formel für die Bahngeschwindigkeit"></div></article>
+          <p id="speed-remember" class="blue-remember" hidden>Bewegt sich ein Körper mit konstanter Winkelgeschwindigkeit ω auf einer Kreisbahn mit dem Radius r, dann gilt für die Bahngeschwindigkeit: v<sub>B</sub> = ω · r.</p>
+        </section>
+
+        <section id="panel-frequency" class="physics-revision-panel" role="tabpanel" aria-labelledby="tab-frequency" data-physics-panel="frequency" hidden>
+          <div class="physics-card-heading"><p class="eyebrow">Anwenden</p><h2>Frequenz und Umlaufdauer</h2><p>Verändere die Umlaufdauer. Beobachte, wie viele vollständige Umdrehungen pro Sekunde möglich sind.</p></div>
+          <article class="physics-task-card"><h3>Aufgabe 5 · Kehrwerte erkennen</h3><div class="frequency-layout"><div class="frequency-wheel" data-frequency-wheel aria-hidden="true">↻</div><div><label for="period-input">Umlaufdauer T in s</label><input id="period-input" type="range" min="0.5" max="5" step="0.5" value="2"><div class="simulation-readout"><strong>T = <span data-period-value>2,0</span> s</strong><strong>f = <span data-frequency-value>0,50</span> Hz</strong></div><p>Eine kleinere Umlaufdauer bedeutet mehr Umdrehungen pro Zeit.</p></div></div></article>
+          <article class="physics-task-card"><h3>Aufgabe 6 · Formel zusammensetzen</h3><p>Ordne die Karten. Frequenz und Umlaufdauer sind Kehrwerte.</p><div id="formula-frequency" class="formula-builder" aria-label="Formel für Frequenz und Umlaufdauer"></div></article>
+          <p id="frequency-remember" class="blue-remember" hidden>Die Drehfrequenz einer Kreisbewegung entspricht dem Kehrwert der Umlaufdauer: f = 1/T.</p>
+        </section>
+
+        <section id="panel-force" class="physics-revision-panel" role="tabpanel" aria-labelledby="tab-force" data-physics-panel="force" hidden>
+          <div class="physics-card-heading"><p class="eyebrow">Verstehen</p><h2>Ursache der Kreisbewegung</h2><p>Ohne resultierende Kraft würde der Körper wegen seiner Trägheit geradlinig weiterfliegen. Damit seine Geschwindigkeit ständig die Richtung ändert, wirkt eine Kraft zum Kreismittelpunkt: die Zentripetalkraft.</p></div>
+          <article class="physics-task-card"><h3>Aufgabe 7 · Vektoren beschreiben</h3><figure class="centripetal-figure"><svg viewBox="0 0 600 360" role="img" aria-label="Kreisbahn mit einem Körper rechts oben, einem dort beginnenden tangentialen Geschwindigkeitsvektor und einer dort beginnenden, zum Kreismittelpunkt gerichteten Zentripetalkraft"><defs><marker id="force-arrow" markerWidth="10" markerHeight="10" refX="8" refY="4" orient="auto"><path d="M0,0 L0,8 L9,4 z" fill="#dc2626"/></marker><marker id="velocity-arrow" markerWidth="10" markerHeight="10" refX="8" refY="4" orient="auto"><path d="M0,0 L0,8 L9,4 z" fill="#2563eb"/></marker></defs><circle cx="260" cy="190" r="130" class="orbit"/><circle cx="260" cy="190" r="6" class="center-point"/><line x1="351.924" y1="98.076" x2="260" y2="190" class="force-vector" marker-end="url(#force-arrow)"/><line x1="351.924" y1="98.076" x2="443.848" y2="190" class="speed-vector" marker-end="url(#velocity-arrow)"/><circle cx="351.924" cy="98.076" r="14" class="moving-body"/><text x="269" y="211" class="svg-label">Kreismittelpunkt</text><text x="287" y="132" class="svg-label vector-force-label">F<tspan baseline-shift="sub" font-size="12">Z</tspan></text><text x="405" y="173" class="svg-label vector-speed-label">v</text></svg><figcaption>Geschwindigkeits- und Kraftvektor an einem Punkt der Kreisbahn.</figcaption></figure>
+            <section class="physics-semantic-task"><h4>Deine Beschreibung</h4><p>Beschreibe, wie der Geschwindigkeitsvektor und der Vektor der Zentripetalkraft in der Grafik eingezeichnet sind.</p><label for="centripetal-answer">Beschreibung der beiden Vektoren</label><textarea id="centripetal-answer" maxlength="3000" rows="6" placeholder="Der Geschwindigkeitsvektor …"></textarea><div class="physics-semantic-task__actions"><span id="centripetal-count">0 von 3000 Zeichen</span><button id="check-centripetal" type="button">Antwort prüfen</button></div><p class="privacy-note"><strong>Hinweis:</strong> Gib keine personenbezogenen Informationen ein. Die fachliche Antwort wird zur automatischen Bewertung an den Skriptserver übertragen.</p><div id="centripetal-feedback" class="physics-semantic-feedback" role="status" aria-live="polite" hidden></div></section>
+            <details class="physics-help-stack"><summary>Hilfe: Sekante, Tangente und Passante</summary><ul><li><strong>Sekante:</strong> Eine Gerade, die den Kreis in zwei Punkten schneidet.</li><li><strong>Tangente:</strong> Eine Gerade, die den Kreis in genau einem Punkt berührt. Am Berührpunkt steht sie senkrecht auf dem Radius.</li><li><strong>Passante:</strong> Eine Gerade, die keinen gemeinsamen Punkt mit dem Kreis besitzt.</li></ul></details>
+          </article>
+        </section>
+
+        <section id="panel-summary" class="physics-revision-panel" role="tabpanel" aria-labelledby="tab-summary" data-physics-panel="summary" hidden><div class="physics-card-heading"><p class="eyebrow">Sichern</p><h2>Merksatz zur Zentripetalkraft</h2><p>Setze die Karten in den Merksatz ein. „außen“ bleibt bei der richtigen Lösung übrig.</p></div><article class="physics-task-card"><h3>Aufgabe 8 · Merksatz ergänzen</h3><p class="notebook-reminder" id="notebook-reminder" hidden><strong>Notiere den Merksatz in dein Heft, wenn die Lücken korrekt ausgefüllt sind.</strong></p><div id="centripetal-cloze" class="physics-cloze" aria-label="Lückentext zur Zentripetalkraft"></div><div class="cloze-actions"><button class="physics-primary-button" id="check-centripetal-cloze" type="button">Lückentext prüfen</button><button class="secondary-action" id="reset-centripetal-cloze" type="button">Zurücksetzen</button></div><div id="centripetal-cloze-feedback" class="physics-feedback" role="status" aria-live="polite" hidden></div></article></section>
+
+        <section id="panel-quiz" class="physics-revision-panel" role="tabpanel" aria-labelledby="tab-quiz" data-physics-panel="quiz" hidden><div class="physics-card-heading"><p class="eyebrow">Übertragen</p><h2>Abschlussquiz</h2><p>Prüfe dein Wissen. Bei Fragen mit dem Hinweis „mehrere Antworten“ sind mindestens zwei Antworten richtig.</p></div><article class="physics-task-card"><h3>Aufgabe 9 · Kreisbewegungen prüfen</h3><div id="circle-quiz" class="physics-multiple-choice" aria-label="Abschlussquiz zu Kreisbewegungen"></div></article></section>
+      </div>
+    </main>
+  </body>
+</html>

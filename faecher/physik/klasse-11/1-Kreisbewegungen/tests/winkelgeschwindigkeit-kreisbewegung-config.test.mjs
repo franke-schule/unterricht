@@ -1,0 +1,48 @@
+import assert from "node:assert/strict";
+import fs from "node:fs";
+
+const html = fs.readFileSync(new URL("../aufgabe3.html", import.meta.url), "utf8");
+const source = fs.readFileSync(new URL("../winkelgeschwindigkeit-kreisbewegung.mjs", import.meta.url), "utf8");
+const css = fs.readFileSync(new URL("../winkelgeschwindigkeit-kreisbewegung.css", import.meta.url), "utf8");
+const semantic = fs.readFileSync(new URL("../components/physics-semantic-task.mjs", import.meta.url), "utf8");
+const kinematics = fs.readFileSync(new URL("../components/circle-kinematics.mjs", import.meta.url), "utf8");
+
+assert.match(html, /Winkelgeschwindigkeit und Ursache der Kreisbewegung/);
+assert.equal((html.match(/data-physics-tab=/g) || []).length, 6);
+assert.equal((html.match(/data-physics-panel=/g) || []).length, 6);
+assert.match(html, /Δφ in rad/);
+assert.match(html, /ω in rad\/s/);
+assert.match(html, /v<sub>B<\/sub> = ω · r/);
+assert.match(html, /Notiere den Merksatz in dein Heft, wenn die Lücken korrekt ausgefüllt sind/);
+assert.match(html, /Sekante:/);
+assert.match(html, /Tangente:/);
+assert.match(html, /Passante:/);
+assert.match(html, /data-angle-status/);
+assert.match(html, /data-speed-status/);
+assert.match(html, /Darstellungsmaßstab: 1&nbsp;m Radius entspricht 30 SVG-Einheiten/);
+assert.match(html, /x1="351\.924" y1="98\.076" x2="260" y2="190" class="force-vector"/);
+assert.match(html, /x1="351\.924" y1="98\.076" x2="443\.848" y2="190" class="speed-vector"/);
+assert.doesNotMatch(html, /Die Pfeile beginnen beide am Körper/);
+assert.match(source, /expected: \["ω", "Δφ", "Δt"\]/);
+assert.match(source, /expected: \["vB", "ω", "r"\]/);
+assert.match(source, /expected: \["f", "1", "T"\]/);
+assert.match(source, /ph11-kreisbewegungen-zentripetalkraft-beschreibung/);
+assert.match(source, /strong\.textContent = "nach innen"/);
+assert.match(source, /"direction-a"/);
+assert.match(source, /"direction-b"/);
+assert.match(source, /correct: \["origin", "inward", "function"\]/);
+assert.match(source, /Formel zurücksetzen/);
+assert.match(source, /minimumLength: 8, fallbackMaxPoints: 5/);
+assert.match(source, /MutationObserver/);
+assert.match(kinematics, /export function circleVectors/);
+assert.match(kinematics, /export function angleAtElapsed/);
+assert.ok((source.match(/mehrere Antworten/g) || []).length >= 1);
+assert.match(css, /prefers-reduced-motion/);
+assert.match(css, /@media \(max-width: 620px\)/);
+assert.match(semantic, /feedbackBuilder/);
+assert.match(semantic, /fallbackMaxPoints/);
+assert.match(semantic, /Automatische Prüfung nicht erreichbar/);
+assert.doesNotMatch(semantic, /innerHTML\s*=\s*result\.feedback/);
+assert.doesNotMatch(semantic, /textarea\.value\s*=/);
+
+console.log("Kreisbewegungsmodul: Formeln, Lückentext, Freitextfeedback und responsive Animationen sind konfiguriert.");
