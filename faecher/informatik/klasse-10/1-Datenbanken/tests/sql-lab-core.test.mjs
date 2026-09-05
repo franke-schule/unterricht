@@ -1,0 +1,22 @@
+import assert from 'node:assert/strict';
+import { classifyDescriptionResult, compareRelations, isValidScriptServerUrl, parseDelimited, validateSelectStatement } from '../sql-lab-core.mjs';
+
+assert.equal(validateSelectStatement("select * from users where name = 'A; B';").ok, true);
+assert.equal(validateSelectStatement('SELECT * FROM users; SELECT * FROM users').ok, false);
+assert.equal(validateSelectStatement('/* Hinweis */ SELECT * FROM users').ok, true);
+assert.equal(validateSelectStatement('UPDATE users SET city = \'Berlin\'').ok, false);
+assert.deepEqual(parseDelimited('id;name\n1;"Bär; Bea"\n2;"""Hi"""'), [['id', 'name'], ['1', 'Bär; Bea'], ['2', '"Hi"']]);
+assert.equal(parseDelimited('\uFEFFid;name\n1;Bea')[0][0], 'id');
+const relation = { columns: ['name'], values: [['Bea'], ['Naomi'], ['Naomi']] };
+assert.equal(compareRelations({ columns: ['x'], values: [['Naomi'], ['Bea'], ['Naomi']] }, relation).correct, true);
+assert.equal(compareRelations({ columns: ['x'], values: [['Naomi'], ['Bea']] }, relation).correct, false);
+assert.equal(compareRelations({ columns: ['x'], values: [['Naomi'], ['Bea'], ['Naomi']] }, relation, { rowOrder: true }).correct, false);
+assert.equal(compareRelations({ columns: ['b', 'a'], values: [['B', 'A']] }, { columns: ['a', 'b'], values: [['A', 'B']] }, { columnOrder: false }).correct, true);
+assert.equal(isValidScriptServerUrl('https://script.google.com/macros/s/test/exec'), true);
+assert.equal(isValidScriptServerUrl('http://script.google.com/macros/s/test/exec'), false);
+assert.equal(isValidScriptServerUrl('https://example.test/exec'), false);
+assert.deepEqual(classifyDescriptionResult({ ok: true, status: 'korrekt', feedback: 'Passt.' }), { level: 'success', text: 'Passt.' });
+assert.deepEqual(classifyDescriptionResult({ ok: true, status: 'teilweise korrekt', feedback: 'Ergänze etwas.' }), { level: 'partial', text: 'Ergänze etwas.' });
+assert.deepEqual(classifyDescriptionResult({ ok: true, status: 'noch nicht korrekt', feedback: 'Prüfe die Bedingung.' }), { level: 'hint', text: 'Prüfe die Bedingung.' });
+assert.deepEqual(classifyDescriptionResult({ ok: false, message: 'Netzwerkfehler.' }), { level: 'error', text: 'Netzwerkfehler.' });
+console.log('sql-lab-core tests passed');

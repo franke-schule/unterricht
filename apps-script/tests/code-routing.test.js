@@ -282,6 +282,58 @@ assert.equal(
 );
 
 
+[
+  'sql-b2-3',
+  'sql-b3-1'
+].forEach(
+  function(taskId) {
+    const sqlDescriptionGet =
+      context.doGet({
+        parameter: {
+          callback:
+            'sqlDescriptionCallback',
+          requestId:
+            'sql-description-' + taskId.replaceAll('-', ''),
+          taskId:
+            taskId,
+          answer:
+            'Eine ausreichend lange fachliche Erklärung der SQL-Anweisung.'
+        }
+      });
+
+    assert.match(
+      sqlDescriptionGet.text,
+      /^sqlDescriptionCallback\(/
+    );
+
+    assert.match(
+      sqlDescriptionGet.text,
+      /GEMINI_EVALUATION_RESULT/
+    );
+
+    assert.equal(
+      evaluatedTypes.at(-1),
+      'text'
+    );
+  }
+);
+
+
+assert.throws(
+  function() {
+    context.validateRequest_({
+      requestId:
+        'sql-description-short',
+      taskId:
+        'sql-b2-3',
+      answer:
+        'zu kurz'
+    });
+  },
+  /ausfuehrlichere Antwort/
+);
+
+
 const codePost =
   context.doPost({
     parameter: {

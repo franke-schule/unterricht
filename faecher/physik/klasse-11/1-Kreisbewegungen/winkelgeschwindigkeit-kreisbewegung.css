@@ -7,7 +7,7 @@
 .circular-motion-page .physics-step-tabs { flex-wrap: wrap; overflow-x: visible; }
 .circular-motion-page .physics-step-tabs [role="tab"] { flex: 1 1 150px; }
 .circle-simulation { display: grid; gap: 16px; margin-top: 16px; }
-.circle-simulation svg, .centripetal-figure svg { display: block; width: min(100%, 600px); height: auto; margin-inline: auto; border: 1px solid #dbe4f0; border-radius: 12px; background: linear-gradient(180deg, #f8fbff, #fff); }
+.circle-simulation svg, .centripetal-figure svg, .frequency-animation svg { display: block; width: min(100%, 600px); height: auto; margin-inline: auto; border: 1px solid #dbe4f0; border-radius: 12px; background: linear-gradient(180deg, #f8fbff, #fff); }
 .orbit { fill: none; stroke: #64748b; stroke-width: 3; stroke-dasharray: 8 6; }
 .radius-line { stroke: #64748b; stroke-width: 3; }
 .angle-arc { fill: rgba(37, 99, 235, .18); stroke: #2563eb; stroke-width: 3; }
@@ -19,6 +19,8 @@
 .svg-label { fill: #334155; font-size: 16px; font-weight: 800; }
 .vector-force-label { fill: #b91c1c; }
 .vector-speed-label { fill: #1d4ed8; }
+.vector-label-badge { pointer-events: none; }
+.vector-label-badge rect { fill: rgba(255, 255, 255, .96); stroke: #93c5fd; stroke-width: 1.5; }
 .simulation-readout { display: flex; flex-wrap: wrap; gap: 10px; justify-content: center; }
 .simulation-readout strong { flex: 1 1 150px; border-left: 4px solid #2563eb; padding: 9px 11px; color: #1e3a8a; background: #eff6ff; text-align: center; }
 .simulation-status, .simulation-note { margin: 0; color: #475569; text-align: center; }
@@ -26,7 +28,8 @@
 .simulation-note { font-size: .9rem; }
 .simulation-controls { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px; }
 .simulation-controls label { display: grid; gap: 7px; color: #334155; font-weight: 800; }
-.simulation-controls input { width: 100%; accent-color: #2563eb; }
+.simulation-controls input, .simulation-controls select { width: 100%; accent-color: #2563eb; }
+.simulation-controls select { min-height: 44px; border: 1px solid #93c5fd; border-radius: 9px; padding: 8px 10px; color: #1e3a8a; background: #fff; font: inherit; font-weight: 750; }
 .simulation-actions { display: flex; flex-wrap: wrap; gap: 9px; }
 .secondary-action { min-height: 44px; border: 1px solid #93c5fd; border-radius: 9px; padding: 9px 16px; color: #1e3a8a; background: #fff; font: inherit; font-weight: 800; cursor: pointer; }
 .circular-motion-page .cloze-token { min-width: 44px; min-height: 44px; }
@@ -38,14 +41,16 @@
 .formula-slot.is-selected, .formula-slot:focus-visible { outline: 3px solid rgba(37, 99, 235, .22); border-color: #2563eb; }
 .blue-remember { margin: 0; border-left: 5px solid #2563eb; border-radius: 10px; padding: 15px 17px; color: #1e3a8a; background: #eff6ff; font-weight: 750; }
 .frequency-layout { display: grid; grid-template-columns: minmax(180px, .8fr) minmax(0, 1fr); align-items: center; gap: 24px; margin-top: 18px; }
-.frequency-wheel { display: grid; place-items: center; width: min(100%, 210px); aspect-ratio: 1; margin: auto; border: 9px solid #7c3aed; border-radius: 50%; color: #7c3aed; font-size: 7rem; font-weight: 800; animation: frequency-turn var(--turn-duration, 2s) linear infinite; animation-play-state: paused; }
+.frequency-animation, .frequency-controls { display: grid; gap: 14px; }
+.frequency-animation svg { width: min(100%, 280px); }
 .frequency-layout label { display: grid; gap: 8px; color: #334155; font-weight: 800; }
-.frequency-layout input { width: 100%; margin-bottom: 12px; accent-color: #7c3aed; }
+.frequency-layout input { width: 100%; accent-color: #7c3aed; }
+.frequency-value, .frequency-elapsed { margin: 0; border-left: 4px solid #7c3aed; padding: 10px 12px; background: #f5f3ff; }
+.frequency-elapsed { border-left-color: #2563eb; background: #eff6ff; }
 .centripetal-figure { margin: 16px 0 0; }
 .centripetal-figure figcaption { margin-top: 8px; color: #475569; font-weight: 700; text-align: center; }
+.circular-motion-page .physics-help-stack summary { display: flex; align-items: center; min-height: 44px; }
 .physics-help-stack ul { margin: 10px 0 0; padding-left: 22px; color: #475569; }
 .notebook-reminder { margin: 0 0 16px; font-weight: 850; }
-@keyframes frequency-turn { to { transform: rotate(360deg); } }
-@media (prefers-reduced-motion: reduce) { .frequency-wheel { animation: none; } }
 @media (max-width: 620px) { .simulation-controls, .frequency-layout { grid-template-columns: 1fr; } .simulation-actions > * { flex: 1 1 100%; } }
 @media (max-width: 430px) { .formula-line { gap: 4px; font-size: 1.1rem; } .formula-slot { min-width: 58px; padding-inline: 6px; } }

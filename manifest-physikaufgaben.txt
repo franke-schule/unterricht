@@ -1,0 +1,83 @@
+Manifest: Verbindliche Regeln für Physikaufgaben
+================================================
+
+Ziel und Geltungsbereich
+------------------------
+Dieses Fachmanifest gilt für alle neu erstellten und überarbeiteten
+Physikaufgaben. Es ergänzt `manifest-allgemein.txt` und die projektweite
+`AGENTS.md`. Vorhandene Komponenten und zentrale Prüfmechanismen sind weiterhin
+zu verwenden; lokale Sonderlösungen sollen vermieden werden.
+
+
+1. Formelzeichen und Indizes
+----------------------------
+
+  - Indizes in Formelzeichen werden immer typografisch tiefgestellt.
+  - In mathematischen Formeln wird beispielsweise v_B dargestellt und niemals
+    als sichtbarer Rohtext `v_B`, `vB` oder `v B` ausgegeben.
+  - In HTML sind vorhandene Mathematikkomponenten oder geeignete `<sub>`-
+    Elemente zu verwenden. In SVG werden Indizes mit einem passend
+    positionierten `<tspan>` dargestellt.
+  - Die Schreibweise muss in Aufgabenstellung, Grafik, Eingabefeld,
+    Reglerbeschriftung, Lösung, Merksatz, Quiz und Feedback übereinstimmen.
+  - Zugängliche Beschriftungen benennen einen Index verständlich, zum Beispiel
+    „Bahngeschwindigkeit v mit Index B“.
+
+
+2. Koordinatensysteme
+---------------------
+
+Diese Regeln sind die zentrale fachliche Vorgabe für Koordinatensysteme in
+Physikaufgaben. Derzeit besteht keine abweichende speziellere Regelquelle.
+
+  - Die positive x-Achse und die positive y-Achse besitzen Pfeilspitzen.
+  - Beide Achsen sind eindeutig mit der dargestellten Größe und, falls
+    erforderlich, ihrer Einheit beschriftet.
+  - Sobald konkrete Werte vorkommen, stehen an den Achsen passende Skalenwerte
+    beziehungsweise beschriftete Teilstriche.
+  - Ursprung, Skalierung und Einheiten müssen eindeutig erkennbar sein.
+  - Eine verlangte genaue Ablesung darf nicht allein durch Abschätzen an einem
+    unbeschrifteten Raster möglich sein.
+  - Beschriftungen, Pfeilspitzen, Datenpunkte und Graphen dürfen sich nicht
+    gegenseitig verdecken.
+  - Die Darstellung muss auf Desktop, Tablet und Smartphone lesbar bleiben.
+
+
+3. Gültige Ziffern bei Rechenaufgaben
+-------------------------------------
+
+  - Erwartete Ergebnisse besitzen eine zur Genauigkeit der gegebenen Größen
+    passende Anzahl gültiger Ziffern.
+  - Zahlenwert, Einheit und Anzahl gültiger Ziffern werden gemeinsam geprüft.
+  - Die Auswertung unterscheidet nach Möglichkeit zwischen fachlich falschem
+    Ergebnis, falscher Einheit und ungeeigneter Anzahl gültiger Ziffern.
+  - Eine numerisch passende, aber mit ungeeigneter Schreibgenauigkeit notierte
+    Antwort darf nicht kommentarlos als vollständig korrekt gelten.
+  - Gerundet wird erst das Endergebnis. Zwischenwerte werden mit ausreichender
+    Genauigkeit weiterverwendet.
+  - Vorhandene zentrale Prüf- und Feedbackmechanismen sind zu nutzen. Für eine
+    einzelne Aufgabe wird keine neue Prüfarchitektur angelegt.
+
+Verbindliche Muster für Rückmeldungen:
+
+  Richtig:
+  „Richtig. Zahlenwert, Einheit und die Anzahl der gültigen Ziffern stimmen.“
+
+  Falsch oder unvollständig:
+  „Prüfe deinen Zahlenwert, die Einheit und die Anzahl der gültigen Ziffern.“
+
+  Nur die Schreibgenauigkeit ist falsch:
+  „Dein Rechenwert ist grundsätzlich passend. Runde das Endergebnis noch auf
+  die geforderte Anzahl gültiger Ziffern.“
+
+
+4. Abschlussprüfung für Physikaufgaben
+--------------------------------------
+
+  [ ] Formelzeichen und Indizes sind in allen Darstellungen konsistent.
+  [ ] Größen, Einheiten und Wertebereiche sind fachlich sinnvoll.
+  [ ] Koordinatensysteme erfüllen die Regeln aus Abschnitt 2.
+  [ ] Rechenergebnisse und Feedback berücksichtigen gültige Ziffern.
+  [ ] Grafiken und Animationen wurden fachlich sowie responsiv geprüft.
+  [ ] Vorhandene Tests, Lint- und Buildbefehle wurden ausgeführt.
+  [ ] `git diff --check` meldet keine Fehler.

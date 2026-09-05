@@ -317,3 +317,13 @@ Bevorzugt:
 bestehende Komponente
 + neue Daten
 + neue Konfiguration
+```
+
+
+# 12. Fachmanifeste
+
+Zusätzlich zu diesem Dokument und `manifest-allgemein.txt` sind die passenden
+Fachmanifeste vollständig zu lesen. Für jede neu erstellte oder überarbeitete
+Physikaufgabe gilt verbindlich:
+
+- `manifest-physikaufgaben.txt`
