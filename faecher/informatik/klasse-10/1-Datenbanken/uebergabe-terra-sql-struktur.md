@@ -559,3 +559,19 @@ Die zwei ausdrücklich geforderten Beschreibe-Aufgaben (`sql-b2-3` und
 `sql-b3-1`) verwenden die bereits vorhandene Apps-Script-/Gemini-Pipeline.
 Alle SQL-Abfragen und die Selbstkontrolle von Blatt 3 A3 bleiben vollständig
 lokal; es wurde keine weitere Server-Pipeline ergänzt.
+
+## Ergänzung: Aufgabe 6 mit dem Mensa-Kreuzprodukt
+
+Aufgabe 6 verwendet inzwischen den Datensatzmodus `menu-cross-product` der
+vorhandenen `SqlWorker`-Klasse. Die fachlich verbindlichen Tabellen
+`Vorspeise`, `Hauptspeise` und `Nachspeise` liegen gemeinsam in
+`menue-kreuzprodukt-daten.mjs`. Aus derselben Quelle entstehen die sichtbaren
+Ausgangstabellen, die programmatische Kombinationsdarstellung und die Tabellen
+der lokalen sql.js-Datenbank.
+
+Die Korrektur führt Schüler- und Referenzanfrage weiterhin in derselben
+flüchtigen Datenbank aus und vergleicht ihre Ergebnisrelationen als Multimengen.
+Damit funktionieren harmlose Formatvarianten und SQLite-Tabellenaliasse, ohne
+einen zweiten Parser oder auf Musterstrings begrenzte Sonderlogik einzuführen.
+Die sichtbaren Ergebnisüberschriften gruppieren die gleichnamigen Attribute
+`Name` und `Preis` nach ihrer Ursprungstabelle.
