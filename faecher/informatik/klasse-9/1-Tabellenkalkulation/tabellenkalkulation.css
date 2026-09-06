@@ -836,3 +836,269 @@ body.is-filling-sheet {
     animation: none !important;
   }
 }
+
+/* Aufgabe 5 – Datenflussdiagramme */
+
+.tool-embed {
+  overflow: hidden;
+  margin-top: 1rem;
+  border: 1px solid #d7dee8;
+  border-radius: 6px;
+  background: #f9fafb;
+}
+
+.tool-embed iframe {
+  display: block;
+  width: 100%;
+  min-height: 680px;
+  border: 0;
+}
+
+.dfd-card {
+  margin-top: 1rem;
+  padding: 1.3rem;
+  background: #fff;
+  border: 1px solid #d7dee8;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+}
+
+.dfd-card h2,
+.dfd-card h3 {
+  margin: 0 0 0.5rem;
+  color: var(--sheet-accent-dark);
+}
+
+.dfd-card + .dfd-card {
+  margin-top: 1.25rem;
+}
+
+.dfd-figure {
+  margin: 1rem auto;
+  text-align: center;
+}
+
+.dfd-figure img {
+  display: block;
+  max-width: 100%;
+  height: auto;
+  margin: 0 auto;
+  border: 1px solid #d7dee8;
+  border-radius: 8px;
+  background: #fff;
+}
+
+.dfd-figure figcaption {
+  margin-top: 0.5rem;
+  color: var(--muted);
+  font-size: 0.85rem;
+}
+
+.dfd-figure-pair {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  gap: 1.25rem;
+  align-items: start;
+}
+
+.help-stack {
+  display: grid;
+  gap: 8px;
+  margin: 20px 0;
+}
+
+.help-stack details {
+  padding: 11px 14px;
+  border: 1px solid #ead6a7;
+  border-radius: 11px;
+  background: #fffbef;
+}
+
+.help-stack summary {
+  cursor: pointer;
+  min-height: 44px;
+  display: flex;
+  align-items: center;
+  color: #80530d;
+  font-weight: 900;
+}
+
+.help-stack p {
+  margin: 9px 0 0;
+  color: #6f5527;
+  line-height: 1.45;
+}
+
+.help-stack summary:focus-visible {
+  outline: 3px solid rgba(23, 99, 213, 0.35);
+  outline-offset: 3px;
+  border-radius: 3px;
+}
+
+.description-input {
+  display: block;
+  width: 100%;
+  min-height: 150px;
+  margin: 0.5rem 0 0.35rem;
+  padding: 0.8rem;
+  border: 1px solid #aaa;
+  border-radius: 6px;
+  font: inherit;
+  line-height: 1.45;
+  resize: vertical;
+}
+
+.description-input:focus {
+  border-color: var(--sheet-accent);
+  outline: 2px solid rgba(37, 99, 235, 0.2);
+}
+
+.description-input:disabled {
+  background: #f1f1f1;
+}
+
+.dfd-card label.description-label {
+  display: block;
+  margin-top: 0.6rem;
+  font-weight: 700;
+}
+
+.dfd-card > .primary-action {
+  display: inline-block;
+  margin: 0.2rem 0 0.4rem;
+}
+
+.result {
+  margin-top: 1rem;
+  padding: 1rem;
+  background: #eef3f8;
+  border: 1px solid #d7dee8;
+  border-radius: 6px;
+}
+
+.result[hidden] {
+  display: none;
+}
+
+.result.high {
+  background: #edf7ee;
+  border-color: #7aae80;
+}
+
+.result.medium {
+  background: #fff4df;
+  border-color: #d99a3a;
+}
+
+.result.low,
+.result.error {
+  background: #fff0f0;
+  border-color: #d38181;
+}
+
+.result h3 {
+  margin: 0 0 0.6rem;
+  color: #172033;
+  font-size: 1.05rem;
+}
+
+.result h4 {
+  margin: 1rem 0 0.35rem;
+  color: #172033;
+  font-size: 0.95rem;
+}
+
+.result p {
+  margin: 0.3rem 0;
+  color: #172033;
+}
+
+.result ul {
+  margin: 0.3rem 0;
+  padding-left: 1.4rem;
+  color: #172033;
+}
+
+.result .feedback {
+  margin-top: 1rem;
+  padding-top: 0.8rem;
+  border-top: 1px solid rgba(0, 0, 0, 0.12);
+}
+
+.dfd-selfcheck {
+  margin-top: 1rem;
+  padding: 0.9rem 1.1rem;
+  border: 1px solid #d7dee8;
+  border-left: 5px solid var(--sheet-accent);
+  border-radius: 8px;
+  background: #f7f9fc;
+}
+
+.dfd-selfcheck summary {
+  cursor: pointer;
+  min-height: 44px;
+  display: flex;
+  align-items: center;
+  color: var(--sheet-accent-dark);
+  font-weight: 700;
+}
+
+.dfd-selfcheck summary:focus-visible {
+  outline: 3px solid rgba(23, 99, 213, 0.35);
+  outline-offset: 3px;
+  border-radius: 3px;
+}
+
+.dfd-selfcheck[open] summary {
+  margin-bottom: 0.75rem;
+}
+
+.dfd-terms {
+  display: grid;
+  grid-template-columns: minmax(140px, 200px) minmax(0, 1fr);
+  gap: 0.5rem 1rem;
+  margin: 1rem 0;
+}
+
+.dfd-terms dt {
+  font-weight: 800;
+  color: var(--sheet-accent-dark);
+}
+
+.dfd-terms dd {
+  margin: 0 0 0.6rem;
+  line-height: 1.5;
+}
+
+.dfd-note {
+  margin-top: 0.75rem;
+  padding: 0.75rem 0.9rem;
+  border: 1px solid #cbdcf5;
+  border-radius: 8px;
+  background: #eff6ff;
+  line-height: 1.5;
+}
+
+.dfd-tool-hint {
+  margin: 0.6rem 0 0;
+  color: var(--muted);
+  font-size: 0.88rem;
+}
+
+.dfd-scenario {
+  font-style: normal;
+}
+
+@media (max-width: 760px) {
+  .dfd-figure-pair {
+    grid-template-columns: 1fr;
+  }
+
+  .dfd-terms {
+    grid-template-columns: 1fr;
+  }
+
+  .dfd-terms dd {
+    margin-bottom: 1rem;
+  }
+}

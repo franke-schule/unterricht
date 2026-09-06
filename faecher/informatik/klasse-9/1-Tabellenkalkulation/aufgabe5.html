@@ -1,0 +1,427 @@
+<!doctype html>
+<html lang="de">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Aufgabe 5 – Datenflussdiagramme</title>
+    <link rel="stylesheet" href="../../../../styles.css?v=20260821">
+    <link rel="stylesheet" href="tabellenkalkulation.css?v=20260906">
+  </head>
+  <body>
+    <div class="site-backdrop" aria-hidden="true"></div>
+    <main class="page-shell spreadsheet-page spreadsheet-new-page">
+      <nav class="topbar" aria-label="Navigation">
+        <a class="back-link" href="../">Zurück zur Aufgabenübersicht</a>
+        <a class="back-link" href="../../../../">Startseite</a>
+      </nav>
+
+      <header class="page-header spreadsheet-header">
+        <p class="eyebrow">Tabellenkalkulation · Datenflussdiagramme</p>
+        <h1>Aufgabe 5</h1>
+        <p>Lies Datenflussdiagramme, zeichne sie selbst und finde Fehler darin.</p>
+      </header>
+
+      <div class="work-order"><strong>Arbeitsauftrag:</strong>
+        <ul>
+          <li>Beschreibe, was ein gegebenes Datenflussdiagramm berechnet.</li>
+          <li>Zeichne selbst ein Datenflussdiagramm zu einer Rechensituation.</li>
+          <li>Finde den Fehler in einem Datenflussdiagramm und korrigiere ihn.</li>
+        </ul>
+      </div>
+
+      <section class="dfd-card" aria-labelledby="intro-title">
+        <h2 id="intro-title">Was rechnet dieses Diagramm?</h2>
+        <p>Die Klasse 9b fährt in den Klettergarten. Notiere in einem Satz, welchen Betrag das Diagramm am Ende ausgibt, und öffne erst danach die Selbstkontrolle.</p>
+        <figure class="dfd-figure">
+          <img src="dfd-klassenausflug.png" alt="Datenflussdiagramm: Fahrtkosten und Kosten Klettergarten fließen in plus, das Ergebnis zusammen mit der Anzahl Mitfahrende in geteilt durch, danach mit der Konstanten 0 in AUFRUNDEN.">
+        </figure>
+        <details class="dfd-selfcheck">
+          <summary>Selbstkontrolle anzeigen</summary>
+          <p>Die Fahrtkosten und die Kosten für den Klettergarten werden addiert. Die Gesamtsumme wird durch die Anzahl der Mitfahrenden geteilt; so entsteht der Preis pro Kopf. Zum Schluss rundet AUFRUNDEN diesen Betrag auf. Die Konstante 0 gibt an, dass auf 0 Nachkommastellen, also auf ganze Euro, aufgerundet wird.</p>
+        </details>
+      </section>
+
+      <section class="dfd-card" aria-labelledby="bausteine-title">
+        <h2 id="bausteine-title">Bausteine eines Datenflussdiagramms</h2>
+        <p>Jedes Datenflussdiagramm wird von oben nach unten gelesen: Die Pfeile zeigen, wie die Werte von den Eingaben durch die Funktionen bis zur Ausgabe fließen.</p>
+        <figure class="dfd-figure">
+          <img src="dfd-bausteine.png" alt="Die fünf Bausteine eines Datenflussdiagramms: Eingabe, Funktion, Ausgabe, Konstante und Verteiler.">
+        </figure>
+        <dl class="dfd-terms">
+          <dt>Eingabe</dt>
+          <dd>Ein Wert, den die nutzende Person eingibt, zum Beispiel die Anzahl der Mitfahrenden.</dd>
+          <dt>Funktion</dt>
+          <dd>Ein Rechen- oder Vergleichsschritt, zum Beispiel plus, mal oder größer. Eine Funktion hat mehrere Eingangspfeile, aber genau einen Ausgangspfeil.</dd>
+          <dt>Ausgabe</dt>
+          <dd>Das Ergebnis, das am Ende angezeigt wird.</dd>
+          <dt>Konstante</dt>
+          <dd>Ein fest eingetragener Wert, der nicht eingegeben wird, zum Beispiel die 0 beim Aufrunden.</dd>
+          <dt>Verteiler</dt>
+          <dd>Ein kleiner Kreis. Er gibt denselben Wert an mehrere Funktionen weiter.</dd>
+        </dl>
+        <p class="dfd-note">Ob ein Funktionsbaustein als Ellipse oder als abgerundetes Rechteck gezeichnet wird, spielt keine Rolle. Wichtig sind die Beschriftung und die Richtung der Pfeile. Im Zeichenwerkzeug heißen die Funktionen teilweise anders: mal heißt dort <code>*</code>, geteilt durch heißt <code>/</code> und größer heißt <code>&gt;</code>.</p>
+      </section>
+
+      <section class="dfd-card" aria-labelledby="a5a-title">
+        <h2 id="a5a-title">5a) Ein Datenflussdiagramm beschreiben</h2>
+        <p>Beschreibe, was das Datenflussdiagramm berechnet. Nenne dabei die einzelnen Teilschritte und das Endergebnis.</p>
+        <p>Die Abbildung rechts zeigt, worum es geht: eine Kreisfläche, einen Zylinder und ein Rohr mit großem Außen- und kleinem Innenradius.</p>
+        <div class="dfd-figure-pair">
+          <figure class="dfd-figure">
+            <img src="dfd-zylinder.png" alt="Datenflussdiagramm: Radius groß und Radius klein werden je über Hoch zwei quadriert; ein Verteiler gibt die Höhe an beide mal-Knoten weiter; die beiden Ergebnisse fließen in minus.">
+          </figure>
+          <figure class="dfd-figure">
+            <img src="dfd-zylinder-koerper.png" alt="Skizze: eine Kreisfläche mit Radius r, ein Zylinder mit Höhe h und ein Rohr mit kleinerem Innenraum.">
+          </figure>
+        </div>
+        <div class="help-stack">
+          <details>
+            <summary>Hilfe 1</summary>
+            <p>Lies das Diagramm von oben nach unten: Oben stehen die Eingaben, unten das Ergebnis.</p>
+          </details>
+          <details>
+            <summary>Hilfe 2</summary>
+            <p>Der kleine Kreis unter „Höhe“ ist ein Verteiler. Er schickt denselben Wert in beide Zweige. Beschreibe zuerst den rechten Zweig, dann den linken.</p>
+          </details>
+          <details>
+            <summary>Hilfe 3</summary>
+            <p>Rechts wird der kleine Radius quadriert und danach mit der Höhe multipliziert. Links geschieht dasselbe mit dem großen Radius. Was der Knoten „minus“ damit macht und was am Ende herauskommt, formulierst du selbst.</p>
+          </details>
+        </div>
+        <label class="description-label" for="answer-5a">Deine Beschreibung</label>
+        <textarea id="answer-5a" class="description-input"></textarea>
+        <button id="button-5a" class="primary-action" type="button">Beschreibung prüfen</button>
+        <section id="result-5a" class="result" aria-live="polite" hidden></section>
+      </section>
+
+      <section class="dfd-card" aria-labelledby="a5b-title">
+        <h2 id="a5b-title">5b) Ein Datenflussdiagramm zeichnen</h2>
+        <p class="dfd-scenario">Jedes Jahr findet an Annas Schule ein Spendenlauf statt. Pro gelaufenem Kilometer sponsern Eltern und Verwandte einen Betrag; die Summe daraus heißt erlaufene Summe. Die SMV zieht davon ihre Unkosten für die Werbeplakate ab. Der Förderverein gibt am Ende noch einmal 50 % der erlaufenen Summe dazu.</p>
+        <p>Zeichne im Werkzeug ein Datenflussdiagramm, das die gespendete Gesamtsumme berechnet. Öffne die Selbstkontrolle erst, wenn du fertig bist.</p>
+        <div class="help-stack">
+          <details>
+            <summary>Hilfe 1</summary>
+            <p>Du brauchst zwei Eingaben: die erlaufene Summe und die Unkosten der SMV.</p>
+          </details>
+          <details>
+            <summary>Hilfe 2</summary>
+            <p>Die erlaufene Summe wird zweimal gebraucht: einmal für den Abzug der Unkosten und einmal für den Zuschuss des Fördervereins. Dafür gibt es den Verteiler.</p>
+          </details>
+          <details>
+            <summary>Hilfe 3</summary>
+            <p>Ein Zweig rechnet erlaufene Summe minus Unkosten. Der andere Zweig multipliziert die erlaufene Summe mit der Konstanten 0,5. Wie du beide Zweige zusammenführst, überlegst du selbst.</p>
+          </details>
+        </div>
+        <div class="tool-embed">
+          <iframe title="Zeichenwerkzeug für Aufgabe 5b" src="orinoco-dfd.html"
+                  loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
+        </div>
+        <p class="dfd-tool-hint">Doppelklicke einen Baustein, um ihn zu beschriften. Das Werkzeug speichert nichts – mache am Ende einen Screenshot oder übertrage das Diagramm in dein Heft.</p>
+        <details class="dfd-selfcheck">
+          <summary>Selbstkontrolle anzeigen</summary>
+          <p>Die erlaufene Summe S geht in einen Verteiler. Der eine Zweig rechnet S minus die Unkosten U der SMV. Der andere Zweig rechnet S mal der Konstanten 0,5, also den Zuschuss des Fördervereins. Beide Ergebnisse fließen in „plus“. Ausgegeben wird die gespendete Gesamtsumme: S − U + 0,5 · S.</p>
+          <figure class="dfd-figure">
+            <img src="dfd-spendenlauf-loesung.png" alt="Lösungsdiagramm zum Spendenlauf: Ein Verteiler gibt die erlaufene Summe an mal 0,5 und an minus Unkosten SMV weiter; beide Ergebnisse fließen in plus.">
+          </figure>
+        </details>
+      </section>
+
+      <section class="dfd-card" aria-labelledby="a5c-title">
+        <h2 id="a5c-title">5c) Einen Fehler finden und korrigieren</h2>
+        <p class="dfd-scenario">Anna zieht ein Los. Wenn die Losnummer größer als 70 ist, erhält sie 10 € Gewinn. Bei jeder anderen Losnummer erhält sie 0 €.</p>
+        <p>Das abgebildete Datenflussdiagramm passt nicht zu diesem Text. Beschreibe den Fehler, seine Auswirkung bei der Losnummer 70 und die nötige Korrektur.</p>
+        <figure class="dfd-figure">
+          <img src="dfd-gewinnspiel-fehlerhaft.png" alt="Fehlerhaftes Datenflussdiagramm: Losnummer und 70 fließen in einen Knoten mit der Beschriftung größer gleich, dessen Ergebnis zusammen mit 10 Euro und 0 Euro in eine WENN-Funktion führt und Losgewinn ausgibt.">
+        </figure>
+        <div class="help-stack">
+          <details>
+            <summary>Hilfe 1</summary>
+            <p>Vergleiche die Beschriftung des Vergleichsknotens Wort für Wort mit dem Text der Aufgabe.</p>
+          </details>
+          <details>
+            <summary>Hilfe 2</summary>
+            <p>Setze für die Losnummer den Wert 70 ein. Was liefert das Diagramm, und was müsste laut Text herauskommen?</p>
+          </details>
+          <details>
+            <summary>Hilfe 3</summary>
+            <p>„größer gleich“ schließt die 70 mit ein, „größer als 70“ nicht. Welche Beschriftung stattdessen im Knoten stehen muss, schreibst du selbst auf.</p>
+          </details>
+        </div>
+        <label class="description-label" for="answer-5c">Deine Beschreibung</label>
+        <textarea id="answer-5c" class="description-input"></textarea>
+        <button id="button-5c" class="primary-action" type="button">Beschreibung prüfen</button>
+        <section id="result-5c" class="result" aria-live="polite" hidden></section>
+
+        <h3 id="a5c-draw-title">Korrigiertes Diagramm zeichnen</h3>
+        <p>Zeichne das korrigierte Datenflussdiagramm im Werkzeug nach.</p>
+        <div class="tool-embed">
+          <iframe title="Zeichenwerkzeug für Aufgabe 5c" src="orinoco-dfd.html"
+                  loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
+        </div>
+        <p class="dfd-tool-hint">Doppelklicke einen Baustein, um ihn zu beschriften. Das Werkzeug speichert nichts – mache am Ende einen Screenshot oder übertrage das Diagramm in dein Heft.</p>
+        <details class="dfd-selfcheck">
+          <summary>Selbstkontrolle anzeigen</summary>
+          <p>Nur ein Baustein ändert sich: Der Vergleichsknoten muss „größer“ heißen, im Werkzeug also <code>&gt;</code>. Alles andere bleibt gleich: die Eingabe Losnummer, die Konstante 70, die WENN-Funktion mit „10€“ und „0€“ sowie die Ausgabe Losgewinn.</p>
+        </details>
+      </section>
+
+      <section class="dfd-card" aria-labelledby="merke-title">
+        <h2 id="merke-title">Merke</h2>
+        <ul>
+          <li>Ein Datenflussdiagramm zeigt, wie Werte von den Eingaben durch Funktionen bis zur Ausgabe fließen. Die Pfeile geben die Richtung des Datenflusses an.</li>
+          <li>Ein Verteiler gibt denselben Wert an mehrere Funktionen weiter. Eine Konstante ist ein fest eingetragener Wert, der nicht eingegeben wird.</li>
+          <li>Jede Funktion entspricht einem Teilschritt einer Formel. Die WENN-Funktion hat drei Eingänge: Bedingung, Ausgabe wenn wahr, Ausgabe wenn falsch.</li>
+          <li>Bei Vergleichen entscheidet der Grenzfall: „größer als 70“ schließt die 70 aus, „größer gleich 70“ schließt sie ein.</li>
+        </ul>
+      </section>
+
+      <section class="solution-download" aria-labelledby="solution-download-title">
+        <h2 id="solution-download-title">Sicherungsblatt zu Aufgabe 5</h2>
+        <details class="solution-reveal">
+          <summary>Sicherungsblatt anzeigen</summary>
+          <form class="solution-code-form"
+            onsubmit="unlockSolution(event, 'M2NP-4JXW', 'solution-download-link', 'solution-code-message')">
+            <label for="solution-code">Lehrercode eingeben</label>
+            <div class="solution-code-controls">
+              <input id="solution-code" name="solution-code" type="text"
+                maxlength="9" autocomplete="off" autocapitalize="characters"
+                spellcheck="false" required>
+              <button type="submit">Code prüfen</button>
+            </div>
+            <p id="solution-code-message" class="solution-code-message"
+              aria-live="polite"></p>
+            <a id="solution-download-link" class="download-button"
+              href="sicherungsblatt-aufgabe-5-loesungen.pdf" download hidden>
+              &#8595; Sicherungsblatt herunterladen
+            </a>
+          </form>
+        </details>
+      </section>
+
+      <nav class="adjacent-task-nav" aria-label="Vorherige und nächste Aufgabe">
+        <a class="secondary-action" href="aufgabe4c.html">← Aufgabe 4c</a>
+        <a class="primary-action" href="../">Zur Aufgabenübersicht →</a>
+      </nav>
+    </main>
+
+    <script>
+      (() => {
+        "use strict";
+
+        window.unlockSolution = function unlockSolution(event, expectedCode, downloadLinkId, messageId) {
+          event.preventDefault();
+
+          const form = event.currentTarget;
+          const enteredCode = form.elements["solution-code"].value
+            .toUpperCase()
+            .replace(/[^A-Z0-9]/g, "");
+          const normalizedExpectedCode = expectedCode.replace(/[^A-Z0-9]/g, "");
+          const downloadLink = document.getElementById(downloadLinkId);
+          const message = document.getElementById(messageId);
+
+          if (enteredCode === normalizedExpectedCode) {
+            downloadLink.hidden = false;
+            message.className = "solution-code-message";
+            message.textContent = "Code korrekt. Das Sicherungsblatt ist freigeschaltet.";
+            return;
+          }
+
+          downloadLink.hidden = true;
+          message.className = "solution-code-message error";
+          message.textContent = "Der eingegebene Code ist nicht gültig.";
+        };
+
+        /**
+         * ==========================================================
+         * HIER DIE URL DER APPS-SCRIPT-WEB-APP EINTRAGEN
+         * ==========================================================
+         *
+         * Die URL muss auf /exec enden, zum Beispiel:
+         * https://script.google.com/macros/s/AKfycb.../exec
+         */
+        const SCRIPT_SERVER_URL =
+          'https://script.google.com/macros/s/AKfycby8RWL6uYrKZyoJ6m2GRpWyRmXjwsdskyCiqzKpRhIK5-wrDl-9lWWk8CiAGaVMoy0x/exec';
+
+        function isValidScriptServerUrl(url) {
+          try {
+            const parsedUrl = new URL(url);
+            return (
+              parsedUrl.protocol === 'https:' &&
+              parsedUrl.hostname === 'script.google.com' &&
+              parsedUrl.pathname.endsWith('/exec')
+            );
+          } catch (error) {
+            return false;
+          }
+        }
+
+        function createRequestId() {
+          if (window.crypto && typeof window.crypto.randomUUID === 'function') {
+            return window.crypto.randomUUID();
+          }
+          return Date.now().toString(36) + '-' + Math.random().toString(36).substring(2);
+        }
+
+        const TASKS = {
+          '5a': { serverTaskId: 'inf9-dfd-zylinder-beschreibung' },
+          '5c': { serverTaskId: 'inf9-dfd-fehlersuche-gewinnspiel' }
+        };
+
+        const pendingRequests = new Map();
+
+        function submitDescription(taskKey) {
+          const task = TASKS[taskKey];
+          const textarea = document.getElementById('answer-' + taskKey);
+          const button = document.getElementById('button-' + taskKey);
+          const resultBox = document.getElementById('result-' + taskKey);
+          const answer = textarea.value.trim();
+
+          if (answer.length < 10) {
+            showError(resultBox, 'Bitte formuliere eine etwas ausführlichere Antwort. Beschreibe mindestens einen Teilschritt in einem ganzen Satz.');
+            textarea.focus();
+            return;
+          }
+
+          if (!isValidScriptServerUrl(SCRIPT_SERVER_URL)) {
+            showError(resultBox, 'Der Auswertungsserver ist nicht korrekt eingerichtet. Bitte informiere deine Lehrkraft.');
+            return;
+          }
+
+          button.disabled = true;
+          textarea.disabled = true;
+          button.textContent = 'Beschreibung wird geprüft …';
+
+          resultBox.hidden = false;
+          resultBox.className = 'result';
+          resultBox.textContent = 'Deine Beschreibung wird ausgewertet …';
+
+          const requestId = createRequestId();
+          const url = new URL(SCRIPT_SERVER_URL);
+          url.searchParams.set('callback', '__handleDfdDescriptionResult');
+          url.searchParams.set('requestId', requestId);
+          url.searchParams.set('taskId', task.serverTaskId);
+          url.searchParams.set('answer', answer);
+          const jsonpUrl = url.toString();
+
+          if (jsonpUrl.length > 1800) {
+            button.disabled = false;
+            textarea.disabled = false;
+            button.textContent = 'Beschreibung prüfen';
+            showError(resultBox, 'Deine Beschreibung ist für die automatische Übertragung zu lang. Bitte kürze sie etwas.');
+            return;
+          }
+
+          const script = document.createElement('script');
+          script.async = true;
+          script.src = jsonpUrl;
+
+          const timeoutId = window.setTimeout(function () {
+            finishRequest(requestId, { ok: false, message: 'Der Auswertungsserver hat nicht rechtzeitig geantwortet. Versuche es bitte noch einmal.' });
+          }, 60000);
+
+          script.onerror = function () {
+            finishRequest(requestId, { ok: false, message: 'Der Auswertungsserver konnte nicht geladen werden. Prüfe deine Internetverbindung.' });
+          };
+
+          pendingRequests.set(requestId, { taskKey, textarea, button, resultBox, script, timeoutId });
+          document.body.appendChild(script);
+        }
+
+        window.__handleDfdDescriptionResult = function (message) {
+          if (!message || (message.type && message.type !== 'GEMINI_EVALUATION_RESULT')) {
+            return;
+          }
+          finishRequest(message.requestId, message.result);
+        };
+
+        function finishRequest(requestId, result) {
+          const pending = pendingRequests.get(requestId);
+          if (!pending) return;
+
+          window.clearTimeout(pending.timeoutId);
+          if (pending.script.parentNode) pending.script.parentNode.removeChild(pending.script);
+
+          pending.button.disabled = false;
+          pending.textarea.disabled = false;
+          pending.button.textContent = 'Beschreibung erneut prüfen';
+
+          pendingRequests.delete(requestId);
+
+          if (!result || result.ok !== true) {
+            showError(pending.resultBox, (result && result.message) ? result.message : 'Die Rückmeldung konnte nicht erstellt werden.');
+            return;
+          }
+
+          showEvaluation(pending.resultBox, result);
+        }
+
+        function classifyLevel(status) {
+          const normalized = String(status || '').trim().toLocaleLowerCase('de');
+          if (normalized === 'korrekt') return 'high';
+          if (normalized === 'teilweise korrekt') return 'medium';
+          return 'low';
+        }
+
+        function showEvaluation(resultBox, result) {
+          resultBox.textContent = '';
+          resultBox.hidden = false;
+          resultBox.className = 'result ' + classifyLevel(result.status);
+
+          const heading = document.createElement('h3');
+          heading.textContent = result.points + ' von ' + result.maxPoints + ' Punkten – ' + result.status;
+          resultBox.appendChild(heading);
+
+          appendList(resultBox, 'Das ist dir gelungen:', result.strengths, 'Es wurde noch kein eindeutiger richtiger Aspekt erkannt.');
+          appendList(resultBox, 'Das solltest du ergänzen oder überprüfen:', result.missing, 'Es fehlen keine wesentlichen Aspekte.');
+
+          const feedbackContainer = document.createElement('div');
+          feedbackContainer.className = 'feedback';
+
+          const feedbackHeading = document.createElement('h4');
+          feedbackHeading.textContent = 'Rückmeldung';
+
+          const feedbackText = document.createElement('p');
+          feedbackText.textContent = result.feedback || 'Überprüfe deine Antwort noch einmal.';
+
+          feedbackContainer.appendChild(feedbackHeading);
+          feedbackContainer.appendChild(feedbackText);
+          resultBox.appendChild(feedbackContainer);
+        }
+
+        function appendList(container, headingText, items, emptyText) {
+          const heading = document.createElement('h4');
+          heading.textContent = headingText;
+          container.appendChild(heading);
+
+          if (!Array.isArray(items) || items.length === 0) {
+            const paragraph = document.createElement('p');
+            paragraph.textContent = emptyText;
+            container.appendChild(paragraph);
+            return;
+          }
+
+          const list = document.createElement('ul');
+          items.forEach(function (item) {
+            const listItem = document.createElement('li');
+            listItem.textContent = String(item);
+            list.appendChild(listItem);
+          });
+          container.appendChild(list);
+        }
+
+        function showError(resultBox, message) {
+          resultBox.hidden = false;
+          resultBox.className = 'result error';
+          resultBox.textContent = message;
+        }
+
+        document.getElementById('button-5a').addEventListener('click', function () {
+          submitDescription('5a');
+        });
+        document.getElementById('button-5c').addEventListener('click', function () {
+          submitDescription('5c');
+        });
+      })();
+    </script>
+  </body>
+</html>

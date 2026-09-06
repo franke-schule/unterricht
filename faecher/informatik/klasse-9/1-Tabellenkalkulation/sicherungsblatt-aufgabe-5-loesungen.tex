@@ -1,0 +1,164 @@
+\documentclass[10pt,a4paper]{article}
+
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage[ngerman]{babel}
+\usepackage[a4paper,margin=14mm]{geometry}
+\usepackage{lmodern}
+\usepackage{xcolor}
+\usepackage{tabularx}
+\usepackage{array}
+\usepackage{listings}
+\usepackage{microtype}
+\usepackage{enumitem}
+
+\pagestyle{empty}
+\setlength{\parindent}{0pt}
+\setlength{\parskip}{0pt}
+\renewcommand{\familydefault}{\sfdefault}
+
+\definecolor{Navy}{HTML}{17324D}
+\definecolor{Blue}{HTML}{3B6EA5}
+\definecolor{Sky}{HTML}{EAF3FA}
+\definecolor{Mint}{HTML}{E8F5EF}
+\definecolor{Gold}{HTML}{F3B33D}
+\definecolor{Ink}{HTML}{1E2935}
+\definecolor{Muted}{HTML}{617080}
+\definecolor{Line}{HTML}{D8E1E8}
+\definecolor{CodeBg}{HTML}{F5F7F9}
+
+\color{Ink}
+
+\newcommand{\sectiontitle}[2]{%
+  \vspace{2.3mm}
+  {\color{#1}\bfseries\large #2}\par
+  \vspace{0.8mm}
+  {\color{#1}\rule{\linewidth}{0.7pt}}\par
+  \vspace{1.2mm}
+}
+
+\newcommand{\solutionrow}[3]{%
+  \textcolor{Blue}{\bfseries #1} &
+  \ttfamily\small #2 &
+  \small #3 \\[1.8mm]
+}
+
+\newcommand{\termrow}[2]{%
+  \textcolor{Blue}{\bfseries #1} &
+  \small #2 \\[1.6mm]
+}
+
+\lstset{
+  basicstyle=\ttfamily\small,
+  backgroundcolor=\color{CodeBg},
+  frame=single,
+  rulecolor=\color{Line},
+  framesep=2.5mm,
+  xleftmargin=1mm,
+  xrightmargin=1mm,
+  aboveskip=1mm,
+  belowskip=1mm,
+  showstringspaces=false,
+  columns=fullflexible
+}
+
+\begin{document}
+
+\colorbox{Navy}{%
+  \parbox{\dimexpr\linewidth-2\fboxsep\relax}{%
+    \vspace{3mm}
+    \color{white}
+    \begin{tabularx}{\linewidth}{@{}Xr@{}}
+      {\small\bfseries INFORMATIK · KLASSE 9} &
+      \colorbox{Gold}{\color{Navy}\small\bfseries\strut LÖSUNGEN}
+    \end{tabularx}
+    \vspace{2.5mm}
+
+    {\fontsize{22}{25}\selectfont\bfseries Sicherungsblatt: Aufgabe 5}\par
+    \vspace{1mm}
+    {\large Datenflussdiagramme}
+    \vspace{3mm}
+  }%
+}
+
+\vspace{3mm}
+\colorbox{Sky}{%
+  \parbox{\dimexpr\linewidth-2\fboxsep\relax}{%
+    \vspace{1.8mm}
+    \textcolor{Blue}{\bfseries Ziel:}
+    Du kannst ein Datenflussdiagramm lesen und beschreiben, selbst eines
+    zeichnen und einen Fehler darin finden und korrigieren.
+    \vspace{1.8mm}
+  }%
+}
+
+\sectiontitle{Blue}{1 · Bausteine}
+
+\renewcommand{\arraystretch}{1.05}
+\begin{tabularx}{\linewidth}{@{}>{\raggedright\arraybackslash}p{26mm} X@{}}
+  \termrow{Eingabe}{Ein Wert, den die nutzende Person eingibt, zum Beispiel die Anzahl der Mitfahrenden.}
+  \termrow{Funktion}{Ein Rechen- oder Vergleichsschritt, zum Beispiel plus, mal oder größer. Eine Funktion hat mehrere Eingangspfeile, aber genau einen Ausgangspfeil.}
+  \termrow{Ausgabe}{Das Ergebnis, das am Ende angezeigt wird.}
+  \termrow{Konstante}{Ein fest eingetragener Wert, der nicht eingegeben wird, zum Beispiel die 0 beim Aufrunden.}
+  \termrow{Verteiler}{Ein kleiner Kreis. Er gibt denselben Wert an mehrere Funktionen weiter.}
+\end{tabularx}
+
+\sectiontitle{Blue}{2 · Musterlösung zu 5a: Rohrvolumen}
+
+\small
+Der Verteiler unter „Höhe“ gibt die Höhe an beide Zweige weiter, beide
+Teilrechnungen verwenden also dieselbe Höhe. Rechts wird der kleine Radius
+quadriert und mit der Höhe multipliziert, links wird der große Radius
+quadriert und ebenfalls mit der Höhe multipliziert. Der Knoten „minus“ zieht
+den rechten Wert vom linken ab. Das Ergebnis beschreibt das Volumen des
+Rohrs – allerdings ohne den Faktor $\pi$. Erst $\pi$ mal diesem Wert ergibt
+das echte Volumen.
+
+\sectiontitle{Blue}{3 · Musterlösung zu 5b: Spendenlauf}
+
+\small
+Eingaben sind die erlaufene Summe S und die Unkosten U der SMV. Ein
+Verteiler gibt S an beide Zweige weiter. Ein Zweig rechnet S $-$ U, der
+andere Zweig rechnet S · 0,5. Beide Ergebnisse fließen in „plus“. Ausgabe:
+gespendete Gesamtsumme = S $-$ U + 0,5 · S.
+
+\sectiontitle{Blue}{4 · Musterlösung zu 5c: Fehler im Gewinnspiel}
+
+\small
+Fehler: Der Vergleichsknoten ist mit „größer gleich“ beschriftet, der Text
+verlangt aber „größer als 70“. Auswirkung: Bei der Losnummer 70 gibt das
+Diagramm 10 € aus, richtig wären 0 €. Korrektur: Der Knoten muss „größer“
+(>) heißen; der übrige Aufbau bleibt unverändert.
+
+\vspace{1.5mm}
+\colorbox{Mint}{%
+  \parbox{\dimexpr\linewidth-2\fboxsep\relax}{%
+    \vspace{1.4mm}
+    \textcolor{Blue}{\bfseries Merke:}
+    \begin{itemize}[leftmargin=4.5mm, itemsep=0.6mm, topsep=0.8mm]
+      \small
+      \item Ein Datenflussdiagramm zeigt, wie Werte von den Eingaben durch
+        Funktionen bis zur Ausgabe fließen. Die Pfeile geben die Richtung
+        des Datenflusses an.
+      \item Ein Verteiler gibt denselben Wert an mehrere Funktionen weiter.
+        Eine Konstante ist ein fest eingetragener Wert, der nicht
+        eingegeben wird.
+      \item Jede Funktion entspricht einem Teilschritt einer Formel. Die
+        WENN-Funktion hat drei Eingänge: Bedingung, Ausgabe wenn wahr,
+        Ausgabe wenn falsch.
+      \item Bei Vergleichen entscheidet der Grenzfall: „größer als 70“
+        schließt die 70 aus, „größer gleich 70“ schließt sie ein.
+    \end{itemize}
+    \vspace{0.6mm}
+  }%
+}
+
+\vfill
+{\color{Line}\rule{\linewidth}{0.5pt}}\par
+\vspace{1.5mm}
+\begin{tabularx}{\linewidth}{@{}Xr@{}}
+  {\small\color{Muted}Klasse 9 · Tabellenkalkulation} &
+  {\small\color{Muted}Sicherungsblatt · Aufgabe 5}
+\end{tabularx}
+
+\end{document}
