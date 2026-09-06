@@ -21,6 +21,9 @@ assert.match(source, /const NEUTRAL_SQL_PLACEHOLDER = 'SELECT \.\.\.\\nFROM \.\.
 assert.doesNotMatch(source, /\.placeholder\s*=\s*SONG_VERBUND_SQL/);
 assert.doesNotMatch(source, /\.placeholder\s*=\s*'SELECT \.\.\. FROM/);
 assert.match(source, /SELECT username, birthday\\nFROM users\\nWHERE city != 'Berlin';/);
+assert.match(source, /initialSql: "SELECT namen\\nFROM users\\nWHERE city = 'Leipzig'"/);
+assert.match(source, /Ursprungsanweisung wiederherstellen/);
+assert.match(source, /fehlt im Vergleichsoperator das Ausrufezeichen: !=/);
 assert.match(source, /panel\.append\(schemaCard\(USERS_TABLE_SCHEMAS\)\)/);
 for (const attribute of ['email_verified_at', 'password', 'bio', 'avatar', 'is_active', 'remember_token', 'updated_at']) assert.ok(source.includes(`['${attribute}',`), `users-Schema enthält ${attribute}`);
 assert.match(source, /panel\.append\(schemaCard\(MENU_TABLE_SCHEMAS\)\)/);
