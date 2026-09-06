@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Aufgabe 5 – Datenflussdiagramme</title>
     <link rel="stylesheet" href="../../../../styles.css?v=20260821">
-    <link rel="stylesheet" href="tabellenkalkulation.css?v=20260907">
+    <link rel="stylesheet" href="tabellenkalkulation.css?v=20260910">
   </head>
   <body>
     <div class="site-backdrop" aria-hidden="true"></div>
@@ -28,6 +28,7 @@
         <button id="tab-zeichnen" type="button" role="tab" aria-selected="false" aria-controls="panel-zeichnen" data-dfd-tab="zeichnen" tabindex="-1">2b · Zeichnen</button>
         <button id="tab-fehler" type="button" role="tab" aria-selected="false" aria-controls="panel-fehler" data-dfd-tab="fehler" tabindex="-1">3 · Fehler finden</button>
         <button id="tab-merke" type="button" role="tab" aria-selected="false" aria-controls="panel-merke" data-dfd-tab="merke" tabindex="-1">Merke</button>
+        <button id="tab-abschluss" type="button" role="tab" aria-selected="false" aria-controls="panel-abschluss" data-dfd-tab="abschluss" tabindex="-1">Abschluss</button>
       </nav>
 
       <div class="step-panels">
@@ -284,30 +285,144 @@
             <p>Die <strong>WENN-Funktion</strong> hat drei Eingänge: Bedingung, Ausgabe wenn wahr, Ausgabe wenn falsch.</p>
           </div>
         </section>
-      </div>
 
-      <section class="solution-download" aria-labelledby="solution-download-title">
-        <h2 id="solution-download-title">Sicherungsblatt zu Aufgabe 5</h2>
-        <details class="solution-reveal">
-          <summary>Sicherungsblatt anzeigen</summary>
-          <form class="solution-code-form"
-            onsubmit="unlockSolution(event, 'M2NP-4JXW', 'solution-download-link', 'solution-code-message')">
-            <label for="solution-code">Lehrercode eingeben</label>
-            <div class="solution-code-controls">
-              <input id="solution-code" name="solution-code" type="text"
-                maxlength="9" autocomplete="off" autocapitalize="characters"
-                spellcheck="false" required>
-              <button type="submit">Code prüfen</button>
-            </div>
-            <p id="solution-code-message" class="solution-code-message"
-              aria-live="polite"></p>
-            <a id="solution-download-link" class="download-button"
-              href="sicherungsblatt-aufgabe-5-loesungen.pdf" download hidden>
-              &#8595; Sicherungsblatt herunterladen
-            </a>
+        <section id="panel-abschluss" class="step-panel dfd-card" role="tabpanel" aria-labelledby="tab-abschluss" data-dfd-panel="abschluss" hidden>
+          <p class="eyebrow">Sichern</p>
+          <h2>Abschluss</h2>
+
+          <h3>Abschlussquiz</h3>
+          <div class="work-order"><strong>Arbeitsauftrag 6:</strong> Beantworte die fünf Fragen zum Abschluss. In manchen Fragen sind mehrere Antworten richtig – kreuze alle richtigen an.</div>
+
+          <form id="final-quiz" class="final-quiz" novalidate>
+            <fieldset>
+              <legend><span>1</span> Wie liest man ein Datenflussdiagramm?</legend>
+              <div class="choice-list">
+                <label class="choice-option"><input type="checkbox" name="quiz-1" value="a"><span>Ein Datenflussdiagramm wird von oben nach unten gelesen.</span></label>
+                <label class="choice-option"><input type="checkbox" name="quiz-1" value="b"><span>Die Pfeile geben die Richtung des Datenflusses an.</span></label>
+                <label class="choice-option"><input type="checkbox" name="quiz-1" value="c"><span>Ganz unten steht die Ausgabe, also das Ergebnis.</span></label>
+                <label class="choice-option"><input type="checkbox" name="quiz-1" value="d"><span>Die Reihenfolge der Rechenschritte ist beliebig.</span></label>
+              </div>
+            </fieldset>
+            <fieldset>
+              <legend><span>2</span> Welche Aussagen über Verteiler und Funktionen stimmen?</legend>
+              <div class="choice-list">
+                <label class="choice-option"><input type="checkbox" name="quiz-2" value="a"><span>Ein Verteiler gibt denselben Wert an mehrere Funktionen weiter.</span></label>
+                <label class="choice-option"><input type="checkbox" name="quiz-2" value="b"><span>Eine Funktion hat mehrere Eingangspfeile, aber genau einen Ausgangspfeil.</span></label>
+                <label class="choice-option"><input type="checkbox" name="quiz-2" value="c"><span>Ein Verteiler addiert die Werte, die bei ihm ankommen.</span></label>
+                <label class="choice-option"><input type="checkbox" name="quiz-2" value="d"><span>Jede Funktion entspricht einem Teilschritt einer Formel.</span></label>
+              </div>
+            </fieldset>
+            <fieldset>
+              <legend><span>3</span> Beim Gewinnspiel wird die Losnummer eingetippt, die 70 steht fest im Diagramm und unten erscheint der Losgewinn. Welche Aussagen stimmen?</legend>
+              <div class="choice-list">
+                <label class="choice-option"><input type="checkbox" name="quiz-3" value="a"><span>Die 70 ist eine Konstante.</span></label>
+                <label class="choice-option"><input type="checkbox" name="quiz-3" value="b"><span>Die Losnummer ist eine Eingabe.</span></label>
+                <label class="choice-option"><input type="checkbox" name="quiz-3" value="c"><span>Die 70 ist eine Eingabe, weil sie oben im Diagramm steht.</span></label>
+                <label class="choice-option"><input type="checkbox" name="quiz-3" value="d"><span>Der Losgewinn ist die Ausgabe.</span></label>
+              </div>
+            </fieldset>
+            <fieldset>
+              <legend><span>4</span> Wie viele Eingänge hat die WENN-Funktion und welche sind es?</legend>
+              <div class="choice-list">
+                <label class="choice-option"><input type="checkbox" name="quiz-4" value="a"><span>Drei: Bedingung, Ausgabe wenn wahr, Ausgabe wenn falsch.</span></label>
+                <label class="choice-option"><input type="checkbox" name="quiz-4" value="b"><span>Zwei: Ausgabe wenn wahr und Ausgabe wenn falsch.</span></label>
+                <label class="choice-option"><input type="checkbox" name="quiz-4" value="c"><span>Einen: nur die Bedingung.</span></label>
+                <label class="choice-option"><input type="checkbox" name="quiz-4" value="d"><span>Drei: Eingabe, Konstante und Verteiler.</span></label>
+              </div>
+            </fieldset>
+            <fieldset>
+              <legend><span>5</span> Im Text steht „Losnummer größer als 70“, im Diagramm steht „größer gleich“. Welche Aussagen stimmen?</legend>
+              <div class="choice-list">
+                <label class="choice-option"><input type="checkbox" name="quiz-5" value="a"><span>Bei der Losnummer 70 gibt das Diagramm 10 € aus, richtig wären 0 €.</span></label>
+                <label class="choice-option"><input type="checkbox" name="quiz-5" value="b"><span>Bei der Losnummer 71 liefern Text und Diagramm dasselbe Ergebnis.</span></label>
+                <label class="choice-option"><input type="checkbox" name="quiz-5" value="c"><span>Der Vergleichsknoten muss „größer“ heißen, im Werkzeug also &gt;.</span></label>
+                <label class="choice-option"><input type="checkbox" name="quiz-5" value="d"><span>Der Fehler wirkt sich bei jeder Losnummer aus.</span></label>
+              </div>
+            </fieldset>
+            <button class="primary-action" type="submit">Quiz prüfen</button>
           </form>
-        </details>
-      </section>
+          <section id="result-quiz" class="result" aria-live="polite" hidden></section>
+
+          <div id="quiz-summary" class="dfd-quiz-summary" hidden>
+            <h3>Übersicht: alle Aufgaben und Lösungen</h3>
+            <p>Hier stehen alle Arbeitsaufträge dieser Aufgabe mit ihren Lösungen – gut geeignet für die gemeinsame Besprechung.</p>
+
+            <section class="summary-section">
+              <h4>1 · Diagramm lesen</h4>
+              <p class="prompt">Arbeitsauftrag 1: Stelle die Formel auf, die das Diagramm zum Klettergarten berechnet (f, k, a).</p>
+              <dl class="summary-grid"><dt>Richtiges Ergebnis</dt><dd>(f + k) / a — zuerst werden Fahrkosten und Kartenkosten addiert, erst danach wird durch die Anzahl der Mitfahrenden geteilt.</dd></dl>
+            </section>
+            <section class="summary-section">
+              <h4>2a · Beschreiben</h4>
+              <p class="prompt">Arbeitsauftrag 2: Beschreibe, was das Datenflussdiagramm zum Rohr berechnet.</p>
+              <dl class="summary-grid"><dt>Richtiges Ergebnis</dt><dd>Der Verteiler unter „Höhe“ gibt die Höhe an beide Zweige weiter. Links wird der große Radius quadriert und mit der Höhe multipliziert, rechts geschieht dasselbe mit dem kleinen Radius. Der Knoten „minus“ zieht den rechten Wert vom linken ab. Das Ergebnis beschreibt das Volumen des Rohrs – allerdings ohne den Faktor π.</dd></dl>
+            </section>
+            <section class="summary-section">
+              <h4>2b · Zeichnen</h4>
+              <p class="prompt">Arbeitsauftrag 3: Zeichne ein Datenflussdiagramm für die gespendete Gesamtsumme beim Spendenlauf.</p>
+              <dl class="summary-grid"><dt>Richtiges Ergebnis</dt><dd>Eingaben sind die erlaufene Summe S und die Unkosten U der SMV. Ein Verteiler gibt S an beide Zweige weiter: Ein Zweig rechnet S − U, der andere S · 0,5. Beide Ergebnisse fließen in „plus“. Ausgabe: gespendete Gesamtsumme = S − U + 0,5 · S.</dd></dl>
+            </section>
+            <section class="summary-section">
+              <h4>3 · Fehler finden</h4>
+              <p class="prompt">Arbeitsauftrag 4: Beschreibe den Fehler im Gewinnspiel-Diagramm, seine Auswirkung bei der Losnummer 70 und die nötige Korrektur.</p>
+              <dl class="summary-grid"><dt>Richtiges Ergebnis</dt><dd>Fehler: Der Vergleichsknoten heißt „größer gleich“, der Text verlangt aber „größer als 70“. Auswirkung: Bei der Losnummer 70 gibt das Diagramm 10 € aus, richtig wären 0 €. Korrektur: Der Knoten muss „größer“ (&gt;) heißen.</dd></dl>
+            </section>
+            <section class="summary-section">
+              <h4>3 · Korrigiertes Diagramm</h4>
+              <p class="prompt">Arbeitsauftrag 5: Zeichne das korrigierte Datenflussdiagramm im Werkzeug nach.</p>
+              <dl class="summary-grid"><dt>Richtiges Ergebnis</dt><dd>Nur ein Baustein ändert sich: Der Vergleichsknoten heißt „größer“, im Werkzeug &gt;. Eingabe Losnummer, Konstante 70, WENN mit „10€“ und „0€“ sowie die Ausgabe Losgewinn bleiben unverändert.</dd></dl>
+            </section>
+            <section class="summary-section">
+              <h4>Quiz – Frage 1</h4>
+              <p class="prompt">Wie liest man ein Datenflussdiagramm?</p>
+              <dl class="summary-grid"><dt>Richtiges Ergebnis</dt><dd>Von oben nach unten; die Pfeile geben die Richtung des Datenflusses an; ganz unten steht die Ausgabe.</dd></dl>
+            </section>
+            <section class="summary-section">
+              <h4>Quiz – Frage 2</h4>
+              <p class="prompt">Welche Aussagen über Verteiler und Funktionen stimmen?</p>
+              <dl class="summary-grid"><dt>Richtiges Ergebnis</dt><dd>Ein Verteiler gibt denselben Wert an mehrere Funktionen weiter; eine Funktion hat mehrere Eingangspfeile, aber genau einen Ausgangspfeil; jede Funktion entspricht einem Teilschritt einer Formel.</dd></dl>
+            </section>
+            <section class="summary-section">
+              <h4>Quiz – Frage 3</h4>
+              <p class="prompt">Welche Bausteine stecken im Gewinnspiel-Diagramm?</p>
+              <dl class="summary-grid"><dt>Richtiges Ergebnis</dt><dd>Die 70 ist eine Konstante, die Losnummer ist eine Eingabe, der Losgewinn ist die Ausgabe.</dd></dl>
+            </section>
+            <section class="summary-section">
+              <h4>Quiz – Frage 4</h4>
+              <p class="prompt">Wie viele Eingänge hat die WENN-Funktion und welche sind es?</p>
+              <dl class="summary-grid"><dt>Richtiges Ergebnis</dt><dd>Drei: Bedingung, Ausgabe wenn wahr, Ausgabe wenn falsch.</dd></dl>
+            </section>
+            <section class="summary-section">
+              <h4>Quiz – Frage 5</h4>
+              <p class="prompt">„größer als 70“ oder „größer gleich 70“ – was ist der Unterschied?</p>
+              <dl class="summary-grid"><dt>Richtiges Ergebnis</dt><dd>Bei 70 gibt das fehlerhafte Diagramm 10 € statt 0 € aus; bei 71 stimmen beide Varianten überein; der Knoten muss „größer“ (&gt;) heißen.</dd></dl>
+            </section>
+          </div>
+
+          <section class="solution-download" aria-labelledby="solution-download-title">
+            <h2 id="solution-download-title">Sicherungsblatt zu Aufgabe 5</h2>
+            <details class="solution-reveal">
+              <summary>Sicherungsblatt anzeigen</summary>
+              <form class="solution-code-form"
+                onsubmit="unlockSolution(event, 'M2NP-4JXW', 'solution-download-link', 'solution-code-message')">
+                <label for="solution-code">Lehrercode eingeben</label>
+                <div class="solution-code-controls">
+                  <input id="solution-code" name="solution-code" type="text"
+                    maxlength="9" autocomplete="off" autocapitalize="characters"
+                    spellcheck="false" required>
+                  <button type="submit">Code prüfen</button>
+                </div>
+                <p id="solution-code-message" class="solution-code-message"
+                  aria-live="polite"></p>
+                <a id="solution-download-link" class="download-button"
+                  href="sicherungsblatt-aufgabe-5-loesungen.pdf" download hidden>
+                  &#8595; Sicherungsblatt herunterladen
+                </a>
+              </form>
+            </details>
+          </section>
+        </section>
+      </div>
 
       <nav class="adjacent-task-nav" aria-label="Vorherige und nächste Aufgabe">
         <a class="secondary-action" href="aufgabe4c.html">← Aufgabe 4c</a>
@@ -424,22 +539,36 @@
           let elapsedBeforePause = 0;
           let running = false;
 
+          /*
+           * hidden ist eine Eigenschaft von HTMLElement, nicht von SVGElement.
+           * Bei einem SVG-Element legt token.hidden = false nur eine
+           * wirkungslose Eigenschaft an und entfernt das Attribut nicht.
+           * Deshalb hier ueber das Attribut schalten.
+           */
+          function showToken(token) {
+            token.removeAttribute("hidden");
+          }
+
+          function hideToken(token) {
+            token.setAttribute("hidden", "");
+          }
+
           function hideAllTokens() {
-            Object.values(tokens).forEach((token) => { token.hidden = true; });
+            Object.values(tokens).forEach(hideToken);
           }
 
           function placeTokenOnPath(token, path, t) {
             const length = path.getTotalLength();
             const point = path.getPointAtLength(Math.min(t, 1) * length);
             token.setAttribute("transform", "translate(" + point.x + "," + point.y + ")");
-            token.hidden = false;
+            showToken(token);
           }
 
           function placeTokenAtPathEnd(token, path) {
             const length = path.getTotalLength();
             const point = path.getPointAtLength(length);
             token.setAttribute("transform", "translate(" + point.x + "," + point.y + ")");
-            token.hidden = false;
+            showToken(token);
           }
 
           function resetVisual() {
@@ -477,13 +606,13 @@
               placeTokenOnPath(tokens.k, paths.k, t);
               placeTokenOnPath(tokens.a, paths.a, t);
             } else if (phase === 2) {
-              tokens.f.hidden = true;
-              tokens.k.hidden = true;
+              hideToken(tokens.f);
+              hideToken(tokens.k);
               placeTokenAtPathEnd(tokens.a, paths.a);
               placeTokenOnPath(tokens.sum, paths.sum, t);
             } else if (phase === 3) {
-              tokens.sum.hidden = true;
-              tokens.a.hidden = true;
+              hideToken(tokens.sum);
+              hideToken(tokens.a);
               placeTokenOnPath(tokens.out, paths.out, t);
             }
 
@@ -597,6 +726,84 @@
             const normalized = normalize(raw);
             const level = classify(normalized);
             showResult(level, FEEDBACK[level]);
+          });
+        })();
+
+        /* ---------------------------------------------------------
+         * Abschluss – Mehrfachauswahl-Quiz (5 Fragen)
+         * --------------------------------------------------------- */
+        (function setupFinalQuiz() {
+          const form = document.getElementById("final-quiz");
+          const resultBox = document.getElementById("result-quiz");
+          const summary = document.getElementById("quiz-summary");
+          if (!form || !resultBox) return;
+
+          const SOLUTIONS = {
+            "quiz-1": ["a", "b", "c"],
+            "quiz-2": ["a", "b", "d"],
+            "quiz-3": ["a", "b", "d"],
+            "quiz-4": ["a"],
+            "quiz-5": ["a", "b", "c"]
+          };
+          const QUESTION_NAMES = Object.keys(SOLUTIONS);
+
+          function selectedValues(name) {
+            return [...document.querySelectorAll(`input[name="${name}"]:checked`)]
+              .map((input) => input.value)
+              .sort();
+          }
+
+          function showResult(level, message) {
+            resultBox.hidden = false;
+            resultBox.className = "result " + level;
+            resultBox.textContent = message;
+          }
+
+          form.querySelectorAll('input[type="checkbox"]').forEach((checkbox) => {
+            checkbox.addEventListener("change", () => {
+              resultBox.hidden = true;
+            });
+          });
+
+          form.addEventListener("submit", function (event) {
+            event.preventDefault();
+
+            const hasEmptyQuestion = QUESTION_NAMES.some((name) => selectedValues(name).length === 0);
+            if (hasEmptyQuestion) {
+              showResult("low", "Bitte kreuze in jeder Frage mindestens eine Antwort an. Bearbeite die Fragen 1 bis 5 vollständig.");
+              return;
+            }
+
+            const results = QUESTION_NAMES.map((name) => {
+              const chosen = selectedValues(name);
+              const solution = SOLUTIONS[name];
+              return chosen.length === solution.length && chosen.join(",") === solution.join(",");
+            });
+
+            const correctCount = results.filter(Boolean).length;
+
+            if (correctCount === QUESTION_NAMES.length) {
+              showResult("high", "Korrekt. Alle fünf Fragen stimmen. Unten ist jetzt die Übersicht mit allen Aufgaben und Lösungen freigeschaltet.");
+              if (summary) summary.hidden = false;
+              return;
+            }
+
+            if (correctCount === 0) {
+              showResult("low", "Noch nicht korrekt. Sieh dir den Reiter „Merke“ und den Reiter „2 · Bausteine“ noch einmal an: Dort stehen die Bausteine, die Leserichtung und die drei Eingänge der WENN-Funktion.");
+              return;
+            }
+
+            const wrongNumbers = results
+              .map((correct, index) => (correct ? null : index + 1))
+              .filter((number) => number !== null);
+            /* "1, 3 und 4" statt "1 und 3 und 4" */
+            const wrongList = wrongNumbers.length <= 1
+              ? wrongNumbers.join("")
+              : wrongNumbers.slice(0, -1).join(", ") + " und " + wrongNumbers[wrongNumbers.length - 1];
+            showResult(
+              "medium",
+              `Teilweise korrekt. Richtig sind schon ${correctCount} von 5 Fragen. Prüfe noch einmal Frage ${wrongList}. Denk daran: In manchen Fragen musst du mehrere Kästchen ankreuzen, in anderen ist genau eine Antwort richtig.`
+            );
           });
         })();
 

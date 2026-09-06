@@ -1159,8 +1159,9 @@ body.is-filling-sheet {
 .dfd-svg {
   display: block;
   width: 100%;
+  max-width: 520px;
   height: auto;
-  margin: 1rem 0;
+  margin: 1rem auto;
 }
 
 .dfd-svg-node {
@@ -1235,6 +1236,126 @@ body.is-filling-sheet {
   margin-bottom: 0;
 }
 
+.final-quiz {
+  display: grid;
+  gap: 1rem;
+  margin-top: 0.75rem;
+}
+
+.final-quiz fieldset {
+  min-width: 0;
+  padding: 1rem;
+  border: 1px solid #d7dee8;
+  border-radius: 10px;
+}
+
+.final-quiz legend {
+  padding: 0 0.5rem;
+  color: var(--sheet-accent-dark);
+  font-weight: 800;
+}
+
+.final-quiz legend span {
+  display: inline-grid;
+  place-items: center;
+  width: 27px;
+  height: 27px;
+  margin-right: 6px;
+  border-radius: 50%;
+  background: #eff6ff;
+  color: var(--sheet-accent-dark);
+}
+
+.choice-list {
+  display: grid;
+  gap: 0.6rem;
+  margin: 0.9rem 0 0;
+}
+
+.choice-option {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.7rem;
+  min-height: 44px;
+  padding: 0.7rem 0.9rem;
+  border: 1px solid #d7dee8;
+  border-radius: 10px;
+  background: #fbfcfe;
+  cursor: pointer;
+}
+
+.choice-option:hover {
+  border-color: var(--sheet-accent);
+  background: #eff6ff;
+}
+
+.choice-option:has(input:checked) {
+  border-color: var(--sheet-accent);
+  background: #eff6ff;
+}
+
+.choice-option input {
+  flex: 0 0 auto;
+  width: 20px;
+  height: 20px;
+  margin-top: 1px;
+  accent-color: var(--sheet-accent);
+}
+
+.choice-option input:focus-visible {
+  outline: 3px solid rgba(23, 99, 213, 0.35);
+  outline-offset: 3px;
+}
+
+.choice-option span {
+  line-height: 1.4;
+}
+
+.dfd-quiz-summary {
+  margin-top: 1.5rem;
+}
+
+.dfd-quiz-summary[hidden] {
+  display: none;
+}
+
+.summary-section {
+  padding: 1rem 1.1rem;
+  margin-top: 0.9rem;
+  border: 1px solid #d7dee8;
+  border-radius: 10px;
+  background: #fbfcfe;
+}
+
+.summary-section h4 {
+  margin: 0 0 0.3rem;
+  color: var(--sheet-accent-dark);
+}
+
+.summary-section .prompt {
+  margin: 0 0 0.7rem;
+  color: var(--muted);
+  font-size: 0.9rem;
+}
+
+.summary-grid {
+  display: grid;
+  grid-template-columns: minmax(150px, .4fr) minmax(0,1fr);
+  gap: .4rem 1rem;
+  margin: 0;
+}
+
+.summary-grid dt {
+  color: #52647a;
+  font-weight: 700;
+}
+
+.summary-grid dd {
+  min-width: 0;
+  margin: 0;
+  overflow-wrap: anywhere;
+}
+
 @media (max-width: 760px) {
   .dfd-figure-pair {
     grid-template-columns: 1fr;
@@ -1251,5 +1372,13 @@ body.is-filling-sheet {
   .dfd-bausteine-layout,
   .dfd-diagram-input-layout {
     grid-template-columns: 1fr;
+  }
+
+  .summary-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .summary-grid dt {
+    margin-top: .4rem;
   }
 }

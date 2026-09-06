@@ -61,6 +61,22 @@ Falls die Spezifikation ein Sicherungsblatt vorsieht:
 - Lehrercode in der Aufgabenseite eintragen und `lehrercodes-dekodierung.tex`
   sowie das zugehörige PDF aktualisieren.
 
+## Niemals fremde Änderungen zurücknehmen
+
+Führe keine verwerfenden Git-Befehle aus — kein `git checkout --`, `git
+restore`, `git reset`, `git clean`, `git stash`. Im Arbeitsverzeichnis liegen
+regelmäßig noch nicht committete Änderungen, die nicht von dir stammen: von
+der Lehrkraft, von einer früheren Stufe des Loops oder von der
+orchestrierenden Sitzung.
+
+Findest du eine Änderung an einer Datei, die nicht zu deinen Zieldateien
+gehört, ist das **kein Fehler, den du bereinigst**. Lass sie unangetastet und
+erwähne sie in deiner Zusammenfassung. Eine verworfene, nie committete
+Änderung ist unwiederbringlich.
+
+Git-Befehle, die nur lesen (`git status`, `git diff`, `git diff --check`,
+`git log`), sind ausdrücklich erlaubt und erwünscht.
+
 ## Rückgabe
 
 Kurze, strukturierte Zusammenfassung:

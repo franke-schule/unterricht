@@ -145,6 +145,28 @@ wenn dies in vergleichbaren Aufgaben ebenfalls vorgesehen ist.
 Bestehende Übersichts-Komponenten und Layouts wiederverwenden.
 
 
+## Abschlussquiz
+
+Jedes Lernmodul muss am Ende ein Abschlussquiz besitzen. Das gilt für neue und
+überarbeitete Module ausnahmslos, auch wenn der konkrete Auftrag es nicht
+erwähnt.
+
+Vorgaben:
+
+- Multiple Choice mit Auswahlkästchen, nicht mit Einfachauswahl.
+- Mindestens zwei Fragen eines Quiz haben mehrere richtige Antworten. Einzelne
+  Fragen dürfen genau eine richtige Antwort haben, aber ein Quiz aus
+  ausschließlich einfach zu beantwortenden Fragen erfüllt die Vorgabe nicht.
+- `manifest-quizaufgaben.txt` gilt verbindlich.
+- Als Referenz die bestehenden Quiz-Implementierungen in Informatik Klasse 10,
+  Einheit Datenbanken verwenden (dort als letzter Schritt `#final-quiz`).
+  Keine eigene Quiz-Komponente entwickeln.
+
+Ist das Modul in Reiter gegliedert, steht das Abschlussquiz im letzten Reiter.
+Ein vorhandener Sicherungsblatt-Download gehört ebenfalls dorthin, damit er
+erst nach der Bearbeitung erreichbar ist.
+
+
 # 5. Didaktische Anforderungen
 
 Die Website ist kein gewöhnliches Übungsportal, sondern Unterrichtsmaterial.
