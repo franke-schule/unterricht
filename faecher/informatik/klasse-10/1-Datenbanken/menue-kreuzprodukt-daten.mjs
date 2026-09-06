@@ -17,6 +17,11 @@ export const MENU_TABLES = Object.freeze({
 });
 
 export const MENU_TABLE_NAMES = Object.freeze(Object.keys(MENU_TABLES));
+export const MENU_TABLE_SCHEMAS = Object.freeze([
+  Object.freeze({ table: 'Vorspeise', columns: Object.freeze([['Name', 'varchar(255)'], ['Preis', 'real']]) }),
+  Object.freeze({ table: 'Hauptspeise', columns: Object.freeze([['Name', 'varchar(255)'], ['Preis', 'real']]) }),
+  Object.freeze({ table: 'Nachspeise', columns: Object.freeze([['Name', 'varchar(255)'], ['Preis', 'real']]) })
+]);
 
 export function buildMenuCombinations(tables = MENU_TABLES) {
   return tables.Vorspeise.flatMap((vorspeise) => tables.Hauptspeise.flatMap((hauptspeise) => tables.Nachspeise.map((nachspeise) => ({

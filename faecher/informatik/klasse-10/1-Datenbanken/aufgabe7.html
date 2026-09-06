@@ -4,38 +4,35 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="robots" content="noindex, nofollow">
-    <title>Aufgabe 6 – Das Kreuzprodukt | Informatik 10</title>
-    <link rel="stylesheet" href="../../../../styles.css?v=20260825">
+    <title>Aufgabe 7 – Der Verbund | Informatik 10</title>
+    <link rel="stylesheet" href="../../../../styles.css?v=20260906">
     <link rel="stylesheet" href="redundanzen.css?v=20260822c">
     <link rel="stylesheet" href="tabellenschema.css?v=20260822c">
   <link rel="stylesheet" href="sql-lab.css?v=20260906c">
   <script type="module" src="sql-lab.js?v=20260906c"></script>
   </head>
-  <body class="redundancy-page sql-page menu-cross-product-page" data-sql-module="menu-cross-product">
+  <body class="redundancy-page sql-page song-verbund-page" data-sql-module="song-verbund">
     <div class="site-backdrop" aria-hidden="true"></div>
     <main class="learning-shell">
       <nav class="module-topbar" aria-label="Seitennavigation">
         <a class="back-link" href="../index.html">Zur Aufgabenübersicht</a>
         <a class="back-link" href="../../../../index.html">Startseite</a>
       </nav>
-
       <header class="module-header">
-        <div class="eyebrow"><span aria-hidden="true">◎</span> Mensa-Datenbanklabor</div>
-        <h1>Das Kreuzprodukt</h1>
-        <p>Entdecke an Menükombinationen, was mehrere Tabellen in einer SQL-Abfrage bewirken.</p>
+        <div class="eyebrow"><span aria-hidden="true">◎</span> Songs-Datenbanklabor</div>
+        <h1>Der Verbund</h1>
+        <p>Finde mit Primär- und Fremdschlüsseln heraus, welche Songs zu welcher Playlist gehören.</p>
       </header>
-
-      <section class="progress-card" aria-labelledby="menu-status-title">
+      <section class="progress-card" aria-labelledby="verbund-status-title">
         <div class="progress-copy">
-          <span id="menu-status-title">SQL-Übungsdaten</span>
-          <strong>Vorspeise · Hauptspeise · Nachspeise</strong>
+          <span id="verbund-status-title">SQL-Übungsdaten</span>
+          <strong>Song · Song_in_Playlist · Playlist</strong>
+          <span id="verbund-progress">Schritt 1 von 6</span>
         </div>
-        <p id="data-status" class="feedback hint" aria-live="polite" aria-busy="true">Die drei Mensa-Tabellen werden geladen …</p>
+        <p id="data-status" class="feedback hint" aria-live="polite" aria-busy="true">Die drei Song-Tabellen werden geladen …</p>
       </section>
-
-      <nav id="menu-tabs" class="step-tabs" aria-label="Lernschritte zum Kreuzprodukt" role="tablist"></nav>
-      <section id="menu-panel" class="step-panel" role="tabpanel" aria-live="off"></section>
-
+      <nav id="verbund-tabs" class="step-tabs" aria-label="Lernschritte zum Verbund" role="tablist"></nav>
+      <section id="verbund-panel" class="step-panel" role="tabpanel" aria-live="off"></section>
       <div class="summary-actions">
         <button id="reset-module" class="secondary-button" type="button">Modul neu beginnen</button>
         <a class="secondary-button" href="../index.html">Zur Aufgabenübersicht</a>

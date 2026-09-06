@@ -81,6 +81,60 @@ Inhalt:
   - zentrale Merksaetze,
   - kompakte und gut lesbare Darstellung.
 
+Didaktische und gestalterische Vorgaben:
+
+  - Bestehende `.tex`-Sicherungsblaetter aus demselben Fach- und Themenbereich
+    als direkte Vorlage verwenden. Aufbau, Farben, Typografie, Abstaende,
+    Kopf- und Fusszeile sowie wiederkehrende Boxen nicht ohne fachlichen Grund
+    neu gestalten.
+  - Ein Sicherungsblatt soll moeglichst auf eine A4-Seite passen. Inhalte
+    duerfen dafuer sinnvoll verdichtet, aber nicht fachlich verkuerzt oder so
+    stark zusammengedraengt werden, dass Lesbarkeit und Verstaendlichkeit
+    leiden. Eine weitere Seite ist nur bei fachlich notwendigem Inhalt besser
+    als eine ueberladene Ein-Seiten-Loesung.
+  - Ein Sicherungsblatt sichert ausschliesslich Lerninhalte, Beispiele und
+    Ergebnisse, die in der zugehoerigen Aufgabe bereits erarbeitet wurden. Es
+    fuehrt keine neuen Lerninhalte und keine neuen Uebungen ein.
+  - Nach dem PDF-Bau jede Seite als Bild rendern und visuell pruefen. Bei
+    mehreren zusammengehoerigen Sicherungsblaettern die gerenderten Seiten
+    zusaetzlich direkt miteinander vergleichen. Insbesondere auf abgeschnittene
+    Inhalte, Ueberlaeufe, zu kleine Schrift, uneinheitliche Abstaende und
+    abweichende Gestaltung achten.
+  - Nur die vorgesehene `.tex`-Quelle und das erzeugte PDF einchecken. Keine
+    LaTeX-Hilfsdateien wie `.aux`, `.fdb_latexmk`, `.fls`, `.log`, `.out`,
+    `.synctex.gz` oder temporaere Renderbilder einchecken.
+
+Aufteilung groesserer Sicherungsblatt-Auftraege:
+
+  - Mehrere zusammengehoerige Sicherungsblaetter nicht ohne gemeinsame
+    Konzeption nach Aufgabennummern auf unabhaengige Agenten verteilen. Sonst
+    drohen unterschiedliche didaktische Reduktionen, Formulierungen und
+    Gestaltungsentscheidungen.
+  - Zuerst die didaktische Konzeption aller Blaetter gemeinsam erstellen:
+    Lernkern, notwendige Beispiele, verbindliche Merksaetze, typische
+    Fehlvorstellungen, Reihenfolge und bewusst entfallende Inhalte. Diese
+    Aufgabe einem besonders leistungsfaehigen Modell fuer differenzierte
+    fachlich-didaktische Entscheidungen geben.
+  - Danach alle zusammengehoerigen `.tex`- und PDF-Dateien moeglichst durch
+    einen gemeinsamen Umsetzungsverantwortlichen erstellen lassen. Dadurch
+    bleiben Layout, Informationsdichte und visuelle Sprache konsistent.
+  - Eine getrennte, regelbasierte Vorpruefung darf ein kostenoptimiertes Modell
+    uebernehmen. Geeignet sind konkrete Kontrollen von Vorgaben, Daten,
+    Dateinamen, Links, Seitenzahl, Ueberlaeufen und visueller Konsistenz. Ein
+    solches Modell soll nicht allein ueber didaktische Auswahl, Reduktion oder
+    endgueltige Formulierungen entscheiden.
+  - Die abschliessende fachliche, didaktische, visuelle und technische Abnahme
+    wieder einem besonders leistungsfaehigen Modell uebertragen. Gefundene
+    Fehler direkt beheben und danach PDF-Bau, Renderpruefung und Integration
+    erneut kontrollieren.
+  - Gemeinsam genutzte Integrationsdateien, insbesondere Lehrercode- und
+    Dekodierdateien, nur durch einen festgelegten Integrationsverantwortlichen
+    bearbeiten lassen, damit parallele Aenderungen einander nicht
+    ueberschreiben.
+  - Teilprompts muessen Eingaben, erlaubte Dateien, erwartete Ergebnisse und
+    Abnahmekriterien eindeutig nennen. Analyse- oder Pruefauftraege duerfen
+    produktive Dateien nur aendern, wenn dies ausdruecklich vorgesehen ist.
+
 In der Schueleransicht nicht offensiv mit Musterloesungen werben. Der
 Downloadbutton bleibt zunaechst verborgen und erscheint erst nach korrekter
 Lehrercode-Eingabe in einem eingeklappten details-Bereich.

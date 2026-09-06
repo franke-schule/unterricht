@@ -15,8 +15,8 @@ assert.equal(compareRelations({ columns: ['b', 'a'], values: [['B', 'A']] }, { c
 assert.equal(isValidScriptServerUrl('https://script.google.com/macros/s/test/exec'), true);
 assert.equal(isValidScriptServerUrl('http://script.google.com/macros/s/test/exec'), false);
 assert.equal(isValidScriptServerUrl('https://example.test/exec'), false);
-assert.deepEqual(classifyDescriptionResult({ ok: true, status: 'korrekt', feedback: 'Passt.' }), { level: 'success', text: 'Passt.' });
-assert.deepEqual(classifyDescriptionResult({ ok: true, status: 'teilweise korrekt', feedback: 'Ergänze etwas.' }), { level: 'partial', text: 'Ergänze etwas.' });
-assert.deepEqual(classifyDescriptionResult({ ok: true, status: 'noch nicht korrekt', feedback: 'Prüfe die Bedingung.' }), { level: 'hint', text: 'Prüfe die Bedingung.' });
+assert.deepEqual(classifyDescriptionResult({ ok: true, points: 3, maxPoints: 3, status: 'korrekt', strengths: ['Tabelle erkannt.'], missing: [], feedback: 'Passt.' }), { level: 'high', points: 3, maxPoints: 3, status: 'korrekt', strengths: ['Tabelle erkannt.'], missing: [], text: 'Passt.' });
+assert.deepEqual(classifyDescriptionResult({ ok: true, points: 2, maxPoints: 3, status: 'teilweise korrekt', strengths: [], missing: ['Bedingung fehlt.'], feedback: 'Ergänze etwas.' }), { level: 'medium', points: 2, maxPoints: 3, status: 'teilweise korrekt', strengths: [], missing: ['Bedingung fehlt.'], text: 'Ergänze etwas.' });
+assert.deepEqual(classifyDescriptionResult({ ok: true, points: 0, maxPoints: 3, status: 'noch nicht korrekt', strengths: [], missing: [], feedback: 'Prüfe die Bedingung.' }), { level: 'low', points: 0, maxPoints: 3, status: 'noch nicht korrekt', strengths: [], missing: [], text: 'Prüfe die Bedingung.' });
 assert.deepEqual(classifyDescriptionResult({ ok: false, message: 'Netzwerkfehler.' }), { level: 'error', text: 'Netzwerkfehler.' });
 console.log('sql-lab-core tests passed');

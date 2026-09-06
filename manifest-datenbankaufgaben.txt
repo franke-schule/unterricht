@@ -1,0 +1,99 @@
+Manifest: Datenbankaufgaben
+===========================
+
+Ziel und Abhaengigkeit
+----------------------
+Dieses Manifest ergaenzt `AGENTS.md` und `manifest-allgemein.txt` fuer neue und
+ueberarbeitete Datenbankaufgaben. Die allgemeinen Regeln zu Navigation,
+Barrierearmut, Rueckmeldungen und Abschlusspruefung gelten zusaetzlich.
+
+
+1. Tabellenschemata
+-------------------
+
+  - Verwendete Tabellen vor beziehungsweise waehrend SQL-Aufgaben als
+    Tabellenschema darstellen.
+  - Die Syntax `Tabellenname (attribut: datentyp, ...)` verwenden.
+  - Reale, im Projekt vorgesehene SQL-Datentypen einsetzen, insbesondere `int`
+    und `varchar(255)` statt deutscher Ersatzbegriffe.
+  - Attribute und Datentypen muessen zum tatsaechlich verwendeten Schema passen;
+    keine Felder oder Typen erfinden.
+  - Ein Hinweis auf geladene Tabellen bleibt im normalen Dokumentfluss und ist
+    nicht sticky oder dauerhaft fixiert.
+  - Bei langen Modulen darf stattdessen das Tabellenschema innerhalb des
+    fachlich passenden Modulbereichs mit `position: sticky` sichtbar bleiben.
+    Es darf keine Aufgaben, Buttons oder Rueckmeldungen verdecken und muss auf
+    kleinen Bildschirmen kompakt, lesbar und bedienbar bleiben.
+
+
+2. SQL-Eingaben und SQL-Darstellung
+-----------------------------------
+
+  - Platzhalter duerfen `SELECT ...` und `FROM ...` zeigen, aber keine fuer die
+    Loesung erforderlichen Tabellen- oder Spaltennamen vorgeben.
+  - Platzhalter sind kein Eingabewert und muessen optisch als Strukturhilfe
+    erkennbar bleiben.
+  - In dargestellten Abfragen beginnt jede SQL-Klausel in einer eigenen Zeile:
+    `SELECT`, `FROM`, `WHERE`, `GROUP BY`, `HAVING`, `ORDER BY` und `LIMIT`.
+  - Fortgesetzte Bedingungen mit `AND` oder `OR` uebersichtlich einruecken oder
+    auf eigene Zeilen setzen.
+  - SQL semantisch als Code auszeichnen und mit der gemeinsamen
+    SQL-Codegestaltung formatieren.
+  - Vorhandene SQL-Auswertungs-, Validierungs- und Sicherheitslogik
+    wiederverwenden. Keine parallele SQL-Engine und keine zweite
+    Auswertungspipeline einfuehren.
+
+
+3. Ergebnisrelationen
+----------------------
+
+  - Spaltenueberschriften vollstaendig und ohne Zeilenumbruch darstellen.
+  - Ausreichende Mindestbreiten fuer Ueberschriften und typische Zellinhalte
+    verwenden; Spalten nicht auf die Seitenbreite zusammenquetschen.
+  - Breite und lange Tabellen in einem begrenzten, responsiven Ergebnisfenster
+    anzeigen. Vertikales und gegebenenfalls horizontales Scrollen findet nur
+    im Tabellenfenster statt, nicht auf der gesamten Seite.
+  - Kurze Relationen duerfen kleiner bleiben. Bei langen Relationen die
+    Kopfzeile nach Moeglichkeit innerhalb des Ergebnisfensters sticky halten.
+  - Das Ergebnisfenster muss mit Maus, Touchpad, Touch und Tastatur bedienbar
+    sein und einen sichtbaren Fokuszustand besitzen.
+  - Tabellen semantisch mit `table`, `caption`, `thead`, `tbody`, `th` und
+    geeigneten `scope`-Attributen auszeichnen.
+  - Leere Ergebnisse und SQL-Fehler mit einer verstaendlichen, nicht nur
+    farbbasierten Textmeldung ausgeben.
+  - Ergebniswerte sicher als Text in den DOM einsetzen; Daten oder
+    Serverantworten nicht ungeprueft als HTML ausgeben.
+
+
+4. Beschreibe-Aufgaben
+-----------------------
+
+  - Die bestehende Skript-Server-Pipeline und die vorhandenen
+    Bewertungsrubriken wiederverwenden. Keine neue API oder KI-Pipeline
+    einfuehren.
+  - Die Rueckmeldung direkt bei der Aufgabe in einem deutlich abgegrenzten
+    Rahmen anzeigen.
+  - Erreichte und maximal erreichbare Punktzahl sowie den Status als Text
+    nennen.
+  - Die bestehende Rot-/Gruen-Logik der Programmieraufgaben samt vorhandener
+    Stufe fuer teilweise richtige Antworten, CSS-Klassen, Typografie und Icons
+    uebernehmen. Keine zusaetzliche Farblogik erfinden.
+  - Lade-, Erfolgs-, Fehler- und Wiederholungszustaende klar unterscheiden.
+    Eine erneute Abgabe ersetzt alte Punkte, Farben und Texte vollstaendig.
+  - Serverrueckmeldungen sicher als Text ausgeben und beim ersten Fehlversuch
+    keine vollstaendige Musterloesung anzeigen.
+
+
+5. Wiederverwendung und Qualitaet
+---------------------------------
+
+  - Gemeinsame Komponenten fuer Schemaanzeige, SQL-Eingabe,
+    Ergebnisrelationen und Serverfeedback verwenden oder behutsam erweitern.
+  - Aenderungen an gemeinsamen Komponenten gegen alle betroffenen
+    Datenbankaufgaben testen.
+  - Darstellung und Bedienung auf Desktop, Tablet und Smartphone sowie mit der
+    Tastatur pruefen.
+  - Lange und breite sowie kurze und leere Ergebnisrelationen, SQL-Fehler und
+    alle vorhandenen Feedbackstufen pruefen.
+  - Vor Abschluss die vorhandenen Syntax-, Build-, Lint- und Testbefehle sowie
+    `git diff --check` ausfuehren.

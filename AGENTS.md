@@ -327,3 +327,6 @@ Fachmanifeste vollständig zu lesen. Für jede neu erstellte oder überarbeitete
 Physikaufgabe gilt verbindlich:
 
 - `manifest-physikaufgaben.txt`
+
+Bei jeder neuen oder überarbeiteten Datenbankaufgabe muss
+`manifest-datenbankaufgaben.txt` vollständig gelesen und beachtet werden.

@@ -118,6 +118,14 @@ export function classifyDescriptionResult(result) {
     return { level: 'error', text: result?.message || 'Die Rückmeldung konnte nicht erstellt werden.' };
   }
   const status = String(result.status || '').trim().toLocaleLowerCase('de');
-  const level = status === 'korrekt' ? 'success' : status === 'teilweise korrekt' ? 'partial' : 'hint';
-  return { level, text: result.feedback || 'Die Rückmeldung ist eingetroffen.' };
+  const level = status === 'korrekt' ? 'high' : status === 'teilweise korrekt' ? 'medium' : 'low';
+  return {
+    level,
+    points: Number(result.points) || 0,
+    maxPoints: Number(result.maxPoints) || 0,
+    status: result.status || 'noch nicht korrekt',
+    strengths: Array.isArray(result.strengths) ? result.strengths.map(String).slice(0, 4) : [],
+    missing: Array.isArray(result.missing) ? result.missing.map(String).slice(0, 4) : [],
+    text: result.feedback || 'Überprüfe deine Antwort noch einmal.'
+  };
 }

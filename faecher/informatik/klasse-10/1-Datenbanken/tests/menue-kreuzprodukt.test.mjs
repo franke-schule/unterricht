@@ -3,7 +3,7 @@ import { createRequire } from 'node:module';
 import { readFile } from 'node:fs/promises';
 import { dirname, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { MENU_TABLES, MENU_TABLE_NAMES, buildMenuCombinations, menuRelation } from '../menue-kreuzprodukt-daten.mjs';
+import { MENU_TABLES, MENU_TABLE_NAMES, MENU_TABLE_SCHEMAS, buildMenuCombinations, menuRelation } from '../menue-kreuzprodukt-daten.mjs';
 import { compareRelations, normalizeRelation, validateSelectStatement } from '../sql-lab-core.mjs';
 
 const combinations = buildMenuCombinations();
@@ -22,6 +22,11 @@ assert.deepEqual(MENU_TABLES, {
   Nachspeise: [{ Name: 'Gemischtes Eis', Preis: 2.50 }]
 }, 'Die Ausgangsrelationen entsprechen den verbindlichen Mensa-Daten.');
 assert.equal(combinations.length, 12, 'Das Kreuzprodukt enthält 12 Menükombinationen.');
+assert.deepEqual(MENU_TABLE_SCHEMAS.map(({ table, columns }) => [table, columns]), [
+  ['Vorspeise', [['Name', 'varchar(255)'], ['Preis', 'real']]],
+  ['Hauptspeise', [['Name', 'varchar(255)'], ['Preis', 'real']]],
+  ['Nachspeise', [['Name', 'varchar(255)'], ['Preis', 'real']]]
+]);
 assert.equal(new Set(menuRelation(combinations).values.map((row) => row.join('|'))).size, 12, 'Jede Menükombination ist eindeutig.');
 assert.deepEqual(Object.fromEntries(MENU_TABLES.Vorspeise.map(({ Name }) => [Name, combinations.filter((menu) => menu.Vorspeise.Name === Name).length])), { Lauchsuppe: 3, Salat: 3, Tagessuppe: 3, Rohkost: 3 });
 assert.deepEqual(Object.fromEntries(MENU_TABLES.Hauptspeise.map(({ Name }) => [Name, combinations.filter((menu) => menu.Hauptspeise.Name === Name).length])), { 'Käsespätzle': 4, Reispfanne: 4, Pizza: 4 });
