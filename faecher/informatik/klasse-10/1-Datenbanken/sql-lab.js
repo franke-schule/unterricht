@@ -1,6 +1,7 @@
 import { classifyDescriptionResult, compareRelations, explainSqlError, isValidScriptServerUrl, normalizeRelation, parseDelimited, validateSelectStatement } from './sql-lab-core.mjs?v=20260906b';
-import { MENU_TABLES, MENU_TABLE_NAMES, MENU_TABLE_SCHEMAS, buildMenuCombinations, menuRelation } from './menue-kreuzprodukt-daten.mjs?v=20260906b';
+import { MENU_TABLES, MENU_TABLE_NAMES, MENU_TABLE_SCHEMAS, buildMenuCombinations, menuRelation } from './menue-kreuzprodukt-daten.mjs?v=20260906c';
 import { SONG_PLAYLIST_PAIRS, SONG_VERBUND_COLUMN_GROUPS, SONG_VERBUND_COLUMNS, SONG_VERBUND_SQL, SONG_VERBUND_TABLE_NAMES, SONG_VERBUND_TABLE_SCHEMAS, SONG_VERBUND_TABLES, SONG_VERBUND_VISIBLE_TEXT, evaluateFirstConnection, evaluateSecondConnection } from './song-verbund-daten.mjs?v=20260906b';
+import { appendSolutionDownloadFromTemplate, focusTabPanelStart, renderTabFlowNavigation, syncTabSemantics } from './tab-navigation.mjs?v=20260906a';
 
 const STORAGE_KEY = 'inf10-sql-grundlagen-v1';
 const SCRIPT_SERVER_URL = 'https://script.google.com/macros/s/AKfycby8RWL6uYrKZyoJ6m2GRpWyRmXjwsdskyCiqzKpRhIK5-wrDl-9lWWk8CiAGaVMoy0x/exec';
@@ -15,6 +16,7 @@ const USERS_TABLE_SCHEMAS = Object.freeze([
   ]) })
 ]);
 const state = { tab: 'conditions', answers: {}, feedback: {}, results: {}, server: {} };
+const SQL_TABS = [['conditions', 'Bedingungen'], ['fastConditions', 'Für die Schnellen: Bedingungen'], ['aggregates', 'Aggregatfunktionen'], ['fastAggregates', 'Für die Schnellen: Aggregatfunktionen']];
 
 function unlockSolution(event, expectedCode, downloadLinkId, messageId) {
   event.preventDefault();
@@ -48,13 +50,13 @@ const tasks = {
     sql('b2-6', '6', 'Liste alle Frauen aus Leipzig auf.', "SELECT *\nFROM users\nWHERE gender = 'female'\n  AND city = 'Leipzig'", { hints: ['Du brauchst zwei Bedingungen.', 'Verbinde beide Bedingungen mit AND.', 'Vergleiche gender mit female und city mit Leipzig.'] }),
     sql('b2-7', '7', 'Gib die Namen aller Männer über 165 cm und aller Frauen über 160 cm aus.', "SELECT name\nFROM users\nWHERE (gender = 'male' AND centimeters > 165)\n   OR (gender = 'female' AND centimeters > 160)", { hints: ['Es gibt zwei Personengruppen.', 'Verbinde die Gruppen mit OR.', 'Setze die zusammengehörigen Bedingungen jeweils in Klammern.'] }),
     sql('b2-8', '8', 'Finde die Mitglieder, deren Vorname mit B beginnt.', "SELECT *\nFROM users\nWHERE name LIKE 'B%'", { hints: ['Suche nach einem Muster statt nach einem exakten Namen.', 'LIKE vergleicht mit einem Muster.', 'B% bedeutet: beginnt mit B; % steht für beliebig viele weitere Zeichen.'] }),
-    sql('b2-9', '9', 'Ermittle, wie viele Mitglieder in München wohnen.', "SELECT COUNT(*) AS Anzahl\nFROM users\nWHERE city = 'München'", { hints: ['Wähle zunächst die Mitglieder aus München aus.', 'Zähle die Zeilen der Ergebnisrelation.', 'COUNT(*) fasst die Anzahl der passenden Zeilen zusammen.'] })
+    sql('b2-9', '9', 'Ermittle, wie viele Mitglieder in München wohnen.', "SELECT COUNT(*) AS anzahl\nFROM users\nWHERE city = 'München'", { hints: ['Wähle zunächst die Mitglieder aus München aus.', 'Zähle die Zeilen der Ergebnisrelation.', 'COUNT(*) fasst die Anzahl der passenden Zeilen zusammen.'] })
   ],
   fastConditions: [
     sql('b2-10', '10', 'Prüfe, ob Mitglieder der Jahrgänge 2005 bis 2010 heute Geburtstag haben.', () => `SELECT *\nFROM users\nWHERE birthday LIKE '%-${todayMonthDay()}'\n  AND birthday BETWEEN '2005-01-01' AND '2010-12-31'`, { birthdayProbe: true, hints: ['Das Datum steht in users im Format YYYY-MM-DD. Vergleiche deshalb nur Monat und Tag.', 'LIKE und % helfen dir, das wechselnde Geburtsjahr vor dem heutigen Monat und Tag zu berücksichtigen.', 'Grenze zusätzlich auf die Jahrgänge 2005 bis 2010 ein.'] }),
     sql('b2-11', '11', 'Finde die Mitglieder, die im März Geburtstag haben.', "SELECT name\nFROM users\nWHERE birthday LIKE '%-03-%'"),
     sql('b2-12', '12', 'Finde alle Berliner, die Marc heißen.', "SELECT *\nFROM users\nWHERE name LIKE 'Marc%'\n  AND city = 'Berlin'"),
-    sql('b2-13', '13', 'Ermittle, wie viele Mitglieder Lina oder Lisa heißen.', "SELECT COUNT(*) AS Anzahl\nFROM users\nWHERE name LIKE 'Lina%'\n   OR name LIKE 'Lisa%'"),
+    sql('b2-13', '13', 'Ermittle, wie viele Mitglieder Lina oder Lisa heißen.', "SELECT COUNT(*) AS anzahl\nFROM users\nWHERE name LIKE 'Lina%'\n   OR name LIKE 'Lisa%'"),
     sql('b2-14', '14', 'Sortiere alle Männer nach ihrer Körpergröße, die 2008 oder später geboren wurden.', "SELECT *\nFROM users\nWHERE gender = 'male'\n  AND birthday >= '2008-01-01'\nORDER BY centimeters", { compare: { rowOrder: true } }),
     sql('b2-15', '15', 'Gib Geburtsdatum und Benutzernamen aller Frauen aus, die kleiner als 1,60 m sind.', "SELECT birthday, username\nFROM users\nWHERE gender = 'female'\n  AND centimeters < 160", { compare: { columnOrder: false } }),
     sql('b2-16', '16', 'Liste alle Mitglieder auf, die Felix heißen und nicht aus Berlin kommen.', "SELECT *\nFROM users\nWHERE name LIKE 'Felix%'\n  AND city != 'Berlin'"),
@@ -62,8 +64,8 @@ const tasks = {
   ],
   aggregates: [
     info(),
-    describe('b3-1', '1', 'Beschreibe diese Anweisung in eigenen Worten.', 'SELECT MIN(centimeters) AS kleinste_Groesse\nFROM users;', 'sql-b3-1', { info: ['AS benennt die Spalte in der Ergebnisrelation um.', 'Hier heißt die ausgegebene Spalte kleinste_Groesse.'] }),
-    sql('b3-2', '2', 'Ermittle das Geburtsdatum des jüngsten Mitglieds. Benenne die Spalte juengstes_Geburtsdatum.', 'SELECT MAX(birthday) AS juengstes_Geburtsdatum\nFROM users', { compare: { columnLabels: true } }),
+    describe('b3-1', '1', 'Beschreibe diese Anweisung in eigenen Worten.', 'SELECT MIN(centimeters) AS kleinste_groesse\nFROM users;', 'sql-b3-1', { info: ['AS benennt die Spalte in der Ergebnisrelation um.', 'Hier heißt die ausgegebene Spalte kleinste_groesse.'] }),
+    sql('b3-2', '2', 'Ermittle das Geburtsdatum des jüngsten Mitglieds. Benenne die Spalte juengstes_geburtsdatum.', 'SELECT MAX(birthday) AS juengstes_geburtsdatum\nFROM users', { compare: { columnLabels: true } }),
     selfCheck('b3-3', '3', 'Beschreibe diese Anweisung in eigenen Worten.', 'SELECT *\nFROM users\nORDER BY created_at DESC\nLIMIT 1;', ['ORDER BY created_at DESC sortiert die Registrierung von neu nach alt.', 'LIMIT 1 lässt nur den ersten Datensatz der sortierten Ergebnisrelation übrig.'], { info: ['LIMIT begrenzt die Anzahl der ausgegebenen Zeilen.', 'LIMIT 1 bedeutet: Zeige nach der Sortierung nur den ersten Datensatz.'] })
   ],
   fastAggregates: [
@@ -91,7 +93,7 @@ class SqlWorker {
     if (options.mode === 'menu-cross-product') {
       const statements = MENU_TABLE_NAMES.flatMap((tableName) => {
         const rows = MENU_TABLES[tableName]; const headers = Object.keys(rows[0]);
-        const schema = headers.map((name) => `${quoteIdentifier(name)} ${name === 'Preis' ? 'real' : 'varchar(255)'}`).join(', ');
+        const schema = headers.map((name) => `${quoteIdentifier(name)} ${name === 'preis' ? 'real' : 'varchar(255)'}`).join(', ');
         return [`CREATE TABLE ${quoteIdentifier(tableName)} (${schema})`, ...rows.map((row) => `INSERT INTO ${quoteIdentifier(tableName)} (${headers.map(quoteIdentifier).join(', ')}) VALUES (${headers.map((header) => sqlValue(row[header], header)).join(', ')})`)];
       });
       await this.send({ action: 'exec', sql: statements.join(';') });
@@ -133,7 +135,7 @@ class SqlWorker {
   close() { if (this.worker) { this.send({ action: 'close' }).catch(() => {}); this.worker.terminate(); } }
 }
 function quoteIdentifier(name) { return `"${String(name).replaceAll('"', '""')}"`; }
-function sqlValue(value, header) { if (value === 'NULL' || value === undefined || value === null) return 'NULL'; if (['id', 'centimeters', 'is_active', 'Preis', 'song_id', 'playlist_id'].includes(header) && /^-?\d+(?:\.\d+)?$/.test(value)) return value; return `'${String(value).replaceAll("'", "''")}'`; }
+function sqlValue(value, header) { if (value === 'NULL' || value === undefined || value === null) return 'NULL'; if (['id', 'centimeters', 'is_active', 'preis', 'song_id', 'playlist_id'].includes(header) && /^-?\d+(?:\.\d+)?$/.test(value)) return value; return `'${String(value).replaceAll("'", "''")}'`; }
 
 let database;
 let databaseReady = false;
@@ -141,15 +143,19 @@ function save() { localStorage.setItem(STORAGE_KEY, JSON.stringify(state)); }
 function restore() { try { Object.assign(state, JSON.parse(localStorage.getItem(STORAGE_KEY) || '{}')); } catch { /* Speicherstand ist optional. */ } }
 function element(tag, className, text) { const node = document.createElement(tag); if (className) node.className = className; if (text !== undefined) node.textContent = text; return node; }
 
-function render() {
+function activateSqlTab(id, { focusContent = false } = {}) { state.tab = id; save(); render({ focusContent }); }
+function render({ focusContent = false } = {}) {
   const tabs = document.getElementById('sql-tabs'); tabs.replaceChildren();
-  const labels = [['conditions', 'Bedingungen'], ['fastConditions', 'Für die Schnellen: Bedingungen'], ['aggregates', 'Aggregatfunktionen'], ['fastAggregates', 'Für die Schnellen: Aggregatfunktionen']];
-  labels.forEach(([id, label], index) => { const button = element('button', 'step-tab', label); button.type = 'button'; button.id = `tab-${id}`; button.role = 'tab'; button.ariaSelected = String(state.tab === id); button.tabIndex = state.tab === id ? 0 : -1; button.setAttribute('aria-controls', 'sql-panel'); button.addEventListener('click', () => { state.tab = id; save(); render(); }); button.addEventListener('keydown', (event) => moveTabFocus(event, labels, index)); tabs.append(button); });
+  SQL_TABS.forEach(([id, label], index) => { const button = element('button', 'step-tab', label); button.type = 'button'; button.id = `tab-${id}`; button.dataset.tab = id; button.role = 'tab'; button.ariaSelected = String(state.tab === id); button.tabIndex = state.tab === id ? 0 : -1; button.setAttribute('aria-controls', 'sql-panel'); button.addEventListener('click', () => activateSqlTab(id)); button.addEventListener('keydown', (event) => moveTabFocus(event, SQL_TABS, index)); tabs.append(button); });
   const panel = document.getElementById('sql-panel'); panel.replaceChildren();
   panel.setAttribute('aria-labelledby', `tab-${state.tab}`);
   panel.append(schemaCard(USERS_TABLE_SCHEMAS));
-  const heading = element('div', 'step-heading'); heading.append(element('span', 'step-number', '5')); const title = element('div'); title.append(element('p', 'step-kicker', state.tab.startsWith('fast') ? 'Vertiefen' : 'Wiederholen'), element('h2', '', labels.find(([id]) => id === state.tab)[1])); heading.append(title); panel.append(heading);
+  const heading = element('div', 'step-heading'); heading.append(element('span', 'step-number', '5')); const title = element('div'); title.append(element('p', 'step-kicker', state.tab.startsWith('fast') ? 'Vertiefen' : 'Wiederholen'), element('h2', '', SQL_TABS.find(([id]) => id === state.tab)[1])); heading.append(title); panel.append(heading);
   tasks[state.tab].forEach((task) => panel.append(renderTask(task)));
+  if (state.tab === 'fastAggregates') appendSolutionDownloadFromTemplate(panel);
+  renderTabFlowNavigation(panel, { items: SQL_TABS.map(([id, label]) => ({ id, label })), currentId: state.tab, onNavigate: activateSqlTab });
+  syncTabSemantics(tabs, state.tab);
+  if (focusContent) focusTabPanelStart(panel);
 }
 
 function moveTabFocus(event, labels, index) {
@@ -181,8 +187,8 @@ function renderTask(task) {
 }
 function aggregateInfo() {
   const card = element('section', 'scenario-card aggregate-intro'); card.append(element('h3', '', 'Kurz erklärt: Aggregatfunktionen'));
-  card.append(element('p', '', 'Eine Aggregatfunktion verarbeitet mehrere Werte und gibt einen zusammengefassten Wert zurück.')); const code = element('pre', 'given-sql'); code.textContent = 'SELECT COUNT(*) AS Anzahl\nFROM users'; card.append(code);
-  const list = element('dl', 'aggregate-list'); [['COUNT(Attribut) / COUNT(*)', 'Anzahl der Datensätze'], ['MIN(Attribut)', 'kleinster Wert'], ['MAX(Attribut)', 'größter Wert'], ['AVG(Attribut)', 'arithmetischer Mittelwert'], ['SUM(Attribut)', 'Summe'], ['AS', 'benennt eine Ergebnisspalte um']].forEach(([term, meaning]) => { list.append(element('dt', '', term), element('dd', '', meaning)); }); card.append(list); return card;
+  card.append(element('p', '', 'Eine Aggregatfunktion verarbeitet mehrere Werte und gibt einen zusammengefassten Wert zurück.')); const code = element('pre', 'given-sql'); code.textContent = 'SELECT COUNT(*) AS anzahl\nFROM users'; card.append(code);
+  const list = element('dl', 'aggregate-list'); [['COUNT(attribut) / COUNT(*)', 'Anzahl der Datensätze'], ['MIN(attribut)', 'kleinster Wert'], ['MAX(attribut)', 'größter Wert'], ['AVG(attribut)', 'arithmetischer Mittelwert'], ['SUM(attribut)', 'Summe'], ['AS', 'benennt eine Ergebnisspalte um']].forEach(([term, meaning]) => { list.append(element('dt', '', term), element('dd', '', meaning)); }); card.append(list); return card;
 }
 function renderSqlTask(card, task) {
   const label = element('label', 'sql-label', 'Deine vollständige SQL-Anweisung'); label.htmlFor = `input-${task.id}`; const input = document.createElement('textarea'); input.id = label.htmlFor; input.className = 'sql-input'; input.spellcheck = false; input.placeholder = NEUTRAL_SQL_PLACEHOLDER; input.value = state.answers[task.id] || ''; input.addEventListener('input', () => { state.answers[task.id] = input.value; delete state.feedback[task.id]; delete state.results[task.id]; save(); renderTaskFeedback(task, card); }); input.addEventListener('keydown', (event) => { if ((event.ctrlKey || event.metaKey) && event.key === 'Enter') { event.preventDefault(); runTask(task, card); } }); card.append(label, input);
@@ -249,15 +255,20 @@ const formatEuro = (value, index) => index % 2 === 1 && typeof value === 'number
 function saveMenuState() { localStorage.setItem(MENU_STORAGE_KEY, JSON.stringify(menuState)); }
 function restoreMenuState() { try { Object.assign(menuState, JSON.parse(localStorage.getItem(MENU_STORAGE_KEY) || '{}')); } catch { /* Speicherstand ist optional. */ } }
 function menuFeedback(id, level, text) { menuState.feedback[id] = { level, text }; saveMenuState(); }
-function renderMenuModule() {
+function activateMenuTab(id, { focusContent = false } = {}) { menuState.tab = id; saveMenuState(); renderMenuModule({ focusContent }); }
+function renderMenuModule({ focusContent = false } = {}) {
   const tabs = document.getElementById('menu-tabs'); tabs.replaceChildren();
-  MENU_TABS.forEach(([id, label], index) => { const button = element('button', 'step-tab', label); button.type = 'button'; button.id = `tab-${id}`; button.role = 'tab'; button.ariaSelected = String(menuState.tab === id); button.tabIndex = menuState.tab === id ? 0 : -1; button.setAttribute('aria-controls', 'menu-panel'); button.addEventListener('click', () => { menuState.tab = id; saveMenuState(); renderMenuModule(); }); button.addEventListener('keydown', (event) => moveTabFocus(event, MENU_TABS, index)); tabs.append(button); });
+  MENU_TABS.forEach(([id, label], index) => { const button = element('button', 'step-tab', label); button.type = 'button'; button.id = `tab-${id}`; button.dataset.tab = id; button.role = 'tab'; button.ariaSelected = String(menuState.tab === id); button.tabIndex = menuState.tab === id ? 0 : -1; button.setAttribute('aria-controls', 'menu-panel'); button.addEventListener('click', () => activateMenuTab(id)); button.addEventListener('keydown', (event) => moveTabFocus(event, MENU_TABS, index)); tabs.append(button); });
   const panel = document.getElementById('menu-panel'); panel.replaceChildren(); panel.setAttribute('aria-labelledby', `tab-${menuState.tab}`);
   panel.append(schemaCard(MENU_TABLE_SCHEMAS));
   if (menuState.tab === 'menus') renderMenuDiscovery(panel);
   if (menuState.tab === 'sql') renderMenuSql(panel);
   if (menuState.tab === 'filter') renderMenuFilter(panel);
   if (menuState.tab === 'summary') renderMenuSummary(panel);
+  if (menuState.tab === 'summary') appendSolutionDownloadFromTemplate(panel);
+  renderTabFlowNavigation(panel, { items: MENU_TABS.map(([id, label]) => ({ id, label })), currentId: menuState.tab, onNavigate: activateMenuTab });
+  syncTabSemantics(tabs, menuState.tab);
+  if (focusContent) focusTabPanelStart(panel);
 }
 function menuHeading(number, kicker, title) { const heading = element('div', 'step-heading'); heading.append(element('span', 'step-number', String(number))); const copy = element('div'); copy.append(element('p', 'step-kicker', kicker), element('h2', '', title)); heading.append(copy); return heading; }
 function renderMenuDiscovery(panel) {
@@ -266,7 +277,7 @@ function renderMenuDiscovery(panel) {
   const task = element('section', 'task-card sql-task'); task.append(element('h3', '', 'Vorhersage'), element('p', '', 'Wie viele verschiedene vollständige Menüs sind möglich?')); const label = element('label', 'sql-label', 'Anzahl der Menüs'); label.htmlFor = 'menu-prediction'; const input = document.createElement('input'); input.id = label.htmlFor; input.className = 'menu-number-input'; input.type = 'number'; input.min = '0'; input.inputMode = 'numeric'; input.value = menuState.prediction; input.addEventListener('input', () => { menuState.prediction = input.value; delete menuState.feedback.prediction; saveMenuState(); renderMenuFeedback(task, 'prediction'); }); const button = element('button', 'primary-button', 'Anzahl prüfen'); button.type = 'button'; button.addEventListener('click', () => { if (Number(menuState.prediction) === 12) menuFeedback('prediction', 'success', 'Korrekt: 4 Vorspeisen · 3 Hauptspeisen · 1 Nachspeise ergeben 12 Menüs.'); else menuFeedback('prediction', 'hint', 'Noch nicht korrekt. Kombiniere systematisch: Multipliziere die Anzahl der möglichen Vorspeisen, Hauptspeisen und Nachspeisen.'); renderMenuFeedback(task, 'prediction'); }); task.append(label, input, button); renderMenuFeedback(task, 'prediction'); panel.append(task);
   const generate = element('section', 'task-card'); generate.append(element('h3', '', 'Alle Kombinationen sichtbar machen'), element('p', '', 'Erzeuge die Ergebnisrelation. Jede Zeile enthält genau eine Auswahl aus jeder der drei Tabellen.')); const action = element('button', 'primary-button', menuState.menusVisible ? 'Ergebnisrelation anzeigen' : 'Alle Menüs erzeugen'); action.type = 'button'; action.addEventListener('click', () => { menuState.menusVisible = true; saveMenuState(); renderMenuModule(); }); generate.append(action); if (menuState.menusVisible) generate.append(renderMenuResult(menuRelation(buildMenuCombinations()), 'Ergebnisrelation: alle Menüs')); panel.append(generate);
 }
-function renderMenuSourceTables() { const wrapper = element('div', 'menu-source-tables'); MENU_TABLE_NAMES.forEach((tableName) => { const relation = MENU_TABLES[tableName]; const section = element('section', 'table-shell menu-source-table'); const table = document.createElement('table'); const caption = element('caption', '', tableName); table.append(caption); const head = document.createElement('thead'); const tr = document.createElement('tr'); ['Name', 'Preis'].forEach((name) => { const th = element('th', '', name); th.scope = 'col'; tr.append(th); }); head.append(tr); const body = document.createElement('tbody'); relation.forEach((row) => { const line = document.createElement('tr'); line.append(element('td', '', row.Name), element('td', '', `${row.Preis.toLocaleString('de-DE', { minimumFractionDigits: 2, maximumFractionDigits: 2 })} €`)); body.append(line); }); table.append(head, body); section.append(table); wrapper.append(section); }); return wrapper; }
+function renderMenuSourceTables() { const wrapper = element('div', 'menu-source-tables'); MENU_TABLE_NAMES.forEach((tableName) => { const relation = MENU_TABLES[tableName]; const section = element('section', 'table-shell menu-source-table'); const table = document.createElement('table'); const caption = element('caption', '', tableName); table.append(caption); const head = document.createElement('thead'); const tr = document.createElement('tr'); ['name', 'preis'].forEach((name) => { const th = element('th', '', name); th.scope = 'col'; tr.append(th); }); head.append(tr); const body = document.createElement('tbody'); relation.forEach((row) => { const line = document.createElement('tr'); line.append(element('td', '', row.name), element('td', '', `${row.preis.toLocaleString('de-DE', { minimumFractionDigits: 2, maximumFractionDigits: 2 })} €`)); body.append(line); }); table.append(head, body); section.append(table); wrapper.append(section); }); return wrapper; }
 function renderMenuResult(relation, title) { const shell = renderRelation(relation, { title, caption: title, columns: menuRelation().columns, columnGroups: MENU_TABLE_SCHEMAS.map(({ table, columns }) => ({ table, columns: columns.map(([name]) => name) })), formatValue: formatEuro }); shell.classList.add('menu-result'); return shell; }
 function renderMenuSql(panel) {
   panel.append(menuHeading(2, 'Verstehen und anwenden', 'Das Kreuzprodukt mit SQL'));
@@ -281,10 +292,10 @@ function explainMenuSqlError(error) { const message = String(error?.message || e
 function renderMenuFeedback(card, id) { card.querySelectorAll('.menu-feedback, .menu-sql-result').forEach((node) => node.remove()); const feedback = menuState.feedback[id]; if (feedback) { const box = element('p', `feedback ${feedback.level} menu-feedback`, feedback.text); box.setAttribute('aria-live', 'polite'); card.append(box); } if (menuState.results[id]) { const result = renderMenuResult(menuState.results[id], 'Ergebnisrelation deiner Anfrage'); result.classList.add('menu-sql-result'); card.append(result); } }
 async function renderMenuFilter(panel) {
   panel.append(menuHeading(3, 'Anwenden', 'Mit einer Bedingung einschränken'));
-  const example = element('section', 'scenario-card accent'); example.append(element('h3', '', 'Nur Menüs mit Salat'), element('p', '', 'Zuerst entsteht das Kreuzprodukt. Die WHERE-Bedingung wählt danach nur die Zeilen mit Salat aus.'), codeBlock("SELECT *\nFROM Vorspeise, Hauptspeise, Nachspeise\nWHERE Vorspeise.Name = 'Salat';")); const sampleSlot = element('div', 'sample-menu-result'); sampleSlot.setAttribute('aria-live', 'polite'); example.append(sampleSlot); panel.append(example);
-  const task = element('section', 'task-card sql-task'); task.append(element('h3', '', 'Deine Anfrage'), element('p', '', 'Erstelle eine SQL-Abfrage, die nur Menüs mit Pizza als Hauptspeise ausgibt.')); renderMenuSqlInput(task, 'pizza', "SELECT *\nFROM Vorspeise, Hauptspeise, Nachspeise\nWHERE Hauptspeise.Name = 'Pizza'", { success: 'Korrekt: Es gibt vier Menüs mit Pizza.', hints: ['Ergänze die vollständige Abfrage um eine WHERE-Bedingung.', 'Da mehrere Tabellen ein Attribut Name besitzen, gib auch die Tabelle an: Hauptspeise.Name.', "Ergänze zum Gerüst WHERE Hauptspeise.Name = '…' den passenden Textwert."] }); panel.append(task);
-  const outlook = element('section', 'short-summary'); outlook.append(element('h2', '', 'Vom Filtern zum Verbinden'), element('p', '', "WHERE Vorspeise.Name = 'Salat' oder WHERE Hauptspeise.Name = 'Pizza' filtert Zeilen nach einem Wert. Bei einem Verbund mit Bedingung werden passende Attribute zweier Tabellen verglichen, zum Beispiel photos.user_id = users.id. Dadurch bleiben nur passende Kombinationen übrig.")); panel.append(outlook);
-  if (databaseReady) { try { sampleSlot.append(renderMenuResult(await database.exec("SELECT * FROM Vorspeise, Hauptspeise, Nachspeise WHERE Vorspeise.Name = 'Salat'"), 'Ergebnisrelation: Salat-Menüs')); } catch { sampleSlot.append(element('p', 'feedback error', 'Die Beispielanfrage konnte nicht ausgeführt werden.')); } } else sampleSlot.append(element('p', 'feedback hint', 'Die Beispielrelation wird geladen …'));
+  const example = element('section', 'scenario-card accent'); example.append(element('h3', '', 'Nur Menüs mit Salat'), element('p', '', 'Zuerst entsteht das Kreuzprodukt. Die WHERE-Bedingung wählt danach nur die Zeilen mit Salat aus.'), codeBlock("SELECT *\nFROM Vorspeise, Hauptspeise, Nachspeise\nWHERE Vorspeise.name = 'Salat';")); const sampleSlot = element('div', 'sample-menu-result'); sampleSlot.setAttribute('aria-live', 'polite'); example.append(sampleSlot); panel.append(example);
+  const task = element('section', 'task-card sql-task'); const prompt = element('p'); prompt.append('Erstelle eine SQL-Abfrage, die ', element('strong', '', 'nur Menüs mit Pizza als Hauptspeise'), ' ausgibt.'); task.append(element('h3', '', 'Deine Anfrage'), prompt); renderMenuSqlInput(task, 'pizza', "SELECT *\nFROM Vorspeise, Hauptspeise, Nachspeise\nWHERE Hauptspeise.name = 'Pizza'", { success: 'Korrekt: Es gibt vier Menüs mit Pizza.', hints: ['Ergänze die vollständige Abfrage um eine WHERE-Bedingung.', 'Da mehrere Tabellen ein Attribut name besitzen, gib auch die Tabelle an: Hauptspeise.name.', "Ergänze zum Gerüst WHERE Hauptspeise.name = '…' den passenden Textwert."] }); panel.append(task);
+  const outlook = element('section', 'short-summary'); outlook.append(element('h2', '', 'Vom Filtern zum Verbinden'), element('p', '', "WHERE Vorspeise.name = 'Salat' oder WHERE Hauptspeise.name = 'Pizza' filtert Zeilen nach einem Wert. Bei einem Verbund mit Bedingung werden passende Attribute zweier Tabellen verglichen, zum Beispiel photos.user_id = users.id. Dadurch bleiben nur passende Kombinationen übrig.")); panel.append(outlook);
+  if (databaseReady) { try { sampleSlot.append(renderMenuResult(await database.exec("SELECT * FROM Vorspeise, Hauptspeise, Nachspeise WHERE Vorspeise.name = 'Salat'"), 'Ergebnisrelation: Salat-Menüs')); } catch { sampleSlot.append(element('p', 'feedback error', 'Die Beispielanfrage konnte nicht ausgeführt werden.')); } } else sampleSlot.append(element('p', 'feedback hint', 'Die Beispielrelation wird geladen …'));
 }
 function renderMenuSummary(panel) {
   panel.append(menuHeading(4, 'Sichern und übertragen', 'Zusammenfassung'));
@@ -305,19 +316,22 @@ function verbundDone(id) { return Boolean(verbundState.completed[id]); }
 function crossDone() { return verbundState.prediction === '32' && verbundState.crossExecuted && verbundState.crossClass.good === 'passend' && verbundState.crossClass.song === 'unpassend' && verbundState.crossClass.playlist === 'unpassend'; }
 function availableVerbundTab(id) { if (id === 'source') return true; if (id === 'cross') return verbundDone('source'); if (id === 'first') return crossDone(); if (id === 'second') return verbundDone('first'); if (id === 'sql') return verbundDone('second'); if (id === 'check') return verbundDone('sql'); return false; }
 function completeVerbund(id) { verbundState.completed[id] = true; saveVerbundState(); }
-function renderVerbundModule() {
+function activateVerbundTab(id, { focusContent = false } = {}) { const allowed = id === 'summary' ? verbundState.summaryUnlocked : availableVerbundTab(id); if (!allowed) return; verbundState.tab = id; saveVerbundState(); renderVerbundModule({ focusContent }); }
+function renderVerbundModule({ focusContent = false } = {}) {
   if (!availableVerbundTab(verbundState.tab) && verbundState.tab !== 'summary') verbundState.tab = 'source';
   if (verbundState.tab === 'summary' && !verbundState.summaryUnlocked) verbundState.tab = 'source';
   const labels = verbundState.summaryUnlocked ? [...VERBUND_TABS, ['summary', 'Übersicht']] : VERBUND_TABS;
   const progress = document.getElementById('verbund-progress'); if (progress) progress.textContent = verbundState.tab === 'summary' ? 'Übersicht freigeschaltet' : `Schritt ${Math.max(1, VERBUND_TABS.findIndex(([id]) => id === verbundState.tab) + 1)} von 6`;
   const tabs = document.getElementById('verbund-tabs'); tabs.replaceChildren();
-  labels.forEach(([id, label], index) => { const button = element('button', 'step-tab', label); button.type = 'button'; button.id = `tab-${id}`; button.role = 'tab'; button.ariaSelected = String(verbundState.tab === id); button.tabIndex = verbundState.tab === id ? 0 : -1; const allowed = id === 'summary' ? verbundState.summaryUnlocked : availableVerbundTab(id); button.disabled = !allowed; if (verbundDone(id)) button.classList.add('is-complete'); button.setAttribute('aria-controls', 'verbund-panel'); button.addEventListener('click', () => { if (!allowed) return; verbundState.tab = id; saveVerbundState(); renderVerbundModule(); }); button.addEventListener('keydown', (event) => moveTabFocus(event, labels.filter(([tab]) => tab === 'summary' || availableVerbundTab(tab)), Math.max(0, labels.filter(([tab]) => tab === 'summary' || availableVerbundTab(tab)).findIndex(([tab]) => tab === id)))); tabs.append(button); });
+  labels.forEach(([id, label], index) => { const button = element('button', 'step-tab', label); button.type = 'button'; button.id = `tab-${id}`; button.dataset.tab = id; button.role = 'tab'; button.ariaSelected = String(verbundState.tab === id); button.tabIndex = verbundState.tab === id ? 0 : -1; const allowed = id === 'summary' ? verbundState.summaryUnlocked : availableVerbundTab(id); button.disabled = !allowed; if (verbundDone(id)) button.classList.add('is-complete'); button.setAttribute('aria-controls', 'verbund-panel'); button.addEventListener('click', () => activateVerbundTab(id)); button.addEventListener('keydown', (event) => moveTabFocus(event, labels.filter(([tab]) => tab === 'summary' || availableVerbundTab(tab)), Math.max(0, labels.filter(([tab]) => tab === 'summary' || availableVerbundTab(tab)).findIndex(([tab]) => tab === id)))); tabs.append(button); });
   const panel = document.getElementById('verbund-panel'); panel.replaceChildren(); panel.setAttribute('aria-labelledby', `tab-${verbundState.tab}`);
   panel.append(schemaCard(SONG_VERBUND_TABLE_SCHEMAS));
-  if (verbundState.tab === 'source') renderVerbundSource(panel); if (verbundState.tab === 'cross') renderVerbundCross(panel); if (verbundState.tab === 'first') renderVerbundFirst(panel); if (verbundState.tab === 'second') renderVerbundSecond(panel); if (verbundState.tab === 'sql') renderVerbundSql(panel); if (verbundState.tab === 'check') renderVerbundCheck(panel); if (verbundState.tab === 'summary') renderVerbundSummary(panel); appendVerbundNavigation(panel, labels);
+  if (verbundState.tab === 'source') renderVerbundSource(panel); if (verbundState.tab === 'cross') renderVerbundCross(panel); if (verbundState.tab === 'first') renderVerbundFirst(panel); if (verbundState.tab === 'second') renderVerbundSecond(panel); if (verbundState.tab === 'sql') renderVerbundSql(panel); if (verbundState.tab === 'check') renderVerbundCheck(panel); if (verbundState.tab === 'summary') renderVerbundSummary(panel);
+  renderTabFlowNavigation(panel, { items: labels.map(([id, label]) => ({ id, label })), currentId: verbundState.tab, onNavigate: activateVerbundTab, isEnabled: (id) => id === 'summary' ? verbundState.summaryUnlocked : availableVerbundTab(id) });
+  syncTabSemantics(tabs, verbundState.tab);
+  if (focusContent) focusTabPanelStart(panel);
 }
 function verbundHeading(number, kicker, title) { const heading = element('div', 'step-heading'); heading.append(element('span', 'step-number', String(number))); const copy = element('div'); copy.append(element('p', 'step-kicker', kicker), element('h2', '', title)); heading.append(copy); return heading; }
-function appendVerbundNavigation(panel, labels) { const index = labels.findIndex(([id]) => id === verbundState.tab); const navigation = element('nav', 'action-row verbund-navigation'); navigation.setAttribute('aria-label', 'Lernschritte wechseln'); if (index > 0) { const previous = element('button', 'secondary-button', `Zurück: ${labels[index - 1][1]}`); previous.type = 'button'; previous.addEventListener('click', () => { verbundState.tab = labels[index - 1][0]; saveVerbundState(); renderVerbundModule(); }); navigation.append(previous); } if (index < labels.length - 1) { const [nextId, nextLabel] = labels[index + 1]; const next = element('button', 'primary-button', `Weiter: ${nextLabel}`); next.type = 'button'; next.disabled = nextId === 'summary' ? !verbundState.summaryUnlocked : !availableVerbundTab(nextId); next.addEventListener('click', () => { if (next.disabled) return; verbundState.tab = nextId; saveVerbundState(); renderVerbundModule(); }); navigation.append(next); } if (navigation.childElementCount) panel.append(navigation); }
 function appendVerbundFeedback(card, id) { const feedback = verbundState.feedback[id]; if (!feedback) return; const box = element('p', `feedback ${feedback.level}`, feedback.text); box.setAttribute('aria-live', 'polite'); card.append(box); }
 function renderSongSourceTables(options = {}) {
   const wrapper = element('div', 'song-source-tables');

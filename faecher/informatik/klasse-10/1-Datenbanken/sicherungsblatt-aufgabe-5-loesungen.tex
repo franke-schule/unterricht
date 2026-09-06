@@ -127,26 +127,26 @@ Textwerte stehen in einfachen Anführungszeichen.}
   left=4mm,right=4mm,top=3mm,bottom=3mm]
 \begin{tabularx}{\linewidth}{@{}>{\ttfamily\bfseries\color{Blue}}l X
   >{\ttfamily\bfseries\color{Blue}}l X@{}}
-COUNT(*) & Anzahl & MIN(Attribut) & kleinster Wert\\
-MAX(Attribut) & größter Wert & AVG(Attribut) & Mittelwert\\
-SUM(Attribut) & Summe & AS & Spalte umbenennen
+COUNT(*) & Anzahl & MIN(attribut) & kleinster Wert\\
+MAX(attribut) & größter Wert & AVG(attribut) & Mittelwert\\
+SUM(attribut) & Summe & AS & Spalte umbenennen
 \end{tabularx}
 \end{tcolorbox}
 
 \vspace{4mm}
 \begin{minipage}[t]{0.48\linewidth}
 \textcolor{Blue}{\bfseries Anzahl aus München}\par\vspace{1mm}
-\sqlbox{\sqlkw{SELECT} \sqlkw{COUNT}(*) \sqlkw{AS} Anzahl\par
+\sqlbox{\sqlkw{SELECT} \sqlkw{COUNT}(*) \sqlkw{AS} anzahl\par
 \sqlkw{FROM} users\par
 \sqlkw{WHERE} city = 'München'}
-\resulttable{Anzahl}{24}
+\resulttable{anzahl}{24}
 \end{minipage}\hfill
 \begin{minipage}[t]{0.48\linewidth}
 \textcolor{Blue}{\bfseries Kleinste Körpergröße}\par\vspace{1mm}
 \sqlbox{\sqlkw{SELECT} \sqlkw{MIN}(centimeters)\par
-\quad \sqlkw{AS} kleinste\_Groesse\par
+\quad \sqlkw{AS} kleinste\_groesse\par
 \sqlkw{FROM} users;}
-\resulttable{kleinste\_Groesse}{152}
+\resulttable{kleinste\_groesse}{152}
 \end{minipage}
 
 \vspace{6mm}

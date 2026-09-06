@@ -54,7 +54,7 @@
 \begin{tabular}{@{}c@{\hspace{7mm}}c@{\hspace{7mm}}c@{}}
 \begin{minipage}[t]{48mm}\centering\sourcecaption{Vorspeise}
 \begin{tabular}{|>{\ttfamily\footnotesize}l|>{\ttfamily\footnotesize\raggedleft\arraybackslash}p{13mm}|}\hline
-\rowcolor{Sky}\textbf{Name} & \textbf{Preis}\\\hline
+\rowcolor{Sky}\textbf{name} & \textbf{preis}\\\hline
 Lauchsuppe & 1,50~€\\\hline
 Salat & 2,00~€\\\hline
 Tagessuppe & 1,00~€\\\hline
@@ -63,7 +63,7 @@ Rohkost & 1,35~€\\\hline
 &
 \begin{minipage}[t]{48mm}\centering\sourcecaption{Hauptspeise}
 \begin{tabular}{|>{\ttfamily\footnotesize}l|>{\ttfamily\footnotesize\raggedleft\arraybackslash}p{13mm}|}\hline
-\rowcolor{Sky}\textbf{Name} & \textbf{Preis}\\\hline
+\rowcolor{Sky}\textbf{name} & \textbf{preis}\\\hline
 Käsespätzle & 3,50~€\\\hline
 Reispfanne & 2,50~€\\\hline
 Pizza & 3,44~€\\\hline
@@ -71,7 +71,7 @@ Pizza & 3,44~€\\\hline
 &
 \begin{minipage}[t]{48mm}\centering\sourcecaption{Nachspeise}
 \begin{tabular}{|>{\ttfamily\footnotesize}l|>{\ttfamily\footnotesize\raggedleft\arraybackslash}p{13mm}|}\hline
-\rowcolor{Sky}\textbf{Name} & \textbf{Preis}\\\hline
+\rowcolor{Sky}\textbf{name} & \textbf{preis}\\\hline
 Gemischtes Eis & 2,50~€\\\hline
 \end{tabular}\end{minipage}
 \end{tabular}\par}
@@ -85,7 +85,7 @@ Gemischtes Eis & 2,50~€\\\hline
 {\footnotesize\ttfamily
 \begin{tabularx}{\linewidth}{@{}>{\raggedright\arraybackslash}X>{\raggedleft\arraybackslash}p{15mm}>{\raggedright\arraybackslash}X>{\raggedleft\arraybackslash}p{15mm}>{\raggedright\arraybackslash}X>{\raggedleft\arraybackslash}p{15mm}@{}}
 \rowcolor{Sky}\multicolumn{2}{c}{\bfseries Vorspeise} & \multicolumn{2}{c}{\bfseries Hauptspeise} & \multicolumn{2}{c}{\bfseries Nachspeise}\\
-\rowcolor{CodeBg}\textbf{Name} & \textbf{Preis} & \textbf{Name} & \textbf{Preis} & \textbf{Name} & \textbf{Preis}\\
+\rowcolor{CodeBg}\textbf{name} & \textbf{preis} & \textbf{name} & \textbf{preis} & \textbf{name} & \textbf{preis}\\
 Lauchsuppe & 1,50~€ & Käsespätzle & 3,50~€ & Gemischtes Eis & 2,50~€\\
 Lauchsuppe & 1,50~€ & Reispfanne & 2,50~€ & Gemischtes Eis & 2,50~€\\
 Lauchsuppe & 1,50~€ & Pizza & 3,44~€ & Gemischtes Eis & 2,50~€\\
@@ -118,19 +118,19 @@ Beim Kreuzprodukt wird jeder Datensatz der einen Tabelle mit jedem Datensatz der
 \sectiontitle{3 · Mit \texttt{WHERE} einschränken}
 \begin{minipage}[t]{0.48\linewidth}
 \textcolor{Blue}{\bfseries Salat als Vorspeise}\par\vspace{0.7mm}
-\codebox{SELECT *\par FROM Vorspeise, Hauptspeise, Nachspeise\par WHERE Vorspeise.Name = 'Salat';}\par\vspace{0.7mm}
+\codebox{SELECT *\par FROM Vorspeise, Hauptspeise, Nachspeise\par WHERE Vorspeise.name = 'Salat';}\par\vspace{0.7mm}
 \textbf{Ergebnis: 3 Ergebniszeilen}
 \end{minipage}\hfill
 \begin{minipage}[t]{0.48\linewidth}
 \textcolor{Blue}{\bfseries Pizza als Hauptspeise}\par\vspace{0.7mm}
-\codebox{SELECT *\par FROM Vorspeise, Hauptspeise, Nachspeise\par WHERE Hauptspeise.Name = 'Pizza';}\par\vspace{0.7mm}
+\codebox{SELECT *\par FROM Vorspeise, Hauptspeise, Nachspeise\par WHERE Hauptspeise.name = 'Pizza';}\par\vspace{0.7mm}
 \textbf{Ergebnis: 4 Ergebniszeilen}
 \end{minipage}
 
 \vspace{1.2mm}
-{\small\textcolor{Muted}{\textbf{Warum der Tabellenname?} \texttt{Name} kommt in mehreren Tabellen vor. Die Angabe \texttt{Vorspeise.Name} beziehungsweise \texttt{Hauptspeise.Name} macht die Bedingung eindeutig.}}\par\vspace{1.0mm}
+{\small\textcolor{Muted}{\textbf{Warum der Tabellenname?} \texttt{name} kommt in mehreren Tabellen vor. Die Angabe \texttt{Vorspeise.name} beziehungsweise \texttt{Hauptspeise.name} macht die Bedingung eindeutig.}}\par\vspace{1.0mm}
 \colorbox{Sky}{\parbox{\dimexpr\linewidth-2\fboxsep\relax}{\vspace{1.3mm}\small
-\textcolor{Blue}{\bfseries Vom Filtern zum Verbinden:} Die Salat- und Pizza-Bedingungen filtern nach einem Wert. Eine Verknüpfungsbedingung vergleicht passende Attribute zweier Tabellen, zum Beispiel \texttt{photos.user\_id = users.id}.\vspace{1.3mm}}}
+\textcolor{Blue}{\bfseries Filterbedingung:} Die Bedingung \texttt{Vorspeise.name = 'Salat'} filtert alle Datensätze heraus, in denen eine Vorspeise vorkommt, die nicht Salat entspricht.\vspace{1.3mm}}}
 
 \vfill{\color{Line}\rule{\linewidth}{.5pt}}\par\vspace{1.5mm}
 \begin{tabularx}{\linewidth}{@{}Xr@{}}{\small\color{Muted}Klasse 10 · Datenbanken} & {\small\color{Muted}Sicherungsblatt · Aufgabe 6}\end{tabularx}

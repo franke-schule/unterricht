@@ -200,8 +200,16 @@ code { font-family: "SFMono-Regular", Consolas, "Liberation Mono", monospace; }
 .download-button { display: inline-flex; width: fit-content; align-items: center; gap: 8px; padding: 12px 18px; border-radius: 5px; background: var(--db-blue); color: white; font-weight: 800; text-decoration: none; }
 .download-button:hover, .download-button:focus-visible { background: #104da9; outline: 3px solid rgba(23, 99, 213, 0.25); outline-offset: 2px; }
 .download-button[hidden] { display: none; }
-.bottom-navigation { display: flex; justify-content: space-between; gap: 12px; margin-top: 18px; }
-.bottom-navigation button:disabled { opacity: 0.45; cursor: not-allowed; transform: none; }
+.tab-flow-navigation { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 28px; padding-top: 18px; border-top: 1px solid var(--db-line); }
+.tab-flow-button { flex: 1 1 260px; }
+.tab-flow-button:disabled { opacity: 0.45; cursor: not-allowed; transform: none; }
+
+.step-heading h2[tabindex="-1"]:focus,
+.tab-panel > h2[tabindex="-1"]:focus {
+  outline: 3px solid rgba(23, 99, 213, 0.35);
+  outline-offset: 4px;
+  border-radius: 4px;
+}
 
 button:focus-visible, input:focus-visible, select:focus-visible, [role="tab"]:focus-visible { outline: 3px solid rgba(23, 99, 213, 0.35); outline-offset: 2px; }
 
@@ -225,7 +233,7 @@ button:focus-visible, input:focus-visible, select:focus-visible, [role="tab"]:fo
   .mini-assignment-row, .summary-grid { grid-template-columns: 1fr; }
   .solution-code-controls { align-items: stretch; flex-direction: column; }
   .summary-grid dt { margin-top: 5px; }
-  .bottom-navigation button { flex: 1; }
+  .tab-flow-button { flex-basis: 100%; }
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -234,7 +242,7 @@ button:focus-visible, input:focus-visible, select:focus-visible, [role="tab"]:fo
 
 @media print {
   body.redundancy-page { background: white; }
-  .site-backdrop, .module-topbar, .module-header, .progress-card, .step-tabs, .bottom-navigation, .summary-actions, .solution-download, #data-status { display: none !important; }
+  .site-backdrop, .module-topbar, .module-header, .progress-card, .step-tabs, .tab-flow-navigation, .summary-actions, .solution-download, #data-status { display: none !important; }
   .learning-shell { width: 100%; padding: 0; }
   .step-panel { display: none !important; box-shadow: none; border: 0; padding: 0; }
   #step-summary { display: block !important; }

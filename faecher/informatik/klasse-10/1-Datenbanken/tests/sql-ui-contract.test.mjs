@@ -7,6 +7,13 @@ const folder = resolve(dirname(fileURLToPath(import.meta.url)), '..');
 const repository = resolve(folder, '../../../..');
 const source = await readFile(resolve(folder, 'sql-lab.js'), 'utf8');
 const css = await readFile(resolve(folder, 'sql-lab.css'), 'utf8');
+const sharedNavigation = await readFile(resolve(folder, 'tab-navigation.mjs'), 'utf8');
+const sharedCss = await readFile(resolve(folder, 'redundanzen.css'), 'utf8');
+const task5Html = await readFile(resolve(folder, 'aufgabe5.html'), 'utf8');
+const task6Html = await readFile(resolve(folder, 'aufgabe6.html'), 'utf8');
+const menuData = await readFile(resolve(folder, 'menue-kreuzprodukt-daten.mjs'), 'utf8');
+const tabbedModules = await Promise.all(['redundanzen.js', 'beziehungen.js', 'tabellenschema.js', 'sql-lab.js'].map((file) => readFile(resolve(folder, file), 'utf8')));
+const earlyTabbedPages = await Promise.all(['aufgabe2.html', 'aufgabe3.html', 'aufgabe4.html'].map((file) => readFile(resolve(folder, file), 'utf8')));
 const agents = await readFile(resolve(repository, 'AGENTS.md'), 'utf8');
 const manifest = await readFile(resolve(repository, 'manifest-datenbankaufgaben.txt'), 'utf8');
 
@@ -30,6 +37,27 @@ assert.match(css, /\.result-relation th \{[^}]*white-space: nowrap;/);
 assert.match(css, /\.server-feedback\.result\.high/);
 assert.match(css, /\.server-feedback\.result\.medium/);
 assert.match(css, /\.server-feedback\.result\.low/);
+assert.match(sharedNavigation, /Weiter: \$\{following\.label\}/);
+assert.match(sharedNavigation, /Zu den Aufgaben für die Schnellen/);
+assert.match(sharedNavigation, /focusTabPanelStart/);
+assert.match(sharedNavigation, /enableTabKeyboardNavigation/);
+assert.match(sharedNavigation, /aria-selected/);
+assert.match(sharedNavigation, /tabIndex/);
+assert.match(sharedCss, /\.tab-flow-navigation/);
+assert.match(sharedCss, /\.tab-flow-button/);
+assert.match(task5Html, /<template id="solution-download-template">/);
+assert.match(task6Html, /<template id="solution-download-template">/);
+assert.equal((task5Html.match(/class="solution-download"/g) || []).length, 1);
+assert.equal((task6Html.match(/class="solution-download"/g) || []).length, 1);
+assert.match(source, /appendSolutionDownloadFromTemplate\(panel\)/);
+assert.match(source, /element\('strong', '', 'nur Menüs mit Pizza als Hauptspeise'\)/);
+assert.doesNotMatch(menuData, /\b(?:Name|Preis)\s*:/);
+for (const technicalName of ['Vorspeise.name', 'Hauptspeise.name']) assert.ok(source.includes(technicalName), `SQL enthält ${technicalName}`);
+for (const moduleSource of tabbedModules) {
+  assert.match(moduleSource, /renderTabFlowNavigation/);
+  assert.match(moduleSource, /syncTabSemantics/);
+}
+for (const pageSource of earlyTabbedPages) assert.doesNotMatch(pageSource, /class="bottom-navigation"/);
 assert.match(agents, /manifest-datenbankaufgaben\.txt` vollständig gelesen und beachtet werden/);
 for (const phrase of ['Tabellenname (attribut: datentyp, ...)', 'SELECT ...', 'FROM ...', 'Ergebnisrelationen', 'Beschreibe-Aufgaben', 'Desktop, Tablet und Smartphone']) assert.ok(manifest.includes(phrase), `Manifest enthält: ${phrase}`);
 

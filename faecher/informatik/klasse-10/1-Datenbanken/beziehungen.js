@@ -1,5 +1,8 @@
+import { enableTabKeyboardNavigation, focusTabPanelStart, renderTabFlowNavigation, syncTabSemantics } from './tab-navigation.mjs?v=20260906a';
+
 const STORAGE_KEY = "informatik10-datenbanken-beziehungen-v1";
 const STEP_TITLES = ["Zuordnen", "1:n entdecken", "Fremdschlüssel", "Anwenden", "Kardinalität", "Klassendiagramm", "Kurzquiz"];
+const TAB_ITEMS = [...STEP_TITLES.map((label, index) => ({ id: index + 1, label })), { id: "summary", label: "Übersicht" }];
 const DEFAULT_STATE = {
   currentStep: 1,
   completed: [],
@@ -143,15 +146,20 @@ function renderTabs() {
     return `<button id="tab-${step}" class="step-tab ${state.completed.includes(step) ? "is-complete" : ""}" type="button" role="tab" aria-controls="step-${step}" aria-selected="${state.currentStep === step}" data-step="${step}" ${unlocked ? "" : 'disabled aria-disabled="true"'}><span>${step}</span><small>${title}</small></button>`;
   }).join("") + `<button id="tab-summary" class="step-tab" type="button" role="tab" aria-controls="step-summary" aria-selected="${state.currentStep === "summary"}" data-step="summary" ${state.summaryUnlocked ? "" : "hidden"}><span>✓</span><small>Übersicht</small></button>`;
   tabs.querySelectorAll("button").forEach((button) => button.addEventListener("click", () => navigateTo(button.dataset.step === "summary" ? "summary" : Number(button.dataset.step))));
+  enableTabKeyboardNavigation(tabs);
+  syncTabSemantics(tabs, state.currentStep);
 }
 
-function navigateTo(step) {
+function navigateTo(step, { focusContent = false } = {}) {
   if (step === "summary" && !state.summaryUnlocked) return;
   if (typeof step === "number" && step > 1 && !state.completed.includes(step - 1) && !state.completed.includes(step)) return;
   document.querySelectorAll(".step-panel").forEach((panel) => { panel.hidden = panel.id !== `step-${step}`; });
   state.currentStep = step; saveState(); updateNavigation(); renderTabs();
   if (step === "summary") renderSummary();
-  window.scrollTo({ top: 0, behavior: "smooth" });
+  const panel = document.getElementById(`step-${step}`);
+  syncTabSemantics(document.getElementById("step-tabs"), state.currentStep);
+  if (focusContent) focusTabPanelStart(panel);
+  else window.scrollTo({ top: 0, behavior: "smooth" });
 }
 
 function updateNavigation() {
@@ -160,19 +168,13 @@ function updateNavigation() {
   document.getElementById("progress-bar").style.width = `${percent}%`;
   document.getElementById("progress-percent").textContent = `${percent} % bearbeitet`;
   document.getElementById("progress-label").textContent = state.currentStep === "summary" ? "Abschlussübersicht" : `Schritt ${state.currentStep} von 7`;
-  const previous = document.getElementById("previous-step");
-  const next = document.getElementById("next-step");
-  if (state.currentStep === "summary") {
-    previous.disabled = false;
-    previous.textContent = "← Zum Quiz";
-    next.hidden = true;
-  } else {
-    previous.disabled = state.currentStep === 1;
-    previous.textContent = "← Zurück";
-    next.hidden = false;
-    next.textContent = state.currentStep === 7 ? "Zur Übersicht →" : "Weiter →";
-    next.disabled = state.currentStep === 7 ? !state.summaryUnlocked : !state.completed.includes(state.currentStep);
-  }
+  const panel = document.getElementById(`step-${state.currentStep}`);
+  renderTabFlowNavigation(panel, {
+    items: TAB_ITEMS,
+    currentId: state.currentStep,
+    onNavigate: navigateTo,
+    isEnabled: (id) => id === "summary" ? state.summaryUnlocked : id === 1 || state.completed.includes(Number(id) - 1) || state.completed.includes(Number(id)),
+  });
 }
 
 function shortDescription(photo) {
@@ -332,14 +334,6 @@ function bindEvents() {
   document.getElementById("check-step5").addEventListener("click", checkStep5);
   document.getElementById("check-step6").addEventListener("click", checkStep6);
   document.getElementById("final-quiz").addEventListener("submit", checkStep7);
-  document.getElementById("previous-step").addEventListener("click", () => {
-    if (state.currentStep === "summary") navigateTo(7);
-    else if (state.currentStep > 1) navigateTo(state.currentStep - 1);
-  });
-  document.getElementById("next-step").addEventListener("click", () => {
-    if (state.currentStep < 7) navigateTo(state.currentStep + 1);
-    else if (state.summaryUnlocked) navigateTo("summary");
-  });
   document.getElementById("reset-module").addEventListener("click", () => { if (window.confirm("Möchtest du alle Eingaben und den Fortschritt zurücksetzen?")) { localStorage.removeItem(STORAGE_KEY); window.location.reload(); } });
 
   document.querySelectorAll('input[name="photos-per-user"], input[name="users-per-photo"]').forEach((input) => input.addEventListener("change", () => {

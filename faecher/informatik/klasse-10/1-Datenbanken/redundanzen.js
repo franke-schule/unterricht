@@ -1,3 +1,5 @@
+import { focusTabPanelStart, renderTabFlowNavigation, syncTabSemantics } from './tab-navigation.mjs?v=20260906a';
+
 const STORAGE_KEY = "informatik10-datenbanken-redundanzen-v2";
 const STEP_TITLES = [
   "Doppelte Informationen",
@@ -8,6 +10,7 @@ const STEP_TITLES = [
   "Datensätze korrekt verbinden",
   "Sicherung",
 ];
+const TAB_ITEMS = [...STEP_TITLES.map((label, index) => ({ id: index + 1, label })), { id: "summary", label: "Auswertung" }];
 
 const STEP2_PROBLEMS = [
   ["repeat", "Dieselbe Änderung muss mehrfach vorgenommen werden."],
@@ -249,6 +252,7 @@ function renderTabs() {
     const step = index + 1;
     return `<button id="tab-${step}" class="step-tab" type="button" role="tab" aria-controls="step-${step}" data-step="${step}"><span>${step}</span><small>${escapeHtml(title)}</small></button>`;
   }).join("") + `<button id="tab-summary" class="step-tab" type="button" role="tab" aria-controls="step-summary" data-step="summary" ${state.summaryUnlocked ? "" : "hidden"}><span>✓</span><small>Auswertung</small></button>`;
+  syncTabSemantics(tabs, state.currentStep);
 }
 
 function redundantRows({ selectableHeadings = false } = {}) {
@@ -712,19 +716,22 @@ function bindTabEvents() {
   });
 }
 
-function showStep(step) {
+function showStep(step, { focusContent = false } = {}) {
   if (step === "summary" && !state.summaryUnlocked) return;
   state.currentStep = step === "summary" ? "summary" : Math.max(1, Math.min(7, Number(step)));
   document.querySelectorAll(".step-panel").forEach((panel) => { panel.hidden = true; });
   document.querySelectorAll(".step-tab").forEach((tab) => tab.setAttribute("aria-selected", "false"));
   const panelId = state.currentStep === "summary" ? "step-summary" : `step-${state.currentStep}`;
   const tabId = state.currentStep === "summary" ? "tab-summary" : `tab-${state.currentStep}`;
-  document.getElementById(panelId).hidden = false;
+  const panel = document.getElementById(panelId);
+  panel.hidden = false;
   document.getElementById(tabId)?.setAttribute("aria-selected", "true");
   if (state.currentStep === "summary") renderSummary();
   saveState();
   updateNavigation();
-  document.getElementById("learning-module").scrollIntoView({ behavior: "smooth", block: "start" });
+  syncTabSemantics(document.getElementById("step-tabs"), state.currentStep);
+  if (focusContent) focusTabPanelStart(panel);
+  else document.getElementById("learning-module").scrollIntoView({ behavior: "smooth", block: "start" });
 }
 
 function updateNavigation() {
@@ -738,31 +745,16 @@ function updateNavigation() {
     tab.classList.toggle("is-complete", Number.isFinite(step) && state.completed.includes(step));
     tab.setAttribute("aria-selected", String(tab.dataset.step === String(state.currentStep)));
   });
-  const previous = document.getElementById("previous-step");
-  const next = document.getElementById("next-step");
-  if (state.currentStep === "summary") {
-    previous.disabled = false;
-    previous.textContent = "← Zur Sicherung";
-    next.hidden = true;
-  } else {
-    previous.disabled = state.currentStep === 1;
-    previous.textContent = "← Zurück";
-    next.hidden = false;
-    if (state.currentStep === 7) next.textContent = state.summaryUnlocked ? "Zur Auswertung →" : "Sicherung zuerst auswerten";
-    else next.textContent = "Weiter →";
-    next.disabled = state.currentStep === 7 && !state.summaryUnlocked;
-  }
+  const panelId = state.currentStep === "summary" ? "step-summary" : `step-${state.currentStep}`;
+  renderTabFlowNavigation(document.getElementById(panelId), {
+    items: TAB_ITEMS,
+    currentId: state.currentStep,
+    onNavigate: showStep,
+    isEnabled: (id) => id !== "summary" || state.summaryUnlocked,
+  });
 }
 
 function bindGlobalEvents() {
-  document.getElementById("previous-step").addEventListener("click", () => {
-    if (state.currentStep === "summary") showStep(7);
-    else if (state.currentStep > 1) showStep(state.currentStep - 1);
-  });
-  document.getElementById("next-step").addEventListener("click", () => {
-    if (state.currentStep < 7) showStep(state.currentStep + 1);
-    else if (state.summaryUnlocked) showStep("summary");
-  });
   document.getElementById("print-summary").addEventListener("click", () => window.print());
   document.getElementById("reset-module").addEventListener("click", () => {
     if (!window.confirm("Möchtest du wirklich alle Eingaben dieses Lernmoduls löschen?")) return;
