@@ -330,3 +330,56 @@ Physikaufgabe gilt verbindlich:
 
 Bei jeder neuen oder überarbeiteten Datenbankaufgabe muss
 `manifest-datenbankaufgaben.txt` vollständig gelesen und beachtet werden.
+
+
+# 13. Agenten-Workflow: Plan → Build → Prüfung → Abnahme
+
+Für neue oder umfangreich überarbeitete Lernmodule wird ein vierstufiger
+Agenten-Loop verwendet, statt die Aufgabe in einem einzigen Durchlauf zu
+konzipieren, zu bauen und zu prüfen. Die Stufen setzen die Rollenteilung um,
+die `manifest-allgemein.txt` in Abschnitt 3 für größere Aufträge ohnehin
+vorschreibt.
+
+1. **Planung** (`lernmodul-planner`, leistungsfähiges Modell) — erstellt aus
+   der Aufgabenstellung eine Spezifikation gemäß Abschnitt 1–12 dieses
+   Dokuments und der einschlägigen Manifeste, inklusive konkreter
+   Referenzimplementierung, wörtlicher Formulierungen und zweier getrennter
+   Akzeptanzkriterien-Listen. Schreibt selbst keinen Code.
+2. **Bau** (`lernmodul-builder`, kosteneffizientes Modell) — implementiert das
+   Modul strikt nach Spezifikation und Referenzkomponenten und übernimmt
+   vorgegebene Wortlaute unverändert.
+3. **Regelbasierte Vorprüfung** (`lernmodul-pruefer`, kosteneffizientes
+   Modell) — arbeitet die mechanischen Checklisten aus
+   `manifest-allgemein.txt` ab: Links, Dateinamen, Menüreihenfolge,
+   Lehrercode, Barrierearmut-Merkmale, Sicherungsblatt-Render, `git diff
+   --check`. Bewertet keine Didaktik.
+4. **Endabnahme** (`lernmodul-reviewer`, leistungsfähiges Modell) — prüft
+   fachliche Richtigkeit, Didaktik, Wiederverwendung, Feedback-Logik und
+   Gestaltung gegen die Spezifikation und gibt `APPROVED` oder
+   `CHANGES_REQUIRED` zurück.
+
+Die Spezifikation aus Stufe 1 ist die Verdichtung dieses Dokuments und der
+Manifeste für die jeweilige Aufgabe. Die späteren Stufen arbeiten mit ihr,
+statt AGENTS.md und alle Manifeste erneut vollständig zu lesen. Das ist
+zugleich Kostensteuerung und Konsistenzsicherung.
+
+Korrekturschleifen sind begrenzt: höchstens drei Runden zwischen Bau und
+Vorprüfung, höchstens zwei Aufrufe der Endabnahme. Danach wird die Aufgabe mit
+einer Zusammenfassung der offenen Punkte an die verantwortliche Person
+zurückgegeben, statt die Schleife fortzusetzen.
+
+Der Loop hat Fixkosten, weil jeder Subagent mit leerem Kontext startet und
+Manifeste und Referenzdateien neu einliest. Er lohnt sich bei neuen Modulen,
+umfangreichen Überarbeitungen und Serien (eine Konzeption, mehrere Artefakte).
+Kleine Änderungen — Textkorrektur, Menüeintrag, Linkfix — werden direkt
+erledigt und nicht durch den Loop geschickt.
+
+Die vier Rollen sind als Subagenten unter `.claude/agents/` definiert
+(`lernmodul-planner.md`, `lernmodul-builder.md`, `lernmodul-pruefer.md`,
+`lernmodul-reviewer.md`) und werden über den Befehl
+`/lernmodul-loop <Aufgabenbeschreibung>` (`.claude/commands/lernmodul-loop.md`)
+orchestriert.
+
+Dieser Workflow ersetzt nicht die in Abschnitt 1–12 beschriebenen inhaltlichen
+Prinzipien, sondern verteilt ihre Anwendung auf vier Rollen mit
+unterschiedlichem Modellaufwand.

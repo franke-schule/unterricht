@@ -1,4 +1,8 @@
-# Große Unterrichtsmaterialien für Klasse 11
+# Große Unterrichtsmaterialien (bleiben lokal, nicht im Repo)
+/faecher/informatik/klasse-9/1-Tabellenkalkulation/material-DFD/
 /faecher/informatik/klasse-11/material-entscheidungsbaum/
 /faecher/informatik/klasse-10/1-Datenbanken/material/
 /faecher/physik/klasse-11/material/
+
+# Lokale Claude-Code-Berechtigungen (maschinenspezifisch)
+/.claude/settings.local.json
