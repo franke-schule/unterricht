@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Aufgabe 5 – Datenflussdiagramme</title>
     <link rel="stylesheet" href="../../../../styles.css?v=20260821">
-    <link rel="stylesheet" href="tabellenkalkulation.css?v=20260906">
+    <link rel="stylesheet" href="tabellenkalkulation.css?v=20260907">
   </head>
   <body>
     <div class="site-backdrop" aria-hidden="true"></div>
@@ -21,159 +21,270 @@
         <p>Lies Datenflussdiagramme, zeichne sie selbst und finde Fehler darin.</p>
       </header>
 
-      <div class="work-order"><strong>Arbeitsauftrag:</strong>
-        <ul>
-          <li>Beschreibe, was ein gegebenes Datenflussdiagramm berechnet.</li>
-          <li>Zeichne selbst ein Datenflussdiagramm zu einer Rechensituation.</li>
-          <li>Finde den Fehler in einem Datenflussdiagramm und korrigiere ihn.</li>
-        </ul>
+      <nav class="step-tabs" role="tablist" aria-label="Abschnitte der Aufgabe">
+        <button id="tab-lesen" type="button" role="tab" aria-selected="true" aria-controls="panel-lesen" data-dfd-tab="lesen">1 · Diagramm lesen</button>
+        <button id="tab-bausteine" type="button" role="tab" aria-selected="false" aria-controls="panel-bausteine" data-dfd-tab="bausteine" tabindex="-1">2 · Bausteine</button>
+        <button id="tab-beschreiben" type="button" role="tab" aria-selected="false" aria-controls="panel-beschreiben" data-dfd-tab="beschreiben" tabindex="-1">2a · Beschreiben</button>
+        <button id="tab-zeichnen" type="button" role="tab" aria-selected="false" aria-controls="panel-zeichnen" data-dfd-tab="zeichnen" tabindex="-1">2b · Zeichnen</button>
+        <button id="tab-fehler" type="button" role="tab" aria-selected="false" aria-controls="panel-fehler" data-dfd-tab="fehler" tabindex="-1">3 · Fehler finden</button>
+        <button id="tab-merke" type="button" role="tab" aria-selected="false" aria-controls="panel-merke" data-dfd-tab="merke" tabindex="-1">Merke</button>
+      </nav>
+
+      <div class="step-panels">
+        <section id="panel-lesen" class="step-panel dfd-card" role="tabpanel" aria-labelledby="tab-lesen" data-dfd-panel="lesen">
+          <p class="eyebrow">Entdecken</p>
+          <h2>1. Was rechnet dieses Diagramm?</h2>
+          <p class="dfd-scenario">Die Klasse 9b fährt in den Klettergarten.</p>
+
+          <svg class="dfd-svg" viewBox="0 0 560 330" role="img" aria-label="Datenflussdiagramm: Fahrkosten f und Kosten Kletterkarten k fließen in plus; das Ergebnis fließt zusammen mit der Anzahl Mitfahrende a in geteilt durch, dessen Ergebnis ausgegeben wird.">
+            <defs>
+              <marker id="dfd-arrow" markerWidth="9" markerHeight="9" refX="7" refY="4" orient="auto">
+                <path d="M0,0 L0,8 L8,4 z" fill="var(--sheet-accent-dark)"></path>
+              </marker>
+            </defs>
+
+            <path id="dfd-edge-f" class="dfd-svg-edge" d="M 80 52 L 80 108" marker-end="url(#dfd-arrow)"></path>
+            <path id="dfd-edge-k" class="dfd-svg-edge" d="M 250 56 L 250 108" marker-end="url(#dfd-arrow)"></path>
+            <path id="dfd-edge-a" class="dfd-svg-edge" d="M 430 56 L 430 218" marker-end="url(#dfd-arrow)"></path>
+            <path id="dfd-edge-sum" class="dfd-svg-edge" d="M 170 158 L 170 190 L 300 190 L 300 218" marker-end="url(#dfd-arrow)"></path>
+            <path id="dfd-edge-out" class="dfd-svg-edge" d="M 355 268 L 355 312" marker-end="url(#dfd-arrow)"></path>
+
+            <text class="dfd-svg-label" x="80" y="30" text-anchor="middle">Fahrkosten (f)</text>
+            <text class="dfd-svg-label" x="250" y="22" text-anchor="middle">Kosten</text>
+            <text class="dfd-svg-label" x="250" y="42" text-anchor="middle">Kletterkarten (k)</text>
+            <text class="dfd-svg-label" x="430" y="22" text-anchor="middle">Anzahl</text>
+            <text class="dfd-svg-label" x="430" y="42" text-anchor="middle">Mitfahrende (a)</text>
+
+            <rect class="dfd-svg-node" x="70" y="110" width="200" height="46" rx="14"></rect>
+            <text class="dfd-svg-label" x="170" y="133" text-anchor="middle">plus</text>
+
+            <rect class="dfd-svg-node" x="250" y="220" width="210" height="46" rx="14"></rect>
+            <text class="dfd-svg-label" x="355" y="243" text-anchor="middle">geteilt durch</text>
+
+            <g class="dfd-token" data-token="f" hidden>
+              <rect x="-16" y="-13" width="32" height="26" rx="13"></rect>
+              <text text-anchor="middle" dominant-baseline="middle">f</text>
+            </g>
+            <g class="dfd-token" data-token="k" hidden>
+              <rect x="-16" y="-13" width="32" height="26" rx="13"></rect>
+              <text text-anchor="middle" dominant-baseline="middle">k</text>
+            </g>
+            <g class="dfd-token" data-token="a" hidden>
+              <rect x="-16" y="-13" width="32" height="26" rx="13"></rect>
+              <text text-anchor="middle" dominant-baseline="middle">a</text>
+            </g>
+            <g class="dfd-token" data-token="sum" hidden>
+              <rect x="-24" y="-13" width="48" height="26" rx="13"></rect>
+              <text text-anchor="middle" dominant-baseline="middle">f+k</text>
+            </g>
+            <g class="dfd-token" data-token="out" hidden>
+              <rect x="-16" y="-13" width="32" height="26" rx="13"></rect>
+              <text text-anchor="middle" dominant-baseline="middle">?</text>
+            </g>
+          </svg>
+
+          <div class="simulation-actions">
+            <button type="button" class="primary-action" data-dfd1-action="start">Bewegung starten</button>
+            <button type="button" class="secondary-action" data-dfd1-action="pause">Pausieren</button>
+            <button type="button" class="secondary-action" data-dfd1-action="reset">Zurücksetzen</button>
+          </div>
+          <p class="simulation-status" data-dfd1-status role="status" aria-live="polite">Bereit. f, k und a stehen an den Eingaben.</p>
+
+          <div class="work-order"><strong>Arbeitsauftrag 1:</strong> Stelle eine Formel auf, die in diesem Datenflussdiagramm berechnet wird. Verwende dafür die Abkürzungen f, k und a.</div>
+
+          <label class="description-label" for="formula-input">Deine Formel</label>
+          <input id="formula-input" type="text" autocomplete="off" spellcheck="false">
+          <button id="button-formula" class="primary-action" type="button">Formel prüfen</button>
+          <section id="result-formula" class="result" aria-live="polite" hidden></section>
+        </section>
+
+        <section id="panel-bausteine" class="step-panel dfd-card" role="tabpanel" aria-labelledby="tab-bausteine" data-dfd-panel="bausteine" hidden>
+          <p class="eyebrow">Verstehen</p>
+          <h2>2. Bausteine eines Datenflussdiagramms</h2>
+          <div class="dfd-bausteine-layout">
+            <div>
+              <p>Jedes Datenflussdiagramm wird von oben nach unten gelesen: Die Pfeile zeigen, wie die Werte von den Eingaben durch die Funktionen bis zur Ausgabe fließen.</p>
+              <dl class="dfd-terms">
+                <dt>Eingabe</dt>
+                <dd>Ein Wert, den die nutzende Person eingibt, zum Beispiel die Anzahl der Mitfahrenden.</dd>
+                <dt>Funktion</dt>
+                <dd>Ein Rechen- oder Vergleichsschritt, zum Beispiel plus, mal oder größer. Eine Funktion hat mehrere Eingangspfeile, aber genau einen Ausgangspfeil.</dd>
+                <dt>Ausgabe</dt>
+                <dd>Das Ergebnis, das am Ende angezeigt wird.</dd>
+                <dt>Konstante</dt>
+                <dd>Ein fest eingetragener Wert, der nicht eingegeben wird, zum Beispiel die 70, mit der eine Losnummer verglichen wird.</dd>
+                <dt>Verteiler</dt>
+                <dd>Ein kleiner Kreis. Er gibt denselben Wert an mehrere Funktionen weiter.</dd>
+              </dl>
+            </div>
+            <figure class="dfd-figure">
+              <img src="dfd-bausteine.png" alt="Die fünf Bausteine eines Datenflussdiagramms: Eingabe, Funktion, Ausgabe, Konstante und Verteiler.">
+            </figure>
+          </div>
+          <p class="dfd-note">Ob ein Funktionsbaustein als Ellipse oder als abgerundetes Rechteck gezeichnet wird, spielt keine Rolle. Wichtig sind die Beschriftung und die Richtung der Pfeile. Im Zeichenwerkzeug heißen die Funktionen teilweise anders: mal heißt dort <code>*</code>, geteilt durch heißt <code>/</code> und größer heißt <code>&gt;</code>.</p>
+        </section>
+
+        <section id="panel-beschreiben" class="step-panel dfd-card" role="tabpanel" aria-labelledby="tab-beschreiben" data-dfd-panel="beschreiben" hidden>
+          <p class="eyebrow">Anwenden</p>
+          <h2>2a) Ein Datenflussdiagramm beschreiben</h2>
+
+          <div class="work-order"><strong>Arbeitsauftrag 2:</strong> Beschreibe, was das Datenflussdiagramm links berechnet. Nenne dabei die einzelnen Teilschritte und das Endergebnis. Die Abbildung rechts kann hilfreich zur geometrischen Vorstellung sein.</div>
+
+          <div class="dfd-figure-pair">
+            <figure class="dfd-figure">
+              <img src="dfd-zylinder.png" alt="Datenflussdiagramm: Radius groß und Radius klein werden je über Hoch zwei quadriert; ein Verteiler gibt die Höhe an beide mal-Knoten weiter; die beiden Ergebnisse fließen in minus.">
+            </figure>
+            <figure class="dfd-figure">
+              <img src="dfd-zylinder-koerper.png" alt="Skizze: eine Kreisfläche mit Radius r, ein Zylinder mit Höhe h und ein Rohr mit kleinerem Innenraum.">
+            </figure>
+          </div>
+
+          <label class="description-label" for="answer-2a">Deine Beschreibung</label>
+          <textarea id="answer-2a" class="description-input"></textarea>
+          <button id="button-2a" class="primary-action" type="button">Beschreibung prüfen</button>
+          <section id="result-2a" class="result" aria-live="polite" hidden></section>
+
+          <div class="help-stack">
+            <details>
+              <summary>Hilfe 1</summary>
+              <p>Lies das Diagramm von oben nach unten: Oben stehen die Eingaben, unten das Ergebnis.</p>
+            </details>
+            <details>
+              <summary>Hilfe 2</summary>
+              <p>Der kleine Kreis unter „Höhe“ ist ein Verteiler. Er schickt denselben Wert in beide Zweige. Beschreibe zuerst den linken Zweig, dann den rechten, dann die Multiplikation mit der Höhe.</p>
+            </details>
+            <details>
+              <summary>Hilfe 3</summary>
+              <p>Links wird der große Radius quadriert und danach mit der Höhe multipliziert. Rechts geschieht dasselbe mit dem kleinen Radius. Notiere dies und ergänze den folgenden Satz: Das Ergebnis der Berechnung im linken Bereich wird ...</p>
+            </details>
+          </div>
+        </section>
+
+        <section id="panel-zeichnen" class="step-panel dfd-card" role="tabpanel" aria-labelledby="tab-zeichnen" data-dfd-panel="zeichnen" hidden>
+          <p class="eyebrow">Anwenden</p>
+          <h2>2b) Ein Datenflussdiagramm zeichnen</h2>
+          <p class="dfd-scenario">Jedes Jahr findet an Annas Schule ein Spendenlauf statt. Pro gelaufenem Kilometer sponsern Eltern und Verwandte einen Betrag; die Summe daraus heißt erlaufene Summe. Die SMV zieht davon ihre Unkosten für die Werbeplakate ab. Der Förderverein gibt am Ende noch einmal 50 % der erlaufenen Summe dazu.</p>
+
+          <div class="work-order"><strong>Arbeitsauftrag 3:</strong> Zeichne im Werkzeug ein Datenflussdiagramm, das die gespendete Gesamtsumme berechnet.</div>
+
+          <div class="tool-embed">
+            <iframe title="Zeichenwerkzeug für Aufgabe 2b" src="orinoco-dfd.html"
+                    loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
+          </div>
+          <p class="dfd-tool-hint">Doppelklicke einen Baustein, um ihn zu beschriften. Das Werkzeug speichert nichts – mache am Ende einen Screenshot oder übertrage das Diagramm in dein Heft.</p>
+
+          <div class="help-stack">
+            <details>
+              <summary>Hilfe 1</summary>
+              <p>Du brauchst zwei Eingaben: die erlaufene Summe und die Unkosten der SMV.</p>
+            </details>
+            <details>
+              <summary>Hilfe 2</summary>
+              <p>Die erlaufene Summe wird zweimal gebraucht: einmal für den Abzug der Unkosten und einmal für den Zuschuss des Fördervereins. Dafür gibt es den Verteiler.</p>
+            </details>
+            <details>
+              <summary>Hilfe 3</summary>
+              <p>Ein Zweig rechnet erlaufene Summe minus Unkosten. Der andere Zweig multipliziert die erlaufene Summe mit der Konstanten 0,5. Wie du beide Zweige zusammenführst, überlegst du selbst.</p>
+            </details>
+          </div>
+
+          <details class="dfd-selfcheck">
+            <summary>Erstelle das Datenflussdiagramm. DANACH hier kontrollieren.</summary>
+            <p>Die erlaufene Summe S geht in einen Verteiler. Der eine Zweig rechnet S minus die Unkosten U der SMV. Der andere Zweig rechnet S mal der Konstanten 0,5, also den Zuschuss des Fördervereins. Beide Ergebnisse fließen in „plus“. Ausgegeben wird die gespendete Gesamtsumme: S − U + 0,5 · S.</p>
+            <figure class="dfd-figure">
+              <img src="dfd-spendenlauf-loesung.png" alt="Lösungsdiagramm zum Spendenlauf: Ein Verteiler gibt die erlaufene Summe an mal 0,5 und an minus Unkosten SMV weiter; beide Ergebnisse fließen in plus.">
+            </figure>
+          </details>
+        </section>
+
+        <section id="panel-fehler" class="step-panel dfd-card" role="tabpanel" aria-labelledby="tab-fehler" data-dfd-panel="fehler" hidden>
+          <p class="eyebrow">Anwenden und übertragen</p>
+          <h2>3. Einen Fehler finden und korrigieren</h2>
+          <p class="dfd-scenario">Anna zieht ein Los. Wenn die Losnummer größer als 70 ist, erhält sie 10 € Gewinn. Bei jeder anderen Losnummer erhält sie 0 €.</p>
+
+          <div class="work-order"><strong>Arbeitsauftrag 4:</strong> Das abgebildete Datenflussdiagramm passt nicht zu diesem Text. Beschreibe den Fehler, seine Auswirkung bei der Losnummer 70 und die nötige Korrektur.</div>
+
+          <div class="dfd-diagram-input-layout">
+            <svg class="dfd-svg" viewBox="0 0 460 430" role="img" aria-label="Fehlerhaftes Datenflussdiagramm: Losnummer und 70 fließen in einen Knoten mit der Beschriftung größer gleich, dessen Ergebnis zusammen mit 10 Euro und 0 Euro in eine WENN-Funktion führt und Losgewinn ausgibt.">
+              <defs>
+                <marker id="dfd-arrow-2" markerWidth="9" markerHeight="9" refX="7" refY="4" orient="auto">
+                  <path d="M0,0 L0,8 L8,4 z" fill="var(--sheet-accent-dark)"></path>
+                </marker>
+              </defs>
+
+              <path class="dfd-svg-edge" d="M 105 46 L 150 96" marker-end="url(#dfd-arrow-2)"></path>
+              <path class="dfd-svg-edge" d="M 250 46 L 205 96" marker-end="url(#dfd-arrow-2)"></path>
+
+              <text class="dfd-svg-label" x="95" y="30" text-anchor="middle">Losnummer</text>
+              <text class="dfd-svg-label" x="250" y="30" text-anchor="middle">70</text>
+
+              <ellipse class="dfd-svg-node" cx="170" cy="140" rx="85" ry="45"></ellipse>
+              <text class="dfd-svg-label" x="170" y="133" text-anchor="middle">größer</text>
+              <text class="dfd-svg-label" x="170" y="155" text-anchor="middle">gleich</text>
+
+              <path class="dfd-svg-edge" d="M 200 182 L 258 270" marker-end="url(#dfd-arrow-2)"></path>
+              <path class="dfd-svg-edge" d="M 335 218 L 303 267" marker-end="url(#dfd-arrow-2)"></path>
+              <path class="dfd-svg-edge" d="M 412 240 L 354 283" marker-end="url(#dfd-arrow-2)"></path>
+
+              <ellipse class="dfd-svg-node" cx="290" cy="310" rx="80" ry="42"></ellipse>
+              <text class="dfd-svg-label" x="290" y="317" text-anchor="middle">WENN</text>
+
+              <text class="dfd-svg-label" x="335" y="205" text-anchor="middle">"10€"</text>
+              <text class="dfd-svg-label" x="420" y="228" text-anchor="middle">"0€"</text>
+
+              <path class="dfd-svg-edge" d="M 290 352 L 290 388" marker-end="url(#dfd-arrow-2)"></path>
+              <text class="dfd-svg-label" x="290" y="412" text-anchor="middle">Losgewinn</text>
+            </svg>
+
+            <div>
+              <label class="description-label" for="answer-3">Deine Beschreibung</label>
+              <textarea id="answer-3" class="description-input"></textarea>
+              <button id="button-3" class="primary-action" type="button">Beschreibung prüfen</button>
+              <section id="result-3" class="result" aria-live="polite" hidden></section>
+            </div>
+          </div>
+
+          <div class="help-stack">
+            <details>
+              <summary>Hilfe 1</summary>
+              <p>Vergleiche die Beschriftung des Vergleichsknotens Wort für Wort mit dem Text der Aufgabe.</p>
+            </details>
+            <details>
+              <summary>Hilfe 2</summary>
+              <p>Setze für die Losnummer den Wert 70 ein. Was liefert das Diagramm, und was müsste laut Text herauskommen?</p>
+            </details>
+            <details>
+              <summary>Hilfe 3</summary>
+              <p>„größer gleich“ schließt die 70 mit ein, „größer als 70“ nicht. Welche Beschriftung stattdessen im Knoten stehen muss, schreibst du selbst auf.</p>
+            </details>
+          </div>
+
+          <h3>Korrigiertes Diagramm zeichnen</h3>
+          <div class="work-order"><strong>Arbeitsauftrag 5:</strong> Zeichne das korrigierte Datenflussdiagramm im Werkzeug nach.</div>
+          <div class="tool-embed">
+            <iframe title="Zeichenwerkzeug für Aufgabe 3" src="orinoco-dfd.html"
+                    loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
+          </div>
+          <p class="dfd-tool-hint">Doppelklicke einen Baustein, um ihn zu beschriften. Das Werkzeug speichert nichts – mache am Ende einen Screenshot oder übertrage das Diagramm in dein Heft.</p>
+          <details class="dfd-selfcheck">
+            <summary>Selbstkontrolle anzeigen</summary>
+            <p>Nur ein Baustein ändert sich: Der Vergleichsknoten muss „größer“ heißen, im Werkzeug also <code>&gt;</code>. Alles andere bleibt gleich: die Eingabe Losnummer, die Konstante 70, die WENN-Funktion mit „10€“ und „0€“ sowie die Ausgabe Losgewinn.</p>
+          </details>
+        </section>
+
+        <section id="panel-merke" class="step-panel dfd-card" role="tabpanel" aria-labelledby="tab-merke" data-dfd-panel="merke" hidden>
+          <p class="eyebrow">Sichern</p>
+          <h2>Merke</h2>
+          <div class="dfd-merke">
+            <p>Ein <strong>Datenflussdiagramm</strong> zeigt, wie Werte von den Eingaben durch Funktionen bis zur Ausgabe fließen.</p>
+            <p>Die Pfeile geben die <strong>Richtung des Datenflusses</strong> an.</p>
+            <p>Ein Verteiler gibt denselben Wert an mehrere Funktionen weiter.</p>
+            <p>Eine Konstante ist ein fest eingetragener Wert, der nicht eingegeben wird.</p>
+            <p>Jede <strong>Funktion</strong> entspricht einem Teilschritt einer Formel.</p>
+            <p>Die <strong>WENN-Funktion</strong> hat drei Eingänge: Bedingung, Ausgabe wenn wahr, Ausgabe wenn falsch.</p>
+          </div>
+        </section>
       </div>
-
-      <section class="dfd-card" aria-labelledby="intro-title">
-        <h2 id="intro-title">Was rechnet dieses Diagramm?</h2>
-        <p>Die Klasse 9b fährt in den Klettergarten. Notiere in einem Satz, welchen Betrag das Diagramm am Ende ausgibt, und öffne erst danach die Selbstkontrolle.</p>
-        <figure class="dfd-figure">
-          <img src="dfd-klassenausflug.png" alt="Datenflussdiagramm: Fahrtkosten und Kosten Klettergarten fließen in plus, das Ergebnis zusammen mit der Anzahl Mitfahrende in geteilt durch, danach mit der Konstanten 0 in AUFRUNDEN.">
-        </figure>
-        <details class="dfd-selfcheck">
-          <summary>Selbstkontrolle anzeigen</summary>
-          <p>Die Fahrtkosten und die Kosten für den Klettergarten werden addiert. Die Gesamtsumme wird durch die Anzahl der Mitfahrenden geteilt; so entsteht der Preis pro Kopf. Zum Schluss rundet AUFRUNDEN diesen Betrag auf. Die Konstante 0 gibt an, dass auf 0 Nachkommastellen, also auf ganze Euro, aufgerundet wird.</p>
-        </details>
-      </section>
-
-      <section class="dfd-card" aria-labelledby="bausteine-title">
-        <h2 id="bausteine-title">Bausteine eines Datenflussdiagramms</h2>
-        <p>Jedes Datenflussdiagramm wird von oben nach unten gelesen: Die Pfeile zeigen, wie die Werte von den Eingaben durch die Funktionen bis zur Ausgabe fließen.</p>
-        <figure class="dfd-figure">
-          <img src="dfd-bausteine.png" alt="Die fünf Bausteine eines Datenflussdiagramms: Eingabe, Funktion, Ausgabe, Konstante und Verteiler.">
-        </figure>
-        <dl class="dfd-terms">
-          <dt>Eingabe</dt>
-          <dd>Ein Wert, den die nutzende Person eingibt, zum Beispiel die Anzahl der Mitfahrenden.</dd>
-          <dt>Funktion</dt>
-          <dd>Ein Rechen- oder Vergleichsschritt, zum Beispiel plus, mal oder größer. Eine Funktion hat mehrere Eingangspfeile, aber genau einen Ausgangspfeil.</dd>
-          <dt>Ausgabe</dt>
-          <dd>Das Ergebnis, das am Ende angezeigt wird.</dd>
-          <dt>Konstante</dt>
-          <dd>Ein fest eingetragener Wert, der nicht eingegeben wird, zum Beispiel die 0 beim Aufrunden.</dd>
-          <dt>Verteiler</dt>
-          <dd>Ein kleiner Kreis. Er gibt denselben Wert an mehrere Funktionen weiter.</dd>
-        </dl>
-        <p class="dfd-note">Ob ein Funktionsbaustein als Ellipse oder als abgerundetes Rechteck gezeichnet wird, spielt keine Rolle. Wichtig sind die Beschriftung und die Richtung der Pfeile. Im Zeichenwerkzeug heißen die Funktionen teilweise anders: mal heißt dort <code>*</code>, geteilt durch heißt <code>/</code> und größer heißt <code>&gt;</code>.</p>
-      </section>
-
-      <section class="dfd-card" aria-labelledby="a5a-title">
-        <h2 id="a5a-title">5a) Ein Datenflussdiagramm beschreiben</h2>
-        <p>Beschreibe, was das Datenflussdiagramm berechnet. Nenne dabei die einzelnen Teilschritte und das Endergebnis.</p>
-        <p>Die Abbildung rechts zeigt, worum es geht: eine Kreisfläche, einen Zylinder und ein Rohr mit großem Außen- und kleinem Innenradius.</p>
-        <div class="dfd-figure-pair">
-          <figure class="dfd-figure">
-            <img src="dfd-zylinder.png" alt="Datenflussdiagramm: Radius groß und Radius klein werden je über Hoch zwei quadriert; ein Verteiler gibt die Höhe an beide mal-Knoten weiter; die beiden Ergebnisse fließen in minus.">
-          </figure>
-          <figure class="dfd-figure">
-            <img src="dfd-zylinder-koerper.png" alt="Skizze: eine Kreisfläche mit Radius r, ein Zylinder mit Höhe h und ein Rohr mit kleinerem Innenraum.">
-          </figure>
-        </div>
-        <div class="help-stack">
-          <details>
-            <summary>Hilfe 1</summary>
-            <p>Lies das Diagramm von oben nach unten: Oben stehen die Eingaben, unten das Ergebnis.</p>
-          </details>
-          <details>
-            <summary>Hilfe 2</summary>
-            <p>Der kleine Kreis unter „Höhe“ ist ein Verteiler. Er schickt denselben Wert in beide Zweige. Beschreibe zuerst den rechten Zweig, dann den linken.</p>
-          </details>
-          <details>
-            <summary>Hilfe 3</summary>
-            <p>Rechts wird der kleine Radius quadriert und danach mit der Höhe multipliziert. Links geschieht dasselbe mit dem großen Radius. Was der Knoten „minus“ damit macht und was am Ende herauskommt, formulierst du selbst.</p>
-          </details>
-        </div>
-        <label class="description-label" for="answer-5a">Deine Beschreibung</label>
-        <textarea id="answer-5a" class="description-input"></textarea>
-        <button id="button-5a" class="primary-action" type="button">Beschreibung prüfen</button>
-        <section id="result-5a" class="result" aria-live="polite" hidden></section>
-      </section>
-
-      <section class="dfd-card" aria-labelledby="a5b-title">
-        <h2 id="a5b-title">5b) Ein Datenflussdiagramm zeichnen</h2>
-        <p class="dfd-scenario">Jedes Jahr findet an Annas Schule ein Spendenlauf statt. Pro gelaufenem Kilometer sponsern Eltern und Verwandte einen Betrag; die Summe daraus heißt erlaufene Summe. Die SMV zieht davon ihre Unkosten für die Werbeplakate ab. Der Förderverein gibt am Ende noch einmal 50 % der erlaufenen Summe dazu.</p>
-        <p>Zeichne im Werkzeug ein Datenflussdiagramm, das die gespendete Gesamtsumme berechnet. Öffne die Selbstkontrolle erst, wenn du fertig bist.</p>
-        <div class="help-stack">
-          <details>
-            <summary>Hilfe 1</summary>
-            <p>Du brauchst zwei Eingaben: die erlaufene Summe und die Unkosten der SMV.</p>
-          </details>
-          <details>
-            <summary>Hilfe 2</summary>
-            <p>Die erlaufene Summe wird zweimal gebraucht: einmal für den Abzug der Unkosten und einmal für den Zuschuss des Fördervereins. Dafür gibt es den Verteiler.</p>
-          </details>
-          <details>
-            <summary>Hilfe 3</summary>
-            <p>Ein Zweig rechnet erlaufene Summe minus Unkosten. Der andere Zweig multipliziert die erlaufene Summe mit der Konstanten 0,5. Wie du beide Zweige zusammenführst, überlegst du selbst.</p>
-          </details>
-        </div>
-        <div class="tool-embed">
-          <iframe title="Zeichenwerkzeug für Aufgabe 5b" src="orinoco-dfd.html"
-                  loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
-        </div>
-        <p class="dfd-tool-hint">Doppelklicke einen Baustein, um ihn zu beschriften. Das Werkzeug speichert nichts – mache am Ende einen Screenshot oder übertrage das Diagramm in dein Heft.</p>
-        <details class="dfd-selfcheck">
-          <summary>Selbstkontrolle anzeigen</summary>
-          <p>Die erlaufene Summe S geht in einen Verteiler. Der eine Zweig rechnet S minus die Unkosten U der SMV. Der andere Zweig rechnet S mal der Konstanten 0,5, also den Zuschuss des Fördervereins. Beide Ergebnisse fließen in „plus“. Ausgegeben wird die gespendete Gesamtsumme: S − U + 0,5 · S.</p>
-          <figure class="dfd-figure">
-            <img src="dfd-spendenlauf-loesung.png" alt="Lösungsdiagramm zum Spendenlauf: Ein Verteiler gibt die erlaufene Summe an mal 0,5 und an minus Unkosten SMV weiter; beide Ergebnisse fließen in plus.">
-          </figure>
-        </details>
-      </section>
-
-      <section class="dfd-card" aria-labelledby="a5c-title">
-        <h2 id="a5c-title">5c) Einen Fehler finden und korrigieren</h2>
-        <p class="dfd-scenario">Anna zieht ein Los. Wenn die Losnummer größer als 70 ist, erhält sie 10 € Gewinn. Bei jeder anderen Losnummer erhält sie 0 €.</p>
-        <p>Das abgebildete Datenflussdiagramm passt nicht zu diesem Text. Beschreibe den Fehler, seine Auswirkung bei der Losnummer 70 und die nötige Korrektur.</p>
-        <figure class="dfd-figure">
-          <img src="dfd-gewinnspiel-fehlerhaft.png" alt="Fehlerhaftes Datenflussdiagramm: Losnummer und 70 fließen in einen Knoten mit der Beschriftung größer gleich, dessen Ergebnis zusammen mit 10 Euro und 0 Euro in eine WENN-Funktion führt und Losgewinn ausgibt.">
-        </figure>
-        <div class="help-stack">
-          <details>
-            <summary>Hilfe 1</summary>
-            <p>Vergleiche die Beschriftung des Vergleichsknotens Wort für Wort mit dem Text der Aufgabe.</p>
-          </details>
-          <details>
-            <summary>Hilfe 2</summary>
-            <p>Setze für die Losnummer den Wert 70 ein. Was liefert das Diagramm, und was müsste laut Text herauskommen?</p>
-          </details>
-          <details>
-            <summary>Hilfe 3</summary>
-            <p>„größer gleich“ schließt die 70 mit ein, „größer als 70“ nicht. Welche Beschriftung stattdessen im Knoten stehen muss, schreibst du selbst auf.</p>
-          </details>
-        </div>
-        <label class="description-label" for="answer-5c">Deine Beschreibung</label>
-        <textarea id="answer-5c" class="description-input"></textarea>
-        <button id="button-5c" class="primary-action" type="button">Beschreibung prüfen</button>
-        <section id="result-5c" class="result" aria-live="polite" hidden></section>
-
-        <h3 id="a5c-draw-title">Korrigiertes Diagramm zeichnen</h3>
-        <p>Zeichne das korrigierte Datenflussdiagramm im Werkzeug nach.</p>
-        <div class="tool-embed">
-          <iframe title="Zeichenwerkzeug für Aufgabe 5c" src="orinoco-dfd.html"
-                  loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
-        </div>
-        <p class="dfd-tool-hint">Doppelklicke einen Baustein, um ihn zu beschriften. Das Werkzeug speichert nichts – mache am Ende einen Screenshot oder übertrage das Diagramm in dein Heft.</p>
-        <details class="dfd-selfcheck">
-          <summary>Selbstkontrolle anzeigen</summary>
-          <p>Nur ein Baustein ändert sich: Der Vergleichsknoten muss „größer“ heißen, im Werkzeug also <code>&gt;</code>. Alles andere bleibt gleich: die Eingabe Losnummer, die Konstante 70, die WENN-Funktion mit „10€“ und „0€“ sowie die Ausgabe Losgewinn.</p>
-        </details>
-      </section>
-
-      <section class="dfd-card" aria-labelledby="merke-title">
-        <h2 id="merke-title">Merke</h2>
-        <ul>
-          <li>Ein Datenflussdiagramm zeigt, wie Werte von den Eingaben durch Funktionen bis zur Ausgabe fließen. Die Pfeile geben die Richtung des Datenflusses an.</li>
-          <li>Ein Verteiler gibt denselben Wert an mehrere Funktionen weiter. Eine Konstante ist ein fest eingetragener Wert, der nicht eingegeben wird.</li>
-          <li>Jede Funktion entspricht einem Teilschritt einer Formel. Die WENN-Funktion hat drei Eingänge: Bedingung, Ausgabe wenn wahr, Ausgabe wenn falsch.</li>
-          <li>Bei Vergleichen entscheidet der Grenzfall: „größer als 70“ schließt die 70 aus, „größer gleich 70“ schließt sie ein.</li>
-        </ul>
-      </section>
 
       <section class="solution-download" aria-labelledby="solution-download-title">
         <h2 id="solution-download-title">Sicherungsblatt zu Aufgabe 5</h2>
@@ -231,6 +342,264 @@
           message.textContent = "Der eingegebene Code ist nicht gültig.";
         };
 
+        /* ---------------------------------------------------------
+         * Reiter (Tabs) – Logik analog physics-step-tabs.mjs
+         * --------------------------------------------------------- */
+        (function setupStepTabs() {
+          const tabs = [...document.querySelectorAll("[data-dfd-tab]")];
+          const panels = [...document.querySelectorAll("[data-dfd-panel]")];
+
+          if (!tabs.length || !panels.length) return;
+
+          function selectTab(id, moveFocus = false) {
+            tabs.forEach((tab) => {
+              const selected = tab.dataset.dfdTab === id;
+              tab.setAttribute("aria-selected", String(selected));
+              tab.tabIndex = selected ? 0 : -1;
+              if (moveFocus && selected) tab.focus();
+            });
+            panels.forEach((panel) => {
+              panel.hidden = panel.dataset.dfdPanel !== id;
+            });
+          }
+
+          tabs.forEach((tab, index) => {
+            tab.addEventListener("click", () => selectTab(tab.dataset.dfdTab));
+            tab.addEventListener("keydown", (event) => {
+              if (!["ArrowRight", "ArrowLeft", "Home", "End"].includes(event.key)) return;
+              event.preventDefault();
+              const nextIndex = event.key === "Home"
+                ? 0
+                : event.key === "End"
+                  ? tabs.length - 1
+                  : (index + (event.key === "ArrowRight" ? 1 : -1) + tabs.length) % tabs.length;
+              selectTab(tabs[nextIndex].dataset.dfdTab, true);
+            });
+          });
+
+          const selected = tabs.find((tab) => tab.getAttribute("aria-selected") === "true") || tabs[0];
+          selectTab(selected.dataset.dfdTab);
+        })();
+
+        /* ---------------------------------------------------------
+         * Abschnitt 1 – Animation der Datenflüsse entlang der Pfade
+         * --------------------------------------------------------- */
+        (function setupDiagramAnimation() {
+          const svg = document.querySelector("#panel-lesen .dfd-svg");
+          if (!svg) return;
+
+          const statusEl = document.querySelector("[data-dfd1-status]");
+          const startButton = document.querySelector('[data-dfd1-action="start"]');
+          const pauseButton = document.querySelector('[data-dfd1-action="pause"]');
+          const resetButton = document.querySelector('[data-dfd1-action="reset"]');
+
+          const paths = {
+            f: svg.querySelector("#dfd-edge-f"),
+            k: svg.querySelector("#dfd-edge-k"),
+            a: svg.querySelector("#dfd-edge-a"),
+            sum: svg.querySelector("#dfd-edge-sum"),
+            out: svg.querySelector("#dfd-edge-out")
+          };
+          const tokens = {
+            f: svg.querySelector('[data-token="f"]'),
+            k: svg.querySelector('[data-token="k"]'),
+            a: svg.querySelector('[data-token="a"]'),
+            sum: svg.querySelector('[data-token="sum"]'),
+            out: svg.querySelector('[data-token="out"]')
+          };
+
+          const PHASE_DURATION = 1600;
+          const STATUS_TEXT = {
+            ready: "Bereit. f, k und a stehen an den Eingaben.",
+            phase1: "f und k fließen in „plus“. a fließt in „geteilt durch“.",
+            phase2: "Das Ergebnis von „plus“ fließt in „geteilt durch“.",
+            phase3: "Das Ergebnis verlässt „geteilt durch“ als Ausgabe.",
+            done: "Fertig. Mit „Zurücksetzen“ startest du erneut.",
+            paused: "Pausiert."
+          };
+
+          let rafId = null;
+          let phase = 0;
+          let phaseStart = 0;
+          let elapsedBeforePause = 0;
+          let running = false;
+
+          function hideAllTokens() {
+            Object.values(tokens).forEach((token) => { token.hidden = true; });
+          }
+
+          function placeTokenOnPath(token, path, t) {
+            const length = path.getTotalLength();
+            const point = path.getPointAtLength(Math.min(t, 1) * length);
+            token.setAttribute("transform", "translate(" + point.x + "," + point.y + ")");
+            token.hidden = false;
+          }
+
+          function placeTokenAtPathEnd(token, path) {
+            const length = path.getTotalLength();
+            const point = path.getPointAtLength(length);
+            token.setAttribute("transform", "translate(" + point.x + "," + point.y + ")");
+            token.hidden = false;
+          }
+
+          function resetVisual() {
+            hideAllTokens();
+            const startF = paths.f.getPointAtLength(0);
+            const startK = paths.k.getPointAtLength(0);
+            const startA = paths.a.getPointAtLength(0);
+            const startSum = paths.sum.getPointAtLength(0);
+            const startOut = paths.out.getPointAtLength(0);
+            tokens.f.setAttribute("transform", "translate(" + startF.x + "," + startF.y + ")");
+            tokens.k.setAttribute("transform", "translate(" + startK.x + "," + startK.y + ")");
+            tokens.a.setAttribute("transform", "translate(" + startA.x + "," + startA.y + ")");
+            tokens.sum.setAttribute("transform", "translate(" + startSum.x + "," + startSum.y + ")");
+            tokens.out.setAttribute("transform", "translate(" + startOut.x + "," + startOut.y + ")");
+          }
+
+          function setStatus(text) {
+            statusEl.textContent = text;
+          }
+
+          function stopRaf() {
+            if (rafId !== null) {
+              window.cancelAnimationFrame(rafId);
+              rafId = null;
+            }
+          }
+
+          function step(timestamp) {
+            if (!phaseStart) phaseStart = timestamp;
+            const elapsed = elapsedBeforePause + (timestamp - phaseStart);
+            const t = Math.min(elapsed / PHASE_DURATION, 1);
+
+            if (phase === 1) {
+              placeTokenOnPath(tokens.f, paths.f, t);
+              placeTokenOnPath(tokens.k, paths.k, t);
+              placeTokenOnPath(tokens.a, paths.a, t);
+            } else if (phase === 2) {
+              tokens.f.hidden = true;
+              tokens.k.hidden = true;
+              placeTokenAtPathEnd(tokens.a, paths.a);
+              placeTokenOnPath(tokens.sum, paths.sum, t);
+            } else if (phase === 3) {
+              tokens.sum.hidden = true;
+              tokens.a.hidden = true;
+              placeTokenOnPath(tokens.out, paths.out, t);
+            }
+
+            if (t >= 1) {
+              if (phase < 3) {
+                phase += 1;
+                phaseStart = 0;
+                elapsedBeforePause = 0;
+                setStatus(phase === 2 ? STATUS_TEXT.phase2 : STATUS_TEXT.phase3);
+                rafId = window.requestAnimationFrame(step);
+              } else {
+                running = false;
+                setStatus(STATUS_TEXT.done);
+                stopRaf();
+              }
+              return;
+            }
+
+            rafId = window.requestAnimationFrame(step);
+          }
+
+          function start() {
+            if (running) return;
+            running = true;
+            if (phase === 0) {
+              phase = 1;
+            }
+            setStatus(phase === 1 ? STATUS_TEXT.phase1 : phase === 2 ? STATUS_TEXT.phase2 : STATUS_TEXT.phase3);
+            phaseStart = 0;
+            rafId = window.requestAnimationFrame(step);
+          }
+
+          function pause() {
+            if (!running) return;
+            running = false;
+            stopRaf();
+            setStatus(STATUS_TEXT.paused);
+          }
+
+          function reset() {
+            running = false;
+            stopRaf();
+            phase = 0;
+            phaseStart = 0;
+            elapsedBeforePause = 0;
+            resetVisual();
+            setStatus(STATUS_TEXT.ready);
+          }
+
+          startButton.addEventListener("click", start);
+          pauseButton.addEventListener("click", pause);
+          resetButton.addEventListener("click", reset);
+
+          reset();
+        })();
+
+        /* ---------------------------------------------------------
+         * Abschnitt 1 – Formelprüfung (client-seitig, ohne eval)
+         * --------------------------------------------------------- */
+        (function setupFormulaCheck() {
+          const input = document.getElementById("formula-input");
+          const button = document.getElementById("button-formula");
+          const resultBox = document.getElementById("result-formula");
+          if (!input || !button || !resultBox) return;
+
+          const CORRECT_ANSWERS = ["(f+k)/a", "(k+f)/a"];
+
+          const FEEDBACK = {
+            empty: "Bitte trage zuerst eine Formel mit f, k und a ein.",
+            high: "Korrekt. Die Klammer sorgt dafür, dass zuerst f und k addiert werden und erst danach durch a geteilt wird.",
+            medium: "Teilweise korrekt. Die drei Größen f, k und a stimmen, aber die Reihenfolge der Rechenschritte passt noch nicht. Achte darauf, welche Werte im Diagramm zuerst zusammentreffen, und setze eine Klammer.",
+            low: "Noch nicht korrekt. Lies das Diagramm von oben nach unten: Welche beiden Werte treffen zuerst aufeinander, welche Funktion folgt danach? Verwende die Abkürzungen f, k und a."
+          };
+
+          function normalize(raw) {
+            let value = raw.trim();
+            if (value.startsWith("=")) value = value.slice(1);
+            value = value.replace(/\s+/g, "");
+            value = value.toLowerCase();
+            value = value.replace(/[:÷]/g, "/");
+            value = value.replace(/[·×]/g, "*");
+            value = value.replace(/[（❨⟮]/g, "(");
+            value = value.replace(/[）❩⟯]/g, ")");
+            return value;
+          }
+
+          function classify(normalized) {
+            if (CORRECT_ANSWERS.includes(normalized)) return "high";
+            const hasF = normalized.includes("f");
+            const hasK = normalized.includes("k");
+            const hasA = normalized.includes("a");
+            const hasPlus = normalized.includes("+");
+            const hasDivide = normalized.includes("/");
+            if (hasF && hasK && hasA && hasPlus && hasDivide) return "medium";
+            return "low";
+          }
+
+          function showResult(level, message) {
+            resultBox.hidden = false;
+            resultBox.className = "result " + level;
+            resultBox.textContent = message;
+          }
+
+          button.addEventListener("click", function () {
+            const raw = input.value;
+            if (raw.trim().length === 0) {
+              showResult("low", FEEDBACK.empty);
+              input.focus();
+              return;
+            }
+            const normalized = normalize(raw);
+            const level = classify(normalized);
+            showResult(level, FEEDBACK[level]);
+          });
+        })();
+
         /**
          * ==========================================================
          * HIER DIE URL DER APPS-SCRIPT-WEB-APP EINTRAGEN
@@ -263,8 +632,8 @@
         }
 
         const TASKS = {
-          '5a': { serverTaskId: 'inf9-dfd-zylinder-beschreibung' },
-          '5c': { serverTaskId: 'inf9-dfd-fehlersuche-gewinnspiel' }
+          '2a': { serverTaskId: 'inf9-dfd-zylinder-beschreibung' },
+          '3': { serverTaskId: 'inf9-dfd-fehlersuche-gewinnspiel' }
         };
 
         const pendingRequests = new Map();
@@ -415,11 +784,11 @@
           resultBox.textContent = message;
         }
 
-        document.getElementById('button-5a').addEventListener('click', function () {
-          submitDescription('5a');
+        document.getElementById('button-2a').addEventListener('click', function () {
+          submitDescription('2a');
         });
-        document.getElementById('button-5c').addEventListener('click', function () {
-          submitDescription('5c');
+        document.getElementById('button-3').addEventListener('click', function () {
+          submitDescription('3');
         });
       })();
     </script>

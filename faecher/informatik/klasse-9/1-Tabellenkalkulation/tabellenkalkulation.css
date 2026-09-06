@@ -1089,6 +1089,152 @@ body.is-filling-sheet {
   font-style: normal;
 }
 
+.step-tabs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin: 1rem 0 0;
+  padding: 6px;
+  border: 1px solid #cbd5e1;
+  border-radius: 13px;
+  background: rgba(255, 255, 255, 0.8);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+}
+
+.step-tabs [role="tab"] {
+  flex: 1 1 150px;
+  min-height: 44px;
+  min-width: 0;
+  padding: 9px 12px;
+  border: 0;
+  border-radius: 9px;
+  background: transparent;
+  color: #475569;
+  font: inherit;
+  font-weight: 800;
+  cursor: pointer;
+}
+
+.step-tabs [role="tab"]:hover {
+  background: rgba(37, 99, 235, 0.08);
+}
+
+.step-tabs [role="tab"][aria-selected="true"] {
+  color: #ffffff;
+  background: linear-gradient(135deg, var(--sheet-accent), var(--sheet-accent-dark));
+}
+
+.step-tabs [role="tab"]:focus-visible {
+  outline: 3px solid rgba(23, 99, 213, 0.35);
+  outline-offset: 3px;
+}
+
+.step-panels {
+  margin-top: 0;
+}
+
+.step-panel[hidden] {
+  display: none;
+}
+
+.dfd-bausteine-layout {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(150px, 200px);
+  gap: 1.25rem;
+  align-items: start;
+}
+
+.dfd-diagram-input-layout {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  gap: 1.25rem;
+  align-items: start;
+}
+
+.dfd-diagram-input-layout .primary-action {
+  display: inline-block;
+  margin: 0.2rem 0 0.4rem;
+}
+
+.dfd-svg {
+  display: block;
+  width: 100%;
+  height: auto;
+  margin: 1rem 0;
+}
+
+.dfd-svg-node {
+  fill: #ffffff;
+  stroke: var(--sheet-accent-dark);
+  stroke-width: 2;
+}
+
+.dfd-svg-edge {
+  fill: none;
+  stroke: var(--sheet-accent-dark);
+  stroke-width: 2;
+}
+
+.dfd-svg-label {
+  fill: #172033;
+  font-family: inherit;
+  font-size: 14px;
+}
+
+.dfd-token {
+  pointer-events: none;
+}
+
+.dfd-token[hidden] {
+  display: none;
+}
+
+.dfd-token rect {
+  fill: var(--sheet-accent);
+  stroke: var(--sheet-accent-dark);
+  stroke-width: 1.5;
+}
+
+.dfd-token text {
+  fill: #ffffff;
+  font-size: 13px;
+  font-weight: 800;
+}
+
+.simulation-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.6rem;
+  margin: 0.5rem 0;
+}
+
+.simulation-status {
+  margin: 0.4rem 0 0;
+  padding: 0.6rem 0.8rem;
+  border: 1px solid #cbdcf5;
+  border-radius: 8px;
+  background: #eff6ff;
+  color: #172033;
+  font-weight: 650;
+}
+
+.dfd-merke {
+  padding: 1rem 1.15rem;
+  border: 1px solid #cbdcf5;
+  border-left: 5px solid var(--sheet-accent);
+  border-radius: 8px;
+  background: #eff6ff;
+}
+
+.dfd-merke p {
+  margin: 0 0 0.55rem;
+  line-height: 1.9;
+}
+
+.dfd-merke p:last-child {
+  margin-bottom: 0;
+}
+
 @media (max-width: 760px) {
   .dfd-figure-pair {
     grid-template-columns: 1fr;
@@ -1100,5 +1246,10 @@ body.is-filling-sheet {
 
   .dfd-terms dd {
     margin-bottom: 1rem;
+  }
+
+  .dfd-bausteine-layout,
+  .dfd-diagram-input-layout {
+    grid-template-columns: 1fr;
   }
 }
