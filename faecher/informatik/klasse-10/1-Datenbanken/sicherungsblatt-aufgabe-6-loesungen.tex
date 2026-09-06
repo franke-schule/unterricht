@@ -1,0 +1,137 @@
+\documentclass[10pt,a4paper]{article}
+
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage[ngerman]{babel}
+\usepackage[a4paper,margin=14mm]{geometry}
+\usepackage{lmodern}
+\usepackage[table]{xcolor}
+\usepackage{tabularx}
+\usepackage{array}
+\usepackage{microtype}
+\usepackage[most]{tcolorbox}
+
+\pagestyle{empty}
+\setlength{\parindent}{0pt}
+\setlength{\parskip}{0pt}
+\renewcommand{\familydefault}{\sfdefault}
+\renewcommand{\arraystretch}{1.12}
+
+\definecolor{Navy}{HTML}{17324D}
+\definecolor{Blue}{HTML}{3B6EA5}
+\definecolor{Sky}{HTML}{EAF3FA}
+\definecolor{Mint}{HTML}{E8F5EF}
+\definecolor{Gold}{HTML}{F3B33D}
+\definecolor{Ink}{HTML}{1E2935}
+\definecolor{Muted}{HTML}{617080}
+\definecolor{Line}{HTML}{D8E1E8}
+\definecolor{CodeBg}{HTML}{F5F7F9}
+
+\color{Ink}
+\newcommand{\sectiontitle}[1]{%
+  \vspace{2.0mm}{\color{Blue}\bfseries\large #1}\par
+  \vspace{0.7mm}{\color{Blue}\rule{\linewidth}{0.7pt}}\par\vspace{1.0mm}}
+\newcommand{\codebox}[1]{%
+  \colorbox{CodeBg}{\parbox{\dimexpr\linewidth-2\fboxsep\relax}{\ttfamily\small #1}}}
+\newcommand{\sourcecaption}[1]{\textcolor{Blue}{\bfseries\texttt{#1}}\par\vspace{0.5mm}}
+
+\begin{document}
+
+\colorbox{Navy}{\parbox{\dimexpr\linewidth-2\fboxsep\relax}{%
+  \vspace{3mm}\color{white}\begin{tabularx}{\linewidth}{@{}Xr@{}}
+  {\small\bfseries INFORMATIK · KLASSE 10} & \colorbox{Gold}{\color{Navy}\small\bfseries\strut LÖSUNGEN}\end{tabularx}
+  \vspace{2.4mm}{\fontsize{18}{21}\selectfont\bfseries Aufgabe 6 -- Das Kreuzprodukt}\par
+  \vspace{0.8mm}{\large Sicherungsblatt}\vspace{2.8mm}}}
+
+\vspace{2.5mm}
+\colorbox{Sky}{\parbox{\dimexpr\linewidth-2\fboxsep\relax}{\vspace{1.6mm}
+\textcolor{Blue}{\bfseries Ziel:} Du bildest ein Kreuzprodukt, erklärst die Anzahl seiner Ergebniszeilen und schränkst es mit \texttt{WHERE} ein.\vspace{1.6mm}}}
+
+\sectiontitle{1 · Vom Mensa-Angebot zur Ergebnisrelation}
+{\small\color{Muted}Jede Zeile der Ergebnisrelation enthält genau eine Vorspeise, eine Hauptspeise und eine Nachspeise.}\par\vspace{1.1mm}
+
+{\centering
+\begin{tabular}{@{}c@{\hspace{7mm}}c@{\hspace{7mm}}c@{}}
+\begin{minipage}[t]{48mm}\centering\sourcecaption{Vorspeise}
+\begin{tabular}{|>{\ttfamily\footnotesize}l|>{\ttfamily\footnotesize\raggedleft\arraybackslash}p{13mm}|}\hline
+\rowcolor{Sky}\textbf{Name} & \textbf{Preis}\\\hline
+Lauchsuppe & 1,50~€\\\hline
+Salat & 2,00~€\\\hline
+Tagessuppe & 1,00~€\\\hline
+Rohkost & 1,35~€\\\hline
+\end{tabular}\end{minipage}
+&
+\begin{minipage}[t]{48mm}\centering\sourcecaption{Hauptspeise}
+\begin{tabular}{|>{\ttfamily\footnotesize}l|>{\ttfamily\footnotesize\raggedleft\arraybackslash}p{13mm}|}\hline
+\rowcolor{Sky}\textbf{Name} & \textbf{Preis}\\\hline
+Käsespätzle & 3,50~€\\\hline
+Reispfanne & 2,50~€\\\hline
+Pizza & 3,44~€\\\hline
+\end{tabular}\end{minipage}
+&
+\begin{minipage}[t]{48mm}\centering\sourcecaption{Nachspeise}
+\begin{tabular}{|>{\ttfamily\footnotesize}l|>{\ttfamily\footnotesize\raggedleft\arraybackslash}p{13mm}|}\hline
+\rowcolor{Sky}\textbf{Name} & \textbf{Preis}\\\hline
+Gemischtes Eis & 2,50~€\\\hline
+\end{tabular}\end{minipage}
+\end{tabular}\par}
+
+\vspace{0.5mm}
+{\centering\textcolor{Blue}{\bfseries Ausgangstabellen \; $\longrightarrow$ \; Kreuzprodukt \; $\longrightarrow$ \; Ergebnisrelation}\par
+\vspace{0.5mm}\colorbox{Mint}{\parbox{74mm}{\centering\textbf{4 · 3 · 1 = 12 Datensätze}}}\par}
+\vspace{0.8mm}
+
+{\small\textcolor{Blue}{\bfseries Ergebnisrelation: alle 12 Menüs}}\par\vspace{0.4mm}
+{\footnotesize\ttfamily
+\begin{tabularx}{\linewidth}{@{}>{\raggedright\arraybackslash}X>{\raggedleft\arraybackslash}p{15mm}>{\raggedright\arraybackslash}X>{\raggedleft\arraybackslash}p{15mm}>{\raggedright\arraybackslash}X>{\raggedleft\arraybackslash}p{15mm}@{}}
+\rowcolor{Sky}\multicolumn{2}{c}{\bfseries Vorspeise} & \multicolumn{2}{c}{\bfseries Hauptspeise} & \multicolumn{2}{c}{\bfseries Nachspeise}\\
+\rowcolor{CodeBg}\textbf{Name} & \textbf{Preis} & \textbf{Name} & \textbf{Preis} & \textbf{Name} & \textbf{Preis}\\
+Lauchsuppe & 1,50~€ & Käsespätzle & 3,50~€ & Gemischtes Eis & 2,50~€\\
+Lauchsuppe & 1,50~€ & Reispfanne & 2,50~€ & Gemischtes Eis & 2,50~€\\
+Lauchsuppe & 1,50~€ & Pizza & 3,44~€ & Gemischtes Eis & 2,50~€\\
+Salat & 2,00~€ & Käsespätzle & 3,50~€ & Gemischtes Eis & 2,50~€\\
+Salat & 2,00~€ & Reispfanne & 2,50~€ & Gemischtes Eis & 2,50~€\\
+Salat & 2,00~€ & Pizza & 3,44~€ & Gemischtes Eis & 2,50~€\\
+Tagessuppe & 1,00~€ & Käsespätzle & 3,50~€ & Gemischtes Eis & 2,50~€\\
+Tagessuppe & 1,00~€ & Reispfanne & 2,50~€ & Gemischtes Eis & 2,50~€\\
+Tagessuppe & 1,00~€ & Pizza & 3,44~€ & Gemischtes Eis & 2,50~€\\
+Rohkost & 1,35~€ & Käsespätzle & 3,50~€ & Gemischtes Eis & 2,50~€\\
+Rohkost & 1,35~€ & Reispfanne & 2,50~€ & Gemischtes Eis & 2,50~€\\
+Rohkost & 1,35~€ & Pizza & 3,44~€ & Gemischtes Eis & 2,50~€\\
+\end{tabularx}}
+
+\sectiontitle{2 · Kreuzprodukt mit SQL}
+\begin{minipage}[t]{0.37\linewidth}
+\vspace{0pt}
+\textcolor{Blue}{\bfseries Vollständiges Kreuzprodukt}\par\vspace{0.8mm}
+\codebox{SELECT *\par FROM Vorspeise, Hauptspeise, Nachspeise;}
+\end{minipage}\hfill
+\begin{minipage}[t]{0.60\linewidth}
+\vspace{0pt}
+\begin{tcolorbox}[colback=Mint,colframe=Blue,arc=2mm,boxrule=.8pt,left=2.5mm,right=2.5mm,top=1.5mm,bottom=1.5mm]
+\textbf{Merksatz}\par\smallskip
+Wenn bei einer \texttt{SELECT}-Abfrage beim Schlüsselwort \texttt{FROM} mehrere Tabellen angegeben werden, wird das Kreuzprodukt auf diesen Tabellen angewendet.\par\smallskip
+Beim Kreuzprodukt wird jeder Datensatz der einen Tabelle mit jedem Datensatz der anderen Tabelle (bzw. den Datensätzen aller weiteren Tabellen) verknüpft.
+\end{tcolorbox}
+\end{minipage}
+
+\sectiontitle{3 · Mit \texttt{WHERE} einschränken}
+\begin{minipage}[t]{0.48\linewidth}
+\textcolor{Blue}{\bfseries Salat als Vorspeise}\par\vspace{0.7mm}
+\codebox{SELECT *\par FROM Vorspeise, Hauptspeise, Nachspeise\par WHERE Vorspeise.Name = 'Salat';}\par\vspace{0.7mm}
+\textbf{Ergebnis: 3 Ergebniszeilen}
+\end{minipage}\hfill
+\begin{minipage}[t]{0.48\linewidth}
+\textcolor{Blue}{\bfseries Pizza als Hauptspeise}\par\vspace{0.7mm}
+\codebox{SELECT *\par FROM Vorspeise, Hauptspeise, Nachspeise\par WHERE Hauptspeise.Name = 'Pizza';}\par\vspace{0.7mm}
+\textbf{Ergebnis: 4 Ergebniszeilen}
+\end{minipage}
+
+\vspace{1.2mm}
+{\small\textcolor{Muted}{\textbf{Warum der Tabellenname?} \texttt{Name} kommt in mehreren Tabellen vor. Die Angabe \texttt{Vorspeise.Name} beziehungsweise \texttt{Hauptspeise.Name} macht die Bedingung eindeutig.}}\par\vspace{1.0mm}
+\colorbox{Sky}{\parbox{\dimexpr\linewidth-2\fboxsep\relax}{\vspace{1.3mm}\small
+\textcolor{Blue}{\bfseries Vom Filtern zum Verbinden:} Die Salat- und Pizza-Bedingungen filtern nach einem Wert. Eine Verknüpfungsbedingung vergleicht passende Attribute zweier Tabellen, zum Beispiel \texttt{photos.user\_id = users.id}.\vspace{1.3mm}}}
+
+\vfill{\color{Line}\rule{\linewidth}{.5pt}}\par\vspace{1.5mm}
+\begin{tabularx}{\linewidth}{@{}Xr@{}}{\small\color{Muted}Klasse 10 · Datenbanken} & {\small\color{Muted}Sicherungsblatt · Aufgabe 6}\end{tabularx}
+\end{document}

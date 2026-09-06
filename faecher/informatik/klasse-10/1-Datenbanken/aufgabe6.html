@@ -9,7 +9,7 @@
     <link rel="stylesheet" href="redundanzen.css?v=20260822c">
     <link rel="stylesheet" href="tabellenschema.css?v=20260822c">
   <link rel="stylesheet" href="sql-lab.css?v=20260906c">
-  <script type="module" src="sql-lab.js?v=20260906c"></script>
+  <script type="module" src="sql-lab.js?v=20260906d"></script>
   </head>
   <body class="redundancy-page sql-page menu-cross-product-page" data-sql-module="menu-cross-product">
     <div class="site-backdrop" aria-hidden="true"></div>
@@ -36,6 +36,23 @@
       <nav id="menu-tabs" class="step-tabs" aria-label="Lernschritte zum Kreuzprodukt" role="tablist"></nav>
       <section id="menu-panel" class="step-panel" role="tabpanel" aria-live="off"></section>
 
+      <section class="solution-download" aria-labelledby="solution-download-title">
+        <h2 id="solution-download-title">Sicherungsblatt zu Aufgabe 6</h2>
+        <details class="solution-reveal">
+          <summary>Sicherungsblatt anzeigen</summary>
+          <form class="solution-code-form" onsubmit="unlockSolution(event, 'M3HT-X8B5', 'solution-download-link', 'solution-code-message')">
+            <label for="solution-code">Lehrercode eingeben</label>
+            <div class="solution-code-controls">
+              <input id="solution-code" name="solution-code" type="text" maxlength="9" autocomplete="off" autocapitalize="characters" spellcheck="false" required>
+              <button type="submit">Code prüfen</button>
+            </div>
+            <p id="solution-code-message" class="solution-code-message" aria-live="polite"></p>
+            <a id="solution-download-link" class="download-button" href="sicherungsblatt-aufgabe-6-loesungen.pdf" download hidden>
+              &#8595; Sicherungsblatt herunterladen
+            </a>
+          </form>
+        </details>
+      </section>
       <div class="summary-actions">
         <button id="reset-module" class="secondary-button" type="button">Modul neu beginnen</button>
         <a class="secondary-button" href="../index.html">Zur Aufgabenübersicht</a>

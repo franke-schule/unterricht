@@ -1,0 +1,174 @@
+\documentclass[10pt,a4paper]{article}
+
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage[ngerman]{babel}
+\usepackage[a4paper,margin=14mm]{geometry}
+\usepackage{lmodern}
+\usepackage[table]{xcolor}
+\usepackage{tabularx}
+\usepackage{array}
+\usepackage{microtype}
+\usepackage[most]{tcolorbox}
+
+\pagestyle{empty}
+\setlength{\parindent}{0pt}
+\setlength{\parskip}{0pt}
+\renewcommand{\familydefault}{\sfdefault}
+\linespread{1.12}\selectfont
+\renewcommand{\arraystretch}{1.35}
+
+\definecolor{Navy}{HTML}{17324D}
+\definecolor{Blue}{HTML}{3B6EA5}
+\definecolor{Sky}{HTML}{EAF3FA}
+\definecolor{Mint}{HTML}{E8F5EF}
+\definecolor{Gold}{HTML}{F3B33D}
+\definecolor{Ink}{HTML}{1E2935}
+\definecolor{Muted}{HTML}{617080}
+\definecolor{Line}{HTML}{D8E1E8}
+\definecolor{CodeBg}{HTML}{F5F7F9}
+
+\color{Ink}
+\newcommand{\sectiontitle}[1]{%
+  \vspace{4mm}{\color{Blue}\bfseries\Large #1}\par
+  \vspace{1mm}{\color{Blue}\rule{\linewidth}{0.7pt}}\par\vspace{2mm}}
+\newcommand{\sqlkw}[1]{\textcolor{Blue}{\bfseries #1}}
+\newcommand{\sqlbox}[1]{%
+  \begin{tcolorbox}[colback=CodeBg,colframe=Line,arc=1.3mm,boxrule=.55pt,
+    left=3mm,right=3mm,top=2mm,bottom=2mm,boxsep=0pt]
+  {\ttfamily\fontsize{10.2}{14}\selectfont #1}
+  \end{tcolorbox}}
+\newcommand{\resulttable}[2]{%
+  \begin{center}\fontsize{9.5}{12}\selectfont
+  \begin{tabular}{|>{\ttfamily\bfseries}c|}\hline
+  \rowcolor{Sky}#1\\\hline
+  #2\\\hline
+  \end{tabular}
+  \end{center}}
+\newcommand{\pageheader}{%
+  \colorbox{Navy}{\parbox{\dimexpr\linewidth-2\fboxsep\relax}{%
+    \vspace{3mm}\color{white}\begin{tabularx}{\linewidth}{@{}Xr@{}}
+    {\small\bfseries INFORMATIK \textperiodcentered{} KLASSE 10} &
+    \colorbox{Gold}{\color{Navy}\small\bfseries\strut LÖSUNGEN}
+    \end{tabularx}
+    \vspace{2.5mm}{\fontsize{18}{22}\selectfont\bfseries
+    Aufgabe 5 -- SQL-Grundlagen wiederholen}\par
+    \vspace{1mm}{\large Sicherungsblatt}\vspace{3mm}}}}
+\newcommand{\pagefooter}[1]{%
+  \vfill{\color{Line}\rule{\linewidth}{.5pt}}\par\vspace{1.5mm}
+  \begin{tabularx}{\linewidth}{@{}Xc r@{}}
+  {\small\color{Muted}Klasse 10 \textperiodcentered{} Datenbanken} &
+  {\small\color{Muted}#1 / 2} &
+  {\small\color{Muted}Sicherungsblatt \textperiodcentered{} Aufgabe 5}
+  \end{tabularx}}
+\newcommand{\merkebox}[1]{%
+  \begin{tcolorbox}[colback=Mint,colframe=Blue,arc=2mm,boxrule=.8pt,
+    left=4mm,right=4mm,top=3mm,bottom=3mm]
+  \textcolor{Blue}{\bfseries Merke}\par\vspace{1.5mm}
+  \fontsize{10.5}{14}\selectfont #1
+  \end{tcolorbox}}
+
+\begin{document}
+
+\pageheader
+
+\vspace{3mm}
+\colorbox{Sky}{\parbox{\dimexpr\linewidth-2\fboxsep\relax}{\vspace{2.5mm}
+\textcolor{Blue}{\bfseries Ziel:} Einfache Abfragen lesen und Bedingungen passend verbinden.
+\vspace{2.5mm}}}
+
+\sectiontitle{1 \textperiodcentered{} Aufbau einer einfachen Abfrage}
+\sqlbox{\sqlkw{SELECT} username, birthday\par
+\sqlkw{FROM} users\par
+\sqlkw{WHERE} city != 'Berlin';}
+
+\vspace{2mm}
+\begin{tabularx}{\linewidth}{@{}>{\ttfamily\bfseries\color{Blue}}l X@{}}
+SELECT & legt die Ergebnisspalten fest.\\
+FROM & nennt die Tabelle.\\
+WHERE & wählt passende Datensätze aus.
+\end{tabularx}
+
+\sectiontitle{2 \textperiodcentered{} Mehrere Bedingungen verbinden}
+\begin{minipage}[t]{0.48\linewidth}
+\textcolor{Blue}{\bfseries \texttt{AND}: beide Bedingungen}\par\vspace{1mm}
+\sqlbox{\sqlkw{SELECT} *\par
+\sqlkw{FROM} users\par
+\sqlkw{WHERE} gender = 'female'\par
+\quad \sqlkw{AND} city = 'Leipzig'}
+\end{minipage}\hfill
+\begin{minipage}[t]{0.48\linewidth}
+\textcolor{Blue}{\bfseries \texttt{LIKE}: Name beginnt mit B}\par\vspace{1mm}
+\sqlbox{\sqlkw{SELECT} *\par
+\sqlkw{FROM} users\par
+\sqlkw{WHERE} name \sqlkw{LIKE} 'B\%'}
+\texttt{\%} steht für beliebig viele Zeichen.
+\end{minipage}
+
+\vspace{4mm}
+\textcolor{Blue}{\bfseries \texttt{OR}: eine geklammerte Gruppe genügt}\par\vspace{1mm}
+\sqlbox{\sqlkw{SELECT} name\par
+\sqlkw{FROM} users\par
+\sqlkw{WHERE} (gender = 'male' \sqlkw{AND} centimeters > 165)\par
+\quad \sqlkw{OR} (gender = 'female' \sqlkw{AND} centimeters > 160)}
+
+\vspace{3mm}
+\merkebox{\texttt{SELECT} bestimmt die Ergebnisspalten, \texttt{FROM} die Tabelle
+und \texttt{WHERE} die ausgewählten Datensätze.\par\vspace{2mm}
+Textwerte stehen in einfachen Anführungszeichen.}
+
+\pagefooter{1}
+
+\newpage
+\pageheader
+
+\sectiontitle{3 \textperiodcentered{} Zusammenfassen, benennen und begrenzen}
+\begin{tcolorbox}[colback=white,colframe=Line,arc=1.5mm,boxrule=.6pt,
+  left=4mm,right=4mm,top=3mm,bottom=3mm]
+\begin{tabularx}{\linewidth}{@{}>{\ttfamily\bfseries\color{Blue}}l X
+  >{\ttfamily\bfseries\color{Blue}}l X@{}}
+COUNT(*) & Anzahl & MIN(Attribut) & kleinster Wert\\
+MAX(Attribut) & größter Wert & AVG(Attribut) & Mittelwert\\
+SUM(Attribut) & Summe & AS & Spalte umbenennen
+\end{tabularx}
+\end{tcolorbox}
+
+\vspace{4mm}
+\begin{minipage}[t]{0.48\linewidth}
+\textcolor{Blue}{\bfseries Anzahl aus München}\par\vspace{1mm}
+\sqlbox{\sqlkw{SELECT} \sqlkw{COUNT}(*) \sqlkw{AS} Anzahl\par
+\sqlkw{FROM} users\par
+\sqlkw{WHERE} city = 'München'}
+\resulttable{Anzahl}{24}
+\end{minipage}\hfill
+\begin{minipage}[t]{0.48\linewidth}
+\textcolor{Blue}{\bfseries Kleinste Körpergröße}\par\vspace{1mm}
+\sqlbox{\sqlkw{SELECT} \sqlkw{MIN}(centimeters)\par
+\quad \sqlkw{AS} kleinste\_Groesse\par
+\sqlkw{FROM} users;}
+\resulttable{kleinste\_Groesse}{152}
+\end{minipage}
+
+\vspace{6mm}
+\textcolor{Blue}{\bfseries Zuletzt registrierter Datensatz}\par\vspace{1mm}
+\sqlbox{\sqlkw{SELECT} *\par
+\sqlkw{FROM} users\par
+\sqlkw{ORDER BY} created\_at \sqlkw{DESC}\par
+\sqlkw{LIMIT} 1;}
+
+\vspace{2mm}
+\begin{tabularx}{\linewidth}{@{}>{\ttfamily\bfseries\color{Blue}}l X@{}}
+DESC & sortiert absteigend.\\
+LIMIT 1 & lässt nur die erste Zeile übrig.
+\end{tabularx}
+
+\vspace{8mm}
+\merkebox{\texttt{AND} verlangt beide Bedingungen; bei \texttt{OR} genügt eine
+geklammerte Gruppe.\par\vspace{2mm}
+Aggregatfunktionen liefern aus vielen Werten ein Ergebnis; \texttt{AS} benennt
+die Ergebnisspalte.\par\vspace{2mm}
+\texttt{ORDER BY ... DESC} sortiert absteigend; \texttt{LIMIT 1} zeigt nur die
+erste Ergebniszeile.}
+
+\pagefooter{2}
+\end{document}
