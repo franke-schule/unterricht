@@ -67,6 +67,68 @@ export const SONG_VERBUND_VISIBLE_TEXT = Object.freeze({
   memory: 'Beim Verbund werden aus dem Kreuzprodukt nur die Datensätze ausgewählt, deren zusammengehörige Primär- und Fremdschlüssel übereinstimmen. Sind mehrere Verknüpfungsbedingungen nötig, werden sie mit AND verbunden.'
 });
 
+/**
+ * Abschlussquiz als Multiple Choice mit Auswahlkästchen. Die Fragen 1 und 3
+ * besitzen mehrere richtige Antworten, damit ein reines Durchklicken einzelner
+ * Kästchen nicht ausreicht.
+ */
+export const SONG_VERBUND_QUIZ = Object.freeze([
+  Object.freeze({
+    id: 'kreuzprodukt',
+    prompt: 'Was gilt für das Kreuzprodukt aus Song, Song_in_Playlist und Playlist?',
+    options: Object.freeze([
+      Object.freeze({ id: 'each', text: 'Jede Zeile wird mit jeder Zeile der anderen Tabellen kombiniert.', correct: true }),
+      Object.freeze({ id: 'product', text: 'Die Anzahl der Ergebniszeilen ist das Produkt der Zeilenanzahlen: 4 · 4 · 2 = 32.', correct: true }),
+      Object.freeze({ id: 'onlyGood', text: 'Es enthält nur fachlich sinnvolle Song-Playlist-Paare.', correct: false }),
+      Object.freeze({ id: 'noWhere', text: 'Es entsteht, wenn nach FROM mehrere Tabellen stehen und keine WHERE-Bedingung folgt.', correct: true })
+    ]),
+    hint: 'Denke an Schritt 2: Ohne Bedingung wird wirklich jede Kombination gebildet.'
+  }),
+  Object.freeze({
+    id: 'first',
+    prompt: 'Welche Bedingung verbindet Song und Song_in_Playlist richtig?',
+    options: Object.freeze([
+      Object.freeze({ id: 'songId', text: 'Song.id = Song_in_Playlist.song_id', correct: true }),
+      Object.freeze({ id: 'playlistId', text: 'Song.id = Playlist.id', correct: false }),
+      Object.freeze({ id: 'titel', text: 'Song.titel = Playlist.titel', correct: false }),
+      Object.freeze({ id: 'inner', text: 'Song_in_Playlist.song_id = Song_in_Playlist.playlist_id', correct: false })
+    ]),
+    hint: 'Ein Primärschlüssel gehört mit dem Fremdschlüssel zusammen, der auf ihn zeigt.'
+  }),
+  Object.freeze({
+    id: 'full',
+    prompt: 'Was gilt für die vollständige WHERE-Klausel des Verbunds?',
+    options: Object.freeze([
+      Object.freeze({ id: 'and', text: 'Beide Teilbedingungen werden mit AND verbunden.', correct: true }),
+      Object.freeze({ id: 'keys', text: 'Jede Teilbedingung vergleicht einen Primärschlüssel mit dem passenden Fremdschlüssel.', correct: true }),
+      Object.freeze({ id: 'or', text: 'Mit OR bleiben genauso viele Zeilen übrig wie mit AND.', correct: false }),
+      Object.freeze({ id: 'four', text: 'Übrig bleiben genau 4 Zeilen.', correct: true })
+    ]),
+    hint: 'Beide Verbindungen müssen gleichzeitig gelten. Vergleiche das Ergebnis aus Schritt 4.'
+  }),
+  Object.freeze({
+    id: 'count',
+    prompt: 'Wie viele Zeilen liefert die Anfrage, wenn nach WHERE nur Song.id = Song_in_Playlist.song_id steht?',
+    options: Object.freeze([
+      Object.freeze({ id: 'four', text: '4 Zeilen', correct: false }),
+      Object.freeze({ id: 'eight', text: '8 Zeilen', correct: true }),
+      Object.freeze({ id: 'sixteen', text: '16 Zeilen', correct: false }),
+      Object.freeze({ id: 'thirtytwo', text: '32 Zeilen', correct: false })
+    ]),
+    hint: 'Jede passende Song-Zuordnung wird noch mit beiden Playlists kombiniert.'
+  })
+]);
+
+export function correctQuizOptions(question) {
+  return question.options.filter((option) => option.correct).map((option) => option.id);
+}
+
+export function evaluateQuizQuestion(question, selected) {
+  if (!Array.isArray(selected) || !selected.length) return false;
+  const correct = correctQuizOptions(question);
+  return correct.length === selected.length && correct.every((id) => selected.includes(id));
+}
+
 export const SONG_PLAYLIST_PAIRS = freezeRows([
   { song: 'Gaslighter', playlist: 'Good Oldies' },
   { song: 'Try', playlist: 'Good Oldies' },

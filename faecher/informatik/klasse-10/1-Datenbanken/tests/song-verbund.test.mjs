@@ -3,7 +3,7 @@ import { createRequire } from 'node:module';
 import { readFile } from 'node:fs/promises';
 import { dirname, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { SONG_PLAYLIST_PAIRS, SONG_VERBUND_COLUMN_GROUPS, SONG_VERBUND_COLUMNS, SONG_VERBUND_SQL, SONG_VERBUND_TABLE_NAMES, SONG_VERBUND_TABLE_SCHEMAS, SONG_VERBUND_TABLES, SONG_VERBUND_VISIBLE_TEXT, buildFirstConnection, buildFullConnection, buildPlaylistConnection, buildSongCombinations, evaluateFirstConnection, evaluateSecondConnection, expectedSongRelation } from '../song-verbund-daten.mjs';
+import { SONG_PLAYLIST_PAIRS, SONG_VERBUND_COLUMN_GROUPS, SONG_VERBUND_COLUMNS, SONG_VERBUND_SQL, SONG_VERBUND_TABLE_NAMES, SONG_VERBUND_TABLE_SCHEMAS, SONG_VERBUND_TABLES, SONG_VERBUND_QUIZ, SONG_VERBUND_VISIBLE_TEXT, buildFirstConnection, correctQuizOptions, evaluateQuizQuestion, buildFullConnection, buildPlaylistConnection, buildSongCombinations, evaluateFirstConnection, evaluateSecondConnection, expectedSongRelation } from '../song-verbund-daten.mjs';
 import { compareRelations, normalizeRelation, validateSelectStatement } from '../sql-lab-core.mjs';
 
 assert.deepEqual(SONG_VERBUND_TABLE_NAMES, ['Song', 'Song_in_Playlist', 'Playlist']);
@@ -103,4 +103,27 @@ assert.match(sqlLab, /button\.id = `tab-\$\{id\}`/, 'Die neue Reiternavigation v
 assert.match(sqlLab, /import \{[^\n]*SONG_VERBUND_COLUMNS[^\n]*\} from '\.\/song-verbund-daten\.mjs\?v=\d+[a-z]?';/, 'Die Ergebnisdarstellung importiert ihre qualifizierte Spaltenliste mit Cache-Buster aus der gemeinsamen Datenquelle.');
 assert.match(sqlLab, /Tabelle \$\{tableName\} horizontal scrollen/, 'Auch breite Ausgangstabellen bleiben in einem beschrifteten, fokussierbaren Scrollbereich erreichbar.');
 assert.doesNotMatch(sqlLab, /button\.id = `verbund-tab-/, 'Die fehlerhafte Sonderadressierung der Verbund-Reiter ist entfernt.');
+
+// Abschlussquiz: Multiple Choice mit Auswahlkaestchen, mehrere Fragen mit mehreren richtigen Antworten.
+assert.ok(SONG_VERBUND_QUIZ.length >= 3, 'Das Abschlussquiz besteht aus mindestens drei Fragen.');
+SONG_VERBUND_QUIZ.forEach((question, index) => {
+  const ids = question.options.map((option) => option.id);
+  assert.equal(new Set(ids).size, ids.length, `Frage ${index + 1} verwendet eindeutige Antwort-Kennungen.`);
+  assert.ok(question.options.length >= 3, `Frage ${index + 1} bietet mindestens drei Antwortmoeglichkeiten.`);
+  assert.ok(correctQuizOptions(question).length >= 1, `Frage ${index + 1} besitzt mindestens eine richtige Antwort.`);
+  assert.ok(question.options.some((option) => !option.correct), `Frage ${index + 1} besitzt mindestens eine falsche Antwort.`);
+  assert.ok(question.prompt.trim().length > 0 && question.hint.trim().length > 0, `Frage ${index + 1} nennt Fragestellung und gestuften Hinweis.`);
+});
+assert.ok(SONG_VERBUND_QUIZ.filter((question) => correctQuizOptions(question).length > 1).length >= 2, 'Mindestens zwei Fragen haben mehrere richtige Antworten.');
+const multiQuestion = SONG_VERBUND_QUIZ.find((question) => correctQuizOptions(question).length > 1);
+const multiCorrect = correctQuizOptions(multiQuestion);
+assert.equal(evaluateQuizQuestion(multiQuestion, [...multiCorrect].reverse()), true, 'Die Reihenfolge der Kreuze ist egal.');
+assert.equal(evaluateQuizQuestion(multiQuestion, multiCorrect.slice(1)), false, 'Eine fehlende richtige Antwort gilt nicht als geloest.');
+assert.equal(evaluateQuizQuestion(multiQuestion, [...multiCorrect, multiQuestion.options.find((option) => !option.correct).id]), false, 'Ein zusaetzliches falsches Kreuz gilt nicht als geloest.');
+assert.equal(evaluateQuizQuestion(multiQuestion, []), false, 'Ohne Kreuz gilt eine Frage als unbeantwortet.');
+assert.equal(evaluateQuizQuestion(multiQuestion, 'kein-array'), false, 'Fehlerhafte Speicherstaende gelten nicht als geloest.');
+assert.match(sqlLab, /\['check', 'Abschlussquiz'\]/, 'Der letzte Reiter der Aufgabe 7 ist das Abschlussquiz.');
+assert.match(sqlLab, /input\.type = 'checkbox'; input\.name = `verbund-quiz-/, 'Das Abschlussquiz verwendet Auswahlkaestchen statt Einfachauswahl.');
+assert.match(sqlLab, /element\('form', 'final-quiz'\)/, 'Das Abschlussquiz nutzt die vorhandene final-quiz-Komponente der Datenbankaufgaben.');
+assert.match(sqlLab, /function renderQuizSolutions/, 'Die Abschlussuebersicht nennt Fragen und richtige Antworten.');
 console.log('Song-Verbund: Daten, 32 → 8 → 4, Schlüsselpaare und SQL-Fehlerfälle erfolgreich geprüft');
