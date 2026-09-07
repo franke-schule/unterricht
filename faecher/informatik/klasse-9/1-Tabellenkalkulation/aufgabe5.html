@@ -492,6 +492,32 @@
             });
           });
 
+          /* Am Ende jedes Reiters ein Button zum nächsten Reiter. */
+          const tablist = document.querySelector(".step-tabs");
+          panels.forEach((panel, index) => {
+            const nextTab = tabs[index + 1];
+            if (!nextTab) return;
+
+            const nav = document.createElement("nav");
+            nav.className = "step-panel-nav";
+            nav.setAttribute("aria-label", "Zum nächsten Abschnitt");
+
+            const button = document.createElement("button");
+            button.type = "button";
+            button.className = "primary-action";
+            button.textContent = "Weiter: " + nextTab.textContent + " →";
+            button.addEventListener("click", () => {
+              selectTab(nextTab.dataset.dfdTab);
+              nextTab.focus({ preventScroll: true });
+              if (!tablist) return;
+              const smooth = !window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+              tablist.scrollIntoView({ behavior: smooth ? "smooth" : "auto", block: "start" });
+            });
+
+            nav.append(button);
+            panel.append(nav);
+          });
+
           const selected = tabs.find((tab) => tab.getAttribute("aria-selected") === "true") || tabs[0];
           selectTab(selected.dataset.dfdTab);
         })();

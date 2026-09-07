@@ -1382,3 +1382,17 @@ body.is-filling-sheet {
     margin-top: .4rem;
   }
 }
+
+.step-panel-nav {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: 1.5rem;
+  padding-top: 1rem;
+  border-top: 1px solid #d7dee8;
+}
+
+@media (max-width: 620px) {
+  .step-panel-nav .primary-action {
+    width: 100%;
+  }
+}
