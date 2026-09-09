@@ -1,0 +1,136 @@
+<!doctype html>
+<html lang="de">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="robots" content="noindex, nofollow">
+    <title>Aufgabe 5 – Das Perzeptron | Informatik 11</title>
+    <link rel="stylesheet" href="../../../../styles.css?v=20260707">
+    <link rel="stylesheet" href="perzeptron/task5.css?v=20260909d">
+    <script type="module" src="perzeptron/ui/task5.mjs?v=20260909c"></script>
+  </head>
+  <body class="perceptron-page">
+    <div class="site-backdrop" aria-hidden="true"></div>
+    <main class="page-shell">
+      <nav class="topbar" aria-label="Navigation">
+        <a class="back-link" href="../index.html">Zur Aufgabenübersicht</a>
+        <a class="back-link" href="aufgabe4.html">Zu Aufgabe 4</a>
+        <a class="back-link" href="../../../../">Startseite</a>
+      </nav>
+      <header class="perceptron-hero">
+        <p class="perceptron-eyebrow">Künstliche Intelligenz · Klassifikation</p>
+        <h1>Das Perzeptron</h1>
+        <p><strong>Aufgabe 5</strong></p>
+        <p>Untersuche, wie ein Perzeptron entscheidet, aus Fehlern lernt und wo seine Grenzen liegen.</p>
+      </header>
+      <p id="save-status" role="status" aria-live="polite">Dein Bearbeitungsstand wird in diesem Browser gespeichert.</p>
+
+      <nav class="tab-list" role="tablist" aria-label="Lernschritte zum Perzeptron">
+        <button id="tab-discover" role="tab" type="button" aria-selected="true" aria-controls="discover" data-tab="discover">1 Entdecken</button>
+        <button id="tab-structure" role="tab" type="button" aria-selected="false" aria-controls="structure" data-tab="structure" tabindex="-1">2 Aufbau</button>
+        <button id="tab-decide" role="tab" type="button" aria-selected="false" aria-controls="decide" data-tab="decide" tabindex="-1">3 Entscheiden</button>
+        <button id="tab-learn" role="tab" type="button" aria-selected="false" aria-controls="learn" data-tab="learn" tabindex="-1">4 Lernen</button>
+        <button id="tab-simulator" role="tab" type="button" aria-selected="false" aria-controls="simulator" data-tab="simulator" tabindex="-1">5 Simulator</button>
+        <button id="tab-fast" role="tab" type="button" aria-selected="false" aria-controls="fast" data-tab="fast" tabindex="-1">6 Für die Schnellen</button>
+        <button id="tab-limits" role="tab" type="button" aria-selected="false" aria-controls="limits" data-tab="limits" tabindex="-1">7 Grenzen</button>
+        <button id="tab-summary" role="tab" type="button" aria-selected="false" aria-controls="summary" data-tab="summary" tabindex="-1">8 Zusammenfassung</button>
+      </nav>
+
+      <section id="discover" class="step-panel" role="tabpanel" aria-labelledby="tab-discover" data-panel="discover">
+        <p class="kicker">Entdecken</p><h2>Welche Merkmale wirken mit?</h2>
+        <p>Schalte Merkmale ein und aus. Beobachte zunächst nur, welche Beiträge in die gemeinsame Summe eingehen.</p>
+        <div class="model-grid">
+          <div class="wool-model" aria-label="Abstraktes Verbindungsmodell mit zwei Merkmalen und einer Ausgabe">
+            <svg class="wool-links" viewBox="0 0 1000 440" preserveAspectRatio="none" aria-hidden="true"><line class="negative" x1="260" y1="105" x2="735" y2="220"></line><line class="positive" x1="260" y1="335" x2="735" y2="220"></line></svg>
+            <button class="feature-toggle wool-input length" data-feature="length" type="button" aria-pressed="true"><span>Zahnlänge aktiv: <strong id="length-value">1</strong></span><span>Merkmal x<sub>1</sub></span></button>
+            <button class="feature-toggle wool-input eyes" data-feature="eyes" type="button" aria-pressed="true"><span>Augengröße aktiv: <strong id="eyes-value">1</strong></span><span>Merkmal x<sub>2</sub></span></button>
+            <div class="connection negative wool-weight length"><span class="clip-mark" aria-hidden="true">−</span><span><strong>blaue Klammern</strong><br>negative Verbindung: schwächt ab</span><strong id="length-contribution">−1</strong></div>
+            <div class="connection positive wool-weight eyes"><span class="clip-mark" aria-hidden="true">+</span><span><strong>rote Klammern</strong><br>positive Verbindung: verstärkt</span><strong id="eyes-contribution">+2</strong></div>
+            <div class="output-card wool-output"><span>Sammelwert: </span><strong id="wool-sum">1</strong><br><span>Grenze: 1</span><br><strong id="wool-output">Ausgabe 1</strong></div>
+          </div>
+          <div class="card"><h3>Beobachtung festhalten</h3><p>Welche Aussagen passen zu deiner Beobachtung?</p>
+            <fieldset id="discover-options"><legend class="sr-only">Beobachtungen</legend>
+              <label><input type="checkbox" value="path">Ein aktives Merkmal wirkt über seine Verbindung auf den Sammelwert.</label>
+              <label><input type="checkbox" value="sign">Plus erhöht den Sammelwert, Minus verringert ihn.</label>
+              <label><input type="checkbox" value="threshold">Die Ausgabe wird 1, wenn der Sammelwert mindestens die Grenze erreicht.</label>
+              <label><input type="checkbox" value="color">Nur die Farbe einer Verbindung bestimmt ihre Bedeutung.</label>
+            </fieldset><button id="check-discover" class="primary-button" type="button">Beobachtung überprüfen</button><div id="discover-feedback" class="feedback" role="status" aria-live="polite" hidden></div>
+          </div>
+        </div>
+        <details><summary>Hilfe 1: Auf Vorzeichen achten</summary><p>Schau zunächst auf das Plus- und Minuszeichen an den Verbindungen.</p></details>
+        <details><summary>Hilfe 2: Beiträge vergleichen</summary><p>Eine aktive Eingabe liefert ihren sichtbaren Verbindungswert, eine inaktive liefert 0.</p></details>
+        <details><summary>Hilfe 3: Ergebnis</summary><p>Bei beiden aktiven Merkmalen ist die Summe −1 + 2 = 1. Die Ausgabe erreicht damit die Grenze.</p></details>
+        <div class="flow-navigation" data-flow="discover"></div>
+      </section>
+
+      <section id="structure" class="step-panel" role="tabpanel" aria-labelledby="tab-structure" data-panel="structure" hidden>
+        <p class="kicker">Aufbau</p><h2>Vom Anschauungsmodell zum Fachmodell</h2><p>Ordne die Fachbegriffe den Teilen des Modells zu. Wähle einen Begriff und danach einen Zielbereich; Ziehen ist zusätzlich möglich.</p>
+        <div class="two-column"><div id="term-palette" class="term-list" aria-label="Fachbegriffe"></div><div id="term-targets" class="term-list" aria-label="Bestandteile des Modells"></div></div>
+        <button id="check-structure" class="primary-button" type="button">Zuordnung überprüfen</button><div id="structure-feedback" class="feedback" role="status" aria-live="polite" hidden></div>
+        <div class="model-lines-scroll" role="region" aria-label="Perzeptron-Schema; auf kleinen Bildschirmen horizontal scrollbar" tabindex="0">
+          <div class="model-lines" aria-label="Schema: Eingaben führen über Gewichte zur gewichteten Summe. Der Schwellenwert führt zusammen mit der Summe zur Aktivierungsfunktion und diese zur Ausgabe.">
+            <svg class="structure-links" viewBox="0 0 1000 420" preserveAspectRatio="none" aria-hidden="true">
+              <line x1="200" y1="106" x2="300" y2="106"></line><line x1="500" y1="106" x2="600" y2="106"></line><line x1="500" y1="302" x2="600" y2="106"></line><line x1="800" y1="106" x2="850" y2="106"></line>
+            </svg>
+            <div class="model-node input"><span>Eingaben x<sub>1</sub>, x<sub>2</sub></span></div>
+            <div class="model-node sum">gewichtete Summe a</div>
+            <div class="model-node threshold">Schwellenwert θ</div>
+            <div class="model-node activation">Aktivierungsfunktion f</div>
+            <div class="model-node output">Ausgabe f(a)</div>
+          </div>
+        </div>
+        <div class="formula-grid"><article class="formula-card"><h3>Merke</h3><p class="math" role="math" aria-label="a ist w eins mal x eins plus w zwei mal x zwei">a = w<sub>1</sub> · x<sub>1</sub> + w<sub>2</sub> · x<sub>2</sub></p></article><article class="formula-card"><h3>Entscheidungsregel</h3><p>Die Aktivierungsfunktion vergleicht a mit dem Schwellenwert θ und gibt 0 oder 1 aus.</p></article></div>
+        <details><summary>Hilfe 1: Informationsweg</summary><p>Folge dem Weg von den Merkmalen über die Verbindungen bis zum Ergebnis.</p></details><details><summary>Hilfe 2: Zahlen an Verbindungen</summary><p>Die Zahlen an den Verbindungen heißen Gewichte. Im Rechenknoten werden Beiträge addiert.</p></details><details><summary>Hilfe 3: Start</summary><p>x<sub>1</sub> und x<sub>2</sub> sind Eingaben; w<sub>1</sub> und w<sub>2</sub> sind Gewichte.</p></details>
+        <div class="flow-navigation" data-flow="structure"></div>
+      </section>
+
+      <section id="decide" class="step-panel" role="tabpanel" aria-labelledby="tab-decide" data-panel="decide" hidden>
+        <p class="kicker">Entscheiden</p><h2>Ein Tier klassifizieren</h2><p>Für ein Tier gelten x<sub>1</sub> = 2, x<sub>2</sub> = 4, w<sub>1</sub> = −1, w<sub>2</sub> = 2 und θ = 3. Berechne zuerst die Beiträge und dann die Entscheidung.</p>
+        <p class="math">a = w<sub>1</sub> · x<sub>1</sub> + w<sub>2</sub> · x<sub>2</sub>; f(a) = 1 bei a ≥ θ, sonst 0</p>
+        <div class="input-grid" id="decision-form">
+          <label>Beitrag w<sub>1</sub> · x<sub>1</sub><input data-answer="product1" inputmode="decimal"></label><label>Beitrag w<sub>2</sub> · x<sub>2</sub><input data-answer="product2" inputmode="decimal"></label><label>gewichtete Summe a<input data-answer="sum" inputmode="decimal"></label>
+          <label>Vergleich<select data-answer="comparison"><option value="">Bitte wählen</option><option value="ge">a ≥ θ</option><option value="lt">a &lt; θ</option></select></label><label>Ausgabe f(a)<select data-answer="output"><option value="">Bitte wählen</option><option value="0">0</option><option value="1">1</option></select></label><label>Klasse<select data-answer="class"><option value="">Bitte wählen</option><option value="safe">ungefährlich</option><option value="danger">gefährlich</option></select></label>
+        </div><button id="check-decision" class="primary-button" type="button">Rechnung überprüfen</button><div id="decision-feedback" class="feedback" role="status" aria-live="polite" hidden></div>
+        <details><summary>Hilfe 1: getrennt rechnen</summary><p>Berechne die beiden Produkte getrennt. Achte beim ersten Gewicht auf das Minuszeichen.</p></details><details><summary>Hilfe 2: vergleichen</summary><p>Addiere −1 · 2 und 2 · 4. Vergleiche anschließend mit 3.</p></details><details><summary>Hilfe 3: Teilergebnis</summary><p>Die Beiträge sind −2 und 8. Damit ist a = 6.</p></details><div class="flow-navigation" data-flow="decide"></div>
+      </section>
+
+      <section id="learn" class="step-panel" role="tabpanel" aria-labelledby="tab-learn" data-panel="learn" hidden>
+        <p class="kicker">Lernen</p><h2>Aus Fehlern die Parameter anpassen</h2><p>Bei richtiger Klassifikation bleibt alles gleich. Ist die Ausgabe zu groß, werden Gewichte kleiner und θ größer; ist sie zu klein, geschieht das Gegenteil.</p>
+        <div class="formula-grid"><article class="formula-card"><p class="math">δ = t − f(a)</p><p>δ beschreibt die Abweichung zwischen Zielwert und Ausgabe.</p></article><article class="formula-card"><p class="math">w<sub>i</sub> neu = w<sub>i</sub> alt + δ · α · x<sub>i</sub></p><p class="math">θ neu = θ alt − δ · α</p></article></div>
+        <p>Start: w<sub>1</sub> = 1, w<sub>2</sub> = 1, θ = 1, α = 1. Bearbeite die Daten in der vorgegebenen Reihenfolge.</p>
+        <form id="epoch-form" novalidate><div class="table-scroll"><table><caption>Erste Trainingsepoche</caption><thead><tr><th>Schritt</th><th>x<sub>1</sub></th><th>x<sub>2</sub></th><th>t</th><th>w<sub>1</sub> vorher</th><th>w<sub>2</sub> vorher</th><th>θ vorher</th><th>a</th><th>f(a)</th><th>δ</th><th>w<sub>1</sub> nachher</th><th>w<sub>2</sub> nachher</th><th>θ nachher</th><th>Prüfen</th></tr></thead><tbody id="epoch-body"></tbody></table></div></form><div id="epoch-feedback" class="feedback" role="status" aria-live="polite" hidden></div>
+        <details><summary>Hilfe 1: a berechnen</summary><p>Nutze immer die alten Parameter der aktuellen Zeile.</p></details><details><summary>Hilfe 2: δ bestimmen</summary><p>Erst nach f(a) kannst du δ = t − f(a) bestimmen.</p></details><details><summary>Hilfe 3: Regel einsetzen</summary><p>Bei δ = 0 bleiben Parameter unverändert. Für die ganze Tabelle gilt α = 1.</p></details>
+        <article class="card"><h3>Kurz erklären</h3><p>Erkläre, was das Perzeptron beim Training verändert und wo das Gelernte gespeichert ist.</p><label for="learning-answer">Deine Erklärung<textarea id="learning-answer" maxlength="600" rows="5" placeholder="Beim Training …"></textarea></label><p class="counter" id="learning-counter">0 von 600 Zeichen</p><p class="privacy"><strong>Hinweis:</strong> Gib keine personenbezogenen Informationen ein. Deine fachliche Antwort wird zur automatischen Auswertung an den Skriptserver und dort an die Gemini API übertragen.</p><button id="check-learning-answer" class="primary-button" type="button">Antwort überprüfen</button><div id="learning-feedback" class="feedback" role="status" aria-live="polite" hidden></div></article>
+        <div class="flow-navigation" data-flow="learn"></div>
+      </section>
+
+      <section id="simulator" class="step-panel" role="tabpanel" aria-labelledby="tab-simulator" data-panel="simulator" hidden>
+        <p class="kicker">Simulator</p><h2>Die Epoche im Werkzeug nachvollziehen</h2><ol><li>Trainingsdatei herunterladen.</li><li>Perzeptron Online in einem neuen Reiter öffnen und die CSV auswählen.</li><li>w<sub>1</sub> = 1, w<sub>2</sub> = 1, θ = 1 und α = 1 setzen, dann initialisieren.</li><li>Trainingsmodus aktivieren und zunächst immer nur eine Iteration trainieren.</li><li>Werte mit deiner Tabelle vergleichen.</li></ol>
+        <p><a class="primary-button" href="perzeptron/data/Trainingsdaten_Tiere.csv" download>↓ Trainingsdaten_Tiere.csv herunterladen</a> <a class="secondary-button" href="https://kex.fim.uni-passau.de/Perzeptron_Online/html/Perzeptron_Online.html" target="_blank" rel="noopener noreferrer">Perzeptron Online öffnen ↗</a></p>
+        <p>Im Simulator heißen die Schritte „Initialisieren“, „Trainingsmodus aktivieren“, „Trainieren“, „Trainingsprotokoll“ und „Geometrische Darstellung“.</p>
+        <p class="data-boundary"><strong>Wichtig:</strong> Die vier importierten Punkte sind Trainingsdaten. Die angezeigten 100&nbsp;% gelten nur für diese bekannten Beispiele und sind noch kein Test mit unbekannten Daten.</p>
+        <div class="input-grid" id="simulator-form"><label>Endwert w<sub>1</sub><input data-answer="endW1" inputmode="decimal"></label><label>Endwert w<sub>2</sub><input data-answer="endW2" inputmode="decimal"></label><label>Endwert θ<input data-answer="theta" inputmode="decimal"></label><label>Trainingsschritte<input data-answer="steps" inputmode="numeric"></label><label>korrekt klassifizierte Trainingspunkte<input data-answer="correctPoints" inputmode="numeric"></label><label>korrekt klassifiziert in Prozent<input data-answer="percent" inputmode="decimal"></label><label>Koeffizient vor x<sub>1</sub> in der Geraden<input data-answer="lineW1" inputmode="decimal"></label><label>Koeffizient vor x<sub>2</sub> in der Geraden<input data-answer="lineW2" inputmode="decimal"></label><label>rechte Seite der Geraden<input data-answer="line" inputmode="decimal"></label></div><button id="check-simulator" class="primary-button" type="button">Beobachtung überprüfen</button><div id="simulator-feedback" class="feedback" role="status" aria-live="polite" hidden></div>
+        <details><summary>Hilfe 1: Protokoll öffnen</summary><p>Öffne nach jedem Trainingsschritt das Trainingsprotokoll.</p></details><details><summary>Hilfe 2: Reihenfolge</summary><p>Die vier Daten sind (2|2), (4|1), (6|2), (0|4).</p></details><details><summary>Hilfe 3: Zwischenstand</summary><p>Nach dem zweiten Schritt gilt w<sub>1</sub> = −3, w<sub>2</sub> = 0 und θ = 2.</p></details>
+        <div class="flow-navigation" data-flow="simulator"></div>
+      </section>
+
+      <section id="fast" class="step-panel" role="tabpanel" aria-labelledby="tab-fast" data-panel="fast" hidden>
+        <p class="kicker">Für die Schnellen</p><h2>Wie stark wird angepasst?</h2><p>Für (4|1), t = 0, w<sub>1</sub> = w<sub>2</sub> = θ = 1 und δ = −1 gilt nun α = 0,5.</p><div class="input-grid" id="fast-form"><label>w<sub>1</sub> neu<input data-answer="w1" inputmode="decimal"></label><label>w<sub>2</sub> neu<input data-answer="w2" inputmode="decimal"></label><label>θ neu<input data-answer="theta" inputmode="decimal"></label></div><button id="check-fast" class="primary-button" type="button">Update überprüfen</button><div id="fast-feedback" class="feedback" role="status" aria-live="polite" hidden></div>
+        <details><summary>Hilfe 1: Lernrate</summary><p>Die Lernrate multipliziert jede Parameteränderung.</p></details><details><summary>Hilfe 2: w<sub>1</sub></summary><p>Rechne 1 + (−1) · 0,5 · 4.</p></details><details><summary>Hilfe 3: Vergleich</summary><p>Die Änderungen sind halb so groß wie bei α = 1.</p></details>
+        <article class="remember"><h3>Geometrisch deuten</h3><p>Die Gleichung w<sub>1</sub>x<sub>1</sub> + w<sub>2</sub>x<sub>2</sub> = θ beschreibt die Trenngerade. Der Gewichtsvektor steht senkrecht auf ihr; der Halbraum in seine Richtung erhält Ausgabe 1. Eine Multiplikation aller Parameter mit einer negativen Zahl lässt zwar dieselbe Gerade entstehen, vertauscht bei unveränderter Regel aber die Ausgabeseiten.</p></article><div class="flow-navigation" data-flow="fast"></div>
+      </section>
+
+      <section id="limits" class="step-panel" role="tabpanel" aria-labelledby="tab-limits" data-panel="limits" hidden>
+        <p class="kicker">Grenzen</p><h2>Kann eine Gerade immer alle Klassen trennen?</h2><p>Die vier Punkte bilden eine XOR-Verteilung. Entscheide zuerst, ob eine einzige Gerade beide Klassen vollständig trennen kann.</p><div class="xor-board" aria-label="XOR-Daten: (0,0) und (1,1) haben Label 1; (0,1) und (1,0) haben Label 0."><div class="xor-point one">(0|0), Label 1</div><div class="xor-point zero">(1|0), Label 0</div><div class="xor-point zero">(0|1), Label 0</div><div class="xor-point one">(1|1), Label 1</div></div>
+        <fieldset id="limits-options"><legend>Welche Aussagen stimmen?</legend><label><input type="checkbox" value="line">Keine einzelne Gerade trennt hier alle Punkte nach ihrem Label.</label><label><input type="checkbox" value="single">Ein einzelnes Perzeptron kann diese Daten nicht vollständig korrekt klassifizieren.</label><label><input type="checkbox" value="continue">Die Parameter können sich weiter verändern, ohne eine fehlerfreie Lösung zu erreichen.</label><label><input type="checkbox" value="rate">Eine größere Lernrate garantiert hier eine Lösung.</label></fieldset><button id="check-limits" class="primary-button" type="button">Aussagen überprüfen</button><div id="limits-feedback" class="feedback" role="status" aria-live="polite" hidden></div>
+        <article class="remember"><p>Ein einzelnes Perzeptron ist ein linearer Klassifikator. Es passt Zahlen nach einer festen Regel an; es entwickelt dabei weder Bewusstsein noch menschliches Verständnis.</p></article><div class="flow-navigation" data-flow="limits"></div>
+      </section>
+
+      <section id="summary" class="step-panel" role="tabpanel" aria-labelledby="tab-summary" data-panel="summary" hidden>
+        <p class="kicker">Zusammenfassung</p><h2>Das Wichtigste sichern</h2><ul><li>a = w<sub>1</sub> · x<sub>1</sub> + w<sub>2</sub> · x<sub>2</sub> fasst die gewichteten Eingaben zusammen.</li><li>f(a) liefert 1 bei a ≥ θ, sonst 0.</li><li>δ = t − f(a) steuert die Änderung der Gewichte und des Schwellenwerts.</li><li>Ein Perzeptron kann nur linear separierbare Daten vollständig trennen.</li><li>Eine Trefferquote auf Trainingsdaten beschreibt noch nicht die Leistung bei unbekannten Daten.</li></ul>
+        <section id="final-quiz" aria-labelledby="quiz-title"><h3 id="quiz-title">Abschlussquiz</h3><p id="quiz-progress">0 von 6 Fragen vollständig richtig</p><form id="quiz-form"><div id="quiz-questions"></div><button class="primary-button" type="submit">Quiz auswerten</button></form><div id="quiz-feedback" class="feedback" role="status" aria-live="polite" hidden></div><div id="quiz-summary" class="remember" hidden></div></section>
+        <button id="reset-progress" class="secondary-button" type="button">Bearbeitungsstand zurücksetzen</button>
+      </section>
+    </main>
+  </body>
+</html>

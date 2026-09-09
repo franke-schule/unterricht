@@ -1,0 +1,15 @@
+const assert = require('node:assert/strict');
+const fs = require('node:fs');
+const path = require('node:path');
+const vm = require('node:vm');
+const context = {};
+vm.createContext(context);
+['Tasks.gs', 'Helpers.gs', 'Rules.gs'].forEach((filename) => vm.runInContext(fs.readFileSync(path.join(process.cwd(), 'apps-script', filename), 'utf8'), context, { filename }));
+const task = vm.runInContext("TASKS['11-5-1']", context);
+assert.equal(task.maxPoints, 4);
+assert.equal(Array.from(task.expectedAspects).length, 4);
+const complete = context.evaluatePerceptronLearningByRules_('Beim Training vergleicht das Perzeptron die erwartete Soll-Ausgabe mit der berechneten Ausgabe. Bei einem Fehler passt es Gewichte und Schwellenwert an. Das Gelernte steckt in diesen Parametern. Es folgt einer festen Regel und hat kein Bewusstsein oder menschliches Verständnis.', 4);
+assert.equal(complete.points, 4);
+const partial = context.evaluatePerceptronLearningByRules_('Die Gewichte werden verändert.', 4);
+assert.equal(partial.points < 4, true);
+console.log('Rubrik für Aufgabe 5 erkennt vollständige und unvollständige Erklärungen.');

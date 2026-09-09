@@ -388,6 +388,25 @@ const TASKS = {
     ]
   },
 
+  '11-5-1': {
+    title:
+      'Klasse 11 Aufgabe 5: Lernen eines Perzeptrons erklären',
+    grade:
+      11,
+    maxPoints:
+      4,
+    instruction:
+      'Bewerte eine kurze fachliche Erklärung zum Training eines einzelnen Perzeptrons. Anerkenne eigene, sinngleiche Formulierungen. Wesentlich sind die Anpassung von Gewichten und gegebenenfalls Schwellenwert, die Abweichung zwischen Soll- und Ist-Ausgabe, die Speicherung des Gelernten in den Parametern sowie die klare Abgrenzung von Bewusstsein oder menschlichem Verständnis. Gib bei fehlenden Aspekten nur Hinweise, keine vollständige Musterlösung.',
+    program:
+      'Kontext: Das Perzeptron berechnet eine Ausgabe f(a), vergleicht sie mit dem Zielwert t und verwendet δ = t − f(a). Bei Fehlern passt es Gewichte w_i und den Schwellenwert θ nach festen Rechenregeln an. Es ist ein linearer Klassifikator und besitzt kein Bewusstsein.',
+    expectedAspects: [
+      'Beim Training werden Gewichte und bei Bedarf auch der Schwellenwert verändert.',
+      'Die Anpassung beruht auf der Abweichung zwischen Zielwert beziehungsweise Soll-Ausgabe t und berechneter Ist-Ausgabe f(a).',
+      'Das Gelernte steckt in den angepassten Gewichten und dem Schwellenwert beziehungsweise Parametern.',
+      'Das Perzeptron entwickelt dabei weder Bewusstsein noch menschliches Verständnis, sondern folgt festen Rechenregeln.'
+    ]
+  },
+
   'ph11-kreisbewegungen-bewegung-diagramm-beschreibung': {
     title:
       'Physik Klasse 11 – Aufgabe 6a: Bewegung in Diagrammen beschreiben',

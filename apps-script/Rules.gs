@@ -45,6 +45,10 @@ function applyRuleBasedMinimum_(
     ruleBasedEvaluation = evaluateFishEqualAccuracyByRules_(answer, task.maxPoints);
   }
 
+  if (task === TASKS['11-5-1']) {
+    ruleBasedEvaluation = evaluatePerceptronLearningByRules_(answer, task.maxPoints);
+  }
+
   if (!ruleBasedEvaluation) {
     return evaluation;
   }
@@ -128,6 +132,48 @@ function evaluateFishEqualAccuracyByRules_(answer, maxPoints) {
   if (containsAny_(text, ['allein', 'nicht genug', 'nicht ausreichend', 'zeigt nicht', 'art der fehler', 'welche fehler', 'verteilung'])) { points++; strengths.push('Du ordnest die Genauigkeit als begrenztes Guetemass ein.'); }
   else { missing.push('Erklaere, warum die Genauigkeit allein die Art der Fehler nicht zeigt.'); }
   return createFishRuleEvaluation_(points, maxPoints, strengths, missing, points === maxPoints ? 'Du zeigst klar, warum gleiche Genauigkeit nicht dieselben Fehler bedeutet.' : 'Vergleiche neben der Genauigkeit auch, welche Fische falsch klassifiziert werden.');
+}
+
+
+function evaluatePerceptronLearningByRules_(answer, maxPoints) {
+  const text = normalizeGermanText_(answer);
+  const strengths = [];
+  const missing = [];
+  let points = 0;
+  const changesParameters =
+    containsAny_(text, ['gewicht', 'w1', 'w2', 'parameter']) &&
+    containsAny_(text, ['aendert', 'ändert', 'anpass', 'veraendert', 'verändert', 'passt']);
+  const mentionsThreshold = containsAny_(text, ['schwellenwert', 'theta', 'θ']);
+  if (changesParameters && (mentionsThreshold || containsAny_(text, ['gewicht', 'parameter']))) {
+    points++;
+    strengths.push('Du nennst die Anpassung von Gewichten und/oder Schwellenwert.');
+  } else {
+    missing.push('Erkläre, welche Parameter bei einer Fehlklassifikation angepasst werden.');
+  }
+  const comparesOutputs =
+    containsAny_(text, ['soll', 'zielwert', 'erwartet', 'label', 't']) &&
+    containsAny_(text, ['ist', 'ausgabe', 'berechnet', 'f a', 'f(a)', 'fehler', 'abweich']);
+  if (comparesOutputs) {
+    points++;
+    strengths.push('Du beschreibst den Vergleich von erwarteter und berechneter Ausgabe.');
+  } else {
+    missing.push('Beschreibe, dass die Anpassung aus der Abweichung zwischen Zielwert und Ausgabe entsteht.');
+  }
+  if (containsAny_(text, ['gespeichert', 'steckt', 'gelernt', 'in den gewichten', 'in gewichten', 'parameter'])) {
+    points++;
+    strengths.push('Du ordnest das Gelernte den angepassten Parametern zu.');
+  } else {
+    missing.push('Ergänze, wo das Gelernte im Modell gespeichert ist.');
+  }
+  const deniesAwareness = containsAny_(text, ['kein bewusstsein', 'nicht bewusst', 'kein verstaendnis', 'kein verständnis', 'versteht nicht', 'nicht menschlich', 'feste regel', 'algorithmus']);
+  const falseAwareness = containsAny_(text, ['entwickelt bewusstsein', 'hat bewusstsein', 'versteht seine fehler bewusst', 'versteht seine fehler bewusst']);
+  if (deniesAwareness && !falseAwareness) {
+    points++;
+    strengths.push('Du grenzt die Regelanpassung von Bewusstsein und Verständnis ab.');
+  } else {
+    missing.push('Grenze die feste Rechenregel von Bewusstsein oder menschlichem Verständnis ab.');
+  }
+  return createFishRuleEvaluation_(points, maxPoints, strengths, missing, points === maxPoints ? 'Du erklärst fachlich vollständig, wie das Perzeptron Parameter anpasst und wo sein Lernen begrenzt ist.' : 'Ergänze die noch fehlenden Aspekte zu Fehlervergleich, Parametern oder der Abgrenzung von Bewusstsein.');
 }
 
 

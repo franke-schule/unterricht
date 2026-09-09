@@ -1,4 +1,4 @@
-\documentclass[10pt,a4paper]{article}
+\documentclass[11pt,a4paper]{article}
 
 \usepackage[T1]{fontenc}
 \usepackage[utf8]{inputenc}
@@ -8,14 +8,15 @@
 \usepackage{xcolor}
 \usepackage{tabularx}
 \usepackage{array}
-\usepackage{listings}
 \usepackage{microtype}
-\usepackage{enumitem}
+\usepackage{tikz}
+\usetikzlibrary{arrows.meta}
 
 \pagestyle{empty}
 \setlength{\parindent}{0pt}
 \setlength{\parskip}{0pt}
 \renewcommand{\familydefault}{\sfdefault}
+\linespread{1.3}\selectfont
 
 \definecolor{Navy}{HTML}{17324D}
 \definecolor{Blue}{HTML}{3B6EA5}
@@ -25,41 +26,15 @@
 \definecolor{Ink}{HTML}{1E2935}
 \definecolor{Muted}{HTML}{617080}
 \definecolor{Line}{HTML}{D8E1E8}
-\definecolor{CodeBg}{HTML}{F5F7F9}
 
 \color{Ink}
 
 \newcommand{\sectiontitle}[2]{%
-  \vspace{2.3mm}
+  \vspace{4mm}
   {\color{#1}\bfseries\large #2}\par
-  \vspace{0.8mm}
-  {\color{#1}\rule{\linewidth}{0.7pt}}\par
   \vspace{1.2mm}
-}
-
-\newcommand{\solutionrow}[3]{%
-  \textcolor{Blue}{\bfseries #1} &
-  \ttfamily\small #2 &
-  \small #3 \\[1.8mm]
-}
-
-\newcommand{\termrow}[2]{%
-  \textcolor{Blue}{\bfseries #1} &
-  \small #2 \\[1.6mm]
-}
-
-\lstset{
-  basicstyle=\ttfamily\small,
-  backgroundcolor=\color{CodeBg},
-  frame=single,
-  rulecolor=\color{Line},
-  framesep=2.5mm,
-  xleftmargin=1mm,
-  xrightmargin=1mm,
-  aboveskip=1mm,
-  belowskip=1mm,
-  showstringspaces=false,
-  columns=fullflexible
+  {\color{#1}\rule{\linewidth}{0.7pt}}\par
+  \vspace{2mm}
 }
 
 \begin{document}
@@ -81,73 +56,101 @@
   }%
 }
 
-\vspace{3mm}
+\vspace{4mm}
 \colorbox{Sky}{%
   \parbox{\dimexpr\linewidth-2\fboxsep\relax}{%
-    \vspace{1.8mm}
+    \vspace{2.4mm}
     \textcolor{Blue}{\bfseries Ziel:}
-    Du kannst ein Datenflussdiagramm lesen und beschreiben, selbst eines
-    zeichnen und einen Fehler darin finden und korrigieren.
-    \vspace{1.8mm}
+    Du kannst ein \textbf{Datenflussdiagramm} lesen, selbst eines zeichnen und
+    einen Fehler darin finden.
+    \vspace{2.4mm}
   }%
 }
 
 \sectiontitle{Blue}{1 · Bausteine}
 
-\renewcommand{\arraystretch}{1.05}
-\begin{tabularx}{\linewidth}{@{}>{\raggedright\arraybackslash}p{26mm} X@{}}
-  \termrow{Eingabe}{Ein Wert, den die nutzende Person eingibt, zum Beispiel die Anzahl der Mitfahrenden.}
-  \termrow{Funktion}{Ein Rechen- oder Vergleichsschritt, zum Beispiel plus, mal oder größer. Eine Funktion hat mehrere Eingangspfeile, aber genau einen Ausgangspfeil.}
-  \termrow{Ausgabe}{Das Ergebnis, das am Ende angezeigt wird.}
-  \termrow{Konstante}{Ein fest eingetragener Wert, der nicht eingegeben wird, zum Beispiel die 70, mit der eine Losnummer verglichen wird.}
-  \termrow{Verteiler}{Ein kleiner Kreis. Er gibt denselben Wert an mehrere Funktionen weiter.}
-\end{tabularx}
+\begin{tikzpicture}[x=1mm,y=1mm,
+    term/.style={font=\bfseries\small, text=Blue, anchor=north west,
+                 inner sep=0pt},
+    desc/.style={font=\small\linespread{1.0}\selectfont, text=Ink,
+                 anchor=north west, inner sep=0pt,
+                 text width=64mm, align=left,
+                 execute at begin node={\hyphenpenalty=10000\relax}},
+    func/.style={draw=Ink, line width=0.7pt, rounded corners=2pt, fill=white,
+                 minimum width=20mm, minimum height=7mm, inner sep=1pt,
+                 font=\small},
+    io/.style={font=\small, inner sep=1pt},
+    formula/.style={font=\small, text=Blue, inner sep=1pt},
+    flow/.style={draw=Ink, line width=0.7pt,
+                 -{Stealth[length=2.2mm,width=1.8mm]}},
+    wire/.style={draw=Ink, line width=0.7pt},
+    pointer/.style={draw=Blue, line width=0.5pt,
+                    dash pattern=on 1.2mm off 1.0mm,
+                    shorten <=1.5mm, shorten >=1.5mm,
+                    -{Stealth[length=1.8mm,width=1.5mm]}}]
 
-\sectiontitle{Blue}{2 · Musterlösung zu 2a: Rohrvolumen}
+  % ---- Begriffsspalte ----
+  \node[term] (t-eingabe) at (0,102) {Eingabe};
 
-\small
-Der Verteiler unter „Höhe“ gibt die Höhe an beide Zweige weiter, beide
-Teilrechnungen verwenden also dieselbe Höhe. Rechts wird der kleine Radius
-quadriert und mit der Höhe multipliziert, links wird der große Radius
-quadriert und ebenfalls mit der Höhe multipliziert. Der Knoten „minus“ zieht
-den rechten Wert vom linken ab. Das Ergebnis beschreibt das Volumen des
-Rohrs – allerdings ohne den Faktor $\pi$. Erst $\pi$ mal diesem Wert ergibt
-das echte Volumen.
+  \node[term] (t-verteiler) at (0,89) {Verteiler};
+  \node[desc] at (0,84.5) {Ein kleiner Kreis.\\
+    Er gibt denselben Wert an mehrere Funktionen weiter.};
 
-\sectiontitle{Blue}{3 · Musterlösung zu 2b: Spendenlauf}
+  \node[term] (t-konstante) at (0,65.5) {Konstante};
 
-\small
-Eingaben sind die erlaufene Summe S und die Unkosten U der SMV. Ein
-Verteiler gibt S an beide Zweige weiter. Ein Zweig rechnet S $-$ U, der
-andere Zweig rechnet S · 0,5. Beide Ergebnisse fließen in „plus“. Ausgabe:
-gespendete Gesamtsumme = S $-$ U + 0,5 · S.
+  \node[term] (t-funktion) at (0,56.5) {Funktion};
+  \node[desc] at (0,52) {Ein Rechen- oder Vergleichsschritt.\\
+    Sie hat mehrere Eingangspfeile, aber genau einen Ausgangspfeil.};
 
-\sectiontitle{Blue}{4 · Musterlösung zu 3: Fehler im Gewinnspiel}
+  \node[term] (t-ausgabe) at (0,33) {Ausgabe};
 
-\small
-Fehler: Der Vergleichsknoten ist mit „größer gleich“ beschriftet, der Text
-verlangt aber „größer als 70“. Auswirkung: Bei der Losnummer 70 gibt das
-Diagramm 10 € aus, richtig wären 0 €. Korrektur: Der Knoten muss „größer“
-(>) heißen; der übrige Aufbau bleibt unverändert.
+  % ---- Beispielhaftes Datenflussdiagramm ----
+  \node[io] (preis) at (156,100) {Preis};
+  \draw[wire] (156,97) -- (156,84);
+  \draw[flow] (156,84) -- (156,33.5);
+  \node[circle, fill=Ink, inner sep=0pt, minimum size=1.9mm]
+    (vert) at (156,84) {};
+  \draw[wire] (156,84) -- (138,84);
+  \draw[flow] (138,84) -- (138,66.5);
 
-\vspace{1.5mm}
+  \node[io] (konst) at (126,74) {0,1};
+  \draw[flow] (126,71) -- (126,66.5);
+
+  \node[func] (mal) at (132,63) {mal};
+  \draw[wire] (132,59.5) -- (132,48) -- (146,48);
+  \draw[flow] (146,48) -- (146,33.5);
+
+  \node[func] (plus) at (151,30) {plus};
+  \draw[flow] (151,26.5) -- (151,15.5);
+  \node[io] (endpreis) at (151,12) {Endpreis};
+
+  \node[formula] at (140,2) {Preis $\cdot$ 0,1 + Preis = Endpreis};
+
+  % ---- Zeigerpfeile ----
+  \draw[pointer] (t-eingabe.east) -- (preis.west);
+  \draw[pointer] (t-verteiler.east)
+    .. controls (70,92) and (132,93) .. (vert.center);
+  \draw[pointer] (t-konstante.east) -- (konst.west);
+  \draw[pointer] (t-funktion.east) -- (mal.west);
+  \draw[pointer] (t-ausgabe.east) -- (endpreis.west);
+
+\end{tikzpicture}
+
+\vspace{7mm}
 \colorbox{Mint}{%
   \parbox{\dimexpr\linewidth-2\fboxsep\relax}{%
-    \vspace{1.4mm}
-    \textcolor{Blue}{\bfseries Merke:}
-    \begin{itemize}[leftmargin=4.5mm, itemsep=0.6mm, topsep=0.8mm]
-      \small
-      \item Ein Datenflussdiagramm zeigt, wie Werte von den Eingaben durch
-        Funktionen bis zur Ausgabe fließen. Die Pfeile geben die Richtung
-        des Datenflusses an.
-      \item Ein Verteiler gibt denselben Wert an mehrere Funktionen weiter.
-        Eine Konstante ist ein fest eingetragener Wert, der nicht
-        eingegeben wird.
-      \item Jede Funktion entspricht einem Teilschritt einer Formel. Die
-        WENN-Funktion hat drei Eingänge: Bedingung, Ausgabe wenn wahr,
-        Ausgabe wenn falsch.
-    \end{itemize}
-    \vspace{0.6mm}
+    \vspace{2.4mm}
+    \textcolor{Blue}{\bfseries Merke:}\\[2.4mm]
+    Ein \textbf{Datenflussdiagramm} zeigt, wie Werte von den \textbf{Eingaben}
+    durch \textbf{Funktionen} bis zu den \textbf{Ausgaben} fließen.\\[2.4mm]
+    Die Pfeile geben die \textbf{Richtung des Datenflusses} an.\\[2.4mm]
+    Ein Verteiler gibt denselben Wert an mehrere Funktionen weiter.\\[2.4mm]
+    Eine Konstante ist ein fest eingetragener Wert, der nicht eingegeben
+    wird.\\[2.4mm]
+    Jede Funktion entspricht einem Teilschritt einer Formel.\\[2.4mm]
+    Die \textbf{WENN-Funktion} hat drei Eingänge: Bedingung, Ausgabe wenn wahr,
+    Ausgabe wenn falsch.
+    \vspace{2.4mm}
   }%
 }
 
