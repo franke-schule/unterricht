@@ -1,0 +1,188 @@
+\documentclass[10pt,a4paper]{article}
+
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage[ngerman]{babel}
+\usepackage[a4paper,margin=14mm]{geometry}
+\usepackage{lmodern}
+\usepackage[table]{xcolor}
+\usepackage{tabularx}
+\usepackage{array}
+\usepackage{microtype}
+\usepackage[most]{tcolorbox}
+\usepackage{tikz}
+\usetikzlibrary{arrows.meta,calc,patterns.meta,positioning}
+
+\pagestyle{empty}
+\setlength{\parindent}{0pt}
+\setlength{\parskip}{0pt}
+\renewcommand{\familydefault}{\sfdefault}
+\renewcommand{\arraystretch}{1.12}
+
+\definecolor{Navy}{HTML}{17324D}
+\definecolor{Blue}{HTML}{3B6EA5}
+\definecolor{Sky}{HTML}{EAF3FA}
+\definecolor{Mint}{HTML}{E8F5EF}
+\definecolor{Gold}{HTML}{F3B33D}
+\definecolor{Ink}{HTML}{1E2935}
+\definecolor{Muted}{HTML}{617080}
+\definecolor{Line}{HTML}{D8E1E8}
+\definecolor{Violet}{HTML}{6D28D9}
+\definecolor{Green}{HTML}{087F5B}
+
+\color{Ink}
+
+\newcommand{\sectiontitle}[1]{%
+  \vspace{1.0mm}%
+  {\color{Blue}\bfseries\large #1}\par
+  \vspace{0.3mm}{\color{Blue}\rule{\linewidth}{0.7pt}}\par
+  \vspace{0.4mm}%
+}
+
+\newcommand{\unit}[1]{\,\mathrm{#1}}
+
+\begin{document}
+
+\colorbox{Navy}{%
+  \parbox{\dimexpr\linewidth-2\fboxsep\relax}{%
+    \vspace{2.6mm}\color{white}
+    \begin{tabularx}{\linewidth}{@{}Xr@{}}
+      {\small\bfseries PHYSIK · KLASSE 11} &
+      \colorbox{Gold}{\color{Navy}\small\bfseries\strut LÖSUNGEN}
+    \end{tabularx}
+    \vspace{2.1mm}
+    {\fontsize{19}{22}\selectfont\bfseries Wiederholung 1 -- Bewegung von Körpern}\par
+    \vspace{0.6mm}{\large Sicherungsblatt}\vspace{2.4mm}
+  }%
+}
+
+\vspace{2.0mm}
+\colorbox{Sky}{%
+  \parbox{\dimexpr\linewidth-2\fboxsep\relax}{%
+    \vspace{1.3mm}
+    \textcolor{Blue}{\bfseries Ziel:}
+    Geschwindigkeit, Vektoren, Beschleunigung und Bewegungsdiagramme sicher deuten und berechnen.
+    \vspace{1.3mm}
+  }%
+}
+
+\sectiontitle{1 · Geschwindigkeit und Einheiten}
+
+\begin{minipage}[t]{0.35\linewidth}
+  \vspace{0pt}
+  \textbf{Geschwindigkeit besitzt}\par
+  \textcolor{Blue}{\bfseries Betrag} (Zahl mit Einheit) und
+  \textcolor{Blue}{\bfseries Richtung} (Vektorpfeil).
+
+  \vspace{1.2mm}
+  \begin{center}
+  \begin{tikzpicture}[>=Latex, node distance=13mm, every node/.style={font=\small\bfseries}]
+    \node (ms) {$1\unit{m/s}$};
+    \node[right=31mm of ms] (kmh) {$3{,}6\unit{km/h}$};
+    \draw[->,Blue,line width=.8pt] ([yshift=2mm]ms.east) -- node[above,font=\scriptsize] {$\times\,3{,}6$} ([yshift=2mm]kmh.west);
+    \draw[<-,Blue,line width=.8pt] ([yshift=-2mm]ms.east) -- node[below,font=\scriptsize] {$:\,3{,}6$} ([yshift=-2mm]kmh.west);
+  \end{tikzpicture}
+  \end{center}
+\end{minipage}\hfill
+\begin{minipage}[t]{0.61\linewidth}
+  \vspace{0pt}
+  \begin{tabularx}{\linewidth}{@{}>{\bfseries}l>{\centering\arraybackslash}X>{\centering\arraybackslash}X@{}}
+    \rowcolor{Sky}Vorgabe & Rechnung & Ergebnis \\
+    $5{,}0\unit{km/h}$ & $: 3{,}6$ & $\approx 1{,}4\unit{m/s}$ \\
+    $5{,}4\unit{m/s}$ & $\times 3{,}6$ & $\approx 19\unit{km/h}$ \\
+    $60\unit{km/h}$ & $: 3{,}6$ & $16{,}666\ldots\unit{m/s}\approx16{,}7\unit{m/s}$ \\
+    $36\unit{m/s}$ & $\times 3{,}6$ & $129{,}6\unit{km/h}\approx130\unit{km/h}$
+  \end{tabularx}
+\end{minipage}
+
+\sectiontitle{2 · Vektoren addieren}
+
+\begin{minipage}[t]{0.49\linewidth}
+\centering
+\begin{tikzpicture}[x=7.2mm,y=8mm,>=Latex,font=\scriptsize]
+  \draw[step=1,Line,very thin] (-2.25,-.15) grid (6.25,2.25);
+  \draw[->,Muted] (-2.35,0)--(6.65,0) node[right] {$x$};
+  \draw[->,Muted] (0,-.35)--(0,2.65) node[above] {$y$};
+  \foreach \x in {-2,-1,1,2,3,4,5,6}{\draw (\x,.06)--(\x,-.06) node[below=1pt] {\x};}
+  \foreach \y in {1,2}{\draw (.06,\y)--(-.06,\y) node[left=1pt] {\y};}
+  \fill[Navy] (0,0) circle (1.3pt) node[below left] {$0$};
+  \draw[->,Blue,line width=1.1pt] (0,0)--(1,2) node[above right] {$v_{1}=(1|2)$};
+  \draw[->,Violet,dashed,line width=1.1pt] (0,0)--(5,0) node[below=8pt] {$v_{2}=(5|0)$};
+  \draw[->,Green,dash dot,line width=1.35pt] (0,0)--(6,2) node[above left] {$v=(6|2)$};
+\end{tikzpicture}
+\end{minipage}\hfill
+\begin{minipage}[t]{0.49\linewidth}
+\centering
+\begin{tikzpicture}[x=7.2mm,y=8mm,>=Latex,font=\scriptsize]
+  \draw[step=1,Line,very thin] (-2.25,-.15) grid (6.25,2.25);
+  \draw[->,Muted] (-2.35,0)--(6.65,0) node[right] {$x$};
+  \draw[->,Muted] (0,-.35)--(0,2.65) node[above] {$y$};
+  \foreach \x in {-2,-1,1,2,3,4,5,6}{\draw (\x,.06)--(\x,-.06) node[below=1pt] {\x};}
+  \foreach \y in {1,2}{\draw (.06,\y)--(-.06,\y) node[left=1pt] {\y};}
+  \fill[Navy] (0,0) circle (1.3pt) node[below left] {$0$};
+  \draw[->,Blue,line width=1.1pt] (0,0)--(-2,2);
+  \node[above,Blue] at (-1.2,2.08) {$v_{1}=(-2|2)$};
+  \draw[->,Violet,dashed,line width=1.1pt] (0,0)--(6,0) node[below=8pt] {$v_{2}=(6|0)$};
+  \draw[->,Green,dash dot,line width=1.35pt] (0,0)--(4,2) node[above right] {$v=(4|2)$};
+\end{tikzpicture}
+\end{minipage}
+
+\vspace{0.3mm}
+{\small\color{Muted}$x$- und $y$-Komponenten von $v_{1}$ und $v_{2}$ werden jeweils addiert.}
+
+\sectiontitle{3 · Geschwindigkeit beim Beschleunigen}
+
+\begin{tcolorbox}[colback=white,colframe=Line,arc=1.5mm,boxrule=.7pt,left=2.5mm,right=2.5mm,top=1.4mm,bottom=1.4mm]
+\textcolor{Blue}{\bfseries Beispiel}\par
+\vspace{0.6mm}
+\begin{tabularx}{\linewidth}{@{}>{\bfseries}p{18mm}X@{}}
+  Gegeben: & $a=2{,}5\unit{m/s^{2}}$, $t=3{,}0\unit{s}$; der Körper befindet sich zu Beginn in Ruhe, also $v_{0}=0\unit{m/s}$. \\
+  Gesucht: & $v(t=3{,}0\unit{s})$ \\
+  Ansatz: & $v=a\cdot t+v_{0}$ \\
+  Rechnung: & $v=0\unit{m/s}+2{,}5\unit{m/s^{2}}\cdot3{,}0\unit{s}=7{,}5\unit{m/s}=27\unit{km/h}$
+\end{tabularx}
+\vspace{0.4mm}\hfill\textcolor{Blue}{\bfseries 2 gültige Ziffern}
+\end{tcolorbox}
+
+\sectiontitle{4 · Bewegungen im $v(t)$-Diagramm}
+
+\begin{minipage}[t]{0.49\linewidth}
+\vspace{0pt}
+\centering
+\begin{tikzpicture}[x=1.12cm,y=.15cm,>=Latex,font=\scriptsize]
+  \fill[Sky] (0,0)--(1,15)--(2,15)--(3,25)--(4,25)--(5,0)--cycle;
+  \draw[->,Muted] (0,0)--(5.35,0) node[right] {$t$ in min};
+  \draw[->,Muted] (0,0)--(0,29) node[above] {$v$ in $\mathrm{m/s}$};
+  \foreach \x/\lab in {0/0,1/3,2/6,3/9,4/12,5/15}{\draw (\x,.55)--(\x,-.55) node[below=2pt] {\lab};}
+  \foreach \y in {15,25}{\draw (.06,\y)--(-.06,\y) node[left=2pt] {\y};}
+  \draw[Navy,line width=1.35pt] (0,0)--(1,15)--(2,15)--(3,25)--(4,25)--(5,0);
+  \foreach \x/\lab in {.5/I,1.5/II,2.5/III,3.5/IV,4.5/V}{\node[font=\scriptsize\bfseries,text=Blue] at (\x,27.5) {\lab};}
+  \node[anchor=north west,text=Muted] at (.15,23.5) {Fläche $\rightarrow$ Weg};
+\end{tikzpicture}
+\end{minipage}\hfill
+\begin{minipage}[t]{0.49\linewidth}
+\vspace{0pt}
+\begin{tabularx}{\linewidth}{@{}>{\centering\arraybackslash}p{9mm}>{\raggedright\arraybackslash}X>{\raggedleft\arraybackslash}p{34mm}@{}}
+  \rowcolor{Sky}Abs. & Bewegung in Worten & Beschleunigung \\
+  I & gleichmäßig beschleunigt ($0\unit{m/s}\rightarrow15\unit{m/s}$) & $a_{\mathrm{I}}\approx 0{,}083\unit{m/s^{2}}$ \\
+  II & gleichförmig ($v=15\unit{m/s}$) & $a_{\mathrm{II}}=0\unit{m/s^{2}}$ \\
+  III & gleichmäßig beschleunigt ($15\unit{m/s}\rightarrow25\unit{m/s}$) & $a_{\mathrm{III}}\approx 0{,}056\unit{m/s^{2}}$ \\
+  IV & gleichförmig ($v=25\unit{m/s}$) & $a_{\mathrm{IV}}=0\unit{m/s^{2}}$ \\
+  V & gleichmäßig verzögert ($25\unit{m/s}\rightarrow0\unit{m/s}$) & $a_{\mathrm{V}}\approx -0{,}14\unit{m/s^{2}}$
+\end{tabularx}
+\end{minipage}
+\vspace{1.0mm}
+\colorbox{Mint}{\parbox{\dimexpr\linewidth-2\fboxsep\relax}{\centering
+  \vspace{1.1mm}\textbf{Zurückgelegter Weg aus den Teilflächen: $14{,}4\unit{km}$}\par
+  \textcolor{Blue}{\bfseries $\approx14\unit{km}=14\,000\unit{m}$}\par
+  {\scriptsize zwei gültige Ziffern}\vspace{1.1mm}}}
+
+\vfill
+{\color{Line}\rule{\linewidth}{0.5pt}}\par
+\vspace{1.2mm}
+\begin{tabularx}{\linewidth}{@{}Xr@{}}
+  {\small\color{Muted}Klasse 11 · Physik · Kreisbewegungen} &
+  {\small\color{Muted}Sicherungsblatt · Wiederholung 1}
+\end{tabularx}
+
+\end{document}

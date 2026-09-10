@@ -45,8 +45,9 @@ assert.match(css, /\.vector-grid-host[\s\S]*?overflow-x: auto/);
 assert.match(css, /\.large-chart[\s\S]*?overflow-x: auto/);
 assert.match(css, /\.physics-revision-panel\[hidden\][\s\S]*?display: none/);
 assert.match(css, /\.physics-task-card[\s\S]*?min-width: 0/);
-assert.match(html, /bewegung-koerpern\.css\?v=20260831c/);
-assert.match(html, /bewegung-koerpern\.mjs\?v=20260831c/);
+assert.match(html, /bewegung-koerpern\.css\?v=20260910a/);
+assert.match(html, /bewegung-koerpern\.mjs\?v=20260910c/);
+assert.match(source, /physics-semantic-task\.mjs\?v=20260910a/);
 assert.equal((html.match(/class="physics-number-controls"/g) || []).length, 2);
 assert.match(css, /\.physics-number-controls \{[\s\S]*?grid-template-columns: minmax\(0, 1fr\) 92px;/);
 assert.equal(
@@ -62,6 +63,8 @@ assert.match(semanticTask, /button\.addEventListener\("click"/);
 assert.match(semanticTask, /Antwort wird geprüft/);
 assert.match(semanticTask, /finally/);
 assert.doesNotMatch(semanticTask, /textarea\.value\s*=/);
+assert.match(semanticTask, /perzeptron\/ui\/semantic-answer\.mjs/);
+assert.doesNotMatch(semanticTask, /entscheidungbaeume\/ui\/semantic-answer\.mjs/);
 
 const visibleTaskHeadings = [...html.matchAll(/<h[34][^>]*>(Aufgabe [^<]+)<\/h[34]>/g)]
   .map((match) => match[1]);
@@ -110,5 +113,12 @@ assert.match(source, /class="chart-value-label" text-anchor="end" x="48" y="135"
 assert.match(source, /class="chart-value-label" text-anchor="end" x="48" y="75">25 m\/s/);
 assert.doesNotMatch(source, /x="190" y="122">15 m\/s|x="440" y="62">25 m\/s/);
 assert.doesNotMatch(`${html}\n${source}`, /verzöger|verzoeger/i);
+assert.match(html, /class="solution-download"/);
+assert.match(html, /onsubmit="unlockSolution\(event, 'R5KV-DQ2M'/);
+assert.match(html, /href="sicherungsblatt-aufgabe-1-loesungen\.pdf\?v=20260910c" download hidden/);
+assert.match(source, /function unlockSolution\(event, expectedCode, downloadLinkId, messageId\)/);
+assert.match(source, /window\.unlockSolution = unlockSolution/);
+assert.match(css, /\.download-button\[hidden\][\s\S]*?display: none/);
+assert.match(html, /id="module-summary"[\s\S]*?class="solution-download"/);
 
 console.log("Nummerierung, Einzelprüfungen, Fachbegriffe und Mehrfachauswahl sind abgesichert.");

@@ -595,6 +595,106 @@
   color: #475569;
 }
 
+.solution-download {
+  margin-top: 26px;
+  border: 1px solid #cbd5e1;
+  border-left: 5px solid var(--blue);
+  border-radius: 10px;
+  padding: 20px 22px;
+  background: #ffffff;
+}
+
+.solution-download h2 {
+  margin: 0;
+  color: #1e3a8a;
+  font-size: 1.15rem;
+}
+
+.solution-reveal {
+  margin-top: 13px;
+}
+
+.solution-reveal summary {
+  width: fit-content;
+  color: #1e3a8a;
+  font-weight: 800;
+  cursor: pointer;
+}
+
+.solution-reveal[open] summary {
+  margin-bottom: 14px;
+}
+
+.solution-code-form {
+  display: grid;
+  gap: 9px;
+  max-width: 520px;
+}
+
+.solution-code-form label {
+  color: #1e293b;
+  font-weight: 700;
+}
+
+.solution-code-controls {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 10px;
+}
+
+.solution-code-controls input {
+  width: 170px;
+  min-height: 44px;
+  border: 2px solid #cbd5e1;
+  border-radius: 8px;
+  padding: 8px 10px;
+  color: #1e293b;
+  font: inherit;
+  letter-spacing: .08em;
+  text-transform: uppercase;
+}
+
+.solution-code-controls .physics-primary-button {
+  margin-top: 0;
+}
+
+.solution-code-message {
+  min-height: 1.3em;
+  margin: 0;
+  color: #065f46;
+  font-weight: 700;
+}
+
+.solution-code-message.error {
+  color: #991b1b;
+}
+
+.download-button {
+  display: inline-flex;
+  width: fit-content;
+  min-height: 44px;
+  align-items: center;
+  border-radius: 8px;
+  padding: 10px 16px;
+  color: #ffffff;
+  background: var(--blue);
+  font-weight: 800;
+  text-decoration: none;
+}
+
+.download-button:hover,
+.download-button:focus-visible,
+.solution-reveal summary:focus-visible,
+.solution-code-controls input:focus-visible {
+  outline: 3px solid rgba(37, 99, 235, 0.35);
+  outline-offset: 3px;
+}
+
+.download-button[hidden] {
+  display: none;
+}
+
 /* Wiederverwendbare Reiter für Aufgabenkarten dieses Moduls. */
 .physics-step-tabs {
   display: flex;

@@ -1,4 +1,4 @@
-import { evaluateSemanticAnswer } from "../../../../informatik/klasse-11/1-Kuenstliche-Intelligenz/entscheidungbaeume/ui/semantic-answer.mjs";
+import { evaluateSemanticAnswer } from "../../../../informatik/klasse-11/1-Kuenstliche-Intelligenz/perzeptron/ui/semantic-answer.mjs";
 
 const MAX_LENGTH = 3000;
 const SCRIPT_SERVER_URL = "https://script.google.com/macros/s/AKfycby8RWL6uYrKZyoJ6m2GRpWyRmXjwsdskyCiqzKpRhIK5-wrDl-9lWWk8CiAGaVMoy0x/exec";

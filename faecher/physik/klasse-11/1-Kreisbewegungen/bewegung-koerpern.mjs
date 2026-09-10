@@ -1,10 +1,32 @@
 import { createPointVectorGrid } from "./components/point-vector-grid.mjs";
-import { setupPhysicsSemanticTask } from "./components/physics-semantic-task.mjs";
+import { setupPhysicsSemanticTask } from "./components/physics-semantic-task.mjs?v=20260910a";
 import { setupPhysicsStepTabs } from "./components/physics-step-tabs.mjs";
 
 const SCRIPT_SERVER_URL = "https://script.google.com/macros/s/AKfycby8RWL6uYrKZyoJ6m2GRpWyRmXjwsdskyCiqzKpRhIK5-wrDl-9lWWk8CiAGaVMoy0x/exec";
 
 export { createPointVectorGrid, setupPhysicsSemanticTask, setupPhysicsStepTabs };
+
+function unlockSolution(event, expectedCode, downloadLinkId, messageId) {
+  event.preventDefault();
+  const form = event.currentTarget;
+  const enteredCode = form.elements["solution-code"].value.toUpperCase().replace(/[^A-Z0-9]/g, "");
+  const normalizedExpectedCode = expectedCode.replace(/[^A-Z0-9]/g, "");
+  const downloadLink = document.getElementById(downloadLinkId);
+  const message = document.getElementById(messageId);
+
+  if (enteredCode === normalizedExpectedCode) {
+    downloadLink.hidden = false;
+    message.className = "solution-code-message";
+    message.textContent = "Code korrekt. Das Sicherungsblatt ist freigeschaltet.";
+    return;
+  }
+
+  downloadLink.hidden = true;
+  message.className = "solution-code-message error";
+  message.textContent = "Der eingegebene Code ist nicht gültig.";
+}
+
+window.unlockSolution = unlockSolution;
 
 function numberValue(value) {
   return Number.parseFloat(String(value).trim().replace(/\s+/g, "").replace(",", "."));

@@ -1,0 +1,139 @@
+\documentclass[10pt,a4paper]{article}
+
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage[ngerman]{babel}
+\usepackage[a4paper,margin=14mm]{geometry}
+\usepackage{lmodern}
+\usepackage[table]{xcolor}
+\usepackage{tabularx}
+\usepackage{array}
+\usepackage{microtype}
+\usepackage[most]{tcolorbox}
+\usepackage{tikz}
+\usetikzlibrary{arrows.meta,calc,positioning}
+
+\pagestyle{empty}
+\setlength{\parindent}{0pt}
+\setlength{\parskip}{0pt}
+\renewcommand{\familydefault}{\sfdefault}
+\renewcommand{\arraystretch}{1.08}
+
+\definecolor{Navy}{HTML}{17324D}
+\definecolor{Blue}{HTML}{3B6EA5}
+\definecolor{Sky}{HTML}{EAF3FA}
+\definecolor{Mint}{HTML}{E8F5EF}
+\definecolor{Gold}{HTML}{F3B33D}
+\definecolor{Ink}{HTML}{1E2935}
+\definecolor{Muted}{HTML}{617080}
+\definecolor{Line}{HTML}{D8E1E8}
+
+\color{Ink}
+\newcommand{\sectiontitle}[1]{%
+  \vspace{0.75mm}{\color{Blue}\bfseries\large #1}\par
+  \vspace{0.25mm}{\color{Blue}\rule{\linewidth}{0.7pt}}\par
+  \vspace{0.35mm}}
+\newcommand{\unit}[1]{\,\mathrm{#1}}
+\newcommand{\forcearrow}[3]{\draw[-{Latex[length=2.1mm]},Blue,line width=0.9pt] #1 -- node[fill=white,inner sep=1pt,font=\scriptsize,align=center] {#3} #2;}
+
+\begin{document}
+
+\colorbox{Navy}{%
+  \parbox{\dimexpr\linewidth-2\fboxsep\relax}{%
+    \vspace{2.3mm}\color{white}
+    \begin{tabularx}{\linewidth}{@{}Xr@{}}
+      {\small\bfseries PHYSIK · KLASSE 11} &
+      \colorbox{Gold}{\color{Navy}\small\bfseries\strut LÖSUNGEN}
+    \end{tabularx}
+    \vspace{1.8mm}
+    {\fontsize{18}{21}\selectfont\bfseries Wiederholung 2 -- Kräfte und Bewegung}\par
+    \vspace{0.4mm}{\large Sicherungsblatt}\vspace{2.0mm}
+  }%
+}
+
+\vspace{1.5mm}
+\colorbox{Sky}{\parbox{\dimexpr\linewidth-2\fboxsep\relax}{%
+  \vspace{1.05mm}\textcolor{Blue}{\bfseries Ziel:} Das newtonsche Grundgesetz anwenden und Kräftegleichgewicht von Wechselwirkung unterscheiden.\vspace{1.05mm}}}
+
+\sectiontitle{1 · Newtonsches Grundgesetz}
+\begin{tcolorbox}[colback=Sky,colframe=Line,arc=1.2mm,boxrule=.6pt,left=2mm,right=2mm,top=1mm,bottom=1mm]
+\begin{center}{\fontsize{19}{22}\selectfont $\vec F\cdot\Delta t=m\cdot\Delta\vec v$}\end{center}
+\begin{tabularx}{\linewidth}{@{}>{\bfseries}l X >{\bfseries}l X@{}}
+  $\vec F$ & resultierende Kraft, Einheit N & $\Delta t$ & Zeitspanne, Einheit s\\
+  $m$ & Masse, Einheit kg & $\Delta\vec v$ & Geschwindigkeitsänderung, Einheit m/s
+\end{tabularx}
+\vspace{0.5mm}
+Bei konstanter resultierender Kraft und konstanter Masse gilt: Kraftimpuls = Änderung des Bewegungsimpulses.\\
+Die Geschwindigkeitsänderung zeigt in Richtung der resultierenden Kraft.
+\end{tcolorbox}
+\vspace{0.3mm}
+\begin{tabularx}{\linewidth}{@{}X X@{}}
+\colorbox{Mint}{\parbox{\dimexpr\linewidth-2\fboxsep\relax}{\centering Gleiche Masse: größere Kraft $\to$ größere Beschleunigung.}} &
+\colorbox{Mint}{\parbox{\dimexpr\linewidth-2\fboxsep\relax}{\centering Gleiche Kraft: kleinere Masse $\to$ größere Beschleunigung.}}
+\end{tabularx}
+
+\sectiontitle{2 · Beschleunigung berechnen}
+\begin{tcolorbox}[colback=white,colframe=Line,arc=1.2mm,boxrule=.65pt,left=2.2mm,right=2.2mm,top=1.1mm,bottom=1.1mm]
+\textcolor{Blue}{\bfseries Beispiel aus Aufgabe 3}\par\vspace{0.35mm}
+\begin{tabularx}{\linewidth}{@{}>{\bfseries}p{19mm}X@{}}
+Gegeben: & $m=100\unit{g}=0{,}100\unit{kg}$, $F=1{,}2\unit{N}$\\
+Gesucht: & $a$ in $\unit{m/s^2}$\\
+Ansatz: & $F=m\cdot a$, also $a=F:m$\\
+Rechnung: & $a=1{,}2\unit{N}:0{,}100\unit{kg}=12\unit{m/s^2}$
+\end{tabularx}
+\vspace{0.25mm}\hfill\textcolor{Blue}{\bfseries Ergebnis: $a=12\unit{m/s^2}$ \quad 2 gültige Ziffern}\par
+\vspace{0.25mm}{\small Die Aufgabe verwendet beide Angaben mit zwei gültigen Ziffern. Das Ergebnis lautet daher ebenfalls mit zwei gültigen Ziffern: $12\unit{m/s^2}$.}
+\end{tcolorbox}
+
+\sectiontitle{3 · Kräftegleichgewicht}
+\begin{tabularx}{\linewidth}{@{}X@{\hspace{1mm}}X@{\hspace{1mm}}X@{}}
+\centering\textbf{Fallschirmspringer}\par\scriptsize Konstante Sinkgeschwindigkeit
+\begin{tikzpicture}[x=.8mm,y=.8mm,>=Latex]
+  \draw[fill=Sky,draw=Blue] (0,10) .. controls (10,26) and (30,26) .. (40,10) -- cycle;
+  \draw[Line] (5,12)--(16,0) (35,12)--(24,0); \draw[Blue] (20,-1) circle (2); \draw[Blue] (20,-1)--(20,-12);
+  \draw[-{Latex},Blue,line width=.7pt] (20,-1)--(20,13) node[above,font=\scriptsize,align=center] {Luftwiderstands-\\kraft $F_R$};
+  \draw[-{Latex},Blue,line width=.7pt] (20,-1)--(20,-15) node[below,font=\scriptsize,align=center] {Gewichtskraft $F_G$};
+  \node[font=\scriptsize] at (20,-23) {$F_R=F_G$};
+\end{tikzpicture}
+&\centering\textbf{Körper auf dem Tisch}\par\scriptsize Ruhe
+\begin{tikzpicture}[x=.8mm,y=.8mm,>=Latex]
+  \draw[fill=Sky,draw=Blue] (5,-10) rectangle (35,-7); \draw[Blue] (10,-7)--(10,-13) (30,-7)--(30,-13); \draw[fill=Mint,draw=Blue] (14,-5) rectangle (26,3);
+  \draw[-{Latex},Blue,line width=.7pt] (20,3)--(20,16) node[above,font=\scriptsize,align=center] {Kraft des Tisches\\auf den Körper};
+  \draw[-{Latex},Blue,line width=.7pt] (20,-1)--(20,-14) node[below,font=\scriptsize] {Gewichtskraft};
+\end{tikzpicture}
+&\centering\textbf{Auto}\par\scriptsize Geradlinig mit konstanter Geschwindigkeit
+\begin{tikzpicture}[x=.8mm,y=.8mm,>=Latex]
+  \draw[fill=Sky,draw=Blue] (7,-4)--(12,4)--(30,4)--(36,-4)--cycle; \draw[Blue] (13,-4) circle (2) (30,-4) circle (2);
+  \draw[-{Latex},Blue,line width=.7pt] (20,0)--(36,0) node[midway,above,font=\scriptsize] {Antriebskraft};
+  \draw[-{Latex},Blue,line width=.7pt] (20,0)--(4,0) node[midway,below,font=\scriptsize] {Widerstandskraft};
+  \node[font=\scriptsize] at (20,-12) {Waagerechte Kräfte};
+\end{tikzpicture}
+\end{tabularx}
+\vspace{0.4mm}
+\colorbox{Mint}{\parbox{\dimexpr\linewidth-2\fboxsep\relax}{\centering\small Die Kräfte wirken auf denselben Körper. Ihre Summe ist null: Der Körper bleibt in Ruhe oder bewegt sich geradlinig mit konstanter Geschwindigkeit.}}\\[-0.1mm]
+\hfill\textcolor{Blue}{\bfseries Resultierende Kraft: $0\unit{N}$ · Beschleunigung: $0\unit{m/s^2}$}
+
+\sectiontitle{4 · Wechselwirkung beim Crashtest}
+\begin{tcolorbox}[colback=Sky,colframe=Line,arc=1.2mm,boxrule=.6pt,left=2mm,right=2mm,top=1mm,bottom=1mm]
+\begin{center}
+\begin{tikzpicture}[x=.8mm,y=.8mm,>=Latex]
+  \draw[fill=Muted!25,draw=Navy,line width=.5pt] (4,-16) rectangle (13,16);
+  \draw[fill=Sky,draw=Blue] (18,-6)--(24,5)--(42,5)--(49,-6)--cycle; \draw[Blue] (27,-6) circle (2) (42,-6) circle (2);
+  \fill[Gold] (15,0) circle (1.5);\node[font=\scriptsize,above] at (15,20) {Kontaktpunkt};
+  \draw[-{Latex},Blue,line width=.9pt] (15,0)--(4,0) node[midway,above,font=\scriptsize,align=center] {Kraft des Autos\\auf die Wand};
+  \draw[-{Latex},Blue,line width=.9pt] (15,0)--(26,0) node[midway,below,font=\scriptsize,align=center] {Kraft der Wand\\auf das Auto};
+\end{tikzpicture}
+\end{center}
+Wechselwirkungskräfte sind gleich groß und entgegengesetzt gerichtet. Sie wirken auf verschiedene Körper und bilden deshalb kein Kräftegleichgewicht an einem einzelnen Körper.
+\end{tcolorbox}
+\vspace{0.7mm}
+\colorbox{Gold}{\parbox{\dimexpr\linewidth-2\fboxsep\relax}{\centering\bfseries Kräftegleichgewicht: derselbe Körper · Wechselwirkung: verschiedene Körper}}
+
+\vfill
+{\color{Line}\rule{\linewidth}{0.5pt}}\par\vspace{1mm}
+\begin{tabularx}{\linewidth}{@{}Xr@{}}
+  {\small\color{Muted}Klasse 11 · Physik · Kreisbewegungen} &
+  {\small\color{Muted}Sicherungsblatt · Wiederholung 2}
+\end{tabularx}
+
+\end{document}
