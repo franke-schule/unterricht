@@ -77,7 +77,7 @@ kostet eine zusätzliche Runde. Liefere sie vollständig.
 - Wo der Menüeintrag ergänzt werden muss (konkrete Datei)
 - Falls ein Sicherungsblatt vorgesehen ist: Dateinamen, `.tex`-Vorlage als
   Pfad, und der Lehrercode nach dem Schema aus `manifest-allgemein.txt`
-  Abschnitt 4 samt Hinweis, dass `lehrercodes-dekodierung.tex/.pdf`
+  Abschnitt 5 samt Hinweis, dass `lehrercodes-dekodierung.tex/.pdf`
   mitzupflegen sind
 - Responsive- und Barrierefreiheits-Punkte, soweit für dieses Modul relevant
 

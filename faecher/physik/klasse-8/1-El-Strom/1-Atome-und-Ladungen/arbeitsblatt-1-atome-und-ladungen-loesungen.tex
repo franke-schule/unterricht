@@ -1,0 +1,390 @@
+\documentclass[10pt,a4paper]{article}
+
+% Loesungsfassung. Die Schuelerfassung
+% arbeitsblatt-1-atome-und-ladungen.tex ist zeichengleich und
+% unterscheidet sich ausschliesslich in der Zeile \solutionfalse / \solutiontrue.
+
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage[ngerman]{babel}
+\usepackage[a4paper,margin=14mm]{geometry}
+\usepackage{lmodern}
+\usepackage[table]{xcolor}
+\usepackage{tabularx}
+\usepackage{array}
+\usepackage{amsmath}
+\usepackage{microtype}
+\usepackage[most]{tcolorbox}
+\usepackage{tikz}
+\usetikzlibrary{arrows.meta,calc,positioning}
+
+\newif\ifsolution
+\solutiontrue
+
+\pagestyle{empty}
+\setlength{\parindent}{0pt}
+\setlength{\parskip}{0pt}
+\renewcommand{\familydefault}{\sfdefault}
+\renewcommand{\arraystretch}{1.08}
+
+\definecolor{Navy}{HTML}{17324D}
+\definecolor{Blue}{HTML}{3B6EA5}
+\definecolor{Sky}{HTML}{EAF3FA}
+\definecolor{Mint}{HTML}{E8F5EF}
+\definecolor{Gold}{HTML}{F3B33D}
+\definecolor{Ink}{HTML}{1E2935}
+\definecolor{Muted}{HTML}{617080}
+\definecolor{Line}{HTML}{D8E1E8}
+
+\color{Ink}
+
+\newcommand{\sectiontitle}[1]{%
+  \vspace{1.0mm}{\color{Blue}\bfseries\large #1}\par
+  \vspace{0.3mm}{\color{Blue}\rule{\linewidth}{0.7pt}}\par
+  \vspace{0.6mm}}
+
+\newcommand{\parttitle}[2]{%
+  \vspace{1.4mm}%
+  \colorbox{Navy}{\parbox{\dimexpr\linewidth-2\fboxsep\relax}{%
+    \vspace{0.9mm}\color{white}\bfseries #1\hfill{\small\mdseries #2}\vspace{0.9mm}}}%
+  \par\vspace{0.8mm}}
+
+% ---------------------------------------------------------------------------
+% Arbeitsbereiche: in Schueler- und Loesungsfassung exakt gleich hoch
+% ---------------------------------------------------------------------------
+\newlength{\schreibzeile}
+\setlength{\schreibzeile}{8.2mm}
+\newcounter{zeilenzaehler}
+
+\makeatletter
+% #1 Anzahl der Schreiblinien, #2 Breite. Die leere hbox legt die Breite der
+% umgebenden vbox fest; ohne sie waeren die \hrule-Linien null Punkt breit.
+\newcommand{\zeilenstapel}[2]{%
+  \hbox to #2{}%
+  \setcounter{zeilenzaehler}{0}%
+  \@whilenum\value{zeilenzaehler}<#1\do{%
+    \stepcounter{zeilenzaehler}%
+    \vskip\dimexpr\schreibzeile-0.6pt\relax
+    {\color{Muted!55}\hrule height 0.6pt}}}
+\makeatother
+
+\newcommand{\schreibraum}[3][\linewidth]{%
+  \parbox[t][\dimexpr#2\schreibzeile\relax][t]{#1}{%
+    \ifsolution
+      \vspace*{1.0mm}\color{Blue}#3%
+    \else
+      \zeilenstapel{#2}{#1}%
+    \fi}}
+
+\newcommand{\gap}[2][28mm]{%
+  \underline{\makebox[#1][c]{\strut\ifsolution\textcolor{Blue}{\bfseries #2}\fi}}}
+
+\newcommand{\kasten}{%
+  \tikz[baseline=-0.75mm]{\draw[Muted,line width=.55pt] (0,0) rectangle (3.6mm,3.6mm);}}
+\newcommand{\kastenhaken}{%
+  \tikz[baseline=-0.75mm]{\draw[Muted,line width=.55pt] (0,0) rectangle (3.6mm,3.6mm);
+    \draw[Blue,line width=.9pt] (0.7mm,1.9mm)--(1.5mm,0.8mm)--(3.0mm,3.1mm);}}
+\newcommand{\mck}[1]{\ifsolution\ifnum#1=1\relax\kastenhaken\else\kasten\fi\else\kasten\fi}
+
+% Begriffskaertchen fuer den Wortspeicher unter einem Lueckentext
+\newcommand{\wortchip}[1]{\fcolorbox{Line}{white}{\strut\small #1}}
+
+\newcommand{\ladung}[1]{%
+  \tikz[baseline=-0.95mm]{\node[circle,draw=Blue,fill=Sky,line width=.6pt,inner sep=0pt,
+    minimum size=4.4mm,font=\scriptsize\bfseries,text=Blue]{#1};}}
+
+% Papierschnipsel: unregelmaessige Umrisse, damit sie nicht wie Rechtecke wirken
+\newcommand{\schnipsel}[3]{%
+  \begin{scope}[shift={(#1,#2)},rotate=#3]
+    \draw[fill=white,draw=Muted,line width=.4pt]
+      (0,0)--(2.4,0.6)--(4.3,-0.2)--(3.9,-2.0)--(1.7,-2.5)--(0.2,-1.7)--cycle;
+  \end{scope}}
+
+% Zwei geriebene Luftballons an Faeden. #1 Laengeneinheit, #2 Bildunterschrift.
+% Wird in A1 und noch einmal verkleinert in A3 verwendet.
+\newcommand{\ballonpaar}[2]{%
+  \begin{tikzpicture}[x=#1,y=#1,>=Latex,font=\scriptsize]
+    \path (-28,-23) rectangle (28,13);
+    \draw[Muted,line width=.8pt] (-16,11)--(16,11);
+    \draw[Muted,line width=.5pt] (-4,11)--(-15,3.4);
+    \draw[Muted,line width=.5pt] (4,11)--(15,3.4);
+    \draw[fill=Sky,draw=Blue,line width=.7pt] (-15,-6.4) ellipse (6.5 and 8.4);
+    \draw[fill=Sky,draw=Blue,line width=.7pt] (-16.3,1.0)--(-13.7,1.0)--(-15,3.4)--cycle;
+    \draw[fill=Sky,draw=Blue,line width=.7pt] (15,-6.4) ellipse (6.5 and 8.4);
+    \draw[fill=Sky,draw=Blue,line width=.7pt] (13.7,1.0)--(16.3,1.0)--(15,3.4)--cycle;
+    \draw[-{Latex[length=1.8mm]},Blue,line width=.7pt] (-21.8,-6.4)--(-27,-6.4);
+    \draw[-{Latex[length=1.8mm]},Blue,line width=.7pt] (21.8,-6.4)--(27,-6.4);
+    \node[anchor=north,align=center,font=\scriptsize] at (0,-16.5) {#2};
+  \end{tikzpicture}}
+
+\newcommand{\blattfuss}{%
+  \vfill
+  {\color{Line}\rule{\linewidth}{0.5pt}}\par\vspace{1.0mm}
+  \begin{tabularx}{\linewidth}{@{}Xr@{}}
+    {\small\color{Muted}Klasse 8 · Physik · Elektrischer Strom} &
+    {\small\color{Muted}Arbeitsblatt 1 · Atome und Ladungen\ifsolution{} · Lösungen\fi{} · Seite \thepage{} von 3}
+  \end{tabularx}}
+
+\begin{document}
+
+% ===========================================================================
+% Seite 1
+% ===========================================================================
+\colorbox{Navy}{%
+  \parbox{\dimexpr\linewidth-2\fboxsep\relax}{%
+    \vspace{2.0mm}\color{white}
+    \begin{tabularx}{\linewidth}{@{}Xr@{}}
+      {\small\bfseries PHYSIK · KLASSE 8} &
+      \colorbox{Gold}{\color{Navy}\small\bfseries\strut \ifsolution LÖSUNGEN\else ARBEITSBLATT\fi}
+    \end{tabularx}
+    \vspace{1.6mm}
+    {\fontsize{18}{21}\selectfont\bfseries Atome und Ladungen}\par
+    \vspace{0.5mm}{\large Arbeitsblatt 1 -- Elektrischer Strom}\vspace{2.0mm}
+  }%
+}
+
+\vspace{1.6mm}
+\colorbox{Sky}{\parbox{\dimexpr\linewidth-2\fboxsep\relax}{%
+  \vspace{0.9mm}\textcolor{Blue}{\bfseries Ziel:} Du erklärst den Aufbau eines Atoms und beschreibst mit Ladungen, warum sich Körper anziehen oder abstoßen und was beim Stromfluss passiert.\vspace{0.9mm}}}
+
+% ---------------------------------------------------------------------------
+\sectiontitle{A1 · Beobachten}
+Die Luftballons wurden vorher an den Haaren gerieben.
+
+\vspace{1.6mm}
+\begin{minipage}[t]{0.48\linewidth}
+\centering
+\begin{tikzpicture}[x=1mm,y=1mm,>=Latex,font=\scriptsize]
+  \path (-10,-23) rectangle (36,13);
+  \draw[fill=Sky,draw=Blue,line width=.7pt] (0,0) ellipse (8 and 10);
+  \draw[fill=Sky,draw=Blue,line width=.7pt] (-1.5,-9.6)--(1.5,-9.6)--(0,-12.6)--cycle;
+  % einige Schnipsel haften am Ballon, andere liegen daneben
+  \schnipsel{7.4}{3.6}{-18}
+  \schnipsel{7.8}{-1.0}{12}
+  \schnipsel{6.4}{-5.2}{-6}
+  \schnipsel{17.0}{5.0}{24}
+  \schnipsel{20.0}{-2.0}{-12}
+  \schnipsel{16.5}{-8.2}{8}
+  \node[anchor=north,font=\scriptsize] (lschnipsel) at (25,-13.5) {Papierschnipsel};
+  \draw[dashed,-{Latex[length=1.8mm]},Muted,line width=.5pt] (lschnipsel) -- (20.6,-4.4);
+\end{tikzpicture}
+\end{minipage}\hfill
+\begin{minipage}[t]{0.48\linewidth}
+\centering
+\ballonpaar{1mm}{zwei geriebene Luftballons\\an Fäden}
+\end{minipage}
+
+\vspace{2.6mm}
+\textbf{Beschreibe}, was du auf dem Bild beobachtest. \textbf{Erkläre} die Beobachtung mit Hilfe von Ladungen.
+
+\vspace{1.2mm}
+\schreibraum{4}{Bild 1: Der geriebene Luftballon zieht die Papierschnipsel an. Bild 2: Die beiden geriebenen Luftballons stoßen sich ab.\par
+Durch das Reiben werden die Luftballons elektrisch geladen. Beide Luftballons sind gleich geladen, deshalb stoßen sie sich ab. Die Papierschnipsel sind nicht geladen und werden vom geladenen Luftballon angezogen.}
+
+\vspace{3.0mm}
+
+% ---------------------------------------------------------------------------
+\sectiontitle{A2 · Atome aufbauen}
+Fülle den Lückentext aus und beschrifte die Skizze.
+
+\vspace{1.6mm}
+Jedes Atom eines Stoffes besteht aus positiv geladenen \gap[30mm]{Protonen}, sowie elektrisch neutralen \gap[32mm]{Neutronen}, die zusammen den \gap[27mm]{Atomkern} bilden, und entsprechend vielen \gap[24mm]{negativ} geladenen \gap[30mm]{Elektronen}, die an \gap[24mm]{den Kern} gebunden sind.
+
+\vspace{3.0mm}
+\begin{minipage}[c]{0.60\linewidth}
+\centering
+\begin{tikzpicture}[x=1mm,y=1mm,font=\small]
+  % gestrichelt: Bereich, in dem sich die Elektronen aufhalten
+  \draw[Line,dashed,line width=.7pt] (0,0) circle (15);
+  % Atomkern: Protonen und Neutronen ueberlappen sich zu einem Koerper
+  \node[circle,fill=Muted,inner sep=0pt,minimum size=4.6mm] (neutron) at (2.1,2.1) {};
+  \node[circle,fill=Muted,inner sep=0pt,minimum size=4.6mm] at (-2.1,-2.1) {};
+  \node[circle,fill=Blue,text=white,inner sep=0pt,minimum size=4.6mm,font=\scriptsize\bfseries] (proton) at (-2.1,2.1) {$+$};
+  \node[circle,fill=Blue,text=white,inner sep=0pt,minimum size=4.6mm,font=\scriptsize\bfseries] at (2.1,-2.1) {$+$};
+  % Elektronen: deutlich kleiner, in unterschiedlichem Abstand innerhalb der Huelle
+  \node[circle,fill=white,draw=Blue,line width=.5pt,text=Blue,inner sep=0pt,minimum size=2.6mm,font=\tiny\bfseries] (elektron) at (10,-8) {$-$};
+  \node[circle,fill=white,draw=Blue,line width=.5pt,text=Blue,inner sep=0pt,minimum size=2.6mm,font=\tiny\bfseries] at (-5,8) {$-$};
+  \node[anchor=east] (lproton) at (-24,15) {\gap[24mm]{Proton}};
+  \node[anchor=west] (lneutron) at (24,15) {\gap[26mm]{Neutron}};
+  \node[anchor=east] (lkern) at (-24,-15) {\gap[24mm]{Atomkern}};
+  \node[anchor=west] (lelektron) at (24,-15) {\gap[26mm]{Elektron}};
+  \draw[Muted,line width=.5pt] (lproton) -- (proton);
+  \draw[Muted,line width=.5pt] (lneutron) -- (neutron);
+  \draw[Muted,line width=.5pt] (lkern) -- (0,-3.0);
+  \draw[Muted,line width=.5pt] (lelektron) -- (elektron);
+\end{tikzpicture}
+\end{minipage}\hfill
+\begin{minipage}[c]{0.36\linewidth}
+\colorbox{Mint}{\parbox{\dimexpr\linewidth-2\fboxsep\relax}{%
+  \vspace{1.0mm}\small\textcolor{Blue}{\bfseries Größenordnung}\par
+  Ein Mensch besteht aus etwa $7\cdot10^{27}$ Atomen.\vspace{1.0mm}}}
+
+\vspace{2.0mm}
+{\small Die Skizze zeigt ein Heliumatom mit 2 Protonen, 2 Neutronen und 2 Elektronen.\par
+\vspace{1.0mm}
+Die gestrichelte Linie ist keine Bahn. Sie zeigt den Bereich, in dem sich die Elektronen aufhalten.}
+\end{minipage}
+
+\blattfuss
+\newpage
+
+% ===========================================================================
+% Seite 2
+% ===========================================================================
+\sectiontitle{A3 · Ladungen vergleichen}
+Trage ein, was zwischen den beiden Ladungen passiert.
+
+\vspace{1.4mm}
+\begin{tabularx}{\linewidth}{@{}p{72mm}X@{}}
+  \rowcolor{Sky}\textbf{Ladungen} & \textbf{Was passiert zwischen ihnen?} \\
+  \ladung{$+$}~\ladung{$+$}\quad zwei positive Ladungen & \gap[52mm]{stoßen sich ab} \\
+  \ladung{$-$}~\ladung{$-$}\quad zwei negative Ladungen & \gap[52mm]{stoßen sich ab} \\
+  \ladung{$+$}~\ladung{$-$}\quad eine positive, eine negative Ladung & \gap[52mm]{ziehen sich an}
+\end{tabularx}
+
+\vspace{1.8mm}
+\colorbox{Mint}{\parbox{\dimexpr\linewidth-2\fboxsep\relax}{%
+  \vspace{1.0mm}\textcolor{Blue}{\bfseries Merke:} Gleichnamige Ladungen \gap[34mm]{stoßen sich ab}, ungleichnamige Ladungen \gap[34mm]{ziehen sich an}.\vspace{1.0mm}}}
+
+\vspace{1.8mm}
+\textbf{Erkläre} mit dieser Erkenntnis, wie die beiden Luftballons beim zweiten Bild aus Aufgabe A1 geladen sind.
+
+\vspace{1.2mm}
+\begin{minipage}[c]{0.60\linewidth}
+\schreibraum{3}{Die beiden Luftballons stoßen sich ab. Sie tragen also gleichnamige Ladungen.\par
+Beide sind beim Reiben gleich geladen worden: entweder beide positiv oder beide negativ.}
+\end{minipage}\hfill
+\begin{minipage}[c]{0.34\linewidth}
+\centering
+\ballonpaar{0.9mm}{Bild 2 aus Aufgabe A1}
+\end{minipage}
+
+\vspace{3.0mm}
+
+% ---------------------------------------------------------------------------
+\sectiontitle{A4 · Stromfluss und Stromrichtung}
+Fülle den Merksatz mit den Begriffen aus dem Wortspeicher aus. Zeichne danach beide Richtungen in den Stromkreis ein.
+
+\vspace{1.4mm}
+\colorbox{Sky}{\parbox{\dimexpr\linewidth-2\fboxsep\relax}{%
+  \vspace{1.0mm}\textcolor{Blue}{\bfseries Merke:} Stromfluss ist die Bewegung von \gap[30mm]{Ladungen}. In guten Leitern wie Kupfer sind das \gap[30mm]{Elektronen}.\par
+  \vspace{1.6mm}
+  Die Stromrichtung ist durch die Bewegungsrichtung einer positiven Ladung festgelegt. Sie zeigt vom \gap[26mm]{Pluspol} zum \gap[26mm]{Minuspol} und ist der Bewegungsrichtung der \gap[30mm]{Elektronen} entgegengesetzt.\vspace{1.0mm}}}
+
+\vspace{1.6mm}
+{\small\color{Muted}Wortspeicher:}~\wortchip{Elektronen (2x)}~\wortchip{Ladungen}~\wortchip{Minuspol}~\wortchip{Pluspol}
+
+\vspace{2.0mm}
+\begin{minipage}[c]{0.60\linewidth}
+\centering
+\begin{tikzpicture}[x=1mm,y=1mm,>=Latex,font=\scriptsize]
+  \path (-22,-10) rectangle (84,42);
+  % Leitung; die senkrechten Enden beruehren die beiden Batterieplatten
+  \draw[Navy,line width=.9pt] (0,0)--(0,12) (0,18)--(0,30)--(62,30)--(62,20);
+  \draw[Navy,line width=.9pt] (62,10)--(62,0)--(44,0);
+  \draw[Navy,line width=.9pt] (26,0)--(0,0);
+  % Batterie
+  \draw[Blue,line width=1.6pt] (-6,18)--(6,18);
+  \draw[Blue,line width=1.6pt] (-3.2,12)--(3.2,12);
+  \node[Blue,font=\small\bfseries] at (10,19.2) {$+$};
+  \node[Blue,font=\small\bfseries] at (10,11.4) {$-$};
+  \node[anchor=east,font=\scriptsize] at (-8,15) {Batterie};
+  % Lampe
+  \draw[fill=Sky,draw=Navy,line width=.9pt] (62,15) circle (5);
+  \draw[Navy,line width=.7pt] (58.5,11.5)--(65.5,18.5) (58.5,18.5)--(65.5,11.5);
+  \node[anchor=west,font=\scriptsize] at (68,15) {Lampe};
+  % geschlossener Schalter
+  \draw[fill=Navy,draw=Navy] (26,0) circle (.9) (44,0) circle (.9);
+  \draw[Navy,line width=.9pt] (26,0)--(35,2.6)--(44,0);
+  \node[anchor=north,font=\scriptsize] at (35,-3.4) {Schalter};
+  \ifsolution
+    \draw[-{Latex[length=2.2mm]},Blue,line width=1.0pt] (16,32.6)--(46,32.6);
+    \node[anchor=south,font=\scriptsize\bfseries,text=Blue] at (31,33.8) {Stromrichtung};
+    \draw[{Latex[length=2.2mm]}-,Blue,dashed,line width=1.0pt] (16,27.4)--(46,27.4);
+    \node[anchor=north,font=\scriptsize\bfseries,text=Blue] at (31,26.2) {Bewegung der Elektronen};
+  \fi
+\end{tikzpicture}
+\end{minipage}\hfill
+\begin{minipage}[c]{0.36\linewidth}
+\begin{tcolorbox}[colback=Mint,colframe=Line,arc=1.2mm,boxrule=.6pt,left=2mm,right=2mm,top=1.2mm,bottom=1.2mm]
+{\small\textcolor{Blue}{\bfseries Hilfen zu A4}\par
+\vspace{0.9mm}
+\textbf{1.} Welche Teilchen können sich in einem Draht überhaupt bewegen?\par
+\vspace{0.9mm}
+\textbf{2.} Welche Ladung haben diese Teilchen? Von welchem Pol werden sie angezogen, von welchem werden sie abgestoßen?}
+\end{tcolorbox}
+\end{minipage}
+
+\blattfuss
+\newpage
+
+% ===========================================================================
+% Seite 3
+% ===========================================================================
+\parttitle{Teil B · Prüfungsaufgaben}{ohne Hilfen bearbeiten}
+
+\sectiontitle{B1 · Bausteine des Atoms \hfill 3 BE}
+Nenne die drei Bausteine eines Atoms und gib jeweils ihre Ladung an.
+
+\vspace{1.2mm}
+\schreibraum{3}{Protonen sind positiv geladen. Neutronen sind elektrisch neutral, sie tragen keine Ladung. Elektronen sind negativ geladen.\par
+Protonen und Neutronen bilden zusammen den Atomkern. Die Elektronen sind an den Kern gebunden.}
+
+\sectiontitle{B2 · Ein geriebener Glasstab \hfill 3 BE}
+Ein Glasstab gibt beim Reiben mit einem Tuch Elektronen ab. Gib an, wie er danach geladen ist, und begründe deine Antwort.
+
+\vspace{1.2mm}
+\schreibraum{3}{Der Glasstab hat danach weniger Elektronen als vorher, also weniger negative Ladungen.\par
+Die positiven Ladungen der Protonen überwiegen jetzt. Der Glasstab ist deshalb positiv geladen.}
+
+\sectiontitle{B3 · Stromrichtung im Kupferdraht \hfill 3 BE}
+In einem Kupferdraht bewegen sich die Elektronen vom Minuspol zum Pluspol. Gib die Stromrichtung an und begründe.
+
+\vspace{1.2mm}
+\schreibraum{3}{Die Stromrichtung zeigt vom Pluspol zum Minuspol.\par
+Sie ist durch die Bewegungsrichtung einer positiven Ladung festgelegt. Deshalb ist sie der Bewegungsrichtung der Elektronen entgegengesetzt.}
+
+\vspace{2.4mm}
+\hfill{\small\color{Muted}erreichte Punkte: \gap[20mm]{} von 9 BE}
+
+\vspace{3.4mm}
+
+% ---------------------------------------------------------------------------
+\sectiontitle{B4 · Check zum Abschluss \hfill Ankreuzen}
+Kreuze alle richtigen Antworten an. Es können mehrere Antworten richtig sein.
+
+\vspace{1.6mm}
+\begin{minipage}[t]{0.485\linewidth}
+\textbf{1. Welche Aussagen über Atome sind richtig?}\par
+\vspace{1.0mm}
+\mck{1}~Protonen sind positiv geladen.\par
+\vspace{0.6mm}\mck{0}~Neutronen sind negativ geladen.\par
+\vspace{0.6mm}\mck{1}~Elektronen sind an den Kern gebunden.\par
+\vspace{0.6mm}\mck{1}~Der Kern besteht aus Protonen und Neutronen.
+
+\vspace{3.0mm}
+\textbf{3. Wie ist die Stromrichtung festgelegt?}\par
+\vspace{1.0mm}
+\mck{0}~Sie zeigt vom Minuspol zum Pluspol.\par
+\vspace{0.6mm}\mck{1}~Sie zeigt vom Pluspol zum Minuspol.\par
+\vspace{0.6mm}\mck{0}~Sie zeigt in Bewegungsrichtung der Elektronen.
+\end{minipage}\hfill
+\begin{minipage}[t]{0.485\linewidth}
+\textbf{2. Was bewegt sich beim Stromfluss im Kupferdraht?}\par
+\vspace{1.0mm}
+\mck{1}~Ladungen\par
+\vspace{0.6mm}\mck{1}~Elektronen\par
+\vspace{0.6mm}\mck{0}~Protonen\par
+\vspace{0.6mm}\mck{0}~der Atomkern
+
+\vspace{3.0mm}
+\textbf{4. Zwei Körper ziehen sich an. Was gilt?}\par
+\vspace{1.0mm}
+\mck{1}~Sie sind ungleichnamig geladen.\par
+\vspace{0.6mm}\mck{0}~Sie sind gleichnamig geladen.\par
+\vspace{0.6mm}\mck{1}~Einer ist positiv, einer negativ geladen.
+\end{minipage}
+
+\blattfuss
+
+\end{document}

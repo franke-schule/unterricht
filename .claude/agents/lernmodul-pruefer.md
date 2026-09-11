@@ -46,7 +46,7 @@ Arbeite jeden Punkt konkret ab und nenne bei jedem Fehler Datei und Stelle:
 - [ ] Sicherungsblatt-Download ist anfangs verborgen
       (`.download-button[hidden] { display: none; }` vorhanden).
 - [ ] Lehrercode in der Seite stimmt mit `lehrercodes-dekodierung` überein und
-      folgt dem Schema aus `manifest-allgemein.txt` Abschnitt 4.
+      folgt dem Schema aus `manifest-allgemein.txt` Abschnitt 5.
 - [ ] Keine LaTeX-Hilfsdateien (`.aux`, `.fdb_latexmk`, `.fls`, `.log`,
       `.out`, `.synctex.gz`) und keine temporären Renderbilder im Repo.
 - [ ] `git diff --check` meldet keine Fehler.

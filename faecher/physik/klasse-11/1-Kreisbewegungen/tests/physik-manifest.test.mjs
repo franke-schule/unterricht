@@ -11,6 +11,9 @@ assert.match(manifest, /positive x-Achse und die positive y-Achse besitzen Pfeil
 assert.match(manifest, /Gültige Ziffern bei Rechenaufgaben/);
 assert.match(manifest, /Zahlenwert, Einheit und die Anzahl der gültigen Ziffern stimmen/);
 assert.match(manifest, /Runde das Endergebnis noch auf/);
+assert.match(manifest, /Bruchstriche bei Divisionen und Einheiten/);
+assert.match(manifest, /waagerechten Bruchstrich/);
+assert.match(manifest, /Zeilenabstand/);
 assert.match(generalManifest, /manifest-physikaufgaben\.txt/);
 assert.match(agentInstructions, /manifest-physikaufgaben\.txt/);
 

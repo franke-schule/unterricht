@@ -180,7 +180,74 @@ Der Lehrercode ist eine pragmatische Unterrichtshuerde, keine kryptografische
 Zugriffssperre. Der PDF-Link bleibt technisch im clientseitigen HTML auffindbar.
 
 
-4. Lehrercode-Schema
+4. Arbeitsblaetter
+------------------
+
+Arbeitsblaetter sind gedruckte Aufgabenblaetter. Sie werden dort eingesetzt, wo
+der Unterricht ohne Tablet stattfindet, derzeit vor allem in Physik in den
+Jahrgangsstufen 7 und 8.
+
+Abgrenzung zum Sicherungsblatt:
+
+  - Ein Sicherungsblatt sichert bereits Erarbeitetes, enthaelt Musterloesungen
+    und fuehrt laut Abschnitt 3 keine neuen Uebungen ein. Diese Regel bleibt
+    unveraendert gueltig.
+  - Ein Arbeitsblatt enthaelt Lern- und Pruefungsaufgaben, die die
+    Schuelerinnen und Schueler auf dem Blatt selbst bearbeiten.
+
+Dateinamen:
+
+  arbeitsblatt-N-<thema>.tex und .pdf            Schuelerfassung
+  arbeitsblatt-N-<thema>-loesungen.tex und .pdf  Loesungsfassung
+
+Regeln:
+
+  - Schueler- und Loesungsfassung sind beide verbindlich. Sie muessen
+    layoutgleich sein: gleiche Seitenzahl, gleiche Abschnittsreihenfolge,
+    gleiche Position jeder Aufgabe.
+  - Layoutgleichheit wird ueber einen Schalter in der Praeambel erreicht
+    (`\newif\ifsolution`). Beide Dateien sind ansonsten zeichengleich; die
+    Loesungsfassung wird aus der Schuelerfassung erzeugt. Arbeitsbereiche und
+    Luecken behalten in beiden Fassungen dieselben festen Masse, damit sich
+    der Umbruch nicht verschiebt.
+  - Als Gestaltungsvorlage dienen die Sicherungsblaetter aus Physik Klasse 11
+    (`faecher/physik/klasse-11/1-Kreisbewegungen/sicherungsblatt-aufgabe-*.tex`):
+    Praeambel, Farben, Kopfleiste, Abschnittstitel und Boxen werden ohne
+    fachlichen Grund nicht neu gestaltet. Das Gold-Feld der Kopfleiste
+    beschriftet die Fassung mit ARBEITSBLATT beziehungsweise LOESUNGEN.
+  - Das Blatt muss vollstaendig auf Papier funktionieren: keine interaktiven
+    Elemente, keine Abhaengigkeit von Links oder Geraeten und ausreichend
+    Schreibraum fuer Handschrift. Kein Kopffeld fuer Name, Klasse und Datum.
+  - Der Arbeitsauftrag steht unter der zugehoerigen Grafik, nicht darueber.
+    Operatoren wie Beschreibe, Erklaere oder Nenne werden fett gesetzt.
+  - Zu einem Lueckentext mit mehreren Luecken gehoert ein Wortspeicher unter
+    dem Text. Die Begriffe stehen alphabetisch, damit die Reihenfolge nichts
+    verraet; ein mehrfach benoetigter Begriff traegt den Zusatz (2x).
+  - Skizzen duerfen keine Fehlvorstellungen anlegen. Im Atommodell heisst das
+    zum Beispiel: keine Elektronen auf einer gezeichneten Bahnlinie und kein
+    Kreis, der dem Atomkern einen festen Radius gibt.
+  - Gliederung in einen Lernteil und einen Pruefungsteil. Der Pruefungsteil
+    nennt die Bewertungseinheiten je Teilaufgabe und kommt ohne Hilfen aus.
+    Gestufte Hilfen stehen im Lernteil bei der zugehoerigen Aufgabe.
+  - Die Regel aus AGENTS.md, dass ein Lernmodul mit einem Abschlussquiz endet,
+    gilt sinngemaess auch hier. Auf Papier wird sie als abschliessender
+    Ankreuz-Check umgesetzt: Auswahlkaestchen statt Einfachauswahl, mindestens
+    zwei Fragen mit mehreren richtigen Antworten. Die HTML-Quizkomponente wird
+    dafuer nicht verwendet.
+  - Ein Arbeitsblatt soll moeglichst zwei A4-Seiten umfassen und hoechstens
+    drei. Eine weitere Seite ist besser als ein ueberladenes Blatt.
+  - Nach dem PDF-Bau jede Seite als Bild rendern und visuell pruefen, danach
+    Schueler- und Loesungsfassung Seite fuer Seite miteinander vergleichen.
+  - Nur die beiden `.tex`-Quellen und die beiden PDFs einchecken. Keine
+    LaTeX-Hilfsdateien und keine Renderbilder. Ausserhalb des Repos gebaut
+    wird in einem Unterordner von `tmp/pdfs/`.
+
+Wird ein Arbeitsblatt zusaetzlich auf der Website angeboten, gelten fuer den
+Download der Loesungsfassung dieselben Regeln wie fuer Sicherungsblaetter:
+verborgener Downloadbutton und Freigabe ueber den Lehrercode nach Abschnitt 5.
+
+
+5. Lehrercode-Schema
 --------------------
 
 Aktuelles Muster:
@@ -225,7 +292,7 @@ Alle anderen Positionen sind Tarn-/Pruefzeichen. Bei neuen Codes:
   - Uebereinstimmung zwischen HTML und Dekodier-PDF pruefen.
 
 
-5. Klassenkarten und Objektkarten
+6. Klassenkarten und Objektkarten
 ---------------------------------
 
 Klassenkarten und Objektkarten muessen visuell eindeutig unterscheidbar sein:
@@ -239,7 +306,7 @@ Klassenkarten und Objektkarten muessen visuell eindeutig unterscheidbar sein:
   - Neue oder geaenderte Klassenkarten und Objektkarten visuell pruefen.
 
 
-6. Barrierearmut und Rueckmeldungen
+7. Barrierearmut und Rueckmeldungen
 ----------------------------------
 
 Beibehalten:
@@ -256,7 +323,7 @@ Richtig/falsch darf nicht ausschliesslich durch Farbe vermittelt werden. Immer
 zusaetzlich eine konkrete Textmeldung anzeigen.
 
 
-7. Abschlusspruefung
+8. Abschlusspruefung
 --------------------
 
 Vor Abschluss mindestens pruefen:
@@ -270,6 +337,7 @@ Vor Abschluss mindestens pruefen:
   [ ] Sicherungsblatt-Download ist anfangs verborgen.
   [ ] Lehrercode stimmt mit der Dekodierdatei ueberein.
   [ ] Neue PDFs wurden gebaut, gerendert und visuell geprueft.
+  [ ] Bei Arbeitsblaettern: Schueler- und Loesungsfassung sind layoutgleich.
   [ ] Seite wurde nach Moeglichkeit im Browser interaktiv getestet.
   [ ] git diff --check meldet keine Fehler.
 

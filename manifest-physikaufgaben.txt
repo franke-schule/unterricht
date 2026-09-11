@@ -71,13 +71,29 @@ Verbindliche Muster für Rückmeldungen:
   die geforderte Anzahl gültiger Ziffern.“
 
 
-4. Abschlussprüfung für Physikaufgaben
+4. Bruchstriche bei Divisionen und Einheiten
+---------------------------------------------
+
+  - Geteilt-Rechnungen werden in Formeln, Rechenwegen und Musterlösungen
+    grundsätzlich mit einem waagerechten Bruchstrich gesetzt, nicht mit einem
+    Doppelpunkt oder einem Schrägstrich.
+  - Auch zusammengesetzte Einheiten werden als Bruch dargestellt, zum Beispiel
+    m über s² statt `m/s²`.
+  - In HTML sind dafür vorhandene Mathematikkomponenten beziehungsweise
+    Bruchdarstellungen wie `\frac` zu verwenden. Die Darstellung muss auch auf
+    kleinen Bildschirmen lesbar bleiben.
+  - Zeilenabstand und weitere Abstände sind so zu bemessen, dass Zähler,
+    Bruchstrich und Nenner weder angrenzende Zeilen noch andere Inhalte berühren.
+
+
+5. Abschlussprüfung für Physikaufgaben
 --------------------------------------
 
   [ ] Formelzeichen und Indizes sind in allen Darstellungen konsistent.
   [ ] Größen, Einheiten und Wertebereiche sind fachlich sinnvoll.
   [ ] Koordinatensysteme erfüllen die Regeln aus Abschnitt 2.
   [ ] Rechenergebnisse und Feedback berücksichtigen gültige Ziffern.
+  [ ] Divisionen und zusammengesetzte Einheiten sind mit Bruchstrich gesetzt.
   [ ] Grafiken und Animationen wurden fachlich sowie responsiv geprüft.
   [ ] Vorhandene Tests, Lint- und Buildbefehle wurden ausgeführt.
   [ ] `git diff --check` meldet keine Fehler.

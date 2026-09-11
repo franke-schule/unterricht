@@ -137,6 +137,16 @@ Sicherungsblätter sollen nicht als eigenes neues System implementiert werden,
 wenn bereits eine Download-/Anzeige-Komponente existiert.
 
 
+## Arbeitsblätter
+
+Physik Klasse 7 und 8 arbeitet ohne Tablet. Dort entstehen statt interaktiver
+Lernmodule gedruckte **Arbeitsblätter**: wie Sicherungsblätter gestaltet, aber
+mit Lern- und Prüfungsaufgaben, die auf dem Blatt bearbeitet werden.
+
+Verbindlich ist `manifest-allgemein.txt` Abschnitt 4. Als Vorlage dient
+`faecher/physik/klasse-8/1-El-Strom/1-Atome-und-Ladungen/arbeitsblatt-1-atome-und-ladungen.tex`.
+
+
 ## Übersichtsseiten
 
 Lernmodule sollen am Ende eine kompakte Übersicht bzw. Zusammenfassung besitzen,
