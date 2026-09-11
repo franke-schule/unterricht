@@ -5,10 +5,11 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="robots" content="noindex, nofollow">
     <title>Wiederholung 2 – Kräfte und Bewegung | Physik 11</title>
-    <link rel="stylesheet" href="../../../../styles.css?v=20260828">
+    <link rel="stylesheet" href="../../../../styles.css?v=20260911a">
     <link rel="stylesheet" href="bewegung-koerpern.css?v=20260910a">
     <link rel="stylesheet" href="kraefte-bewegung.css?v=20260901b">
-    <script type="module" src="kraefte-bewegung.mjs?v=20260910a"></script>
+    <link rel="stylesheet" href="components/physics-notation.css?v=20260911a">
+    <script type="module" src="kraefte-bewegung.mjs?v=20260911a"></script>
   </head>
   <body class="physics-revision-page force-revision-page">
     <div class="site-backdrop" aria-hidden="true"></div>
@@ -53,7 +54,7 @@
           <article class="physics-task-card" aria-labelledby="force-acceleration-title">
             <h3 id="force-acceleration-title">Aufgabe 3 · Beschleunigung berechnen</h3>
             <p>Auf einen Körper mit <strong>m = 100&nbsp;g</strong> wirkt <strong>F = 1,2&nbsp;N</strong>. Berechne mit <strong>F = m · a</strong> die Beschleunigung und gib sie mit zwei gültigen Ziffern an.</p>
-            <div class="physics-number-entry"><label for="force-acceleration-answer">Beschleunigung</label><div class="physics-number-controls"><input id="force-acceleration-answer" inputmode="decimal" autocomplete="off"><select id="force-acceleration-unit" aria-label="Einheit der Beschleunigung"><option value="">Einheit auswählen …</option><option value="m/s²">m/s²</option><option value="m/s">m/s</option><option value="N">N</option></select></div></div>
+            <div class="physics-number-entry"><label for="force-acceleration-answer">Beschleunigung</label><div class="physics-number-controls"><input id="force-acceleration-answer" inputmode="decimal" autocomplete="off"><fieldset class="unit-choice" id="force-acceleration-unit" data-unit-choice><legend class="sr-only">Einheit der Beschleunigung auswählen</legend><label class="unit-choice__option"><input type="radio" name="force-acceleration-unit" value="m/s²"><span class="physics-fraction" role="img" aria-label="Meter pro Sekunde zum Quadrat"><span class="physics-fraction__numerator">m</span><span class="physics-fraction__denominator">s²</span></span></label><label class="unit-choice__option"><input type="radio" name="force-acceleration-unit" value="m/s"><span class="physics-fraction" role="img" aria-label="Meter pro Sekunde"><span class="physics-fraction__numerator">m</span><span class="physics-fraction__denominator">s</span></span></label><label class="unit-choice__option"><input type="radio" name="force-acceleration-unit" value="N">N</label></fieldset></div></div>
             <button class="physics-primary-button" id="check-force-acceleration" type="button">Beschleunigung prüfen</button>
             <div id="force-acceleration-feedback" class="physics-feedback" role="status" aria-live="polite" hidden></div>
             <details class="sortable-help"><summary>Hilfe: Rechenschritte sortieren</summary><p>Bringe die vier Rechenschritte in die richtige Reihenfolge und prüfe sie anschließend.</p><div id="acceleration-steps" class="sortable-steps" aria-label="Sortierbare Rechenschritte"></div><button class="physics-primary-button" id="check-acceleration-steps" type="button">Reihenfolge prüfen</button><div id="acceleration-steps-feedback" class="physics-feedback" role="status" aria-live="polite" hidden></div></details>
@@ -91,7 +92,7 @@
                   <button class="physics-primary-button" type="submit">Code prüfen</button>
                 </div>
                 <p id="solution-code-message" class="solution-code-message" aria-live="polite"></p>
-                <a id="solution-download-link" class="download-button" href="sicherungsblatt-aufgabe-2-loesungen.pdf?v=20260910a" download hidden>
+                <a id="solution-download-link" class="download-button" href="sicherungsblatt-aufgabe-2-loesungen.pdf?v=20260911a" download hidden>
                   &#8595; Sicherungsblatt herunterladen
                 </a>
               </form>

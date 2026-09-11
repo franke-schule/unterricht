@@ -1,0 +1,110 @@
+/* Gemeinsame Notation für Physikaufgaben: tiefgestellte Indizes und
+   zusammengesetzte Einheiten mit waagerechtem Bruchstrich. */
+
+.physics-symbol {
+  white-space: nowrap;
+}
+
+.physics-symbol sub,
+.svg-label sub {
+  font-size: 0.72em;
+  line-height: 0;
+  vertical-align: baseline;
+  position: relative;
+  bottom: -0.28em;
+}
+
+.physics-fraction {
+  display: inline-flex;
+  flex-direction: column;
+  align-items: center;
+  vertical-align: middle;
+  margin: 0 0.15em;
+  font-size: 0.8em;
+  font-style: normal;
+  line-height: 1.08;
+  white-space: nowrap;
+}
+
+.physics-fraction__numerator,
+.physics-fraction__denominator {
+  display: block;
+  padding: 0 0.2em;
+}
+
+.physics-fraction__denominator {
+  border-top: 1px solid currentColor;
+}
+
+/* Zähler, Bruchstrich und Nenner brauchen mehr Zeilenabstand, damit sie
+   angrenzende Zeilen und andere Inhalte nicht berühren. */
+p:has(.physics-fraction),
+li:has(.physics-fraction),
+td:has(.physics-fraction),
+th:has(.physics-fraction),
+legend:has(.physics-fraction),
+label:has(.physics-fraction),
+strong:has(.physics-fraction),
+summary:has(.physics-fraction),
+figcaption:has(.physics-fraction),
+.physics-feedback:has(.physics-fraction),
+.simulation-readout:has(.physics-fraction) {
+  line-height: 1.9;
+}
+
+/* Optionstexte in Quizfragen sind ein einzelnes Flex-Element, damit Indizes
+   und Brüche innerhalb des Textes nicht als eigene Spalte umbrechen. */
+.quiz-option-text {
+  min-width: 0;
+}
+
+.svg-fraction-bar {
+  stroke: currentColor;
+  stroke-width: 1;
+}
+
+.unit-choice {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin: 0;
+  padding: 0;
+  border: 0;
+}
+
+.unit-choice > .unit-choice__option {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  min-height: 44px;
+  border: 1px solid #cbd5e1;
+  border-radius: 8px;
+  padding: 4px 11px;
+  color: #1f2937;
+  background: #ffffff;
+  cursor: pointer;
+}
+
+.unit-choice > .unit-choice__option:focus-within {
+  border-color: #2563eb;
+  box-shadow: 0 0 0 2px rgba(37, 99, 235, 0.25);
+}
+
+.unit-choice > .unit-choice__option input[type="radio"] {
+  flex: 0 0 auto;
+  width: 18px;
+  height: 18px;
+  margin: 0;
+}
+
+.unit-choice > .unit-choice__option:has(input:checked) {
+  border-color: #2563eb;
+  background: #eff6ff;
+  font-weight: 700;
+}
+
+/* Einheitenauswahl braucht die volle Breite der Eingabezeile, damit die
+   Bruchdarstellung in den Auswahlfeldern lesbar bleibt. */
+.physics-number-controls:has(.unit-choice) {
+  grid-template-columns: minmax(0, 1fr);
+}

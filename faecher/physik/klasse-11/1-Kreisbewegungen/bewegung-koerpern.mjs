@@ -1,6 +1,7 @@
 import { createPointVectorGrid } from "./components/point-vector-grid.mjs";
 import { setupPhysicsSemanticTask } from "./components/physics-semantic-task.mjs?v=20260910a";
 import { setupPhysicsStepTabs } from "./components/physics-step-tabs.mjs";
+import { appendPhysicsText, physicsTextSpan, unitChoiceValue } from "./components/physics-notation.mjs?v=20260911a";
 
 const SCRIPT_SERVER_URL = "https://script.google.com/macros/s/AKfycby8RWL6uYrKZyoJ6m2GRpWyRmXjwsdskyCiqzKpRhIK5-wrDl-9lWWk8CiAGaVMoy0x/exec";
 
@@ -45,7 +46,8 @@ function setFeedback(id, status, message) {
   const box = document.getElementById(id);
   box.hidden = false;
   box.className = `physics-feedback ${status}`;
-  box.textContent = message;
+  box.replaceChildren();
+  appendPhysicsText(box, message);
 }
 
 function setupUnitTable() {
@@ -69,7 +71,7 @@ function setupUnitTable() {
     });
     if (correct === 4) setFeedback("unit-feedback", "success", "Korrekt: Alle vier Umrechnungen stimmen – mit passenden Rundungen.");
     else if (correct > 0) setFeedback("unit-feedback", "partial", `${correct} von 4 Umrechnungen stimmen. Prüfe noch: ${wrong.join(", ")}. Nutze den Faktor 3,6 in der passenden Rechenrichtung.`);
-    else setFeedback("unit-feedback", "error", "Noch nicht korrekt. Denke zuerst an 1 m/s = 3,6 km/h und an die Rechenrichtung.");
+    else setFeedback("unit-feedback", "error", "Noch nicht korrekt. Denke zuerst an 1 {{m/s}} = 3,6 {{km/h}} und an die Rechenrichtung.");
   });
 }
 
@@ -107,17 +109,17 @@ function setupAcceleration() {
   document.getElementById("check-acceleration").addEventListener("click", () => {
     const input = document.getElementById("acceleration-answer");
     const value = numberValue(input.value);
-    const unit = document.getElementById("acceleration-unit").value;
+    const unit = unitChoiceValue("acceleration-unit");
     const target = unit === "m/s" ? 7.5 : 27;
     const tolerance = unit === "m/s" ? 0.01 : 0.05;
     const valueCorrect = Number.isFinite(value) && Math.abs(value - target) <= tolerance;
     const digitsCorrect = significantDigitCount(input.value) === 2;
     if (valueCorrect && digitsCorrect) {
-      setFeedback("acceleration-feedback", "success", "Korrekt: v = v₀ + a · t = 7,5 m/s = 27 km/h. Die Angaben 2,5 m/s² und 3,0 s besitzen jeweils zwei gültige Ziffern; deshalb hat auch das Ergebnis zwei gültige Ziffern.");
+      setFeedback("acceleration-feedback", "success", "Korrekt: v = {{v_0}} + a · t = 7,5 {{m/s}} = 27 {{km/h}}. Die Angaben 2,5 {{m/s²}} und 3,0 s besitzen jeweils zwei gültige Ziffern; deshalb hat auch das Ergebnis zwei gültige Ziffern.");
     } else if (valueCorrect) {
-      setFeedback("acceleration-feedback", "partial", "Der Zahlenwert und die Einheit passen. Gib das Ergebnis noch mit genau zwei gültigen Ziffern an: Die ungenauesten Angaben 2,5 m/s² und 3,0 s besitzen jeweils zwei gültige Ziffern.");
+      setFeedback("acceleration-feedback", "partial", "Der Zahlenwert und die Einheit passen. Gib das Ergebnis noch mit genau zwei gültigen Ziffern an: Die ungenauesten Angaben 2,5 {{m/s²}} und 3,0 s besitzen jeweils zwei gültige Ziffern.");
     } else {
-      setFeedback("acceleration-feedback", "error", "Noch nicht korrekt. Nutze v = v₀ + a · t mit v₀ = 0, beachte die gewählte Einheit und gib das Ergebnis mit zwei gültigen Ziffern an.");
+      setFeedback("acceleration-feedback", "error", "Noch nicht korrekt. Nutze v = {{v_0}} + a · t mit {{v_0}} = 0, beachte die gewählte Einheit und gib das Ergebnis mit zwei gültigen Ziffern an.");
     }
   });
 }
@@ -247,7 +249,7 @@ function setupVtMatching() {
 function setupGivenVtChart() {
   const host = document.getElementById("given-vt-chart");
   const svg = chartSvg("constant", "v(t)-Diagramm der fünf Bewegungsabschnitte, Geschwindigkeit in Meter pro Sekunde und Zeit in Minuten", { width: 720, height: 270 });
-  svg.innerHTML = '<defs><marker id="given-vt-axis-arrow" markerWidth="6" markerHeight="6" refX="5" refY="3" orient="auto" markerUnits="strokeWidth"><path d="M0,0 L6,3 L0,6 z" class="chart-axis-arrow"/></marker></defs><line x1="55" y1="220" x2="695" y2="220" class="chart-axis" marker-end="url(#given-vt-axis-arrow)"/><line x1="55" y1="220" x2="55" y2="22" class="chart-axis" marker-end="url(#given-vt-axis-arrow)"/><line x1="51" y1="130" x2="59" y2="130" class="chart-axis"/><line x1="51" y1="70" x2="59" y2="70" class="chart-axis"/><path d="M55 220 L180 130 L305 130 L430 70 L555 70 L680 220" class="chart-plot given-vt-plot"/><text x="48" y="248">0</text><text x="168" y="248">3</text><text x="293" y="248">6</text><text x="418" y="248">9</text><text x="539" y="248">12</text><text x="672" y="248">15</text><text class="chart-axis-label" x="635" y="264">t in min</text><text class="chart-axis-label" x="7" y="17">v in m/s</text><text class="chart-value-label" text-anchor="end" x="48" y="135">15 m/s</text><text class="chart-value-label" text-anchor="end" x="48" y="75">25 m/s</text><text class="chart-section-label" text-anchor="middle" x="118" y="45">I</text><text class="chart-section-label" text-anchor="middle" x="243" y="45">II</text><text class="chart-section-label" text-anchor="middle" x="368" y="45">III</text><text class="chart-section-label" text-anchor="middle" x="493" y="45">IV</text><text class="chart-section-label" text-anchor="middle" x="618" y="45">V</text>';
+  svg.innerHTML = '<defs><marker id="given-vt-axis-arrow" markerWidth="6" markerHeight="6" refX="5" refY="3" orient="auto" markerUnits="strokeWidth"><path d="M0,0 L6,3 L0,6 z" class="chart-axis-arrow"/></marker></defs><line x1="55" y1="220" x2="695" y2="220" class="chart-axis" marker-end="url(#given-vt-axis-arrow)"/><line x1="55" y1="220" x2="55" y2="22" class="chart-axis" marker-end="url(#given-vt-axis-arrow)"/><line x1="51" y1="130" x2="59" y2="130" class="chart-axis"/><line x1="51" y1="70" x2="59" y2="70" class="chart-axis"/><path d="M55 220 L180 130 L305 130 L430 70 L555 70 L680 220" class="chart-plot given-vt-plot"/><text x="48" y="248">0</text><text x="168" y="248">3</text><text x="293" y="248">6</text><text x="418" y="248">9</text><text x="539" y="248">12</text><text x="672" y="248">15</text><text class="chart-axis-label" x="635" y="264">t in min</text><text class="chart-axis-label" x="7" y="16">v in</text><g class="svg-fraction" role="img" aria-label="Meter pro Sekunde"><text class="chart-axis-label" text-anchor="middle" x="17" y="33">m</text><line class="svg-fraction-bar" x1="8" y1="38" x2="26" y2="38"/><text class="chart-axis-label" text-anchor="middle" x="17" y="53">s</text></g><text class="chart-value-label" text-anchor="end" x="48" y="135">15</text><text class="chart-value-label" text-anchor="end" x="48" y="75">25</text><text class="chart-section-label" text-anchor="middle" x="118" y="45">I</text><text class="chart-section-label" text-anchor="middle" x="243" y="45">II</text><text class="chart-section-label" text-anchor="middle" x="368" y="45">III</text><text class="chart-section-label" text-anchor="middle" x="493" y="45">IV</text><text class="chart-section-label" text-anchor="middle" x="618" y="45">V</text>';
   host.append(svg);
 }
 
@@ -379,7 +381,7 @@ function setupQuiz() {
       options: [
         ["scalar", "Geschwindigkeit besitzt grundsätzlich keine Richtung."],
         ["magnitude", "Ihr Betrag beschreibt, wie schnell sich ein Körper bewegt."],
-        ["acceleration-unit", "Ihre SI-Einheit ist m/s²."],
+        ["acceleration-unit", "Ihre SI-Einheit ist {{m/s²}}."],
         ["direction", "Die Pfeilrichtung beschreibt die Bewegungsrichtung."],
         ["directed", "Geschwindigkeit ist eine gerichtete Größe."],
       ],
@@ -401,11 +403,11 @@ function setupQuiz() {
       question: "Welche Einheiten können eine Beschleunigung beschreiben?",
       correct: ["m-s2", "m-s-per-s", "km-h-per-s"],
       options: [
-        ["m-s", "m/s"],
-        ["m-s2", "m/s²"],
-        ["km-h", "km/h"],
-        ["km-h-per-s", "km/h pro s"],
-        ["m-s-per-s", "m/s pro s"],
+        ["m-s", "{{m/s}}"],
+        ["m-s2", "{{m/s²}}"],
+        ["km-h", "{{km/h}}"],
+        ["km-h-per-s", "{{km/h}} pro s"],
+        ["m-s-per-s", "{{m/s}} pro s"],
       ],
       hint: "Eine Beschleunigung gibt an, wie stark sich eine Geschwindigkeit pro Zeit ändert.",
     },
@@ -417,7 +419,7 @@ function setupQuiz() {
     const fieldset = document.createElement("fieldset");
     fieldset.className = "physics-quiz-question quiz-question";
     const legend = document.createElement("legend");
-    legend.textContent = `Aufgabe 8${String.fromCharCode(97 + index)} · ${item.question}`;
+    appendPhysicsText(legend, `Aufgabe 8${String.fromCharCode(97 + index)} · ${item.question}`);
     const options = document.createElement("div");
     options.className = "quiz-options";
     item.options.forEach(([value, labelText]) => {
@@ -433,7 +435,7 @@ function setupQuiz() {
         fieldset.querySelector(".quiz-item-feedback").hidden = true;
         document.getElementById("module-summary").hidden = true;
       });
-      label.append(input, document.createTextNode(labelText));
+      label.append(input, physicsTextSpan(labelText, "quiz-option-text"));
       options.append(label);
     });
     const button = document.createElement("button");

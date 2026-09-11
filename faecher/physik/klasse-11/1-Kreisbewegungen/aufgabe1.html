@@ -5,9 +5,10 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="robots" content="noindex, nofollow">
     <title>Wiederholung 1 – Bewegung von Körpern | Physik 11</title>
-    <link rel="stylesheet" href="../../../../styles.css?v=20260828">
+    <link rel="stylesheet" href="../../../../styles.css?v=20260911a">
     <link rel="stylesheet" href="bewegung-koerpern.css?v=20260910a">
-    <script type="module" src="bewegung-koerpern.mjs?v=20260910c"></script>
+    <link rel="stylesheet" href="components/physics-notation.css?v=20260911a">
+    <script type="module" src="bewegung-koerpern.mjs?v=20260911a"></script>
   </head>
   <body class="physics-revision-page">
     <div class="site-backdrop" aria-hidden="true"></div>
@@ -39,7 +40,7 @@
           </div>
 
           <div class="physics-info-grid">
-            <article class="physics-info-card"><h3>Betrag</h3><p>Der Betrag beschreibt, wie schnell sich ein Körper bewegt, zum Beispiel <strong>5,4&nbsp;m/s</strong>.</p></article>
+            <article class="physics-info-card"><h3>Betrag</h3><p>Der Betrag beschreibt, wie schnell sich ein Körper bewegt, zum Beispiel <strong>5,4&nbsp;<span class="physics-fraction" role="img" aria-label="Meter pro Sekunde"><span class="physics-fraction__numerator">m</span><span class="physics-fraction__denominator">s</span></span></strong>.</p></article>
             <article class="physics-info-card"><h3>Richtung</h3><p>Die Richtung gehört zum Geschwindigkeitsvektor und wird durch dessen Pfeil dargestellt.</p></article>
           </div>
 
@@ -51,10 +52,10 @@
                 <caption>Vier Geschwindigkeiten aus Alltag und Verkehr</caption>
                 <thead><tr><th scope="col">Beispiel</th><th scope="col">Vorgabe</th><th scope="col">Deine Umrechnung</th></tr></thead>
                 <tbody>
-                  <tr><th scope="row">Fußgänger</th><td>5,0&nbsp;km/h</td><td><label><span class="sr-only">Fußgänger in Meter pro Sekunde</span><input data-unit-answer="pedestrian" inputmode="decimal" autocomplete="off"><span>m/s</span></label></td></tr>
-                  <tr><th scope="row">Radfahrerin</th><td>5,4&nbsp;m/s</td><td><label><span class="sr-only">Radfahrerin in Kilometer pro Stunde</span><input data-unit-answer="cyclist" inputmode="decimal" autocomplete="off"><span>km/h</span></label></td></tr>
-                  <tr><th scope="row">Rennpferd</th><td>60&nbsp;km/h</td><td><label><span class="sr-only">Rennpferd in Meter pro Sekunde</span><input data-unit-answer="horse" inputmode="decimal" autocomplete="off"><span>m/s</span></label></td></tr>
-                  <tr><th scope="row">Auto auf der Autobahn</th><td>36&nbsp;m/s</td><td><label><span class="sr-only">Auto in Kilometer pro Stunde</span><input data-unit-answer="car" inputmode="decimal" autocomplete="off"><span>km/h</span></label></td></tr>
+                  <tr><th scope="row">Fußgänger</th><td>5,0&nbsp;<span class="physics-fraction" role="img" aria-label="Kilometer pro Stunde"><span class="physics-fraction__numerator">km</span><span class="physics-fraction__denominator">h</span></span></td><td><label><span class="sr-only">Fußgänger in Meter pro Sekunde</span><input data-unit-answer="pedestrian" inputmode="decimal" autocomplete="off"><span class="physics-fraction" role="img" aria-label="Meter pro Sekunde"><span class="physics-fraction__numerator">m</span><span class="physics-fraction__denominator">s</span></span></label></td></tr>
+                  <tr><th scope="row">Radfahrerin</th><td>5,4&nbsp;<span class="physics-fraction" role="img" aria-label="Meter pro Sekunde"><span class="physics-fraction__numerator">m</span><span class="physics-fraction__denominator">s</span></span></td><td><label><span class="sr-only">Radfahrerin in Kilometer pro Stunde</span><input data-unit-answer="cyclist" inputmode="decimal" autocomplete="off"><span class="physics-fraction" role="img" aria-label="Kilometer pro Stunde"><span class="physics-fraction__numerator">km</span><span class="physics-fraction__denominator">h</span></span></label></td></tr>
+                  <tr><th scope="row">Rennpferd</th><td>60&nbsp;<span class="physics-fraction" role="img" aria-label="Kilometer pro Stunde"><span class="physics-fraction__numerator">km</span><span class="physics-fraction__denominator">h</span></span></td><td><label><span class="sr-only">Rennpferd in Meter pro Sekunde</span><input data-unit-answer="horse" inputmode="decimal" autocomplete="off"><span class="physics-fraction" role="img" aria-label="Meter pro Sekunde"><span class="physics-fraction__numerator">m</span><span class="physics-fraction__denominator">s</span></span></label></td></tr>
+                  <tr><th scope="row">Auto auf der Autobahn</th><td>36&nbsp;<span class="physics-fraction" role="img" aria-label="Meter pro Sekunde"><span class="physics-fraction__numerator">m</span><span class="physics-fraction__denominator">s</span></span></td><td><label><span class="sr-only">Auto in Kilometer pro Stunde</span><input data-unit-answer="car" inputmode="decimal" autocomplete="off"><span class="physics-fraction" role="img" aria-label="Kilometer pro Stunde"><span class="physics-fraction__numerator">km</span><span class="physics-fraction__denominator">h</span></span></label></td></tr>
                 </tbody>
               </table>
             </div>
@@ -62,8 +63,8 @@
             <div id="unit-feedback" class="physics-feedback" role="status" aria-live="polite" hidden></div>
             <div class="physics-help-stack">
               <details><summary>Hilfe 1: Größen erinnern</summary><p>Überlege, wie viele Meter ein Kilometer und wie viele Sekunden eine Stunde hat.</p></details>
-              <details><summary>Hilfe 2: Umrechnungsfaktor</summary><p>Nutze <strong>1&nbsp;m/s = 3,6&nbsp;km/h</strong>.</p></details>
-              <details><summary>Hilfe 3: Rechenrichtung</summary><p>Von km/h nach m/s teilst du durch 3,6. In die andere Richtung multiplizierst du mit 3,6.</p></details>
+              <details><summary>Hilfe 2: Umrechnungsfaktor</summary><p>Nutze <strong>1&nbsp;<span class="physics-fraction" role="img" aria-label="Meter pro Sekunde"><span class="physics-fraction__numerator">m</span><span class="physics-fraction__denominator">s</span></span> = 3,6&nbsp;<span class="physics-fraction" role="img" aria-label="Kilometer pro Stunde"><span class="physics-fraction__numerator">km</span><span class="physics-fraction__denominator">h</span></span></strong>.</p></details>
+              <details><summary>Hilfe 3: Rechenrichtung</summary><p>Von <span class="physics-fraction" role="img" aria-label="Kilometer pro Stunde"><span class="physics-fraction__numerator">km</span><span class="physics-fraction__denominator">h</span></span> nach <span class="physics-fraction" role="img" aria-label="Meter pro Sekunde"><span class="physics-fraction__numerator">m</span><span class="physics-fraction__denominator">s</span></span> teilst du durch 3,6. In die andere Richtung multiplizierst du mit 3,6.</p></details>
             </div>
           </article>
         </section>
@@ -105,12 +106,12 @@
 
           <article class="physics-task-card" aria-labelledby="acceleration-title">
             <h3 id="acceleration-title">Aufgabe 4 · Geschwindigkeit nach dem Beschleunigen</h3>
-            <p>Ein zunächst ruhender Körper wird mit <strong>a = 2,5&nbsp;m/s²</strong> über <strong>3,0&nbsp;s</strong> beschleunigt. Berechne seine Geschwindigkeit und gib das Ergebnis mit zwei gültigen Ziffern an.</p>
+            <p>Ein zunächst ruhender Körper wird mit <strong>a = 2,5&nbsp;<span class="physics-fraction" role="img" aria-label="Meter pro Sekunde zum Quadrat"><span class="physics-fraction__numerator">m</span><span class="physics-fraction__denominator">s²</span></span></strong> über <strong>3,0&nbsp;s</strong> beschleunigt. Berechne seine Geschwindigkeit und gib das Ergebnis mit zwei gültigen Ziffern an.</p>
             <div class="physics-number-entry">
               <label for="acceleration-answer">Geschwindigkeit</label>
               <div class="physics-number-controls">
                 <input id="acceleration-answer" inputmode="decimal" autocomplete="off">
-                <select id="acceleration-unit" aria-label="Einheit der berechneten Geschwindigkeit"><option value="m/s">m/s</option><option value="km/h">km/h</option></select>
+                <fieldset class="unit-choice" id="acceleration-unit" data-unit-choice><legend class="sr-only">Einheit der berechneten Geschwindigkeit</legend><label class="unit-choice__option"><input type="radio" name="acceleration-unit" value="m/s" checked><span class="physics-fraction" role="img" aria-label="Meter pro Sekunde"><span class="physics-fraction__numerator">m</span><span class="physics-fraction__denominator">s</span></span></label><label class="unit-choice__option"><input type="radio" name="acceleration-unit" value="km/h"><span class="physics-fraction" role="img" aria-label="Kilometer pro Stunde"><span class="physics-fraction__numerator">km</span><span class="physics-fraction__denominator">h</span></span></label></fieldset>
               </div>
             </div>
             <button class="physics-primary-button" id="check-acceleration" type="button">Geschwindigkeit prüfen</button>
@@ -204,7 +205,7 @@
                 <button class="physics-primary-button" type="submit">Code prüfen</button>
               </div>
               <p id="solution-code-message" class="solution-code-message" aria-live="polite"></p>
-              <a id="solution-download-link" class="download-button" href="sicherungsblatt-aufgabe-1-loesungen.pdf?v=20260910c" download hidden>
+              <a id="solution-download-link" class="download-button" href="sicherungsblatt-aufgabe-1-loesungen.pdf?v=20260911a" download hidden>
                 &#8595; Sicherungsblatt herunterladen
               </a>
             </form>

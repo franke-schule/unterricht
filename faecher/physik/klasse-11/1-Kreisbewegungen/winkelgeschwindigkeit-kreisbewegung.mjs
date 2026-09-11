@@ -1,5 +1,6 @@
 import { setupPhysicsStepTabs } from "./components/physics-step-tabs.mjs";
 import { setupPhysicsSemanticTask } from "./components/physics-semantic-task.mjs";
+import { appendPhysicsText, createIndexedSymbol, physicsTextSpan } from "./components/physics-notation.mjs?v=20260911a";
 import { angleAtCycleElapsed, angleAtElapsed, angularSpeed, circleVectors, clamp, elapsedInCycle, frequencyFromPeriod, sectorPath, shuffleIncorrect, tangentialSpeed } from "./components/circle-kinematics.mjs";
 
 const SCRIPT_SERVER_URL = "https://script.google.com/macros/s/AKfycby8RWL6uYrKZyoJ6m2GRpWyRmXjwsdskyCiqzKpRhIK5-wrDl-9lWWk8CiAGaVMoy0x/exec";
@@ -12,26 +13,10 @@ function setFeedback(target, status, message) {
   appendPhysicsText(element, message);
 }
 
-function appendIndexedSymbol(target, base, index) {
-  target.append(document.createTextNode(base));
-  const subscript = document.createElement("sub");
-  subscript.textContent = index;
-  target.append(subscript);
-}
-
-function appendPhysicsText(target, text) {
-  const parts = text.split(/(\{\{vB\}\}|\{\{FZ\}\})/g);
-  parts.forEach((part) => {
-    if (part === "{{vB}}") appendIndexedSymbol(target, "v", "B");
-    else if (part === "{{FZ}}") appendIndexedSymbol(target, "F", "Z");
-    else if (part) target.append(document.createTextNode(part));
-  });
-}
-
 function renderFormulaSymbol(target, value) {
   target.replaceChildren();
   if (value === "vB") {
-    appendIndexedSymbol(target, "v", "B");
+    target.append(createIndexedSymbol("v", "B"));
     target.setAttribute("aria-label", "v mit Index B");
   } else {
     target.textContent = value;
@@ -158,7 +143,12 @@ function setupFormulaBuilder({ id, expected, equation, rememberId }) {
     const bank = document.createElement("div"); bank.className = "formula-token-bank";
     values.forEach((value) => { const token = document.createElement("button"); token.type = "button"; token.className = "cloze-token"; renderFormulaSymbol(token, value); token.draggable = true; token.disabled = slots.some((slot) => slot.value === value); token.addEventListener("dragstart", (event) => event.dataTransfer.setData("text/plain", value)); bindKeyboardButton(token, () => { selected = value; target.querySelectorAll(".formula-slot").forEach((slot) => slot.classList.toggle("is-selected", !slot.dataset.value)); }); bank.append(token); });
     const line = document.createElement("div"); line.className = "formula-line"; line.setAttribute("aria-label", equation);
-    slots.forEach((slot, index) => { const button = document.createElement("button"); button.type = "button"; button.className = "formula-slot"; button.dataset.value = slot.value; if (slot.value) renderFormulaSymbol(button, slot.value); else button.textContent = "?"; button.setAttribute("aria-label", slot.value === "vB" ? `Feld ${index + 1}: v mit Index B` : `Feld ${index + 1} der Formel`); bindKeyboardButton(button, () => { if (selected) { slots[index].value = selected; selected = ""; } else if (slots[index].value) slots[index].value = ""; document.getElementById(rememberId).hidden = true; render(); }); button.addEventListener("dragover", (event) => event.preventDefault()); button.addEventListener("drop", (event) => { event.preventDefault(); slots[index].value = event.dataTransfer.getData("text/plain"); document.getElementById(rememberId).hidden = true; render(); }); line.append(button); if (index === 0) line.append(document.createTextNode(" = ")); if (index === 1) line.append(document.createTextNode(id === "formula-angle" ? " / " : id === "formula-speed" ? " · " : " / ")); });
+    const isQuotient = id !== "formula-speed";
+    const slotRoles = isQuotient ? ["", ", Zähler", ", Nenner"] : ["", "", ""];
+    const buttons = slots.map((slot, index) => { const button = document.createElement("button"); button.type = "button"; button.className = "formula-slot"; button.dataset.value = slot.value; if (slot.value) renderFormulaSymbol(button, slot.value); else button.textContent = "?"; button.setAttribute("aria-label", slot.value === "vB" ? `Feld ${index + 1}: v mit Index B${slotRoles[index]}` : `Feld ${index + 1} der Formel${slotRoles[index]}`); bindKeyboardButton(button, () => { if (selected) { slots[index].value = selected; selected = ""; } else if (slots[index].value) slots[index].value = ""; document.getElementById(rememberId).hidden = true; render(); }); button.addEventListener("dragover", (event) => event.preventDefault()); button.addEventListener("drop", (event) => { event.preventDefault(); slots[index].value = event.dataTransfer.getData("text/plain"); document.getElementById(rememberId).hidden = true; render(); }); return button; });
+    line.append(buttons[0], document.createTextNode(" = "));
+    if (isQuotient) { const fraction = document.createElement("div"); fraction.className = "formula-fraction"; const bar = document.createElement("span"); bar.className = "formula-fraction__bar"; bar.setAttribute("aria-hidden", "true"); fraction.append(buttons[1], bar, buttons[2]); line.append(fraction); }
+    else line.append(buttons[1], document.createTextNode(" · "), buttons[2]);
     const actions = document.createElement("div"); actions.className = "cloze-actions";
     const check = document.createElement("button"); check.type = "button"; check.className = "physics-primary-button"; check.textContent = "Formel prüfen";
     const reset = document.createElement("button"); reset.type = "button"; reset.className = "secondary-action"; reset.textContent = "Formel zurücksetzen";
@@ -256,16 +246,16 @@ function setupCentripetalCloze() {
 
 function renderQuizQuestion(target, item, index) {
   const fieldset = document.createElement("fieldset"); fieldset.className = "physics-quiz-question"; const legend = document.createElement("legend"); appendPhysicsText(legend, `${index + 1}. ${item.question}${item.correct.length > 1 ? " (mehrere Antworten)" : ""}`); const options = document.createElement("div"); options.className = "quiz-options";
-  item.options.forEach(([value, labelText]) => { const label = document.createElement("label"); label.className = "quiz-option"; const input = document.createElement("input"); input.type = "checkbox"; input.value = value; label.append(input); appendPhysicsText(label, labelText); options.append(label); });
+  item.options.forEach(([value, labelText]) => { const label = document.createElement("label"); label.className = "quiz-option"; const input = document.createElement("input"); input.type = "checkbox"; input.value = value; label.append(input, physicsTextSpan(labelText, "quiz-option-text")); options.append(label); });
   const check = document.createElement("button"); check.type = "button"; check.className = "physics-primary-button direct-check-button"; check.textContent = "Antwort prüfen"; const feedback = document.createElement("p"); feedback.className = "physics-feedback"; feedback.hidden = true; feedback.setAttribute("role", "status"); feedback.setAttribute("aria-live", "polite"); check.addEventListener("click", () => { const selected = [...fieldset.querySelectorAll("input:checked")].map((input) => input.value); const hits = selected.filter((value) => item.correct.includes(value)); const extras = selected.filter((value) => !item.correct.includes(value)); const exact = hits.length === item.correct.length && extras.length === 0; if (exact) setFeedback(feedback, "success", "Korrekt: " + item.feedback); else if (hits.length && !extras.length) setFeedback(feedback, "partial", "Teilweise korrekt: Es fehlt noch mindestens eine richtige Aussage. " + item.hint); else setFeedback(feedback, "error", "Noch nicht korrekt. " + item.hint); }); fieldset.append(legend, options, check, feedback); target.append(fieldset);
 }
 
 function setupQuiz() {
   const items = [
     { question: "Was beschreibt der Drehwinkel Δφ?", correct: ["angle"], options: [["angle", "Die Weiterdrehung der Verbindungslinie zwischen Zentrum und Körper."], ["time", "Die Zeit für eine beliebige Strecke."], ["radius", "Die Länge der Kreisbahn."]], feedback: "Δφ wird im Bogenmaß angegeben.", hint: "Denk an die Verbindungslinie vom Zentrum zum Körper." },
-    { question: "Welche Aussagen zur Winkelgeschwindigkeit sind richtig?", correct: ["formula", "unit"], options: [["formula", "ω ergibt sich aus Drehwinkel geteilt durch Zeitintervall."], ["unit", "Eine Einheit von ω ist rad/s."], ["radius", "Bei größerem Radius ist ω immer größer."]], feedback: "Winkelgeschwindigkeit beschreibt die Drehung pro Zeit.", hint: "Vergleiche Drehwinkel, Zeit und Einheit." },
-    { question: "Welche Aussagen zur Bahngeschwindigkeit {{vB}} sind richtig?", correct: ["omega", "radius"], options: [["omega", "Bei gleichem Radius vergrößert eine größere Winkelgeschwindigkeit {{vB}}."], ["radius", "Bei gleicher Winkelgeschwindigkeit vergrößert ein größerer Radius {{vB}}."], ["inverse", "{{vB}} wird kleiner, wenn ω oder r größer werden."]], feedback: "Es gilt {{vB}} = ω · r.", hint: "Nutze die Multiplikation von ω und r." },
-    { question: "Welche Aussagen zu Frequenz f und Umlaufdauer T sind richtig?", correct: ["inverse", "unit"], options: [["inverse", "f und T sind Kehrwerte."], ["unit", "Die Einheit der Frequenz ist Hertz."], ["same", "Eine größere Umlaufdauer bedeutet eine größere Frequenz."]], feedback: "Eine kurze Umlaufdauer bedeutet viele Umdrehungen pro Zeit.", hint: "Vergleiche 1/T für kleine und große T." },
+    { question: "Welche Aussagen zur Winkelgeschwindigkeit sind richtig?", correct: ["formula", "unit"], options: [["formula", "ω ergibt sich aus Drehwinkel geteilt durch Zeitintervall."], ["unit", "Eine Einheit von ω ist {{rad/s}}."], ["radius", "Bei größerem Radius ist ω immer größer."]], feedback: "Winkelgeschwindigkeit beschreibt die Drehung pro Zeit.", hint: "Vergleiche Drehwinkel, Zeit und Einheit." },
+    { question: "Welche Aussagen zur Bahngeschwindigkeit {{v_B}} sind richtig?", correct: ["omega", "radius"], options: [["omega", "Bei gleichem Radius vergrößert eine größere Winkelgeschwindigkeit {{v_B}}."], ["radius", "Bei gleicher Winkelgeschwindigkeit vergrößert ein größerer Radius {{v_B}}."], ["inverse", "{{v_B}} wird kleiner, wenn ω oder r größer werden."]], feedback: "Es gilt {{v_B}} = ω · r.", hint: "Nutze die Multiplikation von ω und r." },
+    { question: "Welche Aussagen zu Frequenz f und Umlaufdauer T sind richtig?", correct: ["inverse", "unit"], options: [["inverse", "f und T sind Kehrwerte."], ["unit", "Die Einheit der Frequenz ist Hertz."], ["same", "Eine größere Umlaufdauer bedeutet eine größere Frequenz."]], feedback: "Eine kurze Umlaufdauer bedeutet viele Umdrehungen pro Zeit.", hint: "Vergleiche den Kehrwert von T für kleine und große T." },
     { question: "Wie ist der Geschwindigkeitsvektor bei einer Kreisbewegung eingezeichnet?", correct: ["tangent"], options: [["tangent", "Er beginnt am Körper und verläuft tangential zur Kreisbahn."], ["center", "Er beginnt am Zentrum und zeigt zum Körper."], ["inward", "Er beginnt am Körper und zeigt immer nach innen."]], feedback: "Der Geschwindigkeitspfeil berührt die Kreisbahn am Körper.", hint: "Die Bewegungsrichtung folgt der Tangente." },
     { question: "Welche Aussagen zur Zentripetalkraft sind richtig?", correct: ["origin", "inward", "function"], options: [["origin", "Der Kraftpfeil beginnt am Körper."], ["inward", "Er zeigt zum Kreismittelpunkt nach innen."], ["function", "Er sorgt für die ständige Änderung der Geschwindigkeitsrichtung."], ["outward", "Er zeigt vom Zentrum nach außen."]], feedback: "Die resultierende Kraft hält den Körper auf der Kreisbahn.", hint: "Achte auf Startpunkt, Richtung und Wirkung der Kraft." },
     { question: "Was geschieht beim Wegfall der Zentripetalkraft?", correct: ["straight"], options: [["straight", "Der Körper bewegt sich tangential geradlinig weiter."], ["circle", "Der Körper bleibt ohne Kraft auf derselben Kreisbahn."], ["center", "Der Körper fliegt sofort zum Mittelpunkt."]], feedback: "Ohne resultierende Kraft bleibt die momentane Bewegungsrichtung erhalten.", hint: "Nutze den Trägheitssatz." }
@@ -276,9 +266,9 @@ function setupQuiz() {
 setupPhysicsStepTabs();
 setupAngleSimulation();
 setupSpeedSimulation();
-setupFormulaBuilder({ id: "formula-angle", expected: ["ω", "Δφ", "Δt"], equation: "ω = Δφ / Δt", rememberId: "angle-remember" });
+setupFormulaBuilder({ id: "formula-angle", expected: ["ω", "Δφ", "Δt"], equation: "ω gleich Δφ durch Δt", rememberId: "angle-remember" });
 setupFormulaBuilder({ id: "formula-speed", expected: ["vB", "ω", "r"], equation: "v mit Index B gleich Omega mal r", rememberId: "speed-remember" });
-setupFormulaBuilder({ id: "formula-frequency", expected: ["f", "1", "T"], equation: "f = 1 / T", rememberId: "frequency-remember" });
+setupFormulaBuilder({ id: "formula-frequency", expected: ["f", "1", "T"], equation: "f gleich 1 durch T", rememberId: "frequency-remember" });
 setupFrequency();
 setupPhysicsSemanticTask({ answerId: "centripetal-answer", buttonId: "check-centripetal", feedbackId: "centripetal-feedback", countId: "centripetal-count", taskId: "ph11-kreisbewegungen-zentripetalkraft-beschreibung", serverUrl: SCRIPT_SERVER_URL, feedbackBuilder: centripetalFeedback, minimumLength: 8, fallbackMaxPoints: 5 });
 setupCentripetalCloze();

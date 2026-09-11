@@ -1,0 +1,161 @@
+\documentclass[10pt,a4paper]{article}
+
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage[ngerman]{babel}
+\usepackage[a4paper,margin=14mm]{geometry}
+\usepackage{lmodern}
+\usepackage[table]{xcolor}
+\usepackage{tabularx}
+\usepackage{array}
+\usepackage{microtype}
+\usepackage[most]{tcolorbox}
+
+\pagestyle{empty}
+\setlength{\parindent}{0pt}
+\setlength{\parskip}{0pt}
+\renewcommand{\familydefault}{\sfdefault}
+
+\definecolor{Navy}{HTML}{17324D}
+\definecolor{Blue}{HTML}{3B6EA5}
+\definecolor{Sky}{HTML}{EAF3FA}
+\definecolor{Mint}{HTML}{E8F5EF}
+\definecolor{Gold}{HTML}{F3B33D}
+\definecolor{Ink}{HTML}{1E2935}
+\definecolor{Muted}{HTML}{617080}
+\definecolor{Line}{HTML}{D8E1E8}
+\definecolor{CodeBg}{HTML}{F5F7F9}
+
+\color{Ink}
+
+\newcommand{\sectiontitle}[1]{%
+  \vspace{2.3mm}
+  {\color{Blue}\bfseries\large #1}\par
+  \vspace{0.8mm}
+  {\color{Blue}\rule{\linewidth}{0.7pt}}\par
+  \vspace{1.2mm}
+}
+
+\begin{document}
+
+\colorbox{Navy}{%
+  \parbox{\dimexpr\linewidth-2\fboxsep\relax}{%
+    \vspace{3mm}\color{white}
+    \begin{tabularx}{\linewidth}{@{}Xr@{}}
+      {\small\bfseries INFORMATIK · KLASSE 10} &
+      \colorbox{Gold}{\color{Navy}\small\bfseries\strut LÖSUNGEN}
+    \end{tabularx}
+    \vspace{2.5mm}
+
+    {\fontsize{22}{25}\selectfont\bfseries Sicherungsblatt: Aufgabe 1}\par
+    \vspace{1mm}
+    {\large Grundlagen relationaler Datenbanken}
+    \vspace{3mm}
+  }%
+}
+
+\vspace{3mm}
+\colorbox{Sky}{%
+  \parbox{\dimexpr\linewidth-2\fboxsep\relax}{%
+    \vspace{1.8mm}
+    \textcolor{Blue}{\bfseries Ziel:}
+    Du kennst den Aufbau einer Relation, überträgst Klassen, Attribute und
+    Objekte in Tabellenbegriffe, ordnest Datentypen zu und liest ein
+    \texttt{CREATE TABLE}-Schema.
+    \vspace{1.8mm}
+  }%
+}
+
+\sectiontitle{1 · Relation = Tabelle}
+
+In einer relationalen Datenbank werden alle Daten in \textbf{Tabellen}
+gespeichert. Der Fachbegriff dafür ist \textbf{Relation}.
+
+\vspace{1.5mm}
+\textcolor{Blue}{\bfseries Tabelle \texttt{Lehrkraft}:}
+
+\vspace{1mm}
+\renewcommand{\arraystretch}{1.2}
+\begin{tabularx}{\linewidth}{@{}>{\ttfamily\small}p{16mm}>{\ttfamily\small}p{28mm}>{\ttfamily\small}p{28mm}>{\ttfamily\small}p{16mm}>{\ttfamily\small}X@{}}
+  \rowcolor{Sky}\bfseries Kürzel & \bfseries Name & \bfseries Vorname & \bfseries Fach1 & \bfseries Fach2 \\
+  bab & Baumbart & Berta & M & Ph \\
+  \rowcolor{CodeBg}sch & Schmidt & Peter & D & E \\
+\end{tabularx}
+
+\sectiontitle{2 · Von der Klasse zur Tabelle}
+
+\begin{tabularx}{\linewidth}{@{}X X X@{}}
+  \textcolor{Blue}{\bfseries Klasse} $\rightarrow$ Tabelle (Relation) &
+  \textcolor{Blue}{\bfseries Attribut} $\rightarrow$ Spalte &
+  \textcolor{Blue}{\bfseries Objekt} $\rightarrow$ Zeile (Datensatz) \\
+\end{tabularx}
+
+\sectiontitle{3 · Datentypen}
+
+\renewcommand{\arraystretch}{1.25}
+\begin{tabularx}{\linewidth}{@{}>{\ttfamily\bfseries\small}p{27mm}X@{}}
+  INTEGER & ganze Zahlen (z.\,B. 42) \\
+  VARCHAR(n) & Text mit variabler Länge, höchstens $n$ Zeichen (z.\,B. \textquotedbl{}Anna-Maria\textquotedbl{}) \\
+  CHAR(n) & Text mit fester Länge $n$ (z.\,B. \textquotedbl{}w\textquotedbl{}) \\
+  DATE & Datum im Format YYYY-MM-DD (z.\,B. '2008-05-12') \\
+\end{tabularx}
+
+\sectiontitle{4 · Primärschlüssel}
+
+Der \textbf{Primärschlüssel} identifiziert jeden Datensatz eindeutig.
+
+\vspace{1.5mm}
+\begin{tabularx}{\linewidth}{@{}p{7mm}X@{}}
+  \textcolor{Gold}{\Large\bfseries !} & \textbf{UNIQUE:} Jeder Wert kommt in der Spalte nur einmal vor. \\[1mm]
+  \textcolor{Gold}{\Large\bfseries !} & \textbf{NOT NULL:} Das Feld darf nie leer sein. \\
+\end{tabularx}
+
+\vspace{1.3mm}
+Deshalb eignen sich eigens vergebene Nummern wie eine Personalnummer besser
+als Namen oder E-Mail-Adressen.
+
+\sectiontitle{5 · CREATE TABLE lesen}
+
+\begin{tabularx}{\linewidth}{@{}p{72mm}X@{}}
+  \colorbox{CodeBg}{%
+    \parbox{70mm}{%
+      \ttfamily\footnotesize
+      CREATE TABLE Videospiel (\\
+      \ \ Spiel\_ID INTEGER PRIMARY KEY,\\
+      \ \ Titel VARCHAR(100),\\
+      \ \ Erscheinungsjahr INTEGER,\\
+      \ \ Preis\_in\_Cent INTEGER\\
+      );
+    }%
+  }
+  &
+  \parbox[t]{\linewidth}{%
+    Relation: \texttt{Videospiel}\par\vspace{1.5mm}
+    Primärschlüssel: \texttt{Spiel\_ID}\par\vspace{1.5mm}
+    \texttt{Titel} fasst höchstens 100 Zeichen
+  }
+  \\
+\end{tabularx}
+
+\sectiontitle{6 · Merke}
+
+\begin{tcolorbox}[colback=white,colframe=Line,arc=3mm,boxrule=0.7pt,left=3mm,right=3mm,top=2mm,bottom=2mm]
+  - Alle Daten stehen in Tabellen (Relationen) aus Spalten und Zeilen.\par
+  - Klasse → Tabelle, Attribut → Spalte, Objekt → Zeile (Datensatz).\par
+  - Jede Spalte hat einen Datentyp: \texttt{INTEGER}, \texttt{VARCHAR(n)},
+  \texttt{CHAR(n)} oder \texttt{DATE}.\par
+  - Der Primärschlüssel ist \texttt{UNIQUE} und \texttt{NOT NULL} und
+  identifiziert jeden Datensatz eindeutig.\par
+  - \texttt{CREATE TABLE} legt Name, Spalten, Datentypen und Primärschlüssel
+  einer Relation fest.
+\end{tcolorbox}
+
+\vfill
+{\color{Line}\rule{\linewidth}{0.5pt}}\par
+\vspace{1.5mm}
+\begin{tabularx}{\linewidth}{@{}Xr@{}}
+  {\small\color{Muted}Klasse 10 · Datenbanken} &
+  {\small\color{Muted}Sicherungsblatt · Aufgabe 1}
+\end{tabularx}
+
+\end{document}

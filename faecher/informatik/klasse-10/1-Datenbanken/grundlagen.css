@@ -1,0 +1,43 @@
+.grundlagen-page .step-tabs { grid-template-columns: repeat(7, minmax(92px, 1fr)); }
+
+.feedback.partial { color: #9a5b0d; }
+
+.help-stack { display: grid; gap: 8px; margin: 20px 0; }
+.help-stack details { padding: 11px 14px; border: 1px solid #ead6a7; border-radius: 11px; background: #fffbef; }
+.help-stack summary { cursor: pointer; color: #80530d; font-weight: 900; }
+.help-stack p { margin: 9px 0 0; color: #6f5527; line-height: 1.45; }
+
+.given-sql { overflow-x: auto; margin: 14px 0 0; padding: 12px; border: 1px solid #d7e4f3; border-radius: 10px; background: #f4f8fc; color: #163e6b; white-space: pre-wrap; font: 0.9rem/1.45 "SFMono-Regular", Consolas, monospace; }
+
+.datatype-card { margin: 0 0 22px; padding: 18px 20px; border: 1px solid #cbe0f0; border-radius: 16px; background: #f4fbff; }
+.datatype-card h3 { margin: 0 0 13px; color: #1b426f; }
+.datatype-card dl { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 11px; margin: 0; }
+.datatype-card dl > div { padding: 12px; border: 1px solid #d5e5f2; border-radius: 11px; background: white; }
+.datatype-card dt { color: #155f83; font-weight: 900; }
+.datatype-card dd { margin: 5px 0 0; color: #50647b; line-height: 1.4; }
+
+.explain-table .table-caption .explain-button { padding: 6px 10px; margin: -6px -8px; border: 2px solid transparent; border-radius: 8px; background: transparent; color: inherit; font-family: "SFMono-Regular", Consolas, monospace; font-weight: 800; text-align: left; cursor: pointer; }
+.explain-button { border: 2px solid transparent; cursor: pointer; }
+.explain-button[aria-pressed="true"] { border-color: var(--db-amber); background: color-mix(in srgb, var(--db-amber) 18%, white); color: var(--db-amber); }
+.explain-output { margin: 0; padding: 14px 15px; border-top: 1px solid var(--db-line); background: var(--db-soft); color: var(--db-muted); font-weight: 700; transition: background 0.16s ease, color 0.16s ease; }
+.explain-table.is-table .explain-output { background: color-mix(in srgb, var(--db-blue) 12%, white); color: var(--db-blue); }
+.explain-table.is-column .explain-output { background: color-mix(in srgb, var(--db-green) 14%, white); color: var(--db-green); }
+.explain-table.is-row .explain-output { background: color-mix(in srgb, var(--db-amber) 14%, white); color: var(--db-amber); }
+
+.gap-list { display: grid; gap: 10px; margin: 16px 0; }
+.gap-row { display: grid; grid-template-columns: minmax(0, 1fr) minmax(140px, 200px); align-items: center; gap: 12px; padding: 10px 12px; border: 1px solid var(--db-line); border-radius: 11px; background: #fbfcfe; }
+.gap-row label { color: var(--db-ink); line-height: 1.4; }
+.gap-input { min-height: 43px; padding: 9px 11px; border: 1px solid #b8c7d9; border-radius: 9px; background: white; color: var(--db-ink); font-family: "SFMono-Regular", Consolas, monospace; }
+.gap-input:focus-visible { outline: 3px solid rgba(23, 99, 213, 0.35); outline-offset: 2px; }
+.gap-input.is-correct { border-color: var(--db-green); background: color-mix(in srgb, var(--db-green) 10%, white); }
+.gap-input.is-wrong { border-color: var(--db-red); background: color-mix(in srgb, var(--db-red) 8%, white); }
+
+@media (max-width: 860px) {
+  .grundlagen-page .step-tabs { grid-template-columns: repeat(7, 104px); }
+}
+
+@media (max-width: 650px) {
+  .gap-row { grid-template-columns: 1fr; align-items: stretch; }
+  .explain-table .table-scroll { overflow-x: auto; }
+  .datatype-card dl { grid-template-columns: 1fr; }
+}

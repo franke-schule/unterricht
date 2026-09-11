@@ -38,6 +38,8 @@
 .formula-token-bank { display: flex; flex-wrap: wrap; gap: 8px; }
 .formula-line { display: flex; align-items: center; justify-content: center; gap: 8px; min-height: 64px; font-size: clamp(1.25rem, 4vw, 1.8rem); font-weight: 800; }
 .formula-slot { min-width: 76px; min-height: 48px; border: 2px dashed #93c5fd; border-radius: 9px; padding: 6px 10px; color: #1e3a8a; background: #eff6ff; font: inherit; font-weight: 850; cursor: pointer; }
+.formula-fraction { display: flex; flex-direction: column; align-items: stretch; gap: 6px; }
+.formula-fraction__bar { height: 3px; border-radius: 2px; background: #1e3a8a; }
 .formula-slot.is-selected, .formula-slot:focus-visible { outline: 3px solid rgba(37, 99, 235, .22); border-color: #2563eb; }
 .blue-remember { margin: 0; border-left: 5px solid #2563eb; border-radius: 10px; padding: 15px 17px; color: #1e3a8a; background: #eff6ff; font-weight: 750; }
 .frequency-layout { display: grid; grid-template-columns: minmax(180px, .8fr) minmax(0, 1fr); align-items: center; gap: 24px; margin-top: 18px; }
@@ -53,4 +55,4 @@
 .physics-help-stack ul { margin: 10px 0 0; padding-left: 22px; color: #475569; }
 .notebook-reminder { margin: 0 0 16px; font-weight: 850; }
 @media (max-width: 620px) { .simulation-controls, .frequency-layout { grid-template-columns: 1fr; } .simulation-actions > * { flex: 1 1 100%; } }
-@media (max-width: 430px) { .formula-line { gap: 4px; font-size: 1.1rem; } .formula-slot { min-width: 58px; padding-inline: 6px; } }
+@media (max-width: 430px) { .formula-line { gap: 4px; font-size: 1.1rem; } .formula-slot { min-width: 58px; padding-inline: 6px; } .formula-fraction { gap: 4px; } }
