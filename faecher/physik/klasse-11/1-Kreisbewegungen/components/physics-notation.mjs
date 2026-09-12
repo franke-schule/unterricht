@@ -63,7 +63,19 @@ export function createPhysicsNotation(token) {
   return createIndexedSymbol(base, index);
 }
 
+// **Text** wird fett gesetzt; darin dürfen wieder {{…}}-Platzhalter stehen.
 export function appendPhysicsText(target, text) {
+  const emphasized = String(text).split(/\*\*(.+?)\*\*/g);
+  if (emphasized.length > 1) {
+    emphasized.forEach((part, index) => {
+      if (!part) return;
+      if (index % 2 === 0) { appendPhysicsText(target, part); return; }
+      const strong = document.createElement("strong");
+      appendPhysicsText(strong, part);
+      target.append(strong);
+    });
+    return;
+  }
   String(text)
     .split(/\{\{([^{}]+)\}\}/g)
     .forEach((part, index) => {

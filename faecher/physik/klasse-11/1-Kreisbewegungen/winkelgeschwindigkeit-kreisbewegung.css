@@ -23,6 +23,10 @@
 .vector-label-badge rect { fill: rgba(255, 255, 255, .96); stroke: #93c5fd; stroke-width: 1.5; }
 .simulation-readout { display: flex; flex-wrap: wrap; gap: 10px; justify-content: center; }
 .simulation-readout strong { flex: 1 1 150px; border-left: 4px solid #2563eb; padding: 9px 11px; color: #1e3a8a; background: #eff6ff; text-align: center; }
+.circle-simulation--compact { gap: 10px; margin-top: 10px; }
+.circle-simulation--compact svg { width: min(100%, 360px); }
+.circle-simulation--compact .simulation-readout strong { padding: 6px 10px; }
+.circle-simulation--compact .simulation-controls { gap: 12px; }
 .simulation-status, .simulation-note { margin: 0; color: #475569; text-align: center; }
 .simulation-status { font-weight: 750; }
 .simulation-note { font-size: .9rem; }

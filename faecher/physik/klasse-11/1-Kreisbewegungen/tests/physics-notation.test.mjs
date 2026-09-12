@@ -15,6 +15,7 @@ assert.match(notation, /export function createUnitFraction/);
 assert.match(notation, /export function createQuotient/);
 assert.match(notation, /export function appendPhysicsText/);
 assert.match(notation, /document\.createElement\("sub"\)/);
+assert.match(notation, /document\.createElement\("strong"\)/);
 assert.match(notationCss, /\.physics-fraction__denominator \{[^}]*border-top/);
 
 // Zusammengesetzte Einheiten werden nie als Schrägstrich im Text ausgegeben.

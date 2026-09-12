@@ -8,9 +8,9 @@
     <link rel="stylesheet" href="../../../../styles.css?v=20260911a">
     <link rel="stylesheet" href="bewegung-koerpern.css?v=20260831c">
     <link rel="stylesheet" href="kraefte-bewegung.css?v=20260901b">
-    <link rel="stylesheet" href="winkelgeschwindigkeit-kreisbewegung.css?v=20260911a">
+    <link rel="stylesheet" href="winkelgeschwindigkeit-kreisbewegung.css?v=20260912a">
     <link rel="stylesheet" href="components/physics-notation.css?v=20260911a">
-    <script type="module" src="winkelgeschwindigkeit-kreisbewegung.mjs?v=20260911a"></script>
+    <script type="module" src="winkelgeschwindigkeit-kreisbewegung.mjs?v=20260912a"></script>
   </head>
   <body class="physics-revision-page circular-motion-page">
     <div class="site-backdrop" aria-hidden="true"></div>
@@ -38,14 +38,19 @@
         <section id="panel-angle" class="physics-revision-panel" role="tabpanel" aria-labelledby="tab-angle" data-physics-panel="angle">
           <div class="physics-card-heading"><p class="eyebrow">Entdecken</p><h2>Drehwinkel und Winkelgeschwindigkeit</h2><p>Verändere Drehwinkel und Zeitintervall. Beobachte, wie sich die Winkelgeschwindigkeit ändert.</p></div>
           <article class="physics-task-card" aria-labelledby="angle-simulation-title">
-            <h3 id="angle-simulation-title">Aufgabe 1 · Eine Drehung beschreiben</h3>
-            <div class="circle-simulation" data-circle-simulation="angle" aria-label="Kreisbewegung mit Drehwinkel und Winkelgeschwindigkeit">
+            <h3 id="angle-simulation-title">Aufgabe 1a · Eine Drehung beschreiben</h3>
+            <div class="circle-simulation circle-simulation--compact" data-circle-simulation="angle" aria-label="Kreisbewegung mit Drehwinkel und Winkelgeschwindigkeit">
               <svg viewBox="0 0 440 330" role="img" aria-label="Kreisbahn mit Mittelpunkt, Massenpunkt, Radius und markiertem Drehwinkel"><defs><marker id="angle-arrow" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto"><path d="M0,0 L0,6 L7,3 z" fill="currentColor"/></marker></defs><circle cx="190" cy="165" r="112" class="orbit"/><path data-angle-arc class="angle-arc"/><line x1="190" y1="165" data-angle-radius class="radius-line"/><circle cx="190" cy="165" r="5" class="center-point"/><circle data-angle-body r="12" class="moving-body"/><text x="198" y="182" class="svg-label">Zentrum</text><text data-angle-label class="svg-label angle-label"></text><text x="314" y="294" class="svg-label">Δt</text><line x1="290" y1="280" x2="390" y2="280" class="time-line" marker-end="url(#angle-arrow)"/></svg>
               <div class="simulation-readout" aria-live="polite"><strong>Δφ = <span data-angle-phi>π/2</span> rad</strong><strong>Δt = <span data-angle-time>1,0</span> s</strong><strong>ω = <span data-angle-omega>1,57</span> <span class="physics-fraction" role="img" aria-label="Radiant pro Sekunde"><span class="physics-fraction__numerator">rad</span><span class="physics-fraction__denominator">s</span></span></strong></div>
-              <p class="simulation-status" data-angle-status role="status" aria-live="polite">Bereit. Die Verbindungslinie startet oben.</p>
+              <p class="simulation-status" data-angle-status role="status" aria-live="polite">Die Verbindungslinie startet oben. Die Bewegung startet nach jedem Durchlauf neu.</p>
               <div class="simulation-controls"><label>Δφ im Bogenmaß<select data-angle-input="phi" aria-label="Drehwinkel Delta Phi im Bogenmaß"><option value="0.5235987755982988">π/6</option><option value="0.7853981633974483">π/4</option><option value="1.0471975511965976">π/3</option><option value="1.5707963267948966" selected>π/2</option><option value="2.0943951023931953">2π/3</option><option value="3.141592653589793">π</option><option value="4.71238898038469">3π/2</option><option value="5.235987755982989">5π/3</option><option value="6.283185307179586">2π</option></select></label><label>Δt in s<input data-angle-input="time" type="range" min="0.5" max="4" step="0.5" value="1"></label></div>
-              <div class="simulation-actions"><button type="button" class="physics-primary-button" data-angle-action="start">Bewegung starten</button><button type="button" class="secondary-action" data-angle-action="pause">Pausieren</button><button type="button" class="secondary-action" data-angle-action="reset">Zurücksetzen</button></div>
+              <div class="simulation-actions"><button type="button" class="physics-primary-button" data-angle-action="restart">Neustarten</button><button type="button" class="secondary-action" data-angle-action="pause">Pausieren</button></div>
             </div>
+          </article>
+          <article class="physics-task-card" aria-labelledby="angle-quiz-title">
+            <h3 id="angle-quiz-title">Aufgabe 1b · Beobachtungen auswerten</h3>
+            <p>Verändere in der Animation jeweils nur einen Wert. Wähle alle Aussagen aus, die zu deinen Beobachtungen passen.</p>
+            <div id="angle-quiz" class="physics-multiple-choice" aria-label="Multiple-Choice-Aufgabe zur Winkelgeschwindigkeit"></div>
           </article>
           <article class="physics-task-card"><h3>Aufgabe 2 · Formel zusammensetzen</h3><p>Ziehe die Formelzeichen in die drei Felder oder tippe eine Karte an und wähle dann ein Feld.</p><div id="formula-angle" class="formula-builder" aria-label="Formel für die Winkelgeschwindigkeit"></div></article>
           <p id="angle-remember" class="blue-remember" hidden>Die Winkelgeschwindigkeit ω gibt an, um welchen Winkel Δφ sich die Verbindungslinie zwischen Zentrum und Massenpunkt im Zeitintervall Δt weiterdreht.</p>

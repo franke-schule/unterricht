@@ -1,6 +1,6 @@
 import { setupPhysicsStepTabs } from "./components/physics-step-tabs.mjs";
 import { setupPhysicsSemanticTask } from "./components/physics-semantic-task.mjs";
-import { appendPhysicsText, createIndexedSymbol, physicsTextSpan } from "./components/physics-notation.mjs?v=20260911a";
+import { appendPhysicsText, createIndexedSymbol, physicsTextSpan } from "./components/physics-notation.mjs?v=20260912a";
 import { angleAtCycleElapsed, angleAtElapsed, angularSpeed, circleVectors, clamp, elapsedInCycle, frequencyFromPeriod, sectorPath, shuffleIncorrect, tangentialSpeed } from "./components/circle-kinematics.mjs";
 
 const SCRIPT_SERVER_URL = "https://script.google.com/macros/s/AKfycby8RWL6uYrKZyoJ6m2GRpWyRmXjwsdskyCiqzKpRhIK5-wrDl-9lWWk8CiAGaVMoy0x/exec";
@@ -54,8 +54,13 @@ function setupAngleSimulation() {
   const label = host.querySelector("[data-angle-label]");
   const panel = host.closest("[data-physics-panel]");
   const status = host.querySelector("[data-angle-status]");
+  const HOLD_SECONDS = 1;
+  const RUNNING_MESSAGE = "Bewegung läuft und startet nach jedem Durchlauf neu.";
+  const reducedMotion = () => window.matchMedia("(prefers-reduced-motion: reduce)").matches;
   let elapsedSeconds = 0;
+  let holdSeconds = 0;
   let running = false;
+  let userPaused = false;
   let frame = 0;
   let last = 0;
 
@@ -75,26 +80,39 @@ function setupAngleSimulation() {
     host.querySelector("[data-angle-time]").textContent = formatNumber(time, 1);
     host.querySelector("[data-angle-omega]").textContent = formatNumber(angularSpeed(phi, time));
   }
+  // Nach jedem Durchlauf bleibt der überstrichene Winkel kurz stehen, dann beginnt die Bewegung von vorn.
   function tick(time) {
     if (!running) return;
     const elapsed = last ? (time - last) / 1000 : 0; last = time;
-    elapsedSeconds = Math.min(Number(inputs.time.value), elapsedSeconds + elapsed);
-    update();
-    if (elapsedSeconds >= Number(inputs.time.value)) {
-      pause("Bewegung abgeschlossen: Der gewählte Winkel wurde im gewählten Zeitintervall überstrichen.");
-      return;
+    const duration = Number(inputs.time.value);
+    if (elapsedSeconds >= duration) {
+      holdSeconds += elapsed;
+      if (holdSeconds >= HOLD_SECONDS) { elapsedSeconds = 0; holdSeconds = 0; }
+    } else {
+      elapsedSeconds = Math.min(duration, elapsedSeconds + elapsed);
     }
+    update();
     frame = requestAnimationFrame(tick);
   }
-  function start() { if (elapsedSeconds >= Number(inputs.time.value)) elapsedSeconds = 0; if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) { elapsedSeconds = Number(inputs.time.value); update(); status.textContent = "Bewegung ohne Animation vollständig angezeigt."; return; } if (!running) { running = true; last = 0; status.textContent = "Bewegung läuft."; frame = requestAnimationFrame(tick); } }
-  function pause(message = "Bewegung pausiert.") { if (!running && !message) return; running = false; cancelAnimationFrame(frame); status.textContent = message; }
-  host.querySelector('[data-angle-action="start"]').addEventListener("click", start);
-  host.querySelector('[data-angle-action="pause"]').addEventListener("click", () => pause());
-  host.querySelector('[data-angle-action="reset"]').addEventListener("click", () => { pause("Bewegung zurückgesetzt."); elapsedSeconds = 0; update(); });
-  Object.values(inputs).forEach((input) => input.addEventListener("input", () => { pause("Werte geändert. Starte die Bewegung erneut."); elapsedSeconds = 0; update(); }));
-  document.addEventListener("visibilitychange", () => { if (document.hidden && running) pause("Bewegung pausiert, weil die Seite nicht sichtbar ist."); });
-  new MutationObserver(() => { if (panel.hidden && running) pause("Bewegung pausiert, weil der Reiter gewechselt wurde."); }).observe(panel, { attributes: true, attributeFilter: ["hidden"] });
-  update();
+  function run() { if (running || userPaused || reducedMotion() || panel.hidden || document.hidden) return; running = true; last = 0; frame = requestAnimationFrame(tick); }
+  function stop() { running = false; cancelAnimationFrame(frame); }
+  function showStatic() { elapsedSeconds = Number(inputs.time.value); holdSeconds = 0; update(); status.textContent = "Bewegung ohne Animation vollständig angezeigt."; }
+  function restart() {
+    userPaused = false; stop(); elapsedSeconds = 0; holdSeconds = 0;
+    if (reducedMotion()) { showStatic(); return; }
+    update(); status.textContent = RUNNING_MESSAGE; run();
+  }
+  function pause() { userPaused = true; stop(); status.textContent = "Wiederholung pausiert. „Neustarten“ startet die Bewegung mit den aktuellen Werten."; }
+  host.querySelector('[data-angle-action="restart"]').addEventListener("click", restart);
+  host.querySelector('[data-angle-action="pause"]').addEventListener("click", pause);
+  Object.values(inputs).forEach((input) => input.addEventListener("input", () => {
+    if (reducedMotion()) { showStatic(); return; }
+    elapsedSeconds = 0; holdSeconds = 0; update();
+    status.textContent = userPaused ? "Werte geändert. „Neustarten“ startet die Bewegung mit den neuen Werten." : "Werte geändert. Die Bewegung läuft mit den neuen Werten weiter.";
+  }));
+  document.addEventListener("visibilitychange", () => { if (document.hidden) stop(); else run(); });
+  new MutationObserver(() => { if (panel.hidden) stop(); else run(); }).observe(panel, { attributes: true, attributeFilter: ["hidden"] });
+  if (reducedMotion()) showStatic(); else { update(); run(); }
 }
 
 function setupSpeedSimulation() {
@@ -250,6 +268,22 @@ function renderQuizQuestion(target, item, index) {
   const check = document.createElement("button"); check.type = "button"; check.className = "physics-primary-button direct-check-button"; check.textContent = "Antwort prüfen"; const feedback = document.createElement("p"); feedback.className = "physics-feedback"; feedback.hidden = true; feedback.setAttribute("role", "status"); feedback.setAttribute("aria-live", "polite"); check.addEventListener("click", () => { const selected = [...fieldset.querySelectorAll("input:checked")].map((input) => input.value); const hits = selected.filter((value) => item.correct.includes(value)); const extras = selected.filter((value) => !item.correct.includes(value)); const exact = hits.length === item.correct.length && extras.length === 0; if (exact) setFeedback(feedback, "success", "Korrekt: " + item.feedback); else if (hits.length && !extras.length) setFeedback(feedback, "partial", "Teilweise korrekt: Es fehlt noch mindestens eine richtige Aussage. " + item.hint); else setFeedback(feedback, "error", "Noch nicht korrekt. " + item.hint); }); fieldset.append(legend, options, check, feedback); target.append(fieldset);
 }
 
+function setupAngleQuiz() {
+  const item = {
+    question: "Welche Aussagen zur Winkelgeschwindigkeit ω sind richtig?",
+    correct: ["time-larger", "angle-smaller"],
+    options: [
+      ["time-larger", "Je kleiner das Zeitintervall Δt bei gleichbleibendem Winkel Δφ, desto **größer** die Winkelgeschwindigkeit."],
+      ["time-smaller", "Je kleiner das Zeitintervall Δt bei gleichbleibendem Winkel Δφ, desto **kleiner** die Winkelgeschwindigkeit."],
+      ["angle-larger", "Je kleiner der Winkel Δφ bei gleichbleibendem Zeitintervall Δt, desto **größer** die Winkelgeschwindigkeit."],
+      ["angle-smaller", "Je kleiner der Winkel Δφ bei gleichbleibendem Zeitintervall Δt, desto **kleiner** die Winkelgeschwindigkeit."],
+    ],
+    feedback: "Wird derselbe Winkel in kürzerer Zeit überstrichen, dreht sich die Verbindungslinie schneller. Ein kleinerer Winkel in derselben Zeit bedeutet eine langsamere Drehung.",
+    hint: "Verändere in der Animation nur Δt oder nur Δφ und beobachte jeweils den Wert von ω.",
+  };
+  renderQuizQuestion(document.getElementById("angle-quiz"), item, 0);
+}
+
 function setupQuiz() {
   const items = [
     { question: "Was beschreibt der Drehwinkel Δφ?", correct: ["angle"], options: [["angle", "Die Weiterdrehung der Verbindungslinie zwischen Zentrum und Körper."], ["time", "Die Zeit für eine beliebige Strecke."], ["radius", "Die Länge der Kreisbahn."]], feedback: "Δφ wird im Bogenmaß angegeben.", hint: "Denk an die Verbindungslinie vom Zentrum zum Körper." },
@@ -265,6 +299,7 @@ function setupQuiz() {
 
 setupPhysicsStepTabs();
 setupAngleSimulation();
+setupAngleQuiz();
 setupSpeedSimulation();
 setupFormulaBuilder({ id: "formula-angle", expected: ["ω", "Δφ", "Δt"], equation: "ω gleich Δφ durch Δt", rememberId: "angle-remember" });
 setupFormulaBuilder({ id: "formula-speed", expected: ["vB", "ω", "r"], equation: "v mit Index B gleich Omega mal r", rememberId: "speed-remember" });
