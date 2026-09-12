@@ -924,3 +924,74 @@ a:focus-visible {
   .dt-tree-answer-form > button { grid-column: auto; }
   .dt-next-task-link { margin-left: 0; }
 }
+
+/* Aufgabe 1: kompaktere Darstellung von Trainingsdaten, Beispiel und Baubereich,
+   damit auf einem Laptop-Bildschirm alles ohne Scrollen sichtbar bleibt.
+   Der Block gilt nur fuer aufgabe1.html (.dt-monkey-page) und laesst die
+   Aufgaben 2 bis 4 unveraendert. */
+
+@media (min-width: 1121px) {
+  .dt-monkey-page .dt-hero { margin: 26px auto 16px; }
+  .dt-monkey-page .dt-hero h1 { font-size: clamp(2.2rem, 4vw, 3.4rem); }
+  .dt-monkey-page .dt-task-number { margin: 10px 0 2px; }
+  .dt-monkey-page .dt-hero > p:not(.dt-eyebrow, .dt-task-number) { font-size: 1.02rem; }
+  .dt-monkey-page .dt-hero .dt-lead { font-size: 1.15rem; }
+  .dt-monkey-page .dt-variant-tabs { margin-bottom: 18px; }
+
+  .dt-monkey-page .dt-workspace { grid-template-columns: minmax(290px, 350px) minmax(0, 1fr); gap: 18px; }
+
+  .dt-monkey-page .dt-eyebrow,
+  .dt-monkey-page .dt-section-heading > span,
+  .dt-monkey-page .dt-card-heading > div > span { margin-bottom: 5px; font-size: 0.72rem; }
+  .dt-monkey-page .dt-section-heading h2,
+  .dt-monkey-page .dt-card-heading h2 { font-size: clamp(1.15rem, 1.7vw, 1.5rem); }
+  .dt-monkey-page .dt-section-heading p,
+  .dt-monkey-page .dt-card-heading p { margin-top: 5px; font-size: 0.85rem; }
+  .dt-monkey-page .dt-section-heading .dt-feature-hint,
+  .dt-monkey-page .dt-card-heading .dt-feature-hint { font-size: 0.79rem; }
+
+  /* Trainingsdaten */
+  .dt-monkey-page .dt-training-panel { padding: 16px; }
+  .dt-monkey-page .dt-training-group { margin-top: 14px; }
+  .dt-monkey-page .dt-training-group h3 { margin-bottom: 7px; font-size: 0.92rem; }
+  .dt-monkey-page .dt-monkey-grid { gap: 6px; }
+  .dt-monkey-page .dt-source-note { margin-top: 14px; padding-top: 12px; }
+
+  /* Beispielbaum */
+  .dt-monkey-page .dt-builder-column { gap: 16px; }
+  .dt-monkey-page .dt-example-card,
+  .dt-monkey-page .dt-editor-card { min-width: 0; padding: clamp(14px, 2vw, 20px); }
+  .dt-monkey-page .dt-example-tree { width: min(460px, 100%); margin: 14px auto 2px; }
+  .dt-monkey-page .dt-demo-feature { padding: 9px 15px; }
+  .dt-monkey-page .dt-demo-branches { gap: 24px; }
+  .dt-monkey-page .dt-demo-branches > div { padding-top: 24px; }
+  .dt-monkey-page .dt-demo-leaf { padding: 8px 13px; }
+
+  /* Bausteine */
+  .dt-monkey-page .dt-palette { margin-top: 14px; padding: 12px; }
+  .dt-monkey-page .dt-palette-heading { margin-bottom: 9px; }
+  .dt-monkey-page .dt-palette-group + .dt-palette-group { margin-top: 10px; }
+  .dt-monkey-page .dt-palette-label { margin-bottom: 5px; }
+  .dt-monkey-page .dt-palette-buttons,
+  .dt-monkey-page .dt-leaf-palette { gap: 6px; }
+  .dt-monkey-page .dt-leaf-palette { margin-top: 9px; padding-top: 9px; }
+  .dt-monkey-page .dt-tool { min-height: 36px; padding: 6px 11px; font-size: 0.8rem; }
+  .dt-monkey-page .dt-interaction-status { min-height: 20px; margin: 9px 0 5px; font-size: 0.82rem; }
+
+  /* Baubereich */
+  .dt-monkey-page .dt-tree-viewport { min-height: 270px; padding: 18px; }
+  .dt-monkey-page .dt-tree-editor { min-height: 210px; }
+  .dt-monkey-page .dt-tree-slot { min-width: 145px; }
+  .dt-monkey-page .dt-tree-node { width: 152px; padding: 9px; }
+  .dt-monkey-page .dt-node-title { font-size: 0.82rem; }
+  .dt-monkey-page .dt-node-actions { margin-top: 7px; }
+  .dt-monkey-page .dt-drop-zone { width: 145px; min-height: 62px; padding: 8px; font-size: 0.74rem; }
+  .dt-monkey-page .dt-drop-zone.root { width: 190px; min-height: 82px; font-size: 0.84rem; }
+  .dt-monkey-page .dt-branches { grid-template-columns: minmax(158px, auto) minmax(158px, auto); gap: 14px; padding-top: 28px; }
+  .dt-monkey-page .dt-branch { padding-top: 7px; }
+  .dt-monkey-page .dt-branch-label { margin-bottom: 7px; }
+
+  .dt-monkey-page .dt-check-area { margin-top: 14px; }
+  .dt-monkey-page .dt-primary-button { min-height: 46px; padding: 10px 18px; font-size: 0.95rem; }
+  .dt-monkey-page .dt-feedback { margin-top: 10px; padding: 13px; }
+}
