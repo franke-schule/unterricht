@@ -98,13 +98,16 @@ await evaluate('new Promise(resolve => setTimeout(resolve, 100))');
 await evaluate("localStorage.removeItem('informatik11-perzeptron-aufgabe5-v1')");
 await reload();
 
-const initial = await evaluate("(() => ({ tabs:document.querySelectorAll('[role=tab]').length, active:document.querySelector('[role=tab][aria-selected=true]')?.dataset.tab, geometry:Boolean(document.querySelector('.geometry-plot')), points:document.querySelectorAll('.geometry-plot .safe-point, .geometry-plot .danger-point, .geometry-plot .hare-point').length, signal:Boolean(document.querySelector('.signal-flow')), signalNodes:document.querySelectorAll('[data-signal]').length, arrows:document.querySelectorAll('[data-signal-arrow]').length }))()");
+const initial = await evaluate("(() => ({ tabs:document.querySelectorAll('[role=tab]').length, active:document.querySelector('[role=tab][aria-selected=true]')?.dataset.tab, geometry:Boolean(document.querySelector('.geometry-plot')), points:document.querySelectorAll('.geometry-plot .safe-point, .geometry-plot .danger-point, .geometry-plot .hare-point').length, hareHidden:document.querySelector('#hare-marker')?.hidden, hareDisplay:getComputedStyle(document.querySelector('#hare-marker')).display, foxHidden:document.querySelector('#fox-marker')?.hidden, foxDisplay:getComputedStyle(document.querySelector('#fox-marker')).display, signal:Boolean(document.querySelector('.signal-flow')), signalNodes:document.querySelectorAll('[data-signal]').length, arrows:document.querySelectorAll('[data-signal-arrow]').length }))()");
 assert(initial.tabs === 8, 'Es müssen genau acht Reiter vorhanden sein.');
-assert(initial.active === 'discover' && initial.geometry && initial.points >= 5, 'Der erste Reiter oder das Tierdiagramm fehlt.');
+assert(initial.active === 'discover' && initial.geometry && initial.points >= 5 && initial.hareHidden && initial.hareDisplay === 'none' && initial.foxHidden && initial.foxDisplay === 'none', 'Der erste Reiter oder der verdeckte Startzustand der Tierpunkte fehlt.');
+await evaluate("(() => { const x=document.querySelector('#fox-x'); const y=document.querySelector('#fox-y'); x.value='5'; x.dispatchEvent(new Event('change',{bubbles:true})); y.value='3'; y.dispatchEvent(new Event('change',{bubbles:true})); document.querySelector('[name=fox-class][value=danger]').click(); document.querySelector('#check-fox').click(); })()");
+const fox = await evaluate("(() => ({ marker:document.querySelector('#fox-label').textContent, x:document.querySelector('#fox-x').value, y:document.querySelector('#fox-y').value, feedback:document.querySelector('#fox-feedback').textContent }))()");
+assert(fox.marker.includes('(5|3)') && fox.x === '5' && fox.y === '3' && fox.feedback.includes('Ausgabe ist 0'), 'Fuchs-Koordinate und -Klasse sind nicht synchron: ' + JSON.stringify(fox));
 
 await evaluate("document.querySelector('[data-tab=structure]').click()");
-const structure = await evaluate("(() => ({ active:document.querySelector('[role=tab][aria-selected=true]')?.dataset.tab, visible:!document.querySelector('#structure').hidden, nodes:document.querySelectorAll('[data-signal]').length, arrows:document.querySelectorAll('[data-signal-arrow]').length, steps:document.querySelectorAll('[data-signal-step]').length, text:document.querySelector('#signal-step-status').textContent }))()");
-assert(structure.active === 'structure' && structure.visible && structure.nodes === 7 && structure.arrows === 6 && structure.steps === 7 && structure.text, 'Der Signalfluss ist nicht vollständig erreichbar.');
+const structure = await evaluate("(() => ({ active:document.querySelector('[role=tab][aria-selected=true]')?.dataset.tab, visible:!document.querySelector('#structure').hidden, nodes:document.querySelectorAll('[data-signal]').length, arrows:document.querySelectorAll('[data-signal-arrow]').length, steps:document.querySelectorAll('#next-signal-step').length, text:document.querySelector('#signal-step-status').textContent }))()");
+assert(structure.active === 'structure' && structure.visible && structure.nodes === 7 && structure.arrows === 6 && structure.steps === 1 && structure.text.includes('Klicke auf Weiter'), 'Der Signalfluss ist nicht vollständig erreichbar.');
 const signalGeometry = await evaluate("(() => { const svg=document.querySelector('.signal-arrows'); const matrix=svg?.getScreenCTM(); const distance=(point,rect)=>Math.hypot(Math.max(rect.left-point.x,0,point.x-rect.right),Math.max(rect.top-point.y,0,point.y-rect.bottom)); return [...svg.querySelectorAll('[data-signal-arrow]')].map(line=>{const [from,to]=line.dataset.signalArrow.split(' ');const start=line.getPointAtLength(0);const end=line.getPointAtLength(line.getTotalLength());const startPoint=new DOMPoint(start.x,start.y).matrixTransform(matrix);const endPoint=new DOMPoint(end.x,end.y).matrixTransform(matrix);return {from,to,startDistance:distance(startPoint,document.querySelector('[data-signal=\"'+from+'\"]').getBoundingClientRect()),endDistance:distance(endPoint,document.querySelector('[data-signal=\"'+to+'\"]').getBoundingClientRect())};}); })()");
 assert(signalGeometry.length === 6 && signalGeometry.every((connection) => connection.startDistance <= 2 && connection.endDistance <= 2), 'Signalpfeile berühren ihre zugehörigen Knoten nicht: ' + JSON.stringify(signalGeometry));
 
@@ -116,22 +119,24 @@ await cdp.send('Input.dispatchKeyEvent', { type:'keyDown', key:'Home', code:'Hom
 await cdp.send('Input.dispatchKeyEvent', { type:'keyUp', key:'Home', code:'Home' });
 assert(await evaluate("document.querySelector('[role=tab][aria-selected=true]').dataset.tab") === 'discover', 'Home muss zum ersten Reiter führen.');
 
-await evaluate("document.querySelector('[data-tab=structure]').click(); document.querySelector('[data-signal-step=\"6\"]').focus()");
-await cdp.send('Input.dispatchKeyEvent', { type:'keyDown', key:'Enter', code:'Enter', windowsVirtualKeyCode:13, nativeVirtualKeyCode:13, text:'\r' });
-await cdp.send('Input.dispatchKeyEvent', { type:'keyUp', key:'Enter', code:'Enter', windowsVirtualKeyCode:13, nativeVirtualKeyCode:13 });
-const internalStep = await evaluate("(() => ({ current:document.querySelector('[data-signal-step][aria-current=step]')?.dataset.signalStep, status:document.querySelector('#signal-step-status').textContent, activeOutput:document.querySelector('[data-signal=output]')?.classList.contains('is-active') }))()");
-assert(internalStep.current === '6' && internalStep.activeOutput && internalStep.status.includes('Ausgabe ist 1'), 'Die interne Schrittsteuerung reagiert nicht auf die Tastatur.');
+await evaluate("document.querySelector('[data-tab=structure]').click(); document.querySelector('#next-signal-step').focus()");
+for (let index = 0; index < 7; index++) { await cdp.send('Input.dispatchKeyEvent', { type:'keyDown', key:'Enter', code:'Enter', windowsVirtualKeyCode:13, nativeVirtualKeyCode:13, text:'\r' }); await cdp.send('Input.dispatchKeyEvent', { type:'keyUp', key:'Enter', code:'Enter', windowsVirtualKeyCode:13, nativeVirtualKeyCode:13 }); }
+const internalStep = await evaluate("(() => ({ disabled:document.querySelector('#next-signal-step').disabled, status:document.querySelector('#signal-step-status').textContent, activeOutput:document.querySelector('[data-signal=output]')?.classList.contains('is-active') }))()");
+assert(internalStep.disabled && internalStep.activeOutput && internalStep.status.includes('Schritt 7/7') && internalStep.status.includes('Ausgabe ist 1'), 'Die interne Schrittsteuerung reagiert nicht auf die Tastatur.');
 
 await evaluate("localStorage.setItem('informatik11-perzeptron-aufgabe5-v1', JSON.stringify({active:'simulator',epoch:[true]}))");
 await reload();
-const oldState = await evaluate("(() => ({ active:document.querySelector('[role=tab][aria-selected=true]')?.dataset.tab, firstEpochDisabled:document.querySelector('#epoch-body tr[data-row=\"0\"] input')?.disabled, geometryStep:document.querySelector('[data-geometry-step][aria-current=step]')?.dataset.geometryStep, signalStep:document.querySelector('[data-signal-step][aria-current=step]')?.dataset.signalStep }))()");
-assert(oldState.active === 'simulator' && oldState.firstEpochDisabled && oldState.geometryStep === '0' && oldState.signalStep === '0', 'Ein alter Speicherstand wird nicht kompatibel geladen.');
+const oldState = await evaluate("(() => { const state=JSON.parse(localStorage.getItem('informatik11-perzeptron-aufgabe5-v1')); return { active:document.querySelector('[role=tab][aria-selected=true]')?.dataset.tab, firstEpochDisabled:document.querySelector('#epoch-body tr[data-row=\"0\"] input')?.disabled, geometryStep:state.geometryStep, signalStep:state.signalStep }; })()");
+assert(oldState.active === 'simulator' && oldState.firstEpochDisabled && oldState.geometryStep === -1 && oldState.signalStep === -1, 'Ein alter Speicherstand wird nicht kompatibel geladen.');
+await evaluate("document.querySelector('[data-tab=learn]').click()");
+const epochHeader = await evaluate("(() => ({ groups:[...document.querySelectorAll('#epoch-form thead tr:first-child th')].map(th=>th.textContent.trim()), scrollRegion:document.querySelector('#epoch-form .table-scroll[role=region][tabindex=\"0\"]')?.getAttribute('aria-label') }))()");
+assert(epochHeader.groups.includes('Trainingsdaten') && epochHeader.groups.includes('Parameter vorher') && epochHeader.groups.includes('Berechnung') && epochHeader.groups.includes('Parameter nachher') && epochHeader.scrollRegion, 'Gruppierte Tabellenkopfzeilen fehlen.');
 
 await evaluate("window.confirm = () => true; document.querySelector('#reset-progress').click()");
 await cdp.waitFor('Page.loadEventFired');
 await evaluate('new Promise(resolve => setTimeout(resolve, 80))');
 const resetState = await evaluate("(() => { const raw = localStorage.getItem('informatik11-perzeptron-aufgabe5-v1'); return raw ? JSON.parse(raw) : null; })()");
-assert(resetState?.active === 'discover' && Array.isArray(resetState.epoch) && resetState.epoch.length === 0 && resetState.geometryStep === 0 && resetState.signalStep === 0, 'Zurücksetzen stellt den leeren Startzustand nicht wieder her.');
+assert(resetState?.active === 'discover' && Array.isArray(resetState.epoch) && resetState.epoch.length === 0 && resetState.geometryStep === -1 && resetState.signalStep === -1 && resetState.foxX === null && resetState.foxY === null, 'Zurücksetzen stellt den leeren Startzustand nicht wieder her.');
 
 await cdp.send('Emulation.setEmulatedMedia', { features:[{ name:'prefers-reduced-motion', value:'reduce' }] });
 await reload();

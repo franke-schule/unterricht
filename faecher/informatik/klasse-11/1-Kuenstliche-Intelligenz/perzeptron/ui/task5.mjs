@@ -6,18 +6,18 @@ const STORAGE_KEY = 'informatik11-perzeptron-aufgabe5-v1';
 const STEPS = ['discover', 'structure', 'decide', 'learn', 'simulator', 'fast', 'limits', 'summary'];
 const epoch = runEpoch();
 const GEOMETRY_STEPS = [
-  { targets:['axes','points'], text:'Die Zahnlänge liefert die waagerechte Koordinate x₁, die Augengröße die senkrechte Koordinate x₂.' },
-  { targets:['hare'], text:'Für den Hasen gilt x₁ = 2 und x₂ = 4. Sein Punkt liegt deshalb bei (2|4).' },
-  { targets:['hare','line','area'], text:'Der Hase liegt auf der Seite „ungefährlich“. Das Modell sagt deshalb „ungefährlich“ voraus.' },
+  { title:'Eigenschaften', targets:['axes','points'], text:'Die Zahnlänge wird auf der x-Achse abgetragen, die Augengröße auf der y-Achse.' },
+  { title:'Punkt eintragen', targets:['hare'], text:'Der Hase hat die Zahnlänge 2 und die Augengröße 4. Deshalb liegt sein Punkt bei (2|4).' },
+  { title:'Klasse ablesen', targets:['hare','line','area'], text:'Der Punkt (2|4) liegt oberhalb der Trenngeraden im Bereich „ungefährlich“.' },
 ];
 const SIGNAL_STEPS = [
-  { targets:['inputs'], text:'Die Eingaben beschreiben den Hasen: x₁ = 2 für die Zahnlänge und x₂ = 4 für die Augengröße.' },
-  { targets:['inputs','weights'], text:'Die Gewichte legen den Einfluss fest: w₁ = −1 und w₂ = 2.' },
-  { targets:['weights','products'], text:'Jede Eingabe wird mit ihrem Gewicht multipliziert: (−1)·2 = −2 und 2·4 = 8.' },
-  { targets:['products','sum'], text:'Die beiden Produkte werden addiert: a = −2 + 8 = 6.' },
-  { targets:['sum','comparison'], text:'Die Summe wird mit dem Schwellenwert verglichen: 6 ≥ 3.' },
-  { targets:['comparison','activation'], text:'Die Treppenfunktion gibt bei a ≥ θ den Wert 1 aus, sonst 0.' },
-  { targets:['activation','output'], text:'Die Ausgabe ist 1. In diesem Modul bedeutet 1: ungefährlich.' },
+  { title:'Eingaben', targets:['inputs'], text:'Die Eingaben beschreiben den Hasen: x₁ = 2 für die Zahnlänge und x₂ = 4 für die Augengröße.' },
+  { title:'Gewichte', targets:['inputs','weights'], text:'Die Gewichte legen den Einfluss fest: w₁ = −1 und w₂ = 2.' },
+  { title:'Produkte', targets:['weights','products'], text:'Jede Eingabe wird mit ihrem Gewicht multipliziert: (−1)·2 = −2 und 2·4 = 8.' },
+  { title:'Summe', targets:['products','sum'], text:'Die beiden Produkte werden addiert: a = −2 + 8 = 6.' },
+  { title:'Vergleich', targets:['sum','comparison'], text:'Die Summe wird mit dem Schwellenwert verglichen: 6 ≥ 3.' },
+  { title:'Treppenfunktion', targets:['comparison','activation'], text:'Die Treppenfunktion gibt bei a ≥ θ den Wert 1 aus, sonst 0.' },
+  { title:'Ausgabe', targets:['activation','output'], text:'Die Ausgabe ist 1. In diesem Modul bedeutet 1: ungefährlich.' },
 ];
 const QUIZ = [
   { q:'1. Welche Aussagen zu den Bestandteilen stimmen?', options:[{id:'threshold',text:'Der Schwellenwert legt die Grenze für die Ausgabe fest.',correct:true},{id:'inputs',text:'Die Eingaben beschreiben Merkmale eines Datenpunkts.',correct:true},{id:'output-change',text:'Die Ausgabe verändert Gewichte ohne Zielwert.',correct:false},{id:'weights',text:'Gewichte bestimmen Stärke und Richtung des Einflusses.',correct:true}] },
@@ -29,13 +29,14 @@ const QUIZ = [
 ];
 const FIELD_LABELS = { product1:'Beitrag w₁ · x₁', product2:'Beitrag w₂ · x₂', sum:'gewichtete Summe a', comparison:'Vergleich a und θ', output:'Ausgabe f(a)', class:'Klasse', delta:'Fehler δ', w1:'w₁ nachher', w2:'w₂ nachher', threshold:'θ nachher', endW1:'Endwert w₁', endW2:'Endwert w₂', theta:'Endwert θ', steps:'Trainingsschritte', correctPoints:'korrekt klassifizierte Trainingspunkte', percent:'korrekt klassifiziert in Prozent', lineW1:'Koeffizient vor x₁', lineW2:'Koeffizient vor x₂', line:'rechte Seite der Geraden' };
 
-function validStep(value, length) { return Number.isInteger(value) && value >= 0 && value < length ? value : 0; }
+function validStep(value, length, minimum = -1) { return Number.isInteger(value) && value >= minimum && value < length ? value : minimum; }
+function validCoordinate(value, maximum, fallback = null) { return Number.isInteger(value) && value >= 0 && value <= maximum ? value : fallback; }
 function loadState() {
-  const defaults = { active:'discover', epoch:[], geometryStep:0, signalStep:0 };
+  const defaults = { active:'discover', epoch:[], geometryStep:-1, signalStep:-1, foxX:null, foxY:null, foxClass:'', foxChecked:false };
   try {
     const parsed = JSON.parse(localStorage.getItem(STORAGE_KEY));
     if (!parsed || typeof parsed !== 'object') return defaults;
-    return { ...defaults, ...parsed, active:STEPS.includes(parsed.active) ? parsed.active : defaults.active, epoch:Array.isArray(parsed.epoch) ? parsed.epoch.slice(0, epoch.length).map(Boolean) : [], geometryStep:validStep(parsed.geometryStep, GEOMETRY_STEPS.length), signalStep:validStep(parsed.signalStep, SIGNAL_STEPS.length) };
+    return { ...defaults, ...parsed, active:STEPS.includes(parsed.active) ? parsed.active : defaults.active, epoch:Array.isArray(parsed.epoch) ? parsed.epoch.slice(0, epoch.length).map(Boolean) : [], geometryStep:validStep(parsed.geometryStep, GEOMETRY_STEPS.length), signalStep:validStep(parsed.signalStep, SIGNAL_STEPS.length), foxX:validCoordinate(parsed.foxX, 7, defaults.foxX), foxY:validCoordinate(parsed.foxY, 5, defaults.foxY), foxClass:['danger','safe'].includes(parsed.foxClass) ? parsed.foxClass : '', foxChecked:parsed.foxChecked === true };
   } catch { return defaults; }
 }
 let state = loadState();
@@ -60,38 +61,52 @@ function setupTabs() {
   document.querySelectorAll('[data-flow]').forEach((container) => { const index = STEPS.indexOf(container.dataset.flow); const next = STEPS[index + 1]; const afterNext = STEPS[index + 2]; if (next === 'fast') container.replaceChildren(flowButton('Weiter zu Grenzen', afterNext), flowButton('Für die Schnellen', next, true)); else if (next) container.replaceChildren(flowButton('Weiter: ' + labelFor(next), next)); });
   showStep(state.active);
 }
-function setupStepper(buttonSelector, itemSelector, steps, stateKey, statusSelector, dataKey) {
-  const buttons = [...document.querySelectorAll(buttonSelector)];
+function setupNextStepper(buttonSelector, itemSelector, steps, stateKey, statusSelector, dataKey, afterShow) {
+  const button = document.querySelector(buttonSelector);
   const items = [...document.querySelectorAll(itemSelector)];
   const show = (index) => {
     const current = validStep(index, steps.length);
     state[stateKey] = current;
     items.forEach((item) => {
-      const activeItem = steps[current].targets.includes(item.dataset[dataKey]);
-      const completeItem = steps.slice(0, current).some((step) => step.targets.includes(item.dataset[dataKey]));
+      const activeItem = current >= 0 && steps[current].targets.includes(item.dataset[dataKey]);
+      const completeItem = current >= 0 && steps.slice(0, current).some((step) => step.targets.includes(item.dataset[dataKey]));
       item.classList.toggle('is-active', activeItem); item.classList.toggle('is-complete', completeItem); item.classList.toggle('is-dimmed', !activeItem && !completeItem);
     });
     document.querySelectorAll('[data-signal-arrow]').forEach((arrow) => {
       const linked = arrow.dataset.signalArrow.split(' ');
-      const activeArrow = linked.some((part) => steps[current].targets.includes(part));
-      const completeArrow = steps.slice(0, current).some((step) => linked.some((part) => step.targets.includes(part)));
+      const activeArrow = current >= 0 && linked.some((part) => steps[current].targets.includes(part));
+      const completeArrow = current >= 0 && steps.slice(0, current).some((step) => linked.some((part) => step.targets.includes(part)));
       arrow.classList.toggle('is-active', activeArrow); arrow.classList.toggle('is-complete', completeArrow); arrow.classList.toggle('is-dimmed', !activeArrow && !completeArrow);
     });
-    buttons.forEach((button, buttonIndex) => { button.setAttribute('aria-current', buttonIndex === current ? 'step' : 'false'); button.classList.toggle('is-complete', buttonIndex < current); });
-    document.querySelector(statusSelector).textContent = steps[current].text;
+    button.disabled = current === steps.length - 1;
+    button.textContent = current === steps.length - 1 ? 'Alle Schritte gezeigt' : 'Weiter';
+    button.setAttribute('aria-describedby', statusSelector.slice(1));
+    document.querySelector(statusSelector).textContent = current < 0 ? 'Klicke auf Weiter, um mit Schritt 1 von ' + steps.length + ' zu beginnen.' : 'Schritt ' + (current + 1) + '/' + steps.length + ': ' + steps[current].title + ' – ' + steps[current].text;
+    afterShow?.(current);
     saveState();
   };
-  buttons.forEach((button, index) => button.addEventListener('click', () => show(index)));
+  button.addEventListener('click', () => show(Math.min(state[stateKey] + 1, steps.length - 1)));
   show(state[stateKey]);
 }
 function setupDiscovery() {
-  setupStepper('[data-geometry-step]', '[data-geometry]', GEOMETRY_STEPS, 'geometryStep', '#geometry-step-status', 'geometry');
+  setupNextStepper('#next-geometry-step', '[data-geometry]', GEOMETRY_STEPS, 'geometryStep', '#geometry-step-status', 'geometry', (current) => { document.querySelector('#hare-marker').hidden = current < 1; });
+  const plot = document.querySelector('.geometry-plot');
+  const foxX = document.querySelector('#fox-x');
+  const foxY = document.querySelector('#fox-y');
+  const updateFox = () => { const x = validCoordinate(state.foxX, 7); const y = validCoordinate(state.foxY, 5); const marker = document.querySelector('#fox-marker'); marker.hidden = x === null || y === null; if (!marker.hidden) { marker.setAttribute('transform', 'translate(' + (90 + x * 85) + ' ' + (390 - y * 60) + ')'); document.querySelector('#fox-label').textContent = 'Fuchs (' + x + '|' + y + ')'; } foxX.value = x === null ? '' : String(x); foxY.value = y === null ? '' : String(y); document.querySelectorAll('[name=fox-class]').forEach((input) => { input.checked = input.value === state.foxClass; }); saveState(); };
+  const setFox = (x, y) => { state.foxX = validCoordinate(x, 7, state.foxX); state.foxY = validCoordinate(y, 5, state.foxY); state.foxChecked = false; updateFox(); };
+  foxX.addEventListener('change', () => setFox(foxX.value === '' ? null : Number(foxX.value), state.foxY));
+  foxY.addEventListener('change', () => setFox(state.foxX, foxY.value === '' ? null : Number(foxY.value)));
+  plot.addEventListener('click', (event) => { const point = new DOMPoint(event.clientX, event.clientY).matrixTransform(plot.getScreenCTM().inverse()); setFox(Math.round((point.x - 90) / 85), Math.round((390 - point.y) / 60)); });
+  document.querySelectorAll('[name=fox-class]').forEach((input) => input.addEventListener('change', () => { state.foxClass = input.value; state.foxChecked = false; saveState(); }));
+  document.querySelector('#check-fox').addEventListener('click', () => { const pointCorrect = state.foxX === 5 && state.foxY === 3; const classCorrect = state.foxClass === 'danger'; state.foxChecked = pointCorrect && classCorrect; saveState(); if (state.foxChecked) feedback('fox-feedback','success','Korrekt. Der Fuchs liegt bei (5|3) im gefährlichen Bereich; die Ausgabe ist 0.'); else if (pointCorrect) feedback('fox-feedback','partial','Der Punkt stimmt. Prüfe noch, auf welcher Seite der Trenngeraden er liegt.'); else if (classCorrect) feedback('fox-feedback','partial','Die Klasse stimmt. Trage den Punkt noch genau bei (5|3) ein.'); else feedback('fox-feedback','error','Noch nicht korrekt. Trage zuerst den Punkt (5|3) ein und lies dann den beschrifteten Bereich ab.'); });
+  updateFox();
   document.querySelector('#check-discover').addEventListener('click', () => { const answers = selectedValues(document.querySelector('#discover-options')); if (sameSet(answers, ['x1','x2','safe'])) feedback('discover-feedback','success','Korrekt. Merkmalswerte werden zu Koordinaten; der Hase liegt bei (2|4) auf der ungefährlichen Seite der Trenngeraden.'); else if (answers.some((value) => ['x1','x2','safe'].includes(value))) feedback('discover-feedback','partial','Teilweise korrekt. Prüfe noch, welche Achse zu welcher Eigenschaft gehört und auf welcher Seite der Linie der Hase liegt.'); else feedback('discover-feedback','error','Noch nicht korrekt. Markiere zuerst den Punkt (2|4) und lies dann die direkt beschrifteten Bereiche ab.'); });
 }
-function setupStructure() { setupStepper('[data-signal-step]', '[data-signal]', SIGNAL_STEPS, 'signalStep', '#signal-step-status', 'signal'); }
+function setupStructure() { setupNextStepper('#next-signal-step', '[data-signal]', SIGNAL_STEPS, 'signalStep', '#signal-step-status', 'signal'); }
 function checkFields(container, expectations) { let correct = 0; const wrong = []; Object.entries(expectations).forEach(([name, expected]) => { const input = container.querySelector('[data-answer=' + name + ']'); const valid = typeof expected === 'number' ? numberMatches(input.value, expected, {allowPercent:name === 'percent'}) : input.value === expected; input.classList.toggle('is-correct', valid); input.classList.toggle('is-wrong', !valid); if (valid) correct++; else wrong.push(name); }); return { correct, total:Object.keys(expectations).length, wrong }; }
 function fieldFeedback(id, kind, beginning, field) { feedback(id, kind, beginning + ' <strong>' + (FIELD_LABELS[field] || field) + '</strong>.', true); }
-function setupDecision() { document.querySelector('#check-decision').addEventListener('click', () => { const result = checkFields(document.querySelector('#decision-form'), {product1:-4,product2:2,sum:-2,comparison:'lt',output:'0',class:'danger'}); if (result.correct === result.total) feedback('decision-feedback','success','Korrekt. Die Summe ist −2; das Perzeptron gibt 0 aus und klassifiziert den Hai als gefährlich.'); else if (result.correct) fieldFeedback('decision-feedback','partial',result.correct + ' von ' + result.total + ' Einträgen stimmen. Prüfe zuerst',result.wrong[0]); else feedback('decision-feedback','error','Noch nicht korrekt. Berechne zuerst beide Produkte und addiere sie erst danach.'); }); }
+function setupDecision() { document.querySelector('#check-decision').addEventListener('click', () => { const result = checkFields(document.querySelector('#decision-form'), {product1:-4,product2:2,sum:-2,comparison:'lt',output:'0',class:'danger'}); const solved = result.correct === result.total; const decisionText = {sum:solved ? 'a = −2' : 'a = ?', comparison:solved ? '−2 < 3' : 'a ? θ', output:solved ? '0' : '?', class:solved ? 'gefährlich' : 'noch unbekannt'}; Object.entries(decisionText).forEach(([part,text]) => document.querySelectorAll('[data-decision=' + part + ']').forEach((element) => { element.textContent = text; })); if (solved) feedback('decision-feedback','success','Korrekt. Die Summe ist −2; das Perzeptron gibt 0 aus und klassifiziert den Hai als gefährlich.'); else if (result.correct) fieldFeedback('decision-feedback','partial',result.correct + ' von ' + result.total + ' Einträgen stimmen. Prüfe zuerst',result.wrong[0]); else feedback('decision-feedback','error','Noch nicht korrekt. Berechne zuerst beide Produkte und addiere sie erst danach.'); }); }
 function entryFields(index) {
   return ['sum','output','delta','w1','w2','threshold'].map((name) => {
     const control = name === 'output' ? '<select data-field="' + name + '"><option value="">–</option><option>0</option><option>1</option></select>' : '<input data-field="' + name + '" inputmode="decimal" autocomplete="off">';

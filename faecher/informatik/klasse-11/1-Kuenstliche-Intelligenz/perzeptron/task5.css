@@ -60,5 +60,40 @@
 .perceptron-page .xor-board { display:grid; grid-template-columns:repeat(2,1fr); gap:.5rem; padding:1rem; background:linear-gradient(90deg,transparent 49.5%,#7897a8 50%,transparent 50.5%),linear-gradient(0deg,transparent 49.5%,#7897a8 50%,transparent 50.5%); }.perceptron-page .xor-point { padding:.6rem; border-radius:.5rem; font-weight:700; }.perceptron-page .xor-point.one { background:#e7f6ef; border:2px solid #287b61; }.perceptron-page .xor-point.zero { background:#edf6fb; border:2px dashed #126e9c; }
 .perceptron-page .privacy { font-size:.92rem; background:#fff8e5; padding:.75rem; border-left:4px solid #bd8900; }.perceptron-page .counter { font-size:.9rem; }
 .perceptron-page .data-boundary { background:#edf6fb; border-left:4px solid #126e9c; padding:.75rem; }
-@media (max-width:700px){.perceptron-page .topbar,.perceptron-page .perceptron-hero,.perceptron-page .tab-list,.perceptron-page .step-panel{box-sizing:border-box;min-width:0}.perceptron-page .topbar{flex-wrap:wrap;justify-content:center}.perceptron-page .formula-grid,.perceptron-page .two-column,.perceptron-page .input-grid{grid-template-columns:1fr}.perceptron-page .geometry-figure{padding:.45rem}.perceptron-page .geometry-plot text{font-size:12px}.perceptron-page .geometry-plot .area-label{font-size:15px!important}.perceptron-page .geometry-plot .axis-label{font-size:14px!important}.perceptron-page .signal-flow{grid-template-columns:1fr;gap:.7rem;padding-left:2.5rem}.perceptron-page .signal-arrows{display:none}.perceptron-page .signal-node{min-height:0;text-align:left}.perceptron-page .signal-node:not(:last-child)::after{content:"↓";position:absolute;left:calc(50% + 2px);top:calc(100% - .05rem);transform:translateX(-50%);display:grid;place-items:center;width:1.35rem;height:calc(.7rem + .55rem);border-radius:.675rem;background:#5d7889;color:#fff;font-weight:900}.perceptron-page .step-panel,.perceptron-page .perceptron-hero{padding:1rem}}
+.perceptron-page .geometry-axes path { fill:#12324a; }
+.perceptron-page .fox-task { margin:1rem 0; }
+.perceptron-page .fox-controls { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:.75rem; }
+.perceptron-page .fox-point { fill:#fff1f1; stroke:#af3f47; stroke-width:4; }
+.perceptron-page .fox-ring { fill:none; stroke:#af3f47; stroke-width:3; stroke-dasharray:5 3; }
+.perceptron-page .fox-label { fill:#12324a; paint-order:stroke; stroke:#fff; stroke-width:4; }
+.perceptron-page #fox-marker { pointer-events:none; }
+.perceptron-page #hare-marker[hidden],.perceptron-page #fox-marker[hidden] { display:none; }
+.perceptron-page .signal-flow { display:block; min-height:23.75rem; }
+.perceptron-page .signal-node { position:absolute; min-height:0; height:36%; }
+.perceptron-page .signal-node[data-signal=inputs] { left:0; top:18%; width:16%; }
+.perceptron-page .signal-node[data-signal=weights] { left:18%; top:18%; width:12%; }
+.perceptron-page .signal-node[data-signal=products] { left:32%; top:18%; width:14%; }
+.perceptron-page .signal-node[data-signal=sum] { left:48%; top:18%; width:12%; }
+.perceptron-page .signal-node[data-signal=activation] { left:62%; top:18%; width:16%; }
+.perceptron-page .signal-node[data-signal=output] { left:83%; top:18%; width:17%; }
+.perceptron-page .signal-node[data-signal=comparison] { left:64%; top:66%; width:14%; height:22%; }
+.perceptron-page .decision-svg { display:block; width:100%; height:auto; margin:1rem 0; border:1px solid #b9d1df; border-radius:.85rem; background:#f9fcfe; font-family:inherit; }
+.perceptron-page .decision-svg-mobile { display:none; }
+.perceptron-page .decision-svg line { stroke:#5d7889; stroke-width:5; marker-end:url(#decision-arrowhead); }
+.perceptron-page .decision-svg-mobile line { stroke:#5d7889; stroke-width:4; stroke-linecap:round; marker-end:url(#decision-mobile-arrowhead); }
+.perceptron-page .decision-svg line { stroke-linecap:round; }
+.perceptron-page .decision-input circle,.perceptron-page .decision-core circle { fill:#fff; stroke:#126e9c; stroke-width:4; }
+.perceptron-page .decision-core line { marker-end:none; stroke:#b9d1df; stroke-width:2; }
+.perceptron-page .decision-input text,.perceptron-page .decision-core text,.perceptron-page .decision-output text,.perceptron-page .decision-weight,.perceptron-page .decision-threshold { fill:#12324a; font-weight:700; text-anchor:middle; font-size:16px; }
+.perceptron-page .decision-input text:nth-of-type(2) { font-size:12px; }
+.perceptron-page .decision-output rect { fill:#fff3cf; stroke:#bd8900; stroke-width:4; }
+.perceptron-page [data-decision=output] { font-size:24px; }
+.perceptron-page [data-decision=class] { font-size:13px; }
+.perceptron-page .table-scroll thead tr:first-child th { background:#126e9c; color:#fff; border-color:#0c587d; }
+.perceptron-page .table-scroll thead tr:nth-child(2) th { background:#fff3cf; color:#12324a; }
+.perceptron-page .table-scroll tbody tr:nth-child(even) { background:#edf6fb; }
+.perceptron-page .table-scroll tbody tr:nth-child(odd) { background:#f9fcfe; }
+.perceptron-page .table-scroll th:nth-child(4),.perceptron-page .table-scroll td:nth-child(4),.perceptron-page .table-scroll th:nth-child(7),.perceptron-page .table-scroll td:nth-child(7),.perceptron-page .table-scroll th:nth-child(10),.perceptron-page .table-scroll td:nth-child(10),.perceptron-page .table-scroll th:nth-child(13),.perceptron-page .table-scroll td:nth-child(13) { border-right:3px solid #126e9c; }
+@media (max-width:700px){.perceptron-page .topbar,.perceptron-page .perceptron-hero,.perceptron-page .tab-list,.perceptron-page .step-panel{box-sizing:border-box;min-width:0}.perceptron-page .topbar{flex-wrap:wrap;justify-content:center}.perceptron-page .formula-grid,.perceptron-page .two-column,.perceptron-page .input-grid{grid-template-columns:1fr}.perceptron-page .geometry-figure{padding:.45rem}.perceptron-page .geometry-plot text{font-size:30px}.perceptron-page .geometry-plot .area-label{font-size:34px!important}.perceptron-page .geometry-plot .axis-label{font-size:34px!important}.perceptron-page .signal-flow{grid-template-columns:1fr;gap:.7rem;padding-left:2.5rem}.perceptron-page .signal-arrows{display:none}.perceptron-page .signal-node{min-height:0;text-align:left}.perceptron-page .signal-node:not(:last-child)::after{content:"↓";position:absolute;left:calc(50% + 2px);top:calc(100% - .05rem);transform:translateX(-50%);display:grid;place-items:center;width:1.35rem;height:calc(.7rem + .55rem);border-radius:.675rem;background:#5d7889;color:#fff;font-weight:900}.perceptron-page .step-panel,.perceptron-page .perceptron-hero{padding:1rem}}
+@media (max-width:700px){.perceptron-page .fox-controls{grid-template-columns:1fr}.perceptron-page .signal-flow{position:static;display:grid;grid-template-columns:1fr;gap:.7rem;padding-left:2.5rem;min-height:0}.perceptron-page .signal-node{position:relative;left:auto!important;top:auto!important;width:auto!important;height:auto!important;min-height:0}.perceptron-page .decision-svg{display:none}.perceptron-page .decision-svg-mobile{display:block;width:100%;height:auto;margin:1rem 0;border:1px solid #b9d1df;border-radius:.85rem;background:#f9fcfe;font-family:inherit}.perceptron-page .decision-svg-mobile .decision-input text,.perceptron-page .decision-svg-mobile .decision-core text,.perceptron-page .decision-svg-mobile .decision-output text,.perceptron-page .decision-svg-mobile .decision-weight,.perceptron-page .decision-svg-mobile .decision-threshold{font-size:13px}.perceptron-page .decision-svg-mobile .decision-input text:nth-of-type(2),.perceptron-page .decision-svg-mobile [data-decision=class]{font-size:10px}.perceptron-page .decision-svg-mobile [data-decision=output]{font-size:20px}}
 @media (prefers-reduced-motion:reduce){*{scroll-behavior:auto!important;transition:none!important}}
