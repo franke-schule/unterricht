@@ -5,9 +5,10 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="robots" content="noindex, nofollow">
     <title>Aufgabe 5 – Das Perzeptron | Informatik 11</title>
+    <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns=%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22 viewBox=%220 0 16 16%22%3E%3Ccircle cx=%228%22 cy=%228%22 r=%227%22 fill=%22%23126e9c%22%2F%3E%3C%2Fsvg%3E">
     <link rel="stylesheet" href="../../../../styles.css?v=20260707">
-    <link rel="stylesheet" href="perzeptron/task5.css?v=20260909d">
-    <script type="module" src="perzeptron/ui/task5.mjs?v=20260909c"></script>
+    <link rel="stylesheet" href="perzeptron/task5.css?v=20260913a">
+    <script type="module" src="perzeptron/ui/task5.mjs?v=20260913a"></script>
   </head>
   <body class="perceptron-page">
     <div class="site-backdrop" aria-hidden="true"></div>
@@ -26,9 +27,9 @@
       <p id="save-status" role="status" aria-live="polite">Dein Bearbeitungsstand wird in diesem Browser gespeichert.</p>
 
       <nav class="tab-list" role="tablist" aria-label="Lernschritte zum Perzeptron">
-        <button id="tab-discover" role="tab" type="button" aria-selected="true" aria-controls="discover" data-tab="discover">1 Entdecken</button>
-        <button id="tab-structure" role="tab" type="button" aria-selected="false" aria-controls="structure" data-tab="structure" tabindex="-1">2 Aufbau</button>
-        <button id="tab-decide" role="tab" type="button" aria-selected="false" aria-controls="decide" data-tab="decide" tabindex="-1">3 Entscheiden</button>
+        <button id="tab-discover" role="tab" type="button" aria-selected="true" aria-controls="discover" data-tab="discover">1 Vom Tier zur Entscheidung</button>
+        <button id="tab-structure" role="tab" type="button" aria-selected="false" aria-controls="structure" data-tab="structure" tabindex="-1">2 So rechnet das Perzeptron</button>
+        <button id="tab-decide" role="tab" type="button" aria-selected="false" aria-controls="decide" data-tab="decide" tabindex="-1">3 Selbst rechnen</button>
         <button id="tab-learn" role="tab" type="button" aria-selected="false" aria-controls="learn" data-tab="learn" tabindex="-1">4 Lernen</button>
         <button id="tab-simulator" role="tab" type="button" aria-selected="false" aria-controls="simulator" data-tab="simulator" tabindex="-1">5 Simulator</button>
         <button id="tab-fast" role="tab" type="button" aria-selected="false" aria-controls="fast" data-tab="fast" tabindex="-1">6 Für die Schnellen</button>
@@ -37,61 +38,58 @@
       </nav>
 
       <section id="discover" class="step-panel" role="tabpanel" aria-labelledby="tab-discover" data-panel="discover">
-        <p class="kicker">Entdecken</p><h2>Welche Merkmale wirken mit?</h2>
-        <p>Schalte Merkmale ein und aus. Beobachte zunächst nur, welche Beiträge in die gemeinsame Summe eingehen.</p>
-        <div class="model-grid">
-          <div class="wool-model" aria-label="Abstraktes Verbindungsmodell mit zwei Merkmalen und einer Ausgabe">
-            <svg class="wool-links" viewBox="0 0 1000 440" preserveAspectRatio="none" aria-hidden="true"><line class="negative" x1="260" y1="105" x2="735" y2="220"></line><line class="positive" x1="260" y1="335" x2="735" y2="220"></line></svg>
-            <button class="feature-toggle wool-input length" data-feature="length" type="button" aria-pressed="true"><span>Zahnlänge aktiv: <strong id="length-value">1</strong></span><span>Merkmal x<sub>1</sub></span></button>
-            <button class="feature-toggle wool-input eyes" data-feature="eyes" type="button" aria-pressed="true"><span>Augengröße aktiv: <strong id="eyes-value">1</strong></span><span>Merkmal x<sub>2</sub></span></button>
-            <div class="connection negative wool-weight length"><span class="clip-mark" aria-hidden="true">−</span><span><strong>blaue Klammern</strong><br>negative Verbindung: schwächt ab</span><strong id="length-contribution">−1</strong></div>
-            <div class="connection positive wool-weight eyes"><span class="clip-mark" aria-hidden="true">+</span><span><strong>rote Klammern</strong><br>positive Verbindung: verstärkt</span><strong id="eyes-contribution">+2</strong></div>
-            <div class="output-card wool-output"><span>Sammelwert: </span><strong id="wool-sum">1</strong><br><span>Grenze: 1</span><br><strong id="wool-output">Ausgabe 1</strong></div>
-          </div>
-          <div class="card"><h3>Beobachtung festhalten</h3><p>Welche Aussagen passen zu deiner Beobachtung?</p>
-            <fieldset id="discover-options"><legend class="sr-only">Beobachtungen</legend>
-              <label><input type="checkbox" value="path">Ein aktives Merkmal wirkt über seine Verbindung auf den Sammelwert.</label>
-              <label><input type="checkbox" value="sign">Plus erhöht den Sammelwert, Minus verringert ihn.</label>
-              <label><input type="checkbox" value="threshold">Die Ausgabe wird 1, wenn der Sammelwert mindestens die Grenze erreicht.</label>
-              <label><input type="checkbox" value="color">Nur die Farbe einer Verbindung bestimmt ihre Bedeutung.</label>
-            </fieldset><button id="check-discover" class="primary-button" type="button">Beobachtung überprüfen</button><div id="discover-feedback" class="feedback" role="status" aria-live="polite" hidden></div>
-          </div>
+        <p class="kicker">Vom Tier zur Entscheidung</p><h2>Eigenschaften werden zu Punkten</h2>
+        <p><strong>Arbeitsauftrag:</strong> Beobachte, wie Eigenschaften eines Tieres zu einem Punkt werden. Ordne anschließend den Hasen bei (2|4) mithilfe der Grenzlinie ein.</p>
+        <figure class="geometry-figure" aria-labelledby="geometry-caption">
+          <svg class="geometry-plot" viewBox="0 0 800 460" role="img" aria-labelledby="geometry-title geometry-description">
+            <title id="geometry-title">Trainingspunkte, Trenngerade und Hase im Koordinatensystem</title>
+            <desc id="geometry-description">Die waagerechte Achse zeigt die Zahnlänge x eins, die senkrechte Achse die Augengröße x zwei. Die Kreise U eins bei null, vier und U zwei bei zwei, zwei liegen im ungefährlichen Bereich. Die Dreiecke G eins bei vier, eins und G zwei bei sechs, zwei liegen im gefährlichen Bereich. Der hervorgehobene Hase bei zwei, vier liegt im ungefährlichen Bereich oberhalb der Trenngeraden.</desc>
+            <defs><marker id="axis-arrow" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto"><path d="M0,0 L8,4 L0,8 z"/></marker><pattern id="safe-pattern" width="10" height="10" patternUnits="userSpaceOnUse" patternTransform="rotate(45)"><line x1="0" y1="0" x2="0" y2="10" stroke="#287b61" stroke-width="2"/></pattern><pattern id="danger-pattern" width="10" height="10" patternUnits="userSpaceOnUse"><circle cx="3" cy="3" r="1.4" fill="#af3f47"/></pattern></defs>
+            <polygon points="90,90 685,90 90,375" class="geometry-area safe-area" data-geometry="area"></polygon><polygon points="90,375 685,90 685,390 90,390" class="geometry-area danger-area" data-geometry="area"></polygon>
+            <g class="geometry-grid" aria-hidden="true"><line x1="90" y1="390" x2="685" y2="390"></line><line x1="90" y1="330" x2="685" y2="330"></line><line x1="90" y1="270" x2="685" y2="270"></line><line x1="90" y1="210" x2="685" y2="210"></line><line x1="90" y1="150" x2="685" y2="150"></line><line x1="90" y1="90" x2="685" y2="90"></line></g>
+            <g class="geometry-axes" data-geometry="axes" aria-hidden="true"><line x1="90" y1="390" x2="705" y2="390"></line><line x1="90" y1="410" x2="90" y2="70"></line></g>
+            <g class="geometry-ticks" aria-hidden="true"><text x="84" y="408">0</text><text x="169" y="408">1</text><text x="254" y="408">2</text><text x="339" y="408">3</text><text x="424" y="408">4</text><text x="509" y="408">5</text><text x="594" y="408">6</text><text x="679" y="408">7</text><text x="65" y="394">0</text><text x="65" y="334">1</text><text x="65" y="274">2</text><text x="65" y="214">3</text><text x="65" y="154">4</text><text x="65" y="94">5</text></g>
+            <text class="axis-label" x="355" y="445">x₁: Zahnlänge</text><text class="axis-label" transform="rotate(-90 25 240)" x="25" y="240">x₂: Augengröße</text>
+            <text class="area-label" x="155" y="128">ungefährlich</text><text class="area-label" x="500" y="360">gefährlich</text>
+            <line class="boundary-line" data-geometry="line" x1="90" y1="375" x2="628" y2="90"></line><text class="line-label" data-geometry="line" x="405" y="176">Trenngerade</text>
+            <g data-geometry="points"><circle class="safe-point" cx="90" cy="150" r="10"></circle><text x="104" y="145">U1 (0|4)</text><circle class="safe-point" cx="260" cy="270" r="10"></circle><text x="274" y="265">U2 (2|2)</text><path class="danger-point" d="M430 317 l-12 22 h24 z"></path><text x="445" y="330">G1 (4|1)</text><path class="danger-point" d="M600 257 l-12 22 h24 z"></path><text x="615" y="252">G2 (6|2)</text></g>
+            <g data-geometry="hare"><path class="hare-point" d="M260 132 l6 12 14 2 -10 10 3 14 -13 -7 -13 7 3 -14 -10 -10 14 -2 z"></path><circle class="hare-ring" cx="260" cy="150" r="22"></circle><text class="hare-label" x="285" y="151">Hase (2|4)</text></g>
+          </svg>
+          <figcaption id="geometry-caption">Die Punkte und Bereiche stehen vor den Fachbegriffen: gleiche Merkmale ergeben vergleichbare Positionen im Koordinatensystem.</figcaption>
+        </figure>
+        <p class="formula-card" data-geometry="line"><strong>Eine solche Grenzlinie heißt Trenngerade.</strong> Die hier gezeichnete Gerade −3x₁ + 4x₂ = 1 trennt die vier Trainingspunkte korrekt.</p>
+        <div class="explanation-stepper" aria-label="Schritte zur Einordnung des Hasen">
+          <div class="step-buttons" role="group" aria-label="Erklärungsschritte"><button type="button" class="secondary-button" data-geometry-step="0">1 Eigenschaften</button><button type="button" class="secondary-button" data-geometry-step="1">2 Punkt eintragen</button><button type="button" class="secondary-button" data-geometry-step="2">3 Klasse ablesen</button></div>
+          <p id="geometry-step-status" class="step-status" aria-live="polite"></p>
         </div>
-        <details><summary>Hilfe 1: Auf Vorzeichen achten</summary><p>Schau zunächst auf das Plus- und Minuszeichen an den Verbindungen.</p></details>
-        <details><summary>Hilfe 2: Beiträge vergleichen</summary><p>Eine aktive Eingabe liefert ihren sichtbaren Verbindungswert, eine inaktive liefert 0.</p></details>
-        <details><summary>Hilfe 3: Ergebnis</summary><p>Bei beiden aktiven Merkmalen ist die Summe −1 + 2 = 1. Die Ausgabe erreicht damit die Grenze.</p></details>
+        <fieldset id="discover-options"><legend>Welche Aussagen stimmen?</legend><label><input type="checkbox" value="x1">Die Zahnlänge bestimmt die waagerechte Koordinate.</label><label><input type="checkbox" value="x2">Die Augengröße bestimmt die senkrechte Koordinate.</label><label><input type="checkbox" value="safe">Der Hase liegt im Bereich „ungefährlich“.</label><label><input type="checkbox" value="color">Nur die Farbe eines Punktes verrät seine Klasse.</label></fieldset><button id="check-discover" class="primary-button" type="button">Einordnung überprüfen</button><div id="discover-feedback" class="feedback" role="status" aria-live="polite" hidden></div>
+        <details><summary>Hilfe 1: Achsen ablesen</summary><p>Lies zuerst die Zahnlänge an der waagerechten und die Augengröße an der senkrechten Achse ab.</p></details><details><summary>Hilfe 2: Punkt prüfen</summary><p>Trage den Hasen bei x₁ = 2 und x₂ = 4 ein und vergleiche seine Lage mit der Grenzlinie.</p></details><details><summary>Hilfe 3: Einordnung</summary><p>Der Hase liegt oberhalb der Grenzlinie im Bereich „ungefährlich“.</p></details>
         <div class="flow-navigation" data-flow="discover"></div>
       </section>
 
       <section id="structure" class="step-panel" role="tabpanel" aria-labelledby="tab-structure" data-panel="structure" hidden>
-        <p class="kicker">Aufbau</p><h2>Vom Anschauungsmodell zum Fachmodell</h2><p>Ordne die Fachbegriffe den Teilen des Modells zu. Wähle einen Begriff und danach einen Zielbereich; Ziehen ist zusätzlich möglich.</p>
-        <div class="two-column"><div id="term-palette" class="term-list" aria-label="Fachbegriffe"></div><div id="term-targets" class="term-list" aria-label="Bestandteile des Modells"></div></div>
-        <button id="check-structure" class="primary-button" type="button">Zuordnung überprüfen</button><div id="structure-feedback" class="feedback" role="status" aria-live="polite" hidden></div>
-        <div class="model-lines-scroll" role="region" aria-label="Perzeptron-Schema; auf kleinen Bildschirmen horizontal scrollbar" tabindex="0">
-          <div class="model-lines" aria-label="Schema: Eingaben führen über Gewichte zur gewichteten Summe. Der Schwellenwert führt zusammen mit der Summe zur Aktivierungsfunktion und diese zur Ausgabe.">
-            <svg class="structure-links" viewBox="0 0 1000 420" preserveAspectRatio="none" aria-hidden="true">
-              <line x1="200" y1="106" x2="300" y2="106"></line><line x1="500" y1="106" x2="600" y2="106"></line><line x1="500" y1="302" x2="600" y2="106"></line><line x1="800" y1="106" x2="850" y2="106"></line>
-            </svg>
-            <div class="model-node input"><span>Eingaben x<sub>1</sub>, x<sub>2</sub></span></div>
-            <div class="model-node sum">gewichtete Summe a</div>
-            <div class="model-node threshold">Schwellenwert θ</div>
-            <div class="model-node activation">Aktivierungsfunktion f</div>
-            <div class="model-node output">Ausgabe f(a)</div>
+        <p class="kicker">So rechnet das Perzeptron</p><h2>Vom Eingang bis zur Ausgabe</h2><p><strong>Arbeitsauftrag:</strong> Durchlaufe den Signalweg vom Eingang bis zur Ausgabe. Achte bei jedem Schritt darauf, welche Zahl weitergegeben oder neu berechnet wird.</p>
+        <div class="signal-flow-region" role="region" aria-label="Signalfluss eines Perzeptrons für den Hasen" tabindex="0">
+          <div class="signal-flow">
+            <svg class="signal-arrows" viewBox="0 0 1000 220" preserveAspectRatio="none" aria-hidden="true"><defs><marker id="signal-arrowhead" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto"><path d="M0,0 L8,4 L0,8 z"></path></marker></defs><line data-signal-arrow="inputs weights" x1="132" y1="110" x2="145" y2="110"></line><line data-signal-arrow="weights products" x1="277" y1="110" x2="290" y2="110"></line><line data-signal-arrow="products sum" x1="422" y1="110" x2="435" y2="110"></line><line data-signal-arrow="sum comparison" x1="567" y1="110" x2="580" y2="110"></line><line data-signal-arrow="comparison activation" x1="712" y1="110" x2="725" y2="110"></line><line data-signal-arrow="activation output" x1="857" y1="110" x2="870" y2="110"></line></svg>
+            <article class="signal-node" data-signal="inputs"><h3>Eingaben</h3><p>x₁ = 2<br>Zahnlänge<br>x₂ = 4<br>Augengröße</p></article><article class="signal-node" data-signal="weights"><h3>Gewichte</h3><p>w₁ = −1<br>w₂ = 2</p></article><article class="signal-node" data-signal="products"><h3>Produkte</h3><p>(−1) · 2 = −2<br>2 · 4 = 8</p></article><article class="signal-node" data-signal="sum"><h3>Summe a</h3><p>a = −2 + 8<br>= 6</p></article><article class="signal-node" data-signal="comparison"><h3>Schwellenwert θ</h3><p>θ = 3<br>6 ≥ 3</p></article><article class="signal-node" data-signal="activation"><h3>Treppenfunktion</h3><p>f(a) = 1 bei<br>a ≥ θ, sonst 0</p></article><article class="signal-node" data-signal="output"><h3>Ausgabe</h3><p><strong>1</strong><br>ungefährlich</p></article>
           </div>
         </div>
-        <div class="formula-grid"><article class="formula-card"><h3>Merke</h3><p class="math" role="math" aria-label="a ist w eins mal x eins plus w zwei mal x zwei">a = w<sub>1</sub> · x<sub>1</sub> + w<sub>2</sub> · x<sub>2</sub></p></article><article class="formula-card"><h3>Entscheidungsregel</h3><p>Die Aktivierungsfunktion vergleicht a mit dem Schwellenwert θ und gibt 0 oder 1 aus.</p></article></div>
-        <details><summary>Hilfe 1: Informationsweg</summary><p>Folge dem Weg von den Merkmalen über die Verbindungen bis zum Ergebnis.</p></details><details><summary>Hilfe 2: Zahlen an Verbindungen</summary><p>Die Zahlen an den Verbindungen heißen Gewichte. Im Rechenknoten werden Beiträge addiert.</p></details><details><summary>Hilfe 3: Start</summary><p>x<sub>1</sub> und x<sub>2</sub> sind Eingaben; w<sub>1</sub> und w<sub>2</sub> sind Gewichte.</p></details>
+        <div class="explanation-stepper" aria-label="Rechenschritte des Perzeptrons"><div class="step-buttons" role="group" aria-label="Rechenschritt wählen"><button type="button" class="secondary-button" data-signal-step="0">1 Eingaben</button><button type="button" class="secondary-button" data-signal-step="1">2 Gewichte</button><button type="button" class="secondary-button" data-signal-step="2">3 Produkte</button><button type="button" class="secondary-button" data-signal-step="3">4 Summe</button><button type="button" class="secondary-button" data-signal-step="4">5 Vergleich</button><button type="button" class="secondary-button" data-signal-step="5">6 Treppenfunktion</button><button type="button" class="secondary-button" data-signal-step="6">7 Ausgabe</button></div><p id="signal-step-status" class="step-status" aria-live="polite"></p></div>
+        <p class="data-boundary"><strong>Trennungshinweis:</strong> Das Zahlenbeispiel verwendet andere Gewichte als die Trenngerade im ersten Reiter. Es zeigt denselben Rechenweg, aber nicht dieselbe gelernte Gerade.</p>
+        <article class="remember"><p>Ein Perzeptron multipliziert Eingaben mit Gewichten, addiert die Ergebnisse und vergleicht die Summe mit einem Schwellenwert.</p></article><details><summary>Vertiefung: mehrere Eingaben</summary><p class="math">Für n Eingaben gilt: a = w₁x₁ + w₂x₂ + … + wₙxₙ = Σ wᵢxᵢ.</p></details>
+        <details><summary>Hilfe 1: Informationsweg</summary><p>Folge den Pfeilen von links nach rechts. Beginne bei x₁ = 2 und x₂ = 4.</p></details><details><summary>Hilfe 2: Produkte</summary><p>Berechne zuerst die Produkte an den beiden Verbindungen und addiere sie danach.</p></details><details><summary>Hilfe 3: Ergebnis</summary><p>Die Produkte sind −2 und 8; daraus folgt a = 6, und 6 ≥ 3 liefert die Ausgabe 1.</p></details>
         <div class="flow-navigation" data-flow="structure"></div>
       </section>
 
       <section id="decide" class="step-panel" role="tabpanel" aria-labelledby="tab-decide" data-panel="decide" hidden>
-        <p class="kicker">Entscheiden</p><h2>Ein Tier klassifizieren</h2><p>Für ein Tier gelten x<sub>1</sub> = 2, x<sub>2</sub> = 4, w<sub>1</sub> = −1, w<sub>2</sub> = 2 und θ = 3. Berechne zuerst die Beiträge und dann die Entscheidung.</p>
+        <p class="kicker">Selbst rechnen</p><h2>Ein Hai wird klassifiziert</h2><p><strong>Arbeitsauftrag:</strong> Ein Hai hat hier die Merkmalswerte x<sub>1</sub> = 4 und x<sub>2</sub> = 1. Berechne mit w<sub>1</sub> = −1, w<sub>2</sub> = 2 und θ = 3 die Produkte, die Summe und die Klasse.</p>
         <p class="math">a = w<sub>1</sub> · x<sub>1</sub> + w<sub>2</sub> · x<sub>2</sub>; f(a) = 1 bei a ≥ θ, sonst 0</p>
         <div class="input-grid" id="decision-form">
           <label>Beitrag w<sub>1</sub> · x<sub>1</sub><input data-answer="product1" inputmode="decimal"></label><label>Beitrag w<sub>2</sub> · x<sub>2</sub><input data-answer="product2" inputmode="decimal"></label><label>gewichtete Summe a<input data-answer="sum" inputmode="decimal"></label>
           <label>Vergleich<select data-answer="comparison"><option value="">Bitte wählen</option><option value="ge">a ≥ θ</option><option value="lt">a &lt; θ</option></select></label><label>Ausgabe f(a)<select data-answer="output"><option value="">Bitte wählen</option><option value="0">0</option><option value="1">1</option></select></label><label>Klasse<select data-answer="class"><option value="">Bitte wählen</option><option value="safe">ungefährlich</option><option value="danger">gefährlich</option></select></label>
         </div><button id="check-decision" class="primary-button" type="button">Rechnung überprüfen</button><div id="decision-feedback" class="feedback" role="status" aria-live="polite" hidden></div>
-        <details><summary>Hilfe 1: getrennt rechnen</summary><p>Berechne die beiden Produkte getrennt. Achte beim ersten Gewicht auf das Minuszeichen.</p></details><details><summary>Hilfe 2: vergleichen</summary><p>Addiere −1 · 2 und 2 · 4. Vergleiche anschließend mit 3.</p></details><details><summary>Hilfe 3: Teilergebnis</summary><p>Die Beiträge sind −2 und 8. Damit ist a = 6.</p></details><div class="flow-navigation" data-flow="decide"></div>
+        <details><summary>Hilfe 1: getrennt rechnen</summary><p>Berechne die beiden Produkte getrennt. Achte beim ersten Gewicht auf das Minuszeichen.</p></details><details><summary>Hilfe 2: vergleichen</summary><p>Addiere −1 · 4 und 2 · 1. Vergleiche anschließend mit 3.</p></details><details><summary>Hilfe 3: Teilergebnis</summary><p>Die Beiträge sind −4 und 2. Damit ist a = −2.</p></details><div class="flow-navigation" data-flow="decide"></div>
       </section>
 
       <section id="learn" class="step-panel" role="tabpanel" aria-labelledby="tab-learn" data-panel="learn" hidden>
