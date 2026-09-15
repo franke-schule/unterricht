@@ -79,7 +79,7 @@
 
           <article class="physics-task-card" aria-labelledby="hammer-simulation-title">
             <h3 id="hammer-simulation-title">Aufgabe 2a · Digitaler Hammerwurf mit Knetmasse</h3>
-            <div class="circle-simulation" data-centripetal-simulation="explore">
+            <div class="circle-simulation circle-simulation--compact" data-centripetal-simulation="explore">
               <svg viewBox="0 0 600 600" role="img" aria-label="Knetmasse an einer Schnur auf einer Kreisbahn mit rotem Kraftpfeil F mit Index Z zum Mittelpunkt und blauem Geschwindigkeitspfeil v mit Index B">
                 <defs>
                   <marker id="cf-explore-force-arrow" markerWidth="10" markerHeight="10" refX="8" refY="4" orient="auto"><path d="M0,0 L0,8 L9,4 z" fill="#dc2626"/></marker>
@@ -95,45 +95,60 @@
                 <g data-cf-force-label class="vector-label-badge" aria-label="Zentripetalkraft F mit Index Z"><rect x="-22" y="-16" width="44" height="30" rx="6"/><text text-anchor="middle" dominant-baseline="middle" class="svg-label vector-force-label">F<tspan baseline-shift="sub" font-size="12">Z</tspan></text></g>
                 <g data-cf-speed-label class="vector-label-badge" aria-label="Bahngeschwindigkeit v mit Index B"><rect x="-25" y="-16" width="50" height="30" rx="6"/><text text-anchor="middle" dominant-baseline="middle" class="svg-label vector-speed-label">v<tspan baseline-shift="sub" font-size="12">B</tspan></text></g>
               </svg>
-              <p><strong>Wähle</strong> aus, welche Größe du veränderst, und <strong>verändere</strong> nur diese mit dem Schieberegler. <strong>Beobachte</strong> den roten Kraftpfeil und den Wert von F<sub>Z</sub>.</p>
-              <div class="simulation-readout" aria-live="polite">
-                <strong>m = <span data-cf-mass>0,10</span> kg</strong>
-                <strong>r = <span data-cf-radius-value>0,50</span> m</strong>
-                <strong>ω = <span data-cf-omega>4,0</span> <span class="physics-fraction" role="img" aria-label="Radiant pro Sekunde"><span class="physics-fraction__numerator">rad</span><span class="physics-fraction__denominator">s</span></span></strong>
-                <strong>v<sub>B</sub> = <span data-cf-speed-value>2,0</span> <span class="physics-fraction" role="img" aria-label="Meter pro Sekunde"><span class="physics-fraction__numerator">m</span><span class="physics-fraction__denominator">s</span></span></strong>
-                <strong>F<sub>Z</sub> = <span data-cf-force-value>0,80</span> N</strong>
+              <div class="simulation-aside">
+                <fieldset>
+                  <legend>Welche Größe veränderst du?</legend>
+                  <label><input type="radio" name="cf-explore-variable" value="mass" checked> Masse m</label>
+                  <label><input type="radio" name="cf-explore-variable" value="radius"> Radius r</label>
+                  <label><input type="radio" name="cf-explore-variable" value="omega"> Winkelgeschwindigkeit ω</label>
+                </fieldset>
+                <div class="simulation-controls">
+                  <label>m in kg<input data-cf-input="mass" type="range" min="0.05" max="0.20" step="0.05" value="0.10"></label>
+                  <label>r in m<input data-cf-input="radius" type="range" min="0.25" max="1.00" step="0.25" value="0.50" disabled></label>
+                  <label>ω in <span class="physics-fraction" role="img" aria-label="Radiant pro Sekunde"><span class="physics-fraction__numerator">rad</span><span class="physics-fraction__denominator">s</span></span><input data-cf-input="omega" type="range" min="2" max="6" step="1" value="4" disabled></label>
+                </div>
+                <div class="simulation-actions">
+                  <button type="button" class="physics-primary-button" data-cf-action="start">Bewegung starten</button>
+                  <button type="button" class="secondary-action" data-cf-action="pause">Pausieren</button>
+                  <button type="button" class="secondary-action" data-cf-action="reset">Zurücksetzen</button>
+                </div>
               </div>
-              <p class="simulation-note">Vergleich mit dem Ausgangswert 0,80 N: <span data-cf-factor>1,00</span>-mal so groß</p>
-              <p class="simulation-note">Darstellungsmaßstab: 1&nbsp;m Radius entspricht 220 SVG-Einheiten, 1&nbsp;N Kraft entspricht 50 SVG-Einheiten. Der rote Pfeil zeigt die Kraft der Schnur auf die Knetmasse – genauso stark musst du an der Schnur ziehen.</p>
-              <p class="simulation-status" data-cf-status role="status" aria-live="polite">Bereit. Die Knetmasse startet oben und bewegt sich im Uhrzeigersinn.</p>
-              <fieldset>
-                <legend>Welche Größe veränderst du?</legend>
-                <label><input type="radio" name="cf-explore-variable" value="mass" checked> Masse m</label>
-                <label><input type="radio" name="cf-explore-variable" value="radius"> Radius r</label>
-                <label><input type="radio" name="cf-explore-variable" value="omega"> Winkelgeschwindigkeit ω</label>
-              </fieldset>
-              <div class="simulation-controls">
-                <label>m in kg<input data-cf-input="mass" type="range" min="0.05" max="0.20" step="0.05" value="0.10"></label>
-                <label>r in m<input data-cf-input="radius" type="range" min="0.25" max="1.00" step="0.25" value="0.50" disabled></label>
-                <label>ω in <span class="physics-fraction" role="img" aria-label="Radiant pro Sekunde"><span class="physics-fraction__numerator">rad</span><span class="physics-fraction__denominator">s</span></span><input data-cf-input="omega" type="range" min="2" max="6" step="1" value="4" disabled></label>
-              </div>
-              <div class="simulation-actions">
-                <button type="button" class="physics-primary-button" data-cf-action="start">Bewegung starten</button>
-                <button type="button" class="secondary-action" data-cf-action="pause">Pausieren</button>
-                <button type="button" class="secondary-action" data-cf-action="reset">Zurücksetzen</button>
+              <div class="simulation-info">
+                <p><strong>Wähle</strong> aus, welche Größe du veränderst, und <strong>verändere</strong> nur diese mit dem Schieberegler. <strong>Beobachte</strong> den roten Kraftpfeil und den Wert von F<sub>Z</sub>.</p>
+                <div class="simulation-readout" aria-live="polite">
+                  <strong>m = <span data-cf-mass>0,10</span> kg</strong>
+                  <strong>r = <span data-cf-radius-value>0,50</span> m</strong>
+                  <strong>ω = <span data-cf-omega>4,0</span> <span class="physics-fraction" role="img" aria-label="Radiant pro Sekunde"><span class="physics-fraction__numerator">rad</span><span class="physics-fraction__denominator">s</span></span></strong>
+                  <strong>v<sub>B</sub> = <span data-cf-speed-value>2,0</span> <span class="physics-fraction" role="img" aria-label="Meter pro Sekunde"><span class="physics-fraction__numerator">m</span><span class="physics-fraction__denominator">s</span></span></strong>
+                  <strong>F<sub>Z</sub> = <span data-cf-force-value>0,80</span> N</strong>
+                </div>
+                <p class="simulation-note">Vergleich mit dem Ausgangswert 0,80 N: <span data-cf-factor>1,00</span>-mal so groß</p>
+                <p class="simulation-note">Darstellungsmaßstab: 1&nbsp;m Radius entspricht 220 SVG-Einheiten, 1&nbsp;N Kraft entspricht 50 SVG-Einheiten. Der rote Pfeil zeigt die Kraft der Schnur auf die Knetmasse – genauso stark musst du an der Schnur ziehen.</p>
+                <p class="simulation-status" data-cf-status role="status" aria-live="polite">Bereit. Die Knetmasse startet oben und bewegt sich im Uhrzeigersinn.</p>
               </div>
             </div>
           </article>
 
           <article class="physics-task-card" aria-labelledby="jedesto-title">
             <h3 id="jedesto-title">Aufgabe 2b · Je-desto-Aussagen</h3>
-            <p><strong>Wähle</strong> alle Je-desto-Aussagen aus, die zu deinen Beobachtungen in der Simulation passen.</p>
-            <div id="je-desto-quiz" class="physics-multiple-choice" aria-label="Multiple-Choice-Aufgabe zu Je-desto-Aussagen"></div>
-            <section class="notebook-task">
-              <h4>Im Unterricht: Hammerwurf mit Knetmasse</h4>
-              <p>Befestige etwa 50&nbsp;g Knetmasse fest an einer reißfesten Schnur von etwa 1&nbsp;m Länge. <strong>Lass</strong> die Knetmasse kreisen, <strong>verändere</strong> nacheinander Winkelgeschwindigkeit, Radius und Masse und <strong>beschreibe</strong>, wie sich die Kraft in deiner Hand ändert.</p>
-              <p><strong>Sicherheitshinweis:</strong> Halte genügend Abstand zu anderen Personen und prüfe vor jedem Versuch, ob die Knetmasse fest an der Schnur sitzt.</p>
-            </section>
+            <p><strong>Ergänze</strong> jede Aussage mit dem Vergleichswort, das zu deinen Beobachtungen in der Simulation passt.</p>
+            <div id="je-desto-cloze" class="je-desto-cloze">
+              <div class="je-desto-sentence">
+                <p class="cloze-sentence">Je <input type="text" id="je-desto-mass-1" class="cloze-text-input" autocomplete="off" spellcheck="false" size="9" aria-label="Vergleichswort für die Masse m, erste Lücke"> die Masse m, desto <input type="text" id="je-desto-mass-2" class="cloze-text-input" autocomplete="off" spellcheck="false" size="9" aria-label="Vergleichswort für die Masse m, zweite Lücke"> die Zentripetalkraft F<sub>Z</sub>.</p>
+                <button type="button" class="physics-primary-button direct-check-button" id="check-je-desto-mass">Prüfen</button>
+                <p id="je-desto-mass-feedback" class="physics-feedback" role="status" aria-live="polite" hidden></p>
+              </div>
+              <div class="je-desto-sentence">
+                <p class="cloze-sentence">Je <input type="text" id="je-desto-omega-1" class="cloze-text-input" autocomplete="off" spellcheck="false" size="9" aria-label="Vergleichswort für die Winkelgeschwindigkeit ω, erste Lücke"> die Winkelgeschwindigkeit ω, desto <input type="text" id="je-desto-omega-2" class="cloze-text-input" autocomplete="off" spellcheck="false" size="9" aria-label="Vergleichswort für die Winkelgeschwindigkeit ω, zweite Lücke"> die Zentripetalkraft F<sub>Z</sub>.</p>
+                <button type="button" class="physics-primary-button direct-check-button" id="check-je-desto-omega">Prüfen</button>
+                <p id="je-desto-omega-feedback" class="physics-feedback" role="status" aria-live="polite" hidden></p>
+              </div>
+              <div class="je-desto-sentence">
+                <p class="cloze-sentence">Je <input type="text" id="je-desto-radius-1" class="cloze-text-input" autocomplete="off" spellcheck="false" size="9" aria-label="Vergleichswort für den Radius r, erste Lücke"> der Radius r bei gleicher Winkelgeschwindigkeit ω, desto <input type="text" id="je-desto-radius-2" class="cloze-text-input" autocomplete="off" spellcheck="false" size="9" aria-label="Vergleichswort für den Radius r, zweite Lücke"> die Zentripetalkraft F<sub>Z</sub>.</p>
+                <button type="button" class="physics-primary-button direct-check-button" id="check-je-desto-radius">Prüfen</button>
+                <p id="je-desto-radius-feedback" class="physics-feedback" role="status" aria-live="polite" hidden></p>
+              </div>
+            </div>
           </article>
         </section>
 
@@ -146,20 +161,66 @@
 
           <article class="physics-task-card" aria-labelledby="proportion-title">
             <h3 id="proportion-title">Aufgabe 3 · Proportionalitäten zuordnen</h3>
-            <p><strong>Ordne</strong> jeder Größe die passende Proportionalität zu. <strong>Nutze</strong> dafür die Simulation aus Aufgabe 2a.</p>
-            <div id="proportion-rows"></div>
-            <button class="physics-primary-button" id="check-proportion" type="button">Zuordnung prüfen</button>
-            <div id="proportion-feedback" class="physics-feedback" role="status" aria-live="polite" hidden></div>
-            <div class="physics-help-stack">
-              <details><summary>Hilfe 1: Hinweis</summary><p>Stelle in der Simulation eine Größe auf das Doppelte ein und lies ab, wie oft so groß F<sub>Z</sub> wird.</p></details>
-              <details><summary>Hilfe 2: Denkansatz</summary><p>Doppelter Wert und doppelte Kraft bedeutet F<sub>Z</sub> ~ Größe. Doppelter Wert und vierfache Kraft bedeutet F<sub>Z</sub> ~ Größe². Doppelter Wert und halbe Kraft bedeutet F<sub>Z</sub> ~ <span class="physics-fraction" role="img" aria-label="1 durch Größe"><span class="physics-fraction__numerator">1</span><span class="physics-fraction__denominator">Größe</span></span>.</p></details>
-              <details><summary>Hilfe 3: Teillösung</summary><p>Beispiel: Wird ω von 2,0 <span class="physics-fraction" role="img" aria-label="Radiant pro Sekunde"><span class="physics-fraction__numerator">rad</span><span class="physics-fraction__denominator">s</span></span> auf 4,0 <span class="physics-fraction" role="img" aria-label="Radiant pro Sekunde"><span class="physics-fraction__numerator">rad</span><span class="physics-fraction__denominator">s</span></span> verdoppelt, steigt F<sub>Z</sub> von 0,20 N auf 0,80 N – also auf das Vierfache.</p></details>
+            <div class="task-with-mini-simulation">
+              <div class="task-with-mini-simulation__main">
+                <p><strong>Ordne</strong> jeder Größe die passende Proportionalität zu. <strong>Nutze</strong> dafür die Simulation aus Aufgabe 2a.</p>
+                <div id="proportion-rows"></div>
+                <button class="physics-primary-button" id="check-proportion" type="button">Zuordnung prüfen</button>
+                <div id="proportion-feedback" class="physics-feedback" role="status" aria-live="polite" hidden></div>
+                <div class="physics-help-stack">
+                  <details><summary>Hilfe 1: Hinweis</summary><p>Stelle in der Simulation eine Größe auf das Doppelte ein und lies ab, wie oft so groß F<sub>Z</sub> wird.</p></details>
+                  <details><summary>Hilfe 2: Denkansatz</summary><p>Doppelter Wert und doppelte Kraft bedeutet F<sub>Z</sub> ~ Größe. Doppelter Wert und vierfache Kraft bedeutet F<sub>Z</sub> ~ Größe². Doppelter Wert und halbe Kraft bedeutet F<sub>Z</sub> ~ <span class="physics-fraction" role="img" aria-label="1 durch Größe"><span class="physics-fraction__numerator">1</span><span class="physics-fraction__denominator">Größe</span></span>.</p></details>
+                  <details><summary>Hilfe 3: Teillösung</summary><p>Beispiel: Wird ω von 2,0 <span class="physics-fraction" role="img" aria-label="Radiant pro Sekunde"><span class="physics-fraction__numerator">rad</span><span class="physics-fraction__denominator">s</span></span> auf 4,0 <span class="physics-fraction" role="img" aria-label="Radiant pro Sekunde"><span class="physics-fraction__numerator">rad</span><span class="physics-fraction__denominator">s</span></span> verdoppelt, steigt F<sub>Z</sub> von 0,20 N auf 0,80 N – also auf das Vierfache.</p></details>
+                </div>
+              </div>
+              <aside class="task-with-mini-simulation__aside circle-simulation circle-simulation--compact" data-centripetal-simulation="mini" aria-label="Kleine Hammerwurf-Simulation zum Ausprobieren">
+                <svg viewBox="0 0 600 600" role="img" aria-label="Kleine Simulation zum Ausprobieren: Knetmasse an einer Schnur auf einer Kreisbahn mit rotem Kraftpfeil F mit Index Z zum Mittelpunkt und blauem Geschwindigkeitspfeil v mit Index B">
+                  <defs>
+                    <marker id="cf-mini-force-arrow" markerWidth="10" markerHeight="10" refX="8" refY="4" orient="auto"><path d="M0,0 L0,8 L9,4 z" fill="#dc2626"/></marker>
+                    <marker id="cf-mini-speed-arrow" markerWidth="10" markerHeight="10" refX="8" refY="4" orient="auto"><path d="M0,0 L0,8 L9,4 z" fill="#2563eb"/></marker>
+                  </defs>
+                  <circle cx="300" cy="300" r="110" data-cf-orbit class="orbit"/>
+                  <line x1="300" y1="300" x2="300" y2="190" data-cf-radius class="radius-line"/>
+                  <circle cx="300" cy="300" r="6" class="center-point"/>
+                  <text x="308" y="317" class="svg-label">Hand</text>
+                  <line data-cf-force class="force-vector" marker-end="url(#cf-mini-force-arrow)"/>
+                  <line data-cf-speed class="speed-vector" marker-end="url(#cf-mini-speed-arrow)"/>
+                  <circle data-cf-body cx="300" cy="190" r="12" class="moving-body"/>
+                  <g data-cf-force-label class="vector-label-badge" aria-label="Zentripetalkraft F mit Index Z"><rect x="-22" y="-16" width="44" height="30" rx="6"/><text text-anchor="middle" dominant-baseline="middle" class="svg-label vector-force-label">F<tspan baseline-shift="sub" font-size="12">Z</tspan></text></g>
+                  <g data-cf-speed-label class="vector-label-badge" aria-label="Bahngeschwindigkeit v mit Index B"><rect x="-25" y="-16" width="50" height="30" rx="6"/><text text-anchor="middle" dominant-baseline="middle" class="svg-label vector-speed-label">v<tspan baseline-shift="sub" font-size="12">B</tspan></text></g>
+                </svg>
+                <div class="simulation-readout" aria-live="polite">
+                  <strong>m = <span data-cf-mass>0,10</span> kg</strong>
+                  <strong>r = <span data-cf-radius-value>0,50</span> m</strong>
+                  <strong>ω = <span data-cf-omega>4,0</span> <span class="physics-fraction" role="img" aria-label="Radiant pro Sekunde"><span class="physics-fraction__numerator">rad</span><span class="physics-fraction__denominator">s</span></span></strong>
+                  <strong>v<sub>B</sub> = <span data-cf-speed-value>2,0</span> <span class="physics-fraction" role="img" aria-label="Meter pro Sekunde"><span class="physics-fraction__numerator">m</span><span class="physics-fraction__denominator">s</span></span></strong>
+                  <strong>F<sub>Z</sub> = <span data-cf-force-value>0,80</span> N</strong>
+                </div>
+                <p class="simulation-note">Vergleich mit dem Ausgangswert 0,80 N: <span data-cf-factor>1,00</span>-mal so groß</p>
+                <p class="simulation-status" data-cf-status role="status" aria-live="polite">Bereit. Die Knetmasse startet oben und bewegt sich im Uhrzeigersinn.</p>
+                <fieldset>
+                  <legend>Welche Größe veränderst du?</legend>
+                  <label><input type="radio" name="cf-mini-variable" value="mass" checked> Masse m</label>
+                  <label><input type="radio" name="cf-mini-variable" value="radius"> Radius r</label>
+                  <label><input type="radio" name="cf-mini-variable" value="omega"> Winkelgeschwindigkeit ω</label>
+                </fieldset>
+                <div class="simulation-controls">
+                  <label>m in kg<input data-cf-input="mass" type="range" min="0.05" max="0.20" step="0.05" value="0.10"></label>
+                  <label>r in m<input data-cf-input="radius" type="range" min="0.25" max="1.00" step="0.25" value="0.50" disabled></label>
+                  <label>ω in <span class="physics-fraction" role="img" aria-label="Radiant pro Sekunde"><span class="physics-fraction__numerator">rad</span><span class="physics-fraction__denominator">s</span></span><input data-cf-input="omega" type="range" min="2" max="6" step="1" value="4" disabled></label>
+                </div>
+                <div class="simulation-actions">
+                  <button type="button" class="physics-primary-button" data-cf-action="start">Bewegung starten</button>
+                  <button type="button" class="secondary-action" data-cf-action="pause">Pausieren</button>
+                  <button type="button" class="secondary-action" data-cf-action="reset">Zurücksetzen</button>
+                </div>
+              </aside>
             </div>
           </article>
 
           <article class="physics-task-card" aria-labelledby="radius-simulation-title">
             <h3 id="radius-simulation-title">Aufgabe 4a · Stolperstelle Radius</h3>
-            <div class="circle-simulation" data-centripetal-simulation="radius">
+            <div class="circle-simulation circle-simulation--compact" data-centripetal-simulation="radius">
               <svg viewBox="0 0 600 600" role="img" aria-label="Knetmasse an einer Schnur auf einer Kreisbahn mit rotem Kraftpfeil F mit Index Z zum Mittelpunkt und blauem Geschwindigkeitspfeil v mit Index B">
                 <defs>
                   <marker id="cf-radius-force-arrow" markerWidth="10" markerHeight="10" refX="8" refY="4" orient="auto"><path d="M0,0 L0,8 L9,4 z" fill="#dc2626"/></marker>
@@ -175,27 +236,31 @@
                 <g data-cf-force-label class="vector-label-badge" aria-label="Zentripetalkraft F mit Index Z"><rect x="-22" y="-16" width="44" height="30" rx="6"/><text text-anchor="middle" dominant-baseline="middle" class="svg-label vector-force-label">F<tspan baseline-shift="sub" font-size="12">Z</tspan></text></g>
                 <g data-cf-speed-label class="vector-label-badge" aria-label="Bahngeschwindigkeit v mit Index B"><rect x="-25" y="-16" width="50" height="30" rx="6"/><text text-anchor="middle" dominant-baseline="middle" class="svg-label vector-speed-label">v<tspan baseline-shift="sub" font-size="12">B</tspan></text></g>
               </svg>
-              <p><strong>Stelle</strong> ein, welche Größe gleich bleibt, und <strong>verdopple</strong> den Radius von 0,50 m auf 1,00 m. <strong>Vergleiche</strong> jeweils F<sub>Z</sub>.</p>
-              <div class="simulation-readout" aria-live="polite">
-                <strong>r = <span data-cf-radius-value>0,50</span> m</strong>
-                <strong>ω = <span data-cf-omega>4,0</span> <span class="physics-fraction" role="img" aria-label="Radiant pro Sekunde"><span class="physics-fraction__numerator">rad</span><span class="physics-fraction__denominator">s</span></span></strong>
-                <strong>v<sub>B</sub> = <span data-cf-speed-value>2,0</span> <span class="physics-fraction" role="img" aria-label="Meter pro Sekunde"><span class="physics-fraction__numerator">m</span><span class="physics-fraction__denominator">s</span></span></strong>
-                <strong>F<sub>Z</sub> = <span data-cf-force-value>0,80</span> N</strong>
+              <div class="simulation-aside">
+                <fieldset>
+                  <legend>Was bleibt gleich?</legend>
+                  <label><input type="radio" name="cf-radius-mode" value="omega" checked> ω bleibt gleich (4,0 <span class="physics-fraction" role="img" aria-label="Radiant pro Sekunde"><span class="physics-fraction__numerator">rad</span><span class="physics-fraction__denominator">s</span></span>)</label>
+                  <label><input type="radio" name="cf-radius-mode" value="speed"> v<sub>B</sub> bleibt gleich (2,0 <span class="physics-fraction" role="img" aria-label="Meter pro Sekunde"><span class="physics-fraction__numerator">m</span><span class="physics-fraction__denominator">s</span></span>)</label>
+                </fieldset>
+                <div class="simulation-controls">
+                  <label>r in m<input data-cf-input="radius" type="range" min="0.40" max="1.00" step="0.10" value="0.50"></label>
+                </div>
+                <div class="simulation-actions">
+                  <button type="button" class="physics-primary-button" data-cf-action="start">Bewegung starten</button>
+                  <button type="button" class="secondary-action" data-cf-action="pause">Pausieren</button>
+                  <button type="button" class="secondary-action" data-cf-action="reset">Zurücksetzen</button>
+                </div>
               </div>
-              <p class="simulation-note">Vergleich mit dem Ausgangswert 0,80 N: <span data-cf-factor>1,00</span>-mal so groß</p>
-              <p class="simulation-status" data-cf-status role="status" aria-live="polite">Bereit. Die Knetmasse startet oben und bewegt sich im Uhrzeigersinn.</p>
-              <fieldset>
-                <legend>Was bleibt gleich?</legend>
-                <label><input type="radio" name="cf-radius-mode" value="omega" checked> ω bleibt gleich (4,0 <span class="physics-fraction" role="img" aria-label="Radiant pro Sekunde"><span class="physics-fraction__numerator">rad</span><span class="physics-fraction__denominator">s</span></span>)</label>
-                <label><input type="radio" name="cf-radius-mode" value="speed"> v<sub>B</sub> bleibt gleich (2,0 <span class="physics-fraction" role="img" aria-label="Meter pro Sekunde"><span class="physics-fraction__numerator">m</span><span class="physics-fraction__denominator">s</span></span>)</label>
-              </fieldset>
-              <div class="simulation-controls">
-                <label>r in m<input data-cf-input="radius" type="range" min="0.40" max="1.00" step="0.10" value="0.50"></label>
-              </div>
-              <div class="simulation-actions">
-                <button type="button" class="physics-primary-button" data-cf-action="start">Bewegung starten</button>
-                <button type="button" class="secondary-action" data-cf-action="pause">Pausieren</button>
-                <button type="button" class="secondary-action" data-cf-action="reset">Zurücksetzen</button>
+              <div class="simulation-info">
+                <p><strong>Stelle</strong> ein, welche Größe gleich bleibt, und <strong>verdopple</strong> den Radius von 0,50 m auf 1,00 m. <strong>Vergleiche</strong> jeweils F<sub>Z</sub>.</p>
+                <div class="simulation-readout" aria-live="polite">
+                  <strong>r = <span data-cf-radius-value>0,50</span> m</strong>
+                  <strong>ω = <span data-cf-omega>4,0</span> <span class="physics-fraction" role="img" aria-label="Radiant pro Sekunde"><span class="physics-fraction__numerator">rad</span><span class="physics-fraction__denominator">s</span></span></strong>
+                  <strong>v<sub>B</sub> = <span data-cf-speed-value>2,0</span> <span class="physics-fraction" role="img" aria-label="Meter pro Sekunde"><span class="physics-fraction__numerator">m</span><span class="physics-fraction__denominator">s</span></span></strong>
+                  <strong>F<sub>Z</sub> = <span data-cf-force-value>0,80</span> N</strong>
+                </div>
+                <p class="simulation-note">Vergleich mit dem Ausgangswert 0,80 N: <span data-cf-factor>1,00</span>-mal so groß</p>
+                <p class="simulation-status" data-cf-status role="status" aria-live="polite">Bereit. Die Knetmasse startet oben und bewegt sich im Uhrzeigersinn.</p>
               </div>
             </div>
           </article>
@@ -225,8 +290,8 @@
             <figure class="centripetal-figure">
               <svg viewBox="0 0 560 300" role="img" aria-label="Zwei Kreisbahnen um denselben Mittelpunkt mit gleich langen Bögen Δx. Daneben die Vektordreiecke: Auf dem inneren Kreis ist die Geschwindigkeitsänderung Δv etwa doppelt so lang wie auf dem äußeren Kreis.">
                 <defs>
-                  <marker id="reason-speed-arrow" markerWidth="10" markerHeight="10" refX="8" refY="4" orient="auto"><path d="M0,0 L0,8 L9,4 z" fill="#2563eb"/></marker>
-                  <marker id="reason-force-arrow" markerWidth="10" markerHeight="10" refX="8" refY="4" orient="auto"><path d="M0,0 L0,8 L9,4 z" fill="#dc2626"/></marker>
+                  <marker id="reason-speed-arrow" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto" markerUnits="userSpaceOnUse"><path d="M0,0 L0,6 L8,3 z" fill="#2563eb"/></marker>
+                  <marker id="reason-force-arrow" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto" markerUnits="userSpaceOnUse"><path d="M0,0 L0,6 L8,3 z" fill="#dc2626"/></marker>
                 </defs>
                 <circle cx="200" cy="280" r="4" class="center-point"/>
                 <text x="184" y="272" class="svg-label">M</text>
@@ -273,11 +338,11 @@
 
           <article class="physics-task-card" aria-labelledby="triangle-title">
             <h3 id="triangle-title">Aufgabe 5 · Das Vektordreieck</h3>
-            <figure class="centripetal-figure">
+            <figure class="centripetal-figure centripetal-figure--triangle">
               <svg viewBox="0 0 680 300" role="img" aria-label="Skizze A: Ein Körper läuft auf einem Kreis mit Mittelpunkt M und Radius r in der Zeit Δt von A nach B; dabei dreht sich die Verbindungslinie um den Winkel φ. Skizze B: Die Geschwindigkeitsvektoren v mit Index 1 und v mit Index 2 bilden mit Δv ein gleichschenkliges Dreieck mit dem Winkel φ an der Spitze; Δv zeigt nach unten.">
                 <defs>
-                  <marker id="triangle-speed-arrow" markerWidth="10" markerHeight="10" refX="8" refY="4" orient="auto"><path d="M0,0 L0,8 L9,4 z" fill="#2563eb"/></marker>
-                  <marker id="triangle-force-arrow" markerWidth="10" markerHeight="10" refX="8" refY="4" orient="auto"><path d="M0,0 L0,8 L9,4 z" fill="#dc2626"/></marker>
+                  <marker id="triangle-speed-arrow" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto" markerUnits="userSpaceOnUse"><path d="M0,0 L0,6 L8,3 z" fill="#2563eb"/></marker>
+                  <marker id="triangle-force-arrow" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto" markerUnits="userSpaceOnUse"><path d="M0,0 L0,6 L8,3 z" fill="#dc2626"/></marker>
                 </defs>
                 <circle cx="170" cy="240" r="170" class="orbit"/>
                 <circle cx="170" cy="240" r="4" class="center-point"/>
@@ -295,16 +360,16 @@
                 <text x="70" y="100" class="svg-label">A</text>
                 <text x="262" y="100" class="svg-label">B</text>
                 <line x1="85" y1="92.78" x2="154.28" y2="52.78" class="speed-vector" marker-end="url(#triangle-speed-arrow)"/>
-                <text x="140" y="45" class="svg-label vector-speed-label">v<tspan baseline-shift="sub" font-size="12">1</tspan></text>
+                <text x="133" y="32" class="svg-label vector-speed-label">v<tspan baseline-shift="sub" font-size="12">1</tspan></text>
                 <line x1="255" y1="92.78" x2="324.28" y2="132.78" class="speed-vector" marker-end="url(#triangle-speed-arrow)"/>
                 <text x="300" y="150" class="svg-label vector-speed-label">v<tspan baseline-shift="sub" font-size="12">2</tspan></text>
                 <text x="170" y="290" text-anchor="middle" class="svg-label">A</text>
 
                 <circle cx="470" cy="150" r="3" class="center-point"/>
                 <line x1="470" y1="150" x2="599.9" y2="75" class="speed-vector" marker-end="url(#triangle-speed-arrow)"/>
-                <text x="565" y="95" class="svg-label vector-speed-label">v<tspan baseline-shift="sub" font-size="12">1</tspan></text>
+                <text x="585" y="58" class="svg-label vector-speed-label">v<tspan baseline-shift="sub" font-size="12">1</tspan></text>
                 <line x1="470" y1="150" x2="599.9" y2="225" class="speed-vector" marker-end="url(#triangle-speed-arrow)"/>
-                <text x="565" y="215" class="svg-label vector-speed-label">v<tspan baseline-shift="sub" font-size="12">2</tspan></text>
+                <text x="585" y="243" class="svg-label vector-speed-label">v<tspan baseline-shift="sub" font-size="12">2</tspan></text>
                 <line x1="599.9" y1="75" x2="599.9" y2="225" class="force-vector" marker-end="url(#triangle-force-arrow)"/>
                 <text x="655" y="153" class="svg-label vector-force-label">Δv</text>
                 <path d="M 500 135 A 42 42 0 0 1 500 165" class="angle-arc"/>

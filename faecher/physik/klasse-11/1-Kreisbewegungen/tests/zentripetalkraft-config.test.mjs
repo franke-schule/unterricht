@@ -19,6 +19,7 @@ assert.deepEqual(eyebrows, ["Entdecken", "Verstehen", "Verstehen", "Anwenden", "
 // Simulationen
 assert.match(html, /data-centripetal-simulation="explore"/);
 assert.match(html, /data-centripetal-simulation="radius"/);
+assert.match(html, /data-centripetal-simulation="mini"/);
 assert.ok((html.match(/F<sub>Z<\/sub>/g) || []).length >= 1);
 assert.doesNotMatch(html, /F_ZP/);
 assert.doesNotMatch(html, /ZP<\/sub>/);
@@ -26,6 +27,19 @@ assert.match(html, /cf-explore-force-arrow/);
 assert.match(html, /cf-explore-speed-arrow/);
 assert.match(html, /cf-radius-force-arrow/);
 assert.match(html, /cf-radius-speed-arrow/);
+assert.match(html, /cf-mini-force-arrow/);
+assert.match(html, /cf-mini-speed-arrow/);
+
+// Aufgabe 2b: Freitext-Lückentext ohne Wortvorgaben (ersetzt das frühere
+// Multiple-Choice), Realexperiment-Anmerkung vollständig entfernt.
+assert.doesNotMatch(html, /id="je-desto-quiz"/);
+assert.doesNotMatch(html, /Im Unterricht: Hammerwurf mit Knetmasse/);
+assert.match(html, /id="je-desto-mass-1"/);
+assert.match(html, /id="je-desto-mass-2"/);
+assert.match(html, /id="je-desto-omega-1"/);
+assert.match(html, /id="je-desto-radius-1"/);
+assert.equal((html.match(/class="cloze-text-input"/g) || []).length, 6);
+assert.equal((html.match(/id="check-je-desto-(mass|omega|radius)"/g) || []).length, 3);
 
 // Download-Bereich nach dem Abschlussquiz im Panel "quiz"
 assert.match(html, /data-physics-panel="quiz"[\s\S]*id="centripetal-quiz"[\s\S]*class="solution-download"/);
@@ -50,6 +64,13 @@ assert.match(source, /significantDigitCount/);
 assert.match(source, /prefers-reduced-motion/);
 assert.match(source, /MutationObserver/);
 assert.match(source, /physicsTextSpan\(labelText, "quiz-option-text"\)/);
+
+// Prüflogik des 2b-Lückentexts (Toleranz: Groß-/Kleinschreibung, Leerzeichen,
+// ASCII-Ersatzschreibweise "groesser" für "größer")
+assert.match(source, /function normalizeGermanWord\(value\)/);
+assert.match(source, /replace\(\/ö\/g, "oe"\)/);
+assert.match(source, /function setupJeDestoCloze\(\)/);
+assert.doesNotMatch(source, /setupJeDestoQuiz/);
 assert.match(source, /correct: \["four"\]/);
 assert.match(source, /correct: \["omega", "speed"\]/);
 assert.match(source, /correct: \["rope", "friction", "gravity"\]/);

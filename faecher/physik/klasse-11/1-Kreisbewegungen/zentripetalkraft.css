@@ -41,10 +41,137 @@
   justify-content: center;
 }
 
-/* Größen der statischen SVGs: Die Skizzen zu Aufgabe 1, 4c und 5 sind
+/* Größen der statischen SVGs: Die Skizzen zu Aufgabe 1 und 4c sind
    breiter angelegt als die bisherigen Kreisbewegungs-Grafiken. */
 .circular-motion-page .centripetal-figure svg {
   width: min(100%, 700px);
+}
+
+/* Aufgabe 5 (Vektordreieck): etwas kleiner als die übrigen Skizzen. */
+.circular-motion-page .centripetal-figure--triangle svg {
+  width: min(100%, 560px);
+}
+
+/* Aufgabe 2a und 4a: Regler/Buttons und Anzeigen/Hinweise werden zu zwei
+   Gruppen zusammengefasst (.simulation-aside, .simulation-info), damit sie
+   sich unabhängig von der Fließreihenfolge anordnen lassen. */
+.circular-motion-page .circle-simulation--compact[data-centripetal-simulation="explore"] .simulation-aside,
+.circular-motion-page .circle-simulation--compact[data-centripetal-simulation="radius"] .simulation-aside,
+.circular-motion-page .circle-simulation--compact[data-centripetal-simulation="explore"] .simulation-info,
+.circular-motion-page .circle-simulation--compact[data-centripetal-simulation="radius"] .simulation-info {
+  display: grid;
+  gap: 10px;
+}
+
+/* Auf schmalen Bildschirmen (Fließreihenfolge): erst die Erklärung mit
+   Anzeigen, danach Regler und Buttons – wie vor der Aufteilung in zwei
+   Gruppen. */
+.circular-motion-page .circle-simulation--compact[data-centripetal-simulation="explore"] .simulation-info,
+.circular-motion-page .circle-simulation--compact[data-centripetal-simulation="radius"] .simulation-info {
+  order: 1;
+}
+
+.circular-motion-page .circle-simulation--compact[data-centripetal-simulation="explore"] .simulation-aside,
+.circular-motion-page .circle-simulation--compact[data-centripetal-simulation="radius"] .simulation-aside {
+  order: 2;
+}
+
+/* Ab ca. 700px: Regler und Buttons neben statt unter der Animation, Anzeigen
+   und Hinweise darunter über die volle Breite. Das hält die ganze Aufgabe
+   auf Laptop- und iPad-Bildschirmen ohne Scrollen sichtbar. Darunter bleibt
+   die vorhandene Ein-Spalten-Regel aus winkelgeschwindigkeit-kreisbewegung.css. */
+@media (min-width: 701px) {
+  .circular-motion-page .circle-simulation--compact[data-centripetal-simulation="explore"],
+  .circular-motion-page .circle-simulation--compact[data-centripetal-simulation="radius"] {
+    grid-template-columns: minmax(0, 220px) 1fr;
+    grid-template-areas: "visual aside" "info info";
+    column-gap: 20px;
+    align-items: start;
+  }
+
+  .circular-motion-page .circle-simulation--compact[data-centripetal-simulation="explore"] > svg,
+  .circular-motion-page .circle-simulation--compact[data-centripetal-simulation="radius"] > svg {
+    grid-area: visual;
+  }
+
+  .circular-motion-page .circle-simulation--compact[data-centripetal-simulation="explore"] > .simulation-aside,
+  .circular-motion-page .circle-simulation--compact[data-centripetal-simulation="radius"] > .simulation-aside {
+    grid-area: aside;
+  }
+
+  .circular-motion-page .circle-simulation--compact[data-centripetal-simulation="explore"] > .simulation-info,
+  .circular-motion-page .circle-simulation--compact[data-centripetal-simulation="radius"] > .simulation-info {
+    grid-area: info;
+  }
+
+  /* Regler in einer Zeile statt in zwei Zeilen (Aufgabe 2a hat drei Regler). */
+  .circular-motion-page .circle-simulation--compact[data-centripetal-simulation="explore"] .simulation-controls {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+}
+
+/* Aufgabe 3: kleine Simulation zum Ausprobieren neben der Zuordnungsaufgabe
+   (schmal: oberhalb, per CSS-Reihenfolge, ohne Markup zu verdoppeln). */
+.task-with-mini-simulation {
+  display: grid;
+  gap: 18px;
+}
+
+.task-with-mini-simulation__aside {
+  order: -1;
+  margin-top: 0;
+}
+
+@media (min-width: 701px) {
+  .task-with-mini-simulation {
+    grid-template-columns: minmax(0, 1fr) 220px;
+    align-items: start;
+  }
+
+  .task-with-mini-simulation__main {
+    grid-column: 1;
+    grid-row: 1;
+  }
+
+  .task-with-mini-simulation__aside {
+    grid-column: 2;
+    grid-row: 1;
+    order: 0;
+  }
+}
+
+/* Aufgabe 2b: Freitext-Lückentext ohne Wortvorgaben. */
+.je-desto-cloze {
+  display: grid;
+  gap: 16px;
+  margin-top: 16px;
+}
+
+.je-desto-sentence {
+  padding-top: 14px;
+  border-top: 1px solid #dbe4f0;
+}
+
+.je-desto-sentence:first-child {
+  padding-top: 0;
+  border-top: 0;
+}
+
+.je-desto-sentence .cloze-sentence {
+  margin: 0;
+}
+
+.cloze-text-input {
+  min-height: 44px;
+  width: 8em;
+  max-width: 100%;
+  border: 2px solid #cbd5e1;
+  border-radius: 8px;
+  padding: 6px 9px;
+  color: #1e293b;
+  background: #ffffff;
+  font: inherit;
+  text-align: center;
 }
 
 @media (max-width: 620px) {
@@ -55,5 +182,9 @@
 
   .formula-fraction__numerator {
     gap: 4px;
+  }
+
+  .cloze-text-input {
+    width: 6.5em;
   }
 }

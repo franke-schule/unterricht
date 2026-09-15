@@ -115,21 +115,60 @@ function setupHammerQuiz() {
   }, 0);
 }
 
-function setupJeDestoQuiz() {
-  renderQuizQuestion(document.getElementById("je-desto-quiz"), {
-    question: "Welche Je-desto-Aussagen stimmen?",
-    correct: ["mass-up", "omega-up", "radius-up"],
-    options: [
-      ["mass-up", "Je größer die Masse m, desto **größer** die Zentripetalkraft {{F_Z}}."],
-      ["mass-down", "Je größer die Masse m, desto **kleiner** die Zentripetalkraft {{F_Z}}."],
-      ["omega-up", "Je größer die Winkelgeschwindigkeit ω, desto **größer** die Zentripetalkraft {{F_Z}}."],
-      ["omega-down", "Je größer die Winkelgeschwindigkeit ω, desto **kleiner** die Zentripetalkraft {{F_Z}}."],
-      ["radius-up", "Je größer der Radius r bei gleicher Winkelgeschwindigkeit ω, desto **größer** die Zentripetalkraft {{F_Z}}."],
-      ["radius-down", "Je größer der Radius r bei gleicher Winkelgeschwindigkeit ω, desto **kleiner** die Zentripetalkraft {{F_Z}}."],
-    ],
-    feedback: "Masse, Winkelgeschwindigkeit und – bei gleichem ω – der Radius vergrößern die Zentripetalkraft.",
-    hint: "Wähle in der Simulation nacheinander m, r und ω aus und beobachte jeweils den roten Kraftpfeil und den Wert von {{F_Z}}.",
-  }, 0);
+// Freitext-Lückentext ohne Wortvorgaben (ersetzt das frühere Multiple-Choice
+// aus Aufgabe 2b). Toleranz: Groß-/Kleinschreibung, Leerzeichen am Rand und
+// die ASCII-Ersatzschreibweise ("groesser" statt "größer") werden akzeptiert.
+function normalizeGermanWord(value) {
+  return String(value)
+    .trim()
+    .toLowerCase()
+    .replace(/ß/g, "ss")
+    .replace(/ö/g, "oe")
+    .replace(/ä/g, "ae")
+    .replace(/ü/g, "ue")
+    .replace(/\s+/g, "");
+}
+
+function wordMatches(value, expected) {
+  return normalizeGermanWord(value) === normalizeGermanWord(expected);
+}
+
+function setupJeDestoCloze() {
+  const items = [
+    {
+      inputIds: ["je-desto-mass-1", "je-desto-mass-2"],
+      feedbackId: "je-desto-mass-feedback",
+      buttonId: "check-je-desto-mass",
+      successText: "Korrekt: Je größer die Masse m, desto größer die Zentripetalkraft {{F_Z}}.",
+      partialText: "Eine Lücke stimmt schon. Stelle in der Simulation aus Aufgabe 2a nur die Masse m ein und beobachte den roten Kraftpfeil, während m größer wird.",
+      errorText: "Noch nicht korrekt. Wähle in der Simulation aus Aufgabe 2a die Masse m aus, vergrößere sie mit dem Regler und beobachte den roten Kraftpfeil sowie den Wert von {{F_Z}}.",
+    },
+    {
+      inputIds: ["je-desto-omega-1", "je-desto-omega-2"],
+      feedbackId: "je-desto-omega-feedback",
+      buttonId: "check-je-desto-omega",
+      successText: "Korrekt: Je größer die Winkelgeschwindigkeit ω, desto größer die Zentripetalkraft {{F_Z}}.",
+      partialText: "Eine Lücke stimmt schon. Stelle in der Simulation aus Aufgabe 2a nur die Winkelgeschwindigkeit ω ein und beobachte den roten Kraftpfeil, während ω größer wird.",
+      errorText: "Noch nicht korrekt. Wähle in der Simulation aus Aufgabe 2a die Winkelgeschwindigkeit ω aus, vergrößere sie mit dem Regler und beobachte den roten Kraftpfeil sowie den Wert von {{F_Z}}.",
+    },
+    {
+      inputIds: ["je-desto-radius-1", "je-desto-radius-2"],
+      feedbackId: "je-desto-radius-feedback",
+      buttonId: "check-je-desto-radius",
+      successText: "Korrekt: Je größer der Radius r bei gleicher Winkelgeschwindigkeit ω, desto größer die Zentripetalkraft {{F_Z}}.",
+      partialText: "Eine Lücke stimmt schon. Stelle in der Simulation aus Aufgabe 2a nur den Radius r ein und beobachte den roten Kraftpfeil, während r größer wird.",
+      errorText: "Noch nicht korrekt. Wähle in der Simulation aus Aufgabe 2a den Radius r aus, vergrößere ihn mit dem Regler und beobachte den roten Kraftpfeil sowie den Wert von {{F_Z}}.",
+    },
+  ];
+  items.forEach((item) => {
+    document.getElementById(item.buttonId).addEventListener("click", () => {
+      const inputs = item.inputIds.map((id) => document.getElementById(id));
+      const correctCount = inputs.filter((input) => wordMatches(input.value, "größer")).length;
+      if (correctCount === 2) setFeedback(item.feedbackId, "success", item.successText);
+      else if (correctCount === 1) setFeedback(item.feedbackId, "partial", item.partialText);
+      else setFeedback(item.feedbackId, "error", item.errorText);
+    });
+  });
 }
 
 // ---- Simulationen (setupSpeedSimulation → setupCentripetalSimulation) ----
@@ -239,8 +278,7 @@ const PAUSED_STATUS = "Bewegung pausiert.";
 const REDUCED_MOTION_STATUS = "Bewegung ist wegen der Einstellung für reduzierte Bewegung angehalten. Pfeile und Werte ändern sich trotzdem mit den Reglern.";
 const BASELINE_FORCE = 0.8;
 
-function createExploreConfig() {
-  const host = document.querySelector('[data-centripetal-simulation="explore"]');
+function createExploreConfig(host) {
   const defaults = { mass: 0.1, radius: 0.5, omega: 4 };
   const state = { ...defaults };
   let variable = "mass";
@@ -249,7 +287,10 @@ function createExploreConfig() {
     radius: host.querySelector('[data-cf-input="radius"]'),
     omega: host.querySelector('[data-cf-input="omega"]'),
   };
-  const radios = [...host.querySelectorAll('input[name="cf-explore-variable"]')];
+  // Strukturell statt über einen festen Gruppennamen ausgewählt, damit diese
+  // Konfiguration unverändert für mehrere Instanzen (Aufgabe 2a und die
+  // kleine Simulation in Aufgabe 3) wiederverwendet werden kann.
+  const radios = [...host.querySelectorAll('fieldset input[type="radio"]')];
   const messages = {
     mass: "Du veränderst nur die Masse m. Radius und Winkelgeschwindigkeit bleiben auf den Ausgangswerten.",
     radius: "Du veränderst nur den Radius r. Masse und Winkelgeschwindigkeit bleiben auf den Ausgangswerten.",
@@ -1030,9 +1071,10 @@ function setupFinalQuiz() {
 
 setupPhysicsStepTabs();
 setupHammerQuiz();
-setupCentripetalSimulation(createExploreConfig());
-setupJeDestoQuiz();
+setupCentripetalSimulation(createExploreConfig(document.querySelector('[data-centripetal-simulation="explore"]')));
+setupJeDestoCloze();
 setupProportionRows();
+setupCentripetalSimulation(createExploreConfig(document.querySelector('[data-centripetal-simulation="mini"]')));
 setupCentripetalSimulation(createRadiusConfig());
 setupRadiusMapping();
 setupRadiusReasonQuiz();
