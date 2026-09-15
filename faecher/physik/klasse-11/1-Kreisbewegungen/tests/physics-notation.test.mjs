@@ -3,8 +3,8 @@ import fs from "node:fs";
 
 const read = (name) => fs.readFileSync(new URL(`../${name}`, import.meta.url), "utf8");
 
-const pages = ["aufgabe1.html", "aufgabe2.html", "aufgabe3.html"];
-const modules = ["bewegung-koerpern.mjs", "kraefte-bewegung.mjs", "winkelgeschwindigkeit-kreisbewegung.mjs"];
+const pages = ["aufgabe1.html", "aufgabe2.html", "aufgabe3.html", "aufgabe4.html"];
+const modules = ["bewegung-koerpern.mjs", "kraefte-bewegung.mjs", "winkelgeschwindigkeit-kreisbewegung.mjs", "zentripetalkraft.mjs"];
 
 const notation = read("components/physics-notation.mjs");
 const notationCss = read("components/physics-notation.css");
@@ -48,16 +48,25 @@ for (const name of modules) {
 }
 
 // Einheitenauswahl nutzt Auswahlfelder mit Bruchdarstellung statt eines <select>.
-for (const page of ["aufgabe1.html", "aufgabe2.html"]) {
+for (const page of ["aufgabe1.html", "aufgabe2.html", "aufgabe4.html"]) {
   const html = read(page);
   assert.match(html, /class="unit-choice"/, `${page} nutzt keine Einheitenauswahl mit Bruchdarstellung`);
   assert.doesNotMatch(html, /<option value="m\/s/, `${page} enthält noch ein <select> mit Einheiten`);
 }
 
 // Divisionen in den Sicherungsblättern sind als Bruch gesetzt.
-for (const sheet of ["sicherungsblatt-aufgabe-1-loesungen.tex", "sicherungsblatt-aufgabe-2-loesungen.tex"]) {
+for (const sheet of ["sicherungsblatt-aufgabe-1-loesungen.tex", "sicherungsblatt-aufgabe-2-loesungen.tex", "sicherungsblatt-aufgabe-4-loesungen.tex"]) {
   assert.doesNotMatch(read(sheet), /m\/s|km\/h/, `${sheet} enthält eine Einheit mit Schrägstrich`);
 }
 assert.ok(read("sicherungsblatt-aufgabe-1-loesungen.tex").includes("\\newcommand{\\unitfrac}[2]"), "Das Sicherungsblatt definiert kein Bruchmakro fuer Einheiten");
+
+// createQuotient rendert Indizes wie "v_B" über createIndexedSymbol und schreibt
+// sie im aria-label als "v mit Index B" aus; unveränderte Quotienten ohne "_"
+// bleiben von dieser Erweiterung unberührt.
+assert.match(notation, /function createQuotient/);
+assert.match(notation, /INDEXED_TOKEN/);
+assert.match(notation, /appendIndexedText\(top, numerator\)/);
+assert.match(notation, /appendIndexedText\(bottom, denominator\)/);
+assert.match(notation, /mit Index \$\{INDEX_NAMES\.get\(index\) \|\| index\}/);
 
 console.log("Einheiten stehen als Bruch, Indizes sind tiefgestellt und beides kommt aus der gemeinsamen Komponente.");

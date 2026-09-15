@@ -1,0 +1,514 @@
+<!doctype html>
+<html lang="de">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="robots" content="noindex, nofollow">
+    <title>Aufgabe 2 – Zentripetalkraft | Physik 11</title>
+    <link rel="stylesheet" href="../../../../styles.css?v=20260911a">
+    <link rel="stylesheet" href="bewegung-koerpern.css?v=20260831c">
+    <link rel="stylesheet" href="kraefte-bewegung.css?v=20260901b">
+    <link rel="stylesheet" href="winkelgeschwindigkeit-kreisbewegung.css?v=20260912a">
+    <link rel="stylesheet" href="components/physics-notation.css?v=20260911a">
+    <link rel="stylesheet" href="zentripetalkraft.css?v=20260915a">
+    <script type="module" src="zentripetalkraft.mjs?v=20260915a"></script>
+  </head>
+  <body class="physics-revision-page circular-motion-page">
+    <div class="site-backdrop" aria-hidden="true"></div>
+    <main class="page-shell physics-revision-shell">
+      <nav class="topbar" aria-label="Navigation">
+        <a class="back-link" href="../index.html">Zur Aufgabenübersicht</a>
+        <a class="back-link" href="../../../../">Startseite</a>
+      </nav>
+      <header class="physics-revision-hero">
+        <p class="eyebrow">Kreisbewegungen · Aufgabe 2</p>
+        <h1>Aufgabe 2 – Zentripetalkraft</h1>
+        <p>Untersuche, wovon die Zentripetalkraft abhängt, und berechne ihren Betrag.</p>
+      </header>
+
+      <div class="physics-step-tabs" role="tablist" aria-label="Arbeitsschritte des Lernmoduls">
+        <button id="tab-discover" type="button" role="tab" aria-selected="true" aria-controls="panel-discover" data-physics-tab="discover">1 · Hammerwurf</button>
+        <button id="tab-proportion" type="button" role="tab" aria-selected="false" aria-controls="panel-proportion" data-physics-tab="proportion" tabindex="-1">2 · Proportionalitäten</button>
+        <button id="tab-derivation" type="button" role="tab" aria-selected="false" aria-controls="panel-derivation" data-physics-tab="derivation" tabindex="-1">3 · Herleitung</button>
+        <button id="tab-apply" type="button" role="tab" aria-selected="false" aria-controls="panel-apply" data-physics-tab="apply" tabindex="-1">4 · Anwenden</button>
+        <button id="tab-summary" type="button" role="tab" aria-selected="false" aria-controls="panel-summary" data-physics-tab="summary" tabindex="-1">5 · Merksätze</button>
+        <button id="tab-quiz" type="button" role="tab" aria-selected="false" aria-controls="panel-quiz" data-physics-tab="quiz" tabindex="-1">6 · Abschlussquiz</button>
+      </div>
+
+      <div class="physics-revision-panels">
+
+        <section id="panel-discover" class="physics-revision-panel" role="tabpanel" aria-labelledby="tab-discover" data-physics-panel="discover">
+          <div class="physics-card-heading">
+            <p class="eyebrow">Entdecken</p>
+            <h2>Wovon hängt die Kraft beim Hammerwurf ab?</h2>
+            <p>Beim Hammerwurf muss der Athlet die Kugel mit großer Kraft auf der Kreisbahn halten. Finde heraus, wovon diese Kraft abhängt.</p>
+          </div>
+
+          <article class="physics-task-card" aria-labelledby="hammer-sketch-title">
+            <h3 id="hammer-sketch-title">Aufgabe 1 · Hammerwurf von oben betrachtet</h3>
+            <figure class="centripetal-figure">
+              <svg viewBox="0 0 600 300" role="img" aria-label="Zwei Skizzen von oben. A: Die Kugel kreist am Seil um den Werfer; die Zentripetalkraft F mit Index Z zeigt von der Kugel zum Mittelpunkt, die Bahngeschwindigkeit v mit Index B tangential. B: Nach dem Loslassen fliegt die Kugel entlang der Tangente weiter.">
+                <defs>
+                  <marker id="hammer-force-arrow" markerWidth="10" markerHeight="10" refX="8" refY="4" orient="auto"><path d="M0,0 L0,8 L9,4 z" fill="#dc2626"/></marker>
+                  <marker id="hammer-speed-arrow" markerWidth="10" markerHeight="10" refX="8" refY="4" orient="auto"><path d="M0,0 L0,8 L9,4 z" fill="#2563eb"/></marker>
+                </defs>
+                <circle cx="150" cy="160" r="100" class="orbit"/>
+                <line x1="150" y1="160" x2="79.29" y2="89.29" class="radius-line"/>
+                <circle cx="150" cy="160" r="5" class="center-point"/>
+                <text x="150" y="182" text-anchor="middle" class="svg-label">Werfer</text>
+                <circle cx="79.29" cy="89.29" r="12" class="moving-body"/>
+                <line x1="87.78" y1="97.78" x2="126.67" y2="136.67" class="force-vector" marker-end="url(#hammer-force-arrow)"/>
+                <line x1="87.77" y1="80.81" x2="137.26" y2="31.32" class="speed-vector" marker-end="url(#hammer-speed-arrow)"/>
+                <text x="112" y="152" class="svg-label vector-force-label">F<tspan baseline-shift="sub" font-size="12">Z</tspan></text>
+                <text x="138" y="42" class="svg-label vector-speed-label">v<tspan baseline-shift="sub" font-size="12">B</tspan></text>
+                <text x="150" y="280" text-anchor="middle" class="svg-label">A · Auf der Kreisbahn</text>
+
+                <circle cx="450" cy="160" r="100" class="orbit"/>
+                <circle cx="450" cy="160" r="5" class="center-point"/>
+                <line x1="450" y1="60" x2="580" y2="60" class="orbit"/>
+                <circle cx="450" cy="60" r="12" class="moving-body"/>
+                <line x1="462" y1="60" x2="542" y2="60" class="speed-vector" marker-end="url(#hammer-speed-arrow)"/>
+                <text x="500" y="45" class="svg-label vector-speed-label">v<tspan baseline-shift="sub" font-size="12">B</tspan></text>
+                <text x="450" y="280" text-anchor="middle" class="svg-label">B · Im Moment des Loslassens</text>
+              </svg>
+              <figcaption>Hammerkugel auf der Kreisbahn und beim Loslassen</figcaption>
+            </figure>
+            <p><strong>Betrachte</strong> die beiden Skizzen. <strong>Wähle</strong> alle Aussagen aus, die zur Bewegung der Hammerkugel passen.</p>
+            <div id="hammer-quiz" class="physics-multiple-choice" aria-label="Multiple-Choice-Aufgabe zu den Skizzen"></div>
+          </article>
+
+          <article class="physics-task-card" aria-labelledby="hammer-simulation-title">
+            <h3 id="hammer-simulation-title">Aufgabe 2a · Digitaler Hammerwurf mit Knetmasse</h3>
+            <div class="circle-simulation" data-centripetal-simulation="explore">
+              <svg viewBox="0 0 600 600" role="img" aria-label="Knetmasse an einer Schnur auf einer Kreisbahn mit rotem Kraftpfeil F mit Index Z zum Mittelpunkt und blauem Geschwindigkeitspfeil v mit Index B">
+                <defs>
+                  <marker id="cf-explore-force-arrow" markerWidth="10" markerHeight="10" refX="8" refY="4" orient="auto"><path d="M0,0 L0,8 L9,4 z" fill="#dc2626"/></marker>
+                  <marker id="cf-explore-speed-arrow" markerWidth="10" markerHeight="10" refX="8" refY="4" orient="auto"><path d="M0,0 L0,8 L9,4 z" fill="#2563eb"/></marker>
+                </defs>
+                <circle cx="300" cy="300" r="110" data-cf-orbit class="orbit"/>
+                <line x1="300" y1="300" x2="300" y2="190" data-cf-radius class="radius-line"/>
+                <circle cx="300" cy="300" r="6" class="center-point"/>
+                <text x="308" y="317" class="svg-label">Hand</text>
+                <line data-cf-force class="force-vector" marker-end="url(#cf-explore-force-arrow)"/>
+                <line data-cf-speed class="speed-vector" marker-end="url(#cf-explore-speed-arrow)"/>
+                <circle data-cf-body cx="300" cy="190" r="12" class="moving-body"/>
+                <g data-cf-force-label class="vector-label-badge" aria-label="Zentripetalkraft F mit Index Z"><rect x="-22" y="-16" width="44" height="30" rx="6"/><text text-anchor="middle" dominant-baseline="middle" class="svg-label vector-force-label">F<tspan baseline-shift="sub" font-size="12">Z</tspan></text></g>
+                <g data-cf-speed-label class="vector-label-badge" aria-label="Bahngeschwindigkeit v mit Index B"><rect x="-25" y="-16" width="50" height="30" rx="6"/><text text-anchor="middle" dominant-baseline="middle" class="svg-label vector-speed-label">v<tspan baseline-shift="sub" font-size="12">B</tspan></text></g>
+              </svg>
+              <p><strong>Wähle</strong> aus, welche Größe du veränderst, und <strong>verändere</strong> nur diese mit dem Schieberegler. <strong>Beobachte</strong> den roten Kraftpfeil und den Wert von F<sub>Z</sub>.</p>
+              <div class="simulation-readout" aria-live="polite">
+                <strong>m = <span data-cf-mass>0,10</span> kg</strong>
+                <strong>r = <span data-cf-radius-value>0,50</span> m</strong>
+                <strong>ω = <span data-cf-omega>4,0</span> <span class="physics-fraction" role="img" aria-label="Radiant pro Sekunde"><span class="physics-fraction__numerator">rad</span><span class="physics-fraction__denominator">s</span></span></strong>
+                <strong>v<sub>B</sub> = <span data-cf-speed-value>2,0</span> <span class="physics-fraction" role="img" aria-label="Meter pro Sekunde"><span class="physics-fraction__numerator">m</span><span class="physics-fraction__denominator">s</span></span></strong>
+                <strong>F<sub>Z</sub> = <span data-cf-force-value>0,80</span> N</strong>
+              </div>
+              <p class="simulation-note">Vergleich mit dem Ausgangswert 0,80 N: <span data-cf-factor>1,00</span>-mal so groß</p>
+              <p class="simulation-note">Darstellungsmaßstab: 1&nbsp;m Radius entspricht 220 SVG-Einheiten, 1&nbsp;N Kraft entspricht 50 SVG-Einheiten. Der rote Pfeil zeigt die Kraft der Schnur auf die Knetmasse – genauso stark musst du an der Schnur ziehen.</p>
+              <p class="simulation-status" data-cf-status role="status" aria-live="polite">Bereit. Die Knetmasse startet oben und bewegt sich im Uhrzeigersinn.</p>
+              <fieldset>
+                <legend>Welche Größe veränderst du?</legend>
+                <label><input type="radio" name="cf-explore-variable" value="mass" checked> Masse m</label>
+                <label><input type="radio" name="cf-explore-variable" value="radius"> Radius r</label>
+                <label><input type="radio" name="cf-explore-variable" value="omega"> Winkelgeschwindigkeit ω</label>
+              </fieldset>
+              <div class="simulation-controls">
+                <label>m in kg<input data-cf-input="mass" type="range" min="0.05" max="0.20" step="0.05" value="0.10"></label>
+                <label>r in m<input data-cf-input="radius" type="range" min="0.25" max="1.00" step="0.25" value="0.50" disabled></label>
+                <label>ω in <span class="physics-fraction" role="img" aria-label="Radiant pro Sekunde"><span class="physics-fraction__numerator">rad</span><span class="physics-fraction__denominator">s</span></span><input data-cf-input="omega" type="range" min="2" max="6" step="1" value="4" disabled></label>
+              </div>
+              <div class="simulation-actions">
+                <button type="button" class="physics-primary-button" data-cf-action="start">Bewegung starten</button>
+                <button type="button" class="secondary-action" data-cf-action="pause">Pausieren</button>
+                <button type="button" class="secondary-action" data-cf-action="reset">Zurücksetzen</button>
+              </div>
+            </div>
+          </article>
+
+          <article class="physics-task-card" aria-labelledby="jedesto-title">
+            <h3 id="jedesto-title">Aufgabe 2b · Je-desto-Aussagen</h3>
+            <p><strong>Wähle</strong> alle Je-desto-Aussagen aus, die zu deinen Beobachtungen in der Simulation passen.</p>
+            <div id="je-desto-quiz" class="physics-multiple-choice" aria-label="Multiple-Choice-Aufgabe zu Je-desto-Aussagen"></div>
+            <section class="notebook-task">
+              <h4>Im Unterricht: Hammerwurf mit Knetmasse</h4>
+              <p>Befestige etwa 50&nbsp;g Knetmasse fest an einer reißfesten Schnur von etwa 1&nbsp;m Länge. <strong>Lass</strong> die Knetmasse kreisen, <strong>verändere</strong> nacheinander Winkelgeschwindigkeit, Radius und Masse und <strong>beschreibe</strong>, wie sich die Kraft in deiner Hand ändert.</p>
+              <p><strong>Sicherheitshinweis:</strong> Halte genügend Abstand zu anderen Personen und prüfe vor jedem Versuch, ob die Knetmasse fest an der Schnur sitzt.</p>
+            </section>
+          </article>
+        </section>
+
+        <section id="panel-proportion" class="physics-revision-panel" role="tabpanel" aria-labelledby="tab-proportion" data-physics-panel="proportion" hidden>
+          <div class="physics-card-heading">
+            <p class="eyebrow">Verstehen</p>
+            <h2>Wie genau hängt F<sub>Z</sub> von m, ω und r ab?</h2>
+            <p>Aus Je-desto-Aussagen werden jetzt genaue Zusammenhänge. Achte beim Radius darauf, welche Größe gleich bleibt.</p>
+          </div>
+
+          <article class="physics-task-card" aria-labelledby="proportion-title">
+            <h3 id="proportion-title">Aufgabe 3 · Proportionalitäten zuordnen</h3>
+            <p><strong>Ordne</strong> jeder Größe die passende Proportionalität zu. <strong>Nutze</strong> dafür die Simulation aus Aufgabe 2a.</p>
+            <div id="proportion-rows"></div>
+            <button class="physics-primary-button" id="check-proportion" type="button">Zuordnung prüfen</button>
+            <div id="proportion-feedback" class="physics-feedback" role="status" aria-live="polite" hidden></div>
+            <div class="physics-help-stack">
+              <details><summary>Hilfe 1: Hinweis</summary><p>Stelle in der Simulation eine Größe auf das Doppelte ein und lies ab, wie oft so groß F<sub>Z</sub> wird.</p></details>
+              <details><summary>Hilfe 2: Denkansatz</summary><p>Doppelter Wert und doppelte Kraft bedeutet F<sub>Z</sub> ~ Größe. Doppelter Wert und vierfache Kraft bedeutet F<sub>Z</sub> ~ Größe². Doppelter Wert und halbe Kraft bedeutet F<sub>Z</sub> ~ <span class="physics-fraction" role="img" aria-label="1 durch Größe"><span class="physics-fraction__numerator">1</span><span class="physics-fraction__denominator">Größe</span></span>.</p></details>
+              <details><summary>Hilfe 3: Teillösung</summary><p>Beispiel: Wird ω von 2,0 <span class="physics-fraction" role="img" aria-label="Radiant pro Sekunde"><span class="physics-fraction__numerator">rad</span><span class="physics-fraction__denominator">s</span></span> auf 4,0 <span class="physics-fraction" role="img" aria-label="Radiant pro Sekunde"><span class="physics-fraction__numerator">rad</span><span class="physics-fraction__denominator">s</span></span> verdoppelt, steigt F<sub>Z</sub> von 0,20 N auf 0,80 N – also auf das Vierfache.</p></details>
+            </div>
+          </article>
+
+          <article class="physics-task-card" aria-labelledby="radius-simulation-title">
+            <h3 id="radius-simulation-title">Aufgabe 4a · Stolperstelle Radius</h3>
+            <div class="circle-simulation" data-centripetal-simulation="radius">
+              <svg viewBox="0 0 600 600" role="img" aria-label="Knetmasse an einer Schnur auf einer Kreisbahn mit rotem Kraftpfeil F mit Index Z zum Mittelpunkt und blauem Geschwindigkeitspfeil v mit Index B">
+                <defs>
+                  <marker id="cf-radius-force-arrow" markerWidth="10" markerHeight="10" refX="8" refY="4" orient="auto"><path d="M0,0 L0,8 L9,4 z" fill="#dc2626"/></marker>
+                  <marker id="cf-radius-speed-arrow" markerWidth="10" markerHeight="10" refX="8" refY="4" orient="auto"><path d="M0,0 L0,8 L9,4 z" fill="#2563eb"/></marker>
+                </defs>
+                <circle cx="300" cy="300" r="110" data-cf-orbit class="orbit"/>
+                <line x1="300" y1="300" x2="300" y2="190" data-cf-radius class="radius-line"/>
+                <circle cx="300" cy="300" r="6" class="center-point"/>
+                <text x="308" y="317" class="svg-label">Hand</text>
+                <line data-cf-force class="force-vector" marker-end="url(#cf-radius-force-arrow)"/>
+                <line data-cf-speed class="speed-vector" marker-end="url(#cf-radius-speed-arrow)"/>
+                <circle data-cf-body cx="300" cy="190" r="12" class="moving-body"/>
+                <g data-cf-force-label class="vector-label-badge" aria-label="Zentripetalkraft F mit Index Z"><rect x="-22" y="-16" width="44" height="30" rx="6"/><text text-anchor="middle" dominant-baseline="middle" class="svg-label vector-force-label">F<tspan baseline-shift="sub" font-size="12">Z</tspan></text></g>
+                <g data-cf-speed-label class="vector-label-badge" aria-label="Bahngeschwindigkeit v mit Index B"><rect x="-25" y="-16" width="50" height="30" rx="6"/><text text-anchor="middle" dominant-baseline="middle" class="svg-label vector-speed-label">v<tspan baseline-shift="sub" font-size="12">B</tspan></text></g>
+              </svg>
+              <p><strong>Stelle</strong> ein, welche Größe gleich bleibt, und <strong>verdopple</strong> den Radius von 0,50 m auf 1,00 m. <strong>Vergleiche</strong> jeweils F<sub>Z</sub>.</p>
+              <div class="simulation-readout" aria-live="polite">
+                <strong>r = <span data-cf-radius-value>0,50</span> m</strong>
+                <strong>ω = <span data-cf-omega>4,0</span> <span class="physics-fraction" role="img" aria-label="Radiant pro Sekunde"><span class="physics-fraction__numerator">rad</span><span class="physics-fraction__denominator">s</span></span></strong>
+                <strong>v<sub>B</sub> = <span data-cf-speed-value>2,0</span> <span class="physics-fraction" role="img" aria-label="Meter pro Sekunde"><span class="physics-fraction__numerator">m</span><span class="physics-fraction__denominator">s</span></span></strong>
+                <strong>F<sub>Z</sub> = <span data-cf-force-value>0,80</span> N</strong>
+              </div>
+              <p class="simulation-note">Vergleich mit dem Ausgangswert 0,80 N: <span data-cf-factor>1,00</span>-mal so groß</p>
+              <p class="simulation-status" data-cf-status role="status" aria-live="polite">Bereit. Die Knetmasse startet oben und bewegt sich im Uhrzeigersinn.</p>
+              <fieldset>
+                <legend>Was bleibt gleich?</legend>
+                <label><input type="radio" name="cf-radius-mode" value="omega" checked> ω bleibt gleich (4,0 <span class="physics-fraction" role="img" aria-label="Radiant pro Sekunde"><span class="physics-fraction__numerator">rad</span><span class="physics-fraction__denominator">s</span></span>)</label>
+                <label><input type="radio" name="cf-radius-mode" value="speed"> v<sub>B</sub> bleibt gleich (2,0 <span class="physics-fraction" role="img" aria-label="Meter pro Sekunde"><span class="physics-fraction__numerator">m</span><span class="physics-fraction__denominator">s</span></span>)</label>
+              </fieldset>
+              <div class="simulation-controls">
+                <label>r in m<input data-cf-input="radius" type="range" min="0.40" max="1.00" step="0.10" value="0.50"></label>
+              </div>
+              <div class="simulation-actions">
+                <button type="button" class="physics-primary-button" data-cf-action="start">Bewegung starten</button>
+                <button type="button" class="secondary-action" data-cf-action="pause">Pausieren</button>
+                <button type="button" class="secondary-action" data-cf-action="reset">Zurücksetzen</button>
+              </div>
+            </div>
+          </article>
+
+          <article class="physics-task-card" aria-labelledby="radius-mapping-title">
+            <h3 id="radius-mapping-title">Aufgabe 4b · Radius richtig einordnen</h3>
+            <p><strong>Ordne</strong> beiden Fällen die passende Proportionalität zu.</p>
+            <div id="radius-mapping-rows">
+              <fieldset class="unit-choice" id="radius-mapping-omega">
+                <legend>ω bleibt gleich</legend>
+                <label class="unit-choice__option"><input type="radio" name="radius-mapping-omega" value="linear"><span>F<sub>Z</sub> ~ r</span></label>
+                <label class="unit-choice__option"><input type="radio" name="radius-mapping-omega" value="inverse"><span>F<sub>Z</sub> ~ <span class="physics-fraction" role="img" aria-label="1 durch r"><span class="physics-fraction__numerator">1</span><span class="physics-fraction__denominator">r</span></span></span></label>
+              </fieldset>
+              <fieldset class="unit-choice" id="radius-mapping-speed">
+                <legend>v<sub>B</sub> bleibt gleich</legend>
+                <label class="unit-choice__option"><input type="radio" name="radius-mapping-speed" value="linear"><span>F<sub>Z</sub> ~ r</span></label>
+                <label class="unit-choice__option"><input type="radio" name="radius-mapping-speed" value="inverse"><span>F<sub>Z</sub> ~ <span class="physics-fraction" role="img" aria-label="1 durch r"><span class="physics-fraction__numerator">1</span><span class="physics-fraction__denominator">r</span></span></span></label>
+              </fieldset>
+            </div>
+            <button class="physics-primary-button" id="check-radius-mapping" type="button">Zuordnung prüfen</button>
+            <div id="radius-mapping-feedback" class="physics-feedback" role="status" aria-live="polite" hidden></div>
+            <p id="proportion-remember" class="blue-remember" hidden>Die Zentripetalkraft ist proportional zur Masse m und zum Quadrat der Winkelgeschwindigkeit ω. Beim Radius kommt es darauf an, was gleich bleibt: Bei gleichem ω gilt F<sub>Z</sub> ~ r, bei gleicher Bahngeschwindigkeit v<sub>B</sub> ist F<sub>Z</sub> indirekt proportional zu r, also F<sub>Z</sub> ~ <span class="physics-fraction" role="img" aria-label="1 durch r"><span class="physics-fraction__numerator">1</span><span class="physics-fraction__denominator">r</span></span>.</p>
+          </article>
+
+          <article class="physics-task-card" aria-labelledby="radius-reason-title">
+            <h3 id="radius-reason-title">Aufgabe 4c · Warum braucht der kleine Kreis mehr Kraft?</h3>
+            <figure class="centripetal-figure">
+              <svg viewBox="0 0 560 300" role="img" aria-label="Zwei Kreisbahnen um denselben Mittelpunkt mit gleich langen Bögen Δx. Daneben die Vektordreiecke: Auf dem inneren Kreis ist die Geschwindigkeitsänderung Δv etwa doppelt so lang wie auf dem äußeren Kreis.">
+                <defs>
+                  <marker id="reason-speed-arrow" markerWidth="10" markerHeight="10" refX="8" refY="4" orient="auto"><path d="M0,0 L0,8 L9,4 z" fill="#2563eb"/></marker>
+                  <marker id="reason-force-arrow" markerWidth="10" markerHeight="10" refX="8" refY="4" orient="auto"><path d="M0,0 L0,8 L9,4 z" fill="#dc2626"/></marker>
+                </defs>
+                <circle cx="200" cy="280" r="4" class="center-point"/>
+                <text x="184" y="272" class="svg-label">M</text>
+                <path d="M 200 170 A 110 110 0 0 1 295.26 225.00" class="angle-arc"/>
+                <path d="M 200 60 A 220 220 0 0 1 310.00 89.47" class="angle-arc"/>
+                <text x="266" y="166" class="svg-label">Δx</text>
+                <text x="264" y="46" class="svg-label">Δx</text>
+                <circle cx="200" cy="170" r="5" class="center-point"/>
+                <circle cx="295.26" cy="225.00" r="5" class="center-point"/>
+                <circle cx="200" cy="60" r="5" class="center-point"/>
+                <circle cx="310.00" cy="89.47" r="5" class="center-point"/>
+                <line x1="200" y1="170" x2="245" y2="170" class="speed-vector" marker-end="url(#reason-speed-arrow)"/>
+                <line x1="295.26" y1="225.00" x2="317.76" y2="263.97" class="speed-vector" marker-end="url(#reason-speed-arrow)"/>
+                <line x1="200" y1="60" x2="245" y2="60" class="speed-vector" marker-end="url(#reason-speed-arrow)"/>
+                <line x1="310.00" y1="89.47" x2="348.97" y2="111.97" class="speed-vector" marker-end="url(#reason-speed-arrow)"/>
+
+                <circle cx="400" cy="190" r="3" class="center-point"/>
+                <line x1="400" y1="190" x2="460" y2="190" class="speed-vector" marker-end="url(#reason-speed-arrow)"/>
+                <line x1="400" y1="190" x2="430.00" y2="241.96" class="speed-vector" marker-end="url(#reason-speed-arrow)"/>
+                <line x1="460" y1="190" x2="430.00" y2="241.96" class="force-vector" marker-end="url(#reason-force-arrow)"/>
+                <text x="452" y="222" class="svg-label vector-force-label">Δv</text>
+                <text x="430" y="265" text-anchor="middle" class="svg-label">innerer Kreis</text>
+
+                <circle cx="400" cy="60" r="3" class="center-point"/>
+                <line x1="400" y1="60" x2="460" y2="60" class="speed-vector" marker-end="url(#reason-speed-arrow)"/>
+                <line x1="400" y1="60" x2="451.96" y2="90" class="speed-vector" marker-end="url(#reason-speed-arrow)"/>
+                <line x1="460" y1="60" x2="451.96" y2="90" class="force-vector" marker-end="url(#reason-force-arrow)"/>
+                <text x="465" y="80" class="svg-label vector-force-label">Δv</text>
+                <text x="430" y="112" text-anchor="middle" class="svg-label">äußerer Kreis</text>
+              </svg>
+              <figcaption>Gleiche Bahngeschwindigkeit, gleicher Bogen Δx – unterschiedliche Richtungsänderung</figcaption>
+            </figure>
+            <p>Beide Körper bewegen sich gleich schnell und legen in derselben Zeit den gleichen Bogen Δx zurück. <strong>Wähle</strong> alle Aussagen aus, die erklären, warum auf dem kleineren Kreis eine größere Zentripetalkraft nötig ist.</p>
+            <div id="radius-reason-quiz" class="physics-multiple-choice" aria-label="Multiple-Choice-Aufgabe zum Vergleich der Kreisbahnen"></div>
+          </article>
+        </section>
+
+        <section id="panel-derivation" class="physics-revision-panel" role="tabpanel" aria-labelledby="tab-derivation" data-physics-panel="derivation" hidden>
+          <div class="physics-card-heading">
+            <p class="eyebrow">Verstehen</p>
+            <h2>Wie groß ist die Zentripetalkraft?</h2>
+            <p>Du leitest her, wie groß die Zentripetalkraft ist. Dafür brauchst du das Grundgesetz aus Wiederholung 2: F · Δt = m · Δv.</p>
+          </div>
+
+          <article class="physics-task-card" aria-labelledby="triangle-title">
+            <h3 id="triangle-title">Aufgabe 5 · Das Vektordreieck</h3>
+            <figure class="centripetal-figure">
+              <svg viewBox="0 0 680 300" role="img" aria-label="Skizze A: Ein Körper läuft auf einem Kreis mit Mittelpunkt M und Radius r in der Zeit Δt von A nach B; dabei dreht sich die Verbindungslinie um den Winkel φ. Skizze B: Die Geschwindigkeitsvektoren v mit Index 1 und v mit Index 2 bilden mit Δv ein gleichschenkliges Dreieck mit dem Winkel φ an der Spitze; Δv zeigt nach unten.">
+                <defs>
+                  <marker id="triangle-speed-arrow" markerWidth="10" markerHeight="10" refX="8" refY="4" orient="auto"><path d="M0,0 L0,8 L9,4 z" fill="#2563eb"/></marker>
+                  <marker id="triangle-force-arrow" markerWidth="10" markerHeight="10" refX="8" refY="4" orient="auto"><path d="M0,0 L0,8 L9,4 z" fill="#dc2626"/></marker>
+                </defs>
+                <circle cx="170" cy="240" r="170" class="orbit"/>
+                <circle cx="170" cy="240" r="4" class="center-point"/>
+                <text x="176" y="236" class="svg-label">M</text>
+                <line x1="170" y1="240" x2="85" y2="92.78" class="radius-line"/>
+                <line x1="170" y1="240" x2="255" y2="92.78" class="radius-line"/>
+                <text x="118" y="180" class="svg-label">r</text>
+                <text x="215" y="180" class="svg-label">r</text>
+                <path d="M 155 218 A 30 30 0 0 1 185 218" class="angle-arc"/>
+                <text x="170" y="205" text-anchor="middle" class="svg-label">φ</text>
+                <line x1="85" y1="92.78" x2="255" y2="92.78" class="radius-line"/>
+                <text x="170" y="116" text-anchor="middle" class="svg-label">Δx = v<tspan baseline-shift="sub" font-size="12">B</tspan> · Δt</text>
+                <circle cx="85" cy="92.78" r="5" class="center-point"/>
+                <circle cx="255" cy="92.78" r="5" class="center-point"/>
+                <text x="70" y="100" class="svg-label">A</text>
+                <text x="262" y="100" class="svg-label">B</text>
+                <line x1="85" y1="92.78" x2="154.28" y2="52.78" class="speed-vector" marker-end="url(#triangle-speed-arrow)"/>
+                <text x="140" y="45" class="svg-label vector-speed-label">v<tspan baseline-shift="sub" font-size="12">1</tspan></text>
+                <line x1="255" y1="92.78" x2="324.28" y2="132.78" class="speed-vector" marker-end="url(#triangle-speed-arrow)"/>
+                <text x="300" y="150" class="svg-label vector-speed-label">v<tspan baseline-shift="sub" font-size="12">2</tspan></text>
+                <text x="170" y="290" text-anchor="middle" class="svg-label">A</text>
+
+                <circle cx="470" cy="150" r="3" class="center-point"/>
+                <line x1="470" y1="150" x2="599.9" y2="75" class="speed-vector" marker-end="url(#triangle-speed-arrow)"/>
+                <text x="565" y="95" class="svg-label vector-speed-label">v<tspan baseline-shift="sub" font-size="12">1</tspan></text>
+                <line x1="470" y1="150" x2="599.9" y2="225" class="speed-vector" marker-end="url(#triangle-speed-arrow)"/>
+                <text x="565" y="215" class="svg-label vector-speed-label">v<tspan baseline-shift="sub" font-size="12">2</tspan></text>
+                <line x1="599.9" y1="75" x2="599.9" y2="225" class="force-vector" marker-end="url(#triangle-force-arrow)"/>
+                <text x="655" y="153" class="svg-label vector-force-label">Δv</text>
+                <path d="M 500 135 A 42 42 0 0 1 500 165" class="angle-arc"/>
+                <text x="490" y="153" text-anchor="middle" class="svg-label">φ</text>
+                <text x="533" y="290" text-anchor="middle" class="svg-label">B</text>
+              </svg>
+              <figcaption>Herleitung der Zentripetalkraft (Winkel φ zur Verdeutlichung vergrößert gezeichnet)</figcaption>
+            </figure>
+            <p><strong>Ergänze</strong> die Lücken mit Hilfe der Skizzen A und B.</p>
+            <div id="triangle-cloze" class="physics-cloze" aria-label="Lückentext zum Vektordreieck"></div>
+            <div class="cloze-actions">
+              <button class="physics-primary-button" id="check-triangle-cloze" type="button">Lückentext prüfen</button>
+              <button class="secondary-action" id="reset-triangle-cloze" type="button">Zurücksetzen</button>
+            </div>
+            <div id="triangle-cloze-feedback" class="physics-feedback" role="status" aria-live="polite" hidden></div>
+            <div class="physics-help-stack">
+              <details><summary>Hilfe 1: Hinweis</summary><p>Bei einer gleichförmigen Kreisbewegung bleibt der Betrag der Geschwindigkeit gleich. Was ändert sich dann?</p></details>
+              <details><summary>Hilfe 2: Denkansatz</summary><p>Ein Dreieck mit zwei gleich langen Seiten heißt gleichschenklig. Dreiecke mit gleichen Winkeln heißen ähnlich.</p></details>
+              <details><summary>Hilfe 3: Teillösung</summary><p>Die ersten beiden Lücken lauten „gleichen“ und „Richtung“. Δv zeigt wie die Zentripetalkraft zum Kreismittelpunkt.</p></details>
+            </div>
+          </article>
+
+          <article class="physics-task-card" aria-labelledby="ratio-title">
+            <h3 id="ratio-title">Aufgabe 6 · Seitenverhältnisse nutzen</h3>
+            <p><strong>Wähle</strong> alle Gleichungen aus, die aus der Ähnlichkeit der beiden Dreiecke folgen.</p>
+            <div id="ratio-quiz" class="physics-multiple-choice" aria-label="Multiple-Choice-Aufgabe zu den Seitenverhältnissen"></div>
+            <div class="physics-help-stack">
+              <details><summary>Hilfe 1: Hinweis</summary><p>Bei ähnlichen Dreiecken ist das Verhältnis „kurze Seite geteilt durch Schenkel“ in beiden Dreiecken gleich.</p></details>
+              <details><summary>Hilfe 2: Denkansatz</summary><p>Vektordreieck: kurze Seite Δv, Schenkel v<sub>B</sub>. Dreieck AMB: kurze Seite ungefähr v<sub>B</sub> · Δt, Schenkel r.</p></details>
+              <details><summary>Hilfe 3: Teillösung</summary><p>Es gilt <span class="physics-fraction" role="img" aria-label="Delta v durch v mit Index B"><span class="physics-fraction__numerator">Δv</span><span class="physics-fraction__denominator">v<sub>B</sub></span></span> = <span class="physics-fraction" role="img" aria-label="v mit Index B mal Delta t durch r"><span class="physics-fraction__numerator">v<sub>B</sub> · Δt</span><span class="physics-fraction__denominator">r</span></span>. Multipliziere beide Seiten mit v<sub>B</sub>.</p></details>
+            </div>
+          </article>
+
+          <article class="physics-task-card" aria-labelledby="formula-speed-title">
+            <h3 id="formula-speed-title">Aufgabe 7 · Formel mit der Bahngeschwindigkeit</h3>
+            <p>Nach dem Grundgesetz gilt F<sub>Z</sub> · Δt = m · Δv. <strong>Setze</strong> Δv aus Aufgabe 6 ein, <strong>teile</strong> durch Δt und <strong>setze</strong> die Formel für F<sub>Z</sub> zusammen.</p>
+            <div id="formula-centripetal-speed" class="formula-builder" aria-label="Formel für die Zentripetalkraft mit der Bahngeschwindigkeit"></div>
+            <p id="formula-speed-remember" class="blue-remember" hidden>Bewegt sich ein Körper der Masse m mit der Bahngeschwindigkeit v<sub>B</sub> auf einer Kreisbahn mit dem Radius r, dann hat die nötige Zentripetalkraft den Betrag F<sub>Z</sub> = <span class="physics-fraction" role="img" aria-label="m mal v mit Index B zum Quadrat durch r"><span class="physics-fraction__numerator">m · v<sub>B</sub>²</span><span class="physics-fraction__denominator">r</span></span>.</p>
+            <div class="physics-help-stack">
+              <details><summary>Hilfe 1: Hinweis</summary><p>Ersetze in F<sub>Z</sub> · Δt = m · Δv das Δv durch den Ausdruck aus Aufgabe 6.</p></details>
+              <details><summary>Hilfe 2: Denkansatz</summary><p>Du erhältst F<sub>Z</sub> · Δt = m · <span class="physics-fraction" role="img" aria-label="v mit Index B zum Quadrat mal Delta t durch r"><span class="physics-fraction__numerator">v<sub>B</sub>² · Δt</span><span class="physics-fraction__denominator">r</span></span>. Was passiert, wenn du beide Seiten durch Δt teilst?</p></details>
+              <details><summary>Hilfe 3: Teillösung</summary><p>Δt fällt weg. Im Zähler stehen m und v<sub>B</sub>², im Nenner steht r.</p></details>
+            </div>
+          </article>
+
+          <article class="physics-task-card" aria-labelledby="formula-omega-title">
+            <h3 id="formula-omega-title">Aufgabe 8 · Formel mit der Winkelgeschwindigkeit</h3>
+            <p>Aus Aufgabe 1 zur Winkelgeschwindigkeit kennst du v<sub>B</sub> = ω · r. <strong>Ersetze</strong> v<sub>B</sub> in der Formel und <strong>setze</strong> die zweite Formel für F<sub>Z</sub> zusammen.</p>
+            <div id="formula-centripetal-omega" class="formula-builder" aria-label="Formel für die Zentripetalkraft mit der Winkelgeschwindigkeit"></div>
+            <p id="formula-omega-remember" class="blue-remember" hidden>Mit v<sub>B</sub> = ω · r gilt ebenso: F<sub>Z</sub> = m · ω² · r.</p>
+            <div class="physics-help-stack">
+              <details><summary>Hilfe 1: Hinweis</summary><p>Setze (ω · r) an die Stelle von v<sub>B</sub> ein.</p></details>
+              <details><summary>Hilfe 2: Denkansatz</summary><p>F<sub>Z</sub> = <span class="physics-fraction" role="img" aria-label="m mal Omega mal r zum Quadrat durch r"><span class="physics-fraction__numerator">m · (ω · r)²</span><span class="physics-fraction__denominator">r</span></span> = <span class="physics-fraction" role="img" aria-label="m mal Omega zum Quadrat mal r zum Quadrat durch r"><span class="physics-fraction__numerator">m · ω² · r²</span><span class="physics-fraction__denominator">r</span></span>. Was kannst du kürzen?</p></details>
+              <details><summary>Hilfe 3: Teillösung</summary><p>Ein r kürzt sich weg. Übrig bleiben m, ω² und r als Produkt.</p></details>
+            </div>
+          </article>
+        </section>
+
+        <section id="panel-apply" class="physics-revision-panel" role="tabpanel" aria-labelledby="tab-apply" data-physics-panel="apply" hidden>
+          <div class="physics-card-heading">
+            <p class="eyebrow">Anwenden</p>
+            <h2>Zentripetalkraft im Alltag</h2>
+            <p>Finde heraus, welche Kraft einen Körper in verschiedenen Situationen auf der Kreisbahn hält, und berechne ihren Betrag.</p>
+          </div>
+
+          <article class="physics-task-card" aria-labelledby="role-title">
+            <h3 id="role-title">Aufgabe 9 · Wer hält den Körper auf der Kreisbahn?</h3>
+            <p><strong>Ordne</strong> jeder Kreisbewegung die reale Kraft zu, die den Körper zum Kreismittelpunkt zieht.</p>
+            <div id="role-grid" class="physics-choice-grid" aria-label="Zuordnung der Kräfte zu fünf Situationen"></div>
+            <button class="physics-primary-button" id="check-role-matching" type="button">Zuordnung prüfen</button>
+            <div id="role-feedback" class="physics-feedback" role="status" aria-live="polite" hidden></div>
+            <p id="role-remember" class="blue-remember" hidden>Die Zentripetalkraft ist keine eigene Kraftart, sondern eine Rolle: Eine reale Kraft – zum Beispiel Seilkraft, Haftreibungskraft oder Gravitationskraft – oder die Resultierende aus mehreren Kräften zeigt zum Kreismittelpunkt und hält den Körper auf der Kreisbahn.</p>
+            <div class="physics-help-stack">
+              <details><summary>Hilfe 1: Hinweis</summary><p>Frage dich: Welcher Gegenstand ist mit dem kreisenden Körper verbunden oder berührt ihn?</p></details>
+              <details><summary>Hilfe 2: Denkansatz</summary><p>Nur eine Kraft, die zum Kreismittelpunkt zeigt, kann einen Körper auf der Kreisbahn halten. Für einen ruhenden Beobachter gibt es keine Kraft, die nach außen zieht.</p></details>
+              <details><summary>Hilfe 3: Teillösung</summary><p>Beim Hammerwurf ist es die Kraft des Drahtseils, beim Auto die Haftreibungskraft. Überlege die übrigen drei Situationen genauso.</p></details>
+            </div>
+          </article>
+
+          <article class="physics-task-card" aria-labelledby="misconception-title">
+            <h3 id="misconception-title">Aufgabe 10 · Typische Denkfehler</h3>
+            <p><strong>Wähle</strong> alle Aussagen aus, die fachlich richtig sind.</p>
+            <div id="misconception-quiz" class="physics-multiple-choice" aria-label="Multiple-Choice-Aufgabe zu Denkfehlern"></div>
+          </article>
+
+          <article class="physics-task-card" aria-labelledby="task11-title">
+            <h3 id="task11-title">Aufgabe 11 · Hammerwurf berechnen</h3>
+            <p>Die Kugel eines Wurfhammers (m = 7,26&nbsp;kg) bewegt sich kurz vor dem Abwurf mit v<sub>B</sub> = 25&nbsp;<span class="physics-fraction" role="img" aria-label="Meter pro Sekunde"><span class="physics-fraction__numerator">m</span><span class="physics-fraction__denominator">s</span></span> auf einer Kreisbahn mit r = 1,8&nbsp;m. <strong>Berechne</strong> die nötige Zentripetalkraft und <strong>gib</strong> das Ergebnis mit zwei gültigen Ziffern <strong>an</strong>.</p>
+            <div class="physics-number-entry">
+              <label for="task11-answer">Zentripetalkraft</label>
+              <div class="physics-number-controls">
+                <input id="task11-answer" inputmode="decimal" autocomplete="off">
+                <fieldset class="unit-choice" id="task11-unit" data-unit-choice>
+                  <legend class="sr-only">Einheit der Zentripetalkraft auswählen</legend>
+                  <label class="unit-choice__option"><input type="radio" name="task11-unit" value="N">N</label>
+                  <label class="unit-choice__option"><input type="radio" name="task11-unit" value="kN">kN</label>
+                </fieldset>
+              </div>
+            </div>
+            <button class="physics-primary-button" id="check-task11" type="button">Zentripetalkraft prüfen</button>
+            <div id="task11-feedback" class="physics-feedback" role="status" aria-live="polite" hidden></div>
+            <div class="physics-help-stack">
+              <details><summary>Hilfe 1: Hinweis</summary><p>Welche der beiden Formeln für F<sub>Z</sub> passt, wenn v<sub>B</sub> gegeben ist?</p></details>
+              <details><summary>Hilfe 2: Denkansatz</summary><p>Nutze F<sub>Z</sub> = <span class="physics-fraction" role="img" aria-label="m mal v mit Index B zum Quadrat durch r"><span class="physics-fraction__numerator">m · v<sub>B</sub>²</span><span class="physics-fraction__denominator">r</span></span>. Quadriere zuerst die Geschwindigkeit.</p></details>
+              <details><summary>Hilfe 3: Teillösung</summary><p>(25&nbsp;<span class="physics-fraction" role="img" aria-label="Meter pro Sekunde"><span class="physics-fraction__numerator">m</span><span class="physics-fraction__denominator">s</span></span>)² = 625&nbsp;<span class="physics-fraction" role="img" aria-label="Quadratmeter pro Sekunde zum Quadrat"><span class="physics-fraction__numerator">m²</span><span class="physics-fraction__denominator">s²</span></span>. Rechne 7,26 kg · 625&nbsp;<span class="physics-fraction" role="img" aria-label="Quadratmeter pro Sekunde zum Quadrat"><span class="physics-fraction__numerator">m²</span><span class="physics-fraction__denominator">s²</span></span> und teile das Ergebnis durch 1,8 m.</p></details>
+            </div>
+          </article>
+
+          <article class="physics-task-card" aria-labelledby="task12-title">
+            <h3 id="task12-title">Aufgabe 12 · Auto in der Kurve</h3>
+            <p>Ein Auto (m = 1200&nbsp;kg) fährt mit 54&nbsp;<span class="physics-fraction" role="img" aria-label="Kilometer pro Stunde"><span class="physics-fraction__numerator">km</span><span class="physics-fraction__denominator">h</span></span> durch eine Kurve mit dem Radius r = 40&nbsp;m. <strong>Berechne</strong> die Zentripetalkraft, die die Haftreibung zwischen Reifen und Straße aufbringen muss, und <strong>gib</strong> das Ergebnis mit zwei gültigen Ziffern <strong>an</strong>.</p>
+            <div class="physics-number-entry">
+              <label for="task12-answer">Zentripetalkraft</label>
+              <div class="physics-number-controls">
+                <input id="task12-answer" inputmode="decimal" autocomplete="off">
+                <fieldset class="unit-choice" id="task12-unit" data-unit-choice>
+                  <legend class="sr-only">Einheit der Zentripetalkraft auswählen</legend>
+                  <label class="unit-choice__option"><input type="radio" name="task12-unit" value="N">N</label>
+                  <label class="unit-choice__option"><input type="radio" name="task12-unit" value="kN">kN</label>
+                </fieldset>
+              </div>
+            </div>
+            <button class="physics-primary-button" id="check-task12" type="button">Zentripetalkraft prüfen</button>
+            <div id="task12-feedback" class="physics-feedback" role="status" aria-live="polite" hidden></div>
+            <div class="physics-help-stack">
+              <details><summary>Hilfe 1: Hinweis</summary><p>Achte auf die Einheit der Geschwindigkeit.</p></details>
+              <details><summary>Hilfe 2: Denkansatz</summary><p>54&nbsp;<span class="physics-fraction" role="img" aria-label="Kilometer pro Stunde"><span class="physics-fraction__numerator">km</span><span class="physics-fraction__denominator">h</span></span> = 15&nbsp;<span class="physics-fraction" role="img" aria-label="Meter pro Sekunde"><span class="physics-fraction__numerator">m</span><span class="physics-fraction__denominator">s</span></span>. Nutze dann F<sub>Z</sub> = <span class="physics-fraction" role="img" aria-label="m mal v mit Index B zum Quadrat durch r"><span class="physics-fraction__numerator">m · v<sub>B</sub>²</span><span class="physics-fraction__denominator">r</span></span>.</p></details>
+              <details><summary>Hilfe 3: Teillösung</summary><p>(15&nbsp;<span class="physics-fraction" role="img" aria-label="Meter pro Sekunde"><span class="physics-fraction__numerator">m</span><span class="physics-fraction__denominator">s</span></span>)² = 225&nbsp;<span class="physics-fraction" role="img" aria-label="Quadratmeter pro Sekunde zum Quadrat"><span class="physics-fraction__numerator">m²</span><span class="physics-fraction__denominator">s²</span></span>. Rechne 1200 kg · 225&nbsp;<span class="physics-fraction" role="img" aria-label="Quadratmeter pro Sekunde zum Quadrat"><span class="physics-fraction__numerator">m²</span><span class="physics-fraction__denominator">s²</span></span> und teile das Ergebnis durch 40 m.</p></details>
+            </div>
+          </article>
+
+          <article class="physics-task-card" aria-labelledby="task13-title">
+            <h3 id="task13-title">Aufgabe 13 · Wie schnell darf das Auto sein?</h3>
+            <p>Die Haftreibung kann bei diesem Auto (m = 1200&nbsp;kg) in der Kurve mit r = 40&nbsp;m höchstens 9,6&nbsp;kN als Zentripetalkraft liefern. <strong>Stelle</strong> F<sub>Z</sub> = <span class="physics-fraction" role="img" aria-label="m mal v mit Index B zum Quadrat durch r"><span class="physics-fraction__numerator">m · v<sub>B</sub>²</span><span class="physics-fraction__denominator">r</span></span> nach v<sub>B</sub> <strong>um</strong> und <strong>berechne</strong> die größte mögliche Geschwindigkeit mit zwei gültigen Ziffern.</p>
+            <div class="physics-number-entry">
+              <label for="task13-answer">Größte Geschwindigkeit</label>
+              <div class="physics-number-controls">
+                <input id="task13-answer" inputmode="decimal" autocomplete="off">
+                <fieldset class="unit-choice" id="task13-unit" data-unit-choice>
+                  <legend class="sr-only">Einheit der Geschwindigkeit auswählen</legend>
+                  <label class="unit-choice__option"><input type="radio" name="task13-unit" value="m/s"><span class="physics-fraction" role="img" aria-label="Meter pro Sekunde"><span class="physics-fraction__numerator">m</span><span class="physics-fraction__denominator">s</span></span></label>
+                  <label class="unit-choice__option"><input type="radio" name="task13-unit" value="km/h"><span class="physics-fraction" role="img" aria-label="Kilometer pro Stunde"><span class="physics-fraction__numerator">km</span><span class="physics-fraction__denominator">h</span></span></label>
+                </fieldset>
+              </div>
+            </div>
+            <button class="physics-primary-button" id="check-task13" type="button">Geschwindigkeit prüfen</button>
+            <div id="task13-feedback" class="physics-feedback" role="status" aria-live="polite" hidden></div>
+            <div class="physics-help-stack">
+              <details><summary>Hilfe 1: Hinweis</summary><p>Multipliziere beide Seiten der Formel mit r und teile durch m.</p></details>
+              <details><summary>Hilfe 2: Denkansatz</summary><p>Du erhältst v<sub>B</sub>² = <span class="physics-fraction" role="img" aria-label="F mit Index Z mal r durch m"><span class="physics-fraction__numerator">F<sub>Z</sub> · r</span><span class="physics-fraction__denominator">m</span></span>. Denke an die Einheit: 9,6 kN = 9 600 N.</p></details>
+              <details><summary>Hilfe 3: Teillösung</summary><p>v<sub>B</sub>² = <span class="physics-fraction" role="img" aria-label="9600 Newton mal 40 Meter durch 1200 Kilogramm"><span class="physics-fraction__numerator">9 600 N · 40 m</span><span class="physics-fraction__denominator">1200 kg</span></span> = 320&nbsp;<span class="physics-fraction" role="img" aria-label="Quadratmeter pro Sekunde zum Quadrat"><span class="physics-fraction__numerator">m²</span><span class="physics-fraction__denominator">s²</span></span>. Jetzt fehlt nur noch die Wurzel.</p></details>
+            </div>
+          </article>
+        </section>
+
+        <section id="panel-summary" class="physics-revision-panel" role="tabpanel" aria-labelledby="tab-summary" data-physics-panel="summary" hidden>
+          <div class="physics-card-heading">
+            <p class="eyebrow">Sichern</p>
+            <h2>Merksätze zur Zentripetalkraft</h2>
+            <p>Fasse die wichtigsten Ergebnisse in Merksätzen zusammen.</p>
+          </div>
+          <article class="physics-task-card" aria-labelledby="summary-title">
+            <h3 id="summary-title">Aufgabe 14 · Merksätze ergänzen</h3>
+            <p><strong>Ergänze</strong> die Merksätze mit den Karten. Ziehe eine Karte in eine Lücke oder wähle sie im Auswahlfeld.</p>
+            <p class="notebook-reminder" id="summary-notebook-reminder" hidden><strong>Notiere die Merksätze in dein Heft, wenn die Lücken korrekt ausgefüllt sind.</strong></p>
+            <div id="summary-cloze" class="physics-cloze" aria-label="Lückentext zu den Merksätzen"></div>
+            <div class="cloze-actions">
+              <button class="physics-primary-button" id="check-summary-cloze" type="button">Lückentext prüfen</button>
+              <button class="secondary-action" id="reset-summary-cloze" type="button">Zurücksetzen</button>
+            </div>
+            <div id="summary-cloze-feedback" class="physics-feedback" role="status" aria-live="polite" hidden></div>
+          </article>
+        </section>
+
+        <section id="panel-quiz" class="physics-revision-panel" role="tabpanel" aria-labelledby="tab-quiz" data-physics-panel="quiz" hidden>
+          <div class="physics-card-heading">
+            <p class="eyebrow">Übertragen</p>
+            <h2>Abschlussquiz</h2>
+            <p>Prüfe dein Wissen. Bei Fragen mit dem Hinweis „mehrere Antworten“ sind mindestens zwei Antworten richtig.</p>
+          </div>
+          <article class="physics-task-card" aria-labelledby="final-quiz-title">
+            <h3 id="final-quiz-title">Aufgabe 15 · Zentripetalkraft prüfen</h3>
+            <div id="centripetal-quiz" class="physics-multiple-choice" aria-label="Abschlussquiz zur Zentripetalkraft"></div>
+          </article>
+          <section class="solution-download" aria-labelledby="solution-download-title">
+            <h2 id="solution-download-title">Sicherungsblatt zu Aufgabe 2 – Zentripetalkraft</h2>
+            <details class="solution-reveal">
+              <summary>Sicherungsblatt anzeigen</summary>
+              <form class="solution-code-form" onsubmit="unlockSolution(event, 'R6WF-DH7K', 'solution-download-link', 'solution-code-message')">
+                <label for="solution-code">Lehrercode eingeben</label>
+                <div class="solution-code-controls">
+                  <input id="solution-code" name="solution-code" type="text" maxlength="9" autocomplete="off" autocapitalize="characters" spellcheck="false" required>
+                  <button class="physics-primary-button" type="submit">Code prüfen</button>
+                </div>
+                <p id="solution-code-message" class="solution-code-message" aria-live="polite"></p>
+                <a id="solution-download-link" class="download-button" href="sicherungsblatt-aufgabe-4-loesungen.pdf?v=20260915a" download hidden>
+                  &#8595; Sicherungsblatt herunterladen
+                </a>
+              </form>
+            </details>
+          </section>
+        </section>
+
+      </div>
+    </main>
+  </body>
+</html>

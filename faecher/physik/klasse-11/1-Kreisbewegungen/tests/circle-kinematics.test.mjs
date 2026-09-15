@@ -1,5 +1,10 @@
 import assert from "node:assert/strict";
-import { angleAtCycleElapsed, angleAtElapsed, angularSpeed, circleVectors, elapsedInCycle, frequencyFromPeriod, sectorPath, shuffleIncorrect, tangentialSpeed } from "../components/circle-kinematics.mjs";
+import { angleAtCycleElapsed, angleAtElapsed, angularSpeed, centripetalForce, centripetalForceFromSpeed, circleVectors, elapsedInCycle, frequencyFromPeriod, sectorPath, shuffleIncorrect, tangentialSpeed } from "../components/circle-kinematics.mjs";
+
+assert.equal(centripetalForce(0.1, 4, 0.5), 0.8);
+assert.equal(centripetalForce(0.1, 2, 0.5), 0.2);
+assert.ok(Math.abs(centripetalForceFromSpeed(7.26, 25, 1.8) - 2520.8333333333335) < 1e-9);
+assert.ok(Number.isNaN(centripetalForceFromSpeed(0.1, 2, 0)));
 
 assert.equal(angularSpeed(Math.PI, 2), Math.PI / 2);
 assert.equal(tangentialSpeed(3, 2.5), 7.5);

@@ -1,0 +1,59 @@
+/* Aufgabe 2 – Zentripetalkraft: nur Regeln, die es in den bestehenden
+   Kreisbewegungs-Stilen (bewegung-koerpern.css, kraefte-bewegung.css,
+   winkelgeschwindigkeit-kreisbewegung.css, physics-notation.css) noch nicht
+   gibt. */
+
+/* Zeilen der Proportionszuordnung (Aufgabe 3, Aufgabe 4b): eine Zeile pro
+   Größe statt einer nebeneinander laufenden Optionsliste. */
+#proportion-rows,
+#radius-mapping-rows {
+  display: grid;
+  gap: 14px;
+  margin-top: 16px;
+}
+
+#proportion-rows .unit-choice,
+#radius-mapping-rows .unit-choice {
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 8px;
+}
+
+#proportion-rows .unit-choice > legend,
+#radius-mapping-rows .unit-choice > legend {
+  margin-bottom: 2px;
+  color: #1e3a8a;
+  font-weight: 800;
+}
+
+/* Formelbaukasten mit zwei Feldern im Zähler (Aufgabe 7): Der Zähler ist
+   eine Flex-Zeile [Feld] · [Feld] statt eines einzelnen Feldes. */
+.formula-fraction__numerator {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+}
+
+.formula-fraction__denominator {
+  display: flex;
+  justify-content: center;
+}
+
+/* Größen der statischen SVGs: Die Skizzen zu Aufgabe 1, 4c und 5 sind
+   breiter angelegt als die bisherigen Kreisbewegungs-Grafiken. */
+.circular-motion-page .centripetal-figure svg {
+  width: min(100%, 700px);
+}
+
+@media (max-width: 620px) {
+  #proportion-rows .unit-choice__option,
+  #radius-mapping-rows .unit-choice__option {
+    width: 100%;
+  }
+
+  .formula-fraction__numerator {
+    gap: 4px;
+  }
+}

@@ -45,6 +45,14 @@ export function shuffleIncorrect(values, expected = values, random = Math.random
   return fallback;
 }
 
+export function centripetalForce(mass, omega, radius) {
+  return mass * omega ** 2 * radius;
+}
+
+export function centripetalForceFromSpeed(mass, speed, radius) {
+  return radius > 0 ? mass * speed ** 2 / radius : Number.NaN;
+}
+
 export function circleVectors(angle, radius = 1) {
   const cosine = Math.cos(angle);
   const sine = Math.sin(angle);

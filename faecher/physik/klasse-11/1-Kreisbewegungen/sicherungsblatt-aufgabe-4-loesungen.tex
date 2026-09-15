@@ -1,0 +1,174 @@
+\documentclass[10pt,a4paper]{article}
+
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage[ngerman]{babel}
+\usepackage[a4paper,margin=12mm]{geometry}
+\usepackage{lmodern}
+\usepackage[table]{xcolor}
+\usepackage{tabularx}
+\usepackage{array}
+\usepackage{booktabs}
+\usepackage{amsmath}
+\usepackage{microtype}
+\usepackage[most]{tcolorbox}
+\usepackage{tikz}
+\usetikzlibrary{arrows.meta,calc,positioning}
+
+\pagestyle{empty}
+\setlength{\parindent}{0pt}
+\setlength{\parskip}{0pt}
+\renewcommand{\familydefault}{\sfdefault}
+\renewcommand{\arraystretch}{1.05}
+
+\definecolor{Navy}{HTML}{17324D}
+\definecolor{Blue}{HTML}{3B6EA5}
+\definecolor{Sky}{HTML}{EAF3FA}
+\definecolor{Mint}{HTML}{E8F5EF}
+\definecolor{Gold}{HTML}{F3B33D}
+\definecolor{Ink}{HTML}{1E2935}
+\definecolor{Muted}{HTML}{617080}
+\definecolor{Line}{HTML}{D8E1E8}
+
+\color{Ink}
+\newcommand{\sectiontitle}[1]{%
+  \vspace{0.4mm}{\color{Blue}\bfseries\large #1}\par
+  \vspace{0.15mm}{\color{Blue}\rule{\linewidth}{0.7pt}}\par
+  \vspace{0.2mm}}
+\newcommand{\unit}[1]{\,\mathrm{#1}}
+\newcommand{\unitfrac}[2]{\,\frac{\mathrm{#1}}{\mathrm{#2}}}
+\newcommand{\pagefooter}[1]{%
+  \vfill{\color{Line}\rule{\linewidth}{0.5pt}}\par\vspace{1mm}
+  \begin{tabularx}{\linewidth}{@{}Xc r@{}}
+    {\small\color{Muted}Klasse 11 · Physik · Kreisbewegungen} &
+    {\small\color{Muted}#1 / 2} &
+    {\small\color{Muted}Sicherungsblatt · Aufgabe 2}
+  \end{tabularx}}
+
+\begin{document}
+
+\colorbox{Navy}{%
+  \parbox{\dimexpr\linewidth-2\fboxsep\relax}{%
+    \vspace{1.3mm}\color{white}
+    \begin{tabularx}{\linewidth}{@{}Xr@{}}
+      {\small\bfseries PHYSIK · KLASSE 11} &
+      \colorbox{Gold}{\color{Navy}\small\bfseries\strut LÖSUNGEN}
+    \end{tabularx}
+    \vspace{0.9mm}
+    {\fontsize{18}{21}\selectfont\bfseries Aufgabe 2 -- Zentripetalkraft}\par
+    \vspace{0.3mm}{\large Sicherungsblatt}\vspace{1.1mm}
+  }%
+}
+
+\vspace{0.9mm}
+\colorbox{Sky}{\parbox{\dimexpr\linewidth-2\fboxsep\relax}{%
+  \vspace{0.55mm}\textcolor{Blue}{\bfseries Ziel:} Den Betrag der Zentripetalkraft bestimmen und erkennen, welche reale Kraft als Zentripetalkraft wirkt.\vspace{0.55mm}}}
+
+\sectiontitle{1 · Einflussgrößen}
+\small
+\rowcolors{2}{Sky}{white}
+\begin{tabularx}{\linewidth}{@{}>{\bfseries}p{27mm} X >{\centering\arraybackslash}p{20mm}@{}}
+\toprule[0.4pt]
+Größe & Je-desto-Aussage & Proportionalität \\
+\midrule[0.3pt]
+$m$ (r, $\omega$ gleich) & Je größer $m$, desto größer $F_{\mathrm Z}$. & $F_{\mathrm Z}\sim m$ \\
+$\omega$ (m, r gleich) & Je größer $\omega$, desto größer $F_{\mathrm Z}$. Doppeltes $\omega$ $\to$ vierfache Kraft. & $F_{\mathrm Z}\sim\omega^{2}$ \\
+$r$ bei gleichem $\omega$ & Je größer $r$, desto größer $F_{\mathrm Z}$. & $F_{\mathrm Z}\sim r$ \\
+$r$ bei gleichem $v_{\mathrm B}$ & Je größer $r$, desto kleiner $F_{\mathrm Z}$. & $F_{\mathrm Z}\sim\dfrac{1}{r}$ \\
+\bottomrule[0.4pt]
+\end{tabularx}
+
+\sectiontitle{2 · Herleitung}
+\begin{minipage}[t]{0.24\linewidth}
+\vspace{0pt}\centering
+\begin{tikzpicture}[x=1mm,y=1mm,>=Latex]
+  \coordinate (P) at (0,0);
+  \draw[-{Latex},Blue,line width=.8pt] (P) -- ++(50:18) coordinate (V1) node[above,font=\scriptsize] {$v_{1}$};
+  \draw[-{Latex},Blue,line width=.8pt] (P) -- ++(-50:18) coordinate (V2) node[below,font=\scriptsize] {$v_{2}$};
+  \draw[-{Latex},Navy,line width=.9pt] (V1) -- (V2) node[midway,right,font=\scriptsize] {$\Delta v$};
+  \draw[Muted] (P) ++(50:7) arc (50:-50:7);
+  \node[font=\scriptsize] at (7,0) {$\varphi$};
+\end{tikzpicture}
+\end{minipage}\hfill
+\begin{minipage}[t]{0.74\linewidth}
+\vspace{0pt}\small
+\begin{tabularx}{\linewidth}{@{}>{\bfseries}p{27mm}X@{}}
+\mbox{Ähnliche Dreiecke:} & $\dfrac{\Delta v}{v_{\mathrm B}}=\dfrac{v_{\mathrm B}\cdot\Delta t}{r} \;\Rightarrow\; \Delta v=\dfrac{v_{\mathrm B}^{2}\cdot\Delta t}{r}$ \\[0.9mm]
+Grundgesetz: & $F_{\mathrm Z}\cdot\Delta t=m\cdot\Delta v \;\Rightarrow\; F_{\mathrm Z}=\dfrac{m\cdot v_{\mathrm B}^{2}}{r}$ \\[0.9mm]
+Mit $v_{\mathrm B}=\omega\cdot r$: & $F_{\mathrm Z}=m\cdot\omega^{2}\cdot r$
+\end{tabularx}
+\end{minipage}
+
+\sectiontitle{3 · Merksatz}
+\begin{tcolorbox}[colback=Sky,colframe=Line,arc=1.2mm,boxrule=.6pt,left=2mm,right=2mm,top=.7mm,bottom=.7mm]
+{\centering\fontsize{14}{17}\selectfont $F_{\mathrm Z}=\dfrac{m\cdot v_{\mathrm B}^{2}}{r}=m\cdot\omega^{2}\cdot r$\par}
+\vspace{0.3mm}
+{\centering\small $m$: Masse (kg) \quad $v_{\mathrm B}$: Bahngeschwindigkeit $\left(\unitfrac{m}{s}\right)$ \quad $\omega$: Winkelgeschwindigkeit $\left(\unitfrac{rad}{s}\right)$ \quad $r$: Radius (m)\par}
+\vspace{0.2mm}
+\small Bewegt sich ein Körper der Masse $m$ mit der Bahngeschwindigkeit $v_{\mathrm B}$ auf einer Kreisbahn mit dem Radius $r$, hat die nötige Zentripetalkraft den Betrag $F_{\mathrm Z}=\dfrac{m\cdot v_{\mathrm B}^{2}}{r}=m\cdot\omega^{2}\cdot r$.
+\end{tcolorbox}
+
+\pagefooter{1}
+
+\newpage
+\sectiontitle{4 · Wer wirkt als Zentripetalkraft?}
+\small
+\rowcolors{2}{Sky}{white}
+\begin{tabularx}{\linewidth}{@{}>{\bfseries}p{40mm} X@{}}
+\toprule[0.4pt]
+Situation & Wirkende Kraft \\
+\midrule[0.3pt]
+Hammerwurf & Kraft des Drahtseils auf die Kugel \\
+Kettenkarussell & Kettenkraft zusammen mit der Gewichtskraft \\
+Auto in der Kurve & Haftreibungskraft zwischen Reifen und Straße \\
+Mond um die Erde & Gravitationskraft der Erde \\
+Wäsche in der Schleudertrommel & Kraft der Trommelwand auf die Wäsche \\
+\bottomrule[0.4pt]
+\end{tabularx}
+\vspace{1mm}
+\colorbox{Gold}{\parbox{\dimexpr\linewidth-2\fboxsep\relax}{\centering\bfseries Zentripetalkraft = Rolle, keine eigene Kraftart · Kraft zu klein $\to$ Bahnradius wird größer}}
+
+\vspace{2.5mm}
+\sectiontitle{5 · Rechenbeispiele}
+{\renewcommand{\arraystretch}{1.42}%
+\begin{tcolorbox}[colback=white,colframe=Line,arc=1.2mm,boxrule=.65pt,left=2.2mm,right=2.2mm,top=1.1mm,bottom=1.1mm]
+\textcolor{Blue}{\bfseries Hammerwurf}\par\vspace{0.35mm}
+{\small
+\begin{tabularx}{\linewidth}{@{}>{\bfseries}p{19mm}X@{}}
+Gegeben: & $m=7{,}26\unit{kg}$, $v_{\mathrm B}=25\unitfrac{m}{s}$, $r=1{,}8\unit{m}$ \\
+Gesucht: & $F_{\mathrm Z}$ \\
+Ansatz: & $F_{\mathrm Z}=\dfrac{m\cdot v_{\mathrm B}^{2}}{r}$ \\
+Rechnung: & $F_{\mathrm Z}=\dfrac{7{,}26\unit{kg}\cdot(25\unitfrac{m}{s})^{2}}{1{,}8\unit{m}}$
+\end{tabularx}}
+\vspace{0.3mm}\hfill\textcolor{Blue}{\bfseries Ergebnis: $2\,521\unit{N}\approx 2{,}5\unit{kN}$ \quad 2 gültige Ziffern}
+\end{tcolorbox}
+
+\vspace{1.2mm}
+\begin{tcolorbox}[colback=white,colframe=Line,arc=1.2mm,boxrule=.65pt,left=2.2mm,right=2.2mm,top=1.1mm,bottom=1.1mm]
+\textcolor{Blue}{\bfseries Auto in der Kurve}\par\vspace{0.35mm}
+{\small
+\begin{tabularx}{\linewidth}{@{}>{\bfseries}p{19mm}X@{}}
+Gegeben: & $m=1200\unit{kg}$, $54\unitfrac{km}{h}=15\unitfrac{m}{s}$, $r=40\unit{m}$ \\
+Gesucht: & $F_{\mathrm Z}$ \\
+Ansatz: & $F_{\mathrm Z}=\dfrac{m\cdot v_{\mathrm B}^{2}}{r}$ \\
+Rechnung: & $F_{\mathrm Z}=\dfrac{1200\unit{kg}\cdot(15\unitfrac{m}{s})^{2}}{40\unit{m}}$
+\end{tabularx}}
+\vspace{0.3mm}\hfill\textcolor{Blue}{\bfseries Ergebnis: $6\,750\unit{N}\approx 6{,}8\unit{kN}$ \quad 2 gültige Ziffern}
+\end{tcolorbox}
+
+\vspace{1.2mm}
+\begin{tcolorbox}[colback=white,colframe=Line,arc=1.2mm,boxrule=.65pt,left=2.2mm,right=2.2mm,top=1.1mm,bottom=1.1mm]
+\textcolor{Blue}{\bfseries Höchstgeschwindigkeit}\par\vspace{0.35mm}
+{\small
+\begin{tabularx}{\linewidth}{@{}>{\bfseries}p{19mm}X@{}}
+Gegeben: & $m=1200\unit{kg}$, $r=40\unit{m}$, $F_{\mathrm Z}=9{,}6\unit{kN}=9\,600\unit{N}$ \\
+Gesucht: & $v_{\mathrm B}$ \\
+Ansatz: & $v_{\mathrm B}=\sqrt{\dfrac{F_{\mathrm Z}\cdot r}{m}}$ \\
+Rechnung: & $v_{\mathrm B}=\sqrt{\dfrac{9\,600\unit{N}\cdot 40\unit{m}}{1200\unit{kg}}}=\sqrt{320}\unitfrac{m}{s}$
+\end{tabularx}}
+\vspace{0.3mm}\hfill\textcolor{Blue}{\bfseries Ergebnis: $\approx 18\unitfrac{m}{s}\approx 64\unitfrac{km}{h}$ \quad 2 gültige Ziffern}
+\end{tcolorbox}}
+
+\pagefooter{2}
+
+\end{document}
