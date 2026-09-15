@@ -1202,6 +1202,53 @@ body.is-filling-sheet {
   font-weight: 800;
 }
 
+.dfd-svg-hint {
+  fill: var(--sheet-accent-dark);
+  font-family: inherit;
+  font-size: 13px;
+  font-weight: 700;
+}
+
+.dfd-svg-edge.is-chosen {
+  stroke-width: 4;
+}
+
+.dfd-value-picker {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.6rem;
+  margin: 0.5rem 0;
+  font-weight: 700;
+}
+
+.dfd-value-picker select {
+  min-width: 5rem;
+  min-height: 44px;
+  padding: 0.4rem 0.6rem;
+  border: 1px solid #cbd5e1;
+  border-radius: 8px;
+  background: #ffffff;
+  color: #172033;
+  font: inherit;
+}
+
+.dfd-term {
+  display: block;
+  margin: 0.6rem 0 1rem;
+  padding: 0.85rem 1rem;
+  overflow-x: auto;
+  border-radius: 10px;
+  background: #172033;
+  color: #f8fafc;
+  font: 650 0.95rem/1.45 ui-monospace, SFMono-Regular, Consolas, monospace;
+  white-space: nowrap;
+}
+
+.dfd-card .dfd-merke + .dfd-note {
+  margin-top: 0.8rem;
+}
+
 .simulation-actions {
   display: flex;
   flex-wrap: wrap;

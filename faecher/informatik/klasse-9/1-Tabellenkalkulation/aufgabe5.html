@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Aufgabe 5 – Datenflussdiagramme</title>
     <link rel="stylesheet" href="../../../../styles.css?v=20260821">
-    <link rel="stylesheet" href="tabellenkalkulation.css?v=20260910">
+    <link rel="stylesheet" href="tabellenkalkulation.css?v=20260915">
   </head>
   <body>
     <div class="site-backdrop" aria-hidden="true"></div>
@@ -18,7 +18,7 @@
       <header class="page-header spreadsheet-header">
         <p class="eyebrow">Tabellenkalkulation · Datenflussdiagramme</p>
         <h1>Aufgabe 5</h1>
-        <p>Lies Datenflussdiagramme, zeichne sie selbst und finde Fehler darin.</p>
+        <p>Lies Datenflussdiagramme, zeichne sie selbst, lerne die WENN-Funktion als Diagramm kennen und finde Fehler darin.</p>
       </header>
 
       <nav class="step-tabs" role="tablist" aria-label="Abschnitte der Aufgabe">
@@ -26,7 +26,8 @@
         <button id="tab-bausteine" type="button" role="tab" aria-selected="false" aria-controls="panel-bausteine" data-dfd-tab="bausteine" tabindex="-1">2 · Bausteine</button>
         <button id="tab-beschreiben" type="button" role="tab" aria-selected="false" aria-controls="panel-beschreiben" data-dfd-tab="beschreiben" tabindex="-1">2a · Beschreiben</button>
         <button id="tab-zeichnen" type="button" role="tab" aria-selected="false" aria-controls="panel-zeichnen" data-dfd-tab="zeichnen" tabindex="-1">2b · Zeichnen</button>
-        <button id="tab-fehler" type="button" role="tab" aria-selected="false" aria-controls="panel-fehler" data-dfd-tab="fehler" tabindex="-1">3 · Fehler finden</button>
+        <button id="tab-wenn" type="button" role="tab" aria-selected="false" aria-controls="panel-wenn" data-dfd-tab="wenn" tabindex="-1">3 · WENN-Funktion</button>
+        <button id="tab-fehler" type="button" role="tab" aria-selected="false" aria-controls="panel-fehler" data-dfd-tab="fehler" tabindex="-1">4 · Fehler finden</button>
         <button id="tab-merke" type="button" role="tab" aria-selected="false" aria-controls="panel-merke" data-dfd-tab="merke" tabindex="-1">Merke</button>
         <button id="tab-abschluss" type="button" role="tab" aria-selected="false" aria-controls="panel-abschluss" data-dfd-tab="abschluss" tabindex="-1">Abschluss</button>
       </nav>
@@ -198,12 +199,215 @@
           </details>
         </section>
 
+        <section id="panel-wenn" class="step-panel dfd-card" role="tabpanel" aria-labelledby="tab-wenn" data-dfd-panel="wenn" hidden>
+          <p class="eyebrow">Entdecken und verstehen</p>
+          <h2>3. Die WENN-Funktion als Datenflussdiagramm</h2>
+          <p class="dfd-scenario">In Aufgabe 4 hast du das Notengeld berechnet: Bei einer Note besser als 2 gibt es 5 €, sonst 0 €. Hier baust du diese Berechnung Schritt für Schritt als Datenflussdiagramm auf.</p>
+
+          <h3>Schritt 1: Die Aussagefunktion</h3>
+          <div data-flow="aussage">
+            <svg class="dfd-svg" viewBox="0 0 460 290" role="img" aria-label="Datenflussdiagramm: Die Eingabe Note und die Konstante 2 fließen in die Funktion kleiner. Heraus kommt ein Wahrheitswert, also WAHR oder FALSCH.">
+              <defs>
+                <marker id="dfd-arrow-3" markerWidth="9" markerHeight="9" refX="7" refY="4" orient="auto">
+                  <path d="M0,0 L0,8 L8,4 z" fill="var(--sheet-accent-dark)"></path>
+                </marker>
+              </defs>
+
+              <path class="dfd-svg-edge" data-flow-path="note" d="M 170 44 L 170 98" marker-end="url(#dfd-arrow-3)"></path>
+              <path class="dfd-svg-edge" data-flow-path="two" d="M 290 44 L 290 98" marker-end="url(#dfd-arrow-3)"></path>
+              <path class="dfd-svg-edge" data-flow-path="truth" d="M 230 168 L 230 226" marker-end="url(#dfd-arrow-3)"></path>
+
+              <text class="dfd-svg-label" x="170" y="30" text-anchor="middle">Note</text>
+              <text class="dfd-svg-label" x="290" y="30" text-anchor="middle">2</text>
+
+              <ellipse class="dfd-svg-node" cx="230" cy="130" rx="100" ry="38"></ellipse>
+              <text class="dfd-svg-label" x="230" y="135" text-anchor="middle">kleiner</text>
+
+              <text class="dfd-svg-label" x="230" y="252" text-anchor="middle">Wahrheitswert</text>
+              <text class="dfd-svg-hint" x="230" y="274" text-anchor="middle">WAHR oder FALSCH</text>
+
+              <g class="dfd-token" data-flow-token="note" hidden>
+                <rect x="-16" y="-13" width="32" height="26" rx="13"></rect>
+                <text text-anchor="middle" dominant-baseline="middle" data-flow-note>1</text>
+              </g>
+              <g class="dfd-token" data-flow-token="two" hidden>
+                <rect x="-16" y="-13" width="32" height="26" rx="13"></rect>
+                <text text-anchor="middle" dominant-baseline="middle">2</text>
+              </g>
+              <g class="dfd-token" data-flow-token="truth" hidden>
+                <rect x="-38" y="-13" width="76" height="26" rx="13"></rect>
+                <text text-anchor="middle" dominant-baseline="middle" data-flow-truth>WAHR</text>
+              </g>
+            </svg>
+
+            <div class="dfd-value-picker">
+              <label for="note-aussage">Note</label>
+              <select id="note-aussage" data-flow-select>
+                <option value="1">1</option>
+                <option value="2">2</option>
+                <option value="3">3</option>
+                <option value="4">4</option>
+                <option value="5">5</option>
+                <option value="6">6</option>
+              </select>
+            </div>
+            <div class="simulation-actions">
+              <button type="button" class="primary-action" data-flow-action="start">Bewegung starten</button>
+              <button type="button" class="secondary-action" data-flow-action="pause">Pausieren</button>
+              <button type="button" class="secondary-action" data-flow-action="reset">Zurücksetzen</button>
+            </div>
+            <p class="simulation-status" data-flow-status role="status" aria-live="polite"></p>
+          </div>
+
+          <div class="work-order"><strong>Arbeitsauftrag 4:</strong> <strong>Wähle</strong> eine Note und <strong>sage voraus</strong>, ob WAHR oder FALSCH herauskommt. <strong>Starte</strong> dann die Bewegung und <strong>prüfe</strong> deine Vermutung. Probiere unbedingt auch die Note 2 aus.</div>
+
+          <div class="dfd-merke">
+            <p>Eine Funktion wie „kleiner“ vergleicht zwei Werte und beantwortet eine Ja-Nein-Frage. Sie heißt <strong>Aussagefunktion</strong>.</p>
+            <p>Ihr Ergebnis ist ein <strong>Wahrheitswert</strong>: WAHR oder FALSCH.</p>
+          </div>
+          <p class="dfd-note">Weitere Aussagefunktionen sind zum Beispiel größer (<code>&gt;</code>), größer gleich (<code>&gt;=</code>) und gleich (<code>=</code>). Es gibt auch Aussagefunktionen mit nur einem Eingang: ISTGERADE prüft, ob eine Zahl gerade ist. Aus 12 wird WAHR.</p>
+
+          <h3>Schritt 2: Die WENN-Funktion</h3>
+          <p>Ein Wahrheitswert allein ist noch kein Notengeld. Die WENN-Funktion wählt mit ihm einen von zwei Werten aus.</p>
+          <div data-flow="wenn">
+            <svg class="dfd-svg" viewBox="0 0 560 460" role="img" aria-label="Datenflussdiagramm: Note und die Konstante 2 fließen in kleiner. Drei Pfeile führen in die WENN-Funktion: als erstes der Wahrheitswert aus kleiner, als zweites die Konstante 5 Euro für den Ja-Fall, als drittes die Konstante 0 Euro für den Nein-Fall. WENN gibt das Notengeld aus.">
+              <defs>
+                <marker id="dfd-arrow-4" markerWidth="9" markerHeight="9" refX="7" refY="4" orient="auto">
+                  <path d="M0,0 L0,8 L8,4 z" fill="var(--sheet-accent-dark)"></path>
+                </marker>
+              </defs>
+
+              <path class="dfd-svg-edge" data-flow-path="note" d="M 110 44 L 110 91" marker-end="url(#dfd-arrow-4)"></path>
+              <path class="dfd-svg-edge" data-flow-path="two" d="M 230 44 L 230 91" marker-end="url(#dfd-arrow-4)"></path>
+              <path class="dfd-svg-edge" data-flow-path="truth" d="M 170 156 L 170 230 L 250 230 L 250 295" marker-end="url(#dfd-arrow-4)"></path>
+              <path class="dfd-svg-edge" data-flow-path="yes" d="M 300 208 L 300 288" marker-end="url(#dfd-arrow-4)"></path>
+              <path class="dfd-svg-edge" data-flow-path="no" d="M 440 208 L 440 250 L 350 250 L 350 295" marker-end="url(#dfd-arrow-4)"></path>
+              <path class="dfd-svg-edge" data-flow-path="out" d="M 300 370 L 300 420" marker-end="url(#dfd-arrow-4)"></path>
+
+              <text class="dfd-svg-label" x="110" y="30" text-anchor="middle">Note</text>
+              <text class="dfd-svg-label" x="230" y="30" text-anchor="middle">2</text>
+
+              <ellipse class="dfd-svg-node" cx="170" cy="120" rx="90" ry="36"></ellipse>
+              <text class="dfd-svg-label" x="170" y="125" text-anchor="middle">kleiner</text>
+
+              <text class="dfd-svg-hint" x="160" y="200" text-anchor="end">1 · Wahrheitswert</text>
+              <text class="dfd-svg-hint" x="300" y="175" text-anchor="middle">2 · Ja-Fall</text>
+              <text class="dfd-svg-label" x="300" y="198" text-anchor="middle">"5€"</text>
+              <text class="dfd-svg-hint" x="440" y="175" text-anchor="middle">3 · Nein-Fall</text>
+              <text class="dfd-svg-label" x="440" y="198" text-anchor="middle">"0€"</text>
+
+              <ellipse class="dfd-svg-node" cx="300" cy="330" rx="90" ry="40"></ellipse>
+              <text class="dfd-svg-label" x="300" y="336" text-anchor="middle">WENN</text>
+
+              <text class="dfd-svg-label" x="300" y="444" text-anchor="middle">Notengeld</text>
+
+              <g class="dfd-token" data-flow-token="note" hidden>
+                <rect x="-16" y="-13" width="32" height="26" rx="13"></rect>
+                <text text-anchor="middle" dominant-baseline="middle" data-flow-note>1</text>
+              </g>
+              <g class="dfd-token" data-flow-token="two" hidden>
+                <rect x="-16" y="-13" width="32" height="26" rx="13"></rect>
+                <text text-anchor="middle" dominant-baseline="middle">2</text>
+              </g>
+              <g class="dfd-token" data-flow-token="truth" hidden>
+                <rect x="-38" y="-13" width="76" height="26" rx="13"></rect>
+                <text text-anchor="middle" dominant-baseline="middle" data-flow-truth>WAHR</text>
+              </g>
+              <g class="dfd-token" data-flow-token="yes" hidden>
+                <rect x="-22" y="-13" width="44" height="26" rx="13"></rect>
+                <text text-anchor="middle" dominant-baseline="middle">5€</text>
+              </g>
+              <g class="dfd-token" data-flow-token="no" hidden>
+                <rect x="-22" y="-13" width="44" height="26" rx="13"></rect>
+                <text text-anchor="middle" dominant-baseline="middle">0€</text>
+              </g>
+              <g class="dfd-token" data-flow-token="out" hidden>
+                <rect x="-22" y="-13" width="44" height="26" rx="13"></rect>
+                <text text-anchor="middle" dominant-baseline="middle" data-flow-out>5€</text>
+              </g>
+            </svg>
+
+            <div class="dfd-value-picker">
+              <label for="note-wenn">Note</label>
+              <select id="note-wenn" data-flow-select>
+                <option value="1">1</option>
+                <option value="2">2</option>
+                <option value="3">3</option>
+                <option value="4">4</option>
+                <option value="5">5</option>
+                <option value="6">6</option>
+              </select>
+            </div>
+            <div class="simulation-actions">
+              <button type="button" class="primary-action" data-flow-action="start">Bewegung starten</button>
+              <button type="button" class="secondary-action" data-flow-action="pause">Pausieren</button>
+              <button type="button" class="secondary-action" data-flow-action="reset">Zurücksetzen</button>
+            </div>
+            <p class="simulation-status" data-flow-status role="status" aria-live="polite"></p>
+          </div>
+
+          <div class="work-order"><strong>Arbeitsauftrag 5:</strong> <strong>Starte</strong> die Bewegung einmal mit der Note 1 und einmal mit der Note 3. <strong>Beobachte</strong>, welche drei Werte in die WENN-Funktion fließen und welcher Wert sie wieder verlässt.</div>
+
+          <div class="dfd-merke">
+            <p>Die <strong>WENN-Funktion</strong> hat <strong>drei Eingänge</strong>:</p>
+            <p>1. den <strong>Wahrheitswert</strong> einer vorgeschalteten Aussagefunktion,<br>2. den Wert für den <strong>Ja-Fall</strong>: ihn gibt WENN aus, wenn der Wahrheitswert WAHR ist,<br>3. den Wert für den <strong>Nein-Fall</strong>: ihn gibt WENN aus, wenn der Wahrheitswert FALSCH ist.</p>
+            <p>Ausgegeben wird immer genau einer der beiden Werte.</p>
+          </div>
+
+          <p>In der Tabellenkalkulation stehen die drei Eingänge in genau dieser Reihenfolge in der Klammer, getrennt durch Semikolons:</p>
+          <code class="dfd-term">=WENN(Note&lt;2; "5€"; "0€")</code>
+
+          <h3>Kurzquiz zur WENN-Funktion</h3>
+          <div class="work-order"><strong>Arbeitsauftrag 6:</strong> <strong>Beantworte</strong> die vier Fragen. In manchen Fragen sind mehrere Antworten richtig – kreuze alle richtigen an.</div>
+
+          <form id="wenn-quiz" class="final-quiz" novalidate>
+            <fieldset>
+              <legend><span>1</span> Welche Werte fließen in die WENN-Funktion hinein?</legend>
+              <div class="choice-list">
+                <label class="choice-option"><input type="checkbox" name="wenn-quiz-1" value="a"><span>Der Wahrheitswert einer Aussagefunktion.</span></label>
+                <label class="choice-option"><input type="checkbox" name="wenn-quiz-1" value="b"><span>Der Wert, der im Ja-Fall ausgegeben wird.</span></label>
+                <label class="choice-option"><input type="checkbox" name="wenn-quiz-1" value="c"><span>Die Note selbst, ohne vorherigen Vergleich.</span></label>
+                <label class="choice-option"><input type="checkbox" name="wenn-quiz-1" value="d"><span>Der Wert, der im Nein-Fall ausgegeben wird.</span></label>
+              </div>
+            </fieldset>
+            <fieldset>
+              <legend><span>2</span> Welche Aussagen über die Aussagefunktion „kleiner“ stimmen?</legend>
+              <div class="choice-list">
+                <label class="choice-option"><input type="checkbox" name="wenn-quiz-2" value="a"><span>Sie vergleicht zwei Werte miteinander.</span></label>
+                <label class="choice-option"><input type="checkbox" name="wenn-quiz-2" value="b"><span>Sie gibt WAHR oder FALSCH aus.</span></label>
+                <label class="choice-option"><input type="checkbox" name="wenn-quiz-2" value="c"><span>Sie gibt 5 € oder 0 € aus.</span></label>
+                <label class="choice-option"><input type="checkbox" name="wenn-quiz-2" value="d"><span>Bei der Note 2 und der Konstanten 2 gibt sie WAHR aus.</span></label>
+              </div>
+            </fieldset>
+            <fieldset>
+              <legend><span>3</span> Im Diagramm aus Schritt 2 wird die Note 3 eingegeben. Was gibt die WENN-Funktion aus?</legend>
+              <div class="choice-list">
+                <label class="choice-option"><input type="checkbox" name="wenn-quiz-3" value="a"><span>"5€"</span></label>
+                <label class="choice-option"><input type="checkbox" name="wenn-quiz-3" value="b"><span>"0€"</span></label>
+                <label class="choice-option"><input type="checkbox" name="wenn-quiz-3" value="c"><span>WAHR</span></label>
+                <label class="choice-option"><input type="checkbox" name="wenn-quiz-3" value="d"><span>FALSCH</span></label>
+              </div>
+            </fieldset>
+            <fieldset>
+              <legend><span>4</span> Welche Aussagen zur Termdarstellung =WENN(Note&lt;2; "5€"; "0€") stimmen?</legend>
+              <div class="choice-list">
+                <label class="choice-option"><input type="checkbox" name="wenn-quiz-4" value="a"><span>An erster Stelle steht die Bedingung, die den Wahrheitswert liefert.</span></label>
+                <label class="choice-option"><input type="checkbox" name="wenn-quiz-4" value="b"><span>An zweiter Stelle steht der Wert für den Ja-Fall.</span></label>
+                <label class="choice-option"><input type="checkbox" name="wenn-quiz-4" value="c"><span>An dritter Stelle steht der Wert für den Nein-Fall.</span></label>
+                <label class="choice-option"><input type="checkbox" name="wenn-quiz-4" value="d"><span>Die Reihenfolge der drei Werte in der Klammer ist beliebig.</span></label>
+              </div>
+            </fieldset>
+            <button class="primary-action" type="submit">Kurzquiz prüfen</button>
+          </form>
+          <section id="result-wenn-quiz" class="result" aria-live="polite" hidden></section>
+        </section>
+
         <section id="panel-fehler" class="step-panel dfd-card" role="tabpanel" aria-labelledby="tab-fehler" data-dfd-panel="fehler" hidden>
           <p class="eyebrow">Anwenden und übertragen</p>
-          <h2>3. Einen Fehler finden und korrigieren</h2>
+          <h2>4. Einen Fehler finden und korrigieren</h2>
           <p class="dfd-scenario">Anna zieht ein Los. Wenn die Losnummer größer als 70 ist, erhält sie 10 € Gewinn. Bei jeder anderen Losnummer erhält sie 0 €.</p>
 
-          <div class="work-order"><strong>Arbeitsauftrag 4:</strong> Das abgebildete Datenflussdiagramm passt nicht zu diesem Text. Beschreibe den Fehler, seine Auswirkung bei der Losnummer 70 und die nötige Korrektur.</div>
+          <div class="work-order"><strong>Arbeitsauftrag 7:</strong> Das abgebildete Datenflussdiagramm passt nicht zu diesem Text. Beschreibe den Fehler, seine Auswirkung bei der Losnummer 70 und die nötige Korrektur.</div>
 
           <div class="dfd-diagram-input-layout">
             <svg class="dfd-svg" viewBox="0 0 460 430" role="img" aria-label="Fehlerhaftes Datenflussdiagramm: Losnummer und 70 fließen in einen Knoten mit der Beschriftung größer gleich, dessen Ergebnis zusammen mit 10 Euro und 0 Euro in eine WENN-Funktion führt und Losgewinn ausgibt.">
@@ -261,9 +465,9 @@
           </div>
 
           <h3>Korrigiertes Diagramm zeichnen</h3>
-          <div class="work-order"><strong>Arbeitsauftrag 5:</strong> Zeichne das korrigierte Datenflussdiagramm im Werkzeug nach.</div>
+          <div class="work-order"><strong>Arbeitsauftrag 8:</strong> Zeichne das korrigierte Datenflussdiagramm im Werkzeug nach.</div>
           <div class="tool-embed">
-            <iframe title="Zeichenwerkzeug für Aufgabe 3" src="orinoco-dfd.html"
+            <iframe title="Zeichenwerkzeug für Aufgabe 4" src="orinoco-dfd.html"
                     loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
           </div>
           <p class="dfd-tool-hint">Doppelklicke einen Baustein, um ihn zu beschriften. Das Werkzeug speichert nichts – mache am Ende einen Screenshot oder übertrage das Diagramm in dein Heft.</p>
@@ -282,7 +486,8 @@
             <p>Ein Verteiler gibt denselben Wert an mehrere Funktionen weiter.</p>
             <p>Eine Konstante ist ein fest eingetragener Wert, der nicht eingegeben wird.</p>
             <p>Jede <strong>Funktion</strong> entspricht einem Teilschritt einer Formel.</p>
-            <p>Die <strong>WENN-Funktion</strong> hat drei Eingänge: Bedingung, Ausgabe wenn wahr, Ausgabe wenn falsch.</p>
+            <p>Eine <strong>Aussagefunktion</strong> vergleicht Werte und gibt einen <strong>Wahrheitswert</strong> aus: WAHR oder FALSCH.</p>
+            <p>Die <strong>WENN-Funktion</strong> hat drei Eingänge: den Wahrheitswert einer Aussagefunktion, den Wert für den Ja-Fall und den Wert für den Nein-Fall. Sie gibt genau einen der beiden Werte aus.</p>
           </div>
         </section>
 
@@ -291,7 +496,7 @@
           <h2>Abschluss</h2>
 
           <h3>Abschlussquiz</h3>
-          <div class="work-order"><strong>Arbeitsauftrag 6:</strong> Beantworte die fünf Fragen zum Abschluss. In manchen Fragen sind mehrere Antworten richtig – kreuze alle richtigen an.</div>
+          <div class="work-order"><strong>Arbeitsauftrag 9:</strong> Beantworte die fünf Fragen zum Abschluss. In manchen Fragen sind mehrere Antworten richtig – kreuze alle richtigen an.</div>
 
           <form id="final-quiz" class="final-quiz" novalidate>
             <fieldset>
@@ -324,7 +529,7 @@
             <fieldset>
               <legend><span>4</span> Wie viele Eingänge hat die WENN-Funktion und welche sind es?</legend>
               <div class="choice-list">
-                <label class="choice-option"><input type="checkbox" name="quiz-4" value="a"><span>Drei: Bedingung, Ausgabe wenn wahr, Ausgabe wenn falsch.</span></label>
+                <label class="choice-option"><input type="checkbox" name="quiz-4" value="a"><span>Drei: Wahrheitswert einer Aussagefunktion, Wert für den Ja-Fall, Wert für den Nein-Fall.</span></label>
                 <label class="choice-option"><input type="checkbox" name="quiz-4" value="b"><span>Zwei: Ausgabe wenn wahr und Ausgabe wenn falsch.</span></label>
                 <label class="choice-option"><input type="checkbox" name="quiz-4" value="c"><span>Einen: nur die Bedingung.</span></label>
                 <label class="choice-option"><input type="checkbox" name="quiz-4" value="d"><span>Drei: Eingabe, Konstante und Verteiler.</span></label>
@@ -363,37 +568,67 @@
               <dl class="summary-grid"><dt>Richtiges Ergebnis</dt><dd>Eingaben sind die erlaufene Summe S und die Unkosten U der SMV. Ein Verteiler gibt S an beide Zweige weiter: Ein Zweig rechnet S − U, der andere S · 0,5. Beide Ergebnisse fließen in „plus“. Ausgabe: gespendete Gesamtsumme = S − U + 0,5 · S.</dd></dl>
             </section>
             <section class="summary-section">
-              <h4>3 · Fehler finden</h4>
-              <p class="prompt">Arbeitsauftrag 4: Beschreibe den Fehler im Gewinnspiel-Diagramm, seine Auswirkung bei der Losnummer 70 und die nötige Korrektur.</p>
+              <h4>3 · Aussagefunktion</h4>
+              <p class="prompt">Arbeitsauftrag 4: Sage voraus, ob die Aussagefunktion „kleiner“ für die gewählte Note WAHR oder FALSCH ausgibt, und prüfe mit der Bewegung.</p>
+              <dl class="summary-grid"><dt>Richtiges Ergebnis</dt><dd>„kleiner“ vergleicht die Note mit der Konstanten 2. Nur bei der Note 1 kommt WAHR heraus. Bei den Noten 2 bis 6 kommt FALSCH heraus – auch bei der Note 2, denn 2 ist nicht kleiner als 2.</dd></dl>
+            </section>
+            <section class="summary-section">
+              <h4>3 · WENN-Funktion</h4>
+              <p class="prompt">Arbeitsauftrag 5: Beobachte mit den Noten 1 und 3, welche drei Werte in WENN fließen und welcher Wert sie verlässt.</p>
+              <dl class="summary-grid"><dt>Richtiges Ergebnis</dt><dd>In WENN fließen immer drei Werte: der Wahrheitswert aus „kleiner“, der Ja-Fall „5€“ und der Nein-Fall „0€“. Note 1: WAHR, WENN gibt „5€“ aus. Note 3: FALSCH, WENN gibt „0€“ aus. Term: =WENN(Note&lt;2; "5€"; "0€").</dd></dl>
+            </section>
+            <section class="summary-section">
+              <h4>Kurzquiz – Frage 1</h4>
+              <p class="prompt">Welche Werte fließen in die WENN-Funktion hinein?</p>
+              <dl class="summary-grid"><dt>Richtiges Ergebnis</dt><dd>Der Wahrheitswert einer Aussagefunktion, der Wert für den Ja-Fall und der Wert für den Nein-Fall.</dd></dl>
+            </section>
+            <section class="summary-section">
+              <h4>Kurzquiz – Frage 2</h4>
+              <p class="prompt">Welche Aussagen über die Aussagefunktion „kleiner“ stimmen?</p>
+              <dl class="summary-grid"><dt>Richtiges Ergebnis</dt><dd>Sie vergleicht zwei Werte miteinander und gibt WAHR oder FALSCH aus. Bei der Note 2 gibt sie FALSCH aus.</dd></dl>
+            </section>
+            <section class="summary-section">
+              <h4>Kurzquiz – Frage 3</h4>
+              <p class="prompt">Die Note 3 wird eingegeben. Was gibt die WENN-Funktion aus?</p>
+              <dl class="summary-grid"><dt>Richtiges Ergebnis</dt><dd>"0€" – „kleiner“ liefert FALSCH, deshalb gibt WENN den Nein-Fall aus. WAHR und FALSCH fließen nur in WENN hinein.</dd></dl>
+            </section>
+            <section class="summary-section">
+              <h4>Kurzquiz – Frage 4</h4>
+              <p class="prompt">Welche Aussagen zur Termdarstellung =WENN(Note&lt;2; "5€"; "0€") stimmen?</p>
+              <dl class="summary-grid"><dt>Richtiges Ergebnis</dt><dd>An erster Stelle steht die Bedingung, an zweiter der Ja-Fall, an dritter der Nein-Fall. Die Reihenfolge ist nicht beliebig.</dd></dl>
+            </section>
+            <section class="summary-section">
+              <h4>4 · Fehler finden</h4>
+              <p class="prompt">Arbeitsauftrag 7: Beschreibe den Fehler im Gewinnspiel-Diagramm, seine Auswirkung bei der Losnummer 70 und die nötige Korrektur.</p>
               <dl class="summary-grid"><dt>Richtiges Ergebnis</dt><dd>Fehler: Der Vergleichsknoten heißt „größer gleich“, der Text verlangt aber „größer als 70“. Auswirkung: Bei der Losnummer 70 gibt das Diagramm 10 € aus, richtig wären 0 €. Korrektur: Der Knoten muss „größer“ (&gt;) heißen.</dd></dl>
             </section>
             <section class="summary-section">
-              <h4>3 · Korrigiertes Diagramm</h4>
-              <p class="prompt">Arbeitsauftrag 5: Zeichne das korrigierte Datenflussdiagramm im Werkzeug nach.</p>
+              <h4>4 · Korrigiertes Diagramm</h4>
+              <p class="prompt">Arbeitsauftrag 8: Zeichne das korrigierte Datenflussdiagramm im Werkzeug nach.</p>
               <dl class="summary-grid"><dt>Richtiges Ergebnis</dt><dd>Nur ein Baustein ändert sich: Der Vergleichsknoten heißt „größer“, im Werkzeug &gt;. Eingabe Losnummer, Konstante 70, WENN mit „10€“ und „0€“ sowie die Ausgabe Losgewinn bleiben unverändert.</dd></dl>
             </section>
             <section class="summary-section">
-              <h4>Quiz – Frage 1</h4>
+              <h4>Abschlussquiz – Frage 1</h4>
               <p class="prompt">Wie liest man ein Datenflussdiagramm?</p>
               <dl class="summary-grid"><dt>Richtiges Ergebnis</dt><dd>Von oben nach unten; die Pfeile geben die Richtung des Datenflusses an; ganz unten steht die Ausgabe.</dd></dl>
             </section>
             <section class="summary-section">
-              <h4>Quiz – Frage 2</h4>
+              <h4>Abschlussquiz – Frage 2</h4>
               <p class="prompt">Welche Aussagen über Verteiler und Funktionen stimmen?</p>
               <dl class="summary-grid"><dt>Richtiges Ergebnis</dt><dd>Ein Verteiler gibt denselben Wert an mehrere Funktionen weiter; eine Funktion hat mehrere Eingangspfeile, aber genau einen Ausgangspfeil; jede Funktion entspricht einem Teilschritt einer Formel.</dd></dl>
             </section>
             <section class="summary-section">
-              <h4>Quiz – Frage 3</h4>
+              <h4>Abschlussquiz – Frage 3</h4>
               <p class="prompt">Welche Bausteine stecken im Gewinnspiel-Diagramm?</p>
               <dl class="summary-grid"><dt>Richtiges Ergebnis</dt><dd>Die 70 ist eine Konstante, die Losnummer ist eine Eingabe, der Losgewinn ist die Ausgabe.</dd></dl>
             </section>
             <section class="summary-section">
-              <h4>Quiz – Frage 4</h4>
+              <h4>Abschlussquiz – Frage 4</h4>
               <p class="prompt">Wie viele Eingänge hat die WENN-Funktion und welche sind es?</p>
-              <dl class="summary-grid"><dt>Richtiges Ergebnis</dt><dd>Drei: Bedingung, Ausgabe wenn wahr, Ausgabe wenn falsch.</dd></dl>
+              <dl class="summary-grid"><dt>Richtiges Ergebnis</dt><dd>Drei: Wahrheitswert einer Aussagefunktion, Wert für den Ja-Fall, Wert für den Nein-Fall.</dd></dl>
             </section>
             <section class="summary-section">
-              <h4>Quiz – Frage 5</h4>
+              <h4>Abschlussquiz – Frage 5</h4>
               <p class="prompt">„größer als 70“ oder „größer gleich 70“ – was ist der Unterschied?</p>
               <dl class="summary-grid"><dt>Richtiges Ergebnis</dt><dd>Bei 70 gibt das fehlerhafte Diagramm 10 € statt 0 € aus; bei 71 stimmen beide Varianten überein; der Knoten muss „größer“ (&gt;) heißen.</dd></dl>
             </section>
@@ -756,21 +991,185 @@
         })();
 
         /* ---------------------------------------------------------
-         * Abschluss – Mehrfachauswahl-Quiz (5 Fragen)
+         * Abschnitt 3 – Bewegte Werte in Aussagefunktion und WENN
+         * Pfade und Werte tragen data-flow-path bzw. data-flow-token.
          * --------------------------------------------------------- */
-        (function setupFinalQuiz() {
-          const form = document.getElementById("final-quiz");
-          const resultBox = document.getElementById("result-quiz");
-          const summary = document.getElementById("quiz-summary");
+        function setupFlowAnimation(root, { phases, readyText, doneText }) {
+          const svg = root.querySelector("svg");
+          const statusEl = root.querySelector("[data-flow-status]");
+          const PHASE_DURATION = 1600;
+          const tokens = {};
+          const paths = {};
+          svg.querySelectorAll("[data-flow-token]").forEach((token) => { tokens[token.dataset.flowToken] = token; });
+          svg.querySelectorAll("[data-flow-path]").forEach((path) => { paths[path.dataset.flowPath] = path; });
+
+          let rafId = null;
+          let phase = -1;
+          let phaseStart = 0;
+          let elapsedBeforePause = 0;
+          let elapsed = 0;
+          let running = false;
+          let finished = false;
+
+          /* SVG-Elemente kennen die Eigenschaft hidden nicht, daher ueber das Attribut. */
+          function hideAllTokens() {
+            Object.values(tokens).forEach((token) => token.setAttribute("hidden", ""));
+          }
+
+          function placeToken(key, t) {
+            const path = paths[key];
+            const point = path.getPointAtLength(Math.min(t, 1) * path.getTotalLength());
+            tokens[key].setAttribute("transform", "translate(" + point.x + "," + point.y + ")");
+            tokens[key].removeAttribute("hidden");
+          }
+
+          function clearHighlights() {
+            Object.values(paths).forEach((path) => path.classList.remove("is-chosen"));
+          }
+
+          function enterPhase(index) {
+            phase = index;
+            phaseStart = 0;
+            elapsedBeforePause = 0;
+            hideAllTokens();
+            const current = phases[phase];
+            if (current.highlight) {
+              const key = current.highlight();
+              if (paths[key]) paths[key].classList.add("is-chosen");
+            }
+            statusEl.textContent = current.status();
+          }
+
+          function step(timestamp) {
+            if (!phaseStart) phaseStart = timestamp;
+            elapsed = elapsedBeforePause + (timestamp - phaseStart);
+            const t = Math.min(elapsed / PHASE_DURATION, 1);
+            phases[phase].moves.forEach((key) => placeToken(key, t));
+
+            if (t < 1) {
+              rafId = window.requestAnimationFrame(step);
+              return;
+            }
+            if (phase < phases.length - 1) {
+              enterPhase(phase + 1);
+              rafId = window.requestAnimationFrame(step);
+              return;
+            }
+            running = false;
+            finished = true;
+            rafId = null;
+            statusEl.textContent = doneText();
+          }
+
+          function stopRaf() {
+            if (rafId !== null) {
+              window.cancelAnimationFrame(rafId);
+              rafId = null;
+            }
+          }
+
+          function start() {
+            if (running) return;
+            if (phase === -1 || finished) {
+              reset();
+              enterPhase(0);
+            } else {
+              statusEl.textContent = phases[phase].status();
+            }
+            running = true;
+            phaseStart = 0;
+            rafId = window.requestAnimationFrame(step);
+          }
+
+          function pause() {
+            if (!running) return;
+            running = false;
+            stopRaf();
+            elapsedBeforePause = elapsed;
+            statusEl.textContent = "Pausiert.";
+          }
+
+          function reset() {
+            running = false;
+            finished = false;
+            stopRaf();
+            phase = -1;
+            phaseStart = 0;
+            elapsedBeforePause = 0;
+            elapsed = 0;
+            hideAllTokens();
+            clearHighlights();
+            statusEl.textContent = readyText();
+          }
+
+          root.querySelector('[data-flow-action="start"]').addEventListener("click", start);
+          root.querySelector('[data-flow-action="pause"]').addEventListener("click", pause);
+          root.querySelector('[data-flow-action="reset"]').addEventListener("click", reset);
+
+          reset();
+          return { reset };
+        }
+
+        (function setupWennAnimations() {
+          ["aussage", "wenn"].forEach((kind) => {
+            const root = document.querySelector('[data-flow="' + kind + '"]');
+            if (!root) return;
+
+            const select = root.querySelector("[data-flow-select]");
+            const note = () => Number(select.value);
+            const isTrue = () => note() < 2;
+            const truthText = () => (isTrue() ? "WAHR" : "FALSCH");
+
+            function updateTokenTexts() {
+              root.querySelectorAll("[data-flow-note]").forEach((el) => { el.textContent = String(note()); });
+              root.querySelectorAll("[data-flow-truth]").forEach((el) => { el.textContent = truthText(); });
+              root.querySelectorAll("[data-flow-out]").forEach((el) => { el.textContent = isTrue() ? "5€" : "0€"; });
+            }
+
+            const compareStatus = () => "Die Note " + note() + " und die Konstante 2 fließen in die Aussagefunktion „kleiner“.";
+            const config = kind === "aussage"
+              ? {
+                  readyText: () => "Bereit. Welcher Wahrheitswert kommt bei der Note " + note() + " heraus? Überlege zuerst, dann starte.",
+                  phases: [
+                    { moves: ["note", "two"], status: compareStatus },
+                    { moves: ["truth"], status: () => "„kleiner“ prüft: Ist " + note() + " kleiner als 2? Heraus kommt der Wahrheitswert " + truthText() + "." }
+                  ],
+                  doneText: () => "Fertig: " + note() + " < 2 ist " + truthText() + ". Wähle eine andere Note und starte erneut."
+                }
+              : {
+                  readyText: () => "Bereit. Die Note " + note() + " steht an der Eingabe.",
+                  phases: [
+                    { moves: ["note", "two"], status: compareStatus },
+                    { moves: ["truth", "yes", "no"], status: () => "Drei Werte fließen in WENN: der Wahrheitswert " + truthText() + ", der Ja-Fall „5€“ und der Nein-Fall „0€“." },
+                    {
+                      moves: ["out"],
+                      highlight: () => (isTrue() ? "yes" : "no"),
+                      status: () => isTrue()
+                        ? "Der Wahrheitswert ist WAHR. Deshalb gibt WENN den Ja-Fall „5€“ aus."
+                        : "Der Wahrheitswert ist FALSCH. Deshalb gibt WENN den Nein-Fall „0€“ aus."
+                    }
+                  ],
+                  doneText: () => "Fertig: Das Notengeld für die Note " + note() + " beträgt " + (isTrue() ? "5 €" : "0 €") + ". Wähle eine andere Note und starte erneut."
+                };
+
+            updateTokenTexts();
+            const animation = setupFlowAnimation(root, config);
+            select.addEventListener("change", () => {
+              updateTokenTexts();
+              animation.reset();
+            });
+          });
+        })();
+
+        /* ---------------------------------------------------------
+         * Mehrfachauswahl-Quiz – Kurzquiz (Abschnitt 3) und Abschlussquiz
+         * --------------------------------------------------------- */
+        function setupChoiceQuiz({ formId, resultId, solutions, messages, onSuccess }) {
+          const form = document.getElementById(formId);
+          const resultBox = document.getElementById(resultId);
           if (!form || !resultBox) return;
 
-          const SOLUTIONS = {
-            "quiz-1": ["a", "b", "c"],
-            "quiz-2": ["a", "b", "d"],
-            "quiz-3": ["a", "b", "d"],
-            "quiz-4": ["a"],
-            "quiz-5": ["a", "b", "c"]
-          };
+          const SOLUTIONS = solutions;
           const QUESTION_NAMES = Object.keys(SOLUTIONS);
 
           function selectedValues(name) {
@@ -796,7 +1195,7 @@
 
             const hasEmptyQuestion = QUESTION_NAMES.some((name) => selectedValues(name).length === 0);
             if (hasEmptyQuestion) {
-              showResult("low", "Bitte kreuze in jeder Frage mindestens eine Antwort an. Bearbeite die Fragen 1 bis 5 vollständig.");
+              showResult("low", "Bitte kreuze in jeder Frage mindestens eine Antwort an. Bearbeite die Fragen 1 bis " + QUESTION_NAMES.length + " vollständig.");
               return;
             }
 
@@ -809,13 +1208,13 @@
             const correctCount = results.filter(Boolean).length;
 
             if (correctCount === QUESTION_NAMES.length) {
-              showResult("high", "Korrekt. Alle fünf Fragen stimmen. Unten ist jetzt die Übersicht mit allen Aufgaben und Lösungen freigeschaltet.");
-              if (summary) summary.hidden = false;
+              showResult("high", messages.high);
+              if (onSuccess) onSuccess();
               return;
             }
 
             if (correctCount === 0) {
-              showResult("low", "Noch nicht korrekt. Sieh dir den Reiter „Merke“ und den Reiter „2 · Bausteine“ noch einmal an: Dort stehen die Bausteine, die Leserichtung und die drei Eingänge der WENN-Funktion.");
+              showResult("low", messages.low);
               return;
             }
 
@@ -828,10 +1227,47 @@
               : wrongNumbers.slice(0, -1).join(", ") + " und " + wrongNumbers[wrongNumbers.length - 1];
             showResult(
               "medium",
-              `Teilweise korrekt. Richtig sind schon ${correctCount} von 5 Fragen. Prüfe noch einmal Frage ${wrongList}. Denk daran: In manchen Fragen musst du mehrere Kästchen ankreuzen, in anderen ist genau eine Antwort richtig.`
+              `Teilweise korrekt. Richtig sind schon ${correctCount} von ${QUESTION_NAMES.length} Fragen. Prüfe noch einmal Frage ${wrongList}. ${messages.mediumHint}`
             );
           });
-        })();
+        }
+
+        setupChoiceQuiz({
+          formId: "wenn-quiz",
+          resultId: "result-wenn-quiz",
+          solutions: {
+            "wenn-quiz-1": ["a", "b", "d"],
+            "wenn-quiz-2": ["a", "b"],
+            "wenn-quiz-3": ["b"],
+            "wenn-quiz-4": ["a", "b", "c"]
+          },
+          messages: {
+            high: "Korrekt. Alle vier Fragen stimmen. Du kennst die Aussagefunktion und die drei Eingänge der WENN-Funktion.",
+            low: "Noch nicht korrekt. Starte die Bewegung in Schritt 2 noch einmal und zähle die Pfeile, die in WENN hineinführen. Lies danach die beiden Merke-Kästen in diesem Reiter.",
+            mediumHint: "Tipp: Probiere in den Diagrammen die Noten 2 und 3 aus. Denk daran: In manchen Fragen musst du mehrere Kästchen ankreuzen, in anderen ist genau eine Antwort richtig."
+          }
+        });
+
+        setupChoiceQuiz({
+          formId: "final-quiz",
+          resultId: "result-quiz",
+          solutions: {
+            "quiz-1": ["a", "b", "c"],
+            "quiz-2": ["a", "b", "d"],
+            "quiz-3": ["a", "b", "d"],
+            "quiz-4": ["a"],
+            "quiz-5": ["a", "b", "c"]
+          },
+          messages: {
+            high: "Korrekt. Alle fünf Fragen stimmen. Unten ist jetzt die Übersicht mit allen Aufgaben und Lösungen freigeschaltet.",
+            low: "Noch nicht korrekt. Sieh dir den Reiter „Merke“, den Reiter „2 · Bausteine“ und den Reiter „3 · WENN-Funktion“ noch einmal an: Dort stehen die Bausteine, die Leserichtung und die drei Eingänge der WENN-Funktion.",
+            mediumHint: "Denk daran: In manchen Fragen musst du mehrere Kästchen ankreuzen, in anderen ist genau eine Antwort richtig."
+          },
+          onSuccess: () => {
+            const summary = document.getElementById("quiz-summary");
+            if (summary) summary.hidden = false;
+          }
+        });
 
         /**
          * ==========================================================
