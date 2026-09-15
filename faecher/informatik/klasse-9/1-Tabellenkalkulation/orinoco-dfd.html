@@ -21,19 +21,51 @@
         font-size: 0.85rem;
         font-weight: 600;
       }
+
+      .tool-unavailable {
+        margin: 1rem;
+        padding: 0.9rem 1rem;
+        border: 1px solid #f3b33d;
+        border-left: 5px solid #f3b33d;
+        border-radius: 8px;
+        background: #fff8e6;
+        color: #1e2935;
+        line-height: 1.5;
+      }
+
+      .tool-unavailable[hidden] {
+        display: none;
+      }
     </style>
+    <script>
+      /* Scheitert ein Skript von klassenkarte.de (z. B. Zertifikatsfehler), wird ein Hinweis gezeigt. */
+      window.__orinocoLoadFailed = false;
+      function orinocoScriptFailed() {
+        window.__orinocoLoadFailed = true;
+      }
+    </script>
   </head>
   <body>
     <div class="tool-header">Datenflussdiagramm zeichnen</div>
+    <p id="tool-unavailable" class="tool-unavailable" role="alert" hidden>
+      <strong>Das Zeichenwerkzeug kann gerade nicht geladen werden.</strong><br>
+      Zeichne das Datenflussdiagramm stattdessen in dein Heft. Kontrolliere es danach mit der Selbstkontrolle unter dem Werkzeug.
+    </p>
     <canvas id="canvas"></canvas>
 
-    <script src="https://klassenkarte.de/oo/js/helper.js"></script>
-    <script src="https://klassenkarte.de/oo/js/model.js"></script>
-    <script src="https://klassenkarte.de/oo/js/celement.js"></script>
-    <script src="https://klassenkarte.de/oo/js/cflow.js"></script>
-    <script src="https://klassenkarte.de/oo/js/setupgui.js"></script>
-    <script src="https://klassenkarte.de/oo/js/evaluation.js"></script>
-    <script src="https://klassenkarte.de/oo/js/function.js"></script>
-    <script src="https://klassenkarte.de/oo/js/main.js"></script>
+    <script src="https://klassenkarte.de/oo/js/helper.js" onerror="orinocoScriptFailed()"></script>
+    <script src="https://klassenkarte.de/oo/js/model.js" onerror="orinocoScriptFailed()"></script>
+    <script src="https://klassenkarte.de/oo/js/celement.js" onerror="orinocoScriptFailed()"></script>
+    <script src="https://klassenkarte.de/oo/js/cflow.js" onerror="orinocoScriptFailed()"></script>
+    <script src="https://klassenkarte.de/oo/js/setupgui.js" onerror="orinocoScriptFailed()"></script>
+    <script src="https://klassenkarte.de/oo/js/evaluation.js" onerror="orinocoScriptFailed()"></script>
+    <script src="https://klassenkarte.de/oo/js/function.js" onerror="orinocoScriptFailed()"></script>
+    <script src="https://klassenkarte.de/oo/js/main.js" onerror="orinocoScriptFailed()"></script>
+    <script>
+      if (window.__orinocoLoadFailed) {
+        document.getElementById("tool-unavailable").hidden = false;
+        document.getElementById("canvas").hidden = true;
+      }
+    </script>
   </body>
 </html>

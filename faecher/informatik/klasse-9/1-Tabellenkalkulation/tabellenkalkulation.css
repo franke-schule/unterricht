@@ -1233,6 +1233,27 @@ body.is-filling-sheet {
   font: inherit;
 }
 
+.dfd-speed {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.6rem;
+  margin: 0.5rem 0;
+  font-weight: 700;
+}
+
+.dfd-speed input[type="range"] {
+  width: min(14rem, 100%);
+  min-height: 44px;
+  accent-color: var(--sheet-accent);
+}
+
+.dfd-speed output {
+  min-width: 8rem;
+  color: #52647a;
+  font-weight: 600;
+}
+
 .dfd-term {
   display: block;
   margin: 0.6rem 0 1rem;

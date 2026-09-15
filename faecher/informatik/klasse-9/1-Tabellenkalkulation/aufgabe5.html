@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Aufgabe 5 – Datenflussdiagramme</title>
     <link rel="stylesheet" href="../../../../styles.css?v=20260821">
-    <link rel="stylesheet" href="tabellenkalkulation.css?v=20260915">
+    <link rel="stylesheet" href="tabellenkalkulation.css?v=20260915-2">
   </head>
   <body>
     <div class="site-backdrop" aria-hidden="true"></div>
@@ -89,6 +89,11 @@
             <button type="button" class="primary-action" data-dfd1-action="start">Bewegung starten</button>
             <button type="button" class="secondary-action" data-dfd1-action="pause">Pausieren</button>
             <button type="button" class="secondary-action" data-dfd1-action="reset">Zurücksetzen</button>
+          </div>
+          <div class="dfd-speed">
+            <label for="speed-lesen">Tempo</label>
+            <input id="speed-lesen" type="range" min="0.5" max="1.5" step="0.25" value="1" data-dfd1-speed>
+            <output for="speed-lesen">normal</output>
           </div>
           <p class="simulation-status" data-dfd1-status role="status" aria-live="polite">Bereit. f, k und a stehen an den Eingaben.</p>
 
@@ -205,6 +210,8 @@
           <p class="dfd-scenario">In Aufgabe 4 hast du das Notengeld berechnet: Bei einer Note besser als 2 gibt es 5 €, sonst 0 €. Hier baust du diese Berechnung Schritt für Schritt als Datenflussdiagramm auf.</p>
 
           <h3>Schritt 1: Die Aussagefunktion</h3>
+          <div class="work-order"><strong>Arbeitsauftrag 4:</strong> <strong>Wähle</strong> eine Note und <strong>sage voraus</strong>, ob WAHR oder FALSCH herauskommt. <strong>Starte</strong> dann die Bewegung und <strong>prüfe</strong> deine Vermutung. Probiere unbedingt auch die Note 2 aus.</div>
+
           <div data-flow="aussage">
             <svg class="dfd-svg" viewBox="0 0 460 290" role="img" aria-label="Datenflussdiagramm: Die Eingabe Note und die Konstante 2 fließen in die Funktion kleiner. Heraus kommt ein Wahrheitswert, also WAHR oder FALSCH.">
               <defs>
@@ -256,10 +263,13 @@
               <button type="button" class="secondary-action" data-flow-action="pause">Pausieren</button>
               <button type="button" class="secondary-action" data-flow-action="reset">Zurücksetzen</button>
             </div>
+            <div class="dfd-speed">
+              <label for="speed-aussage">Tempo</label>
+              <input id="speed-aussage" type="range" min="0.5" max="1.5" step="0.25" value="1" data-flow-speed>
+              <output for="speed-aussage">normal</output>
+            </div>
             <p class="simulation-status" data-flow-status role="status" aria-live="polite"></p>
           </div>
-
-          <div class="work-order"><strong>Arbeitsauftrag 4:</strong> <strong>Wähle</strong> eine Note und <strong>sage voraus</strong>, ob WAHR oder FALSCH herauskommt. <strong>Starte</strong> dann die Bewegung und <strong>prüfe</strong> deine Vermutung. Probiere unbedingt auch die Note 2 aus.</div>
 
           <div class="dfd-merke">
             <p>Eine Funktion wie „kleiner“ vergleicht zwei Werte und beantwortet eine Ja-Nein-Frage. Sie heißt <strong>Aussagefunktion</strong>.</p>
@@ -342,6 +352,11 @@
               <button type="button" class="primary-action" data-flow-action="start">Bewegung starten</button>
               <button type="button" class="secondary-action" data-flow-action="pause">Pausieren</button>
               <button type="button" class="secondary-action" data-flow-action="reset">Zurücksetzen</button>
+            </div>
+            <div class="dfd-speed">
+              <label for="speed-wenn">Tempo</label>
+              <input id="speed-wenn" type="range" min="0.5" max="1.5" step="0.25" value="1" data-flow-speed>
+              <output for="speed-wenn">normal</output>
             </div>
             <p class="simulation-status" data-flow-status role="status" aria-live="polite"></p>
           </div>
@@ -758,12 +773,32 @@
         })();
 
         /* ---------------------------------------------------------
+         * Tempo-Regler fuer die Animationen (0,5-fach bis 1,5-fach)
+         * Liefert die aktuelle Dauer einer Phase in Millisekunden.
+         * --------------------------------------------------------- */
+        function bindSpeedControl(input, baseDuration) {
+          const LABELS = { "0.5": "langsam", "0.75": "etwas langsamer", "1": "normal", "1.25": "etwas schneller", "1.5": "schnell" };
+          const output = input.parentElement.querySelector("output");
+
+          function update() {
+            const label = LABELS[input.value] || "normal";
+            if (output) output.textContent = label;
+            input.setAttribute("aria-valuetext", label);
+          }
+
+          input.addEventListener("input", update);
+          update();
+          return () => baseDuration / Number(input.value || 1);
+        }
+
+        /* ---------------------------------------------------------
          * Abschnitt 1 – Animation der Datenflüsse entlang der Pfade
          * --------------------------------------------------------- */
         (function setupDiagramAnimation() {
           const svg = document.querySelector("#panel-lesen .dfd-svg");
           if (!svg) return;
 
+          const phaseDuration = bindSpeedControl(document.querySelector("[data-dfd1-speed]"), 1600);
           const statusEl = document.querySelector("[data-dfd1-status]");
           const startButton = document.querySelector('[data-dfd1-action="start"]');
           const pauseButton = document.querySelector('[data-dfd1-action="pause"]');
@@ -784,7 +819,6 @@
             out: svg.querySelector('[data-token="out"]')
           };
 
-          const PHASE_DURATION = 1600;
           const STATUS_TEXT = {
             ready: "Bereit. f, k und a stehen an den Eingaben.",
             phase1: "f und k fließen in „plus“. a fließt in „geteilt durch“.",
@@ -796,8 +830,9 @@
 
           let rafId = null;
           let phase = 0;
-          let phaseStart = 0;
-          let elapsedBeforePause = 0;
+          /* Fortschritt der Phase (0 bis 1); so wirkt ein Tempowechsel ohne Sprung. */
+          let progress = 0;
+          let lastTimestamp = 0;
           let running = false;
 
           /*
@@ -858,9 +893,10 @@
           }
 
           function step(timestamp) {
-            if (!phaseStart) phaseStart = timestamp;
-            const elapsed = elapsedBeforePause + (timestamp - phaseStart);
-            const t = Math.min(elapsed / PHASE_DURATION, 1);
+            const delta = lastTimestamp ? timestamp - lastTimestamp : 0;
+            lastTimestamp = timestamp;
+            progress = Math.min(progress + delta / phaseDuration(), 1);
+            const t = progress;
 
             if (phase === 1) {
               placeTokenOnPath(tokens.f, paths.f, t);
@@ -880,8 +916,7 @@
             if (t >= 1) {
               if (phase < 3) {
                 phase += 1;
-                phaseStart = 0;
-                elapsedBeforePause = 0;
+                progress = 0;
                 setStatus(phase === 2 ? STATUS_TEXT.phase2 : STATUS_TEXT.phase3);
                 rafId = window.requestAnimationFrame(step);
               } else {
@@ -902,7 +937,7 @@
               phase = 1;
             }
             setStatus(phase === 1 ? STATUS_TEXT.phase1 : phase === 2 ? STATUS_TEXT.phase2 : STATUS_TEXT.phase3);
-            phaseStart = 0;
+            lastTimestamp = 0;
             rafId = window.requestAnimationFrame(step);
           }
 
@@ -917,8 +952,8 @@
             running = false;
             stopRaf();
             phase = 0;
-            phaseStart = 0;
-            elapsedBeforePause = 0;
+            progress = 0;
+            lastTimestamp = 0;
             resetVisual();
             setStatus(STATUS_TEXT.ready);
           }
@@ -997,7 +1032,7 @@
         function setupFlowAnimation(root, { phases, readyText, doneText }) {
           const svg = root.querySelector("svg");
           const statusEl = root.querySelector("[data-flow-status]");
-          const PHASE_DURATION = 1600;
+          const phaseDuration = bindSpeedControl(root.querySelector("[data-flow-speed]"), 1600);
           const tokens = {};
           const paths = {};
           svg.querySelectorAll("[data-flow-token]").forEach((token) => { tokens[token.dataset.flowToken] = token; });
@@ -1005,9 +1040,9 @@
 
           let rafId = null;
           let phase = -1;
-          let phaseStart = 0;
-          let elapsedBeforePause = 0;
-          let elapsed = 0;
+          /* Fortschritt der Phase (0 bis 1); so wirkt ein Tempowechsel ohne Sprung. */
+          let progress = 0;
+          let lastTimestamp = 0;
           let running = false;
           let finished = false;
 
@@ -1029,8 +1064,7 @@
 
           function enterPhase(index) {
             phase = index;
-            phaseStart = 0;
-            elapsedBeforePause = 0;
+            progress = 0;
             hideAllTokens();
             const current = phases[phase];
             if (current.highlight) {
@@ -1041,9 +1075,10 @@
           }
 
           function step(timestamp) {
-            if (!phaseStart) phaseStart = timestamp;
-            elapsed = elapsedBeforePause + (timestamp - phaseStart);
-            const t = Math.min(elapsed / PHASE_DURATION, 1);
+            const delta = lastTimestamp ? timestamp - lastTimestamp : 0;
+            lastTimestamp = timestamp;
+            progress = Math.min(progress + delta / phaseDuration(), 1);
+            const t = progress;
             phases[phase].moves.forEach((key) => placeToken(key, t));
 
             if (t < 1) {
@@ -1077,7 +1112,7 @@
               statusEl.textContent = phases[phase].status();
             }
             running = true;
-            phaseStart = 0;
+            lastTimestamp = 0;
             rafId = window.requestAnimationFrame(step);
           }
 
@@ -1085,7 +1120,6 @@
             if (!running) return;
             running = false;
             stopRaf();
-            elapsedBeforePause = elapsed;
             statusEl.textContent = "Pausiert.";
           }
 
@@ -1094,9 +1128,8 @@
             finished = false;
             stopRaf();
             phase = -1;
-            phaseStart = 0;
-            elapsedBeforePause = 0;
-            elapsed = 0;
+            progress = 0;
+            lastTimestamp = 0;
             hideAllTokens();
             clearHighlights();
             statusEl.textContent = readyText();
