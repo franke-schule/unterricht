@@ -23,9 +23,12 @@ assert.equal(tasks.fehlersuche.statusLabels.correct, 'korrekt');
 assert.match(tasks.fehlersuche.context, /größer gleich/);
 assert.match(tasks.fehlersuche.instruction, /keine vollständige Musterlösung/i);
 
-const page = fs.readFileSync(path.join(process.cwd(), 'faecher', 'informatik', 'klasse-9', '1-Tabellenkalkulation', 'aufgabe5.html'), 'utf8');
-assert.equal((page.match(/inf9-dfd-zylinder-beschreibung/g) || []).length, 1, 'Client verwendet inf9-dfd-zylinder-beschreibung genau einmal');
-assert.equal((page.match(/inf9-dfd-fehlersuche-gewinnspiel/g) || []).length, 1, 'Client verwendet inf9-dfd-fehlersuche-gewinnspiel genau einmal');
-assert.doesNotMatch(page, /tabellenkalkulation\.js/);
+const pageDir = path.join(process.cwd(), 'faecher', 'informatik', 'klasse-9', '1-Tabellenkalkulation');
+const page5a = fs.readFileSync(path.join(pageDir, 'aufgabe5a.html'), 'utf8');
+const page5b = fs.readFileSync(path.join(pageDir, 'aufgabe5b.html'), 'utf8');
+assert.equal((page5a.match(/inf9-dfd-zylinder-beschreibung/g) || []).length, 1, 'Aufgabe 5a verwendet inf9-dfd-zylinder-beschreibung genau einmal');
+assert.equal((page5b.match(/inf9-dfd-fehlersuche-gewinnspiel/g) || []).length, 1, 'Aufgabe 5b verwendet inf9-dfd-fehlersuche-gewinnspiel genau einmal');
+assert.doesNotMatch(page5a, /tabellenkalkulation\.js/);
+assert.doesNotMatch(page5b, /tabellenkalkulation\.js/);
 
 console.log('DFD-Beschreibe-Aufgaben und Client-/Server-IDs sind konsistent.');

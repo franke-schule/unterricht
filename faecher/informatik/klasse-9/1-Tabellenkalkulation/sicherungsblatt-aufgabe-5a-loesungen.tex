@@ -1,0 +1,163 @@
+\documentclass[11pt,a4paper]{article}
+
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage[ngerman]{babel}
+\usepackage[a4paper,margin=14mm]{geometry}
+\usepackage{lmodern}
+\usepackage{xcolor}
+\usepackage{tabularx}
+\usepackage{array}
+\usepackage{microtype}
+\usepackage{tikz}
+\usetikzlibrary{arrows.meta}
+
+\pagestyle{empty}
+\setlength{\parindent}{0pt}
+\setlength{\parskip}{0pt}
+\renewcommand{\familydefault}{\sfdefault}
+\linespread{1.3}\selectfont
+
+\definecolor{Navy}{HTML}{17324D}
+\definecolor{Blue}{HTML}{3B6EA5}
+\definecolor{Sky}{HTML}{EAF3FA}
+\definecolor{Mint}{HTML}{E8F5EF}
+\definecolor{Gold}{HTML}{F3B33D}
+\definecolor{Ink}{HTML}{1E2935}
+\definecolor{Muted}{HTML}{617080}
+\definecolor{Line}{HTML}{D8E1E8}
+
+\color{Ink}
+
+\newcommand{\sectiontitle}[2]{%
+  \vspace{4mm}
+  {\color{#1}\bfseries\large #2}\par
+  \vspace{1.2mm}
+  {\color{#1}\rule{\linewidth}{0.7pt}}\par
+  \vspace{2mm}
+}
+
+\begin{document}
+
+\colorbox{Navy}{%
+  \parbox{\dimexpr\linewidth-2\fboxsep\relax}{%
+    \vspace{3mm}
+    \color{white}
+    \begin{tabularx}{\linewidth}{@{}Xr@{}}
+      {\small\bfseries INFORMATIK · KLASSE 9} &
+      \colorbox{Gold}{\color{Navy}\small\bfseries\strut LÖSUNGEN}
+    \end{tabularx}
+    \vspace{2.5mm}
+
+    {\fontsize{22}{25}\selectfont\bfseries Sicherungsblatt: Aufgabe 5a}\par
+    \vspace{1mm}
+    {\large Datenflussdiagramme}
+    \vspace{3mm}
+  }%
+}
+
+\vspace{4mm}
+\colorbox{Sky}{%
+  \parbox{\dimexpr\linewidth-2\fboxsep\relax}{%
+    \vspace{2.4mm}
+    \textcolor{Blue}{\bfseries Ziel:}
+    Du kannst ein \textbf{Datenflussdiagramm} lesen, seine Bausteine benennen
+    und selbst eines zeichnen.
+    \vspace{2.4mm}
+  }%
+}
+
+\sectiontitle{Blue}{1 · Bausteine}
+
+\begin{tikzpicture}[x=1mm,y=1mm,
+    term/.style={font=\bfseries\small, text=Blue, anchor=north west,
+                 inner sep=0pt},
+    desc/.style={font=\small\linespread{1.0}\selectfont, text=Ink,
+                 anchor=north west, inner sep=0pt,
+                 text width=64mm, align=left,
+                 execute at begin node={\hyphenpenalty=10000\relax}},
+    func/.style={draw=Ink, line width=0.7pt, rounded corners=2pt, fill=white,
+                 minimum width=20mm, minimum height=7mm, inner sep=1pt,
+                 font=\small},
+    io/.style={font=\small, inner sep=1pt},
+    formula/.style={font=\small, text=Blue, inner sep=1pt},
+    flow/.style={draw=Ink, line width=0.7pt,
+                 -{Stealth[length=2.2mm,width=1.8mm]}},
+    wire/.style={draw=Ink, line width=0.7pt},
+    pointer/.style={draw=Blue, line width=0.5pt,
+                    dash pattern=on 1.2mm off 1.0mm,
+                    shorten <=1.5mm, shorten >=1.5mm,
+                    -{Stealth[length=1.8mm,width=1.5mm]}}]
+
+  % ---- Begriffsspalte ----
+  \node[term] (t-eingabe) at (0,102) {Eingabe};
+
+  \node[term] (t-verteiler) at (0,89) {Verteiler};
+  \node[desc] at (0,84.5) {Ein kleiner Kreis.\\
+    Er gibt denselben Wert an mehrere Funktionen weiter.};
+
+  \node[term] (t-konstante) at (0,65.5) {Konstante};
+
+  \node[term] (t-funktion) at (0,56.5) {Funktion};
+  \node[desc] at (0,52) {Ein Rechen- oder Vergleichsschritt.\\
+    Sie hat mehrere Eingangspfeile, aber genau einen Ausgangspfeil.};
+
+  \node[term] (t-ausgabe) at (0,33) {Ausgabe};
+
+  % ---- Beispielhaftes Datenflussdiagramm ----
+  \node[io] (preis) at (156,100) {Preis};
+  \draw[wire] (156,97) -- (156,84);
+  \draw[flow] (156,84) -- (156,33.5);
+  \node[circle, fill=Ink, inner sep=0pt, minimum size=1.9mm]
+    (vert) at (156,84) {};
+  \draw[wire] (156,84) -- (138,84);
+  \draw[flow] (138,84) -- (138,66.5);
+
+  \node[io] (konst) at (126,74) {0,1};
+  \draw[flow] (126,71) -- (126,66.5);
+
+  \node[func] (mal) at (132,63) {mal};
+  \draw[wire] (132,59.5) -- (132,48) -- (146,48);
+  \draw[flow] (146,48) -- (146,33.5);
+
+  \node[func] (plus) at (151,30) {plus};
+  \draw[flow] (151,26.5) -- (151,15.5);
+  \node[io] (endpreis) at (151,12) {Endpreis};
+
+  \node[formula] at (140,2) {Preis $\cdot$ 0,1 + Preis = Endpreis};
+
+  % ---- Zeigerpfeile ----
+  \draw[pointer] (t-eingabe.east) -- (preis.west);
+  \draw[pointer] (t-verteiler.east)
+    .. controls (70,92) and (132,93) .. (vert.center);
+  \draw[pointer] (t-konstante.east) -- (konst.west);
+  \draw[pointer] (t-funktion.east) -- (mal.west);
+  \draw[pointer] (t-ausgabe.east) -- (endpreis.west);
+
+\end{tikzpicture}
+
+\vspace{7mm}
+\colorbox{Mint}{%
+  \parbox{\dimexpr\linewidth-2\fboxsep\relax}{%
+    \vspace{2.4mm}
+    \textcolor{Blue}{\bfseries Merke:}\\[2.4mm]
+    Ein \textbf{Datenflussdiagramm} zeigt, wie Werte von den \textbf{Eingaben}
+    durch \textbf{Funktionen} bis zu den \textbf{Ausgaben} fließen.\\[2.4mm]
+    Die Pfeile geben die \textbf{Richtung des Datenflusses} an.\\[2.4mm]
+    Ein Verteiler gibt denselben Wert an mehrere Funktionen weiter.\\[2.4mm]
+    Eine Konstante ist ein fest eingetragener Wert, der nicht eingegeben
+    wird.\\[2.4mm]
+    Jede Funktion entspricht einem Teilschritt einer Formel.
+    \vspace{2.4mm}
+  }%
+}
+
+\vfill
+{\color{Line}\rule{\linewidth}{0.5pt}}\par
+\vspace{1.5mm}
+\begin{tabularx}{\linewidth}{@{}Xr@{}}
+  {\small\color{Muted}Klasse 9 · Tabellenkalkulation} &
+  {\small\color{Muted}Sicherungsblatt · Aufgabe 5a}
+\end{tabularx}
+
+\end{document}

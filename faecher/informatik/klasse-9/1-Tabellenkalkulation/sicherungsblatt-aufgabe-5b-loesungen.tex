@@ -1,0 +1,182 @@
+\documentclass[11pt,a4paper]{article}
+
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage[ngerman]{babel}
+\usepackage[a4paper,margin=14mm]{geometry}
+\usepackage{lmodern}
+\usepackage{xcolor}
+\usepackage{tabularx}
+\usepackage{array}
+\usepackage{microtype}
+\usepackage{tikz}
+\usetikzlibrary{arrows.meta,shapes.geometric}
+\usepackage{textcomp}
+
+% Gerade Anführungszeichen; " ist bei ngerman ein Kurzbefehl.
+\newcommand{\qd}[1]{\textquotedbl#1\textquotedbl}
+
+\pagestyle{empty}
+\setlength{\parindent}{0pt}
+\setlength{\parskip}{0pt}
+\renewcommand{\familydefault}{\sfdefault}
+\linespread{1.3}\selectfont
+
+\definecolor{Navy}{HTML}{17324D}
+\definecolor{Blue}{HTML}{3B6EA5}
+\definecolor{Sky}{HTML}{EAF3FA}
+\definecolor{Mint}{HTML}{E8F5EF}
+\definecolor{Gold}{HTML}{F3B33D}
+\definecolor{Ink}{HTML}{1E2935}
+\definecolor{Muted}{HTML}{617080}
+\definecolor{Line}{HTML}{D8E1E8}
+
+\color{Ink}
+
+\newcommand{\sectiontitle}[2]{%
+  \vspace{4mm}
+  {\color{#1}\bfseries\large #2}\par
+  \vspace{1.2mm}
+  {\color{#1}\rule{\linewidth}{0.7pt}}\par
+  \vspace{2mm}
+}
+
+\begin{document}
+
+\colorbox{Navy}{%
+  \parbox{\dimexpr\linewidth-2\fboxsep\relax}{%
+    \vspace{3mm}
+    \color{white}
+    \begin{tabularx}{\linewidth}{@{}Xr@{}}
+      {\small\bfseries INFORMATIK · KLASSE 9} &
+      \colorbox{Gold}{\color{Navy}\small\bfseries\strut LÖSUNGEN}
+    \end{tabularx}
+    \vspace{2.5mm}
+
+    {\fontsize{22}{25}\selectfont\bfseries Sicherungsblatt: Aufgabe 5b}\par
+    \vspace{1mm}
+    {\large WENN-Funktion als Datenflussdiagramm}
+    \vspace{3mm}
+  }%
+}
+
+\vspace{4mm}
+\colorbox{Sky}{%
+  \parbox{\dimexpr\linewidth-2\fboxsep\relax}{%
+    \vspace{2.4mm}
+    \textcolor{Blue}{\bfseries Ziel:}
+    Du kannst die \textbf{Aussagefunktion} und die \textbf{WENN-Funktion} als
+    Datenflussdiagramm darstellen und einen Fehler darin finden.
+    \vspace{2.4mm}
+  }%
+}
+
+\sectiontitle{Blue}{1 · Aussagefunktion}
+
+\begin{tikzpicture}[x=1mm,y=1mm,
+    desc/.style={font=\small\linespread{1.15}\selectfont, text=Ink,
+                 anchor=north west, inner sep=0pt,
+                 text width=104mm, align=left},
+    func/.style={draw=Ink, line width=0.7pt, ellipse, fill=white,
+                 minimum width=22mm, minimum height=8mm, inner sep=1pt,
+                 font=\small},
+    io/.style={font=\small, inner sep=1pt},
+    hint/.style={font=\scriptsize\bfseries, text=Blue, inner sep=1pt},
+    flow/.style={draw=Ink, line width=0.7pt,
+                 -{Stealth[length=2.2mm,width=1.8mm]}}]
+
+  \node[io] (note) at (18,32) {Note};
+  \node[io] (zwei) at (46,32) {2};
+  \node[func] (kleiner) at (32,19) {kleiner};
+  \draw[flow] (note.south) -- (kleiner.north west);
+  \draw[flow] (zwei.south) -- (kleiner.north east);
+  \node[io] (wert) at (32,4) {Wahrheitswert};
+  \draw[flow] (kleiner.south) -- (wert.north);
+  \node[hint] at (32,0) {WAHR oder FALSCH};
+
+  \node[desc] at (76,33) {Eine \textbf{Aussagefunktion} vergleicht Werte und
+    beantwortet eine Ja-Nein-Frage. Ihr Ergebnis ist ein
+    \textbf{Wahrheitswert}: WAHR oder FALSCH.\\[1.5mm]
+    Note 1: $1 < 2$ ist WAHR.\quad Note 2: $2 < 2$ ist FALSCH.\\[1.5mm]
+    Weitere Aussagefunktionen: größer, größer gleich, gleich. ISTGERADE hat
+    nur einen Eingang: Aus 12 wird WAHR.};
+\end{tikzpicture}
+
+\sectiontitle{Blue}{2 · WENN-Funktion als Datenflussdiagramm}
+
+\begin{tikzpicture}[x=1mm,y=1mm,
+    desc/.style={font=\small\linespread{1.15}\selectfont, text=Ink,
+                 anchor=north west, inner sep=0pt,
+                 text width=66mm, align=left},
+    func/.style={draw=Ink, line width=0.7pt, ellipse, fill=white,
+                 minimum width=22mm, minimum height=8mm, inner sep=1pt,
+                 font=\small},
+    io/.style={font=\small, inner sep=1pt},
+    hint/.style={font=\scriptsize\bfseries, text=Blue, inner sep=1pt},
+    flow/.style={draw=Ink, line width=0.7pt,
+                 -{Stealth[length=2.2mm,width=1.8mm]}}]
+
+  \node[io] (note) at (16,54) {Note};
+  \node[io] (zwei) at (44,54) {2};
+  \node[func] (kleiner) at (30,43) {kleiner};
+  \draw[flow] (note.south) -- (kleiner.north west);
+  \draw[flow] (zwei.south) -- (kleiner.north east);
+
+  \node[hint] at (72,38) {2 · Ja-Fall};
+  \node[io] (ja) at (72,33.5) {\qd{5\texteuro}};
+  \node[hint] at (100,38) {3 · Nein-Fall};
+  \node[io] (nein) at (100,33.5) {\qd{0\texteuro}};
+
+  \node[func] (wenn) at (62,18) {WENN};
+  \draw[flow] (kleiner.south) -- (wenn.north west);
+  \node[hint, anchor=east] at (38.5,30) {1 · Wahrheitswert};
+  \draw[flow] (ja.south) -- (wenn.north);
+  \draw[flow] (nein.south) -- (wenn.north east);
+
+  \node[io] (geld) at (62,4) {Notengeld};
+  \draw[flow] (wenn.south) -- (geld.north);
+
+  \node[desc] at (116,56) {Die \textbf{WENN-Funktion} hat drei Eingänge:\\[1mm]
+    \textbf{1.}~den Wahrheitswert einer Aussagefunktion,\\
+    \textbf{2.}~den Wert für den Ja-Fall,\\
+    \textbf{3.}~den Wert für den Nein-Fall.\\[1.5mm]
+    Bei WAHR gibt sie den Ja-Fall aus, bei FALSCH den Nein-Fall.\\[1.5mm]
+    Note 1 \textrightarrow{} WAHR \textrightarrow{} \qd{5\texteuro}\\
+    Note 3 \textrightarrow{} FALSCH \textrightarrow{} \qd{0\texteuro}\\[1.5mm]
+    \textcolor{Blue}{\bfseries Termdarstellung:}\\
+    {\footnotesize\texttt{=WENN(Note\textless 2; \qd{5\texteuro}; \qd{0\texteuro})}}};
+\end{tikzpicture}
+
+\sectiontitle{Blue}{3 · Fehler finden: größer oder größer gleich?}
+
+{\small\linespread{1.15}\selectfont
+Anna erhält 10\,\texteuro{} nur bei einer Losnummer \textbf{größer als 70}.
+Ein Diagramm mit \textbf{größer gleich} (\texttt{>=}) liefert bei der
+Losnummer 70 schon 10\,\texteuro{} – richtig wären 0\,\texteuro.
+Korrektur: Die Aussagefunktion muss \textbf{größer} (\texttt{>}) heißen.
+Alles andere bleibt gleich.\par}
+
+\vspace{4mm}
+\colorbox{Mint}{%
+  \parbox{\dimexpr\linewidth-2\fboxsep\relax}{%
+    \vspace{2mm}
+    \textcolor{Blue}{\bfseries Merke:}\\[1.5mm]
+    Eine \textbf{Aussagefunktion} vergleicht Werte und gibt einen
+    \textbf{Wahrheitswert} aus: WAHR oder FALSCH.\\[1.5mm]
+    Die \textbf{WENN-Funktion} hat drei Eingänge: den Wahrheitswert einer
+    Aussagefunktion, den Wert für den Ja-Fall und den Wert für den
+    Nein-Fall.\\[1.5mm]
+    Sie gibt genau einen der beiden Werte aus.
+    \vspace{2mm}
+  }%
+}
+
+\vfill
+{\color{Line}\rule{\linewidth}{0.5pt}}\par
+\vspace{1.5mm}
+\begin{tabularx}{\linewidth}{@{}Xr@{}}
+  {\small\color{Muted}Klasse 9 · Tabellenkalkulation} &
+  {\small\color{Muted}Sicherungsblatt · Aufgabe 5b}
+\end{tabularx}
+
+\end{document}

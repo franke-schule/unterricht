@@ -633,7 +633,7 @@ const TASKS = {
 
   'inf9-dfd-fehlersuche-gewinnspiel': {
     title:
-      'Informatik Klasse 9 – Aufgabe 5c: Fehler im Datenflussdiagramm zum Gewinnspiel finden',
+      'Informatik Klasse 9 – Aufgabe 5b: Fehler im Datenflussdiagramm zum Gewinnspiel finden',
     grade:
       9,
     maxPoints:

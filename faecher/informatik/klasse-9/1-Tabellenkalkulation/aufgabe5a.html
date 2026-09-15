@@ -1,0 +1,947 @@
+<!doctype html>
+<html lang="de">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Aufgabe 5a – Datenflussdiagramme</title>
+    <link rel="stylesheet" href="../../../../styles.css?v=20260821">
+    <link rel="stylesheet" href="tabellenkalkulation.css?v=20260915-2">
+  </head>
+  <body>
+    <div class="site-backdrop" aria-hidden="true"></div>
+    <main class="page-shell spreadsheet-page spreadsheet-new-page">
+      <nav class="topbar" aria-label="Navigation">
+        <a class="back-link" href="../">Zurück zur Aufgabenübersicht</a>
+        <a class="back-link" href="../../../../">Startseite</a>
+      </nav>
+
+      <header class="page-header spreadsheet-header">
+        <p class="eyebrow">Tabellenkalkulation · Datenflussdiagramme</p>
+        <h1>Aufgabe 5a</h1>
+        <p>Lies Datenflussdiagramme, lerne ihre Bausteine kennen und zeichne selbst eines.</p>
+      </header>
+
+      <nav class="step-tabs" role="tablist" aria-label="Abschnitte der Aufgabe">
+        <button id="tab-lesen" type="button" role="tab" aria-selected="true" aria-controls="panel-lesen" data-dfd-tab="lesen">1 · Diagramm lesen</button>
+        <button id="tab-bausteine" type="button" role="tab" aria-selected="false" aria-controls="panel-bausteine" data-dfd-tab="bausteine" tabindex="-1">2 · Bausteine</button>
+        <button id="tab-beschreiben" type="button" role="tab" aria-selected="false" aria-controls="panel-beschreiben" data-dfd-tab="beschreiben" tabindex="-1">2a · Beschreiben</button>
+        <button id="tab-zeichnen" type="button" role="tab" aria-selected="false" aria-controls="panel-zeichnen" data-dfd-tab="zeichnen" tabindex="-1">2b · Zeichnen</button>
+        <button id="tab-merke" type="button" role="tab" aria-selected="false" aria-controls="panel-merke" data-dfd-tab="merke" tabindex="-1">Merke</button>
+        <button id="tab-abschluss" type="button" role="tab" aria-selected="false" aria-controls="panel-abschluss" data-dfd-tab="abschluss" tabindex="-1">Abschluss</button>
+      </nav>
+
+      <div class="step-panels">
+        <section id="panel-lesen" class="step-panel dfd-card" role="tabpanel" aria-labelledby="tab-lesen" data-dfd-panel="lesen">
+          <p class="eyebrow">Entdecken</p>
+          <h2>1. Was rechnet dieses Diagramm?</h2>
+          <p class="dfd-scenario">Die Klasse 9b fährt in den Klettergarten.</p>
+
+          <svg class="dfd-svg" viewBox="0 0 560 330" role="img" aria-label="Datenflussdiagramm: Fahrkosten f und Kosten Kletterkarten k fließen in plus; das Ergebnis fließt zusammen mit der Anzahl Mitfahrende a in geteilt durch, dessen Ergebnis ausgegeben wird.">
+            <defs>
+              <marker id="dfd-arrow" markerWidth="9" markerHeight="9" refX="7" refY="4" orient="auto">
+                <path d="M0,0 L0,8 L8,4 z" fill="var(--sheet-accent-dark)"></path>
+              </marker>
+            </defs>
+
+            <path id="dfd-edge-f" class="dfd-svg-edge" d="M 80 52 L 80 108" marker-end="url(#dfd-arrow)"></path>
+            <path id="dfd-edge-k" class="dfd-svg-edge" d="M 250 56 L 250 108" marker-end="url(#dfd-arrow)"></path>
+            <path id="dfd-edge-a" class="dfd-svg-edge" d="M 430 56 L 430 218" marker-end="url(#dfd-arrow)"></path>
+            <path id="dfd-edge-sum" class="dfd-svg-edge" d="M 170 158 L 170 190 L 300 190 L 300 218" marker-end="url(#dfd-arrow)"></path>
+            <path id="dfd-edge-out" class="dfd-svg-edge" d="M 355 268 L 355 312" marker-end="url(#dfd-arrow)"></path>
+
+            <text class="dfd-svg-label" x="80" y="30" text-anchor="middle">Fahrkosten (f)</text>
+            <text class="dfd-svg-label" x="250" y="22" text-anchor="middle">Kosten</text>
+            <text class="dfd-svg-label" x="250" y="42" text-anchor="middle">Kletterkarten (k)</text>
+            <text class="dfd-svg-label" x="430" y="22" text-anchor="middle">Anzahl</text>
+            <text class="dfd-svg-label" x="430" y="42" text-anchor="middle">Mitfahrende (a)</text>
+
+            <rect class="dfd-svg-node" x="70" y="110" width="200" height="46" rx="14"></rect>
+            <text class="dfd-svg-label" x="170" y="133" text-anchor="middle">plus</text>
+
+            <rect class="dfd-svg-node" x="250" y="220" width="210" height="46" rx="14"></rect>
+            <text class="dfd-svg-label" x="355" y="243" text-anchor="middle">geteilt durch</text>
+
+            <g class="dfd-token" data-token="f" hidden>
+              <rect x="-16" y="-13" width="32" height="26" rx="13"></rect>
+              <text text-anchor="middle" dominant-baseline="middle">f</text>
+            </g>
+            <g class="dfd-token" data-token="k" hidden>
+              <rect x="-16" y="-13" width="32" height="26" rx="13"></rect>
+              <text text-anchor="middle" dominant-baseline="middle">k</text>
+            </g>
+            <g class="dfd-token" data-token="a" hidden>
+              <rect x="-16" y="-13" width="32" height="26" rx="13"></rect>
+              <text text-anchor="middle" dominant-baseline="middle">a</text>
+            </g>
+            <g class="dfd-token" data-token="sum" hidden>
+              <rect x="-24" y="-13" width="48" height="26" rx="13"></rect>
+              <text text-anchor="middle" dominant-baseline="middle">f+k</text>
+            </g>
+            <g class="dfd-token" data-token="out" hidden>
+              <rect x="-16" y="-13" width="32" height="26" rx="13"></rect>
+              <text text-anchor="middle" dominant-baseline="middle">?</text>
+            </g>
+          </svg>
+
+          <div class="simulation-actions">
+            <button type="button" class="primary-action" data-dfd1-action="start">Bewegung starten</button>
+            <button type="button" class="secondary-action" data-dfd1-action="pause">Pausieren</button>
+            <button type="button" class="secondary-action" data-dfd1-action="reset">Zurücksetzen</button>
+          </div>
+          <div class="dfd-speed">
+            <label for="speed-lesen">Tempo</label>
+            <input id="speed-lesen" type="range" min="0.5" max="1.5" step="0.25" value="1" data-dfd1-speed>
+            <output for="speed-lesen">normal</output>
+          </div>
+          <p class="simulation-status" data-dfd1-status role="status" aria-live="polite">Bereit. f, k und a stehen an den Eingaben.</p>
+
+          <div class="work-order"><strong>Arbeitsauftrag 1:</strong> Stelle eine Formel auf, die in diesem Datenflussdiagramm berechnet wird. Verwende dafür die Abkürzungen f, k und a.</div>
+
+          <label class="description-label" for="formula-input">Deine Formel</label>
+          <input id="formula-input" type="text" autocomplete="off" spellcheck="false">
+          <button id="button-formula" class="primary-action" type="button">Formel prüfen</button>
+          <section id="result-formula" class="result" aria-live="polite" hidden></section>
+        </section>
+
+        <section id="panel-bausteine" class="step-panel dfd-card" role="tabpanel" aria-labelledby="tab-bausteine" data-dfd-panel="bausteine" hidden>
+          <p class="eyebrow">Verstehen</p>
+          <h2>2. Bausteine eines Datenflussdiagramms</h2>
+          <div class="dfd-bausteine-layout">
+            <div>
+              <p>Jedes Datenflussdiagramm wird von oben nach unten gelesen: Die Pfeile zeigen, wie die Werte von den Eingaben durch die Funktionen bis zur Ausgabe fließen.</p>
+              <dl class="dfd-terms">
+                <dt>Eingabe</dt>
+                <dd>Ein Wert, den die nutzende Person eingibt, zum Beispiel die Anzahl der Mitfahrenden.</dd>
+                <dt>Funktion</dt>
+                <dd>Ein Rechen- oder Vergleichsschritt, zum Beispiel plus, mal oder größer. Eine Funktion hat mehrere Eingangspfeile, aber genau einen Ausgangspfeil.</dd>
+                <dt>Ausgabe</dt>
+                <dd>Das Ergebnis, das am Ende angezeigt wird.</dd>
+                <dt>Konstante</dt>
+                <dd>Ein fest eingetragener Wert, der nicht eingegeben wird, zum Beispiel die 70, mit der eine Losnummer verglichen wird.</dd>
+                <dt>Verteiler</dt>
+                <dd>Ein kleiner Kreis. Er gibt denselben Wert an mehrere Funktionen weiter.</dd>
+              </dl>
+            </div>
+            <figure class="dfd-figure">
+              <img src="dfd-bausteine.png" alt="Die fünf Bausteine eines Datenflussdiagramms: Eingabe, Funktion, Ausgabe, Konstante und Verteiler.">
+            </figure>
+          </div>
+          <p class="dfd-note">Ob ein Funktionsbaustein als Ellipse oder als abgerundetes Rechteck gezeichnet wird, spielt keine Rolle. Wichtig sind die Beschriftung und die Richtung der Pfeile. Im Zeichenwerkzeug heißen die Funktionen teilweise anders: mal heißt dort <code>*</code>, geteilt durch heißt <code>/</code> und größer heißt <code>&gt;</code>.</p>
+        </section>
+
+        <section id="panel-beschreiben" class="step-panel dfd-card" role="tabpanel" aria-labelledby="tab-beschreiben" data-dfd-panel="beschreiben" hidden>
+          <p class="eyebrow">Anwenden</p>
+          <h2>2a) Ein Datenflussdiagramm beschreiben</h2>
+
+          <div class="work-order"><strong>Arbeitsauftrag 2:</strong> Beschreibe, was das Datenflussdiagramm links berechnet. Nenne dabei die einzelnen Teilschritte und das Endergebnis. Die Abbildung rechts kann hilfreich zur geometrischen Vorstellung sein.</div>
+
+          <div class="dfd-figure-pair">
+            <figure class="dfd-figure">
+              <img src="dfd-zylinder.png" alt="Datenflussdiagramm: Radius groß und Radius klein werden je über Hoch zwei quadriert; ein Verteiler gibt die Höhe an beide mal-Knoten weiter; die beiden Ergebnisse fließen in minus.">
+            </figure>
+            <figure class="dfd-figure">
+              <img src="dfd-zylinder-koerper.png" alt="Skizze: eine Kreisfläche mit Radius r, ein Zylinder mit Höhe h und ein Rohr mit kleinerem Innenraum.">
+            </figure>
+          </div>
+
+          <label class="description-label" for="answer-2a">Deine Beschreibung</label>
+          <textarea id="answer-2a" class="description-input"></textarea>
+          <button id="button-2a" class="primary-action" type="button">Beschreibung prüfen</button>
+          <section id="result-2a" class="result" aria-live="polite" hidden></section>
+
+          <div class="help-stack">
+            <details>
+              <summary>Hilfe 1</summary>
+              <p>Lies das Diagramm von oben nach unten: Oben stehen die Eingaben, unten das Ergebnis.</p>
+            </details>
+            <details>
+              <summary>Hilfe 2</summary>
+              <p>Der kleine Kreis unter „Höhe“ ist ein Verteiler. Er schickt denselben Wert in beide Zweige. Beschreibe zuerst den linken Zweig, dann den rechten, dann die Multiplikation mit der Höhe.</p>
+            </details>
+            <details>
+              <summary>Hilfe 3</summary>
+              <p>Links wird der große Radius quadriert und danach mit der Höhe multipliziert. Rechts geschieht dasselbe mit dem kleinen Radius. Notiere dies und ergänze den folgenden Satz: Das Ergebnis der Berechnung im linken Bereich wird ...</p>
+            </details>
+          </div>
+        </section>
+
+        <section id="panel-zeichnen" class="step-panel dfd-card" role="tabpanel" aria-labelledby="tab-zeichnen" data-dfd-panel="zeichnen" hidden>
+          <p class="eyebrow">Anwenden</p>
+          <h2>2b) Ein Datenflussdiagramm zeichnen</h2>
+          <p class="dfd-scenario">Jedes Jahr findet an Annas Schule ein Spendenlauf statt. Pro gelaufenem Kilometer sponsern Eltern und Verwandte einen Betrag; die Summe daraus heißt erlaufene Summe. Die SMV zieht davon ihre Unkosten für die Werbeplakate ab. Der Förderverein gibt am Ende noch einmal 50 % der erlaufenen Summe dazu.</p>
+
+          <div class="work-order"><strong>Arbeitsauftrag 3:</strong> Zeichne im Werkzeug ein Datenflussdiagramm, das die gespendete Gesamtsumme berechnet.</div>
+
+          <div class="tool-embed">
+            <iframe title="Zeichenwerkzeug für Aufgabe 2b" src="orinoco-dfd.html"
+                    loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
+          </div>
+          <p class="dfd-tool-hint">Doppelklicke einen Baustein, um ihn zu beschriften. Das Werkzeug speichert nichts – mache am Ende einen Screenshot oder übertrage das Diagramm in dein Heft.</p>
+
+          <div class="help-stack">
+            <details>
+              <summary>Hilfe 1</summary>
+              <p>Du brauchst zwei Eingaben: die erlaufene Summe und die Unkosten der SMV.</p>
+            </details>
+            <details>
+              <summary>Hilfe 2</summary>
+              <p>Die erlaufene Summe wird zweimal gebraucht: einmal für den Abzug der Unkosten und einmal für den Zuschuss des Fördervereins. Dafür gibt es den Verteiler.</p>
+            </details>
+            <details>
+              <summary>Hilfe 3</summary>
+              <p>Ein Zweig rechnet erlaufene Summe minus Unkosten. Der andere Zweig multipliziert die erlaufene Summe mit der Konstanten 0,5. Wie du beide Zweige zusammenführst, überlegst du selbst.</p>
+            </details>
+          </div>
+
+          <details class="dfd-selfcheck">
+            <summary>Erstelle das Datenflussdiagramm. DANACH hier kontrollieren.</summary>
+            <p>Die erlaufene Summe S geht in einen Verteiler. Der eine Zweig rechnet S minus die Unkosten U der SMV. Der andere Zweig rechnet S mal der Konstanten 0,5, also den Zuschuss des Fördervereins. Beide Ergebnisse fließen in „plus“. Ausgegeben wird die gespendete Gesamtsumme: S − U + 0,5 · S.</p>
+            <figure class="dfd-figure">
+              <img src="dfd-spendenlauf-loesung.png" alt="Lösungsdiagramm zum Spendenlauf: Ein Verteiler gibt die erlaufene Summe an mal 0,5 und an minus Unkosten SMV weiter; beide Ergebnisse fließen in plus.">
+            </figure>
+          </details>
+        </section>
+
+        <section id="panel-merke" class="step-panel dfd-card" role="tabpanel" aria-labelledby="tab-merke" data-dfd-panel="merke" hidden>
+          <p class="eyebrow">Sichern</p>
+          <h2>Merke</h2>
+          <div class="dfd-merke">
+            <p>Ein <strong>Datenflussdiagramm</strong> zeigt, wie Werte von den Eingaben durch Funktionen bis zur Ausgabe fließen.</p>
+            <p>Die Pfeile geben die <strong>Richtung des Datenflusses</strong> an.</p>
+            <p>Ein Verteiler gibt denselben Wert an mehrere Funktionen weiter.</p>
+            <p>Eine Konstante ist ein fest eingetragener Wert, der nicht eingegeben wird.</p>
+            <p>Jede <strong>Funktion</strong> entspricht einem Teilschritt einer Formel.</p>
+          </div>
+        </section>
+
+        <section id="panel-abschluss" class="step-panel dfd-card" role="tabpanel" aria-labelledby="tab-abschluss" data-dfd-panel="abschluss" hidden>
+          <p class="eyebrow">Sichern</p>
+          <h2>Abschluss</h2>
+
+          <h3>Abschlussquiz</h3>
+          <div class="work-order"><strong>Arbeitsauftrag 4:</strong> Beantworte die drei Fragen zum Abschluss. In manchen Fragen sind mehrere Antworten richtig – kreuze alle richtigen an.</div>
+
+          <form id="final-quiz" class="final-quiz" novalidate>
+            <fieldset>
+              <legend><span>1</span> Wie liest man ein Datenflussdiagramm?</legend>
+              <div class="choice-list">
+                <label class="choice-option"><input type="checkbox" name="quiz-1" value="a"><span>Ein Datenflussdiagramm wird von oben nach unten gelesen.</span></label>
+                <label class="choice-option"><input type="checkbox" name="quiz-1" value="b"><span>Die Pfeile geben die Richtung des Datenflusses an.</span></label>
+                <label class="choice-option"><input type="checkbox" name="quiz-1" value="c"><span>Ganz unten steht die Ausgabe, also das Ergebnis.</span></label>
+                <label class="choice-option"><input type="checkbox" name="quiz-1" value="d"><span>Die Reihenfolge der Rechenschritte ist beliebig.</span></label>
+              </div>
+            </fieldset>
+            <fieldset>
+              <legend><span>2</span> Welche Aussagen über Verteiler und Funktionen stimmen?</legend>
+              <div class="choice-list">
+                <label class="choice-option"><input type="checkbox" name="quiz-2" value="a"><span>Ein Verteiler gibt denselben Wert an mehrere Funktionen weiter.</span></label>
+                <label class="choice-option"><input type="checkbox" name="quiz-2" value="b"><span>Eine Funktion hat mehrere Eingangspfeile, aber genau einen Ausgangspfeil.</span></label>
+                <label class="choice-option"><input type="checkbox" name="quiz-2" value="c"><span>Ein Verteiler addiert die Werte, die bei ihm ankommen.</span></label>
+                <label class="choice-option"><input type="checkbox" name="quiz-2" value="d"><span>Jede Funktion entspricht einem Teilschritt einer Formel.</span></label>
+              </div>
+            </fieldset>
+            <fieldset>
+              <legend><span>3</span> Beim Gewinnspiel wird die Losnummer eingetippt, die 70 steht fest im Diagramm und unten erscheint der Losgewinn. Welche Aussagen stimmen?</legend>
+              <div class="choice-list">
+                <label class="choice-option"><input type="checkbox" name="quiz-3" value="a"><span>Die 70 ist eine Konstante.</span></label>
+                <label class="choice-option"><input type="checkbox" name="quiz-3" value="b"><span>Die Losnummer ist eine Eingabe.</span></label>
+                <label class="choice-option"><input type="checkbox" name="quiz-3" value="c"><span>Die 70 ist eine Eingabe, weil sie oben im Diagramm steht.</span></label>
+                <label class="choice-option"><input type="checkbox" name="quiz-3" value="d"><span>Der Losgewinn ist die Ausgabe.</span></label>
+              </div>
+            </fieldset>
+            <button class="primary-action" type="submit">Quiz prüfen</button>
+          </form>
+          <section id="result-quiz" class="result" aria-live="polite" hidden></section>
+
+          <div id="quiz-summary" class="dfd-quiz-summary" hidden>
+            <h3>Übersicht: alle Aufgaben und Lösungen</h3>
+            <p>Hier stehen alle Arbeitsaufträge dieser Aufgabe mit ihren Lösungen – gut geeignet für die gemeinsame Besprechung.</p>
+
+            <section class="summary-section">
+              <h4>1 · Diagramm lesen</h4>
+              <p class="prompt">Arbeitsauftrag 1: Stelle die Formel auf, die das Diagramm zum Klettergarten berechnet (f, k, a).</p>
+              <dl class="summary-grid"><dt>Richtiges Ergebnis</dt><dd>(f + k) / a — zuerst werden Fahrkosten und Kartenkosten addiert, erst danach wird durch die Anzahl der Mitfahrenden geteilt.</dd></dl>
+            </section>
+            <section class="summary-section">
+              <h4>2a · Beschreiben</h4>
+              <p class="prompt">Arbeitsauftrag 2: Beschreibe, was das Datenflussdiagramm zum Rohr berechnet.</p>
+              <dl class="summary-grid"><dt>Richtiges Ergebnis</dt><dd>Der Verteiler unter „Höhe“ gibt die Höhe an beide Zweige weiter. Links wird der große Radius quadriert und mit der Höhe multipliziert, rechts geschieht dasselbe mit dem kleinen Radius. Der Knoten „minus“ zieht den rechten Wert vom linken ab. Das Ergebnis beschreibt das Volumen des Rohrs – allerdings ohne den Faktor π.</dd></dl>
+            </section>
+            <section class="summary-section">
+              <h4>2b · Zeichnen</h4>
+              <p class="prompt">Arbeitsauftrag 3: Zeichne ein Datenflussdiagramm für die gespendete Gesamtsumme beim Spendenlauf.</p>
+              <dl class="summary-grid"><dt>Richtiges Ergebnis</dt><dd>Eingaben sind die erlaufene Summe S und die Unkosten U der SMV. Ein Verteiler gibt S an beide Zweige weiter: Ein Zweig rechnet S − U, der andere S · 0,5. Beide Ergebnisse fließen in „plus“. Ausgabe: gespendete Gesamtsumme = S − U + 0,5 · S.</dd></dl>
+            </section>
+            <section class="summary-section">
+              <h4>Abschlussquiz – Frage 1</h4>
+              <p class="prompt">Wie liest man ein Datenflussdiagramm?</p>
+              <dl class="summary-grid"><dt>Richtiges Ergebnis</dt><dd>Von oben nach unten; die Pfeile geben die Richtung des Datenflusses an; ganz unten steht die Ausgabe.</dd></dl>
+            </section>
+            <section class="summary-section">
+              <h4>Abschlussquiz – Frage 2</h4>
+              <p class="prompt">Welche Aussagen über Verteiler und Funktionen stimmen?</p>
+              <dl class="summary-grid"><dt>Richtiges Ergebnis</dt><dd>Ein Verteiler gibt denselben Wert an mehrere Funktionen weiter; eine Funktion hat mehrere Eingangspfeile, aber genau einen Ausgangspfeil; jede Funktion entspricht einem Teilschritt einer Formel.</dd></dl>
+            </section>
+            <section class="summary-section">
+              <h4>Abschlussquiz – Frage 3</h4>
+              <p class="prompt">Welche Bausteine stecken im Gewinnspiel-Diagramm?</p>
+              <dl class="summary-grid"><dt>Richtiges Ergebnis</dt><dd>Die 70 ist eine Konstante, die Losnummer ist eine Eingabe, der Losgewinn ist die Ausgabe.</dd></dl>
+            </section>
+          </div>
+
+          <section class="solution-download" aria-labelledby="solution-download-title">
+            <h2 id="solution-download-title">Sicherungsblatt zu Aufgabe 5a</h2>
+            <details class="solution-reveal">
+              <summary>Sicherungsblatt anzeigen</summary>
+              <form class="solution-code-form"
+                onsubmit="unlockSolution(event, 'M2NP-4JXW', 'solution-download-link', 'solution-code-message')">
+                <label for="solution-code">Lehrercode eingeben</label>
+                <div class="solution-code-controls">
+                  <input id="solution-code" name="solution-code" type="text"
+                    maxlength="9" autocomplete="off" autocapitalize="characters"
+                    spellcheck="false" required>
+                  <button type="submit">Code prüfen</button>
+                </div>
+                <p id="solution-code-message" class="solution-code-message"
+                  aria-live="polite"></p>
+                <a id="solution-download-link" class="download-button"
+                  href="sicherungsblatt-aufgabe-5a-loesungen.pdf" download hidden>
+                  &#8595; Sicherungsblatt herunterladen
+                </a>
+              </form>
+            </details>
+          </section>
+        </section>
+      </div>
+
+      <nav class="adjacent-task-nav" aria-label="Vorherige und nächste Aufgabe">
+        <a class="secondary-action" href="aufgabe4c.html">← Aufgabe 4c</a>
+        <a class="primary-action" href="aufgabe5b.html">Aufgabe 5b →</a>
+      </nav>
+    </main>
+
+    <script>
+      (() => {
+        "use strict";
+
+        window.unlockSolution = function unlockSolution(event, expectedCode, downloadLinkId, messageId) {
+          event.preventDefault();
+
+          const form = event.currentTarget;
+          const enteredCode = form.elements["solution-code"].value
+            .toUpperCase()
+            .replace(/[^A-Z0-9]/g, "");
+          const normalizedExpectedCode = expectedCode.replace(/[^A-Z0-9]/g, "");
+          const downloadLink = document.getElementById(downloadLinkId);
+          const message = document.getElementById(messageId);
+
+          if (enteredCode === normalizedExpectedCode) {
+            downloadLink.hidden = false;
+            message.className = "solution-code-message";
+            message.textContent = "Code korrekt. Das Sicherungsblatt ist freigeschaltet.";
+            return;
+          }
+
+          downloadLink.hidden = true;
+          message.className = "solution-code-message error";
+          message.textContent = "Der eingegebene Code ist nicht gültig.";
+        };
+
+        /* ---------------------------------------------------------
+         * Reiter (Tabs) – Logik analog physics-step-tabs.mjs
+         * --------------------------------------------------------- */
+        (function setupStepTabs() {
+          const tabs = [...document.querySelectorAll("[data-dfd-tab]")];
+          const panels = [...document.querySelectorAll("[data-dfd-panel]")];
+
+          if (!tabs.length || !panels.length) return;
+
+          function selectTab(id, moveFocus = false) {
+            tabs.forEach((tab) => {
+              const selected = tab.dataset.dfdTab === id;
+              tab.setAttribute("aria-selected", String(selected));
+              tab.tabIndex = selected ? 0 : -1;
+              if (moveFocus && selected) tab.focus();
+            });
+            panels.forEach((panel) => {
+              panel.hidden = panel.dataset.dfdPanel !== id;
+            });
+          }
+
+          tabs.forEach((tab, index) => {
+            tab.addEventListener("click", () => selectTab(tab.dataset.dfdTab));
+            tab.addEventListener("keydown", (event) => {
+              if (!["ArrowRight", "ArrowLeft", "Home", "End"].includes(event.key)) return;
+              event.preventDefault();
+              const nextIndex = event.key === "Home"
+                ? 0
+                : event.key === "End"
+                  ? tabs.length - 1
+                  : (index + (event.key === "ArrowRight" ? 1 : -1) + tabs.length) % tabs.length;
+              selectTab(tabs[nextIndex].dataset.dfdTab, true);
+            });
+          });
+
+          /* Am Ende jedes Reiters ein Button zum nächsten Reiter. */
+          const tablist = document.querySelector(".step-tabs");
+          panels.forEach((panel, index) => {
+            const nextTab = tabs[index + 1];
+            if (!nextTab) return;
+
+            const nav = document.createElement("nav");
+            nav.className = "step-panel-nav";
+            nav.setAttribute("aria-label", "Zum nächsten Abschnitt");
+
+            const button = document.createElement("button");
+            button.type = "button";
+            button.className = "primary-action";
+            button.textContent = "Weiter: " + nextTab.textContent + " →";
+            button.addEventListener("click", () => {
+              selectTab(nextTab.dataset.dfdTab);
+              nextTab.focus({ preventScroll: true });
+              if (!tablist) return;
+              const smooth = !window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+              tablist.scrollIntoView({ behavior: smooth ? "smooth" : "auto", block: "start" });
+            });
+
+            nav.append(button);
+            panel.append(nav);
+          });
+
+          const selected = tabs.find((tab) => tab.getAttribute("aria-selected") === "true") || tabs[0];
+          selectTab(selected.dataset.dfdTab);
+        })();
+
+        /* ---------------------------------------------------------
+         * Tempo-Regler fuer die Animationen (0,5-fach bis 1,5-fach)
+         * Liefert die aktuelle Dauer einer Phase in Millisekunden.
+         * --------------------------------------------------------- */
+        function bindSpeedControl(input, baseDuration) {
+          const LABELS = { "0.5": "langsam", "0.75": "etwas langsamer", "1": "normal", "1.25": "etwas schneller", "1.5": "schnell" };
+          const output = input.parentElement.querySelector("output");
+
+          function update() {
+            const label = LABELS[input.value] || "normal";
+            if (output) output.textContent = label;
+            input.setAttribute("aria-valuetext", label);
+          }
+
+          input.addEventListener("input", update);
+          update();
+          return () => baseDuration / Number(input.value || 1);
+        }
+
+        /* ---------------------------------------------------------
+         * Abschnitt 1 – Animation der Datenflüsse entlang der Pfade
+         * --------------------------------------------------------- */
+        (function setupDiagramAnimation() {
+          const svg = document.querySelector("#panel-lesen .dfd-svg");
+          if (!svg) return;
+
+          const phaseDuration = bindSpeedControl(document.querySelector("[data-dfd1-speed]"), 1600);
+          const statusEl = document.querySelector("[data-dfd1-status]");
+          const startButton = document.querySelector('[data-dfd1-action="start"]');
+          const pauseButton = document.querySelector('[data-dfd1-action="pause"]');
+          const resetButton = document.querySelector('[data-dfd1-action="reset"]');
+
+          const paths = {
+            f: svg.querySelector("#dfd-edge-f"),
+            k: svg.querySelector("#dfd-edge-k"),
+            a: svg.querySelector("#dfd-edge-a"),
+            sum: svg.querySelector("#dfd-edge-sum"),
+            out: svg.querySelector("#dfd-edge-out")
+          };
+          const tokens = {
+            f: svg.querySelector('[data-token="f"]'),
+            k: svg.querySelector('[data-token="k"]'),
+            a: svg.querySelector('[data-token="a"]'),
+            sum: svg.querySelector('[data-token="sum"]'),
+            out: svg.querySelector('[data-token="out"]')
+          };
+
+          const STATUS_TEXT = {
+            ready: "Bereit. f, k und a stehen an den Eingaben.",
+            phase1: "f und k fließen in „plus“. a fließt in „geteilt durch“.",
+            phase2: "Das Ergebnis von „plus“ fließt in „geteilt durch“.",
+            phase3: "Das Ergebnis verlässt „geteilt durch“ als Ausgabe.",
+            done: "Fertig. Mit „Zurücksetzen“ startest du erneut.",
+            paused: "Pausiert."
+          };
+
+          let rafId = null;
+          let phase = 0;
+          /* Fortschritt der Phase (0 bis 1); so wirkt ein Tempowechsel ohne Sprung. */
+          let progress = 0;
+          let lastTimestamp = 0;
+          let running = false;
+
+          /*
+           * hidden ist eine Eigenschaft von HTMLElement, nicht von SVGElement.
+           * Bei einem SVG-Element legt token.hidden = false nur eine
+           * wirkungslose Eigenschaft an und entfernt das Attribut nicht.
+           * Deshalb hier ueber das Attribut schalten.
+           */
+          function showToken(token) {
+            token.removeAttribute("hidden");
+          }
+
+          function hideToken(token) {
+            token.setAttribute("hidden", "");
+          }
+
+          function hideAllTokens() {
+            Object.values(tokens).forEach(hideToken);
+          }
+
+          function placeTokenOnPath(token, path, t) {
+            const length = path.getTotalLength();
+            const point = path.getPointAtLength(Math.min(t, 1) * length);
+            token.setAttribute("transform", "translate(" + point.x + "," + point.y + ")");
+            showToken(token);
+          }
+
+          function placeTokenAtPathEnd(token, path) {
+            const length = path.getTotalLength();
+            const point = path.getPointAtLength(length);
+            token.setAttribute("transform", "translate(" + point.x + "," + point.y + ")");
+            showToken(token);
+          }
+
+          function resetVisual() {
+            hideAllTokens();
+            const startF = paths.f.getPointAtLength(0);
+            const startK = paths.k.getPointAtLength(0);
+            const startA = paths.a.getPointAtLength(0);
+            const startSum = paths.sum.getPointAtLength(0);
+            const startOut = paths.out.getPointAtLength(0);
+            tokens.f.setAttribute("transform", "translate(" + startF.x + "," + startF.y + ")");
+            tokens.k.setAttribute("transform", "translate(" + startK.x + "," + startK.y + ")");
+            tokens.a.setAttribute("transform", "translate(" + startA.x + "," + startA.y + ")");
+            tokens.sum.setAttribute("transform", "translate(" + startSum.x + "," + startSum.y + ")");
+            tokens.out.setAttribute("transform", "translate(" + startOut.x + "," + startOut.y + ")");
+          }
+
+          function setStatus(text) {
+            statusEl.textContent = text;
+          }
+
+          function stopRaf() {
+            if (rafId !== null) {
+              window.cancelAnimationFrame(rafId);
+              rafId = null;
+            }
+          }
+
+          function step(timestamp) {
+            const delta = lastTimestamp ? timestamp - lastTimestamp : 0;
+            lastTimestamp = timestamp;
+            progress = Math.min(progress + delta / phaseDuration(), 1);
+            const t = progress;
+
+            if (phase === 1) {
+              placeTokenOnPath(tokens.f, paths.f, t);
+              placeTokenOnPath(tokens.k, paths.k, t);
+              placeTokenOnPath(tokens.a, paths.a, t);
+            } else if (phase === 2) {
+              hideToken(tokens.f);
+              hideToken(tokens.k);
+              placeTokenAtPathEnd(tokens.a, paths.a);
+              placeTokenOnPath(tokens.sum, paths.sum, t);
+            } else if (phase === 3) {
+              hideToken(tokens.sum);
+              hideToken(tokens.a);
+              placeTokenOnPath(tokens.out, paths.out, t);
+            }
+
+            if (t >= 1) {
+              if (phase < 3) {
+                phase += 1;
+                progress = 0;
+                setStatus(phase === 2 ? STATUS_TEXT.phase2 : STATUS_TEXT.phase3);
+                rafId = window.requestAnimationFrame(step);
+              } else {
+                running = false;
+                setStatus(STATUS_TEXT.done);
+                stopRaf();
+              }
+              return;
+            }
+
+            rafId = window.requestAnimationFrame(step);
+          }
+
+          function start() {
+            if (running) return;
+            running = true;
+            if (phase === 0) {
+              phase = 1;
+            }
+            setStatus(phase === 1 ? STATUS_TEXT.phase1 : phase === 2 ? STATUS_TEXT.phase2 : STATUS_TEXT.phase3);
+            lastTimestamp = 0;
+            rafId = window.requestAnimationFrame(step);
+          }
+
+          function pause() {
+            if (!running) return;
+            running = false;
+            stopRaf();
+            setStatus(STATUS_TEXT.paused);
+          }
+
+          function reset() {
+            running = false;
+            stopRaf();
+            phase = 0;
+            progress = 0;
+            lastTimestamp = 0;
+            resetVisual();
+            setStatus(STATUS_TEXT.ready);
+          }
+
+          startButton.addEventListener("click", start);
+          pauseButton.addEventListener("click", pause);
+          resetButton.addEventListener("click", reset);
+
+          reset();
+        })();
+
+        /* ---------------------------------------------------------
+         * Abschnitt 1 – Formelprüfung (client-seitig, ohne eval)
+         * --------------------------------------------------------- */
+        (function setupFormulaCheck() {
+          const input = document.getElementById("formula-input");
+          const button = document.getElementById("button-formula");
+          const resultBox = document.getElementById("result-formula");
+          if (!input || !button || !resultBox) return;
+
+          const CORRECT_ANSWERS = ["(f+k)/a", "(k+f)/a"];
+
+          const FEEDBACK = {
+            empty: "Bitte trage zuerst eine Formel mit f, k und a ein.",
+            high: "Korrekt. Die Klammer sorgt dafür, dass zuerst f und k addiert werden und erst danach durch a geteilt wird.",
+            medium: "Teilweise korrekt. Die drei Größen f, k und a stimmen, aber die Reihenfolge der Rechenschritte passt noch nicht. Achte darauf, welche Werte im Diagramm zuerst zusammentreffen, und setze eine Klammer.",
+            low: "Noch nicht korrekt. Lies das Diagramm von oben nach unten: Welche beiden Werte treffen zuerst aufeinander, welche Funktion folgt danach? Verwende die Abkürzungen f, k und a."
+          };
+
+          function normalize(raw) {
+            let value = raw.trim();
+            if (value.startsWith("=")) value = value.slice(1);
+            value = value.replace(/\s+/g, "");
+            value = value.toLowerCase();
+            value = value.replace(/[:÷]/g, "/");
+            value = value.replace(/[·×]/g, "*");
+            value = value.replace(/[（❨⟮]/g, "(");
+            value = value.replace(/[）❩⟯]/g, ")");
+            return value;
+          }
+
+          function classify(normalized) {
+            if (CORRECT_ANSWERS.includes(normalized)) return "high";
+            const hasF = normalized.includes("f");
+            const hasK = normalized.includes("k");
+            const hasA = normalized.includes("a");
+            const hasPlus = normalized.includes("+");
+            const hasDivide = normalized.includes("/");
+            if (hasF && hasK && hasA && hasPlus && hasDivide) return "medium";
+            return "low";
+          }
+
+          function showResult(level, message) {
+            resultBox.hidden = false;
+            resultBox.className = "result " + level;
+            resultBox.textContent = message;
+          }
+
+          button.addEventListener("click", function () {
+            const raw = input.value;
+            if (raw.trim().length === 0) {
+              showResult("low", FEEDBACK.empty);
+              input.focus();
+              return;
+            }
+            const normalized = normalize(raw);
+            const level = classify(normalized);
+            showResult(level, FEEDBACK[level]);
+          });
+        })();
+
+        /* ---------------------------------------------------------
+         * Mehrfachauswahl-Quiz – Abschlussquiz
+         * --------------------------------------------------------- */
+        function setupChoiceQuiz({ formId, resultId, solutions, messages, onSuccess }) {
+          const form = document.getElementById(formId);
+          const resultBox = document.getElementById(resultId);
+          if (!form || !resultBox) return;
+
+          const SOLUTIONS = solutions;
+          const QUESTION_NAMES = Object.keys(SOLUTIONS);
+
+          function selectedValues(name) {
+            return [...document.querySelectorAll(`input[name="${name}"]:checked`)]
+              .map((input) => input.value)
+              .sort();
+          }
+
+          function showResult(level, message) {
+            resultBox.hidden = false;
+            resultBox.className = "result " + level;
+            resultBox.textContent = message;
+          }
+
+          form.querySelectorAll('input[type="checkbox"]').forEach((checkbox) => {
+            checkbox.addEventListener("change", () => {
+              resultBox.hidden = true;
+            });
+          });
+
+          form.addEventListener("submit", function (event) {
+            event.preventDefault();
+
+            const hasEmptyQuestion = QUESTION_NAMES.some((name) => selectedValues(name).length === 0);
+            if (hasEmptyQuestion) {
+              showResult("low", "Bitte kreuze in jeder Frage mindestens eine Antwort an. Bearbeite die Fragen 1 bis " + QUESTION_NAMES.length + " vollständig.");
+              return;
+            }
+
+            const results = QUESTION_NAMES.map((name) => {
+              const chosen = selectedValues(name);
+              const solution = SOLUTIONS[name];
+              return chosen.length === solution.length && chosen.join(",") === solution.join(",");
+            });
+
+            const correctCount = results.filter(Boolean).length;
+
+            if (correctCount === QUESTION_NAMES.length) {
+              showResult("high", messages.high);
+              if (onSuccess) onSuccess();
+              return;
+            }
+
+            if (correctCount === 0) {
+              showResult("low", messages.low);
+              return;
+            }
+
+            const wrongNumbers = results
+              .map((correct, index) => (correct ? null : index + 1))
+              .filter((number) => number !== null);
+            /* "1, 3 und 4" statt "1 und 3 und 4" */
+            const wrongList = wrongNumbers.length <= 1
+              ? wrongNumbers.join("")
+              : wrongNumbers.slice(0, -1).join(", ") + " und " + wrongNumbers[wrongNumbers.length - 1];
+            showResult(
+              "medium",
+              `Teilweise korrekt. Richtig sind schon ${correctCount} von ${QUESTION_NAMES.length} Fragen. Prüfe noch einmal Frage ${wrongList}. ${messages.mediumHint}`
+            );
+          });
+        }
+
+        setupChoiceQuiz({
+          formId: "final-quiz",
+          resultId: "result-quiz",
+          solutions: {
+            "quiz-1": ["a", "b", "c"],
+            "quiz-2": ["a", "b", "d"],
+            "quiz-3": ["a", "b", "d"]
+          },
+          messages: {
+            high: "Korrekt. Alle drei Fragen stimmen. Unten ist jetzt die Übersicht mit allen Aufgaben und Lösungen freigeschaltet.",
+            low: "Noch nicht korrekt. Sieh dir den Reiter „Merke“ und den Reiter „2 · Bausteine“ noch einmal an: Dort stehen die Bausteine eines Datenflussdiagramms und die Leserichtung.",
+            mediumHint: "Denk daran: In manchen Fragen musst du mehrere Kästchen ankreuzen, in anderen ist genau eine Antwort richtig."
+          },
+          onSuccess: () => {
+            const summary = document.getElementById("quiz-summary");
+            if (summary) summary.hidden = false;
+          }
+        });
+
+        /**
+         * ==========================================================
+         * HIER DIE URL DER APPS-SCRIPT-WEB-APP EINTRAGEN
+         * ==========================================================
+         *
+         * Die URL muss auf /exec enden, zum Beispiel:
+         * https://script.google.com/macros/s/AKfycb.../exec
+         */
+        const SCRIPT_SERVER_URL =
+          'https://script.google.com/macros/s/AKfycby8RWL6uYrKZyoJ6m2GRpWyRmXjwsdskyCiqzKpRhIK5-wrDl-9lWWk8CiAGaVMoy0x/exec';
+
+        function isValidScriptServerUrl(url) {
+          try {
+            const parsedUrl = new URL(url);
+            return (
+              parsedUrl.protocol === 'https:' &&
+              parsedUrl.hostname === 'script.google.com' &&
+              parsedUrl.pathname.endsWith('/exec')
+            );
+          } catch (error) {
+            return false;
+          }
+        }
+
+        function createRequestId() {
+          if (window.crypto && typeof window.crypto.randomUUID === 'function') {
+            return window.crypto.randomUUID();
+          }
+          return Date.now().toString(36) + '-' + Math.random().toString(36).substring(2);
+        }
+
+        const TASKS = {
+          '2a': { serverTaskId: 'inf9-dfd-zylinder-beschreibung' }
+        };
+
+        const pendingRequests = new Map();
+
+        function submitDescription(taskKey) {
+          const task = TASKS[taskKey];
+          const textarea = document.getElementById('answer-' + taskKey);
+          const button = document.getElementById('button-' + taskKey);
+          const resultBox = document.getElementById('result-' + taskKey);
+          const answer = textarea.value.trim();
+
+          if (answer.length < 10) {
+            showError(resultBox, 'Bitte formuliere eine etwas ausführlichere Antwort. Beschreibe mindestens einen Teilschritt in einem ganzen Satz.');
+            textarea.focus();
+            return;
+          }
+
+          if (!isValidScriptServerUrl(SCRIPT_SERVER_URL)) {
+            showError(resultBox, 'Der Auswertungsserver ist nicht korrekt eingerichtet. Bitte informiere deine Lehrkraft.');
+            return;
+          }
+
+          button.disabled = true;
+          textarea.disabled = true;
+          button.textContent = 'Beschreibung wird geprüft …';
+
+          resultBox.hidden = false;
+          resultBox.className = 'result';
+          resultBox.textContent = 'Deine Beschreibung wird ausgewertet …';
+
+          const requestId = createRequestId();
+          const url = new URL(SCRIPT_SERVER_URL);
+          url.searchParams.set('callback', '__handleDfdDescriptionResult');
+          url.searchParams.set('requestId', requestId);
+          url.searchParams.set('taskId', task.serverTaskId);
+          url.searchParams.set('answer', answer);
+          const jsonpUrl = url.toString();
+
+          if (jsonpUrl.length > 1800) {
+            button.disabled = false;
+            textarea.disabled = false;
+            button.textContent = 'Beschreibung prüfen';
+            showError(resultBox, 'Deine Beschreibung ist für die automatische Übertragung zu lang. Bitte kürze sie etwas.');
+            return;
+          }
+
+          const script = document.createElement('script');
+          script.async = true;
+          script.src = jsonpUrl;
+
+          const timeoutId = window.setTimeout(function () {
+            finishRequest(requestId, { ok: false, message: 'Der Auswertungsserver hat nicht rechtzeitig geantwortet. Versuche es bitte noch einmal.' });
+          }, 60000);
+
+          script.onerror = function () {
+            finishRequest(requestId, { ok: false, message: 'Der Auswertungsserver konnte nicht geladen werden. Prüfe deine Internetverbindung.' });
+          };
+
+          pendingRequests.set(requestId, { taskKey, textarea, button, resultBox, script, timeoutId });
+          document.body.appendChild(script);
+        }
+
+        window.__handleDfdDescriptionResult = function (message) {
+          if (!message || (message.type && message.type !== 'GEMINI_EVALUATION_RESULT')) {
+            return;
+          }
+          finishRequest(message.requestId, message.result);
+        };
+
+        function finishRequest(requestId, result) {
+          const pending = pendingRequests.get(requestId);
+          if (!pending) return;
+
+          window.clearTimeout(pending.timeoutId);
+          if (pending.script.parentNode) pending.script.parentNode.removeChild(pending.script);
+
+          pending.button.disabled = false;
+          pending.textarea.disabled = false;
+          pending.button.textContent = 'Beschreibung erneut prüfen';
+
+          pendingRequests.delete(requestId);
+
+          if (!result || result.ok !== true) {
+            showError(pending.resultBox, (result && result.message) ? result.message : 'Die Rückmeldung konnte nicht erstellt werden.');
+            return;
+          }
+
+          showEvaluation(pending.resultBox, result);
+        }
+
+        function classifyLevel(status) {
+          const normalized = String(status || '').trim().toLocaleLowerCase('de');
+          if (normalized === 'korrekt') return 'high';
+          if (normalized === 'teilweise korrekt') return 'medium';
+          return 'low';
+        }
+
+        function showEvaluation(resultBox, result) {
+          resultBox.textContent = '';
+          resultBox.hidden = false;
+          resultBox.className = 'result ' + classifyLevel(result.status);
+
+          const heading = document.createElement('h3');
+          heading.textContent = result.points + ' von ' + result.maxPoints + ' Punkten – ' + result.status;
+          resultBox.appendChild(heading);
+
+          appendList(resultBox, 'Das ist dir gelungen:', result.strengths, 'Es wurde noch kein eindeutiger richtiger Aspekt erkannt.');
+          appendList(resultBox, 'Das solltest du ergänzen oder überprüfen:', result.missing, 'Es fehlen keine wesentlichen Aspekte.');
+
+          const feedbackContainer = document.createElement('div');
+          feedbackContainer.className = 'feedback';
+
+          const feedbackHeading = document.createElement('h4');
+          feedbackHeading.textContent = 'Rückmeldung';
+
+          const feedbackText = document.createElement('p');
+          feedbackText.textContent = result.feedback || 'Überprüfe deine Antwort noch einmal.';
+
+          feedbackContainer.appendChild(feedbackHeading);
+          feedbackContainer.appendChild(feedbackText);
+          resultBox.appendChild(feedbackContainer);
+        }
+
+        function appendList(container, headingText, items, emptyText) {
+          const heading = document.createElement('h4');
+          heading.textContent = headingText;
+          container.appendChild(heading);
+
+          if (!Array.isArray(items) || items.length === 0) {
+            const paragraph = document.createElement('p');
+            paragraph.textContent = emptyText;
+            container.appendChild(paragraph);
+            return;
+          }
+
+          const list = document.createElement('ul');
+          items.forEach(function (item) {
+            const listItem = document.createElement('li');
+            listItem.textContent = String(item);
+            list.appendChild(listItem);
+          });
+          container.appendChild(list);
+        }
+
+        function showError(resultBox, message) {
+          resultBox.hidden = false;
+          resultBox.className = 'result error';
+          resultBox.textContent = message;
+        }
+
+        document.getElementById('button-2a').addEventListener('click', function () {
+          submitDescription('2a');
+        });
+      })();
+    </script>
+  </body>
+</html>
