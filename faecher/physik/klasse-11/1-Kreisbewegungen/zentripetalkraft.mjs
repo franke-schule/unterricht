@@ -597,7 +597,7 @@ function setupFormulaNewton() {
   });
 }
 
-// ---- Aufgabe 6a: Skizze beschriften (Muster wie setupRoleMatching) ----
+// ---- Aufgabe 6a: Skizze beschriften (Zuordnung per Auswahlliste) ----
 
 function setupLabelGrid() {
   const rows = [
@@ -962,101 +962,30 @@ function setupCentripetalOmegaFormula() {
 
 // ---- Reiter 4 · Anwenden ----
 
-function setupRoleMatching() {
-  const situations = [
-    { key: "moon", label: "Mond auf seiner Bahn um die Erde", correct: "gravity" },
-    { key: "hammer", label: "Hammerwurf (von oben betrachtet)", correct: "rope" },
-    { key: "car", label: "Auto in einer flachen Kurve", correct: "friction" },
-    { key: "electron", label: "Elektron um den Atomkern (Atommodell von Bohr)", correct: "electric" },
-    { key: "laundry", label: "Wäsche in der Schleudertrommel", correct: "wall" },
-    { key: "carousel", label: "Kettenkarussell – hier wirken zwei Kräfte zusammen", correct: "chain" },
-  ];
-  const optionEntries = [
-    ["", "Kraft auswählen …"],
-    ["gravity", "Gravitationskraft"],
-    ["rope", "Seilkraft"],
-    ["friction", "Haftreibungskraft"],
-    ["electric", "elektrische Kraft"],
-    ["wall", "Normalkraft der Trommelwand"],
-    ["chain", "Kettenkraft und Gewichtskraft zusammen"],
-    ["centrifugal", "Zentrifugalkraft nach außen"],
-    ["none", "keine Kraft nötig"],
-  ];
-  const grid = document.getElementById("role-grid");
-  situations.forEach((situation) => {
-    const label = document.createElement("label");
-    label.append(document.createTextNode(situation.label));
-    const select = document.createElement("select");
-    select.dataset.roleSituation = situation.key;
-    select.setAttribute("aria-label", `Kraft für ${situation.label}`);
-    optionEntries.forEach(([value, text]) => {
-      const option = document.createElement("option");
-      option.value = value;
-      option.textContent = text;
-      select.append(option);
-    });
-    label.append(select);
-    grid.append(label);
-  });
-
-  document.getElementById("check-role-matching").addEventListener("click", () => {
-    const selects = [...grid.querySelectorAll("select")];
-    const values = selects.map((select) => select.value);
-    const anySelected = values.some(Boolean);
-    const correctCount = situations.filter((situation, index) => values[index] === situation.correct).length;
-    const wrongLabels = situations.filter((situation, index) => values[index] !== situation.correct).map((situation) => situation.label);
-    const remember = document.getElementById("role-remember");
-    if (correctCount === situations.length) {
-      setFeedback("role-feedback", "success", "Korrekt: In jeder Situation wirkt eine bekannte Kraft – beim Kettenkarussell wirken zwei Kräfte zusammen – als Zentripetalkraft.");
-      remember.hidden = false;
+// Aufgabe 9: Merksatz mit einer Lücke ohne Wortvorgabe (Muster wie Aufgabe 2b).
+// Akzeptiert werden "Mittelpunkt" und "Ursprung".
+function setupDefinitionGap() {
+  const accepted = ["Mittelpunkt", "Ursprung"];
+  const input = document.getElementById("definition-gap");
+  const reminder = document.getElementById("definition-notebook-reminder");
+  document.getElementById("check-definition-gap").addEventListener("click", () => {
+    const value = input.value;
+    if (!normalizeGermanWord(value)) {
+      reminder.hidden = true;
+      setFeedback("definition-feedback", "error", "Trage ein Wort in die Lücke ein.");
       return;
     }
-    remember.hidden = true;
-    let status;
-    let message;
-    if (!anySelected || correctCount === 0) {
-      status = "error";
-      message = "Noch nicht korrekt. Stelle dir bei jeder Situation die Leitfrage: Welche Kraft zieht den Körper zum Kreismittelpunkt?";
-    } else {
-      status = "partial";
-      message = `${correctCount} von 6 Zuordnungen stimmen. Prüfe noch: ${wrongLabels.join(", ")}.`;
+    if (accepted.some((word) => wordMatches(value, word))) {
+      reminder.hidden = false;
+      setFeedback("definition-feedback", "success", "Korrekt: Die Zentripetalkraft ist zum Mittelpunkt der Kreisbahn hin gerichtet.");
+      return;
     }
-    if (values.includes("centrifugal")) message += " Eine Kraft nach außen würde den Körper nicht auf der Kreisbahn halten.";
-    if (values.includes("none")) message += " Ohne Kraft würde sich der Körper nach dem Trägheitssatz geradlinig weiterbewegen.";
-    setFeedback("role-feedback", status, message);
+    reminder.hidden = true;
+    const text = normalizeGermanWord(value).includes("aussen")
+      ? "Noch nicht korrekt. Eine Kraft nach außen hält den Körper nicht auf der Kreisbahn. Überlege, wohin der rote Kraftpfeil in den Simulationen zeigt."
+      : "Noch nicht korrekt. Überlege, wohin der rote Kraftpfeil {{F_Z}} in den Simulationen zeigt.";
+    setFeedback("definition-feedback", "error", text);
   });
-}
-
-function setupRoleQuiz() {
-  const items = [
-    {
-      question: "In welchen Situationen darfst du die genannte Kraft direkt mit {{F_Z}} gleichsetzen?",
-      correct: ["moon", "electron", "car"],
-      options: [
-        ["moon", "Mond um die Erde: Gravitationskraft = {{F_Z}}"],
-        ["electron", "Elektron um den Atomkern: elektrische Kraft = {{F_Z}}"],
-        ["car", "Auto in einer flachen Kurve: Haftreibungskraft = {{F_Z}}"],
-        ["carousel", "Kettenkarussell: Kettenkraft = {{F_Z}}"],
-        ["looping", "Achterbahn im höchsten Punkt eines Loopings: Gewichtskraft = {{F_Z}}"],
-      ],
-      feedback: "Gleichsetzen darf man nur, wenn eine einzige Kraft zum Kreismittelpunkt wirkt. Beim Kettenkarussell wirken Kettenkraft und Gewichtskraft zusammen, im Looping Gewichtskraft und die Kraft der Schiene.",
-      hint: "Prüfe bei jeder Situation, ob außer der genannten Kraft noch eine weitere Kraft zur Kreisbewegung beiträgt.",
-    },
-    {
-      question: "Die Zentripetalkraft ist keine eigene Kraftart, …",
-      correct: ["any", "several"],
-      options: [
-        ["centrifuge", "… weil sie nur in Zentrifugen auftritt."],
-        ["any", "… weil jede Kraftart als Zentripetalkraft wirken kann."],
-        ["fake", "… weil es sie in Wirklichkeit gar nicht gibt."],
-        ["several", "… weil sie auch von mehreren Kräften gemeinsam aufgebracht werden kann."],
-      ],
-      feedback: "Die Zentripetalkraft beschreibt eine Rolle: Die Kraft oder die Kräfte zum Kreismittelpunkt halten den Körper auf der Kreisbahn. Es gibt sie also wirklich, nur nicht als eigene Kraftart.",
-      hint: "Denke an die Situationen aus 9a: Welche Kräfte haben dort als Zentripetalkraft gewirkt?",
-    },
-  ];
-  const target = document.getElementById("role-quiz");
-  items.forEach((item, index) => renderQuizQuestion(target, item, index));
 }
 
 function setupMisconceptionQuiz() {
@@ -1285,8 +1214,7 @@ setupRatioChoice();
 setupFormulaDeltaV();
 setupCentripetalSpeedFormula();
 setupCentripetalOmegaFormula();
-setupRoleMatching();
-setupRoleQuiz();
+setupDefinitionGap();
 setupMisconceptionQuiz();
 setupTask11();
 setupTask12();

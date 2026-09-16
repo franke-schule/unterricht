@@ -452,6 +452,18 @@
   margin: 0;
 }
 
+/* Aufgabe 9: Merksatz mit einer Lücke ohne Wortvorgabe. */
+.definition-gap {
+  display: grid;
+  justify-items: start;
+  gap: 12px;
+  margin-top: 12px;
+}
+
+.definition-gap .cloze-sentence {
+  margin: 0;
+}
+
 .cloze-text-input {
   min-height: 44px;
   width: 8em;

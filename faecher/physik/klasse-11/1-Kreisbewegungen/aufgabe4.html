@@ -10,8 +10,8 @@
     <link rel="stylesheet" href="kraefte-bewegung.css?v=20260901b">
     <link rel="stylesheet" href="winkelgeschwindigkeit-kreisbewegung.css?v=20260912a">
     <link rel="stylesheet" href="components/physics-notation.css?v=20260911a">
-    <link rel="stylesheet" href="zentripetalkraft.css?v=20260916a">
-    <script type="module" src="zentripetalkraft.mjs?v=20260916a"></script>
+    <link rel="stylesheet" href="zentripetalkraft.css?v=20260917a">
+    <script type="module" src="zentripetalkraft.mjs?v=20260917a"></script>
   </head>
   <body class="physics-revision-page circular-motion-page">
     <div class="site-backdrop" aria-hidden="true"></div>
@@ -526,25 +526,18 @@
           <div class="physics-card-heading">
             <p class="eyebrow">Anwenden</p>
             <h2>Zentripetalkraft im Alltag</h2>
-            <p>Finde heraus, welche Kraft einen Körper in verschiedenen Situationen auf der Kreisbahn hält, und berechne ihren Betrag.</p>
+            <p>Sichere, wohin die Zentripetalkraft zeigt, und berechne ihren Betrag in Alltagssituationen.</p>
           </div>
 
-          <article class="physics-task-card" aria-labelledby="role-title">
-            <h3 id="role-title">Aufgabe 9 · Wer hält den Körper auf der Kreisbahn?</h3>
-            <p>Jede Kreisbewegung braucht eine Kraft zum Kreismittelpunkt. Welche Kraft das ist, hängt von der Situation ab.</p>
-            <p><strong>Beantworte</strong> für jede Situation die Leitfrage „Welche Kraft wirkt hier als Zentripetalkraft?“ und <strong>wähle</strong> die passende Kraft aus.</p>
-            <div id="role-grid" class="physics-choice-grid" aria-label="Zuordnung der Kräfte zu sechs Situationen"></div>
-            <button class="physics-primary-button" id="check-role-matching" type="button">Zuordnung prüfen</button>
-            <div id="role-feedback" class="physics-feedback" role="status" aria-live="polite" hidden></div>
-            <p id="role-remember" class="blue-remember" hidden>Bewegt sich ein Körper auf einer Kreisbahn, muss eine Kraft oder müssen mehrere Kräfte zusammen als Zentripetalkraft wirken. Die Zentripetalkraft ist keine eigene Kraftart: Seilkraft, Haftreibungskraft, Gravitationskraft, elektrische Kraft oder Normalkraft können diese Rolle übernehmen. Nur wenn eine einzige Kraft zum Kreismittelpunkt wirkt, darf man sie mit F<sub>Z</sub> gleichsetzen.</p>
-            <div class="physics-help-stack">
-              <details><summary>Hilfe 1: Hinweis</summary><p>Frage dich: Was berührt den Körper oder ist mit ihm verbunden? Oder wirkt eine Kraft ohne Berührung, wie die Gravitationskraft?</p></details>
-              <details><summary>Hilfe 2: Denkansatz</summary><p>Nur eine Kraft zum Kreismittelpunkt kann einen Körper auf der Kreisbahn halten. Eine Kraft nach außen gibt es für einen ruhenden Beobachter nicht.</p></details>
-              <details><summary>Hilfe 3: Teillösung</summary><p>Beim Mond ist es die Gravitationskraft, beim Hammerwurf die Seilkraft. Überlege die übrigen vier Situationen genauso.</p></details>
+          <article class="physics-task-card" aria-labelledby="definition-title">
+            <h3 id="definition-title">Aufgabe 9 · Merksatz zur Zentripetalkraft</h3>
+            <p><strong>Ergänze</strong> die Lücke im Merksatz ohne Wortvorgabe.</p>
+            <div class="definition-gap">
+              <p class="cloze-sentence blue-remember">Damit sich ein Körper mit gleichbleibender Bahngeschwindigkeit auf einer Kreisbahn bewegt, muss auf ihn eine Kraft wirken, die zum <input type="text" id="definition-gap" class="cloze-text-input" autocomplete="off" spellcheck="false" size="11" aria-label="Lücke: Wohin ist die Kraft gerichtet?"> hin gerichtet ist. Diese Kraft nennt man Zentripetalkraft F<sub>Z</sub>.</p>
+              <button type="button" class="physics-primary-button direct-check-button" id="check-definition-gap">Prüfen</button>
+              <p id="definition-feedback" class="physics-feedback" role="status" aria-live="polite" hidden></p>
             </div>
-
-            <p><strong>Wähle</strong> jeweils alle passenden Antworten <strong>aus</strong>.</p>
-            <div id="role-quiz" class="physics-multiple-choice" aria-label="Multiple-Choice-Aufgabe zum Gleichsetzen mit der Zentripetalkraft"></div>
+            <p class="notebook-reminder" id="definition-notebook-reminder" hidden><strong>Notiere den Merksatz in dein Heft.</strong></p>
           </article>
 
           <article class="physics-task-card" aria-labelledby="misconception-title">
@@ -681,7 +674,7 @@
                   <button class="physics-primary-button" type="submit">Code prüfen</button>
                 </div>
                 <p id="solution-code-message" class="solution-code-message" aria-live="polite"></p>
-                <a id="solution-download-link" class="download-button" href="sicherungsblatt-aufgabe-4-loesungen.pdf?v=20260916a" download hidden>
+                <a id="solution-download-link" class="download-button" href="sicherungsblatt-aufgabe-4-loesungen.pdf?v=20260917a" download hidden>
                   &#8595; Sicherungsblatt herunterladen
                 </a>
               </form>

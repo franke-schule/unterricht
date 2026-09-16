@@ -58,6 +58,21 @@ Physikaufgaben. Derzeit besteht keine abweichende speziellere Regelquelle.
   - Vorhandene zentrale Prüf- und Feedbackmechanismen sind zu nutzen. Für eine
     einzelne Aufgabe wird keine neue Prüfarchitektur angelegt.
 
+Einheiten bei Rechenaufgaben mit Zahleneingabe:
+
+  - Die Einheit steht immer direkt neben dem Zahlen-Eingabefeld, in derselben
+    Zeile, auch auf dem Smartphone.
+  - Die Einheit wird über ein Dropdown-Menü (`<select>`) ausgewählt, nicht frei
+    eingetippt. Die erste Option ist leer („Einheit“), damit die Wahl eine
+    eigene Leistung ist.
+  - Das Dropdown enthält neben den richtigen Einheiten plausible falsche
+    Einheiten, zum Beispiel kg oder J bei einer Kraft.
+  - Fachlich gleichwertige Einheiten werden als richtig akzeptiert, zum
+    Beispiel N und kN bei einer Kraft. Der erwartete Zahlenwert richtet sich
+    nach der gewählten Einheit (2,5 kN entspricht 2 500 N).
+  - Als Vorlage dienen die vorhandenen Einheiten-Dropdowns, zum Beispiel in
+    `faecher/physik/klasse-11/1-Kreisbewegungen/aufgabe4.html` (Aufgaben 11–13).
+
 Verbindliche Muster für Rückmeldungen:
 
   Richtig:
@@ -84,6 +99,11 @@ Verbindliche Muster für Rückmeldungen:
     kleinen Bildschirmen lesbar bleiben.
   - Zeilenabstand und weitere Abstände sind so zu bemessen, dass Zähler,
     Bruchstrich und Nenner weder angrenzende Zeilen noch andere Inhalte berühren.
+  - Ausnahme: Die Optionstexte eines Einheiten-Dropdowns (Abschnitt 3) dürfen
+    zusammengesetzte Einheiten mit Schrägstrich zeigen, zum Beispiel „m/s“ oder
+    „km/h“, weil ein natives Dropdown keinen Bruchstrich darstellen kann. Die
+    Ausnahme gilt nur für diese Optionstexte; in Aufgabentext, Feedback, Hilfen
+    und Lösungen bleibt der Bruchstrich verbindlich.
 
 
 5. Abschlussprüfung für Physikaufgaben
@@ -93,6 +113,8 @@ Verbindliche Muster für Rückmeldungen:
   [ ] Größen, Einheiten und Wertebereiche sind fachlich sinnvoll.
   [ ] Koordinatensysteme erfüllen die Regeln aus Abschnitt 2.
   [ ] Rechenergebnisse und Feedback berücksichtigen gültige Ziffern.
+  [ ] Einheiten werden per Dropdown direkt neben dem Eingabefeld gewählt;
+      gleichwertige Einheiten (z. B. N und kN) werden akzeptiert.
   [ ] Divisionen und zusammengesetzte Einheiten sind mit Bruchstrich gesetzt.
   [ ] Grafiken und Animationen wurden fachlich sowie responsiv geprüft.
   [ ] Vorhandene Tests, Lint- und Buildbefehle wurden ausgeführt.

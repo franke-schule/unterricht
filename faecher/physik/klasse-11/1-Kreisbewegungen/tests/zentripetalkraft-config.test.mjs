@@ -39,7 +39,8 @@ assert.match(html, /id="je-desto-mass-1"/);
 assert.match(html, /id="je-desto-mass-2"/);
 assert.match(html, /id="je-desto-omega-1"/);
 assert.match(html, /id="je-desto-radius-1"/);
-assert.equal((html.match(/class="cloze-text-input"/g) || []).length, 6);
+// 6 Lücken in Aufgabe 2b plus 1 Lücke im Merksatz von Aufgabe 9
+assert.equal((html.match(/class="cloze-text-input"/g) || []).length, 7);
 assert.equal((html.match(/id="check-je-desto-(mass|omega|radius)"/g) || []).length, 3);
 
 // Korrekturrunde: Buttonsystem wie in Aufgabe 1 (Winkelgeschwindigkeit,
@@ -81,7 +82,7 @@ assert.deepEqual(
 // Download-Bereich nach dem Abschlussquiz im Panel "quiz"
 assert.match(html, /data-physics-panel="quiz"[\s\S]*id="centripetal-quiz"[\s\S]*class="solution-download"/);
 assert.match(html, /unlockSolution\(event, 'R6WF-DH7K', 'solution-download-link', 'solution-code-message'\)/);
-assert.match(html, /href="sicherungsblatt-aufgabe-4-loesungen\.pdf\?v=20260916a" download hidden/);
+assert.match(html, /href="sicherungsblatt-aufgabe-4-loesungen\.pdf\?v=20260917a" download hidden/);
 assert.match(html, /maxlength="9"/);
 
 // Reiter 3 (Herleitung): neue Aufgaben 5-8 + "Für Schnelle", alte Aufgaben entfernt
@@ -89,7 +90,6 @@ assert.match(html, /id="formula-newton"/);
 assert.match(html, /id="label-grid"/);
 assert.match(html, /id="ratio-choice"/);
 assert.match(html, /id="formula-delta-v"/);
-assert.match(html, /id="role-quiz"/);
 assert.match(html, /id="similarity-answer"/);
 assert.equal((source.match(/setupPhysicsSemanticTask\(/g) || []).length, 3);
 assert.match(source, /taskId: "ph11-zentripetalkraft-herleitung-dv"/);
@@ -104,7 +104,7 @@ assert.match(html, /<h3 id="step6-title">Aufgabe 6 · /);
 assert.match(html, /<h3 id="ratio-delta-title">Aufgabe 7 · /);
 assert.match(html, /<h3 id="formula-final-title">Aufgabe 8 · /);
 assert.match(html, /Für Schnelle \(optional\) · Warum sind die Dreiecke ähnlich\?/);
-assert.match(html, /<h3 id="role-title">Aufgabe 9 · /);
+assert.match(html, /<h3 id="definition-title">Aufgabe 9 · Merksatz zur Zentripetalkraft<\/h3>/);
 assert.match(html, /<h3 id="misconception-title">Aufgabe 10 · /);
 assert.match(html, /<h3 id="task11-title">Aufgabe 11 · /);
 assert.match(html, /<h3 id="task13-title">Aufgabe 13 · /);
@@ -112,8 +112,16 @@ assert.match(html, /<h3 id="task13-title">Aufgabe 13 · /);
 // Aufgabe 3: mass vor radius vor omega
 assert.match(source, /key: "mass"[\s\S]*?key: "radius"[\s\S]*?key: "omega"/);
 
-// Aufgabe 9b und Aufgabe 10: neue Auswahllisten
-assert.match(source, /correct: \["any", "several"\]/);
+// Aufgabe 9: Zuordnung und Multiple Choice entfernt, stattdessen Merksatz mit
+// einer Lücke ohne Wortvorgabe ("Mittelpunkt" oder "Ursprung")
+assert.doesNotMatch(html, /id="role-(grid|quiz|feedback|remember)"/);
+assert.doesNotMatch(source, /setupRoleMatching|setupRoleQuiz/);
+assert.match(html, /die zum <input type="text" id="definition-gap" class="cloze-text-input"[^>]*> hin gerichtet ist\. Diese Kraft nennt man Zentripetalkraft F<sub>Z<\/sub>\./);
+assert.match(html, /id="check-definition-gap"/);
+assert.match(html, /id="definition-feedback" class="physics-feedback" role="status" aria-live="polite"/);
+assert.match(source, /const accepted = \["Mittelpunkt", "Ursprung"\];/);
+
+// Aufgabe 10
 assert.match(source, /correct: \["too-small", "tangent"\]/);
 assert.doesNotMatch(source, /"extra", "Auf das Auto/);
 assert.doesNotMatch(source, /"no-extra"/);
