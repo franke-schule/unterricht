@@ -108,28 +108,88 @@
   font: inherit;
   font-weight: 750;
   cursor: grab;
+  touch-action: none;
+  user-select: none;
 }
 
-.ki-intro-page .cloze-token:disabled {
-  opacity: 0.45;
-  cursor: default;
+.ki-intro-page .cloze-token.is-picked,
+.ki-intro-page .cloze-gap.is-picked {
+  outline: 3px solid #126e9c;
+  outline-offset: 2px;
 }
 
+.ki-intro-page .cloze-token.is-dragging,
+.ki-intro-page .cloze-gap.is-dragging {
+  opacity: .45;
+}
+
+.cloze-drag-ghost {
+  position: fixed;
+  z-index: 1000;
+  pointer-events: none;
+  transform: translate(-50%, -50%);
+  min-height: 44px;
+  display: inline-flex;
+  align-items: center;
+  border: 1px solid #126e9c;
+  border-radius: 9px;
+  padding: 8px 12px;
+  color: #12324a;
+  background: #f9fcfe;
+  font-weight: 750;
+  box-shadow: 0 6px 18px rgba(18, 50, 74, .25);
+}
+
+/* Merksatz als normaler Fließtext; Lücken sitzen in der Zeile */
 .ki-intro-page .cloze-sentence {
   margin: 0;
-  line-height: 2.6;
+  padding: 1rem 1.1rem;
+  border: 1px solid #b9d1df;
+  border-radius: .85rem;
+  background: #fff;
+  font-size: 1.08rem;
+  line-height: 2.3;
+  text-align: left;
+  color: #12324a;
 }
 
-.ki-intro-page .cloze-sentence select {
-  min-height: 44px;
-  max-width: 100%;
-  margin: 0 4px;
-  border: 1px solid #94a3b8;
-  border-radius: 8px;
-  padding: 6px 8px;
-  color: #0f172a;
-  background: #ffffff;
+.ki-intro-page .cloze-gap {
+  display: inline-block;
+  min-width: 7.5em;
+  margin: 0 .15em;
+  padding: .15em .5em;
+  border: 0;
+  border-bottom: 2px dashed #126e9c;
+  border-radius: 6px 6px 0 0;
+  background: #eef6fb;
+  color: #12324a;
   font: inherit;
+  font-weight: 750;
+  line-height: 1.8;
+  vertical-align: baseline;
+  cursor: pointer;
+  touch-action: none;
+}
+
+.ki-intro-page .cloze-gap.is-filled {
+  min-width: 0;
+  padding-inline: .3em;
+  border-bottom-style: solid;
+  background: #f9fcfe;
+  cursor: grab;
+}
+
+.ki-intro-page .cloze-gap.is-attached {
+  margin-right: 0;
+}
+
+.ki-intro-page .cloze-gap.is-filled.is-attached {
+  padding-right: .05em;
+}
+
+.ki-intro-page .cloze-gap.is-drop-target {
+  background: #d7ebf6;
+  border-bottom-color: #12324a;
 }
 
 .ki-intro-page .cloze-actions {

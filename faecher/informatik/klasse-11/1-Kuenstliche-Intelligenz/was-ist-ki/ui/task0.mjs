@@ -244,21 +244,82 @@ function setupCloze() {
   function hideExtras() {
     document.querySelector('.notebook-reminder').hidden = true;
   }
+  // Ausgewählte Karte für die Tipp-/Tastaturbedienung: { key, from } mit from = Lückenindex oder -1 (Wortspeicher)
+  let picked = null;
+  function place(key, from, gapIndex) {
+    if (from >= 0) choices[from] = '';
+    if (gapIndex >= 0) {
+      const previous = choices[gapIndex];
+      choices[gapIndex] = key;
+      if (from >= 0 && previous) choices[from] = previous; // Tausch zwischen zwei Lücken
+    }
+    picked = null;
+    hideExtras(); saveState(); render();
+  }
+  // Ziehen per Pointer Events, damit Maus, Stift und Touch gleich funktionieren
+  function enableDrag(element, key, from) {
+    element.addEventListener('pointerdown', (event) => {
+      if (event.button !== 0) return;
+      const startX = event.clientX;
+      const startY = event.clientY;
+      let ghost = null;
+      element.setPointerCapture(event.pointerId);
+      const move = (moveEvent) => {
+        if (!ghost && Math.hypot(moveEvent.clientX - startX, moveEvent.clientY - startY) < 6) return;
+        if (!ghost) {
+          ghost = document.createElement('span');
+          ghost.className = 'cloze-token cloze-drag-ghost';
+          ghost.textContent = key;
+          document.body.append(ghost);
+          element.classList.add('is-dragging');
+        }
+        ghost.style.left = moveEvent.clientX + 'px';
+        ghost.style.top = moveEvent.clientY + 'px';
+        target.querySelectorAll('.cloze-gap').forEach((gap) => gap.classList.remove('is-drop-target'));
+        document.elementFromPoint(moveEvent.clientX, moveEvent.clientY)?.closest('.cloze-gap')?.classList.add('is-drop-target');
+      };
+      const end = (endEvent) => {
+        element.removeEventListener('pointermove', move);
+        element.removeEventListener('pointerup', end);
+        element.removeEventListener('pointercancel', end);
+        if (!ghost) return; // kein Ziehen, Klick-Handler übernimmt
+        ghost.remove();
+        element.dataset.dragged = 'true';
+        const drop = endEvent.type === 'pointerup' ? document.elementFromPoint(endEvent.clientX, endEvent.clientY) : null;
+        const gap = drop?.closest('#definition-cloze .cloze-gap');
+        if (gap) place(key, from, Number(gap.dataset.index));
+        else if (from >= 0 && drop?.closest('#definition-cloze .cloze-term-bank')) place(key, from, -1);
+        else render();
+      };
+      element.addEventListener('pointermove', move);
+      element.addEventListener('pointerup', end);
+      element.addEventListener('pointercancel', end);
+    });
+  }
+  function wasDragged(element) {
+    if (element.dataset.dragged !== 'true') return false;
+    delete element.dataset.dragged;
+    return true;
+  }
   function render() {
     target.replaceChildren();
     const bank = document.createElement('div');
     bank.className = 'cloze-term-bank';
-    CLOZE_WORD_BANK.forEach((term) => {
+    bank.setAttribute('aria-label', 'Wortspeicher');
+    CLOZE_WORD_BANK.filter((term) => !choices.includes(term.key)).forEach((term) => {
       const token = document.createElement('button');
       token.type = 'button';
       token.className = 'cloze-token';
       token.textContent = term.text;
-      token.draggable = true;
-      token.disabled = choices.includes(term.key);
-      token.addEventListener('dragstart', (event) => event.dataTransfer.setData('text/plain', term.key));
+      const isPicked = picked?.key === term.key;
+      token.setAttribute('aria-pressed', String(isPicked));
+      token.classList.toggle('is-picked', isPicked);
+      enableDrag(token, term.key, -1);
       token.addEventListener('click', () => {
-        const empty = choices.findIndex((value) => !value);
-        if (empty >= 0) { choices[empty] = term.key; hideExtras(); saveState(); render(); }
+        if (wasDragged(token)) return;
+        picked = isPicked ? null : { key: term.key, from: -1 };
+        render();
+        if (picked) (target.querySelector('.cloze-gap:not(.is-filled)') || target.querySelector('.cloze-gap'))?.focus();
       });
       bank.append(token);
     });
@@ -267,16 +328,24 @@ function setupCloze() {
     CLOZE_SENTENCE_PARTS.forEach((part, index) => {
       sentence.append(document.createTextNode(part));
       if (index < CLOZE_TERMS.length) {
-        const select = document.createElement('select');
-        select.setAttribute('aria-label', 'Lücke ' + (index + 1));
-        select.innerHTML = '<option value="">Karte auswählen …</option>' + CLOZE_ALL_TERMS
-          .filter((term) => !choices.includes(term.key) || choices[index] === term.key)
-          .map((term) => '<option value="' + term.key + '">' + term.text + '</option>').join('');
-        select.value = choices[index];
-        select.addEventListener('change', () => { choices[index] = select.value; hideExtras(); saveState(); render(); });
-        select.addEventListener('dragover', (event) => event.preventDefault());
-        select.addEventListener('drop', (event) => { event.preventDefault(); choices[index] = event.dataTransfer.getData('text/plain'); hideExtras(); saveState(); render(); });
-        sentence.append(select);
+        const gap = document.createElement('button');
+        gap.type = 'button';
+        gap.className = 'cloze-gap';
+        gap.dataset.index = String(index);
+        const key = choices[index];
+        gap.textContent = key || ' '; // geschütztes Leerzeichen hält die leere Lücke auf der Grundlinie
+        gap.classList.toggle('is-filled', Boolean(key));
+        gap.classList.toggle('is-attached', /^\S/.test(CLOZE_SENTENCE_PARTS[index + 1])); // kein Abstand vor Satzzeichen oder „menschlich|es“
+        gap.classList.toggle('is-picked', picked?.from === index);
+        gap.setAttribute('aria-label', 'Lücke ' + (index + 1) + (key ? ': ' + key : ': leer'));
+        if (key) enableDrag(gap, key, index);
+        gap.addEventListener('click', () => {
+          if (wasDragged(gap)) return;
+          if (picked && picked.from !== index) { place(picked.key, picked.from, index); target.querySelector('[data-index="' + index + '"]')?.focus(); return; }
+          if (picked && picked.from === index) { place(key, index, -1); return; }
+          if (key) { picked = { key, from: index }; render(); target.querySelector('[data-index="' + index + '"]')?.focus(); }
+        });
+        sentence.append(gap);
       }
     });
     target.append(bank, sentence);
@@ -303,7 +372,7 @@ function setupCloze() {
     }
   });
   document.querySelector('#reset-cloze').addEventListener('click', () => {
-    choices.fill(''); saveState();
+    choices.fill(''); picked = null; saveState();
     document.querySelector('#cloze-feedback').hidden = true;
     hideExtras();
     render();
