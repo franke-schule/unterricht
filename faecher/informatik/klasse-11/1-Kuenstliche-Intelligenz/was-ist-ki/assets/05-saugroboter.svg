@@ -1,0 +1,16 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 140" role="img">
+  <rect x="0" y="0" width="200" height="140" fill="#e9d3b4"/>
+  <g stroke="#cfb18a" stroke-width="2">
+    <line x1="0" y1="28" x2="200" y2="28"/><line x1="0" y1="56" x2="200" y2="56"/><line x1="0" y1="84" x2="200" y2="84"/><line x1="0" y1="112" x2="200" y2="112"/>
+    <line x1="60" y1="0" x2="60" y2="28"/><line x1="140" y1="28" x2="140" y2="56"/><line x1="40" y1="56" x2="40" y2="84"/><line x1="120" y1="84" x2="120" y2="112"/><line x1="80" y1="112" x2="80" y2="140"/>
+  </g>
+  <!-- Fahrspur -->
+  <path d="M24 120 C 40 100, 60 118, 66 96" fill="none" stroke="#126e9c" stroke-width="3" stroke-dasharray="6 6" stroke-linecap="round"/>
+  <!-- Roboter von oben -->
+  <circle cx="112" cy="70" r="50" fill="#c9dce8" stroke="#12324a" stroke-width="3"/>
+  <circle cx="112" cy="70" r="36" fill="#f9fcfe" stroke="#12324a" stroke-width="2"/>
+  <path d="M70 44 a50 50 0 0 1 84 0" fill="none" stroke="#12324a" stroke-width="6" stroke-linecap="round"/>
+  <circle cx="112" cy="40" r="8" fill="#126e9c" stroke="#12324a" stroke-width="2.5"/>
+  <circle cx="112" cy="76" r="9" fill="#12324a"/>
+  <circle cx="112" cy="76" r="3" fill="#6fcf97"/>
+</svg>

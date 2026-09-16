@@ -1,0 +1,17 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 140" role="img">
+  <rect x="0" y="0" width="200" height="140" fill="#eef6fb"/>
+  <line x1="8" y1="118" x2="192" y2="118" stroke="#b9d1df" stroke-width="4" stroke-linecap="round"/>
+  <!-- Sensor mit Wellen -->
+  <rect x="92" y="22" width="16" height="10" rx="3" fill="#12324a"/>
+  <path d="M86 18 a16 16 0 0 1 28 0" fill="none" stroke="#126e9c" stroke-width="3" stroke-linecap="round"/>
+  <path d="M78 12 a28 28 0 0 1 44 0" fill="none" stroke="#126e9c" stroke-width="3" stroke-linecap="round" opacity=".6"/>
+  <!-- Bus -->
+  <rect x="24" y="32" width="152" height="74" rx="22" fill="#f2c94c" stroke="#12324a" stroke-width="3"/>
+  <rect x="36" y="42" width="30" height="30" rx="6" fill="#c9e3f2" stroke="#12324a" stroke-width="2.5"/>
+  <rect x="74" y="42" width="30" height="30" rx="6" fill="#c9e3f2" stroke="#12324a" stroke-width="2.5"/>
+  <rect x="112" y="42" width="30" height="30" rx="6" fill="#c9e3f2" stroke="#12324a" stroke-width="2.5"/>
+  <rect x="150" y="42" width="18" height="52" rx="5" fill="#c9e3f2" stroke="#12324a" stroke-width="2.5"/>
+  <text x="89" y="92" text-anchor="middle" font-family="Segoe UI, Arial, sans-serif" font-size="13" font-weight="700" fill="#12324a">fährt selbst</text>
+  <circle cx="58" cy="108" r="13" fill="#12324a"/><circle cx="58" cy="108" r="5" fill="#c9dce8"/>
+  <circle cx="142" cy="108" r="13" fill="#12324a"/><circle cx="142" cy="108" r="5" fill="#c9dce8"/>
+</svg>

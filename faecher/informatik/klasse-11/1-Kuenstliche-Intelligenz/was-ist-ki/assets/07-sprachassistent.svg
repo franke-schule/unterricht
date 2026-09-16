@@ -1,0 +1,18 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 140" role="img">
+  <rect x="0" y="0" width="200" height="140" fill="#eef6fb"/>
+  <!-- Sprechblase der Person -->
+  <path d="M14 18 h66 a8 8 0 0 1 8 8 v22 a8 8 0 0 1 -8 8 h-40 l-12 12 v-12 h-14 a8 8 0 0 1 -8 -8 v-22 a8 8 0 0 1 8 -8 Z" fill="#fff" stroke="#12324a" stroke-width="2.5"/>
+  <text x="47" y="36" text-anchor="middle" font-family="Segoe UI, Arial, sans-serif" font-size="12" font-weight="700" fill="#12324a">Wie wird</text>
+  <text x="47" y="50" text-anchor="middle" font-family="Segoe UI, Arial, sans-serif" font-size="12" font-weight="700" fill="#12324a">das Wetter?</text>
+  <!-- Smartphone mit Mikrofon -->
+  <rect x="104" y="10" width="72" height="122" rx="12" fill="#12324a"/>
+  <rect x="110" y="20" width="60" height="102" rx="5" fill="#f9fcfe"/>
+  <circle cx="140" cy="54" r="18" fill="#126e9c"/>
+  <rect x="134" y="42" width="12" height="18" rx="6" fill="#fff"/>
+  <path d="M130 54 a10 10 0 0 0 20 0 M140 64 v6" fill="none" stroke="#fff" stroke-width="2.5" stroke-linecap="round"/>
+  <!-- Audiowelle -->
+  <g stroke="#126e9c" stroke-width="4" stroke-linecap="round">
+    <line x1="118" y1="96" x2="118" y2="100"/><line x1="126" y1="90" x2="126" y2="106"/><line x1="134" y1="84" x2="134" y2="112"/>
+    <line x1="142" y1="92" x2="142" y2="104"/><line x1="150" y1="86" x2="150" y2="110"/><line x1="158" y1="94" x2="158" y2="102"/><line x1="164" y1="96" x2="164" y2="100"/>
+  </g>
+</svg>

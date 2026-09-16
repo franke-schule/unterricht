@@ -1,0 +1,26 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 140" role="img">
+  <rect x="0" y="0" width="200" height="140" fill="#eef6fb"/>
+  <!-- Smartphone mit Video -->
+  <rect x="60" y="6" width="80" height="130" rx="12" fill="#12324a"/>
+  <rect x="66" y="16" width="68" height="110" rx="5" fill="#2b5876"/>
+  <circle cx="100" cy="62" r="18" fill="#fff" opacity=".9"/>
+  <path d="M94 52 L112 62 L94 72 Z" fill="#126e9c"/>
+  <!-- Herz, Kommentar, Teilen -->
+  <path d="M123 88 c-4 -6 -12 -2 -8 4 l8 7 l8 -7 c4 -6 -4 -10 -8 -4 Z" fill="#e5484d"/>
+  <rect x="116" y="102" width="14" height="10" rx="3" fill="#fff"/>
+  <rect x="72" y="104" width="34" height="5" rx="2.5" fill="#fff" opacity=".8"/>
+  <rect x="72" y="113" width="24" height="5" rx="2.5" fill="#fff" opacity=".6"/>
+  <!-- Vorschläge daneben -->
+  <g stroke="#12324a" stroke-width="2.5">
+    <rect x="10" y="24" width="42" height="28" rx="5" fill="#c9dce8"/>
+    <rect x="10" y="60" width="42" height="28" rx="5" fill="#e9b872"/>
+    <rect x="10" y="96" width="42" height="28" rx="5" fill="#6fcf97"/>
+    <rect x="148" y="24" width="42" height="28" rx="5" fill="#e9b872"/>
+    <rect x="148" y="60" width="42" height="28" rx="5" fill="#c9dce8"/>
+    <rect x="148" y="96" width="42" height="28" rx="5" fill="#126e9c"/>
+  </g>
+  <g fill="#12324a">
+    <path d="M27 32 l10 6 l-10 6 Z"/><path d="M27 68 l10 6 l-10 6 Z"/><path d="M27 104 l10 6 l-10 6 Z"/>
+    <path d="M165 32 l10 6 l-10 6 Z"/><path d="M165 68 l10 6 l-10 6 Z"/><path d="M165 104 l10 6 l-10 6 Z" fill="#fff"/>
+  </g>
+</svg>

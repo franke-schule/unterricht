@@ -1,0 +1,16 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 140" role="img">
+  <rect x="0" y="0" width="200" height="140" fill="#eef6fb"/>
+  <line x1="20" y1="122" x2="180" y2="122" stroke="#b9d1df" stroke-width="4" stroke-linecap="round"/>
+  <!-- Toastscheiben -->
+  <path d="M68 58 V34 a12 12 0 0 1 12 -12 h8 a12 12 0 0 1 12 12 V58 Z" fill="#e9b872" stroke="#12324a" stroke-width="3" stroke-linejoin="round"/>
+  <path d="M104 58 V30 a12 12 0 0 1 12 -12 h8 a12 12 0 0 1 12 12 V58 Z" fill="#e9b872" stroke="#12324a" stroke-width="3" stroke-linejoin="round"/>
+  <!-- Gehäuse -->
+  <rect x="44" y="50" width="112" height="70" rx="18" fill="#c9dce8" stroke="#12324a" stroke-width="3"/>
+  <rect x="64" y="48" width="38" height="8" rx="4" fill="#12324a"/>
+  <rect x="100" y="48" width="38" height="8" rx="4" fill="#12324a"/>
+  <rect x="58" y="68" width="84" height="6" rx="3" fill="#f9fcfe" opacity=".8"/>
+  <!-- Hebel und Drehknopf -->
+  <rect x="156" y="64" width="16" height="10" rx="3" fill="#126e9c" stroke="#12324a" stroke-width="3"/>
+  <circle cx="100" cy="98" r="10" fill="#f9fcfe" stroke="#12324a" stroke-width="3"/>
+  <line x1="100" y1="98" x2="106" y2="92" stroke="#12324a" stroke-width="3" stroke-linecap="round"/>
+</svg>

@@ -1,0 +1,22 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 140" role="img">
+  <rect x="0" y="0" width="200" height="140" fill="#eef6fb"/>
+  <!-- Smartphone mit Chat -->
+  <rect x="28" y="10" width="72" height="122" rx="12" fill="#12324a"/>
+  <rect x="34" y="20" width="60" height="102" rx="5" fill="#f9fcfe"/>
+  <rect x="40" y="28" width="40" height="16" rx="7" fill="#c9dce8"/>
+  <rect x="50" y="50" width="38" height="16" rx="7" fill="#126e9c"/>
+  <rect x="40" y="72" width="44" height="22" rx="7" fill="#c9dce8"/>
+  <rect x="56" y="100" width="32" height="14" rx="7" fill="#126e9c"/>
+  <!-- Roboter -->
+  <line x1="150" y1="30" x2="150" y2="42" stroke="#12324a" stroke-width="3"/>
+  <circle cx="150" cy="26" r="5" fill="#e9b872" stroke="#12324a" stroke-width="3"/>
+  <rect x="120" y="42" width="60" height="46" rx="12" fill="#c9dce8" stroke="#12324a" stroke-width="3"/>
+  <circle cx="138" cy="62" r="6" fill="#126e9c"/>
+  <circle cx="162" cy="62" r="6" fill="#126e9c"/>
+  <path d="M140 76 q10 7 20 0" fill="none" stroke="#12324a" stroke-width="3" stroke-linecap="round"/>
+  <rect x="128" y="92" width="44" height="34" rx="8" fill="#c9dce8" stroke="#12324a" stroke-width="3"/>
+  <circle cx="150" cy="109" r="5" fill="#e9b872"/>
+  <!-- Sprechblase -->
+  <path d="M104 24 h26 a6 6 0 0 1 6 6 v4 l6 6 -10 -2 h-28 a6 6 0 0 1 -6 -6 v-2 a6 6 0 0 1 6 -6 Z" fill="#fff" stroke="#12324a" stroke-width="2"/>
+  <circle cx="112" cy="31" r="2" fill="#12324a"/><circle cx="120" cy="31" r="2" fill="#12324a"/><circle cx="128" cy="31" r="2" fill="#12324a"/>
+</svg>

@@ -1,0 +1,23 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 140" role="img">
+  <rect x="0" y="0" width="200" height="140" fill="#eef6fb"/>
+  <!-- Smartphone quer -->
+  <rect x="12" y="14" width="176" height="112" rx="14" fill="#12324a"/>
+  <rect x="24" y="22" width="152" height="96" rx="5" fill="#dcecf5"/>
+  <circle cx="18" cy="70" r="3" fill="#5b7a90"/>
+  <!-- drei Personen -->
+  <g stroke="#12324a" stroke-width="2.5">
+    <path d="M36 118 a18 18 0 0 1 36 0 Z" fill="#126e9c"/>
+    <circle cx="54" cy="74" r="14" fill="#f2c9a0"/>
+    <path d="M82 118 a18 18 0 0 1 36 0 Z" fill="#e9b872"/>
+    <circle cx="100" cy="66" r="14" fill="#c99a6e"/>
+    <path d="M128 118 a18 18 0 0 1 36 0 Z" fill="#6fcf97"/>
+    <circle cx="146" cy="76" r="14" fill="#f2c9a0"/>
+  </g>
+  <g fill="#12324a"><circle cx="49" cy="72" r="2"/><circle cx="59" cy="72" r="2"/><circle cx="95" cy="64" r="2"/><circle cx="105" cy="64" r="2"/><circle cx="141" cy="74" r="2"/><circle cx="151" cy="74" r="2"/></g>
+  <!-- Erkennungsrahmen -->
+  <g fill="none" stroke="#f2c94c" stroke-width="3" stroke-linecap="round">
+    <path d="M36 62 v-8 h8 M64 54 h8 v8 M72 86 v8 h-8 M44 94 h-8 v-8"/>
+    <path d="M82 54 v-8 h8 M110 46 h8 v8 M118 78 v8 h-8 M90 86 h-8 v-8"/>
+    <path d="M128 64 v-8 h8 M156 56 h8 v8 M164 88 v8 h-8 M136 96 h-8 v-8"/>
+  </g>
+</svg>
