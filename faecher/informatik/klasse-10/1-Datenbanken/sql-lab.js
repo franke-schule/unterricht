@@ -318,7 +318,7 @@ function dropLegacyQuizAnswers() { if (!verbundState.check || typeof verbundStat
 function verbundFeedback(id, level, text) { verbundState.feedback[id] = { level, text }; saveVerbundState(); }
 function verbundDone(id) { return Boolean(verbundState.completed[id]); }
 function crossDone() { return verbundState.prediction === '32' && verbundState.crossExecuted && verbundState.crossClass.good === 'passend' && verbundState.crossClass.song === 'unpassend' && verbundState.crossClass.playlist === 'unpassend'; }
-function availableVerbundTab(id) { if (id === 'source') return true; if (id === 'cross') return verbundDone('source'); if (id === 'first') return crossDone(); if (id === 'second') return verbundDone('first'); if (id === 'sql') return verbundDone('second'); if (id === 'check') return verbundDone('sql'); return false; }
+function availableVerbundTab(id) { return VERBUND_TABS.some(([tab]) => tab === id); }
 function completeVerbund(id) { verbundState.completed[id] = true; saveVerbundState(); }
 function activateVerbundTab(id, { focusContent = false } = {}) { const allowed = id === 'summary' ? verbundState.summaryUnlocked : availableVerbundTab(id); if (!allowed) return; verbundState.tab = id; saveVerbundState(); renderVerbundModule({ focusContent }); }
 function renderVerbundModule({ focusContent = false } = {}) {

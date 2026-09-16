@@ -142,8 +142,7 @@ function renderTabs() {
   const tabs = document.getElementById("step-tabs");
   tabs.innerHTML = STEP_TITLES.map((title, index) => {
     const step = index + 1;
-    const unlocked = step === 1 || state.completed.includes(step) || state.completed.includes(step - 1);
-    return `<button id="tab-${step}" class="step-tab ${state.completed.includes(step) ? "is-complete" : ""}" type="button" role="tab" aria-controls="step-${step}" aria-selected="${state.currentStep === step}" data-step="${step}" ${unlocked ? "" : 'disabled aria-disabled="true"'}><span>${step}</span><small>${title}</small></button>`;
+    return `<button id="tab-${step}" class="step-tab ${state.completed.includes(step) ? "is-complete" : ""}" type="button" role="tab" aria-controls="step-${step}" aria-selected="${state.currentStep === step}" data-step="${step}"><span>${step}</span><small>${title}</small></button>`;
   }).join("") + `<button id="tab-summary" class="step-tab" type="button" role="tab" aria-controls="step-summary" aria-selected="${state.currentStep === "summary"}" data-step="summary" ${state.summaryUnlocked ? "" : "hidden"}><span>✓</span><small>Übersicht</small></button>`;
   tabs.querySelectorAll("button").forEach((button) => button.addEventListener("click", () => navigateTo(button.dataset.step === "summary" ? "summary" : Number(button.dataset.step))));
   enableTabKeyboardNavigation(tabs);
@@ -152,7 +151,6 @@ function renderTabs() {
 
 function navigateTo(step, { focusContent = false } = {}) {
   if (step === "summary" && !state.summaryUnlocked) return;
-  if (typeof step === "number" && step > 1 && !state.completed.includes(step - 1) && !state.completed.includes(step)) return;
   document.querySelectorAll(".step-panel").forEach((panel) => { panel.hidden = panel.id !== `step-${step}`; });
   state.currentStep = step; saveState(); updateNavigation(); renderTabs();
   if (step === "summary") renderSummary();
@@ -173,7 +171,7 @@ function updateNavigation() {
     items: TAB_ITEMS,
     currentId: state.currentStep,
     onNavigate: navigateTo,
-    isEnabled: (id) => id === "summary" ? state.summaryUnlocked : id === 1 || state.completed.includes(Number(id) - 1) || state.completed.includes(Number(id)),
+    isEnabled: (id) => id === "summary" ? state.summaryUnlocked : true,
   });
 }
 
