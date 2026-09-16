@@ -7,8 +7,8 @@
     <title>Aufgabe 5 – Das Perzeptron | Informatik 11</title>
     <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns=%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22 viewBox=%220 0 16 16%22%3E%3Ccircle cx=%228%22 cy=%228%22 r=%227%22 fill=%22%23126e9c%22%2F%3E%3C%2Fsvg%3E">
     <link rel="stylesheet" href="../../../../styles.css?v=20260707">
-    <link rel="stylesheet" href="perzeptron/task5.css?v=20260914a">
-    <script type="module" src="perzeptron/ui/task5.mjs?v=20260914a"></script>
+    <link rel="stylesheet" href="perzeptron/task5.css?v=20260916a">
+    <script type="module" src="perzeptron/ui/task5.mjs?v=20260916a"></script>
   </head>
   <body class="perceptron-page">
     <div class="site-backdrop" aria-hidden="true"></div>
@@ -39,11 +39,11 @@
 
       <section id="discover" class="step-panel" role="tabpanel" aria-labelledby="tab-discover" data-panel="discover">
         <p class="kicker">Vom Tier zur Entscheidung</p><h2>Eigenschaften werden zu Punkten</h2>
-        <p><strong>Arbeitsauftrag:</strong> Klicke auf den Button Weiter, um Schritt für Schritt herauszufinden, ob ein Hase als gefährlich eingestuft wird.</p>
+        <div class="geometry-layout">
         <figure class="geometry-figure">
           <svg class="geometry-plot" viewBox="0 0 800 460" role="img" aria-labelledby="geometry-title geometry-description">
-            <title id="geometry-title">Trainingspunkte, Trenngerade und Hase im Koordinatensystem</title>
-            <desc id="geometry-description">Die x-Achse zeigt die Zahnlänge, die y-Achse die Augengröße. Die Kreise U eins bei null, vier und U zwei bei zwei, zwei liegen im ungefährlichen Bereich. Die Dreiecke G eins bei vier, eins und G zwei bei sechs, zwei liegen im gefährlichen Bereich. Der hervorgehobene Hase bei zwei, vier liegt im ungefährlichen Bereich oberhalb der Trenngeraden.</desc>
+            <title id="geometry-title">Trainingspunkte, Trenngerade, Hase und Fuchs im Koordinatensystem</title>
+            <desc id="geometry-description">Die x-Achse zeigt die Zahnlänge, die y-Achse die Augengröße. Die Kreise U eins bei null, vier und U zwei bei zwei, zwei liegen im ungefährlichen Bereich. Die Dreiecke G eins bei vier, eins und G zwei bei sechs, zwei liegen im gefährlichen Bereich. Der hervorgehobene Hase bei zwei, vier liegt im ungefährlichen Bereich oberhalb der Trenngeraden. Den Fuchs setzt du selbst ein.</desc>
             <defs><marker id="axis-arrow" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto"><path d="M0,0 L8,4 L0,8 z"/></marker><pattern id="safe-pattern" width="10" height="10" patternUnits="userSpaceOnUse" patternTransform="rotate(45)"><line x1="0" y1="0" x2="0" y2="10" stroke="#287b61" stroke-width="2"/></pattern><pattern id="danger-pattern" width="10" height="10" patternUnits="userSpaceOnUse"><circle cx="3" cy="3" r="1.4" fill="#af3f47"/></pattern></defs>
             <polygon points="90,90 685,90 90,375" class="geometry-area safe-area" data-geometry="area"></polygon><polygon points="90,375 685,90 685,390 90,390" class="geometry-area danger-area" data-geometry="area"></polygon>
             <g class="geometry-grid" aria-hidden="true"><line x1="90" y1="390" x2="685" y2="390"></line><line x1="90" y1="330" x2="685" y2="330"></line><line x1="90" y1="270" x2="685" y2="270"></line><line x1="90" y1="210" x2="685" y2="210"></line><line x1="90" y1="150" x2="685" y2="150"></line><line x1="90" y1="90" x2="685" y2="90"></line></g>
@@ -57,12 +57,16 @@
             <g data-geometry="fox" id="fox-marker" hidden><path class="fox-point" d="M0 -14 L12 0 L0 14 L-12 0 Z"></path><circle class="fox-ring" cx="0" cy="0" r="21"></circle><text class="fox-label" id="fox-label" x="25" y="5">Fuchs</text></g>
           </svg>
         </figure>
-        <p class="formula-card" data-geometry="line"><strong>Eine solche Grenzlinie heißt Trenngerade.</strong> Die hier gezeichnete Gerade −3x₁ + 4x₂ = 1 trennt die vier Trainingspunkte korrekt.</p>
-        <div class="explanation-stepper" aria-label="Schritte zur Einordnung des Hasen">
-          <button type="button" id="next-geometry-step" class="primary-button">Weiter</button>
-          <p id="geometry-step-status" class="step-status" aria-live="polite"></p>
+        <div class="geometry-side">
+          <p><strong>Arbeitsauftrag:</strong> <strong>Klicke</strong> auf Weiter und <strong>ordne</strong> zuerst den Hasen, dann den Fuchs Schritt für Schritt ein.</p>
+          <div class="explanation-stepper" aria-label="Schritte zur Einordnung von Hase und Fuchs">
+            <p id="geometry-step-status" class="step-status" aria-live="polite"></p>
+            <div class="stepper-actions"><button type="button" id="next-geometry-step" class="primary-button">Weiter</button></div>
+          </div>
+          <div class="fox-task" id="fox-task" hidden><div class="fox-controls"><label for="fox-x">Zahnlänge (x₁)<select id="fox-x"><option value="">–</option><option value="0">0</option><option value="1">1</option><option value="2">2</option><option value="3">3</option><option value="4">4</option><option value="5">5</option><option value="6">6</option><option value="7">7</option></select></label><label for="fox-y">Augengröße (x₂)<select id="fox-y"><option value="">–</option><option value="0">0</option><option value="1">1</option><option value="2">2</option><option value="3">3</option><option value="4">4</option><option value="5">5</option></select></label></div><fieldset id="fox-class" hidden><legend>Welche Klasse hat der Fuchs?</legend><label><input type="radio" name="fox-class" value="danger">gefährlich – Ausgabe 0</label><label><input type="radio" name="fox-class" value="safe">nicht gefährlich – Ausgabe 1</label></fieldset><button id="check-fox" class="primary-button" type="button" hidden>Fuchs überprüfen</button><div id="fox-feedback" class="feedback" role="status" aria-live="polite" hidden></div></div>
         </div>
-        <article class="card fox-task"><h3>Fuchs einordnen</h3><p>Setze den Fuchs bei (5|3): Klicke dazu in das Koordinatensystem oder wähle die Werte mit der Tastatur.</p><div class="fox-controls"><label for="fox-x">Zahnlänge (x-Achse)<select id="fox-x"><option value="">Bitte wählen</option><option value="0">0</option><option value="1">1</option><option value="2">2</option><option value="3">3</option><option value="4">4</option><option value="5">5</option><option value="6">6</option><option value="7">7</option></select></label><label for="fox-y">Augengröße (y-Achse)<select id="fox-y"><option value="">Bitte wählen</option><option value="0">0</option><option value="1">1</option><option value="2">2</option><option value="3">3</option><option value="4">4</option><option value="5">5</option></select></label></div><fieldset id="fox-class"><legend>Welche Klasse hat der Fuchs?</legend><label><input type="radio" name="fox-class" value="danger">gefährlich – Ausgabe 0</label><label><input type="radio" name="fox-class" value="safe">nicht gefährlich – Ausgabe 1</label></fieldset><button id="check-fox" class="primary-button" type="button">Fuchs überprüfen</button><div id="fox-feedback" class="feedback" role="status" aria-live="polite" hidden></div></article>
+        </div>
+        <p class="formula-card" data-geometry="line"><strong>Eine solche Grenzlinie heißt Trenngerade.</strong> Die hier gezeichnete Gerade −3x₁ + 4x₂ = 1 trennt die vier Trainingspunkte korrekt.</p>
         <fieldset id="discover-options"><legend>Welche Aussagen stimmen?</legend><label><input type="checkbox" value="x1">Die Zahnlänge wird auf der x-Achse abgetragen.</label><label><input type="checkbox" value="x2">Die Augengröße wird auf der y-Achse abgetragen.</label><label><input type="checkbox" value="safe">Der Hase liegt im Bereich „ungefährlich“.</label><label><input type="checkbox" value="color">Nur die Farbe eines Punktes verrät seine Klasse.</label></fieldset><button id="check-discover" class="primary-button" type="button">Aussagen überprüfen</button><div id="discover-feedback" class="feedback" role="status" aria-live="polite" hidden></div>
         <details><summary>Hilfe 1: Achsen ablesen</summary><p>Die Zahnlänge steht auf der x-Achse, die Augengröße auf der y-Achse.</p></details><details><summary>Hilfe 2: Punkt prüfen</summary><p>Trage den Hasen bei x₁ = 2 und x₂ = 4 ein und vergleiche seine Lage mit der Grenzlinie.</p></details><details><summary>Hilfe 3: Einordnung</summary><p>Der Hase liegt oberhalb der Grenzlinie im Bereich „ungefährlich“.</p></details>
         <div class="flow-navigation" data-flow="discover"></div>

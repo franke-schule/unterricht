@@ -7,9 +7,12 @@ const STEPS = ['discover', 'structure', 'decide', 'learn', 'simulator', 'fast', 
 const epoch = runEpoch();
 const GEOMETRY_STEPS = [
   { title:'Eigenschaften', targets:['axes','points'], text:'Die Zahnlänge wird auf der x-Achse abgetragen, die Augengröße auf der y-Achse.' },
-  { title:'Punkt eintragen', targets:['hare'], text:'Der Hase hat die Zahnlänge 2 und die Augengröße 4. Deshalb liegt sein Punkt bei (2|4).' },
-  { title:'Klasse ablesen', targets:['hare','line','area'], text:'Der Punkt (2|4) liegt oberhalb der Trenngeraden im Bereich „ungefährlich“.' },
+  { title:'Hase eintragen', targets:['hare'], text:'Der Hase hat die Zahnlänge 2 und die Augengröße 4. Deshalb liegt sein Punkt bei (2|4).' },
+  { title:'Hase einordnen', targets:['hare','line','area'], text:'Der Punkt (2|4) liegt oberhalb der Trenngeraden im Bereich „ungefährlich“.' },
+  { title:'Fuchs eintragen', targets:['fox'], text:'Der Fuchs hat die Zahnlänge 5 und die Augengröße 3. Klicke in das Koordinatensystem bei (5|3) oder wähle die Werte unten.' },
+  { title:'Fuchs einordnen', targets:['fox','line','area'], text:'Lies ab, auf welcher Seite der Trenngeraden der Fuchs liegt. Wähle seine Klasse und überprüfe.' },
 ];
+const FOX_STEP = 3;
 const SIGNAL_STEPS = [
   { title:'Eingaben', targets:['inputs'], text:'Die Eingaben beschreiben den Hasen: x₁ = 2 für die Zahnlänge und x₂ = 4 für die Augengröße.' },
   { title:'Gewichte', targets:['inputs','weights'], text:'Die Gewichte legen den Einfluss fest: w₁ = −1 und w₂ = 2.' },
@@ -78,27 +81,27 @@ function setupNextStepper(buttonSelector, itemSelector, steps, stateKey, statusS
       const completeArrow = current >= 0 && steps.slice(0, current).some((step) => linked.some((part) => step.targets.includes(part)));
       arrow.classList.toggle('is-active', activeArrow); arrow.classList.toggle('is-complete', completeArrow); arrow.classList.toggle('is-dimmed', !activeArrow && !completeArrow);
     });
-    button.disabled = current === steps.length - 1;
-    button.textContent = current === steps.length - 1 ? 'Alle Schritte gezeigt' : 'Weiter';
+    button.textContent = current === steps.length - 1 ? 'Schritte neu starten' : 'Weiter';
+    button.classList.toggle('primary-button', current < steps.length - 1); button.classList.toggle('secondary-button', current === steps.length - 1);
     button.setAttribute('aria-describedby', statusSelector.slice(1));
     document.querySelector(statusSelector).textContent = current < 0 ? 'Klicke auf Weiter, um mit Schritt 1 von ' + steps.length + ' zu beginnen.' : 'Schritt ' + (current + 1) + '/' + steps.length + ': ' + steps[current].title + ' – ' + steps[current].text;
     afterShow?.(current);
     saveState();
   };
-  button.addEventListener('click', () => show(Math.min(state[stateKey] + 1, steps.length - 1)));
+  button.addEventListener('click', () => show(state[stateKey] >= steps.length - 1 ? -1 : state[stateKey] + 1));
   show(state[stateKey]);
 }
 function setupDiscovery() {
-  setupNextStepper('#next-geometry-step', '[data-geometry]', GEOMETRY_STEPS, 'geometryStep', '#geometry-step-status', 'geometry', (current) => { document.querySelector('#hare-marker').hidden = current < 1; });
   const plot = document.querySelector('.geometry-plot');
   const foxX = document.querySelector('#fox-x');
   const foxY = document.querySelector('#fox-y');
-  const updateFox = () => { const x = validCoordinate(state.foxX, 7); const y = validCoordinate(state.foxY, 5); const marker = document.querySelector('#fox-marker'); marker.hidden = x === null || y === null; if (!marker.hidden) { marker.setAttribute('transform', 'translate(' + (90 + x * 85) + ' ' + (390 - y * 60) + ')'); document.querySelector('#fox-label').textContent = 'Fuchs (' + x + '|' + y + ')'; } foxX.value = x === null ? '' : String(x); foxY.value = y === null ? '' : String(y); document.querySelectorAll('[name=fox-class]').forEach((input) => { input.checked = input.value === state.foxClass; }); saveState(); };
+  const updateFox = () => { const x = validCoordinate(state.foxX, 7); const y = validCoordinate(state.foxY, 5); const marker = document.querySelector('#fox-marker'); const foxStep = state.geometryStep >= FOX_STEP; marker.toggleAttribute('hidden', !foxStep || x === null || y === null); plot.classList.toggle('accepts-fox', foxStep); document.querySelector('#fox-task').hidden = !foxStep; document.querySelector('#fox-class').hidden = state.geometryStep < FOX_STEP + 1; document.querySelector('#check-fox').hidden = state.geometryStep < FOX_STEP + 1; if (!marker.hasAttribute('hidden')) { marker.setAttribute('transform', 'translate(' + (90 + x * 85) + ' ' + (390 - y * 60) + ')'); document.querySelector('#fox-label').textContent = 'Fuchs (' + x + '|' + y + ')'; } foxX.value = x === null ? '' : String(x); foxY.value = y === null ? '' : String(y); document.querySelectorAll('[name=fox-class]').forEach((input) => { input.checked = input.value === state.foxClass; }); saveState(); };
   const setFox = (x, y) => { state.foxX = validCoordinate(x, 7, state.foxX); state.foxY = validCoordinate(y, 5, state.foxY); state.foxChecked = false; updateFox(); };
   foxX.addEventListener('change', () => setFox(foxX.value === '' ? null : Number(foxX.value), state.foxY));
   foxY.addEventListener('change', () => setFox(state.foxX, foxY.value === '' ? null : Number(foxY.value)));
-  plot.addEventListener('click', (event) => { const point = new DOMPoint(event.clientX, event.clientY).matrixTransform(plot.getScreenCTM().inverse()); setFox(Math.round((point.x - 90) / 85), Math.round((390 - point.y) / 60)); });
+  plot.addEventListener('click', (event) => { if (state.geometryStep < FOX_STEP) return; const point = new DOMPoint(event.clientX, event.clientY).matrixTransform(plot.getScreenCTM().inverse()); setFox(Math.round((point.x - 90) / 85), Math.round((390 - point.y) / 60)); });
   document.querySelectorAll('[name=fox-class]').forEach((input) => input.addEventListener('change', () => { state.foxClass = input.value; state.foxChecked = false; saveState(); }));
+  setupNextStepper('#next-geometry-step', '[data-geometry]', GEOMETRY_STEPS, 'geometryStep', '#geometry-step-status', 'geometry', (current) => { document.querySelector('#hare-marker').toggleAttribute('hidden', current < 1); updateFox(); });
   document.querySelector('#check-fox').addEventListener('click', () => { const pointCorrect = state.foxX === 5 && state.foxY === 3; const classCorrect = state.foxClass === 'danger'; state.foxChecked = pointCorrect && classCorrect; saveState(); if (state.foxChecked) feedback('fox-feedback','success','Korrekt. Der Fuchs liegt bei (5|3) im gefährlichen Bereich; die Ausgabe ist 0.'); else if (pointCorrect) feedback('fox-feedback','partial','Der Punkt stimmt. Prüfe noch, auf welcher Seite der Trenngeraden er liegt.'); else if (classCorrect) feedback('fox-feedback','partial','Die Klasse stimmt. Trage den Punkt noch genau bei (5|3) ein.'); else feedback('fox-feedback','error','Noch nicht korrekt. Trage zuerst den Punkt (5|3) ein und lies dann den beschrifteten Bereich ab.'); });
   updateFox();
   document.querySelector('#check-discover').addEventListener('click', () => { const answers = selectedValues(document.querySelector('#discover-options')); if (sameSet(answers, ['x1','x2','safe'])) feedback('discover-feedback','success','Korrekt. Merkmalswerte werden zu Koordinaten; der Hase liegt bei (2|4) auf der ungefährlichen Seite der Trenngeraden.'); else if (answers.some((value) => ['x1','x2','safe'].includes(value))) feedback('discover-feedback','partial','Teilweise korrekt. Prüfe noch, welche Achse zu welcher Eigenschaft gehört und auf welcher Seite der Linie der Hase liegt.'); else feedback('discover-feedback','error','Noch nicht korrekt. Markiere zuerst den Punkt (2|4) und lies dann die direkt beschrifteten Bereiche ab.'); });
