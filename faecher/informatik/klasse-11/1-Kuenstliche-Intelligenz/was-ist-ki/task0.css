@@ -1,0 +1,143 @@
+/* Aufgabe 0 "Was ist KI?" - nur neue Regeln: Bildraster, iframe-Einbettung, Lückentext.
+   Basis-Layout, Reiter, Buttons, Feedback usw. kommen aus perzeptron/task5.css. */
+
+.ki-intro-page .ki-rating-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 1rem;
+  margin: 1rem 0;
+}
+
+.ki-intro-page .ki-rating-figure {
+  margin: 0;
+  padding: .85rem;
+  border: 1px solid #b9d1df;
+  border-radius: .85rem;
+  background: #f9fcfe;
+  display: flex;
+  flex-direction: column;
+  gap: .5rem;
+}
+
+.ki-intro-page .ki-rating-figure img {
+  display: block;
+  width: 100%;
+  height: 130px;
+  object-fit: contain;
+  background: #fff;
+  border-radius: .5rem;
+}
+
+.ki-intro-page .ki-rating-figure figcaption {
+  font-weight: 700;
+  color: #12324a;
+}
+
+.ki-intro-page .ki-rating-figure figcaption .ki-rating-mark {
+  display: block;
+  font-weight: 700;
+  margin-top: .2rem;
+}
+
+.ki-intro-page .ki-rating-figure figcaption .ki-rating-mark.is-correct { color: #1a6b45; }
+.ki-intro-page .ki-rating-figure figcaption .ki-rating-mark.is-wrong { color: #af3f47; }
+
+.ki-intro-page .ki-rating-figure label {
+  font-weight: 700;
+  display: block;
+}
+
+.ki-intro-page .ki-rating-figure select {
+  margin-top: .3rem;
+  min-height: 44px;
+}
+
+@media (max-width: 900px) {
+  .ki-intro-page .ki-rating-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+
+@media (max-width: 480px) {
+  .ki-intro-page .ki-rating-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: .6rem; }
+  .ki-intro-page .ki-rating-figure img { height: 90px; }
+}
+
+/* -- iframe-Einbettung inf-schule (Reiter 3-5) -- */
+
+.ki-intro-page .ki-embed {
+  margin: 1rem 0;
+}
+
+.ki-intro-page .ki-embed iframe {
+  display: block;
+  width: 100%;
+  height: min(78vh, 760px);
+  border: 1px solid #b9d1df;
+  border-radius: .85rem;
+  background: #fff;
+}
+
+@media (max-width: 700px) {
+  .ki-intro-page .ki-embed iframe { height: 70vh; }
+}
+
+.ki-intro-page .ki-embed-fallback {
+  margin: .5rem 0 0;
+}
+
+/* -- Lückentext (aus faecher/physik/klasse-11/1-Kreisbewegungen/kraefte-bewegung.css Z. 171-232) -- */
+
+.ki-intro-page .physics-cloze {
+  display: grid;
+  gap: 16px;
+  margin: 18px 0;
+}
+
+.ki-intro-page .cloze-term-bank {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.ki-intro-page .cloze-token {
+  min-height: 44px;
+  border: 1px solid #b9d1df;
+  border-radius: 9px;
+  padding: 8px 12px;
+  color: #12324a;
+  background: #f9fcfe;
+  font: inherit;
+  font-weight: 750;
+  cursor: grab;
+}
+
+.ki-intro-page .cloze-token:disabled {
+  opacity: 0.45;
+  cursor: default;
+}
+
+.ki-intro-page .cloze-sentence {
+  margin: 0;
+  line-height: 2.6;
+}
+
+.ki-intro-page .cloze-sentence select {
+  min-height: 44px;
+  max-width: 100%;
+  margin: 0 4px;
+  border: 1px solid #94a3b8;
+  border-radius: 8px;
+  padding: 6px 8px;
+  color: #0f172a;
+  background: #ffffff;
+  font: inherit;
+}
+
+.ki-intro-page .cloze-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.ki-intro-page .notebook-reminder {
+  margin-top: .6rem;
+}

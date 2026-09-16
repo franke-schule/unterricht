@@ -1,0 +1,292 @@
+<!doctype html>
+<html lang="de">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="robots" content="noindex, nofollow">
+    <title>Aufgabe 0 – Was ist KI? | Informatik 11</title>
+    <link rel="stylesheet" href="../../../../styles.css?v=20260707">
+    <link rel="stylesheet" href="perzeptron/task5.css?v=20260916a">
+    <link rel="stylesheet" href="was-ist-ki/task0.css?v=20260916a">
+    <script type="module" src="was-ist-ki/ui/task0.mjs?v=20260916a"></script>
+  </head>
+  <body class="perceptron-page ki-intro-page">
+    <div class="site-backdrop" aria-hidden="true"></div>
+    <main class="page-shell">
+      <nav class="topbar" aria-label="Navigation">
+        <a class="back-link" href="../index.html">Zur Aufgabenübersicht</a>
+        <a class="back-link" href="aufgabe1.html">Zu Aufgabe 1</a>
+        <a class="back-link" href="../../../../">Startseite</a>
+      </nav>
+      <header class="perceptron-hero">
+        <p class="perceptron-eyebrow">Künstliche Intelligenz · Einstieg</p>
+        <h1>Was ist KI?</h1>
+        <p><strong>Aufgabe 0</strong></p>
+        <p>Finde heraus, wo KI in deinem Alltag steckt, vervollständige eine Definition und teste ein lernendes System.</p>
+      </header>
+      <p id="save-status" role="status" aria-live="polite">Dein Bearbeitungsstand wird in diesem Browser gespeichert.</p>
+
+      <nav class="tab-list" role="tablist" aria-label="Lernschritte zu Was ist KI?">
+        <button id="tab-rate" role="tab" type="button" aria-selected="true" aria-controls="rate" data-tab="rate">1 Ist das KI?</button>
+        <button id="tab-define" role="tab" type="button" aria-selected="false" aria-controls="define" data-tab="define" tabindex="-1">2 Was ist KI?</button>
+        <button id="tab-learning" role="tab" type="button" aria-selected="false" aria-controls="learning" data-tab="learning" tabindex="-1">3 Ein lernendes System</button>
+        <button id="tab-errors" role="tab" type="button" aria-selected="false" aria-controls="errors" data-tab="errors" tabindex="-1">4 Fehlende Erfahrung</button>
+        <button id="tab-improve" role="tab" type="button" aria-selected="false" aria-controls="improve" data-tab="improve" tabindex="-1">5 Verbesserungen</button>
+        <button id="tab-finish" role="tab" type="button" aria-selected="false" aria-controls="finish" data-tab="finish" tabindex="-1">6 Abschluss</button>
+      </nav>
+
+      <section id="rate" class="step-panel" role="tabpanel" aria-labelledby="tab-rate" data-panel="rate">
+        <p class="kicker">Ist das KI?</p><h2>KI im Alltag einschätzen</h2>
+        <div class="ki-rating-grid">
+          <figure class="ki-rating-figure">
+            <img src="was-ist-ki/assets/01-toaster.png" alt="Toaster mit zwei Brotschlitzen">
+            <figcaption>Toaster<span id="rate-mark-0" class="ki-rating-mark"></span></figcaption>
+            <label for="rate-0">Wie oft steckt hier KI?
+              <select id="rate-0">
+                <option value="">Bitte wählen</option>
+                <option value="1">1 – auf keinen Fall</option>
+                <option value="2">2 – ganz selten</option>
+                <option value="3">3 – oft</option>
+                <option value="4">4 – sehr oft/immer</option>
+              </select>
+            </label>
+          </figure>
+          <figure class="ki-rating-figure">
+            <img src="was-ist-ki/assets/02-taschenrechner.png" alt="Taschenrechner mit Zifferntasten">
+            <figcaption>Taschenrechner<span id="rate-mark-1" class="ki-rating-mark"></span></figcaption>
+            <label for="rate-1">Wie oft steckt hier KI?
+              <select id="rate-1">
+                <option value="">Bitte wählen</option>
+                <option value="1">1 – auf keinen Fall</option>
+                <option value="2">2 – ganz selten</option>
+                <option value="3">3 – oft</option>
+                <option value="4">4 – sehr oft/immer</option>
+              </select>
+            </label>
+          </figure>
+          <figure class="ki-rating-figure">
+            <img src="was-ist-ki/assets/03-chatbot.jpg" alt="Hand hält ein Smartphone mit Sprechblasen, daneben ein Roboter">
+            <figcaption>Chatbot<span id="rate-mark-2" class="ki-rating-mark"></span></figcaption>
+            <label for="rate-2">Wie oft steckt hier KI?
+              <select id="rate-2">
+                <option value="">Bitte wählen</option>
+                <option value="1">1 – auf keinen Fall</option>
+                <option value="2">2 – ganz selten</option>
+                <option value="3">3 – oft</option>
+                <option value="4">4 – sehr oft/immer</option>
+              </select>
+            </label>
+          </figure>
+          <figure class="ki-rating-figure">
+            <img src="was-ist-ki/assets/04-autonomer-kleinbus.jpg" alt="Gelber Kleinbus ohne Fahrer mit der Aufschrift „Fährt selbst“">
+            <figcaption>Selbstfahrender Kleinbus<span id="rate-mark-3" class="ki-rating-mark"></span></figcaption>
+            <label for="rate-3">Wie oft steckt hier KI?
+              <select id="rate-3">
+                <option value="">Bitte wählen</option>
+                <option value="1">1 – auf keinen Fall</option>
+                <option value="2">2 – ganz selten</option>
+                <option value="3">3 – oft</option>
+                <option value="4">4 – sehr oft/immer</option>
+              </select>
+            </label>
+          </figure>
+          <figure class="ki-rating-figure">
+            <img src="was-ist-ki/assets/05-saugroboter.jpg" alt="Runder Saugroboter auf einem Holzboden">
+            <figcaption>Saugroboter<span id="rate-mark-4" class="ki-rating-mark"></span></figcaption>
+            <label for="rate-4">Wie oft steckt hier KI?
+              <select id="rate-4">
+                <option value="">Bitte wählen</option>
+                <option value="1">1 – auf keinen Fall</option>
+                <option value="2">2 – ganz selten</option>
+                <option value="3">3 – oft</option>
+                <option value="4">4 – sehr oft/immer</option>
+              </select>
+            </label>
+          </figure>
+          <figure class="ki-rating-figure">
+            <img src="was-ist-ki/assets/06-gesichtserkennung.jpg" alt="Smartphone-Kamera markiert drei Gesichter mit Rahmen">
+            <figcaption>Gesichtserkennung in der Kamera<span id="rate-mark-5" class="ki-rating-mark"></span></figcaption>
+            <label for="rate-5">Wie oft steckt hier KI?
+              <select id="rate-5">
+                <option value="">Bitte wählen</option>
+                <option value="1">1 – auf keinen Fall</option>
+                <option value="2">2 – ganz selten</option>
+                <option value="3">3 – oft</option>
+                <option value="4">4 – sehr oft/immer</option>
+              </select>
+            </label>
+          </figure>
+          <figure class="ki-rating-figure">
+            <img src="was-ist-ki/assets/07-sprachassistent.jpg" alt="Person spricht in ein Smartphone mit Sprachaufnahme">
+            <figcaption>Sprachassistent<span id="rate-mark-6" class="ki-rating-mark"></span></figcaption>
+            <label for="rate-6">Wie oft steckt hier KI?
+              <select id="rate-6">
+                <option value="">Bitte wählen</option>
+                <option value="1">1 – auf keinen Fall</option>
+                <option value="2">2 – ganz selten</option>
+                <option value="3">3 – oft</option>
+                <option value="4">4 – sehr oft/immer</option>
+              </select>
+            </label>
+          </figure>
+          <figure class="ki-rating-figure">
+            <img src="was-ist-ki/assets/08-video-apps.png" alt="Logos von Netflix, TikTok und Instagram">
+            <figcaption>Video- und Social-Media-Apps<span id="rate-mark-7" class="ki-rating-mark"></span></figcaption>
+            <label for="rate-7">Wie oft steckt hier KI?
+              <select id="rate-7">
+                <option value="">Bitte wählen</option>
+                <option value="1">1 – auf keinen Fall</option>
+                <option value="2">2 – ganz selten</option>
+                <option value="3">3 – oft</option>
+                <option value="4">4 – sehr oft/immer</option>
+              </select>
+            </label>
+          </figure>
+        </div>
+        <p id="rate-task"><strong>Entscheide</strong> für jedes Bild, wie oft darin KI-Systeme stecken. <strong>Wähle</strong> unter jedem Bild eine Stufe von 1 (auf keinen Fall) bis 4 (sehr oft/immer).</p>
+        <button id="check-rate" class="primary-button" type="button">Einschätzung vergleichen</button>
+        <div id="rate-feedback" class="feedback" role="status" aria-live="polite" hidden></div>
+        <details><summary>Hilfe 1: Worauf achten?</summary><p>Überlege bei jedem Gerät: Muss es etwas erkennen, verstehen oder vorhersagen – oder führt es nur feste Befehle aus?</p></details>
+        <details><summary>Hilfe 2: Zwei Gruppen</summary><p>Geräte, die Bilder, Sprache oder Verhalten auswerten, nutzen meist KI. Geräte, die nur nach festen Rechen- oder Zeitregeln arbeiten, brauchen keine.</p></details>
+        <details><summary>Hilfe 3: Teillösung</summary><p>Der Taschenrechner arbeitet ohne KI (1), der einfache Toaster fast immer ohne KI (2). Chatbot, selbstfahrender Kleinbus und Sprachassistent nutzen sehr oft KI (4).</p></details>
+        <article class="remember" id="rate-remember" hidden>
+          <h3>Bemerkung zu Künstlicher Intelligenz und deren Einsatz</h3>
+          <p>Künstliche Intelligenz beschreibt Systeme, die nach bestimmten Verfahren funktionieren. Manche Geräte funktionieren nur mit KI-Systemen, andere können mit oder ohne. Bei anderen macht ein Einsatz von KI-Systemen keinen Sinn.</p>
+        </article>
+        <details id="rate-solution" hidden>
+          <summary>Musterlösung mit Begründungen</summary>
+          <ul id="rate-solution-list"></ul>
+        </details>
+        <div class="flow-navigation" data-flow="rate"></div>
+      </section>
+
+      <section id="define" class="step-panel" role="tabpanel" aria-labelledby="tab-define" data-panel="define" hidden>
+        <p class="kicker">Was ist KI?</p><h2>Eine Definition für KI</h2>
+        <div id="definition-cloze" class="physics-cloze" aria-label="Lückentext zur Definition von KI"></div>
+        <p id="cloze-task"><strong>Ergänze</strong> den Merksatz mit den Wortkarten. Ziehe eine Karte in eine Lücke oder wähle sie im Auswahlfeld; nicht alle Wörter werden gebraucht.</p>
+        <div class="cloze-actions">
+          <button id="check-cloze" class="primary-button" type="button">Lückentext prüfen</button>
+          <button id="reset-cloze" class="secondary-button" type="button">Lückentext zurücksetzen</button>
+        </div>
+        <div id="cloze-feedback" class="feedback" role="status" aria-live="polite" hidden></div>
+        <p class="notebook-reminder" hidden><strong>Notiere den Merksatz in dein Heft.</strong></p>
+        <details><summary>Hilfe 1: Wortart</summary><p>Lies jeden Satz ganz. Überlege, ob in der Lücke ein Nomen, ein Verb oder ein Adjektiv fehlt.</p></details>
+        <details><summary>Hilfe 2: Satz für Satz</summary><p>Der erste Satz sagt, was KI tut. Der dritte Satz nennt, was KI-Systemen fehlt. Der letzte Satz sagt, dass es keine einheitliche Beschreibung gibt.</p></details>
+        <details><summary>Hilfe 3: Erster Satz</summary><p>Der erste Satz lautet: „Künstliche Intelligenz beschreibt Systeme, die mit Hilfe einer Wissensbasis u. a. menschliches Denken simulieren.“</p></details>
+        <div class="flow-navigation" data-flow="define"></div>
+      </section>
+
+      <section id="learning" class="step-panel" role="tabpanel" aria-labelledby="tab-learning" data-panel="learning" hidden>
+        <p class="kicker">Ein lernendes System</p><h2>Fröhlich oder traurig?</h2>
+        <figure class="ki-embed">
+          <iframe data-src="https://inf-schule.de/kids/computerinalltag/lernende-systeme/schritt2" title="inf-schule: Lernendes System – Fröhlich oder traurig?" loading="lazy"></iframe>
+        </figure>
+        <p class="ki-embed-fallback">Wird das Werkzeug nicht angezeigt? <a href="https://inf-schule.de/kids/computerinalltag/lernende-systeme/schritt2" target="_blank" rel="noopener noreferrer">Schritt 2 auf inf-schule öffnen ↗</a></p>
+        <p id="learning-task"><strong>Male</strong> mehrere Gesichter und <strong>drücke</strong> auf Start. <strong>Beobachte</strong>, welche Prozentzahlen das System anzeigt, und lies auf der eingebetteten Seite, womit es trainiert wurde.</p>
+        <fieldset id="learning-options">
+          <legend>Welche Aussagen stimmen?</legend>
+          <label><input type="checkbox" value="training" data-correct="true"> Das System wurde mit je fünf Beispielbildern für „Fröhlich“ und „Traurig“ trainiert.</label>
+          <label><input type="checkbox" value="percent" data-correct="true"> Für jede Kategorie berechnet das System eine Prozentzahl.</label>
+          <label><input type="checkbox" value="sum" data-correct="true"> Die Prozentzahlen der beiden Kategorien ergeben zusammen 100 %.</label>
+          <label><input type="checkbox" value="understand"> Das System erkennt ein Gesicht, weil es weiß, was ein Mund ist.</label>
+        </fieldset>
+        <button id="check-learning" class="primary-button" type="button">Aussagen überprüfen</button>
+        <div id="learning-feedback" class="feedback" role="status" aria-live="polite" hidden></div>
+        <details><summary>Hilfe 1: Wo nachlesen?</summary><p>Scrolle im eingebetteten Fenster unter das Zeichenfeld. Dort ist der Erfahrungsschatz abgebildet.</p></details>
+        <details><summary>Hilfe 2: Zahlen vergleichen</summary><p>Addiere die Prozentzahlen für „Fröhlich“ und „Traurig“ bei einer deiner Zeichnungen.</p></details>
+        <details><summary>Hilfe 3: Teillösung</summary><p>Das System vergleicht nur Striche und Formen mit seinen Beispielbildern. Was ein Mund ist, weiß es nicht.</p></details>
+        <article class="remember" id="learning-remember" hidden>
+          <p><strong>Merke:</strong> Ein <strong>lernendes System</strong> bildet aus Beispielen, den <strong>Trainingsdaten</strong>, seinen <strong>Erfahrungsschatz</strong>. Damit ordnet es neue Eingaben einer <strong>Kategorie</strong> zu und berechnet für jede Kategorie eine <strong>Wahrscheinlichkeit</strong>.</p>
+        </article>
+        <div class="flow-navigation" data-flow="learning"></div>
+      </section>
+
+      <section id="errors" class="step-panel" role="tabpanel" aria-labelledby="tab-errors" data-panel="errors" hidden>
+        <p class="kicker">Fehlende Erfahrung</p><h2>Das System macht Fehler</h2>
+        <figure class="ki-embed">
+          <iframe data-src="https://inf-schule.de/kids/computerinalltag/lernende-systeme/schritt3" title="inf-schule: Lernendes System – Fehlende Erfahrung" loading="lazy"></iframe>
+        </figure>
+        <p class="ki-embed-fallback">Wird das Werkzeug nicht angezeigt? <a href="https://inf-schule.de/kids/computerinalltag/lernende-systeme/schritt3" target="_blank" rel="noopener noreferrer">Schritt 3 auf inf-schule öffnen ↗</a></p>
+        <ul id="errors-task">
+          <li><strong>Teste</strong> das System mit Gesichtern, die auf dem Kopf stehen oder auf der Seite liegen.</li>
+          <li><strong>Teste</strong> es auch mit Tieren oder einem geschriebenen Wort.</li>
+          <li><strong>Stelle Vermutungen auf</strong>, warum sich das System irrt.</li>
+        </ul>
+        <fieldset id="errors-options">
+          <legend>Welche Erklärungen passen zu den Fehlern?</legend>
+          <label><input type="checkbox" value="upside" data-correct="true"> In den Trainingsdaten gibt es keine Gesichter, die auf dem Kopf stehen.</label>
+          <label><input type="checkbox" value="shapes" data-correct="true"> Das System vergleicht nur Linien und Formen mit seinen Beispielbildern; was gemalt wurde, versteht es nicht.</label>
+          <label><input type="checkbox" value="categories" data-correct="true"> Auch eine Gans oder ein Schriftzug wird einer der beiden gelernten Kategorien zugeordnet.</label>
+          <label><input type="checkbox" value="reads"> Das System liest das Wort „Traurig“ und entscheidet sich absichtlich anders.</label>
+        </fieldset>
+        <button id="check-errors" class="primary-button" type="button">Erklärungen überprüfen</button>
+        <div id="errors-feedback" class="feedback" role="status" aria-live="polite" hidden></div>
+        <details><summary>Hilfe 1: Trainingsbilder</summary><p>Alle Trainingsbilder zeigen aufrechte Gesichter aus Kreisen und einem Bogen.</p></details>
+        <details><summary>Hilfe 2: Gans und Schnecke</summary><p>Achte darauf, ob die Linien der Zeichnung eher nach oben oder nach unten gebogen sind.</p></details>
+        <details><summary>Hilfe 3: Teillösung</summary><p>Ein Gesicht auf dem Kopf hat einen nach unten gebogenen Mund. Genau so sehen die „traurigen“ Trainingsbilder aus.</p></details>
+        <article class="remember" id="errors-remember" hidden>
+          <p><strong>Merke:</strong> Ein lernendes System kann nur so gut sein wie sein Erfahrungsschatz. Fehlen passende Beispiele, ordnet es Eingaben trotzdem einer bekannten Kategorie zu – und liegt dabei oft falsch.</p>
+        </article>
+        <div class="flow-navigation" data-flow="errors"></div>
+      </section>
+
+      <section id="improve" class="step-panel" role="tabpanel" aria-labelledby="tab-improve" data-panel="improve" hidden>
+        <p class="kicker">Verbesserungen</p><h2>Das System verbessern</h2>
+        <figure class="ki-embed">
+          <iframe data-src="https://inf-schule.de/kids/computerinalltag/lernende-systeme/schritt4" title="inf-schule: Lernendes System – Verbesserungen" loading="lazy"></iframe>
+        </figure>
+        <p class="ki-embed-fallback">Wird das Werkzeug nicht angezeigt? <a href="https://inf-schule.de/kids/computerinalltag/lernende-systeme/schritt4" target="_blank" rel="noopener noreferrer">Schritt 4 auf inf-schule öffnen ↗</a></p>
+        <p id="improve-task"><strong>Teste</strong> das verbesserte System mit der neuen Kategorie „Geht so“. <strong>Vergleiche</strong> sein Verhalten mit Reiter 4.</p>
+        <fieldset id="improve-options">
+          <legend>Welche Vorschläge können das System verbessern?</legend>
+          <label><input type="checkbox" value="more" data-correct="true"> Mehr Trainingsbilder ergänzen, auch von gedrehten Gesichtern.</label>
+          <label><input type="checkbox" value="nofaces" data-correct="true"> Eine Kategorie „Kein Gesicht“ mit Beispielen wie Tieren oder Schrift trainieren.</label>
+          <label><input type="checkbox" value="people" data-correct="true"> Zeichnungen von vielen verschiedenen Personen als Trainingsbilder verwenden.</label>
+          <label><input type="checkbox" value="delete"> Die Trainingsbilder löschen, damit das System unvoreingenommen entscheidet.</label>
+        </fieldset>
+        <button id="check-improve" class="primary-button" type="button">Vorschläge überprüfen</button>
+        <div id="improve-feedback" class="feedback" role="status" aria-live="polite" hidden></div>
+        <fieldset id="transfer-options">
+          <legend>Welche Fehler können lernende Systeme aus Reiter 1 ähnlich machen?</legend>
+          <label><input type="checkbox" value="face" data-correct="true"> Die Gesichtserkennung findet ein Gesicht bei ungewohnter Beleuchtung nicht.</label>
+          <label><input type="checkbox" value="voice" data-correct="true"> Der Sprachassistent versteht einen Dialekt falsch, der in seinen Trainingsdaten selten vorkam.</label>
+          <label><input type="checkbox" value="feed" data-correct="true"> Eine Video-App schlägt Videos vor, die dich gar nicht interessieren.</label>
+          <label><input type="checkbox" value="calc"> Der Taschenrechner rechnet 2 + 2 falsch, weil ihm Erfahrung fehlt.</label>
+        </fieldset>
+        <button id="check-transfer" class="primary-button" type="button">Übertragung überprüfen</button>
+        <div id="transfer-feedback" class="feedback" role="status" aria-live="polite" hidden></div>
+        <details><summary>Hilfe 1: Erfahrungsschatz</summary><p>Ein lernendes System kann nur mit dem arbeiten, was in seinen Trainingsdaten vorkommt.</p></details>
+        <details><summary>Hilfe 2: Vorschläge prüfen</summary><p>Frage bei jedem Vorschlag: Bekommt das System dadurch mehr oder vielfältigere Beispiele?</p></details>
+        <details><summary>Hilfe 3: Teillösung</summary><p>Das Löschen der Trainingsbilder verschlechtert das System. Ein Taschenrechner lernt nicht aus Beispielen.</p></details>
+        <div class="flow-navigation" data-flow="improve"></div>
+      </section>
+
+      <section id="finish" class="step-panel" role="tabpanel" aria-labelledby="tab-finish" data-panel="finish" hidden>
+        <p class="kicker">Abschluss</p><h2>Das Wichtigste sichern</h2>
+        <ul>
+          <li>KI-Systeme stecken in vielen Alltagsgeräten, zum Beispiel in Sprachassistenten, in der Gesichtserkennung und in Empfehlungen von Video-Apps. Ein Taschenrechner arbeitet dagegen ohne KI.</li>
+          <li>Künstliche Intelligenz beschreibt Systeme, die mit Hilfe einer Wissensbasis u. a. menschliches Denken simulieren. Sie sind programmierbar, haben aber weder Emotionen noch Bewusstsein.</li>
+          <li>Ein lernendes System bildet aus Trainingsdaten seinen Erfahrungsschatz und ordnet neue Eingaben mit einer Wahrscheinlichkeit einer Kategorie zu.</li>
+          <li>Fehlen passende Beispiele, macht das System Fehler. Mehr und vielfältigere Trainingsdaten oder zusätzliche Kategorien können es verbessern.</li>
+        </ul>
+        <section id="final-quiz" aria-labelledby="quiz-title">
+          <h3 id="quiz-title">Abschlussquiz</h3>
+          <p id="quiz-progress">0 von 6 Fragen vollständig richtig</p>
+          <form id="quiz-form">
+            <div id="quiz-questions"></div>
+            <button class="primary-button" type="submit">Quiz auswerten</button>
+          </form>
+          <div id="quiz-feedback" class="feedback" role="status" aria-live="polite" hidden></div>
+          <div id="quiz-summary" class="remember" hidden></div>
+        </section>
+        <details class="dt-source-note">
+          <summary>Quellen und Lizenz</summary>
+          <p>Bilder in Reiter 1: Arbeitsblatt „Ist das schon KI? – Einführung in künstliche Intelligenz“.</p>
+          <p>Lernendes System in Reiter 3–5: <a href="https://inf-schule.de/kids/computerinalltag/lernende-systeme/schritt2" target="_blank" rel="noopener noreferrer">inf-schule.de – Lernende Systeme</a>, Autor:innen HSL, <a href="https://creativecommons.org/licenses/by-sa/4.0/deed.de" target="_blank" rel="noopener noreferrer">CC BY-SA 4.0</a>.</p>
+        </details>
+        <p><a class="primary-button" href="aufgabe1.html">Weiter zu Aufgabe 1: Entscheidungsbäume</a></p>
+        <button id="reset-progress" class="secondary-button" type="button">Bearbeitungsstand zurücksetzen</button>
+      </section>
+    </main>
+  </body>
+</html>
