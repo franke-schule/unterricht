@@ -61,6 +61,19 @@ Der Zurueck-Link soll den fachlichen Kontext erhalten. Eine konkrete Aufgabe
 verlinkt deshalb normalerweise auf die Jahrgangs-/Aufgabenuebersicht und nicht
 auf eine weiter entfernte Oberseite.
 
+Position von Arbeitsauftraegen:
+
+  - Ein Arbeitsauftrag, der sich auf eine Simulation bezieht oder sie
+    verwendet (auch eine eingebettete Website oder ein interaktives Werkzeug),
+    steht ueber der Simulation. So wissen die Schuelerinnen und Schueler vor
+    dem Ausprobieren, worauf sie achten sollen.
+  - Ein Arbeitsauftrag, der eine Eingabe unter einer Grafik verlangt, steht
+    unter der Grafik, direkt ueber dem Eingabebereich. Beispiel: eine
+    Beschreibe-Aufgabe mit Eingabefeld unter einer Abbildung. Das gilt
+    ebenso fuer Auftraege auf gedruckten Arbeitsblaettern (Abschnitt 4).
+  - Operatoren wie Beschreibe, Erklaere oder Nenne werden in beiden Faellen
+    fett gesetzt.
+
 Bestehende Layoutklassen wiederverwenden, bevor neue Klassen angelegt werden.
 Auf Menueebenen wenig erklaerenden Text verwenden; die eigentliche Anleitung
 gehoert auf die Aufgabenseite.

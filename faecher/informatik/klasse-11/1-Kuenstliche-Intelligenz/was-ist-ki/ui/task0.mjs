@@ -473,9 +473,9 @@ function setupQuiz() {
       const overviewItems = [
         '<li><strong>Reiter 1 – Ist das KI?</strong> ' + document.querySelector('#rate-task').textContent + ' Richtige Werte: ' + ratingItems + '</li>',
         '<li><strong>Reiter 2 – Was ist KI?</strong> ' + document.querySelector('#cloze-task').textContent + ' Merksatz: „' + sentence + '“</li>',
-        '<li><strong>Reiter 3 – Ein lernendes System</strong> ' + document.querySelector('#learning-task').textContent + ' Richtige Aussagen: ' + optionTexts(document.querySelector('#learning-options'), true).join(' · ') + '</li>',
-        '<li><strong>Reiter 4 – Fehlende Erfahrung</strong> ' + document.querySelector('#errors-task').textContent.trim().replace(/\s+/g, ' ') + ' Richtige Erklärungen: ' + optionTexts(document.querySelector('#errors-options'), true).join(' · ') + '</li>',
-        '<li><strong>Reiter 5 – Verbesserungen</strong> ' + document.querySelector('#improve-task').textContent + ' Richtige Vorschläge: ' + optionTexts(document.querySelector('#improve-options'), true).join(' · ') + ' Richtige Übertragung: ' + optionTexts(document.querySelector('#transfer-options'), true).join(' · ') + '</li>',
+        '<li><strong>Reiter 3 – Ein lernendes System</strong> ' + document.querySelector('#learning-options legend').textContent + ' ' + optionTexts(document.querySelector('#learning-options'), true).join(' · ') + '</li>',
+        '<li><strong>Reiter 4 – Fehlende Erfahrung</strong> ' + document.querySelector('#errors-options legend').textContent + ' ' + optionTexts(document.querySelector('#errors-options'), true).join(' · ') + '</li>',
+        '<li><strong>Reiter 5 – Verbesserungen</strong> ' + document.querySelector('#improve-options legend').textContent + ' ' + optionTexts(document.querySelector('#improve-options'), true).join(' · ') + ' ' + document.querySelector('#transfer-options legend').textContent + ' ' + optionTexts(document.querySelector('#transfer-options'), true).join(' · ') + '</li>',
       ];
       overview.innerHTML = '<h3>Übersicht aller Teilaufgaben</h3><ul>' + overviewItems.join('') + '</ul><h3>Quizübersicht</h3><ul>' + summary.join('') + '</ul>';
     }

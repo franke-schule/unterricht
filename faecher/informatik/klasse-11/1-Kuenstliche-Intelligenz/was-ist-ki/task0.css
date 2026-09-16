@@ -75,12 +75,6 @@
   text-align: left;
 }
 
-.ki-intro-page .ki-embed-task::before {
-  content: "Arbeitsauftrag: ";
-  font-weight: 800;
-  color: #126e9c;
-}
-
 .ki-intro-page .ki-embed {
   margin: 1rem 0;
 }
