@@ -98,6 +98,19 @@ function renderQuizQuestion(target, item, index) {
   target.append(fieldset);
 }
 
+// ---- Weiter-Buttons am Ende jedes Reiterinhalts (außer im letzten Reiter) ----
+
+function setupNextTabButtons(stepTabs) {
+  document.querySelectorAll("[data-next-tab]").forEach((button) => {
+    button.addEventListener("click", () => {
+      stepTabs.goToTab(button.dataset.nextTab, true);
+      const tabs = document.querySelector(".physics-step-tabs");
+      const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+      tabs?.scrollIntoView({ behavior: reducedMotion ? "auto" : "smooth", block: "start" });
+    });
+  });
+}
+
 // ---- Reiter 1 · Hammerwurf ----
 
 function setupHammerQuiz() {
@@ -248,20 +261,21 @@ function setupCentripetalSimulation(config) {
     frame = requestAnimationFrame(tick);
   }
 
-  function start() {
-    if (reducedMotion()) { paint(); renderStatus(status, config.reducedMotionStatus); return; }
-    if (!running) { running = true; last = 0; renderStatus(status, config.runningStatus); frame = requestAnimationFrame(tick); }
-  }
-  function pause(message) { running = false; cancelAnimationFrame(frame); renderStatus(status, message || config.pausedStatus); }
-
-  host.querySelector('[data-cf-action="start"]').addEventListener("click", start);
-  host.querySelector('[data-cf-action="pause"]').addEventListener("click", () => pause());
-  host.querySelector('[data-cf-action="reset"]').addEventListener("click", () => {
-    config.resetState();
+  function stop() { running = false; cancelAnimationFrame(frame); }
+  function restart() {
+    stop();
     rotation = -Math.PI / 2;
-    pause(config.readyStatus);
+    if (reducedMotion()) { paint(); renderStatus(status, config.reducedMotionStatus); return; }
     paint();
-  });
+    renderStatus(status, config.runningStatus);
+    running = true;
+    last = 0;
+    frame = requestAnimationFrame(tick);
+  }
+  function pause(message) { stop(); renderStatus(status, message || config.pausedStatus); }
+
+  host.querySelector('[data-cf-action="restart"]').addEventListener("click", restart);
+  host.querySelector('[data-cf-action="pause"]').addEventListener("click", () => pause());
 
   config.bindControls({ paint, setStatus: (message) => renderStatus(status, message) });
 
@@ -321,11 +335,6 @@ function createExploreConfig(host) {
       host.querySelector("[data-cf-force-value]").textContent = formatNumber(v.force, 2);
       host.querySelector("[data-cf-factor]").textContent = formatNumber(v.force / BASELINE_FORCE, 2);
     },
-    resetState() {
-      Object.assign(state, defaults);
-      applyInputs();
-      applyDisabled();
-    },
     readyStatus: READY_STATUS,
     runningStatus: RUNNING_STATUS,
     pausedStatus: PAUSED_STATUS,
@@ -382,10 +391,6 @@ function createRadiusConfig() {
       host.querySelector("[data-cf-speed-value]").textContent = formatNumber(v.speed, 1);
       host.querySelector("[data-cf-force-value]").textContent = formatNumber(v.force, 2);
       host.querySelector("[data-cf-factor]").textContent = formatNumber(v.force / BASELINE_FORCE, 2);
-    },
-    resetState() {
-      state.radius = defaultRadius;
-      input.value = state.radius;
     },
     readyStatus: READY_STATUS,
     runningStatus: RUNNING_STATUS,
@@ -1069,7 +1074,8 @@ function setupFinalQuiz() {
   items.forEach((item, index) => renderQuizQuestion(target, item, index));
 }
 
-setupPhysicsStepTabs();
+const physicsStepTabs = setupPhysicsStepTabs();
+setupNextTabButtons(physicsStepTabs);
 setupHammerQuiz();
 setupCentripetalSimulation(createExploreConfig(document.querySelector('[data-centripetal-simulation="explore"]')));
 setupJeDestoCloze();

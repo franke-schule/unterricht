@@ -6,6 +6,7 @@ const source = fs.readFileSync(new URL("../zentripetalkraft.mjs", import.meta.ur
 const css = fs.readFileSync(new URL("../zentripetalkraft.css", import.meta.url), "utf8");
 const menu = fs.readFileSync(new URL("../../index.html", import.meta.url), "utf8");
 const kinematics = fs.readFileSync(new URL("../components/circle-kinematics.mjs", import.meta.url), "utf8");
+const stepTabsSource = fs.readFileSync(new URL("../components/physics-step-tabs.mjs", import.meta.url), "utf8");
 const sheet = fs.readFileSync(new URL("../sicherungsblatt-aufgabe-4-loesungen.tex", import.meta.url), "utf8");
 const decoding = fs.readFileSync(new URL("../../../../../lehrercodes-dekodierung.tex", import.meta.url), "utf8");
 
@@ -41,6 +42,42 @@ assert.match(html, /id="je-desto-radius-1"/);
 assert.equal((html.match(/class="cloze-text-input"/g) || []).length, 6);
 assert.equal((html.match(/id="check-je-desto-(mass|omega|radius)"/g) || []).length, 3);
 
+// Korrekturrunde: Buttonsystem wie in Aufgabe 1 (Winkelgeschwindigkeit,
+// Simulation "angle") – genau zwei Buttons "Neustarten"/"Pausieren" statt
+// "Bewegung starten"/"Zurücksetzen", einheitlich für alle drei Simulationen.
+assert.equal((html.match(/data-cf-action="restart"/g) || []).length, 3);
+assert.equal((html.match(/data-cf-action="pause"/g) || []).length, 3);
+assert.doesNotMatch(html, /data-cf-action="start"/);
+assert.doesNotMatch(html, /data-cf-action="reset"/);
+assert.equal((html.match(/>Neustarten<\/button>/g) || []).length, 3);
+assert.doesNotMatch(html, /Bewegung starten/);
+
+// Aufgabe 2a und Mini-Simulation (Aufgabe 3): "Welche Größe veränderst du?"
+// steht direkt bei den Reglern, jede Größe erscheint nur einmal (Radio und
+// Regler in derselben Zeile statt getrennter Listen).
+assert.equal((html.match(/class="cf-variable-fieldset"/g) || []).length, 2);
+assert.equal((html.match(/class="cf-variable-row"/g) || []).length, 6);
+assert.equal((html.match(/class="cf-variable-radio"/g) || []).length, 6);
+assert.equal((html.match(/class="cf-variable-slider"/g) || []).length, 6);
+assert.doesNotMatch(html, /<div class="simulation-controls">\s*<label>m in kg/);
+
+// Korrekturrunde 2: Aufgabe 2a/4a stehen als EINE Spalte (Anleitung, Regler,
+// Buttons, Anzeigewerte, Status) neben der Animation statt in einer eigenen
+// vollbreiten Zeile darunter – das nutzt die Höhe neben der Animation aus.
+assert.equal((html.match(/class="simulation-panel"/g) || []).length, 2);
+assert.doesNotMatch(html, /class="simulation-aside"/);
+assert.doesNotMatch(html, /class="simulation-info"/);
+// Maßstab-Hinweis in Aufgabe 2a hinter <details>, Wortlaut unverändert.
+assert.match(html, /<details class="simulation-scale-details">\s*<summary>Maßstab der Zeichnung<\/summary>/);
+assert.match(html, /Darstellungsmaßstab: 1&nbsp;m Radius entspricht 220 SVG-Einheiten/);
+
+// Weiter-Buttons am Ende jedes Reiterinhalts (außer im letzten Reiter "quiz")
+assert.equal((html.match(/class="physics-step-next"/g) || []).length, 5);
+assert.deepEqual(
+  [...html.matchAll(/data-next-tab="([^"]+)"/g)].map((match) => match[1]),
+  ["proportion", "derivation", "apply", "summary", "quiz"],
+);
+
 // Download-Bereich nach dem Abschlussquiz im Panel "quiz"
 assert.match(html, /data-physics-panel="quiz"[\s\S]*id="centripetal-quiz"[\s\S]*class="solution-download"/);
 assert.match(html, /unlockSolution\(event, 'R6WF-DH7K', 'solution-download-link', 'solution-code-message'\)/);
@@ -56,6 +93,18 @@ assert.match(html, /<strong>Betrachte<\/strong> die beiden Skizzen\. <strong>Wä
 assert.match(html, /<strong>Stelle<\/strong> ein, welche Größe gleich bleibt, und <strong>verdopple<\/strong> den Radius von 0,50 m auf 1,00 m\./);
 assert.match(html, /Die Haftreibung kann bei diesem Auto \(m = 1200&nbsp;kg\) in der Kurve mit r = 40&nbsp;m höchstens 9,6&nbsp;kN als Zentripetalkraft liefern\./);
 assert.match(html, /Bei Fragen mit dem Hinweis „mehrere Antworten“ sind mindestens zwei Antworten richtig\./);
+
+// Weiter-Buttons: physics-step-tabs-Mechanik wird verwendet, kein Reload
+assert.match(source, /function setupNextTabButtons\(stepTabs\)/);
+assert.match(source, /querySelectorAll\("\[data-next-tab\]"\)/);
+assert.match(source, /stepTabs\.goToTab\(button\.dataset\.nextTab, true\)/);
+assert.match(source, /const physicsStepTabs = setupPhysicsStepTabs\(\);/);
+
+// Buttonsystem der Simulationen: restart()/pause() statt start()/reset()
+assert.match(source, /function restart\(\)/);
+assert.doesNotMatch(source, /data-cf-action="start"/);
+assert.doesNotMatch(source, /data-cf-action="reset"/);
+assert.doesNotMatch(source, /resetState/);
 
 // Quelltext
 assert.match(source, /function unlockSolution\(event, expectedCode, downloadLinkId, messageId\)/);
@@ -90,6 +139,18 @@ assert.match(menu, /<a class="module-button" href="1-Kreisbewegungen\/aufgabe4\.
 // circle-kinematics.mjs exportiert die neuen Funktionen
 assert.match(kinematics, /export function centripetalForce/);
 assert.match(kinematics, /export function centripetalForceFromSpeed/);
+
+// physics-step-tabs.mjs: rückwärtskompatible Erweiterung um goToTab, ohne
+// aufgabe1.html–aufgabe3.html anzufassen (bestehendes Verhalten unverändert).
+assert.match(stepTabsSource, /export function setupPhysicsStepTabs\(root = document\)/);
+assert.match(stepTabsSource, /function goToTab\(id, moveFocus = true\)/);
+assert.match(stepTabsSource, /return \{ goToTab, goToNextTab \};/);
+
+// CSS: Animation größer (Vorgabe der Lehrkraft), Regler/Buttons dafür kompakter
+assert.match(css, /width: min\(100%, 420px\)/);
+assert.match(css, /\.cf-variable-fieldset/);
+assert.match(css, /\.cf-variable-row/);
+assert.match(css, /\.physics-step-next/);
 
 // TeX: Titel, keine Schrägstrich-Einheiten, Lehrercode in der Dekodierdatei
 assert.match(sheet, /Aufgabe 2 -- Zentripetalkraft/);

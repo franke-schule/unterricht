@@ -7,7 +7,7 @@ export function setupPhysicsStepTabs(root = document) {
   const panels = [...root.querySelectorAll("[data-physics-panel]")];
 
   if (!tabs.length || !panels.length) {
-    return;
+    return { goToTab() {}, goToNextTab() {} };
   }
 
   function selectTab(id, moveFocus = false) {
@@ -38,4 +38,20 @@ export function setupPhysicsStepTabs(root = document) {
 
   const selected = tabs.find((tab) => tab.getAttribute("aria-selected") === "true") || tabs[0];
   selectTab(selected.dataset.physicsTab);
+
+  // Rückwärtskompatible Erweiterung: programmatischer Wechsel zu einem Reiter,
+  // z. B. für "Weiter"-Buttons am Ende eines Reiterinhalts. Bestehende Aufrufe
+  // von setupPhysicsStepTabs() ohne Verwendung des Rückgabewerts bleiben
+  // unverändert funktionsfähig.
+  function goToTab(id, moveFocus = true) {
+    if (!tabs.some((tab) => tab.dataset.physicsTab === id)) return;
+    selectTab(id, moveFocus);
+  }
+  function goToNextTab(currentId, moveFocus = true) {
+    const index = tabs.findIndex((tab) => tab.dataset.physicsTab === currentId);
+    if (index < 0 || index >= tabs.length - 1) return;
+    goToTab(tabs[index + 1].dataset.physicsTab, moveFocus);
+  }
+
+  return { goToTab, goToNextTab };
 }

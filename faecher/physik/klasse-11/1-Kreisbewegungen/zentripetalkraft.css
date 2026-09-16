@@ -8,17 +8,43 @@
 #proportion-rows,
 #radius-mapping-rows {
   display: grid;
-  gap: 14px;
-  margin-top: 16px;
+  gap: 10px;
+  margin-top: 10px;
 }
 
-#proportion-rows .unit-choice,
-#radius-mapping-rows .unit-choice {
-  flex-direction: column;
-  align-items: flex-start;
-  gap: 8px;
+/* Weniger Leerraum in Hilfen und Quiz auf dieser Seite (Klickflächen
+   bleiben bei 44px, nur Innenabstand und Zeilenabstand sind kleiner). */
+.circular-motion-page .physics-help-stack {
+  gap: 6px;
+  margin-top: 10px;
 }
 
+.circular-motion-page .physics-help-stack details {
+  padding: 6px 10px;
+}
+
+.circular-motion-page .physics-multiple-choice {
+  gap: 10px;
+  margin-top: 10px;
+}
+
+.circular-motion-page .physics-quiz-question {
+  padding: 10px;
+}
+
+.circular-motion-page .physics-quiz-question .quiz-options {
+  gap: 5px;
+  margin-top: 6px;
+}
+
+.circular-motion-page .physics-quiz-question .quiz-option {
+  padding: 6px 9px;
+}
+
+/* Optionen einer Zeile bleiben nebeneinander (Vorgabe der Lehrkraft: kurze
+   Auswahlreihen sparen Höhe). Die Basis liefert bereits .unit-choice
+   (display:flex, flex-wrap:wrap) aus physics-notation.css; hier nur die
+   Legende hervorgehoben. */
 #proportion-rows .unit-choice > legend,
 #radius-mapping-rows .unit-choice > legend {
   margin-bottom: 2px;
@@ -52,40 +78,204 @@
   width: min(100%, 560px);
 }
 
-/* Aufgabe 2a und 4a: Regler/Buttons und Anzeigen/Hinweise werden zu zwei
-   Gruppen zusammengefasst (.simulation-aside, .simulation-info), damit sie
-   sich unabhängig von der Fließreihenfolge anordnen lassen. */
-.circular-motion-page .circle-simulation--compact[data-centripetal-simulation="explore"] .simulation-aside,
-.circular-motion-page .circle-simulation--compact[data-centripetal-simulation="radius"] .simulation-aside,
-.circular-motion-page .circle-simulation--compact[data-centripetal-simulation="explore"] .simulation-info,
-.circular-motion-page .circle-simulation--compact[data-centripetal-simulation="radius"] .simulation-info {
+/* Platz für die Animation kommt nicht nur aus kompakteren Reglern, sondern
+   auch aus weniger Leerraum über der Karte: Seitenkopf, Reiterleiste und
+   Kartenkopf sind gestrafft. Nur auf dieser Seite wirksam (eigenes
+   Stylesheet, aufgabe1–3.html binden es nicht ein). */
+.circular-motion-page .physics-revision-hero {
+  margin: 10px auto 14px;
+}
+
+.circular-motion-page .physics-revision-hero h1 {
+  font-size: clamp(1.7rem, 3.4vw, 2.6rem);
+  line-height: 1.15;
+}
+
+.circular-motion-page .physics-revision-hero > p:last-child {
+  margin-top: 6px;
+}
+
+.circular-motion-page .physics-step-tabs {
+  margin: 0 0 12px;
+}
+
+.circular-motion-page .physics-card-heading {
+  padding: 12px 16px;
+}
+
+.circular-motion-page .physics-card-heading h2 {
+  font-size: clamp(1.2rem, 2.2vw, 1.5rem);
+}
+
+.circular-motion-page .physics-card-heading > p:last-child {
+  margin-top: 4px;
+}
+
+.circular-motion-page .physics-revision-panel {
+  gap: 12px;
+}
+
+.circular-motion-page .physics-task-card {
+  padding: 14px 16px;
+}
+
+.circular-motion-page .physics-task-card > h3 {
+  font-size: 1.05rem;
+}
+
+.circular-motion-page .physics-task-card > h3 + p,
+.circular-motion-page .physics-task-card > p:first-of-type {
+  margin-top: 6px;
+}
+
+/* Aufgabe 2a und 4a: Die Animation bleibt die Hauptsache. Der Platzgewinn
+   kommt aus kompakteren Reglern/Buttons, nicht aus einer kleineren Grafik –
+   deshalb hier ein größerer SVG-Rahmen als die sonst übliche Kompakt-Grenze
+   (360px aus winkelgeschwindigkeit-kreisbewegung.css). */
+.circular-motion-page .circle-simulation--compact[data-centripetal-simulation="explore"] svg,
+.circular-motion-page .circle-simulation--compact[data-centripetal-simulation="radius"] svg {
+  width: min(100%, 420px);
+}
+
+/* Aufgabe 2a und 4a: Anleitung, Regler, Buttons, Anzeigewerte und Status
+   stehen in EINER Spalte neben der Animation (.simulation-panel) statt in
+   zwei Gruppen mit einer eigenen vollbreiten Zeile darunter. Das nutzt die
+   Höhe neben der (jetzt größeren) Animation aus, statt zusätzliche Höhe zu
+   verbrauchen – Vorgabe: Anzeigewerte stehen neben statt unter den Reglern. */
+.circular-motion-page .circle-simulation--compact[data-centripetal-simulation="explore"] .simulation-panel,
+.circular-motion-page .circle-simulation--compact[data-centripetal-simulation="radius"] .simulation-panel {
   display: grid;
-  gap: 10px;
+  align-content: start;
+  gap: 8px;
 }
 
-/* Auf schmalen Bildschirmen (Fließreihenfolge): erst die Erklärung mit
-   Anzeigen, danach Regler und Buttons – wie vor der Aufteilung in zwei
-   Gruppen. */
-.circular-motion-page .circle-simulation--compact[data-centripetal-simulation="explore"] .simulation-info,
-.circular-motion-page .circle-simulation--compact[data-centripetal-simulation="radius"] .simulation-info {
-  order: 1;
+.circular-motion-page .simulation-instruction {
+  margin: 0;
 }
 
-.circular-motion-page .circle-simulation--compact[data-centripetal-simulation="explore"] .simulation-aside,
-.circular-motion-page .circle-simulation--compact[data-centripetal-simulation="radius"] .simulation-aside {
-  order: 2;
+/* Anzeigewerte zweispaltig statt in einer breiten Zeile pro Wert – spart
+   deutlich Höhe, da die Werte ohnehin kurz sind. */
+.circular-motion-page .circle-simulation--compact[data-centripetal-simulation="explore"] .simulation-readout,
+.circular-motion-page .circle-simulation--compact[data-centripetal-simulation="radius"] .simulation-readout {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 6px;
 }
 
-/* Ab ca. 700px: Regler und Buttons neben statt unter der Animation, Anzeigen
-   und Hinweise darunter über die volle Breite. Das hält die ganze Aufgabe
-   auf Laptop- und iPad-Bildschirmen ohne Scrollen sichtbar. Darunter bleibt
-   die vorhandene Ein-Spalten-Regel aus winkelgeschwindigkeit-kreisbewegung.css. */
+.circular-motion-page .circle-simulation--compact[data-centripetal-simulation="explore"] .simulation-readout strong,
+.circular-motion-page .circle-simulation--compact[data-centripetal-simulation="radius"] .simulation-readout strong {
+  flex: unset;
+  padding: 5px 8px;
+  font-size: 0.86rem;
+}
+
+/* Maßstab-Hinweis (Aufgabe 2a) hinter <details>, damit die feste Erklärung
+   nicht dauerhaft Platz beansprucht. Weiterhin 44px Klickfläche. */
+.circular-motion-page .simulation-scale-details {
+  margin: 0;
+}
+
+.circular-motion-page .simulation-scale-details > summary {
+  display: flex;
+  align-items: center;
+  min-height: 36px;
+  color: #1e3a8a;
+  font-weight: 750;
+  font-size: 0.88rem;
+  cursor: pointer;
+}
+
+.circular-motion-page .simulation-scale-details .simulation-note {
+  margin-top: 4px;
+}
+
+.circular-motion-page .circle-simulation--compact[data-centripetal-simulation] .simulation-note,
+.circular-motion-page .circle-simulation--compact[data-centripetal-simulation] .simulation-status {
+  margin: 0;
+  font-size: 0.88rem;
+}
+
+/* Aufgabe 2a und die Mini-Simulation (Aufgabe 3): "Welche Größe veränderst
+   du?" steht direkt bei den Reglern – eine Zeile pro Größe statt einer
+   getrennten Auswahlliste und getrennten Reglerliste. Kompakt, aber mit
+   44px Klickfläche für Radio-Label und Schieberegler. */
+.circular-motion-page .cf-variable-fieldset {
+  display: grid;
+  gap: 6px;
+  margin: 0;
+  padding: 0;
+  border: 0;
+}
+
+.circular-motion-page .cf-variable-fieldset > legend {
+  margin-bottom: 2px;
+  padding: 0;
+  color: #1e3a8a;
+  font-weight: 800;
+}
+
+.circular-motion-page .cf-variable-row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 6px 10px;
+}
+
+.circular-motion-page .cf-variable-radio {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  min-height: 44px;
+  flex: 0 0 auto;
+  color: #334155;
+  font-size: 0.92rem;
+  font-weight: 750;
+}
+
+.circular-motion-page .cf-variable-slider {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  min-height: 44px;
+  flex: 1 1 130px;
+  min-width: 0;
+  color: #475569;
+  font-size: 0.82rem;
+  font-weight: 700;
+}
+
+.circular-motion-page .cf-variable-slider input[type="range"] {
+  flex: 1 1 auto;
+  min-width: 0;
+  min-height: 44px;
+  accent-color: #2563eb;
+}
+
+/* Kompakte Buttons in den Zentripetalkraft-Simulationen: weiterhin 44px
+   Klickfläche, aber weniger Innenabstand als der Seitenstandard. */
+.circular-motion-page .circle-simulation--compact[data-centripetal-simulation] .simulation-actions {
+  gap: 8px;
+}
+
+.circular-motion-page .circle-simulation--compact[data-centripetal-simulation] .simulation-actions .physics-primary-button,
+.circular-motion-page .circle-simulation--compact[data-centripetal-simulation] .simulation-actions .secondary-action {
+  min-height: 44px;
+  margin-top: 0;
+  padding: 8px 14px;
+  font-size: 0.92rem;
+}
+
+/* Ab ca. 700px: Anleitung/Regler/Buttons/Anzeigewerte/Status stehen als EINE
+   Spalte neben statt unter der Animation. Die Spalte nutzt die Höhe der
+   (jetzt größeren) Animation aus, ohne eine eigene vollbreite Zeile zu
+   brauchen. Darunter bleibt die vorhandene Ein-Spalten-Regel aus
+   winkelgeschwindigkeit-kreisbewegung.css (Panel unter der Animation). */
 @media (min-width: 701px) {
   .circular-motion-page .circle-simulation--compact[data-centripetal-simulation="explore"],
   .circular-motion-page .circle-simulation--compact[data-centripetal-simulation="radius"] {
-    grid-template-columns: minmax(0, 220px) 1fr;
-    grid-template-areas: "visual aside" "info info";
-    column-gap: 20px;
+    grid-template-columns: minmax(240px, 420px) minmax(220px, 1fr);
+    grid-template-areas: "visual panel";
+    column-gap: 24px;
     align-items: start;
   }
 
@@ -94,19 +284,9 @@
     grid-area: visual;
   }
 
-  .circular-motion-page .circle-simulation--compact[data-centripetal-simulation="explore"] > .simulation-aside,
-  .circular-motion-page .circle-simulation--compact[data-centripetal-simulation="radius"] > .simulation-aside {
-    grid-area: aside;
-  }
-
-  .circular-motion-page .circle-simulation--compact[data-centripetal-simulation="explore"] > .simulation-info,
-  .circular-motion-page .circle-simulation--compact[data-centripetal-simulation="radius"] > .simulation-info {
-    grid-area: info;
-  }
-
-  /* Regler in einer Zeile statt in zwei Zeilen (Aufgabe 2a hat drei Regler). */
-  .circular-motion-page .circle-simulation--compact[data-centripetal-simulation="explore"] .simulation-controls {
-    grid-template-columns: repeat(3, minmax(0, 1fr));
+  .circular-motion-page .circle-simulation--compact[data-centripetal-simulation="explore"] > .simulation-panel,
+  .circular-motion-page .circle-simulation--compact[data-centripetal-simulation="radius"] > .simulation-panel {
+    grid-area: panel;
   }
 }
 
@@ -114,7 +294,7 @@
    (schmal: oberhalb, per CSS-Reihenfolge, ohne Markup zu verdoppeln). */
 .task-with-mini-simulation {
   display: grid;
-  gap: 18px;
+  gap: 10px;
 }
 
 .task-with-mini-simulation__aside {
@@ -122,9 +302,62 @@
   margin-top: 0;
 }
 
+/* Die Mini-Simulation ist zum Ausprobieren gedacht, nicht die Hauptaufgabe:
+   deutlich kleinere Grafik und ein kompakter Aufbau ohne den erklärenden
+   Maßstabshinweis aus Aufgabe 2a, damit Aufgabe 3 zusammen mit der
+   Simulation ohne Scrollen sichtbar bleibt. */
+.circular-motion-page .circle-simulation--mini {
+  gap: 5px;
+}
+
+.circular-motion-page .circle-simulation--mini svg {
+  width: min(100%, 150px);
+}
+
+.circular-motion-page .circle-simulation--mini .cf-variable-fieldset {
+  gap: 4px;
+}
+
+.circular-motion-page .circle-simulation--mini .cf-variable-fieldset > legend {
+  font-size: 0.78rem;
+}
+
+.circular-motion-page .circle-simulation--mini .cf-variable-row {
+  gap: 4px 8px;
+}
+
+.circular-motion-page .circle-simulation--mini .cf-variable-radio {
+  flex-basis: auto;
+  gap: 4px;
+  font-size: 0.68rem;
+}
+
+.circular-motion-page .circle-simulation--mini .cf-variable-slider {
+  flex: 1 1 70px;
+  gap: 4px;
+  font-size: 0.68rem;
+}
+
+.circular-motion-page .circle-simulation--mini .simulation-readout {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 4px;
+}
+
+.circular-motion-page .circle-simulation--mini .simulation-readout strong {
+  flex: unset;
+  padding: 4px 6px;
+  font-size: 0.78rem;
+}
+
+.circular-motion-page .circle-simulation--mini .simulation-note,
+.circular-motion-page .circle-simulation--mini .simulation-status {
+  font-size: 0.82rem;
+}
+
 @media (min-width: 701px) {
   .task-with-mini-simulation {
-    grid-template-columns: minmax(0, 1fr) 220px;
+    grid-template-columns: minmax(0, 1fr) 260px;
     align-items: start;
   }
 
@@ -174,6 +407,17 @@
   text-align: center;
 }
 
+/* Weiter-Button am Ende jedes Reiterinhalts (außer im letzten Reiter). */
+.physics-step-next {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: 20px;
+}
+
+.physics-step-next .physics-primary-button {
+  margin-top: 0;
+}
+
 @media (max-width: 620px) {
   #proportion-rows .unit-choice__option,
   #radius-mapping-rows .unit-choice__option {
@@ -186,5 +430,18 @@
 
   .cloze-text-input {
     width: 6.5em;
+  }
+
+  .circular-motion-page .cf-variable-radio,
+  .circular-motion-page .cf-variable-slider {
+    flex: 1 1 100%;
+  }
+
+  .physics-step-next {
+    justify-content: stretch;
+  }
+
+  .physics-step-next .physics-primary-button {
+    width: 100%;
   }
 }
