@@ -42,7 +42,7 @@ test("Aufgabe 4 bindet Tabs, Material und Skriptserver passend ein", async () =>
   });
   assert.doesNotMatch(page, /Datensatz_Fische_Kleiner_Datensatz\.csv/);
   assert.match(page, /ENTER_Online/);
-  assert.match(page, /keine Namen, E-Mail-Adressen oder andere personenbezogene Informationen/);
+  assert.match(page, /Gib keine personenbezogenen Informationen ein. Deine Antwort wird zur automatischen Auswertung an den Skriptserver und dort an ein KI-System übertragen./);
   const tabs = [...page.matchAll(/data-step-tab="([^"]+)"/g)].map((match) => match[1]);
   assert.deepEqual(tabs, ["task41", "task42", "task4a"]);
   const trainingPosition = page.indexOf("Datensatz_Fische_Einstieg_Trainingsdaten.csv");
