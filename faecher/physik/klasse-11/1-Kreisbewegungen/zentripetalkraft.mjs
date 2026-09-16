@@ -1,6 +1,7 @@
 import { setupPhysicsStepTabs } from "./components/physics-step-tabs.mjs";
 import { appendPhysicsText, createIndexedSymbol, physicsTextSpan, unitChoiceValue } from "./components/physics-notation.mjs?v=20260915a";
 import { centripetalForce, circleVectors, clamp, shuffleIncorrect, tangentialSpeed } from "./components/circle-kinematics.mjs";
+import { setupPhysicsSemanticTask } from "./components/physics-semantic-task.mjs";
 
 // ---- Unverändert aus kraefte-bewegung.mjs / winkelgeschwindigkeit-kreisbewegung.mjs übernommen ----
 
@@ -420,14 +421,14 @@ function setupProportionRows() {
       hint: " Masse: Vergleiche {{F_Z}} bei m = 0,05 kg und m = 0,10 kg.",
     },
     {
-      key: "omega", legend: "Winkelgeschwindigkeit ω (m und r bleiben gleich)", correct: "square",
-      options: [["linear", "{{F_Z}} ~ ω"], ["square", "{{F_Z}} ~ ω²"], ["inverse", "{{F_Z}} ~ {{1|ω}}"]],
-      hint: " Winkelgeschwindigkeit: Vergleiche {{F_Z}} bei ω = 2,0 {{rad/s}} und ω = 4,0 {{rad/s}}. Um welchen Faktor ändert sich die Kraft?",
-    },
-    {
       key: "radius", legend: "Radius r (m und ω bleiben gleich)", correct: "linear",
       options: [["linear", "{{F_Z}} ~ r"], ["square", "{{F_Z}} ~ r²"], ["inverse", "{{F_Z}} ~ {{1|r}}"]],
       hint: " Radius: Vergleiche {{F_Z}} bei r = 0,25 m und r = 0,50 m.",
+    },
+    {
+      key: "omega", legend: "Winkelgeschwindigkeit ω (m und r bleiben gleich)", correct: "square",
+      options: [["linear", "{{F_Z}} ~ ω"], ["square", "{{F_Z}} ~ ω²"], ["inverse", "{{F_Z}} ~ {{1|ω}}"]],
+      hint: " Winkelgeschwindigkeit: Vergleiche {{F_Z}} bei ω = 2,0 {{rad/s}} und ω = 4,0 {{rad/s}}. Um welchen Faktor ändert sich die Kraft?",
     },
   ];
   const container = document.getElementById("proportion-rows");
@@ -456,7 +457,7 @@ function setupProportionRows() {
     const anySelected = values.some(Boolean);
     const correctCount = rows.filter((row, index) => values[index] === row.correct).length;
     if (!anySelected) { setFeedback("proportion-feedback", "error", "Wähle in jeder Zeile eine Proportionalität aus."); return; }
-    if (correctCount === rows.length) { setFeedback("proportion-feedback", "success", "Korrekt: {{F_Z}} ~ m, {{F_Z}} ~ ω² und bei festem ω {{F_Z}} ~ r."); return; }
+    if (correctCount === rows.length) { setFeedback("proportion-feedback", "success", "Korrekt: {{F_Z}} ~ m, bei festem ω {{F_Z}} ~ r und {{F_Z}} ~ ω²."); return; }
     if (correctCount === 0) { setFeedback("proportion-feedback", "error", "Noch nicht korrekt. Verdopple in der Simulation jeweils eine Größe und lies ab, wie oft so groß {{F_Z}} wird."); return; }
     let message = `${correctCount} von 3 Zuordnungen stimmen.`;
     rows.forEach((row, index) => { if (values[index] !== row.correct) message += row.hint; });
@@ -578,53 +579,175 @@ function setupCloze({ targetId, sentenceParts, terms, distractors, feedbackId, c
   });
 }
 
-function setupTriangleCloze() {
-  setupCloze({
-    targetId: "triangle-cloze",
-    checkButtonId: "check-triangle-cloze",
-    resetButtonId: "reset-triangle-cloze",
-    feedbackId: "triangle-cloze-feedback",
-    rememberIds: [],
-    sentenceParts: [
-      "Der Körper bewegt sich in der kurzen Zeit Δt von A nach B. Dabei legt er den Kreisbogen Δx = {{v_B}} · Δt zurück. Die Geschwindigkeitsvektoren {{v_1}} und {{v_2}} haben den ",
-      " Betrag, aber eine andere ",
-      ". Deshalb ist das Vektordreieck aus {{v_1}}, Δv und {{v_2}} ",
-      ". Für sehr kleine Zeitspannen zeigt Δv zum ",
-      " – also in dieselbe Richtung wie die Zentripetalkraft. Das Dreieck AMB und das Vektordreieck haben an der Spitze denselben Winkel φ. Beide Dreiecke sind deshalb ",
-      ".",
+function setupFormulaNewton() {
+  setupFormulaBuilder({
+    id: "formula-newton",
+    expected: ["F", "Δt", "m", "Δv"],
+    alternativeExpected: [["m", "Δv", "F", "Δt"]],
+    freeGroups: [[0, 1], [2, 3]],
+    distractors: ["v", "Δx", "r"],
+    layout: "product-equals-product",
+    equationLabel: "F mal Delta t gleich m mal Delta v",
+    successText: "Korrekt: F · Δt = m · Δv. Die Kraft F bewirkt in der Zeit Δt die Geschwindigkeitsänderung Δv.",
+    errorText: "Noch nicht korrekt. Überlege, welche Größen eine Kraft mit einer Geschwindigkeitsänderung verbinden.",
+    partialHints: [
+      { test: (actual) => actual.includes("v"), text: " Nicht die Geschwindigkeit v, sondern ihre Änderung Δv steht in der Gleichung." },
+      { test: (actual) => actual.includes("Δx") || actual.includes("r"), text: " Eine Strecke wie Δx oder r kommt im Grundgesetz nicht vor." },
     ],
-    terms: [
-      { key: "gleichen", text: "gleichen" },
-      { key: "Richtung", text: "Richtung" },
-      { key: "gleichschenklig", text: "gleichschenklig" },
-      { key: "Kreismittelpunkt", text: "Kreismittelpunkt" },
-      { key: "ähnlich", text: "ähnlich" },
-    ],
-    distractors: [
-      { key: "unterschiedlichen", text: "unterschiedlichen" },
-      { key: "rechtwinklig", text: "rechtwinklig" },
-      { key: "kongruent", text: "kongruent" },
-    ],
-    successText: "Korrekt: Das Vektordreieck ist vollständig beschrieben.",
-    partialText: (n) => `${n} von 5 Lücken stimmen. Vergleiche die Beträge und Richtungen von {{v_1}} und {{v_2}} in Skizze B.`,
-    errorText: "Noch nicht korrekt. Setze zunächst die Karten in die Lücken ein.",
-    wrongText: "Noch nicht korrekt. Vergleiche in Skizze B die Längen und Richtungen von {{v_1}} und {{v_2}}.",
   });
 }
 
-function setupRatioQuiz() {
-  renderQuizQuestion(document.getElementById("ratio-quiz"), {
-    question: "Welche Gleichungen sind richtig?",
-    correct: ["ratio", "delta"],
-    options: [
-      ["ratio", "{{Δv|v_B}} = {{v_B · Δt|r}}"],
-      ["swapped", "{{Δv|v_B}} = {{r|v_B · Δt}}"],
-      ["delta", "Δv = {{v_B² · Δt|r}}"],
-      ["nosquare", "Δv = {{v_B · Δt|r}}"],
+// ---- Aufgabe 6a: Skizze beschriften (Muster wie setupRoleMatching) ----
+
+function setupLabelGrid() {
+  const rows = [
+    { key: "1", label: "Stelle 1", short: "Stelle 1", correct: "A" },
+    { key: "2", label: "Stelle 2", short: "Stelle 2", correct: "B" },
+    { key: "3", label: "Stelle 3", short: "Stelle 3", correct: "M" },
+    { key: "4", label: "Stelle 4 (oranger Bogen)", short: "Stelle 4", correct: "Δx" },
+  ];
+  const optionEntries = [
+    ["", "Auswahl …"],
+    ["A", "A"],
+    ["B", "B"],
+    ["M", "M"],
+    ["Δx", "Δx"],
+    ["r", "r"],
+  ];
+  const grid = document.getElementById("label-grid");
+  rows.forEach((row) => {
+    const label = document.createElement("label");
+    label.append(document.createTextNode(row.label));
+    const select = document.createElement("select");
+    select.dataset.labelRow = row.key;
+    select.setAttribute("aria-label", `Beschriftung für ${row.label}`);
+    optionEntries.forEach(([value, text]) => {
+      const option = document.createElement("option");
+      option.value = value;
+      option.textContent = text;
+      select.append(option);
+    });
+    label.append(select);
+    grid.append(label);
+  });
+
+  document.getElementById("check-labels").addEventListener("click", () => {
+    const selects = [...grid.querySelectorAll("select")];
+    const values = selects.map((select) => select.value);
+    const anySelected = values.some(Boolean);
+    const correctCount = rows.filter((row, index) => values[index] === row.correct).length;
+    if (correctCount === rows.length) {
+      setFeedback("labels-feedback", "success", "Korrekt: Die Masse läuft um M von A nach B und legt dabei den Bogen Δx zurück.");
+      return;
+    }
+    if (!anySelected || correctCount === 0) {
+      setFeedback("labels-feedback", "error", "Noch nicht korrekt. Die Masse läuft um den Mittelpunkt M von A nach B. Die Pfeile {{v_1}} und {{v_2}} zeigen die Bewegungsrichtung.");
+      return;
+    }
+    const wrongLabels = rows.filter((row, index) => values[index] !== row.correct).map((row) => row.short);
+    let message = `${correctCount} von 4 Stellen stimmen. Prüfe noch: ${wrongLabels.join(", ")}.`;
+    if (values[0] === "B" && values[1] === "A") message += " Die Masse startet dort, wo {{v_1}} eingezeichnet ist.";
+    if (values[3] === "r") message += " Stelle 4 ist ein Stück der Kreisbahn, kein Radius.";
+    setFeedback("labels-feedback", "partial", message);
+  });
+}
+
+// ---- Aufgabe 6b/6c und "Für Schnelle": KI-Freitext über physics-semantic-task ----
+
+function semanticFeedbackParagraph(text) {
+  const paragraph = document.createElement("p");
+  appendPhysicsText(paragraph, text);
+  return paragraph;
+}
+
+function dvConstructionFeedback(result) {
+  const fragment = document.createDocumentFragment();
+  if (result.context === "server-error") {
+    fragment.append(semanticFeedbackParagraph("Zum Vergleich: {{v_1}} und {{v_2}} werden so verschoben, dass sie im selben Punkt beginnen. Δv zeigt von der Spitze von {{v_1}} zur Spitze von {{v_2}}. Deine eingegebene Antwort bleibt erhalten."));
+  } else if (result.status === "korrekt") {
+    fragment.append(semanticFeedbackParagraph("Richtig: Beide Pfeile beginnen im selben Punkt. Δv reicht von der Spitze von {{v_1}} bis zur Spitze von {{v_2}}, also gilt {{v_1}} + Δv = {{v_2}}."));
+  } else if (result.points > 0) {
+    fragment.append(semanticFeedbackParagraph("Teilweise richtig. Ergänze die oben genannten Aspekte. Achte darauf, wo Δv beginnt und wo es endet."));
+  } else {
+    fragment.append(semanticFeedbackParagraph("Noch nicht richtig. Vergleiche, wo {{v_1}} und {{v_2}} in Skizze 1 und in Skizze 2 beginnen."));
+  }
+  return fragment;
+}
+
+function approxFeedback(result) {
+  const fragment = document.createDocumentFragment();
+  if (result.context === "server-error") {
+    fragment.append(semanticFeedbackParagraph("Zum Vergleich: Für sehr kleine Δt ist der Bogen kaum gekrümmt, Δx und Δs sind dann fast gleich lang. Deine eingegebene Antwort bleibt erhalten."));
+  } else if (result.status === "korrekt") {
+    fragment.append(semanticFeedbackParagraph("Richtig: Für sehr kleine Δt ist der Bogen fast gerade. Δx und Δs sind dann nahezu gleich lang, also gilt Δs ≈ Δx = {{v_B}} · Δt."));
+  } else if (result.points > 0) {
+    fragment.append(semanticFeedbackParagraph("Teilweise richtig. Ergänze, was mit dem Bogen passiert, wenn Δt sehr klein wird."));
+  } else {
+    fragment.append(semanticFeedbackParagraph("Noch nicht richtig. Überlege, wie sich Bogen und Strecke Δs unterscheiden, wenn B ganz nah bei A liegt."));
+  }
+  return fragment;
+}
+
+function similarityFeedback(result) {
+  const fragment = document.createDocumentFragment();
+  if (result.context === "server-error") {
+    fragment.append(semanticFeedbackParagraph("Zum Vergleich: Beide Dreiecke sind gleichschenklig. Weil die Geschwindigkeit immer senkrecht auf dem Radius steht, ist der Winkel an der Spitze in beiden Dreiecken α. Deine eingegebene Antwort bleibt erhalten."));
+  } else if (result.status === "korrekt") {
+    fragment.append(semanticFeedbackParagraph("Richtig: Beide Dreiecke sind gleichschenklig und haben an der Spitze denselben Winkel α. Nach dem Ähnlichkeitssatz SWS sind sie ähnlich."));
+  } else if (result.points > 0) {
+    fragment.append(semanticFeedbackParagraph("Teilweise richtig. Ergänze die oben genannten Aspekte."));
+  } else {
+    fragment.append(semanticFeedbackParagraph("Noch nicht richtig. Vergleiche die Seitenlängen und den Winkel an der Spitze beider Dreiecke."));
+  }
+  return fragment;
+}
+
+function setupDerivationSemanticTasks() {
+  setupPhysicsSemanticTask({
+    answerId: "dv-construction-answer", buttonId: "check-dv-construction", feedbackId: "dv-construction-feedback", countId: "dv-construction-count",
+    taskId: "ph11-zentripetalkraft-herleitung-dv", feedbackBuilder: dvConstructionFeedback,
+    minimumLength: 8, fallbackMaxPoints: 3, shortAnswerHint: "Formuliere eine etwas ausführlichere Beschreibung der Konstruktion.",
+  });
+  setupPhysicsSemanticTask({
+    answerId: "approx-answer", buttonId: "check-approx", feedbackId: "approx-feedback", countId: "approx-count",
+    taskId: "ph11-zentripetalkraft-herleitung-naeherung", feedbackBuilder: approxFeedback,
+    minimumLength: 8, fallbackMaxPoints: 2, shortAnswerHint: "Formuliere eine etwas ausführlichere Begründung.",
+  });
+  setupPhysicsSemanticTask({
+    answerId: "similarity-answer", buttonId: "check-similarity", feedbackId: "similarity-feedback", countId: "similarity-count",
+    taskId: "ph11-zentripetalkraft-herleitung-aehnlichkeit", feedbackBuilder: similarityFeedback,
+    minimumLength: 8, fallbackMaxPoints: 3, shortAnswerHint: "Formuliere eine etwas ausführlichere Begründung.",
+  });
+}
+
+// ---- Aufgabe 7a: Seitenverhältnis (statische Radio-Auswahl wie Aufgabe 4b) ----
+
+function setupRatioChoice() {
+  document.getElementById("check-ratio").addEventListener("click", () => {
+    const value = unitChoiceValue("ratio-choice");
+    if (!value) { setFeedback("ratio-feedback", "error", "Wähle ein Seitenverhältnis aus."); return; }
+    if (value === "vr") { setFeedback("ratio-feedback", "success", "Korrekt: Δv und Δs entsprechen einander, ebenso {{v_B}} und r. Also gilt {{Δv|Δs}} = {{v_B|r}}."); return; }
+    if (value === "rv") { setFeedback("ratio-feedback", "error", "Noch nicht korrekt. Im Zähler steht jeweils die Größe aus Skizze 2: Δv und {{v_B}}."); return; }
+    setFeedback("ratio-feedback", "error", "Noch nicht korrekt. Vergleiche nur Seiten der beiden Dreiecke. Δt ist keine Dreiecksseite.");
+  });
+}
+
+function setupFormulaDeltaV() {
+  setupFormulaBuilder({
+    id: "formula-delta-v",
+    expected: ["Δv", "vB²", "Δt", "r"],
+    distractors: ["vB", "Δs", "r²"],
+    layout: "fraction-product",
+    freeGroups: [[1, 2]],
+    equationLabel: "Delta v gleich v mit Index B zum Quadrat mal Delta t durch r",
+    successText: "Korrekt: Δv = {{v_B² · Δt|r}}.",
+    errorText: "Noch nicht korrekt. Links steht die Größe, die du suchst.",
+    partialHints: [
+      { test: (actual) => actual.includes("Δs"), text: " Ersetze Δs durch {{v_B}} · Δt." },
+      { test: (actual) => actual.includes("vB"), text: " Aus {{v_B}} · {{v_B}} wird {{v_B}}²." },
+      { test: (actual) => actual.includes("r²"), text: " Im Nenner steht r nur einfach." },
     ],
-    feedback: "Entsprechende Seiten stehen im gleichen Verhältnis. Stellt man nach Δv um, erhält man Δv = {{v_B² · Δt|r}}.",
-    hint: "Im Vektordreieck gehört die kurze Seite Δv zu den Schenkeln {{v_B}}. Im Dreieck AMB gehört die kurze Seite {{v_B}} · Δt zu den Schenkeln r.",
-  }, 0);
+  });
 }
 
 // ---- Formelbaukasten (setupFormulaBuilder → Layouts 3.3) ----
@@ -662,15 +785,19 @@ function renderFormulaSymbol(target, value) {
   else { target.textContent = value; }
 }
 
-function setupFormulaBuilder({ id, expected, distractors = [], layout, freeGroups, equationLabel, rememberId, successText, errorText, partialHints = [] }) {
+function setupFormulaBuilder({ id, expected, alternativeExpected = [], distractors = [], layout, freeGroups, equationLabel, rememberId, successText, errorText, partialHints = [] }) {
   const target = document.getElementById(id);
   const bankSource = [...expected, ...distractors];
   let selected = "";
   let values = shuffleIncorrect(bankSource, bankSource);
   const slots = expected.map(() => ({ value: "" }));
+  const rememberIds = Array.isArray(rememberId) ? rememberId : (rememberId ? [rememberId] : []);
 
   function hideRemember() {
-    if (rememberId) document.getElementById(rememberId).hidden = true;
+    rememberIds.forEach((id) => { document.getElementById(id).hidden = true; });
+  }
+  function showRemember() {
+    rememberIds.forEach((id) => { document.getElementById(id).hidden = false; });
   }
 
   function render() {
@@ -720,25 +847,33 @@ function setupFormulaBuilder({ id, expected, distractors = [], layout, freeGroup
       return button;
     }
 
-    const leftButton = makeSlotButton(0, ", linke Seite");
-    line.append(leftButton, document.createTextNode(" = "));
-
-    if (layout === "fraction-product") {
-      const fraction = document.createElement("div");
-      fraction.className = "formula-fraction";
-      const numerator = document.createElement("div");
-      numerator.className = "formula-fraction__numerator";
-      numerator.append(makeSlotButton(1, ", Zähler"), document.createTextNode(" · "), makeSlotButton(2, ", Zähler"));
-      const bar = document.createElement("span");
-      bar.className = "formula-fraction__bar";
-      bar.setAttribute("aria-hidden", "true");
-      const denominator = document.createElement("div");
-      denominator.className = "formula-fraction__denominator";
-      denominator.append(makeSlotButton(3, ", Nenner"));
-      fraction.append(numerator, bar, denominator);
-      line.append(fraction);
+    if (layout === "product-equals-product") {
+      line.append(
+        makeSlotButton(0, ", linke Seite"), document.createTextNode(" · "), makeSlotButton(1, ", linke Seite"),
+        document.createTextNode(" = "),
+        makeSlotButton(2, ", rechte Seite"), document.createTextNode(" · "), makeSlotButton(3, ", rechte Seite"),
+      );
     } else {
-      line.append(makeSlotButton(1, ""), document.createTextNode(" · "), makeSlotButton(2, ""), document.createTextNode(" · "), makeSlotButton(3, ""));
+      const leftButton = makeSlotButton(0, ", linke Seite");
+      line.append(leftButton, document.createTextNode(" = "));
+
+      if (layout === "fraction-product") {
+        const fraction = document.createElement("div");
+        fraction.className = "formula-fraction";
+        const numerator = document.createElement("div");
+        numerator.className = "formula-fraction__numerator";
+        numerator.append(makeSlotButton(1, ", Zähler"), document.createTextNode(" · "), makeSlotButton(2, ", Zähler"));
+        const bar = document.createElement("span");
+        bar.className = "formula-fraction__bar";
+        bar.setAttribute("aria-hidden", "true");
+        const denominator = document.createElement("div");
+        denominator.className = "formula-fraction__denominator";
+        denominator.append(makeSlotButton(3, ", Nenner"));
+        fraction.append(numerator, bar, denominator);
+        line.append(fraction);
+      } else {
+        line.append(makeSlotButton(1, ""), document.createTextNode(" · "), makeSlotButton(2, ""), document.createTextNode(" · "), makeSlotButton(3, ""));
+      }
     }
 
     const actions = document.createElement("div");
@@ -759,10 +894,11 @@ function setupFormulaBuilder({ id, expected, distractors = [], layout, freeGroup
 
     check.addEventListener("click", () => {
       const actualValues = slots.map((slot) => slot.value);
-      const correct = gradeSlots(actualValues, expected, freeGroups);
+      const candidates = [expected, ...alternativeExpected];
+      const correct = Math.max(...candidates.map((candidate) => gradeSlots(actualValues, candidate, freeGroups)));
       if (correct === expected.length) {
         setFeedback(feedback, "success", successText);
-        if (rememberId) document.getElementById(rememberId).hidden = false;
+        showRemember();
       } else {
         hideRemember();
         if (correct === 0) { setFeedback(feedback, "error", errorText); return; }
@@ -813,7 +949,7 @@ function setupCentripetalOmegaFormula() {
     layout: "product3",
     freeGroups: [[1, 2, 3]],
     equationLabel: "F mit Index Z gleich m mal Omega zum Quadrat mal r",
-    rememberId: "formula-omega-remember",
+    rememberId: ["formula-omega-remember", "formula-omega-notebook-reminder"],
     successText: "Korrekt: {{F_Z}} = m · ω² · r.",
     errorText: "Noch nicht korrekt. Überlege zuerst, welche Größe auf der linken Seite stehen muss.",
     partialHints: [
@@ -828,21 +964,23 @@ function setupCentripetalOmegaFormula() {
 
 function setupRoleMatching() {
   const situations = [
-    { key: "hammer", label: "Hammerwurf", correct: "rope" },
-    { key: "carousel", label: "Kettenkarussell", correct: "chain" },
-    { key: "car", label: "Auto in der Kurve", correct: "friction" },
-    { key: "moon", label: "Mond um die Erde", correct: "gravity" },
+    { key: "moon", label: "Mond auf seiner Bahn um die Erde", correct: "gravity" },
+    { key: "hammer", label: "Hammerwurf (von oben betrachtet)", correct: "rope" },
+    { key: "car", label: "Auto in einer flachen Kurve", correct: "friction" },
+    { key: "electron", label: "Elektron um den Atomkern (Atommodell von Bohr)", correct: "electric" },
     { key: "laundry", label: "Wäsche in der Schleudertrommel", correct: "wall" },
+    { key: "carousel", label: "Kettenkarussell – hier wirken zwei Kräfte zusammen", correct: "chain" },
   ];
   const optionEntries = [
     ["", "Kraft auswählen …"],
+    ["gravity", "Gravitationskraft"],
+    ["rope", "Seilkraft"],
+    ["friction", "Haftreibungskraft"],
+    ["electric", "elektrische Kraft"],
+    ["wall", "Normalkraft der Trommelwand"],
+    ["chain", "Kettenkraft und Gewichtskraft zusammen"],
     ["centrifugal", "Zentrifugalkraft nach außen"],
-    ["gravity", "Gravitationskraft der Erde"],
-    ["rope", "Kraft des Drahtseils auf die Kugel"],
-    ["friction", "Haftreibungskraft zwischen Reifen und Straße"],
-    ["wall", "Kraft der Trommelwand auf die Wäsche"],
-    ["none", "keine Kraft – der Körper bewegt sich von selbst im Kreis"],
-    ["chain", "Kettenkraft zusammen mit der Gewichtskraft"],
+    ["none", "keine Kraft nötig"],
   ];
   const grid = document.getElementById("role-grid");
   situations.forEach((situation) => {
@@ -869,7 +1007,7 @@ function setupRoleMatching() {
     const wrongLabels = situations.filter((situation, index) => values[index] !== situation.correct).map((situation) => situation.label);
     const remember = document.getElementById("role-remember");
     if (correctCount === situations.length) {
-      setFeedback("role-feedback", "success", "Korrekt: In jeder Situation übernimmt eine reale Kraft die Rolle der Zentripetalkraft.");
+      setFeedback("role-feedback", "success", "Korrekt: In jeder Situation wirkt eine bekannte Kraft – beim Kettenkarussell wirken zwei Kräfte zusammen – als Zentripetalkraft.");
       remember.hidden = false;
       return;
     }
@@ -878,10 +1016,10 @@ function setupRoleMatching() {
     let message;
     if (!anySelected || correctCount === 0) {
       status = "error";
-      message = "Noch nicht korrekt. Suche in jeder Situation die Kraft, die den Körper zum Kreismittelpunkt zieht.";
+      message = "Noch nicht korrekt. Stelle dir bei jeder Situation die Leitfrage: Welche Kraft zieht den Körper zum Kreismittelpunkt?";
     } else {
       status = "partial";
-      message = `${correctCount} von 5 Zuordnungen stimmen. Prüfe noch: ${wrongLabels.join(", ")}.`;
+      message = `${correctCount} von 6 Zuordnungen stimmen. Prüfe noch: ${wrongLabels.join(", ")}.`;
     }
     if (values.includes("centrifugal")) message += " Eine Kraft nach außen würde den Körper nicht auf der Kreisbahn halten.";
     if (values.includes("none")) message += " Ohne Kraft würde sich der Körper nach dem Trägheitssatz geradlinig weiterbewegen.";
@@ -889,98 +1027,154 @@ function setupRoleMatching() {
   });
 }
 
+function setupRoleQuiz() {
+  const items = [
+    {
+      question: "In welchen Situationen darfst du die genannte Kraft direkt mit {{F_Z}} gleichsetzen?",
+      correct: ["moon", "electron", "car"],
+      options: [
+        ["moon", "Mond um die Erde: Gravitationskraft = {{F_Z}}"],
+        ["electron", "Elektron um den Atomkern: elektrische Kraft = {{F_Z}}"],
+        ["car", "Auto in einer flachen Kurve: Haftreibungskraft = {{F_Z}}"],
+        ["carousel", "Kettenkarussell: Kettenkraft = {{F_Z}}"],
+        ["looping", "Achterbahn im höchsten Punkt eines Loopings: Gewichtskraft = {{F_Z}}"],
+      ],
+      feedback: "Gleichsetzen darf man nur, wenn eine einzige Kraft zum Kreismittelpunkt wirkt. Beim Kettenkarussell wirken Kettenkraft und Gewichtskraft zusammen, im Looping Gewichtskraft und die Kraft der Schiene.",
+      hint: "Prüfe bei jeder Situation, ob außer der genannten Kraft noch eine weitere Kraft zur Kreisbewegung beiträgt.",
+    },
+    {
+      question: "Die Zentripetalkraft ist keine eigene Kraftart, …",
+      correct: ["any", "several"],
+      options: [
+        ["centrifuge", "… weil sie nur in Zentrifugen auftritt."],
+        ["any", "… weil jede Kraftart als Zentripetalkraft wirken kann."],
+        ["fake", "… weil es sie in Wirklichkeit gar nicht gibt."],
+        ["several", "… weil sie auch von mehreren Kräften gemeinsam aufgebracht werden kann."],
+      ],
+      feedback: "Die Zentripetalkraft beschreibt eine Rolle: Die Kraft oder die Kräfte zum Kreismittelpunkt halten den Körper auf der Kreisbahn. Es gibt sie also wirklich, nur nicht als eigene Kraftart.",
+      hint: "Denke an die Situationen aus 9a: Welche Kräfte haben dort als Zentripetalkraft gewirkt?",
+    },
+  ];
+  const target = document.getElementById("role-quiz");
+  items.forEach((item, index) => renderQuizQuestion(target, item, index));
+}
+
 function setupMisconceptionQuiz() {
   renderQuizQuestion(document.getElementById("misconception-quiz"), {
     question: "Welche Aussagen sind richtig?",
-    correct: ["too-small", "tangent", "no-extra"],
+    correct: ["too-small", "tangent"],
     options: [
       ["centrifugal", "Eine Zentrifugalkraft zieht den Hammer nach außen. Deshalb fliegt er beim Loslassen vom Mittelpunkt weg."],
       ["too-small", "Reicht die Kraft zum Mittelpunkt nicht aus, wird der Bahnradius größer: Das Auto rutscht in der Kurve nach außen."],
-      ["extra", "Auf das Auto in der Kurve wirken die Haftreibungskraft und zusätzlich noch die Zentripetalkraft."],
+      ["stop", "Hört die Kraft zum Mittelpunkt auf zu wirken, bleibt der Körper sofort stehen."],
       ["tangent", "Beim Loslassen fliegt der Hammer tangential weiter, weil keine Kraft mehr zum Mittelpunkt wirkt."],
       ["too-big", "Ist die Kraft zum Mittelpunkt größer als nötig, bewegt sich der Körper auf einem größeren Kreis."],
-      ["no-extra", "Beim Auto in der Kurve wirkt neben der Haftreibungskraft keine zusätzliche Zentripetalkraft."],
     ],
-    feedback: "Es gibt keine zusätzliche Kraft namens Zentripetalkraft und für einen ruhenden Beobachter keine Kraft, die nach außen zieht. Fehlt die Kraft zum Mittelpunkt oder ist sie zu klein, entfernt sich der Körper vom Mittelpunkt.",
+    feedback: "Für einen ruhenden Beobachter gibt es keine Kraft, die nach außen zieht. Fehlt die Kraft zum Mittelpunkt, bewegt sich der Körper tangential geradlinig weiter. Ist sie zu klein, wird der Bahnradius größer.",
     hint: "Prüfe bei jeder Aussage: Welche reale Kraft zeigt nach innen, und was passiert nach dem Trägheitssatz, wenn sie fehlt oder zu klein ist?",
   }, 0);
 }
 
 // ---- Rechenaufgaben 11–13 ----
 
-function setupNumberTask({ buttonId, inputId, unitGroupId, feedbackId, units, wrongChecks, successText, roundingText, unitMismatchText, genericErrorText }) {
+// Prüfreihenfolge (B5): 1. keine Einheit · 2. kein Zahlenwert · 3. Einheit ist
+// Distraktor (passt die Zahl zu einer gültigen Einheit: partial, sonst error)
+// · 4. Sollwert + 2 gültige Ziffern: success · 5. Sollwert/Rechenfenster mit
+// falscher Ziffernzahl: partial (Rundung) · 6. passt zur anderen gültigen
+// Einheit: partial · 7. wrongChecks · 8. sonst generischer Fehler.
+function setupNumberTask({ buttonId, inputId, unitSelectId, feedbackId, validUnits, wrongChecks, successText, roundingText, unitMismatchText, wrongUnitText, genericErrorText }) {
   document.getElementById(buttonId).addEventListener("click", () => {
     const input = document.getElementById(inputId);
     const raw = input.value;
     const value = numberValue(raw);
     const digits = significantDigitCount(raw);
-    const unit = unitChoiceValue(unitGroupId);
+    const unit = document.getElementById(unitSelectId).value;
+
     if (!unit) { setFeedback(feedbackId, "error", "Wähle eine Einheit aus."); return; }
-    const target = units[unit];
-    const valueCorrect = Number.isFinite(value) && Math.abs(value - target.value) <= target.tolerance;
-    const exactUnrounded = Number.isFinite(value) && Math.abs(value - target.exact) <= target.exactTolerance;
+    if (!Number.isFinite(value)) { setFeedback(feedbackId, "error", "Gib einen Zahlenwert ein."); return; }
+
+    const matchesWindow = (target) => Math.abs(value - target.value) <= target.tolerance || Math.abs(value - target.exact) <= target.exactTolerance;
+
+    if (!(unit in validUnits)) {
+      const matchesSomeValidUnit = Object.values(validUnits).some(matchesWindow);
+      if (matchesSomeValidUnit) { setFeedback(feedbackId, "partial", wrongUnitText); return; }
+      setFeedback(feedbackId, "error", genericErrorText);
+      return;
+    }
+
+    const target = validUnits[unit];
+    const valueCorrect = Math.abs(value - target.value) <= target.tolerance;
+    const exactUnrounded = Math.abs(value - target.exact) <= target.exactTolerance;
+
     if (valueCorrect && digits === 2) { setFeedback(feedbackId, "success", successText); return; }
     if ((valueCorrect || exactUnrounded) && digits !== 2) { setFeedback(feedbackId, "partial", roundingText); return; }
-    const otherUnitKey = Object.keys(units).find((key) => key !== unit);
-    const otherTarget = units[otherUnitKey];
-    const matchesOtherUnit = Number.isFinite(value) && Math.abs(value - otherTarget.value) <= otherTarget.tolerance;
-    if (matchesOtherUnit) { setFeedback(feedbackId, "partial", unitMismatchText); return; }
+
+    const otherUnitKey = Object.keys(validUnits).find((key) => key !== unit);
+    if (matchesWindow(validUnits[otherUnitKey])) { setFeedback(feedbackId, "partial", unitMismatchText); return; }
+
     const matchedWrong = wrongChecks.find((check) => check.test(value, unit));
-    if (matchedWrong) { setFeedback(feedbackId, "error", matchedWrong.text); return; }
+    if (matchedWrong) { setFeedback(feedbackId, matchedWrong.status || "error", matchedWrong.text); return; }
+
     setFeedback(feedbackId, "error", genericErrorText);
   });
 }
 
 function setupTask11() {
   setupNumberTask({
-    buttonId: "check-task11", inputId: "task11-answer", unitGroupId: "task11-unit", feedbackId: "task11-feedback",
-    units: {
-      N: { value: 2500, tolerance: 50, exact: 2521, exactTolerance: 15 },
-      kN: { value: 2.5, tolerance: 0.05, exact: 2.521, exactTolerance: 0.015 },
+    buttonId: "check-task11", inputId: "task11-answer", unitSelectId: "task11-unit", feedbackId: "task11-feedback",
+    validUnits: {
+      N: { value: 2500, tolerance: 0.5, exact: 2520.83, exactTolerance: 25.2083 },
+      kN: { value: 2.5, tolerance: 0.0005, exact: 2.52083, exactTolerance: 0.0252083 },
     },
     wrongChecks: [
-      { test: (value, unit) => (unit === "N" ? Math.abs(value - 100.8) <= 2 : Math.abs(value - 0.1008) <= 0.002), text: "Noch nicht korrekt. Prüfe deinen Zahlenwert, die Einheit und die Anzahl der gültigen Ziffern. Die Bahngeschwindigkeit geht im Quadrat ein: {{v_B}}²." },
-      { test: (value, unit) => (unit === "N" ? Math.abs(value - 8168) <= 20 : Math.abs(value - 8.168) <= 0.02), text: "Noch nicht korrekt. Prüfe deinen Zahlenwert, die Einheit und die Anzahl der gültigen Ziffern. Der Radius steht im Nenner: Teile durch r." },
+      { test: (value, unit) => (unit === "N" ? Math.abs(value - 100.83) <= 1.0083 : Math.abs(value - 0.10083) <= 0.0010083), text: "Noch nicht korrekt. Prüfe deinen Zahlenwert, die Einheit und die Anzahl der gültigen Ziffern. Die Bahngeschwindigkeit geht im Quadrat ein: {{v_B}}²." },
+      { test: (value, unit) => (unit === "N" ? Math.abs(value - 8167.5) <= 81.675 : Math.abs(value - 8.1675) <= 0.081675), text: "Noch nicht korrekt. Prüfe deinen Zahlenwert, die Einheit und die Anzahl der gültigen Ziffern. Der Radius steht im Nenner: Teile durch r." },
+      { test: (value, unit) => (unit === "N" ? Math.abs(value - 347.22) <= 3.4722 : Math.abs(value - 0.34722) <= 0.0034722), text: "Noch nicht korrekt. Prüfe deinen Zahlenwert, die Einheit und die Anzahl der gültigen Ziffern. Die Masse m gehört in den Zähler." },
     ],
     successText: "Richtig. Zahlenwert, Einheit und die Anzahl der gültigen Ziffern stimmen. {{F_Z}} = {{m · v_B²|r}} ≈ 2 521 N ≈ 2,5 kN. Diese Kraft muss das Drahtseil auf die Kugel ausüben.",
     roundingText: "Dein Rechenwert ist grundsätzlich passend. Runde das Endergebnis noch auf die geforderte Anzahl gültiger Ziffern. Die Angaben 25 {{m/s}} und 1,8 m besitzen nur zwei gültige Ziffern.",
     unitMismatchText: "Prüfe deinen Zahlenwert, die Einheit und die Anzahl der gültigen Ziffern. Dein Zahlenwert passt zur anderen Einheit: 1 kN = 1 000 N.",
+    wrongUnitText: "Prüfe deinen Zahlenwert, die Einheit und die Anzahl der gültigen Ziffern. Dein Zahlenwert passt, aber eine Kraft wird in N oder kN angegeben.",
     genericErrorText: "Noch nicht korrekt. Prüfe deinen Zahlenwert, die Einheit und die Anzahl der gültigen Ziffern. Setze die Werte in {{F_Z}} = {{m · v_B²|r}} ein.",
   });
 }
 
 function setupTask12() {
   setupNumberTask({
-    buttonId: "check-task12", inputId: "task12-answer", unitGroupId: "task12-unit", feedbackId: "task12-feedback",
-    units: {
-      N: { value: 6800, tolerance: 50, exact: 6750, exactTolerance: 15 },
-      kN: { value: 6.8, tolerance: 0.05, exact: 6.75, exactTolerance: 0.015 },
+    buttonId: "check-task12", inputId: "task12-answer", unitSelectId: "task12-unit", feedbackId: "task12-feedback",
+    validUnits: {
+      N: { value: 6800, tolerance: 0.5, exact: 6750, exactTolerance: 67.5 },
+      kN: { value: 6.8, tolerance: 0.0005, exact: 6.75, exactTolerance: 0.0675 },
     },
     wrongChecks: [
-      { test: (value, unit) => (unit === "N" ? Math.abs(value - 87480) <= 1000 : Math.abs(value - 87.48) <= 1), text: "Noch nicht korrekt. Prüfe deinen Zahlenwert, die Einheit und die Anzahl der gültigen Ziffern. Rechne die Geschwindigkeit zuerst in {{m/s}} um: Teile durch 3,6." },
-      { test: (value, unit) => (unit === "N" ? Math.abs(value - 450) <= 10 : Math.abs(value - 0.45) <= 0.01), text: "Noch nicht korrekt. Prüfe deinen Zahlenwert, die Einheit und die Anzahl der gültigen Ziffern. Die Bahngeschwindigkeit geht im Quadrat ein: {{v_B}}²." },
+      { test: (value, unit) => (unit === "N" ? Math.abs(value - 87480) <= 874.8 : Math.abs(value - 87.48) <= 0.8748), text: "Noch nicht korrekt. Prüfe deinen Zahlenwert, die Einheit und die Anzahl der gültigen Ziffern. Rechne die Geschwindigkeit zuerst in {{m/s}} um: Teile durch 3,6." },
+      { test: (value, unit) => (unit === "N" ? Math.abs(value - 450) <= 4.5 : Math.abs(value - 0.45) <= 0.0045), text: "Noch nicht korrekt. Prüfe deinen Zahlenwert, die Einheit und die Anzahl der gültigen Ziffern. Die Bahngeschwindigkeit geht im Quadrat ein: {{v_B}}²." },
+      { test: (value, unit) => (unit === "N" ? Math.abs(value - 1133740) <= 11337.4 : Math.abs(value - 1133.74) <= 11.3374), text: "Noch nicht korrekt. Prüfe deinen Zahlenwert, die Einheit und die Anzahl der gültigen Ziffern. Von {{km/h}} nach {{m/s}} teilst du durch 3,6." },
     ],
     successText: "Richtig. Zahlenwert, Einheit und die Anzahl der gültigen Ziffern stimmen. Mit {{v_B}} = 15 {{m/s}} gilt {{F_Z}} = {{m · v_B²|r}} = 6 750 N ≈ 6,8 kN. Diese Kraft muss die Haftreibung zwischen Reifen und Straße liefern.",
-    roundingText: "Dein Rechenwert ist grundsätzlich passend. Runde das Endergebnis noch auf die geforderte Anzahl gültiger Ziffern.",
+    roundingText: "Dein Rechenwert ist grundsätzlich passend. Runde das Endergebnis noch auf die geforderte Anzahl gültiger Ziffern. Die Geschwindigkeit 54 {{km/h}} ist nur mit zwei gültigen Ziffern angegeben.",
     unitMismatchText: "Prüfe deinen Zahlenwert, die Einheit und die Anzahl der gültigen Ziffern. Dein Zahlenwert passt zur anderen Einheit: 1 kN = 1 000 N.",
+    wrongUnitText: "Prüfe deinen Zahlenwert, die Einheit und die Anzahl der gültigen Ziffern. Dein Zahlenwert passt, aber eine Kraft wird in N oder kN angegeben.",
     genericErrorText: "Noch nicht korrekt. Prüfe deinen Zahlenwert, die Einheit und die Anzahl der gültigen Ziffern. Setze die Werte in {{F_Z}} = {{m · v_B²|r}} ein.",
   });
 }
 
 function setupTask13() {
   setupNumberTask({
-    buttonId: "check-task13", inputId: "task13-answer", unitGroupId: "task13-unit", feedbackId: "task13-feedback",
-    units: {
-      "m/s": { value: 18, tolerance: 0.05, exact: 17.89, exactTolerance: 0.1 },
-      "km/h": { value: 64, tolerance: 0.5, exact: 64.4, exactTolerance: 0.3 },
+    buttonId: "check-task13", inputId: "task13-answer", unitSelectId: "task13-unit", feedbackId: "task13-feedback",
+    validUnits: {
+      mps: { value: 18, tolerance: 0.0005, exact: 17.8885, exactTolerance: 0.178885 },
+      kmh: { value: 64, tolerance: 0.0005, exact: 64.3988, exactTolerance: 0.643988 },
     },
     wrongChecks: [
-      { test: (value, unit) => (unit === "m/s" ? Math.abs(value - 320) <= 5 : Math.abs(value - 1152) <= 20), text: "Noch nicht korrekt. Du hast {{v_B}}² berechnet. Ziehe noch die Wurzel." },
-      { test: (value, unit) => (unit === "m/s" ? Math.abs(value - 0.566) <= 0.02 : Math.abs(value - 2.04) <= 0.05), text: "Noch nicht korrekt. Prüfe deinen Zahlenwert, die Einheit und die Anzahl der gültigen Ziffern. Rechne 9,6 kN zuerst in Newton um." },
+      { test: (value, unit) => (unit === "mps" ? Math.abs(value - 320) <= 5 : Math.abs(value - 1152) <= 20), text: "Noch nicht korrekt. Du hast {{v_B}}² berechnet. Ziehe noch die Wurzel." },
+      { test: (value, unit) => (unit === "mps" ? Math.abs(value - 0.566) <= 0.02 : Math.abs(value - 2.04) <= 0.05), text: "Noch nicht korrekt. Prüfe deinen Zahlenwert, die Einheit und die Anzahl der gültigen Ziffern. Rechne 9,6 kN zuerst in Newton um." },
+      { test: (value, unit) => unit === "kmh" && Math.abs(value - 65) <= 0.3, status: "partial", text: "Dein Rechenwert ist grundsätzlich passend. Runde erst das Endergebnis: Rechne den ungerundeten Wert von {{v_B}} in {{km/h}} um." },
     ],
     successText: "Richtig. Zahlenwert, Einheit und die Anzahl der gültigen Ziffern stimmen. {{v_B}} = √{{F_Z · r|m}} ≈ 18 {{m/s}} ≈ 64 {{km/h}}. Fährt das Auto schneller, reicht die Haftreibung nicht aus: Der Bahnradius wird größer und das Auto rutscht aus der Kurve.",
-    roundingText: "Dein Rechenwert ist grundsätzlich passend. Runde das Endergebnis noch auf die geforderte Anzahl gültiger Ziffern.",
+    roundingText: "Dein Rechenwert ist grundsätzlich passend. Runde das Endergebnis noch auf die geforderte Anzahl gültiger Ziffern. Die Kraft 9,6 kN ist nur mit zwei gültigen Ziffern angegeben.",
     unitMismatchText: "Prüfe deinen Zahlenwert, die Einheit und die Anzahl der gültigen Ziffern. Dein Zahlenwert passt zur anderen Einheit: 1 {{m/s}} = 3,6 {{km/h}}.",
+    wrongUnitText: "Prüfe deinen Zahlenwert, die Einheit und die Anzahl der gültigen Ziffern. Dein Zahlenwert passt, aber eine Geschwindigkeit wird in {{m/s}} oder {{km/h}} angegeben.",
     genericErrorText: "Noch nicht korrekt. Prüfe deinen Zahlenwert, die Einheit und die Anzahl der gültigen Ziffern. Stelle zuerst nach {{v_B}}² um.",
   });
 }
@@ -1084,11 +1278,15 @@ setupCentripetalSimulation(createExploreConfig(document.querySelector('[data-cen
 setupCentripetalSimulation(createRadiusConfig());
 setupRadiusMapping();
 setupRadiusReasonQuiz();
-setupTriangleCloze();
-setupRatioQuiz();
+setupFormulaNewton();
+setupLabelGrid();
+setupDerivationSemanticTasks();
+setupRatioChoice();
+setupFormulaDeltaV();
 setupCentripetalSpeedFormula();
 setupCentripetalOmegaFormula();
 setupRoleMatching();
+setupRoleQuiz();
 setupMisconceptionQuiz();
 setupTask11();
 setupTask12();

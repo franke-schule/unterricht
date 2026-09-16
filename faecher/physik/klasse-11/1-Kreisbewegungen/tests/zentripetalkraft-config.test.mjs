@@ -81,12 +81,60 @@ assert.deepEqual(
 // Download-Bereich nach dem Abschlussquiz im Panel "quiz"
 assert.match(html, /data-physics-panel="quiz"[\s\S]*id="centripetal-quiz"[\s\S]*class="solution-download"/);
 assert.match(html, /unlockSolution\(event, 'R6WF-DH7K', 'solution-download-link', 'solution-code-message'\)/);
-assert.match(html, /href="sicherungsblatt-aufgabe-4-loesungen\.pdf\?v=20260915a" download hidden/);
+assert.match(html, /href="sicherungsblatt-aufgabe-4-loesungen\.pdf\?v=20260916a" download hidden/);
 assert.match(html, /maxlength="9"/);
 
-// SVG-Koordinaten aus Aufgabe 5 (Vektordreieck), wörtlich wie spezifiziert
-assert.match(html, /x1="599\.9" y1="75" x2="599\.9" y2="225" class="force-vector"/);
-assert.match(html, /x1="470" y1="150" x2="599\.9" y2="75" class="speed-vector"/);
+// Reiter 3 (Herleitung): neue Aufgaben 5-8 + "Für Schnelle", alte Aufgaben entfernt
+assert.match(html, /id="formula-newton"/);
+assert.match(html, /id="label-grid"/);
+assert.match(html, /id="ratio-choice"/);
+assert.match(html, /id="formula-delta-v"/);
+assert.match(html, /id="role-quiz"/);
+assert.match(html, /id="similarity-answer"/);
+assert.equal((source.match(/setupPhysicsSemanticTask\(/g) || []).length, 3);
+assert.match(source, /taskId: "ph11-zentripetalkraft-herleitung-dv"/);
+assert.match(source, /taskId: "ph11-zentripetalkraft-herleitung-naeherung"/);
+assert.match(source, /taskId: "ph11-zentripetalkraft-herleitung-aehnlichkeit"/);
+const derivationPanel = html.match(/data-physics-panel="derivation"[\s\S]*?data-physics-panel="apply"/)[0];
+assert.doesNotMatch(derivationPanel, /triangle-cloze/);
+assert.doesNotMatch(derivationPanel, /id="ratio-quiz"/);
+assert.doesNotMatch(derivationPanel, /φ/);
+assert.match(html, /<h3 id="formula-newton-title">Aufgabe 5 · /);
+assert.match(html, /<h3 id="step6-title">Aufgabe 6 · /);
+assert.match(html, /<h3 id="ratio-delta-title">Aufgabe 7 · /);
+assert.match(html, /<h3 id="formula-final-title">Aufgabe 8 · /);
+assert.match(html, /Für Schnelle \(optional\) · Warum sind die Dreiecke ähnlich\?/);
+assert.match(html, /<h3 id="role-title">Aufgabe 9 · /);
+assert.match(html, /<h3 id="misconception-title">Aufgabe 10 · /);
+assert.match(html, /<h3 id="task11-title">Aufgabe 11 · /);
+assert.match(html, /<h3 id="task13-title">Aufgabe 13 · /);
+
+// Aufgabe 3: mass vor radius vor omega
+assert.match(source, /key: "mass"[\s\S]*?key: "radius"[\s\S]*?key: "omega"/);
+
+// Aufgabe 9b und Aufgabe 10: neue Auswahllisten
+assert.match(source, /correct: \["any", "several"\]/);
+assert.match(source, /correct: \["too-small", "tangent"\]/);
+assert.doesNotMatch(source, /"extra", "Auf das Auto/);
+assert.doesNotMatch(source, /"no-extra"/);
+
+// Aufgabe 11-13: <select> statt Radio-Fieldset
+assert.match(html, /<select id="task11-unit"/);
+assert.match(html, /<select id="task12-unit"/);
+assert.match(html, /<select id="task13-unit"/);
+assert.doesNotMatch(html, /name="task1[123]-unit"/);
+
+// Pfeilmuster (B2): markerUnits/markerWidth wie spezifiziert, referenzierte Marker existieren
+assert.match(css, /\.centripetal-figure--vectors \.speed-vector,\s*\n\.centripetal-figure--vectors \.force-vector \{\s*\n\s*stroke-width: 3;/);
+[...html.matchAll(/<line[^>]*class="(?:speed-vector|force-vector)"[^>]*marker-end="url\(#([^)]+)\)"/g)]
+  .forEach((match) => { assert.match(html, new RegExp(`<marker id="${match[1]}"`)); });
+assert.match(html, /<marker id="reason-blue" markerUnits="userSpaceOnUse" markerWidth="12"/);
+assert.match(html, /<marker id="deriv-blue" markerUnits="userSpaceOnUse" markerWidth="12"/);
+
+// Skizze 1 (Aufgabe 6): keine Buchstaben-Beschriftung, aber vier nummerierte Badges
+const sketch1 = html.slice(html.indexOf('id="step6-title"'), html.indexOf('Skizze 1 · Bewegung'));
+assert.doesNotMatch(sketch1, />A<\/text>|>B<\/text>|>M<\/text>|>Δx<\/text>/);
+assert.equal((html.match(/class="derivation-badge"/g) || []).length, 4);
 
 // Wortlaute (Stichproben)
 assert.match(html, /<strong>Betrachte<\/strong> die beiden Skizzen\. <strong>Wähle<\/strong> alle Aussagen aus, die zur Bewegung der Hammerkugel passen\./);

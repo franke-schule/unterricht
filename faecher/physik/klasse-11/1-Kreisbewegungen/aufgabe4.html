@@ -10,8 +10,8 @@
     <link rel="stylesheet" href="kraefte-bewegung.css?v=20260901b">
     <link rel="stylesheet" href="winkelgeschwindigkeit-kreisbewegung.css?v=20260912a">
     <link rel="stylesheet" href="components/physics-notation.css?v=20260911a">
-    <link rel="stylesheet" href="zentripetalkraft.css?v=20260915a">
-    <script type="module" src="zentripetalkraft.mjs?v=20260915a"></script>
+    <link rel="stylesheet" href="zentripetalkraft.css?v=20260916a">
+    <script type="module" src="zentripetalkraft.mjs?v=20260916a"></script>
   </head>
   <body class="physics-revision-page circular-motion-page">
     <div class="site-backdrop" aria-hidden="true"></div>
@@ -295,11 +295,11 @@
 
           <article class="physics-task-card" aria-labelledby="radius-reason-title">
             <h3 id="radius-reason-title">Aufgabe 4c · Warum braucht der kleine Kreis mehr Kraft?</h3>
-            <figure class="centripetal-figure">
+            <figure class="centripetal-figure centripetal-figure--vectors">
               <svg viewBox="0 0 560 300" role="img" aria-label="Zwei Kreisbahnen um denselben Mittelpunkt mit gleich langen Bögen Δx. Daneben die Vektordreiecke: Auf dem inneren Kreis ist die Geschwindigkeitsänderung Δv etwa doppelt so lang wie auf dem äußeren Kreis.">
                 <defs>
-                  <marker id="reason-speed-arrow" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto" markerUnits="userSpaceOnUse"><path d="M0,0 L0,6 L8,3 z" fill="#2563eb"/></marker>
-                  <marker id="reason-force-arrow" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto" markerUnits="userSpaceOnUse"><path d="M0,0 L0,6 L8,3 z" fill="#dc2626"/></marker>
+                  <marker id="reason-blue" markerUnits="userSpaceOnUse" markerWidth="12" markerHeight="8" refX="7.5" refY="4" orient="auto"><path d="M0,0 L12,4 L0,8 z" fill="#2563eb"/></marker>
+                  <marker id="reason-red" markerUnits="userSpaceOnUse" markerWidth="12" markerHeight="8" refX="7.5" refY="4" orient="auto"><path d="M0,0 L12,4 L0,8 z" fill="#dc2626"/></marker>
                 </defs>
                 <circle cx="200" cy="280" r="4" class="center-point"/>
                 <text x="184" y="272" class="svg-label">M</text>
@@ -311,22 +311,22 @@
                 <circle cx="295.26" cy="225.00" r="5" class="center-point"/>
                 <circle cx="200" cy="60" r="5" class="center-point"/>
                 <circle cx="310.00" cy="89.47" r="5" class="center-point"/>
-                <line x1="200" y1="170" x2="245" y2="170" class="speed-vector" marker-end="url(#reason-speed-arrow)"/>
-                <line x1="295.26" y1="225.00" x2="317.76" y2="263.97" class="speed-vector" marker-end="url(#reason-speed-arrow)"/>
-                <line x1="200" y1="60" x2="245" y2="60" class="speed-vector" marker-end="url(#reason-speed-arrow)"/>
-                <line x1="310.00" y1="89.47" x2="348.97" y2="111.97" class="speed-vector" marker-end="url(#reason-speed-arrow)"/>
+                <line x1="200" y1="170" x2="240.5" y2="170" class="speed-vector" marker-end="url(#reason-blue)"/>
+                <line x1="295.26" y1="225.00" x2="315.51" y2="260.07" class="speed-vector" marker-end="url(#reason-blue)"/>
+                <line x1="200" y1="60" x2="240.5" y2="60" class="speed-vector" marker-end="url(#reason-blue)"/>
+                <line x1="310.00" y1="89.47" x2="345.07" y2="109.72" class="speed-vector" marker-end="url(#reason-blue)"/>
 
                 <circle cx="400" cy="190" r="3" class="center-point"/>
-                <line x1="400" y1="190" x2="460" y2="190" class="speed-vector" marker-end="url(#reason-speed-arrow)"/>
-                <line x1="400" y1="190" x2="430.00" y2="241.96" class="speed-vector" marker-end="url(#reason-speed-arrow)"/>
-                <line x1="460" y1="190" x2="430.00" y2="241.96" class="force-vector" marker-end="url(#reason-force-arrow)"/>
+                <line x1="400" y1="190" x2="455.5" y2="190" class="speed-vector" marker-end="url(#reason-blue)"/>
+                <line x1="400" y1="190" x2="427.75" y2="238.06" class="speed-vector" marker-end="url(#reason-blue)"/>
+                <line x1="460" y1="190" x2="432.25" y2="238.06" class="force-vector" marker-end="url(#reason-red)"/>
                 <text x="452" y="222" class="svg-label vector-force-label">Δv</text>
                 <text x="430" y="265" text-anchor="middle" class="svg-label">innerer Kreis</text>
 
                 <circle cx="400" cy="60" r="3" class="center-point"/>
-                <line x1="400" y1="60" x2="460" y2="60" class="speed-vector" marker-end="url(#reason-speed-arrow)"/>
-                <line x1="400" y1="60" x2="451.96" y2="90" class="speed-vector" marker-end="url(#reason-speed-arrow)"/>
-                <line x1="460" y1="60" x2="451.96" y2="90" class="force-vector" marker-end="url(#reason-force-arrow)"/>
+                <line x1="400" y1="60" x2="455.5" y2="60" class="speed-vector" marker-end="url(#reason-blue)"/>
+                <line x1="400" y1="60" x2="448.06" y2="87.75" class="speed-vector" marker-end="url(#reason-blue)"/>
+                <line x1="460" y1="60" x2="453.13" y2="85.65" class="force-vector" marker-end="url(#reason-red)"/>
                 <text x="465" y="80" class="svg-label vector-force-label">Δv</text>
                 <text x="430" y="112" text-anchor="middle" class="svg-label">äußerer Kreis</text>
               </svg>
@@ -345,97 +345,175 @@
           <div class="physics-card-heading">
             <p class="eyebrow">Verstehen</p>
             <h2>Wie groß ist die Zentripetalkraft?</h2>
-            <p>Du leitest her, wie groß die Zentripetalkraft ist. Dafür brauchst du das Grundgesetz aus Wiederholung 2: F · Δt = m · Δv.</p>
+            <p>Damit sich ein Körper gleichförmig auf einer Kreisbahn bewegt, muss sich die Richtung seiner Geschwindigkeit ständig ändern. Die dafür nötige Zentripetalkraft zeigt immer zum Kreismittelpunkt. Leite jetzt Schritt für Schritt eine Formel für ihren Betrag her.</p>
           </div>
 
-          <article class="physics-task-card" aria-labelledby="triangle-title">
-            <h3 id="triangle-title">Aufgabe 5 · Das Vektordreieck</h3>
-            <figure class="centripetal-figure centripetal-figure--triangle">
-              <svg viewBox="0 0 680 300" role="img" aria-label="Skizze A: Ein Körper läuft auf einem Kreis mit Mittelpunkt M und Radius r in der Zeit Δt von A nach B; dabei dreht sich die Verbindungslinie um den Winkel φ. Skizze B: Die Geschwindigkeitsvektoren v mit Index 1 und v mit Index 2 bilden mit Δv ein gleichschenkliges Dreieck mit dem Winkel φ an der Spitze; Δv zeigt nach unten.">
+          <article class="physics-task-card" aria-labelledby="formula-newton-title">
+            <h3 id="formula-newton-title">Aufgabe 5 · Ausgangspunkt: das Grundgesetz</h3>
+            <p><strong>Setze</strong> aus den Karten die Newton'sche Bewegungsgleichung zusammen, die du aus Wiederholung 2 kennst.</p>
+            <div id="formula-newton" class="formula-builder" aria-label="Newton'sche Bewegungsgleichung"></div>
+            <div class="physics-help-stack">
+              <details><summary>Hilfe 1: Hinweis</summary><p>Das 2. Newton'sche Gesetz verbindet eine Kraft mit einer Änderung der Geschwindigkeit.</p></details>
+              <details><summary>Hilfe 2: Denkansatz</summary><p>Eine Kraft F, die während der Zeit Δt auf einen Körper der Masse m wirkt, ändert seine Geschwindigkeit um Δv.</p></details>
+              <details><summary>Hilfe 3: Teillösung</summary><p>Auf einer Seite stehen die Kraft und die Zeitspanne, auf der anderen die Masse und die Geschwindigkeitsänderung.</p></details>
+            </div>
+          </article>
+
+          <article class="physics-task-card" aria-labelledby="step6-title">
+            <h3 id="step6-title">Aufgabe 6 · Von A nach B</h3>
+            <figure class="centripetal-figure centripetal-figure--vectors centripetal-figure--derivation">
+              <svg viewBox="0 0 640 320" role="img" aria-label="Skizze 1: Ausschnitt einer Kreisbahn mit Mittelpunkt an Stelle 3. Eine Masse läuft von Stelle 1 nach Stelle 2. Radiuspfeile r mit Index 1 und r mit Index 2 beginnen im Mittelpunkt und schließen den Winkel α ein. Die gerade Strecke Δs verbindet Stelle 1 und 2, der orange Bogen an Stelle 4 ist die Bahnstrecke. Tangentiale Geschwindigkeitspfeile v mit Index 1 und v mit Index 2. Skizze 2: v mit Index 1 und v mit Index 2 beginnen im selben Punkt und schließen den Winkel α ein; der rote Pfeil Δv reicht von der Spitze von v mit Index 1 zur Spitze von v mit Index 2.">
                 <defs>
-                  <marker id="triangle-speed-arrow" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto" markerUnits="userSpaceOnUse"><path d="M0,0 L0,6 L8,3 z" fill="#2563eb"/></marker>
-                  <marker id="triangle-force-arrow" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto" markerUnits="userSpaceOnUse"><path d="M0,0 L0,6 L8,3 z" fill="#dc2626"/></marker>
+                  <marker id="deriv-blue" markerUnits="userSpaceOnUse" markerWidth="12" markerHeight="8" refX="7.5" refY="4" orient="auto"><path d="M0,0 L12,4 L0,8 z" fill="#2563eb"/></marker>
+                  <marker id="deriv-red" markerUnits="userSpaceOnUse" markerWidth="12" markerHeight="8" refX="7.5" refY="4" orient="auto"><path d="M0,0 L12,4 L0,8 z" fill="#dc2626"/></marker>
+                  <marker id="deriv-gray" markerUnits="userSpaceOnUse" markerWidth="12" markerHeight="8" refX="7.5" refY="4" orient="auto"><path d="M0,0 L12,4 L0,8 z" fill="#475569"/></marker>
+                  <marker id="deriv-dark" markerUnits="userSpaceOnUse" markerWidth="12" markerHeight="8" refX="7.5" refY="4" orient="auto"><path d="M0,0 L12,4 L0,8 z" fill="#0f172a"/></marker>
                 </defs>
-                <circle cx="170" cy="240" r="170" class="orbit"/>
-                <circle cx="170" cy="240" r="4" class="center-point"/>
-                <text x="176" y="236" class="svg-label">M</text>
-                <line x1="170" y1="240" x2="85" y2="92.78" class="radius-line"/>
-                <line x1="170" y1="240" x2="255" y2="92.78" class="radius-line"/>
-                <text x="118" y="180" class="svg-label">r</text>
-                <text x="215" y="180" class="svg-label">r</text>
-                <path d="M 155 218 A 30 30 0 0 1 185 218" class="angle-arc"/>
-                <text x="170" y="205" text-anchor="middle" class="svg-label">φ</text>
-                <line x1="85" y1="92.78" x2="255" y2="92.78" class="radius-line"/>
-                <text x="170" y="116" text-anchor="middle" class="svg-label">Δx = v<tspan baseline-shift="sub" font-size="12">B</tspan> · Δt</text>
-                <circle cx="85" cy="92.78" r="5" class="center-point"/>
-                <circle cx="255" cy="92.78" r="5" class="center-point"/>
-                <text x="70" y="100" class="svg-label">A</text>
-                <text x="262" y="100" class="svg-label">B</text>
-                <line x1="85" y1="92.78" x2="154.28" y2="52.78" class="speed-vector" marker-end="url(#triangle-speed-arrow)"/>
-                <text x="133" y="32" class="svg-label vector-speed-label">v<tspan baseline-shift="sub" font-size="12">1</tspan></text>
-                <line x1="255" y1="92.78" x2="324.28" y2="132.78" class="speed-vector" marker-end="url(#triangle-speed-arrow)"/>
-                <text x="300" y="150" class="svg-label vector-speed-label">v<tspan baseline-shift="sub" font-size="12">2</tspan></text>
-                <text x="170" y="290" text-anchor="middle" class="svg-label">A</text>
+                <path d="M 41.44 116.79 A 200 200 0 0 1 298.56 116.79" class="orbit"/>
+                <path d="M 101.6 82.06 A 200 200 0 0 1 238.4 82.06" class="derivation-arc"/>
+                <line x1="168.63" y1="266.24" x2="104.85" y2="90.99" class="radius-vector"/>
+                <line x1="171.37" y1="266.24" x2="235.15" y2="90.99" class="radius-vector"/>
+                <line x1="106.6" y1="82.06" x2="228.9" y2="82.06" class="chord-vector"/>
+                <line x1="106.29" y1="80.35" x2="167.84" y2="57.95" class="speed-vector" marker-end="url(#deriv-blue)"/>
+                <line x1="243.1" y1="83.77" x2="304.65" y2="106.17" class="speed-vector" marker-end="url(#deriv-blue)"/>
+                <circle cx="170" cy="270" r="4" class="center-point"/>
+                <circle cx="101.6" cy="82.06" r="5" class="center-point"/>
+                <circle cx="238.4" cy="82.06" r="5" class="center-point"/>
+                <path d="M 158.37 238.05 A 34 34 0 0 1 181.63 238.05" class="angle-arc-line"/>
+                <text x="170" y="230" text-anchor="middle" class="svg-label">α</text>
+                <text x="124" y="182" text-anchor="end" class="svg-label">r<tspan baseline-shift="sub" font-size="12">1</tspan></text>
+                <text x="216" y="182" class="svg-label">r<tspan baseline-shift="sub" font-size="12">2</tspan></text>
+                <text x="170" y="102" text-anchor="middle" class="svg-label">Δs</text>
+                <text x="134" y="53" text-anchor="middle" class="svg-label vector-speed-label">v<tspan baseline-shift="sub" font-size="12">1</tspan></text>
+                <text x="282" y="124" text-anchor="middle" class="svg-label vector-speed-label">v<tspan baseline-shift="sub" font-size="12">2</tspan></text>
+                <g class="derivation-badge" transform="translate(92 69.26)"><circle r="11"/><text text-anchor="middle" dy="4.5">1</text></g>
+                <g class="derivation-badge" transform="translate(248 69.26)"><circle r="11"/><text text-anchor="middle" dy="4.5">2</text></g>
+                <g class="derivation-badge" transform="translate(154 270)"><circle r="11"/><text text-anchor="middle" dy="4.5">3</text></g>
+                <g class="derivation-badge" transform="translate(206.64 62.21)"><circle r="11"/><text text-anchor="middle" dy="4.5">4</text></g>
+                <text x="170" y="312" text-anchor="middle" class="svg-label">Skizze 1 · Bewegung</text>
 
-                <circle cx="470" cy="150" r="3" class="center-point"/>
-                <line x1="470" y1="150" x2="599.9" y2="75" class="speed-vector" marker-end="url(#triangle-speed-arrow)"/>
-                <text x="585" y="58" class="svg-label vector-speed-label">v<tspan baseline-shift="sub" font-size="12">1</tspan></text>
-                <line x1="470" y1="150" x2="599.9" y2="225" class="speed-vector" marker-end="url(#triangle-speed-arrow)"/>
-                <text x="585" y="243" class="svg-label vector-speed-label">v<tspan baseline-shift="sub" font-size="12">2</tspan></text>
-                <line x1="599.9" y1="75" x2="599.9" y2="225" class="force-vector" marker-end="url(#triangle-force-arrow)"/>
-                <text x="655" y="153" class="svg-label vector-force-label">Δv</text>
-                <path d="M 500 135 A 42 42 0 0 1 500 165" class="angle-arc"/>
-                <text x="490" y="153" text-anchor="middle" class="svg-label">φ</text>
-                <text x="533" y="290" text-anchor="middle" class="svg-label">B</text>
+                <circle cx="420" cy="150" r="4" class="center-point"/>
+                <line x1="423.76" y1="148.63" x2="556.73" y2="100.24" class="speed-vector" marker-end="url(#deriv-blue)"/>
+                <line x1="423.76" y1="151.37" x2="556.73" y2="199.76" class="speed-vector" marker-end="url(#deriv-blue)"/>
+                <line x1="560.95" y1="98.7" x2="560.95" y2="196.8" class="force-vector" marker-end="url(#deriv-red)"/>
+                <path d="M 453.83 137.69 A 36 36 0 0 1 453.83 162.31" class="angle-arc-line"/>
+                <text x="466" y="155" class="svg-label">α</text>
+                <text x="485" y="106" text-anchor="middle" class="svg-label vector-speed-label">v<tspan baseline-shift="sub" font-size="12">1</tspan></text>
+                <text x="485" y="206" text-anchor="middle" class="svg-label vector-speed-label">v<tspan baseline-shift="sub" font-size="12">2</tspan></text>
+                <text x="572" y="155" class="svg-label vector-force-label">Δv</text>
+                <text x="500" y="312" text-anchor="middle" class="svg-label">Skizze 2 · Konstruktion von Δv</text>
               </svg>
-              <figcaption>Herleitung der Zentripetalkraft (Winkel φ zur Verdeutlichung vergrößert gezeichnet)</figcaption>
+              <figcaption>Winkel α zur Verdeutlichung vergrößert gezeichnet</figcaption>
             </figure>
-            <p><strong>Ergänze</strong> die Lücken mit Hilfe der Skizzen A und B.</p>
-            <div id="triangle-cloze" class="physics-cloze" aria-label="Lückentext zum Vektordreieck"></div>
-            <div class="cloze-actions">
-              <button class="physics-primary-button" id="check-triangle-cloze" type="button">Lückentext prüfen</button>
-              <button class="secondary-action" id="reset-triangle-cloze" type="button">Zurücksetzen</button>
-            </div>
-            <div id="triangle-cloze-feedback" class="physics-feedback" role="status" aria-live="polite" hidden></div>
+            <p>Eine Masse m bewegt sich gleichförmig auf einer Kreisbahn mit dem Radius r um den Mittelpunkt M. In der kurzen Zeit Δt läuft sie von A nach B. Beide Geschwindigkeitspfeile haben den Betrag v<sub>B</sub>.</p>
+
+            <h4 id="label-grid-title">Aufgabe 6a · Skizze beschriften</h4>
+            <p><strong>Ordne</strong> jeder markierten Stelle in Skizze 1 die passende Beschriftung zu.</p>
+            <div id="label-grid" class="physics-choice-grid" aria-label="Zuordnung der Beschriftungen zu vier markierten Stellen"></div>
+            <button class="physics-primary-button" id="check-labels" type="button">Beschriftung prüfen</button>
+            <div id="labels-feedback" class="physics-feedback" role="status" aria-live="polite" hidden></div>
             <div class="physics-help-stack">
-              <details><summary>Hilfe 1: Hinweis</summary><p>Bei einer gleichförmigen Kreisbewegung bleibt der Betrag der Geschwindigkeit gleich. Was ändert sich dann?</p></details>
-              <details><summary>Hilfe 2: Denkansatz</summary><p>Ein Dreieck mit zwei gleich langen Seiten heißt gleichschenklig. Dreiecke mit gleichen Winkeln heißen ähnlich.</p></details>
-              <details><summary>Hilfe 3: Teillösung</summary><p>Die ersten beiden Lücken lauten „gleichen“ und „Richtung“. Δv zeigt wie die Zentripetalkraft zum Kreismittelpunkt.</p></details>
+              <details><summary>Hilfe 1: Hinweis</summary><p>Die Pfeile v<sub>1</sub> und v<sub>2</sub> zeigen, in welche Richtung sich die Masse bewegt.</p></details>
+              <details><summary>Hilfe 2: Denkansatz</summary><p>Die Masse startet dort, wo v<sub>1</sub> eingezeichnet ist. Die Radiuspfeile beginnen im Mittelpunkt.</p></details>
+              <details><summary>Hilfe 3: Teillösung</summary><p>Stelle 3 ist M. Stelle 4 ist das Stück der Kreisbahn, das die Masse wirklich zurücklegt.</p></details>
+            </div>
+
+            <section class="physics-semantic-task" aria-labelledby="dv-construction-title">
+              <h4 id="dv-construction-title">Aufgabe 6b · Δv konstruieren</h4>
+              <p><strong>Beschreibe</strong>, wie der Pfeil Δv in Skizze 2 aus den Pfeilen v<sub>1</sub> und v<sub>2</sub> aus Skizze 1 konstruiert wird.</p>
+              <label for="dv-construction-answer">Beschreibung der Konstruktion von Δv</label>
+              <textarea id="dv-construction-answer" maxlength="3000" rows="6" placeholder="Man verschiebt …"></textarea>
+              <div class="physics-semantic-task__actions"><span id="dv-construction-count">0 von 3000 Zeichen</span><button id="check-dv-construction" type="button">Antwort prüfen</button></div>
+              <p class="privacy-note"><strong>Hinweis:</strong> Gib keine personenbezogenen Informationen ein. Deine Antwort wird zur automatischen Auswertung an den Skriptserver und dort an ein KI-System übertragen.</p>
+              <div id="dv-construction-feedback" class="physics-semantic-feedback" role="status" aria-live="polite" hidden></div>
+              <div class="physics-help-stack">
+                <details><summary>Hilfe 1: Hinweis</summary><p>Vergleiche, wo v<sub>1</sub> und v<sub>2</sub> in Skizze 1 und wo sie in Skizze 2 beginnen.</p></details>
+                <details><summary>Hilfe 2: Denkansatz</summary><p>In Skizze 2 beginnen beide Pfeile im selben Punkt. Achte darauf, wo Δv beginnt und wo es endet.</p></details>
+                <details><summary>Hilfe 3: Teillösung</summary><p>Teillösung: v<sub>2</sub> wird parallel verschoben, bis er im selben Punkt wie v<sub>1</sub> beginnt. Beschreibe nun noch, wie Δv eingezeichnet wird.</p></details>
+              </div>
+            </section>
+
+            <section class="physics-semantic-task" aria-labelledby="approx-title">
+              <h4 id="approx-title">Aufgabe 6c · Bogen oder Strecke?</h4>
+              <p><strong>Begründe</strong> knapp, warum man die Bahnstrecke Δx mit der Strecke Δs gleichsetzen darf, wenn Δt sehr klein ist.</p>
+              <label for="approx-answer">Begründung zur Näherung</label>
+              <textarea id="approx-answer" maxlength="3000" rows="6"></textarea>
+              <div class="physics-semantic-task__actions"><span id="approx-count">0 von 3000 Zeichen</span><button id="check-approx" type="button">Antwort prüfen</button></div>
+              <p class="privacy-note"><strong>Hinweis:</strong> Gib keine personenbezogenen Informationen ein. Deine Antwort wird zur automatischen Auswertung an den Skriptserver und dort an ein KI-System übertragen.</p>
+              <div id="approx-feedback" class="physics-semantic-feedback" role="status" aria-live="polite" hidden></div>
+              <div class="physics-help-stack">
+                <details><summary>Hilfe 1: Hinweis</summary><p>In Skizze 1 ist der Winkel α zur Verdeutlichung sehr groß gezeichnet.</p></details>
+                <details><summary>Hilfe 2: Denkansatz</summary><p>Stell dir vor, B rückt immer näher an A heran. Wie unterscheiden sich dann der orange Bogen und die Strecke Δs?</p></details>
+                <details><summary>Hilfe 3: Teillösung</summary><p>Teillösung: Je kleiner Δt ist, desto kleiner ist der Winkel α und desto weniger ist der Bogen gekrümmt.</p></details>
+              </div>
+            </section>
+          </article>
+
+          <article class="physics-task-card" aria-labelledby="ratio-delta-title">
+            <h3 id="ratio-delta-title">Aufgabe 7 · Ein Ausdruck für Δv</h3>
+            <p>Das Dreieck MAB aus Skizze 1 und das Dreieck aus Skizze 2 sind ähnlich. Die Begründung findest du in „Für Schnelle“ am Ende dieses Reiters.</p>
+
+            <h4 id="ratio-choice-title">Aufgabe 7a · Seitenverhältnis</h4>
+            <p><strong>Wähle</strong> das Seitenverhältnis aus, das zu <span class="physics-fraction" role="img" aria-label="Delta v durch Delta s"><span class="physics-fraction__numerator">Δv</span><span class="physics-fraction__denominator">Δs</span></span> passt.</p>
+            <fieldset class="unit-choice" id="ratio-choice">
+              <legend><span class="physics-fraction" role="img" aria-label="Delta v durch Delta s"><span class="physics-fraction__numerator">Δv</span><span class="physics-fraction__denominator">Δs</span></span> = …</legend>
+              <label class="unit-choice__option"><input type="radio" name="ratio-choice" value="vr"><span class="physics-fraction" role="img" aria-label="v mit Index B durch r"><span class="physics-fraction__numerator">v<sub>B</sub></span><span class="physics-fraction__denominator">r</span></span></label>
+              <label class="unit-choice__option"><input type="radio" name="ratio-choice" value="rv"><span class="physics-fraction" role="img" aria-label="r durch v mit Index B"><span class="physics-fraction__numerator">r</span><span class="physics-fraction__denominator">v<sub>B</sub></span></span></label>
+              <label class="unit-choice__option"><input type="radio" name="ratio-choice" value="tr"><span class="physics-fraction" role="img" aria-label="Delta t durch r"><span class="physics-fraction__numerator">Δt</span><span class="physics-fraction__denominator">r</span></span></label>
+              <label class="unit-choice__option"><input type="radio" name="ratio-choice" value="vt"><span class="physics-fraction" role="img" aria-label="v mit Index B durch Delta t"><span class="physics-fraction__numerator">v<sub>B</sub></span><span class="physics-fraction__denominator">Δt</span></span></label>
+            </fieldset>
+            <button class="physics-primary-button" id="check-ratio" type="button">Verhältnis prüfen</button>
+            <div id="ratio-feedback" class="physics-feedback" role="status" aria-live="polite" hidden></div>
+
+            <h4 id="formula-delta-v-title">Aufgabe 7b · Formel für Δv</h4>
+            <p><strong>Ersetze</strong> Δs durch Δx = v<sub>B</sub> · Δt und <strong>setze</strong> die Formel für Δv zusammen.</p>
+            <div id="formula-delta-v" class="formula-builder" aria-label="Formel für Δv"></div>
+
+            <div class="physics-help-stack">
+              <details><summary>Hilfe 1: Hinweis</summary><p>Entsprechende Seiten: Δv gehört zu Δs, v<sub>B</sub> gehört zu r.</p></details>
+              <details><summary>Hilfe 2: Denkansatz</summary><p>Multipliziere <span class="physics-fraction" role="img" aria-label="Delta v durch Delta s"><span class="physics-fraction__numerator">Δv</span><span class="physics-fraction__denominator">Δs</span></span> = <span class="physics-fraction" role="img" aria-label="v mit Index B durch r"><span class="physics-fraction__numerator">v<sub>B</sub></span><span class="physics-fraction__denominator">r</span></span> mit Δs. Du erhältst Δv = <span class="physics-fraction" role="img" aria-label="v mit Index B mal Delta s durch r"><span class="physics-fraction__numerator">v<sub>B</sub> · Δs</span><span class="physics-fraction__denominator">r</span></span>.</p></details>
+              <details><summary>Hilfe 3: Teillösung</summary><p>Setze Δs = v<sub>B</sub> · Δt ein: Δv = <span class="physics-fraction" role="img" aria-label="v mit Index B mal v mit Index B mal Delta t durch r"><span class="physics-fraction__numerator">v<sub>B</sub> · v<sub>B</sub> · Δt</span><span class="physics-fraction__denominator">r</span></span>. Fasse v<sub>B</sub> · v<sub>B</sub> zusammen.</p></details>
             </div>
           </article>
 
-          <article class="physics-task-card" aria-labelledby="ratio-title">
-            <h3 id="ratio-title">Aufgabe 6 · Seitenverhältnisse nutzen</h3>
-            <p><strong>Wähle</strong> alle Gleichungen aus, die aus der Ähnlichkeit der beiden Dreiecke folgen.</p>
-            <div id="ratio-quiz" class="physics-multiple-choice" aria-label="Multiple-Choice-Aufgabe zu den Seitenverhältnissen"></div>
-            <div class="physics-help-stack">
-              <details><summary>Hilfe 1: Hinweis</summary><p>Bei ähnlichen Dreiecken ist das Verhältnis „kurze Seite geteilt durch Schenkel“ in beiden Dreiecken gleich.</p></details>
-              <details><summary>Hilfe 2: Denkansatz</summary><p>Vektordreieck: kurze Seite Δv, Schenkel v<sub>B</sub>. Dreieck AMB: kurze Seite ungefähr v<sub>B</sub> · Δt, Schenkel r.</p></details>
-              <details><summary>Hilfe 3: Teillösung</summary><p>Es gilt <span class="physics-fraction" role="img" aria-label="Delta v durch v mit Index B"><span class="physics-fraction__numerator">Δv</span><span class="physics-fraction__denominator">v<sub>B</sub></span></span> = <span class="physics-fraction" role="img" aria-label="v mit Index B mal Delta t durch r"><span class="physics-fraction__numerator">v<sub>B</sub> · Δt</span><span class="physics-fraction__denominator">r</span></span>. Multipliziere beide Seiten mit v<sub>B</sub>.</p></details>
-            </div>
-          </article>
-
-          <article class="physics-task-card" aria-labelledby="formula-speed-title">
-            <h3 id="formula-speed-title">Aufgabe 7 · Formel mit der Bahngeschwindigkeit</h3>
-            <p>Nach dem Grundgesetz gilt F<sub>Z</sub> · Δt = m · Δv. <strong>Setze</strong> Δv aus Aufgabe 6 ein, <strong>teile</strong> durch Δt und <strong>setze</strong> die Formel für F<sub>Z</sub> zusammen.</p>
+          <article class="physics-task-card" aria-labelledby="formula-final-title">
+            <h3 id="formula-final-title">Aufgabe 8 · „A little bit of algebra …“</h3>
+            <h4 id="formula-centripetal-speed-title">Aufgabe 8a · Formel mit v<sub>B</sub></h4>
+            <p>Im Grundgesetz ist F hier die Zentripetalkraft F<sub>Z</sub>. <strong>Setze</strong> Δv aus Aufgabe 7 in F<sub>Z</sub> · Δt = m · Δv <strong>ein</strong>, <strong>stelle</strong> nach F<sub>Z</sub> <strong>um</strong> und <strong>setze</strong> die Formel zusammen.</p>
             <div id="formula-centripetal-speed" class="formula-builder" aria-label="Formel für die Zentripetalkraft mit der Bahngeschwindigkeit"></div>
             <p id="formula-speed-remember" class="blue-remember" hidden>Bewegt sich ein Körper der Masse m mit der Bahngeschwindigkeit v<sub>B</sub> auf einer Kreisbahn mit dem Radius r, dann hat die nötige Zentripetalkraft den Betrag F<sub>Z</sub> = <span class="physics-fraction" role="img" aria-label="m mal v mit Index B zum Quadrat durch r"><span class="physics-fraction__numerator">m · v<sub>B</sub>²</span><span class="physics-fraction__denominator">r</span></span>.</p>
             <div class="physics-help-stack">
-              <details><summary>Hilfe 1: Hinweis</summary><p>Ersetze in F<sub>Z</sub> · Δt = m · Δv das Δv durch den Ausdruck aus Aufgabe 6.</p></details>
+              <details><summary>Hilfe 1: Hinweis</summary><p>Ersetze in F<sub>Z</sub> · Δt = m · Δv das Δv durch den Ausdruck aus Aufgabe 7.</p></details>
               <details><summary>Hilfe 2: Denkansatz</summary><p>Du erhältst F<sub>Z</sub> · Δt = m · <span class="physics-fraction" role="img" aria-label="v mit Index B zum Quadrat mal Delta t durch r"><span class="physics-fraction__numerator">v<sub>B</sub>² · Δt</span><span class="physics-fraction__denominator">r</span></span>. Was passiert, wenn du beide Seiten durch Δt teilst?</p></details>
               <details><summary>Hilfe 3: Teillösung</summary><p>Δt fällt weg. Im Zähler stehen m und v<sub>B</sub>², im Nenner steht r.</p></details>
             </div>
-          </article>
 
-          <article class="physics-task-card" aria-labelledby="formula-omega-title">
-            <h3 id="formula-omega-title">Aufgabe 8 · Formel mit der Winkelgeschwindigkeit</h3>
-            <p>Aus Aufgabe 1 zur Winkelgeschwindigkeit kennst du v<sub>B</sub> = ω · r. <strong>Ersetze</strong> v<sub>B</sub> in der Formel und <strong>setze</strong> die zweite Formel für F<sub>Z</sub> zusammen.</p>
+            <h4 id="formula-centripetal-omega-title">Aufgabe 8b · Finale</h4>
+            <p>Aus Aufgabe 1 zur Winkelgeschwindigkeit kennst du v<sub>B</sub> = ω · r. <strong>Ersetze</strong> v<sub>B</sub> und <strong>setze</strong> die zweite Formel zusammen.</p>
             <div id="formula-centripetal-omega" class="formula-builder" aria-label="Formel für die Zentripetalkraft mit der Winkelgeschwindigkeit"></div>
-            <p id="formula-omega-remember" class="blue-remember" hidden>Mit v<sub>B</sub> = ω · r gilt ebenso: F<sub>Z</sub> = m · ω² · r.</p>
+            <p id="formula-omega-remember" class="blue-remember" hidden>Merke: Für den Betrag der Zentripetalkraft gilt F<sub>Z</sub> = <span class="physics-fraction" role="img" aria-label="m mal v mit Index B zum Quadrat durch r"><span class="physics-fraction__numerator">m · v<sub>B</sub>²</span><span class="physics-fraction__denominator">r</span></span> = m · ω² · r.</p>
+            <p class="notebook-reminder" id="formula-omega-notebook-reminder" hidden><strong>Notiere beide Formeln im Merkkasten deines Hefts.</strong></p>
             <div class="physics-help-stack">
               <details><summary>Hilfe 1: Hinweis</summary><p>Setze (ω · r) an die Stelle von v<sub>B</sub> ein.</p></details>
               <details><summary>Hilfe 2: Denkansatz</summary><p>F<sub>Z</sub> = <span class="physics-fraction" role="img" aria-label="m mal Omega mal r zum Quadrat durch r"><span class="physics-fraction__numerator">m · (ω · r)²</span><span class="physics-fraction__denominator">r</span></span> = <span class="physics-fraction" role="img" aria-label="m mal Omega zum Quadrat mal r zum Quadrat durch r"><span class="physics-fraction__numerator">m · ω² · r²</span><span class="physics-fraction__denominator">r</span></span>. Was kannst du kürzen?</p></details>
               <details><summary>Hilfe 3: Teillösung</summary><p>Ein r kürzt sich weg. Übrig bleiben m, ω² und r als Produkt.</p></details>
+            </div>
+          </article>
+
+          <article class="physics-task-card" aria-labelledby="similarity-title">
+            <h3 id="similarity-title">Für Schnelle (optional) · Warum sind die Dreiecke ähnlich?</h3>
+            <section class="physics-semantic-task" aria-labelledby="similarity-question-title">
+              <p id="similarity-question-title"><strong>Begründe</strong> mit einem Ähnlichkeitssatz, warum das Dreieck MAB aus Skizze 1 und das Dreieck aus Skizze 2 ähnlich sind.</p>
+              <label for="similarity-answer">Begründung der Ähnlichkeit</label>
+              <textarea id="similarity-answer" maxlength="3000" rows="6"></textarea>
+              <div class="physics-semantic-task__actions"><span id="similarity-count">0 von 3000 Zeichen</span><button id="check-similarity" type="button">Antwort prüfen</button></div>
+              <p class="privacy-note"><strong>Hinweis:</strong> Gib keine personenbezogenen Informationen ein. Deine Antwort wird zur automatischen Auswertung an den Skriptserver und dort an ein KI-System übertragen.</p>
+              <div id="similarity-feedback" class="physics-semantic-feedback" role="status" aria-live="polite" hidden></div>
+            </section>
+            <div class="physics-help-stack">
+              <details><summary>Hilfe 1: Hinweis</summary><p>Zwei Dreiecke sind ähnlich, wenn zwei Winkel übereinstimmen (WW) oder wenn zwei Seitenverhältnisse und der eingeschlossene Winkel übereinstimmen (SWS).</p></details>
+              <details><summary>Hilfe 2: Denkansatz</summary><p>Beide Dreiecke haben zwei gleich lange Seiten. Die Geschwindigkeitspfeile stehen senkrecht auf den Radien: Dreht sich der Radius um α, dreht sich auch der Geschwindigkeitspfeil um α.</p></details>
+              <details><summary>Hilfe 3: Teillösung</summary><p>Teillösung: Beide Dreiecke sind gleichschenklig und haben zwischen den Schenkeln denselben Winkel α. Nenne jetzt noch den passenden Ähnlichkeitssatz.</p></details>
             </div>
           </article>
 
@@ -453,16 +531,20 @@
 
           <article class="physics-task-card" aria-labelledby="role-title">
             <h3 id="role-title">Aufgabe 9 · Wer hält den Körper auf der Kreisbahn?</h3>
-            <p><strong>Ordne</strong> jeder Kreisbewegung die reale Kraft zu, die den Körper zum Kreismittelpunkt zieht.</p>
-            <div id="role-grid" class="physics-choice-grid" aria-label="Zuordnung der Kräfte zu fünf Situationen"></div>
+            <p>Jede Kreisbewegung braucht eine Kraft zum Kreismittelpunkt. Welche Kraft das ist, hängt von der Situation ab.</p>
+            <p><strong>Beantworte</strong> für jede Situation die Leitfrage „Welche Kraft wirkt hier als Zentripetalkraft?“ und <strong>wähle</strong> die passende Kraft aus.</p>
+            <div id="role-grid" class="physics-choice-grid" aria-label="Zuordnung der Kräfte zu sechs Situationen"></div>
             <button class="physics-primary-button" id="check-role-matching" type="button">Zuordnung prüfen</button>
             <div id="role-feedback" class="physics-feedback" role="status" aria-live="polite" hidden></div>
-            <p id="role-remember" class="blue-remember" hidden>Die Zentripetalkraft ist keine eigene Kraftart, sondern eine Rolle: Eine reale Kraft – zum Beispiel Seilkraft, Haftreibungskraft oder Gravitationskraft – oder die Resultierende aus mehreren Kräften zeigt zum Kreismittelpunkt und hält den Körper auf der Kreisbahn.</p>
+            <p id="role-remember" class="blue-remember" hidden>Bewegt sich ein Körper auf einer Kreisbahn, muss eine Kraft oder müssen mehrere Kräfte zusammen als Zentripetalkraft wirken. Die Zentripetalkraft ist keine eigene Kraftart: Seilkraft, Haftreibungskraft, Gravitationskraft, elektrische Kraft oder Normalkraft können diese Rolle übernehmen. Nur wenn eine einzige Kraft zum Kreismittelpunkt wirkt, darf man sie mit F<sub>Z</sub> gleichsetzen.</p>
             <div class="physics-help-stack">
-              <details><summary>Hilfe 1: Hinweis</summary><p>Frage dich: Welcher Gegenstand ist mit dem kreisenden Körper verbunden oder berührt ihn?</p></details>
-              <details><summary>Hilfe 2: Denkansatz</summary><p>Nur eine Kraft, die zum Kreismittelpunkt zeigt, kann einen Körper auf der Kreisbahn halten. Für einen ruhenden Beobachter gibt es keine Kraft, die nach außen zieht.</p></details>
-              <details><summary>Hilfe 3: Teillösung</summary><p>Beim Hammerwurf ist es die Kraft des Drahtseils, beim Auto die Haftreibungskraft. Überlege die übrigen drei Situationen genauso.</p></details>
+              <details><summary>Hilfe 1: Hinweis</summary><p>Frage dich: Was berührt den Körper oder ist mit ihm verbunden? Oder wirkt eine Kraft ohne Berührung, wie die Gravitationskraft?</p></details>
+              <details><summary>Hilfe 2: Denkansatz</summary><p>Nur eine Kraft zum Kreismittelpunkt kann einen Körper auf der Kreisbahn halten. Eine Kraft nach außen gibt es für einen ruhenden Beobachter nicht.</p></details>
+              <details><summary>Hilfe 3: Teillösung</summary><p>Beim Mond ist es die Gravitationskraft, beim Hammerwurf die Seilkraft. Überlege die übrigen vier Situationen genauso.</p></details>
             </div>
+
+            <p><strong>Wähle</strong> jeweils alle passenden Antworten <strong>aus</strong>.</p>
+            <div id="role-quiz" class="physics-multiple-choice" aria-label="Multiple-Choice-Aufgabe zum Gleichsetzen mit der Zentripetalkraft"></div>
           </article>
 
           <article class="physics-task-card" aria-labelledby="misconception-title">
@@ -478,11 +560,13 @@
               <label for="task11-answer">Zentripetalkraft</label>
               <div class="physics-number-controls">
                 <input id="task11-answer" inputmode="decimal" autocomplete="off">
-                <fieldset class="unit-choice" id="task11-unit" data-unit-choice>
-                  <legend class="sr-only">Einheit der Zentripetalkraft auswählen</legend>
-                  <label class="unit-choice__option"><input type="radio" name="task11-unit" value="N">N</label>
-                  <label class="unit-choice__option"><input type="radio" name="task11-unit" value="kN">kN</label>
-                </fieldset>
+                <select id="task11-unit" aria-label="Einheit der Zentripetalkraft">
+                  <option value="">Einheit</option>
+                  <option value="N">N</option>
+                  <option value="kN">kN</option>
+                  <option value="kg">kg</option>
+                  <option value="J">J</option>
+                </select>
               </div>
             </div>
             <button class="physics-primary-button" id="check-task11" type="button">Zentripetalkraft prüfen</button>
@@ -501,11 +585,13 @@
               <label for="task12-answer">Zentripetalkraft</label>
               <div class="physics-number-controls">
                 <input id="task12-answer" inputmode="decimal" autocomplete="off">
-                <fieldset class="unit-choice" id="task12-unit" data-unit-choice>
-                  <legend class="sr-only">Einheit der Zentripetalkraft auswählen</legend>
-                  <label class="unit-choice__option"><input type="radio" name="task12-unit" value="N">N</label>
-                  <label class="unit-choice__option"><input type="radio" name="task12-unit" value="kN">kN</label>
-                </fieldset>
+                <select id="task12-unit" aria-label="Einheit der Zentripetalkraft">
+                  <option value="">Einheit</option>
+                  <option value="N">N</option>
+                  <option value="kN">kN</option>
+                  <option value="kg">kg</option>
+                  <option value="J">J</option>
+                </select>
               </div>
             </div>
             <button class="physics-primary-button" id="check-task12" type="button">Zentripetalkraft prüfen</button>
@@ -524,11 +610,17 @@
               <label for="task13-answer">Größte Geschwindigkeit</label>
               <div class="physics-number-controls">
                 <input id="task13-answer" inputmode="decimal" autocomplete="off">
-                <fieldset class="unit-choice" id="task13-unit" data-unit-choice>
-                  <legend class="sr-only">Einheit der Geschwindigkeit auswählen</legend>
-                  <label class="unit-choice__option"><input type="radio" name="task13-unit" value="m/s"><span class="physics-fraction" role="img" aria-label="Meter pro Sekunde"><span class="physics-fraction__numerator">m</span><span class="physics-fraction__denominator">s</span></span></label>
-                  <label class="unit-choice__option"><input type="radio" name="task13-unit" value="km/h"><span class="physics-fraction" role="img" aria-label="Kilometer pro Stunde"><span class="physics-fraction__numerator">km</span><span class="physics-fraction__denominator">h</span></span></label>
-                </fieldset>
+                <!-- Lehrkraft-Entscheidung: ein natives <option> kann keinen Bruchstrich
+                     darstellen. Nur diese vier Optionstexte zeigen die Einheit deshalb
+                     ausnahmsweise mit Schrägstrich; die Werte (mps/kmh/mps2/m) sowie alle
+                     anderen Texte auf der Seite bleiben von der Ausnahme unberührt. -->
+                <select id="task13-unit" aria-label="Einheit der Geschwindigkeit">
+                  <option value="">Einheit</option>
+                  <option value="mps">m/s</option>
+                  <option value="kmh">km/h</option>
+                  <option value="mps2">m/s²</option>
+                  <option value="m">m</option>
+                </select>
               </div>
             </div>
             <button class="physics-primary-button" id="check-task13" type="button">Geschwindigkeit prüfen</button>
@@ -589,7 +681,7 @@
                   <button class="physics-primary-button" type="submit">Code prüfen</button>
                 </div>
                 <p id="solution-code-message" class="solution-code-message" aria-live="polite"></p>
-                <a id="solution-download-link" class="download-button" href="sicherungsblatt-aufgabe-4-loesungen.pdf?v=20260915a" download hidden>
+                <a id="solution-download-link" class="download-button" href="sicherungsblatt-aufgabe-4-loesungen.pdf?v=20260916a" download hidden>
                   &#8595; Sicherungsblatt herunterladen
                 </a>
               </form>

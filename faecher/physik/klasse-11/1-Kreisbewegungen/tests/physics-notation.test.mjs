@@ -19,11 +19,24 @@ assert.match(notation, /document\.createElement\("strong"\)/);
 assert.match(notationCss, /\.physics-fraction__denominator \{[^}]*border-top/);
 
 // Zusammengesetzte Einheiten werden nie als Schrägstrich im Text ausgegeben.
+//
+// Lehrkraft-Entscheidung (Zentripetalkraft-Zusatzspezifikation, Rückfrage
+// "Einheiten in Aufgabe 13"): Ein natives <option>-Element kann keinen
+// waagerechten Bruchstrich darstellen. Für genau dieses eine Dropdown
+// (select#task13-unit in aufgabe4.html) hat die Lehrkraft eine eng begrenzte
+// Ausnahme vom Schrägstrich-Verbot genehmigt: nur die <option>-Texte dieses
+// Selects dürfen "m/s", "km/h" und "m/s²" anzeigen. Die Werte bleiben
+// mps/kmh/mps2/m; überall sonst auf der Seite (Aufgabentext, Feedback,
+// Hilfen, Sicherungsblatt) stehen Einheiten weiterhin als Bruch. Alle
+// anderen Prüfungen dieser Datei bleiben unverändert wirksam.
 const forbiddenUnit = /(?:^|[\s\d,.(>])(m|km|rad|N)\/(s²|s|h|kg)(?![\w-])/;
 for (const page of pages) {
   const html = read(page);
   assert.match(html, /components\/physics-notation\.css/, `${page} bindet die Notations-CSS nicht ein`);
-  html.split("\n").forEach((line, index) => {
+  const html_for_slash_check = page === "aufgabe4.html"
+    ? html.replace(/<select id="task13-unit"[\s\S]*?<\/select>/, (block) => block.replace(/<option value="[^"]*">[^<]*<\/option>/g, "<option></option>"))
+    : html;
+  html_for_slash_check.split("\n").forEach((line, index) => {
     line.split(/(<[^>]*>)/g).forEach((segment, position) => {
       if (position % 2 === 1) return;
       assert.doesNotMatch(segment, forbiddenUnit, `${page}:${index + 1} enthält eine Einheit mit Schrägstrich`);

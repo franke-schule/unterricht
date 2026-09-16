@@ -54,6 +54,7 @@ export function setupPhysicsSemanticTask({
   minimumLength = 30,
   fallbackMaxPoints = 0,
   evaluationFunction = evaluateSemanticAnswer,
+  shortAnswerHint = "Formuliere eine etwas ausführlichere Beschreibung der beiden Vektoren.",
 }) {
   const textarea = document.getElementById(answerId);
   const button = document.getElementById(buttonId);
@@ -80,7 +81,7 @@ export function setupPhysicsSemanticTask({
           points: 0,
           maxPoints: fallbackMaxPoints,
           strengths: [],
-          missing: ["Formuliere eine etwas ausführlichere Beschreibung der beiden Vektoren."],
+          missing: [shortAnswerHint],
           feedback: ""
         }, feedbackBuilder);
         textarea.focus();

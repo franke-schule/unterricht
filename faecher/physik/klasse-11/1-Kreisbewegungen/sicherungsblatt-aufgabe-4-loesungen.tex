@@ -88,15 +88,16 @@ $r$ bei gleichem $v_{\mathrm B}$ & Je größer $r$, desto kleiner $F_{\mathrm Z}
   \draw[-{Latex},Blue,line width=.8pt] (P) -- ++(-50:18) coordinate (V2) node[below,font=\scriptsize] {$v_{2}$};
   \draw[-{Latex},Navy,line width=.9pt] (V1) -- (V2) node[midway,right,font=\scriptsize] {$\Delta v$};
   \draw[Muted] (P) ++(50:7) arc (50:-50:7);
-  \node[font=\scriptsize] at (4.2,0) {$\varphi$};
+  \node[font=\scriptsize] at (4.2,0) {$\alpha$};
 \end{tikzpicture}
 \end{minipage}\hfill
 \begin{minipage}[t]{0.74\linewidth}
 \vspace{0pt}\small
 \begin{tabularx}{\linewidth}{@{}>{\bfseries}p{27mm}X@{}}
-\mbox{Ähnliche Dreiecke:} & $\dfrac{\Delta v}{v_{\mathrm B}}=\dfrac{v_{\mathrm B}\cdot\Delta t}{r} \;\Rightarrow\; \Delta v=\dfrac{v_{\mathrm B}^{2}\cdot\Delta t}{r}$ \\[0.9mm]
-Grundgesetz: & $F_{\mathrm Z}\cdot\Delta t=m\cdot\Delta v \;\Rightarrow\; F_{\mathrm Z}=\dfrac{m\cdot v_{\mathrm B}^{2}}{r}$ \\[0.9mm]
-Mit $v_{\mathrm B}=\omega\cdot r$: & $F_{\mathrm Z}=m\cdot\omega^{2}\cdot r$
+Grundgesetz: & $F\cdot\Delta t=m\cdot\Delta v$ \\[0.9mm]
+\mbox{Ähnliche Dreiecke:} & $\dfrac{\Delta v}{\Delta s}=\dfrac{v_{\mathrm B}}{r}$ (beide gleichschenklig, gleicher Winkel $\alpha$, SWS) \\[0.9mm]
+Näherung: & (kleines $\Delta t$) \quad $\Delta s\approx\Delta x=v_{\mathrm B}\cdot\Delta t \;\Rightarrow\; \Delta v=\dfrac{v_{\mathrm B}^{2}\cdot\Delta t}{r}$ \\[0.9mm]
+Einsetzen: & $F_{\mathrm Z}=\dfrac{m\cdot v_{\mathrm B}^{2}}{r}$, mit $v_{\mathrm B}=\omega\cdot r$: $F_{\mathrm Z}=m\cdot\omega^{2}\cdot r$
 \end{tabularx}
 \end{minipage}
 
@@ -110,21 +111,22 @@ Mit $v_{\mathrm B}=\omega\cdot r$: & $F_{\mathrm Z}=m\cdot\omega^{2}\cdot r$
 \end{tcolorbox}
 
 \sectiontitle{4 · Wer wirkt als Zentripetalkraft?}
-\small
+\footnotesize
 \rowcolors{2}{Sky}{white}
-\begin{tabularx}{\linewidth}{@{}>{\bfseries}p{50mm} X@{}}
+\begin{tabularx}{\linewidth}{@{}>{\bfseries}p{47mm} X@{}}
 \toprule[0.4pt]
 Situation & Wirkende Kraft \\
 \midrule[0.3pt]
-Hammerwurf & Kraft des Drahtseils auf die Kugel \\
-Kettenkarussell & Kettenkraft zusammen mit der Gewichtskraft \\
-Auto in der Kurve & Haftreibungskraft zwischen Reifen und Straße \\
-Mond um die Erde & Gravitationskraft der Erde \\
-Wäsche in der Schleudertrommel & Kraft der Trommelwand auf die Wäsche \\
+Mond auf seiner Bahn um die Erde & Gravitationskraft \\
+Hammerwurf (von oben betrachtet) & Seilkraft \\
+Auto in einer flachen Kurve & Haftreibungskraft \\
+Elektron um den Atomkern (Bohr) & elektrische Kraft \\
+Wäsche in der Schleudertrommel & Normalkraft der Trommelwand \\
+Kettenkarussell & Kettenkraft und Gewichtskraft zusammen \\
 \bottomrule[0.4pt]
 \end{tabularx}
 \vspace{1mm}
-\colorbox{Gold}{\parbox{\dimexpr\linewidth-2\fboxsep\relax}{\centering\bfseries Zentripetalkraft = Rolle, keine eigene Kraftart · Kraft zu klein $\to$ Bahnradius wird größer}}
+\colorbox{Gold}{\parbox{\dimexpr\linewidth-2\fboxsep\relax}{\small\centering\bfseries Leitfrage: Welche Kraft wirkt hier als Zentripetalkraft? \\ Nur eine einzige Kraft zum Mittelpunkt $\to$ gleichsetzen mit $F_{\mathrm Z}$ · Kraft zu klein $\to$ Bahnradius wird größer}}
 
 \pagefooter{1}
 
@@ -166,7 +168,7 @@ Gesucht: & $v_{\mathrm B}$ \\
 Ansatz: & $v_{\mathrm B}=\sqrt{\dfrac{F_{\mathrm Z}\cdot r}{m}}$ \\[2mm]
 Rechnung: & $v_{\mathrm B}=\sqrt{\dfrac{9\,600\unit{N}\cdot 40\unit{m}}{1200\unit{kg}}}=\sqrt{320}\unitfrac{m}{s}$
 \end{tabularx}}
-\vspace{0.3mm}\hfill\textcolor{Blue}{\bfseries Ergebnis: $\approx 18\unitfrac{m}{s}\approx 64\unitfrac{km}{h}$ \quad 2 gültige Ziffern}
+\vspace{0.3mm}\hfill\textcolor{Blue}{\bfseries Ergebnis: $\approx 18\unitfrac{m}{s}$ \quad ($17{,}89\unitfrac{m}{s}\cdot 3{,}6\approx 64\unitfrac{km}{h}$) \quad 2 gültige Ziffern}
 \end{tcolorbox}}
 
 \pagefooter{2}
