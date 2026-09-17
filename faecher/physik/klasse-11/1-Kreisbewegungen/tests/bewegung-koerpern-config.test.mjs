@@ -45,7 +45,7 @@ assert.match(css, /\.vector-grid-host[\s\S]*?overflow-x: auto/);
 assert.match(css, /\.large-chart[\s\S]*?overflow-x: auto/);
 assert.match(css, /\.physics-revision-panel\[hidden\][\s\S]*?display: none/);
 assert.match(css, /\.physics-task-card[\s\S]*?min-width: 0/);
-assert.match(html, /bewegung-koerpern\.css\?v=20260910a/);
+assert.match(html, /bewegung-koerpern\.css\?v=20260917a/);
 assert.match(html, /bewegung-koerpern\.mjs\?v=20260911a/);
 assert.match(source, /physics-semantic-task\.mjs\?v=20260910a/);
 assert.equal((html.match(/class="physics-number-controls"/g) || []).length, 2);

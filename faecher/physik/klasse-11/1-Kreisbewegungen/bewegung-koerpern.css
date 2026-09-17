@@ -469,16 +469,47 @@
   background: #f8fafc;
 }
 
+.way-hint {
+  margin-top: 12px;
+  border: 1px solid #bfdbfe;
+  border-radius: 10px;
+  padding: 10px 14px;
+  background: #eff6ff;
+  color: #334155;
+}
+
+.way-hint p {
+  margin: 0;
+}
+
+.way-hint ul {
+  margin: 8px 0 0;
+  padding-left: 20px;
+}
+
+.way-hint li + li {
+  margin-top: 4px;
+}
+
+#other-diagram-bank {
+  grid-template-columns: minmax(0, 1fr);
+  justify-items: center;
+}
+
 .diagram-bank-wide {
   grid-template-columns: repeat(4, minmax(0, 1fr));
+  width: 100%;
+  max-width: 900px;
 }
 
 .diagram-bank-wide h4 {
   grid-column: 1 / -1;
+  text-align: center;
 }
 
 .mini-diagram {
   display: grid;
+  justify-items: center;
   gap: 5px;
 }
 
