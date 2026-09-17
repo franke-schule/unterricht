@@ -130,11 +130,21 @@ function checkMatrix(event) {
   else { const labels = { "peaceful-peaceful": "tatsächlich friedlich, berechnet friedlich", "peaceful-hostile": "tatsächlich friedlich, berechnet feindselig", "hostile-peaceful": "tatsächlich feindselig, berechnet friedlich", "hostile-hostile": "tatsächlich feindselig, berechnet feindselig", "peaceful-total": "der Summe der tatsächlich friedlichen Fische", "hostile-total": "der Summe der tatsächlich feindseligen Fische", "predicted-peaceful-total": "der Summe der berechneten friedlichen Fische", "predicted-hostile-total": "der Summe der berechneten feindseligen Fische", total: "der Gesamtzahl der Testfische" }; showFeedback("matrix-feedback", correct ? "wrong" : "incomplete", `${correct} von 9 Feldern stimmen. Prüfe das Feld für ${labels[firstWrong]}. Lies zuerst erwartet, dann berechnet.`); }
   saveState();
 }
+function checkAccuracyValues() {
+  const values = Object.fromEntries(new FormData(document.querySelector("#accuracy-form"))); state.accuracy = values;
+  const countsCorrect = Number(values.correct) === 4 && Number(values.total) === 5;
+  if (countsCorrect && Number(values.percent) === 80) showFeedback("accuracy-values-feedback", "success", "Richtig: 4 von 5 Testfischen entsprechen 80 %.");
+  else if (!values.correct || !values.total || !values.percent) showFeedback("accuracy-values-feedback", "incomplete", "Fülle alle drei Felder aus.");
+  else if (countsCorrect) showFeedback("accuracy-values-feedback", "wrong", "Die Anzahlen stimmen. Rechne den Anteil 4 von 5 noch in Prozent um.");
+  else showFeedback("accuracy-values-feedback", "wrong", "Prüfe die beiden Diagonalfelder der Matrix. Sie liefern die Anzahl richtig klassifizierter Testfische.");
+  saveState();
+}
 function checkAccuracy(event) {
-  event.preventDefault(); const form = event.currentTarget; const values = Object.fromEntries(new FormData(form)); state.accuracy = values; const valuesCorrect = Number(values.correct) === 4 && Number(values.total) === 5 && Number(values.percent) === 80; const judgementCorrect = values.judgement === "correct";
-  if (valuesCorrect && judgementCorrect) showFeedback("accuracy-feedback", "success", "Richtig: 4 von 5 Testfischen entsprechen 80 %. Diese Genauigkeit beschreibt nur diese fünf Testdaten.");
-  else if (valuesCorrect) showFeedback("accuracy-feedback", "wrong", "Die Zahlen stimmen. Prüfe noch die Aussage: Eine Genauigkeit beschreibt das vorliegende Testset, keine Garantie für alle Fische.");
-  else showFeedback("accuracy-feedback", "wrong", "Prüfe die beiden Diagonalfelder der Matrix. Sie liefern die Anzahl richtig klassifizierter Testfische.");
+  event.preventDefault(); const values = Object.fromEntries(new FormData(event.currentTarget)); state.accuracy = values;
+  if (values.judgement === "correct") showFeedback("accuracy-feedback", "success", "Richtig: Diese Genauigkeit beschreibt nur diese fünf Testdaten.");
+  else if (!values.judgement) showFeedback("accuracy-feedback", "incomplete", "Wähle eine Beurteilung aus.");
+  else if (values.judgement === "wrong-training") showFeedback("accuracy-feedback", "wrong", "Noch nicht. Die Genauigkeit wurde mit den fünf Testfischen bestimmt, nicht mit den Trainingsfischen.");
+  else showFeedback("accuracy-feedback", "wrong", "Noch nicht. Eine Genauigkeit beschreibt das vorliegende Testset, keine Garantie für alle Fische.");
   saveState();
 }
 
@@ -182,6 +192,7 @@ if (typeof document !== "undefined") {
   document.querySelector("#classification-form").addEventListener("submit", checkClassification);
   document.querySelector("#matrix-form").addEventListener("submit", checkMatrix);
   document.querySelector("#accuracy-form").addEventListener("submit", checkAccuracy);
+  document.querySelector("#check-accuracy-values").addEventListener("click", checkAccuracyValues);
   document.querySelector("#quiz-form").addEventListener("submit", checkQuiz);
   bindNavigation(); showStep(STEPS.includes(state.activeStep) ? state.activeStep : "test");
   if (state.quizComplete) { markVisited("quiz"); showQuizSummary(); }

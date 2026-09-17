@@ -104,10 +104,10 @@ function renderChoices() {
   document.getElementById("final-choice").innerHTML = [["right", "Klassenname → Tabellenname; zwischen den Klammern steht attribut: datentyp. Einrücken ist freiwillig."], ["wrong-one", "Ein Tabellenschema besteht nur aus dem Tabellennamen und IDs."], ["wrong-two", "Datentypen werden ohne Attributnamen zwischen die Klammern geschrieben."]].map(([value, label]) => `<label class="choice-option"><input type="radio" name="final" value="${value}" ${state.final === value ? "checked" : ""}><span>${label}</span></label>`).join("");
   document.getElementById("final-relation-choice").innerHTML = [["right", "Fremdschlüssel → Verbindung mit Kardinalität; der Fremdschlüssel steht nicht als Attribut in der Klassenkarte."], ["wrong-one", "Fremdschlüssel → zusätzliches Attribut in jeder verbundenen Klasse."], ["wrong-two", "Fremdschlüssel → Datentyp der gesamten Klasse."]].map(([value, label]) => `<label class="choice-option"><input type="radio" name="final-relation" value="${value}" ${state.finalRelation === value ? "checked" : ""}><span>${label}</span></label>`).join("");
   document.querySelectorAll('input[name="example"]').forEach((input) => input.addEventListener("change", () => { state.step2 = input.value; clearFeedback(2); saveState(); }));
-  document.querySelectorAll('input[name="foreign-key"]').forEach((input) => input.addEventListener("change", () => { state.relationship.foreignKey = input.value; clearFeedback(5); saveState(); }));
-  document.querySelectorAll('input[name="relation-mapping"]').forEach((input) => input.addEventListener("change", () => { state.relationship.mapping = input.value; clearFeedback(5); saveState(); }));
-  document.getElementById("users-cardinality").addEventListener("change", (event) => { state.relationship.usersCardinality = event.target.value; clearFeedback(5); saveState(); });
-  document.getElementById("photos-cardinality").addEventListener("change", (event) => { state.relationship.photosCardinality = event.target.value; clearFeedback(5); saveState(); });
+  document.querySelectorAll('input[name="foreign-key"]').forEach((input) => input.addEventListener("change", () => { state.relationship.foreignKey = input.value; clearFeedback("5-1"); saveState(); }));
+  document.querySelectorAll('input[name="relation-mapping"]').forEach((input) => input.addEventListener("change", () => { state.relationship.mapping = input.value; clearFeedback("5-2"); saveState(); }));
+  document.getElementById("users-cardinality").addEventListener("change", (event) => { state.relationship.usersCardinality = event.target.value; clearFeedback("5-3"); saveState(); });
+  document.getElementById("photos-cardinality").addEventListener("change", (event) => { state.relationship.photosCardinality = event.target.value; clearFeedback("5-3"); saveState(); });
   document.querySelectorAll('input[name="final"]').forEach((input) => input.addEventListener("change", () => { state.final = input.value; clearFeedback(7); saveState(); }));
   document.querySelectorAll('input[name="final-relation"]').forEach((input) => input.addEventListener("change", () => { state.finalRelation = input.value; clearFeedback(7); saveState(); }));
 }
@@ -134,28 +134,44 @@ function checkStep1() { const expected = { username: "varchar(255)", "photo-id":
 function checkStep2() { if (state.step2 === "right") { setFeedback(2, "success", "Genau. Jetzt kannst du diese Syntax auf die InstaHub-Daten anwenden."); markComplete(2); } else if (!state.step2) setFeedback(2, "hint", "Noch nicht korrekt: Wähle eine Aussage aus."); else setFeedback(2, "hint", "Noch nicht korrekt. Prüfe Klammern und Doppelpunkt im Beispiel."); saveState(); }
 function checkStep3() { checkSchemaStep(3, "users"); }
 function checkStep4() { checkSchemaStep(4, "photos"); }
-function checkStep5() {
-  const checks = {
+function relationshipChecks() {
+  return {
     foreignKey: state.relationship.foreignKey === "foreign",
     mapping: state.relationship.mapping === "relation",
-    usersCardinality: state.relationship.usersCardinality === "1",
-    photosCardinality: state.relationship.photosCardinality === "n",
+    cardinality: state.relationship.usersCardinality === "1" && state.relationship.photosCardinality === "n",
   };
-  const selected = Object.values(state.relationship).filter(Boolean).length;
-  const correct = Object.values(checks).filter(Boolean).length;
-  if (correct === 4) {
-    setFeedback(5, "success", "Richtig. Der Fremdschlüssel wird im Klassendiagramm durch die 1:n-Beziehung dargestellt.");
-    document.getElementById("relationship-result").hidden = false;
-    markComplete(5);
-  } else if (!selected) {
-    setFeedback(5, "hint", "Noch nicht korrekt: Bearbeite alle drei Teile der Aufgabe.");
-  } else {
-    const hints = [];
-    if (!checks.foreignKey) hints.push("Suche die Zeile, die den Tabellennamen in eckigen Klammern nennt.");
-    if (!checks.mapping) hints.push("Prüfe, ob eine Beziehung in der Klassenkarte wirklich ein eigenes Attribut ist.");
-    if (!checks.usersCardinality || !checks.photosCardinality) hints.push("Überlege, wie viele Fotos ein Benutzer hochladen kann und zu wie vielen Benutzern ein Foto gehört.");
-    setFeedback(5, correct ? "partial" : "hint", `${correct} von 4 Angaben stimmen. ${hints[0]}`);
-  }
+}
+function completeStep5IfSolved() {
+  if (!Object.values(relationshipChecks()).every(Boolean)) { clearFeedback(5); return; }
+  setFeedback(5, "success", "Alle drei Teile stimmen. Der Fremdschlüssel wird im Klassendiagramm durch die 1:n-Beziehung dargestellt.");
+  document.getElementById("relationship-result").hidden = false;
+  markComplete(5);
+}
+function checkStep5ForeignKey() {
+  const answer = state.relationship.foreignKey;
+  if (answer === "foreign") setFeedback("5-1", "success", "Richtig. user_id[users] verweist auf die Tabelle users – das ist der Fremdschlüssel.");
+  else if (!answer) setFeedback("5-1", "hint", "Noch nicht korrekt: Wähle eine Zeile aus.");
+  else setFeedback("5-1", "hint", "Noch nicht korrekt. Suche die Zeile, die den Tabellennamen in eckigen Klammern nennt.");
+  completeStep5IfSolved();
+  saveState();
+}
+function checkStep5Mapping() {
+  const answer = state.relationship.mapping;
+  if (answer === "relation") setFeedback("5-2", "success", "Richtig. Der Fremdschlüssel wird zur Verbindungslinie mit Kardinalitäten.");
+  else if (!answer) setFeedback("5-2", "hint", "Noch nicht korrekt: Wähle eine Aussage aus.");
+  else if (answer === "attribute") setFeedback("5-2", "hint", "Noch nicht korrekt. Prüfe, ob eine Beziehung in der Klassenkarte wirklich ein eigenes Attribut ist.");
+  else setFeedback("5-2", "hint", "Noch nicht korrekt. Die Information geht nicht verloren – überlege, wie ein Klassendiagramm Verbindungen zeigt.");
+  completeStep5IfSolved();
+  saveState();
+}
+function checkStep5Cardinality() {
+  const { usersCardinality, photosCardinality } = state.relationship;
+  const correct = Number(usersCardinality === "1") + Number(photosCardinality === "n");
+  if (correct === 2) setFeedback("5-3", "success", "Richtig. Ein Benutzer kann n Fotos hochladen, jedes Foto gehört zu genau 1 Benutzer.");
+  else if (!usersCardinality || !photosCardinality) setFeedback("5-3", "hint", "Noch nicht korrekt: Wähle bei beiden Tabellen eine Kardinalität aus.");
+  else if (correct === 1) setFeedback("5-3", "partial", "Eine Kardinalität stimmt schon. Überlege, wie viele Fotos ein Benutzer hochladen kann und zu wie vielen Benutzern ein Foto gehört.");
+  else setFeedback("5-3", "hint", "Noch nicht korrekt. Überlege, wie viele Fotos ein Benutzer hochladen kann und zu wie vielen Benutzern ein Foto gehört.");
+  completeStep5IfSolved();
   saveState();
 }
 function checkStep6() { const result = evaluateClassCard(state.classCard, SCHEMAS.photos); if (result.correct) { setFeedback(6, "success", "Richtig. Die Klassenkarte enthält die fünf eigenen Attribute; der Fremdschlüssel wird als Beziehung dargestellt."); markComplete(6); } else if (!state.classCard.attributes.filter(Boolean).length) setFeedback(6, "hint", "Noch nicht korrekt: Trage einen Klassennamen und die passenden Attribute aus dem Tabellenschema ein."); else if (result.namedCorrect) { const pieces = []; if (!result.nameCorrect) pieces.push("Prüfe den Klassennamen."); if (result.missing.length) pieces.push(`Fehlt: ${result.missing.join(", ")}.`); if (result.extra.length) pieces.push(`Nicht als Attribut erwartet: ${result.extra.join(", ")}.`); if (result.duplicates.length) pieces.push(`Doppelt: ${[...new Set(result.duplicates)].join(", ")}.`); setFeedback(6, "partial", `Teilweise korrekt: ${pieces.join(" ")}`); } else setFeedback(6, "hint", "Noch nicht korrekt. Übernimm die eigenen Spaltennamen als Attribute. Beachte die Zeile mit den eckigen Klammern."); saveState(); }
@@ -165,6 +181,6 @@ function renderTabs() { const tabs = document.getElementById("step-tabs"); tabs.
 function navigateTo(step, { focusContent = false } = {}) { if (step === "summary" && !state.summaryUnlocked) return; document.querySelectorAll(".step-panel").forEach((panel) => { panel.hidden = panel.id !== `step-${step}`; }); state.currentStep = step; saveState(); renderTabs(); updateNavigation(); document.getElementById("relationship-result").hidden = !state.completed.includes(5); if (step === "summary") renderSummary(); const panel = document.getElementById(`step-${step}`); syncTabSemantics(document.getElementById("step-tabs"), state.currentStep); if (focusContent) focusTabPanelStart(panel); else window.scrollTo({ top: 0, behavior: "smooth" }); }
 function updateNavigation() { const complete = state.completed.filter((step) => step >= 1 && step <= TOTAL_STEPS).length; const percent = Math.round(complete / TOTAL_STEPS * 100); document.getElementById("progress-bar").style.width = `${percent}%`; document.getElementById("progress-percent").textContent = `${percent} % bearbeitet`; document.getElementById("progress-label").textContent = state.currentStep === "summary" ? "Abschlussübersicht" : `Schritt ${state.currentStep} von ${TOTAL_STEPS}`; const panel = document.getElementById(`step-${state.currentStep}`); renderTabFlowNavigation(panel, { items: TAB_ITEMS, currentId: state.currentStep, onNavigate: navigateTo, isEnabled: (id) => id === "summary" ? state.summaryUnlocked : true }); }
 function renderSummary() { const entries = [["1. Datentypen", "varchar(255) für Text, int für ganze Zahlen, char für ein Zeichen und date für ein Datum."], ["2. Syntax", "tabellenname( – attribut: datentyp – ). Einrückungen sind freiwillig."], ["3. users", "users mit id, username, birthday, created_at und updated_at."], ["4. photos", "photos mit id, description, url, created_at und updated_at."], ["5. Beziehung", "photos.user_id[users] verweist als Fremdschlüssel auf users. Im Klassendiagramm wird daraus die 1:n-Beziehung."], ["6. Gegenrichtung", "Eigene Spalten werden Attribute; der Fremdschlüssel wird als Beziehung dargestellt."], ["7. Merkhilfe", "Klammern und Doppelpunkte gehören zur Schema-Syntax; die Einrückung ist freiwillig."]]; document.getElementById("answer-summary").innerHTML = entries.map(([title, result]) => `<section class="summary-section"><h3>${title}</h3><dl class="summary-grid"><dt>Richtiges Ergebnis</dt><dd>${result}</dd></dl></section>`).join(""); }
-function bindEvents() { document.getElementById("check-step1").addEventListener("click", checkStep1); document.getElementById("check-step2").addEventListener("click", checkStep2); document.getElementById("check-step3").addEventListener("click", checkStep3); document.getElementById("check-step4").addEventListener("click", checkStep4); document.getElementById("check-step5").addEventListener("click", checkStep5); document.getElementById("check-step6").addEventListener("click", checkStep6); document.getElementById("final-quiz").addEventListener("submit", checkStep7); document.getElementById("reset-module").addEventListener("click", () => { if (window.confirm("Möchtest du alle Eingaben und den Fortschritt zurücksetzen?")) { localStorage.removeItem(STORAGE_KEY); window.location.reload(); } }); }
+function bindEvents() { document.getElementById("check-step1").addEventListener("click", checkStep1); document.getElementById("check-step2").addEventListener("click", checkStep2); document.getElementById("check-step3").addEventListener("click", checkStep3); document.getElementById("check-step4").addEventListener("click", checkStep4); document.getElementById("check-step5-1").addEventListener("click", checkStep5ForeignKey); document.getElementById("check-step5-2").addEventListener("click", checkStep5Mapping); document.getElementById("check-step5-3").addEventListener("click", checkStep5Cardinality); document.getElementById("check-step6").addEventListener("click", checkStep6); document.getElementById("final-quiz").addEventListener("submit", checkStep7); document.getElementById("reset-module").addEventListener("click", () => { if (window.confirm("Möchtest du alle Eingaben und den Fortschritt zurücksetzen?")) { localStorage.removeItem(STORAGE_KEY); window.location.reload(); } }); }
 function init() { renderAssignment(); renderChoices(); renderEditors(); renderTabs(); bindEvents(); if (state.currentStep === "summary" && !state.summaryUnlocked) state.currentStep = 1; navigateTo(state.currentStep); }
 if (typeof document !== "undefined") document.addEventListener("DOMContentLoaded", init);

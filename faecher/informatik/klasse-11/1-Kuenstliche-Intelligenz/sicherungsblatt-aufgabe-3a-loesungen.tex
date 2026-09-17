@@ -1,0 +1,252 @@
+\documentclass[11pt,a4paper]{article}
+
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage[ngerman]{babel}
+\usepackage{lmodern}
+\usepackage{amsmath,amssymb}
+\usepackage{graphicx}
+\usepackage{booktabs,tabularx,array}
+\usepackage[table]{xcolor}
+\usepackage{tikz}
+\usetikzlibrary{arrows.meta,positioning,shapes.geometric,calc}
+\usepackage[most]{tcolorbox}
+\usepackage{enumitem}
+\usepackage{microtype}
+\usepackage{hyperref}
+\usepackage[a4paper,left=18mm,right=18mm,top=15mm,bottom=15mm,headheight=0pt]{geometry}
+
+\definecolor{navy}{HTML}{174A63}
+\definecolor{blue}{HTML}{2E7698}
+\definecolor{lightblue}{HTML}{EAF3F7}
+\definecolor{lightgray}{HTML}{F2F3F4}
+\definecolor{midgray}{HTML}{66727A}
+\definecolor{green}{HTML}{477A63}
+\definecolor{orange}{HTML}{B96A2B}
+
+\hypersetup{colorlinks=true,linkcolor=navy,urlcolor=blue,pdftitle={Sicherungsblatt Aufgabe 3a -- Einen Entscheidungsbaum erstellen}}
+\setlength{\parindent}{0pt}
+\setlength{\parskip}{4pt}
+\setlist[itemize]{leftmargin=5mm,itemsep=1.5pt,topsep=2pt}
+\setlist[enumerate]{leftmargin=6mm,itemsep=2pt,topsep=2pt}
+\renewcommand{\familydefault}{\sfdefault}
+
+\pagestyle{empty}
+
+\newtcolorbox{definition}[1][]{enhanced,breakable,colback=lightblue,colframe=blue,
+  boxrule=0.8pt,arc=1.5mm,left=3mm,right=3mm,top=2mm,bottom=2mm,
+  fonttitle=\bfseries,title=Definition,#1}
+\newtcolorbox{merke}[1][]{enhanced,breakable,colback=lightgray,colframe=navy,
+  boxrule=0.9pt,arc=1.5mm,left=3mm,right=3mm,top=2mm,bottom=2mm,
+  fonttitle=\bfseries,title=Merke,#1}
+\newtcolorbox{beispiel}[1][]{enhanced,breakable,colback=white,colframe=midgray,
+  boxrule=0.7pt,arc=1.5mm,left=3mm,right=3mm,top=2mm,bottom=2mm,
+  fonttitle=\bfseries,title=Beispiel,#1}
+\newtcolorbox{ueberblick}[1][]{enhanced,breakable,colback=lightblue,colframe=navy,
+  boxrule=1.1pt,arc=1.5mm,left=3mm,right=3mm,top=2.5mm,bottom=2.5mm,
+  fonttitle=\bfseries,title=Überblick,#1}
+
+\newcommand{\fach}[1]{\textbf{\color{navy}#1}}
+\newcommand{\sectionline}[1]{%
+  \vspace{1mm}{\Large\bfseries\color{navy}#1}\par\vspace{1mm}%
+  {\color{blue}\rule{\linewidth}{0.8pt}}\vspace{1mm}}
+\newcommand{\sheettitle}[2]{%
+  \begin{tcolorbox}[colback=navy,colframe=navy,arc=2mm,boxrule=0pt,left=5mm,right=5mm,top=2.5mm,bottom=2.5mm]
+    {\color{white}\fontsize{20}{24}\selectfont\bfseries #1}\par
+    \vspace{0.5mm}{\color{white}\large #2}
+  \end{tcolorbox}}
+\newcommand{\subline}[1]{\vspace{1mm}{\large\bfseries\color{navy}#1}\par}
+
+\definecolor{fishblue}{HTML}{377ED1}
+\definecolor{fishorange}{HTML}{E87931}
+\definecolor{fishyellow}{HTML}{F2C94C}
+\definecolor{fishred}{HTML}{D84B53}
+\definecolor{fishdark}{HTML}{23324A}
+\definecolor{peaceful}{HTML}{08705A}
+\definecolor{hostile}{HTML}{992D35}
+
+% \fisch{(Position)}{Schuppenfarbe}{Punkte 0/1}{Bauchfarbe}{Flossenfarbe}{ID}{Label f/h}{Fehler 0/1}
+\newcommand{\fisch}[8]{%
+  \begin{scope}[shift={#1}]
+    \filldraw[fill=#5,draw=fishdark,line width=0.5pt,line join=round] (0.46,0) -- (0.74,0.21) -- (0.74,-0.21) -- cycle;
+    \filldraw[fill=#5,draw=fishdark,line width=0.5pt,line join=round] (-0.12,0.21) -- (0.08,0.36) -- (0.2,0.19) -- cycle;
+    \begin{scope}
+      \clip (0,0) ellipse (0.5 and 0.26);
+      \fill[#2] (-0.6,-0.3) rectangle (0.6,0.3);
+      \fill[#4] (-0.6,-0.3) rectangle (0.6,-0.1);
+      \ifnum#3=1
+        \fill[fishdark] (-0.12,0.09) circle (0.035) (0.1,0.14) circle (0.035) (0.28,0.05) circle (0.035)
+          (0.05,-0.01) circle (0.035) (-0.2,-0.03) circle (0.035);
+      \fi
+    \end{scope}
+    \draw[fishdark,line width=0.7pt] (0,0) ellipse (0.5 and 0.26);
+    \filldraw[fill=fishdark,draw=white,line width=0.4pt] (-0.32,0.06) circle (0.055);
+    \if#7f
+      \node[font=\tiny,text=peaceful,align=center,inner sep=0pt] at (0.12,-0.66) {\textbf{#6}\\friedlich};
+    \else
+      \node[font=\tiny,text=hostile,align=center,inner sep=0pt] at (0.12,-0.66) {\textbf{#6}\\feindselig};
+    \fi
+    \ifnum#8=1
+      \draw[fishred,line width=0.9pt,dashed,rounded corners=1mm] (-0.6,-0.98) rectangle (0.84,0.5);
+      \node[fill=fishred,text=white,font=\tiny\bfseries,rounded corners=0.8mm,inner sep=1pt] at (0.12,0.5) {Fehler};
+    \fi
+  \end{scope}}
+
+\begin{document}
+
+\sheettitle{Entscheidungsbaum mit Fischdaten erstellen}{Entscheidungsbäume · Sicherungsblatt zu Aufgabe 3a · Informatik 11}
+
+\sectionline{1. Fehlklassifikation und Informationsgewinn}
+
+\begin{definition}[title=Definition: Fehlklassifikation und Informationsgewinn]
+Ein Knoten sagt für seine Teilmenge das häufigere Label voraus. Alle Daten mit dem anderen Label sind
+\fach{Fehlklassifikationen}. Der \fach{Informationsgewinn} eines Splits ist
+\[
+  IG=\text{Fehler vor dem Aufteilen}-\text{Gesamtfehler nach dem Aufteilen}.
+\]
+Gewählt wird das Attribut mit dem größten Informationsgewinn.
+\end{definition}
+
+\begin{beispiel}[title=Beispiel: erster Split der 9 Trainingsfische]
+\begin{center}
+\begin{tikzpicture}[font=\small,
+  decision/.style={draw=navy,fill=lightblue,rounded corners=1mm,minimum width=27mm,minimum height=8mm},
+  group/.style={rounded corners=2mm,line width=0.9pt}]
+  % Alle Trainingsfische ohne Split
+  \draw[group,draw=midgray,fill=lightgray] (-7.9,-1.75) rectangle (7.9,1.3);
+  \node[anchor=west,font=\small\bfseries,text=navy] at (-7.7,0.98) {Ohne Split: alle 9 Trainingsfische};
+  \fisch{(-6.88,0)}{fishorange}{0}{white}{fishyellow}{F1}{h}{0}
+  \fisch{(-5.16,0)}{fishorange}{0}{white}{fishred}{F2}{h}{0}
+  \fisch{(-3.44,0)}{fishblue}{0}{fishdark}{fishyellow}{F3}{f}{1}
+  \fisch{(-1.72,0)}{fishblue}{0}{white}{fishyellow}{F4}{f}{1}
+  \fisch{(0,0)}{fishblue}{1}{fishdark}{fishred}{F5}{h}{0}
+  \fisch{(1.72,0)}{fishblue}{1}{fishdark}{fishyellow}{F6}{h}{0}
+  \fisch{(3.44,0)}{fishorange}{1}{white}{fishyellow}{F7}{h}{0}
+  \fisch{(5.16,0)}{fishblue}{1}{white}{fishred}{F8}{f}{1}
+  \fisch{(6.88,0)}{fishorange}{1}{fishdark}{fishred}{F9}{f}{1}
+  \node[font=\footnotesize] at (0,-1.4) {4 friedlich, 5 feindselig $\;\Rightarrow\;$ Vorhersage \emph{feindselig} $\;\Rightarrow\;$ \textbf{4 Fehler}};
+
+  % Split
+  \node[decision] (split) at (0,-2.55) {Schuppenfarbe?};
+  \draw (0,-1.75) -- (split.north);
+  \draw (split.south west) -- node[above left,font=\footnotesize]{Blau} (-4.0,-3.45);
+  \draw (split.south east) -- node[above right,font=\footnotesize]{Orange} (4.0,-3.45);
+
+  % Teilmenge Blau
+  \draw[group,draw=fishblue,fill=white] (-7.9,-3.45) rectangle (-0.1,-6.5);
+  \node[anchor=west,font=\small\bfseries,text=fishblue] at (-7.7,-3.77) {Teilmenge Blau: 5 Fische};
+  \fisch{(-7.05,-4.75)}{fishblue}{0}{fishdark}{fishyellow}{F3}{f}{0}
+  \fisch{(-5.55,-4.75)}{fishblue}{0}{white}{fishyellow}{F4}{f}{0}
+  \fisch{(-4.05,-4.75)}{fishblue}{1}{white}{fishred}{F8}{f}{0}
+  \fisch{(-2.55,-4.75)}{fishblue}{1}{fishdark}{fishred}{F5}{h}{1}
+  \fisch{(-1.05,-4.75)}{fishblue}{1}{fishdark}{fishyellow}{F6}{h}{1}
+  \node[font=\footnotesize] at (-4.0,-6.13) {3 friedlich, 2 feindselig $\Rightarrow$ \emph{friedlich} $\Rightarrow$ \textbf{2 Fehler}};
+
+  % Teilmenge Orange
+  \draw[group,draw=fishorange,fill=white] (0.1,-3.45) rectangle (7.9,-6.5);
+  \node[anchor=west,font=\small\bfseries,text=fishorange!80!black] at (0.3,-3.77) {Teilmenge Orange: 4 Fische};
+  \fisch{(1.2,-4.75)}{fishorange}{0}{white}{fishyellow}{F1}{h}{0}
+  \fisch{(3.0,-4.75)}{fishorange}{0}{white}{fishred}{F2}{h}{0}
+  \fisch{(4.8,-4.75)}{fishorange}{1}{white}{fishyellow}{F7}{h}{0}
+  \fisch{(6.6,-4.75)}{fishorange}{1}{fishdark}{fishred}{F9}{f}{1}
+  \node[font=\footnotesize] at (4.0,-6.13) {1 friedlich, 3 feindselig $\Rightarrow$ \emph{feindselig} $\Rightarrow$ \textbf{1 Fehler}};
+
+  % Ergebnis
+  \node[draw=navy,fill=lightblue,rounded corners=1mm,inner sep=2mm,font=\small] at (0,-7.25)
+    {Gesamtfehler nach dem Aufteilen: $2+1=3$ \qquad Informationsgewinn: $4-3=\mathbf{1}$};
+\end{tikzpicture}
+
+{\scriptsize\color{midgray}Körper = Schuppenfarbe, Punkte = Muster, unterer Streifen = Bauchfarbe, Flossen = Flossenfarbe.
+Rot gestrichelt mit \glqq Fehler\grqq{}: Das Label des Fisches passt nicht zur Vorhersage seiner Gruppe.}
+\end{center}
+
+\smallskip
+\begin{minipage}[t]{0.61\linewidth}
+\vspace{0pt}
+\renewcommand{\arraystretch}{1.1}\setlength{\tabcolsep}{4pt}
+\begin{tabularx}{\linewidth}{@{}X>{\centering\arraybackslash}p{14mm}>{\centering\arraybackslash}p{16mm}>{\centering\arraybackslash}p{10mm}@{}}
+\toprule
+\textbf{Schuppenfarbe} & \textbf{friedlich} & \textbf{feindselig} & \textbf{Fehler}\\
+\midrule
+Fehler vor dem Aufteilen & & & 4\\
+Blau & 3 & 2 & 2\\
+Orange & 1 & 3 & 1\\
+\midrule
+Gesamtfehler nach dem Aufteilen & & & 3\\
+\bottomrule
+\end{tabularx}
+
+\smallskip
+Informationsgewinn: $4-3=1$
+\end{minipage}\hfill
+\begin{minipage}[t]{0.35\linewidth}
+\vspace{0pt}
+\renewcommand{\arraystretch}{1.1}\setlength{\tabcolsep}{4pt}
+\begin{tabularx}{\linewidth}{@{}X>{\centering\arraybackslash}p{14mm}>{\centering\arraybackslash}p{6mm}@{}}
+\toprule
+\textbf{Attribut} & \textbf{Fehler}\newline\textbf{nachher} & \textbf{IG}\\
+\midrule
+\rowcolor{lightblue}\textbf{Schuppenfarbe} & 3 & \textbf{1}\\
+Muster & 4 & 0\\
+Bauchfarbe & 4 & 0\\
+Flossenfarbe & 4 & 0\\
+\bottomrule
+\end{tabularx}
+
+\smallskip
+\emph{Schuppenfarbe} wird die Wurzel.
+\end{minipage}
+\end{beispiel}
+
+\newpage
+\sectionline{2. Wie entsteht ein Entscheidungsbaum?}
+
+Für jede entstandene \fach{Teilmenge} wird erneut der Informationsgewinn aller Attribute bestimmt:
+\begin{itemize}
+  \item \textbf{Blau} (5 Fische, 2 Fehler): \emph{Muster} und \emph{Bauchfarbe} haben beide IG\,1. Bei diesem
+        \fach{Gleichstand} sind beide gleich gut geeignet; im Beispiel wird \emph{Muster} gewählt.
+  \item \textbf{Blau, Ohne} (2 Fische): beide friedlich, also ein \fach{Blatt}.
+  \item \textbf{Blau, Punkte} (3 Fische, 1 Fehler) und \textbf{Orange} (4 Fische, 1 Fehler):
+        \emph{Bauchfarbe} hat jeweils IG\,1 und trennt fehlerfrei.
+\end{itemize}
+
+\begin{center}
+\begin{tikzpicture}[scale=0.82,transform shape,font=\small,every node/.style={align=center},
+  decision/.style={draw=navy,fill=lightblue,rounded corners=1mm,minimum width=27mm,minimum height=9mm},
+  leaf/.style={draw=midgray,fill=lightgray,rounded corners=1mm,minimum width=21mm,minimum height=9mm}]
+  \node[decision] (root) at (0,0) {Schuppenfarbe?};
+  \node[decision] (pattern) at (-4.2,-2.0) {Muster?};
+  \node[decision] (bellyorange) at (4.6,-2.0) {Bauchfarbe?};
+  \node[leaf] (none) at (-6.6,-4.0) {friedlich};
+  \node[decision] (bellyblue) at (-1.8,-4.0) {Bauchfarbe?};
+  \node[leaf] (bbBlack) at (-3.4,-6.0) {feindselig};
+  \node[leaf] (bbWhite) at (-0.2,-6.0) {friedlich};
+  \node[leaf] (obBlack) at (3.0,-4.0) {friedlich};
+  \node[leaf] (obWhite) at (6.2,-4.0) {feindselig};
+  \draw (root) -- node[above left,font=\footnotesize]{Blau} (pattern);
+  \draw (root) -- node[above right,font=\footnotesize]{Orange} (bellyorange);
+  \draw (pattern) -- node[above left,font=\footnotesize]{Ohne} (none);
+  \draw (pattern) -- node[above right,font=\footnotesize]{Punkte} (bellyblue);
+  \draw (bellyblue) -- node[above left,font=\footnotesize]{Schwarz} (bbBlack);
+  \draw (bellyblue) -- node[above right,font=\footnotesize]{Weiß} (bbWhite);
+  \draw (bellyorange) -- node[above left,font=\footnotesize]{Schwarz} (obBlack);
+  \draw (bellyorange) -- node[above right,font=\footnotesize]{Weiß} (obWhite);
+\end{tikzpicture}
+\end{center}
+
+\begin{beispiel}[title=Algorithmus zum Erstellen eines Entscheidungsbaums]
+\begin{enumerate}
+  \item Für die aktuelle Datenmenge den Informationsgewinn jedes Attributs bestimmen.
+  \item Das Attribut mit dem größten Informationsgewinn wird zum \fach{Entscheidungsknoten}.
+  \item Die Daten nach den Attributwerten in Teilmengen aufteilen.
+  \item Haben alle Daten einer Teilmenge dasselbe Label oder ist keine sinnvolle Aufteilung mehr möglich,
+        entsteht ein Blatt mit dem häufigeren Label. Sonst das Verfahren für diese Teilmenge wiederholen.
+\end{enumerate}
+\end{beispiel}
+
+\begin{merke}
+Ein Entscheidungsbaum entsteht schrittweise. In jedem Knoten wird ein möglichst geeignetes Attribut ausgewählt.
+Anschließend wird das Verfahren für die entstandenen Teilmengen wiederholt.
+\end{merke}
+
+\end{document}

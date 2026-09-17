@@ -210,6 +210,8 @@
                 <label class="choice-option"><input type="checkbox" name="wenn-quiz-1" value="d"><span>Der Wert, der im Nein-Fall ausgegeben wird.</span></label>
               </div>
             </fieldset>
+            <button class="primary-action" type="button" data-question-check="wenn-quiz-1">Frage 1 prüfen</button>
+            <section id="result-wenn-quiz-1" class="result" aria-live="polite" hidden></section>
             <fieldset>
               <legend><span>2</span> Welche Aussagen über die Aussagefunktion „kleiner“ stimmen?</legend>
               <div class="choice-list">
@@ -219,6 +221,8 @@
                 <label class="choice-option"><input type="checkbox" name="wenn-quiz-2" value="d"><span>Bei der Note 2 und der Konstanten 2 gibt sie WAHR aus.</span></label>
               </div>
             </fieldset>
+            <button class="primary-action" type="button" data-question-check="wenn-quiz-2">Frage 2 prüfen</button>
+            <section id="result-wenn-quiz-2" class="result" aria-live="polite" hidden></section>
             <fieldset>
               <legend><span>3</span> Im Diagramm aus Schritt 2 wird die Note 3 eingegeben. Was gibt die WENN-Funktion aus?</legend>
               <div class="choice-list">
@@ -228,6 +232,8 @@
                 <label class="choice-option"><input type="checkbox" name="wenn-quiz-3" value="d"><span>FALSCH</span></label>
               </div>
             </fieldset>
+            <button class="primary-action" type="button" data-question-check="wenn-quiz-3">Frage 3 prüfen</button>
+            <section id="result-wenn-quiz-3" class="result" aria-live="polite" hidden></section>
             <fieldset>
               <legend><span>4</span> Welche Aussagen zur Termdarstellung =WENN(Note&lt;2; "5€"; "0€") stimmen?</legend>
               <div class="choice-list">
@@ -237,9 +243,9 @@
                 <label class="choice-option"><input type="checkbox" name="wenn-quiz-4" value="d"><span>Die Reihenfolge der drei Werte in der Klammer ist beliebig.</span></label>
               </div>
             </fieldset>
-            <button class="primary-action" type="submit">Kurzquiz prüfen</button>
+            <button class="primary-action" type="button" data-question-check="wenn-quiz-4">Frage 4 prüfen</button>
+            <section id="result-wenn-quiz-4" class="result" aria-live="polite" hidden></section>
           </form>
-          <section id="result-wenn-quiz" class="result" aria-live="polite" hidden></section>
         </section>
 
         <section id="panel-fehler" class="step-panel dfd-card" role="tabpanel" aria-labelledby="tab-fehler" data-dfd-panel="fehler" hidden>
@@ -739,7 +745,7 @@
         })();
 
         /* ---------------------------------------------------------
-         * Mehrfachauswahl-Quiz – Kurzquiz (Reiter 1) und Abschlussquiz
+         * Mehrfachauswahl-Quiz – Abschlussquiz
          * --------------------------------------------------------- */
         function setupChoiceQuiz({ formId, resultId, solutions, messages, onSuccess }) {
           const form = document.getElementById(formId);
@@ -809,21 +815,73 @@
           });
         }
 
-        setupChoiceQuiz({
-          formId: "wenn-quiz",
-          resultId: "result-wenn-quiz",
-          solutions: {
-            "wenn-quiz-1": ["a", "b", "d"],
-            "wenn-quiz-2": ["a", "b"],
-            "wenn-quiz-3": ["b"],
-            "wenn-quiz-4": ["a", "b", "c"]
-          },
-          messages: {
-            high: "Korrekt. Alle vier Fragen stimmen. Du kennst die Aussagefunktion und die drei Eingänge der WENN-Funktion.",
-            low: "Noch nicht korrekt. Starte die Bewegung in Schritt 2 noch einmal und zähle die Pfeile, die in WENN hineinführen. Lies danach die beiden Merke-Kästen in diesem Reiter.",
-            mediumHint: "Tipp: Probiere in den Diagrammen die Noten 2 und 3 aus. Denk daran: In manchen Fragen musst du mehrere Kästchen ankreuzen, in anderen ist genau eine Antwort richtig."
+        /* Kurzquiz in Reiter 1: Jede Frage hat einen eigenen Prüfen-Button. */
+        (function setupQuestionChecks() {
+          const QUESTIONS = {
+            "wenn-quiz-1": {
+              solution: ["a", "b", "d"],
+              success: "Korrekt. In WENN fließen der Wahrheitswert, der Ja-Fall und der Nein-Fall.",
+              hint: "Starte die Bewegung in Schritt 2 noch einmal und zähle die Pfeile, die in WENN hineinführen. Die Note fließt zuerst in „kleiner“."
+            },
+            "wenn-quiz-2": {
+              solution: ["a", "b"],
+              success: "Korrekt. „kleiner“ vergleicht zwei Werte und gibt WAHR oder FALSCH aus.",
+              hint: "Probiere im Diagramm die Note 2 aus: Ist 2 kleiner als 2? Und was kommt aus „kleiner“ heraus – ein Wahrheitswert oder ein Geldbetrag?"
+            },
+            "wenn-quiz-3": {
+              solution: ["b"],
+              success: "Korrekt. 3 < 2 ist FALSCH, deshalb gibt WENN den Nein-Fall \"0€\" aus.",
+              hint: "WAHR und FALSCH fließen nur in WENN hinein. Überlege, welchen Wert WENN bei FALSCH ausgibt."
+            },
+            "wenn-quiz-4": {
+              solution: ["a", "b", "c"],
+              success: "Korrekt. Die Reihenfolge in der Klammer ist fest: Bedingung; Ja-Fall; Nein-Fall.",
+              hint: "Vergleiche die drei Werte in der Klammer mit den drei Eingängen der WENN-Funktion."
+            }
+          };
+
+          function selectedValues(name) {
+            return [...document.querySelectorAll(`input[name="${name}"]:checked`)].map((input) => input.value);
           }
-        });
+
+          function showResult(box, level, message) {
+            box.hidden = false;
+            box.className = "result " + level;
+            box.textContent = message;
+          }
+
+          const form = document.getElementById("wenn-quiz");
+          if (form) form.addEventListener("submit", (event) => event.preventDefault());
+
+          document.querySelectorAll("[data-question-check]").forEach((button) => {
+            const name = button.dataset.questionCheck;
+            const question = QUESTIONS[name];
+            const resultBox = document.getElementById("result-" + name);
+            if (!question || !resultBox) return;
+
+            document.querySelectorAll(`input[name="${name}"]`).forEach((checkbox) => {
+              checkbox.addEventListener("change", () => { resultBox.hidden = true; });
+            });
+
+            button.addEventListener("click", () => {
+              const chosen = selectedValues(name);
+              const rightChosen = chosen.filter((value) => question.solution.includes(value)).length;
+              const wrongChosen = chosen.length - rightChosen;
+
+              if (!chosen.length) {
+                showResult(resultBox, "low", "Kreuze mindestens eine Antwort an.");
+              } else if (!wrongChosen && rightChosen === question.solution.length) {
+                showResult(resultBox, "high", question.success);
+              } else if (rightChosen && !wrongChosen) {
+                showResult(resultBox, "medium", "Teilweise korrekt. Deine Kreuze stimmen, aber es fehlt noch mindestens eine richtige Antwort. " + question.hint);
+              } else if (rightChosen) {
+                showResult(resultBox, "medium", "Teilweise korrekt. Mindestens ein Kreuz ist nicht richtig. " + question.hint);
+              } else {
+                showResult(resultBox, "low", "Noch nicht korrekt. " + question.hint);
+              }
+            });
+          });
+        })();
 
         setupChoiceQuiz({
           formId: "final-quiz",

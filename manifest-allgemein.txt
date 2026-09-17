@@ -335,6 +335,19 @@ Beibehalten:
 Richtig/falsch darf nicht ausschliesslich durch Farbe vermittelt werden. Immer
 zusaetzlich eine konkrete Textmeldung anzeigen.
 
+Feedback-Buttons bei Multiple-Choice-Fragen:
+
+  - Jede Multiple-Choice-Frage ausserhalb des Abschlussquiz erhaelt einen
+    eigenen Pruefen-Button mit eigener Rueckmeldung direkt unter der Frage.
+  - Mehrere MC-Fragen in einem Reiter oder einer Aufgabenkarte nicht ueber
+    einen gemeinsamen Button am Ende pruefen. Das gilt auch, wenn eine
+    MC-Frage mit einer anderen Teilaufgabe (z. B. Zahleneingabe) kombiniert
+    ist: Die MC-Frage bekommt trotzdem ihren eigenen Button.
+  - Ein Reiter gilt erst als abgeschlossen, wenn alle Teilfragen richtig
+    beantwortet sind; Freischaltungen erscheinen erst dann.
+  - Ausgenommen ist das Abschlussquiz (#final-quiz); dort gilt
+    manifest-quizaufgaben.txt.
+
 
 8. Abschlusspruefung
 --------------------
@@ -346,6 +359,8 @@ Vor Abschluss mindestens pruefen:
   [ ] Aufgaben stehen in allen Menues in aufsteigender numerischer Reihenfolge.
   [ ] Rueck- und Startseitenlink zeigen auf die richtigen Ziele.
   [ ] Dynamische Rueckmeldungen sind verstaendlich und barrierearm.
+  [ ] Jede MC-Frage ausserhalb des Abschlussquiz hat einen eigenen
+      Pruefen-Button.
   [ ] Inline-JavaScript ist syntaktisch gueltig.
   [ ] Sicherungsblatt-Download ist anfangs verborgen.
   [ ] Lehrercode stimmt mit der Dekodierdatei ueberein.

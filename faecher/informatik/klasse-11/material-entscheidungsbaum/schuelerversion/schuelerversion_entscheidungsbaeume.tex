@@ -154,82 +154,123 @@ Merkmalskombination enthalten.
 
 \newpage\thispagestyle{fancy}
 
-\sectionline{4. Wie entsteht ein Entscheidungsbaum?}
-
-\begin{enumerate}
-  \item Ein mögliches Attribut teilt die Trainingsdaten in \fach{Teilmengen} auf. Diese Aufteilung heißt \fach{Split}.
-  \item Ein \fach{Splitkriterium} bewertet, wie eindeutig die Klassen in den Teilmengen sind.
-  \item Bevorzugt wird das Attribut mit dem größten \fach{Informationsgewinn}.
-  \item Das Verfahren wird für die entstandenen Teilmengen wiederholt.
-  \item Ist keine sinnvolle weitere Aufteilung möglich oder gilt eine Abbruchbedingung, entsteht ein Blatt.
-\end{enumerate}
-
-\begin{merke}
-Ein gutes Attribut teilt die Daten so, dass die entstehenden Gruppen möglichst eindeutig einer Klasse
-zugeordnet werden können. Der Aufbau ist heuristisch: Ein optimaler Baum ist nicht garantiert.
-\end{merke}
-
 % Seite 3
-\sectionline{5. Fehlklassifikation und Informationsgewinn}
+\sectionline{4. Fehlklassifikation und Informationsgewinn}
 
-Eine Gruppe wird meist der Klasse zugeordnet, die darin am häufigsten vorkommt. Alle Daten der anderen Klasse
-wären dann \fach{Fehlklassifikationen}. Die \fach{Fehlklassifikationsrate} ist deren Anteil an der Gruppe.
+Ein Entscheidungsbaum wird aus gelabelten Trainingsdaten aufgebaut. Im Beispiel sind es 9 Fische mit den
+Attributen \emph{Schuppenfarbe}, \emph{Muster}, \emph{Bauchfarbe} und \emph{Flossenfarbe} sowie dem Label
+\emph{friedlich} oder \emph{feindselig}.
 
-\begin{definition}
-Für eine Datenmenge $X$ mit Klassenanteilen $p_1,\dots,p_k$ gilt
+\begin{definition}[title=Definition: Fehlklassifikation und Informationsgewinn]
+Ein Knoten sagt für seine Teilmenge das häufigere Label voraus. Alle Daten mit dem anderen Label sind
+\fach{Fehlklassifikationen}. Der \fach{Informationsgewinn} eines Splits ist
 \[
-  F(X)=1-\max\{p_1,\dots,p_k\}.
+  IG=\text{Fehler vor dem Aufteilen}-\text{Gesamtfehler nach dem Aufteilen}.
 \]
-Je kleiner $F(X)$ ist, desto eindeutiger ist die Gruppe.
+Gewählt wird das Attribut mit dem größten Informationsgewinn.
 \end{definition}
 
-Nach einem Split werden die Fehler der Teilmengen nach ihrer Größe gewichtet. Für Teilmengen
-$X_1,\dots,X_m$ gilt:
-\[
-F_{\mathrm{nach}}=\sum_{j=1}^{m}\frac{|X_j|}{|X|}\,F(X_j),
-\qquad
-IG_F=F(X)-F_{\mathrm{nach}}.
-\]
+\begin{beispiel}[title=Beispiel: erster Split der 9 Trainingsfische]
+Ohne Split: 4 friedlich, 5 feindselig. Der Baum sagt \emph{feindselig} voraus; es entstehen 4 Fehler.
 
-\begin{beispiel}[title=Kompaktes Split-Beispiel]
-Vor dem Split enthält die Menge 10 grüne und 10 rote Objekte. Bei der Wahl einer Mehrheitsklasse entstehen
-10 Fehler. Zwei Attribute liefern unterschiedliche Aufteilungen:
-
-\medskip
-\begin{tabularx}{\linewidth}{@{}>{\bfseries}l>{\centering\arraybackslash}X>{\centering\arraybackslash}X>{\centering\arraybackslash}X@{}}
+\smallskip
+\begin{minipage}[t]{0.61\linewidth}
+\vspace{0pt}
+\renewcommand{\arraystretch}{1.1}\setlength{\tabcolsep}{4pt}
+\begin{tabularx}{\linewidth}{@{}X>{\centering\arraybackslash}p{14mm}>{\centering\arraybackslash}p{16mm}>{\centering\arraybackslash}p{10mm}@{}}
 \toprule
-Attribut & Fehler vorher & Fehler nachher & Informationsgewinn \\
+\textbf{Schuppenfarbe} & \textbf{friedlich} & \textbf{feindselig} & \textbf{Fehler}\\
 \midrule
-Streifen & 10 & $0+6=6$ & $10-6=4$ Fehler \\
-Form     & 10 & $3+5=8$ & $10-8=2$ Fehler \\
+Fehler vor dem Aufteilen & & & 4\\
+Blau & 3 & 2 & 2\\
+Orange & 1 & 3 & 1\\
+\midrule
+Gesamtfehler nach dem Aufteilen & & & 3\\
 \bottomrule
 \end{tabularx}
 
-\medskip
-Das Attribut \emph{Streifen} ist hier das ``wichtigste'' bzw. ``beste'' Attribut, weil es den größeren
-Informationsgewinn liefert.
+\smallskip
+Informationsgewinn: $4-3=1$
+\end{minipage}\hfill
+\begin{minipage}[t]{0.35\linewidth}
+\vspace{0pt}
+\renewcommand{\arraystretch}{1.1}\setlength{\tabcolsep}{4pt}
+\begin{tabularx}{\linewidth}{@{}X>{\centering\arraybackslash}p{14mm}>{\centering\arraybackslash}p{6mm}@{}}
+\toprule
+\textbf{Attribut} & \textbf{Fehler}\newline\textbf{nachher} & \textbf{IG}\\
+\midrule
+\rowcolor{lightblue}\textbf{Schuppenfarbe} & 3 & \textbf{1}\\
+Muster & 4 & 0\\
+Bauchfarbe & 4 & 0\\
+Flossenfarbe & 4 & 0\\
+\bottomrule
+\end{tabularx}
+
+\smallskip
+\emph{Schuppenfarbe} wird die Wurzel.
+\end{minipage}
 \end{beispiel}
 
-\begin{center}
-\begin{tikzpicture}[font=\small,>=Latex]
-  \node[draw=midgray,rounded corners,fill=lightgray,minimum width=34mm,minimum height=11mm] (before) {vorher: 10 Fehler};
-  \node[draw=green,rounded corners,fill=white,minimum width=34mm,minimum height=11mm,right=23mm of before] (good) {Split A: 6 Fehler};
-  \node[draw=orange,rounded corners,fill=white,minimum width=34mm,minimum height=11mm,below=10mm of good] (less) {Split B: 8 Fehler};
-  \draw[->,thick] (before) -- node[above]{Gewinn: 4} (good);
-  \draw[->,thick] (before) -- node[below,sloped]{Gewinn: 2} (less);
+\sectionline{5. Wie entsteht ein Entscheidungsbaum?}
+
+\begin{minipage}[c]{0.53\linewidth}
+Für jede entstandene \fach{Teilmenge} wird erneut der Informationsgewinn aller Attribute bestimmt:
+\begin{itemize}
+  \item \textbf{Blau} (5 Fische, 2 Fehler): \emph{Muster} und \emph{Bauchfarbe} haben beide IG\,1. Bei diesem
+        \fach{Gleichstand} sind beide gleich gut geeignet; im Beispiel wird \emph{Muster} gewählt.
+  \item \textbf{Blau, Ohne} (2 Fische): beide friedlich, also ein \fach{Blatt}.
+  \item \textbf{Blau, Punkte} (3 Fische, 1 Fehler) und \textbf{Orange} (4 Fische, 1 Fehler):
+        \emph{Bauchfarbe} hat jeweils IG\,1 und trennt fehlerfrei.
+\end{itemize}
+\end{minipage}\hfill
+\begin{minipage}[c]{0.44\linewidth}
+\centering
+\begin{tikzpicture}[scale=0.9,transform shape,font=\footnotesize,every node/.style={align=center},
+  decision/.style={draw=navy,fill=lightblue,rounded corners=1mm,minimum width=19mm,minimum height=6.5mm},
+  leaf/.style={draw=midgray,fill=lightgray,rounded corners=1mm,minimum width=14mm,minimum height=6.5mm}]
+  \node[decision] (root) at (0.6,0) {Schuppenfarbe?};
+  \node[decision] (pattern) at (-1.5,-1.5) {Muster?};
+  \node[decision] (bellyorange) at (2.9,-1.5) {Bauchfarbe?};
+  \node[leaf] (none) at (-2.9,-3.0) {friedlich};
+  \node[decision] (bellyblue) at (-0.2,-3.0) {Bauchfarbe?};
+  \node[leaf] (bbBlack) at (-1.25,-4.5) {feindselig};
+  \node[leaf] (bbWhite) at (0.85,-4.5) {friedlich};
+  \node[leaf] (obBlack) at (2.1,-3.0) {friedlich};
+  \node[leaf] (obWhite) at (3.75,-3.0) {feindselig};
+  \draw (root) -- node[above left,font=\scriptsize]{Blau} (pattern);
+  \draw (root) -- node[above right,font=\scriptsize]{Orange} (bellyorange);
+  \draw (pattern) -- node[above left,font=\scriptsize]{Ohne} (none);
+  \draw (pattern) -- node[above right,font=\scriptsize]{Punkte} (bellyblue);
+  \draw (bellyblue) -- node[left,font=\scriptsize]{Schwarz} (bbBlack);
+  \draw (bellyblue) -- node[right,font=\scriptsize]{Weiß} (bbWhite);
+  \draw (bellyorange) -- node[left,font=\scriptsize]{Schwarz} (obBlack);
+  \draw (bellyorange) -- node[right,font=\scriptsize]{Weiß} (obWhite);
 \end{tikzpicture}
-\end{center}
+\end{minipage}
+
+\medskip
+\begin{beispiel}[title=Algorithmus zum Erstellen eines Entscheidungsbaums]
+\begin{enumerate}
+  \item Für die aktuelle Datenmenge den Informationsgewinn jedes Attributs bestimmen.
+  \item Das Attribut mit dem größten Informationsgewinn wird zum \fach{Entscheidungsknoten}.
+  \item Die Daten nach den Attributwerten in Teilmengen aufteilen.
+  \item Haben alle Daten einer Teilmenge dasselbe Label oder ist keine sinnvolle Aufteilung mehr möglich,
+        entsteht ein Blatt mit dem häufigeren Label. Sonst das Verfahren für diese Teilmenge wiederholen.
+\end{enumerate}
+\end{beispiel}
 
 \begin{merke}
-Je stärker ein Split die Zahl bzw. Rate der Fehlklassifikationen verringert, desto größer ist sein
-Informationsgewinn. Informationsgewinn bewertet einen \emph{Split}; er ist nicht dasselbe wie die später
-gemessene Genauigkeit des gesamten Modells.
+Ein Entscheidungsbaum entsteht schrittweise. In jedem Knoten wird ein möglichst geeignetes Attribut ausgewählt.
+Anschließend wird das Verfahren für die entstandenen Teilmengen wiederholt.
 \end{merke}
+
+\newpage\thispagestyle{fancy}
+
 
 % Seite 4
 \sectionline{6. Weitere Splitkriterien}
 
-In der Praxis werden häufig empfindlichere Maße als die Fehlklassifikationsrate verwendet. Sie messen, wie
+In der Praxis werden häufig empfindlichere Maße als die Anzahl der Fehlklassifikationen verwendet. Sie messen, wie
 stark die Klassen in einer Datenmenge gemischt sind.
 
 \subline{Entropie}
@@ -253,7 +294,8 @@ Für dieselbe Menge gilt
 Auch hier zeigt ein kleiner Wert eine geringe Durchmischung. Bei einer reinen Gruppe ist $G(X)=0$.
 \end{definition}
 
-Für beide Kriterien wird der Wert nach einem Split nach der Größe der Teilmengen gewichtet. Allgemein, mit
+Da Entropie und Gini-Impurity Anteile beschreiben, werden ihre Werte für die Teilmengen nach deren Größe
+gewichtet. Allgemein, mit
 einem Unreinheitsmaß $U$:
 \[
   IG_U(X,A)=U(X)-\sum_{j=1}^{m}\frac{|X_j|}{|X|}\,U(X_j).
@@ -279,7 +321,7 @@ ihre Rolle ist jedoch ähnlich: Sie bewerten die Reinheit möglicher Splits.
 \end{beispiel}
 
 \begin{merke}
-\fach{Fehlklassifikationsrate}, \fach{Entropie} und \fach{Gini-Impurity} sind verschiedene Splitkriterien.
+Die \fach{Anzahl der Fehlklassifikationen}, \fach{Entropie} und \fach{Gini-Impurity} sind verschiedene Splitkriterien.
 Sie dürfen nicht gleichgesetzt werden und können unterschiedliche Bäume begünstigen.
 \end{merke}
 
@@ -409,7 +451,7 @@ Confusion Matrix & vorhergesagte und tatsächliche Label auswerten \\
   \item An jedem \fach{Knoten} werden Daten anhand eines \fach{Attributs} aufgeteilt; ein \fach{Blatt} enthält eine Klasse.
   \item Ein \fach{Splitkriterium} bewertet die Qualität einer möglichen Aufteilung.
   \item Ein möglichst großer \fach{Informationsgewinn} ist erwünscht.
-  \item \fach{Fehlklassifikationsrate}, \fach{Entropie} und \fach{Gini-Impurity} sind mögliche Splitkriterien.
+  \item Die \fach{Anzahl der Fehlklassifikationen}, \fach{Entropie} und \fach{Gini-Impurity} sind mögliche Splitkriterien.
   \item Unabhängige \fach{Testdaten} dienen zur Beurteilung der \fach{Vorhersagequalität}.
   \item Eine \fach{Konfusionsmatrix} zeigt richtige und falsche Klassifikationen; daraus lässt sich unter anderem die \fach{Genauigkeit} berechnen.
   \item \fach{Hyperparameter} beeinflussen Aufbau und Komplexität des Baums.

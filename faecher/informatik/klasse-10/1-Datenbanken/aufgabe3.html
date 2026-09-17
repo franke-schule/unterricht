@@ -8,7 +8,7 @@
     <link rel="stylesheet" href="../../../../styles.css?v=20260825">
     <link rel="stylesheet" href="redundanzen.css?v=20260916a">
     <link rel="stylesheet" href="beziehungen.css?v=20260826b">
-    <script type="module" src="beziehungen.js?v=20260916a"></script>
+    <script type="module" src="beziehungen.js?v=20260917a"></script>
   </head>
   <body class="redundancy-page relation-page">
     <div class="site-backdrop" aria-hidden="true"></div>
@@ -50,7 +50,11 @@
           <div id="relationship-observation" class="scenario-card accent"></div>
           <div class="task-card"><h3>Deine Beobachtung</h3><p>Wähle für beide Aussagen die passende Ergänzung.</p>
             <div class="choice-list" id="step2-choices"></div>
-            <div class="action-row"><button id="check-step2" class="primary-button" type="button">Beobachtung prüfen</button></div>
+            <div class="action-row"><button id="check-step2-photos" class="primary-button" type="button">Antwort 1 prüfen</button></div>
+            <p id="feedback-step2-photos" class="feedback" aria-live="polite"></p>
+            <div class="choice-list" id="step2-users"></div>
+            <div class="action-row"><button id="check-step2-users" class="primary-button" type="button">Antwort 2 prüfen</button></div>
+            <p id="feedback-step2-users" class="feedback" aria-live="polite"></p>
             <p id="feedback-step2" class="feedback" aria-live="polite"></p>
           </div>
           <div id="relationship-reveal" class="concept-reveal relation-concept" hidden>
@@ -76,9 +80,8 @@
 
         <section id="step-4" class="step-panel" role="tabpanel" aria-labelledby="tab-4" hidden>
           <div class="step-heading"><span class="step-number">4</span><div><p class="step-kicker">Anwenden</p><h2>Fremdschlüssel einsetzen</h2></div></div>
-          <div class="task-card"><h3>A. Fremdschlüssel erkennen</h3><p>Welche Spalte ist der Fremdschlüssel?</p><div id="step4a-choices" class="choice-list"></div></div>
-          <div id="new-photo-task" class="task-card"></div>
-          <div class="action-row"><button id="check-step4" class="primary-button" type="button">Antworten prüfen</button></div>
+          <div class="task-card"><h3>A. Fremdschlüssel erkennen</h3><p>Welche Spalte ist der Fremdschlüssel?</p><div id="step4a-choices" class="choice-list"></div><div class="action-row"><button id="check-step4-key" class="primary-button" type="button">Antwort A prüfen</button></div><p id="feedback-step4-key" class="feedback" aria-live="polite"></p></div>
+          <div class="task-card"><div id="new-photo-task"></div><div class="action-row"><button id="check-step4-value" class="primary-button" type="button">Antwort B prüfen</button></div><p id="feedback-step4-value" class="feedback" aria-live="polite"></p></div>
           <p id="feedback-step4" class="feedback" aria-live="polite"></p>
         </section>
 

@@ -197,7 +197,7 @@ function renderData() {
   document.getElementById("relationship-observation").innerHTML = `<p><strong>${escapeHtml(lesson.primaryUser.name)}</strong> wurde in der Zuordnung mehreren Fotos zugeordnet.</p><p>Betrachte nun beide Richtungen der Beziehung.</p>`;
   radioList("step2-choices", "photos-per-user", [["mehrere", "Ein Benutzer kann mehrere Fotos besitzen."], ["eines", "Ein Benutzer kann nur ein Foto besitzen."]], state.step2.photos);
   radioList("step3-choices", "foreign-column", [["id", "photos.id"], ["user_id", "photos.user_id"], ["description", "photos.description"]], state.step3.answer);
-  document.getElementById("step2-choices").insertAdjacentHTML("beforeend", `<div class="choice-list"><p><strong>Ein einzelnes Foto gehört …</strong></p><label class="choice-option"><input type="radio" name="users-per-photo" value="einem" ${state.step2.users === "einem" ? "checked" : ""}><span>… genau einem Benutzer.</span></label><label class="choice-option"><input type="radio" name="users-per-photo" value="mehreren" ${state.step2.users === "mehreren" ? "checked" : ""}><span>… mehreren Benutzern.</span></label></div>`);
+  document.getElementById("step2-users").innerHTML = `<p><strong>Ein einzelnes Foto gehört …</strong></p><label class="choice-option"><input type="radio" name="users-per-photo" value="einem" ${state.step2.users === "einem" ? "checked" : ""}><span>… genau einem Benutzer.</span></label><label class="choice-option"><input type="radio" name="users-per-photo" value="mehreren" ${state.step2.users === "mehreren" ? "checked" : ""}><span>… mehreren Benutzern.</span></label>`;
   document.getElementById("key-comparison").innerHTML = tableExcerptMarkup(true);
   radioList("step4a-choices", "step4-key", [["photos.id", "photos.id"], ["photos.user_id", "photos.user_id"], ["users.username", "users.username"]], state.step4.key);
   document.getElementById("new-photo-task").innerHTML = `<h3>B. Fremdschlüssel anwenden</h3><p>Ein neues Foto soll zu <strong>${escapeHtml(lesson.targetUser.name)}</strong> gehören. In <code>users</code> hat diese Person die <code>id</code> <strong>${escapeHtml(lesson.targetUser.id)}</strong>.</p><p>Das neue Foto besitzt die ID <strong>4</strong>.</p><label for="new-photo-user-id">Trage den Wert für <code>user_id</code> im neuen Foto #4 ein.</label><input id="new-photo-user-id" class="inline-input" type="number" min="1" step="1" inputmode="numeric" value="${escapeHtml(state.step4.value)}" aria-label="Wert für user_id im neuen Foto">`;
@@ -229,16 +229,31 @@ function checkStep1() {
   saveState();
 }
 
-function checkStep2() {
+function readStep2() {
   state.step2.photos = document.querySelector('input[name="photos-per-user"]:checked')?.value ?? "";
   state.step2.users = document.querySelector('input[name="users-per-photo"]:checked')?.value ?? "";
-  state.step2.checked = true;
-  const photosCorrect = state.step2.photos === "mehrere";
-  const usersCorrect = state.step2.users === "einem";
-  if (photosCorrect && usersCorrect) { setFeedback(2, "success", "Genau: Das ist eine 1:n-Beziehung."); markComplete(2); document.getElementById("relationship-reveal").hidden = false; }
-  else if (!state.step2.photos || !state.step2.users) setFeedback(2, "hint", "Wähle zu beiden Aussagen eine Ergänzung.");
-  else if (photosCorrect || usersCorrect) setFeedback(2, "hint", "Eine Aussage stimmt schon. Prüfe die andere Richtung der Beziehung noch einmal.");
-  else setFeedback(2, "hint", "Schau auf die Zuordnung zurück: Ein Benutzer durfte mehrfach gewählt werden. Ein Foto wurde nur einmal zugeordnet.");
+}
+
+function completeStep2IfSolved() {
+  if (state.step2.photos === "mehrere" && state.step2.users === "einem") { state.step2.checked = true; setFeedback(2, "success", "Genau: Beide Richtungen zusammen ergeben eine 1:n-Beziehung."); markComplete(2); document.getElementById("relationship-reveal").hidden = false; }
+  else clearFeedback(2);
+}
+
+function checkStep2Photos() {
+  readStep2();
+  if (state.step2.photos === "mehrere") setFeedback("2-photos", "success", "Richtig: Ein Benutzer kann mehrere Fotos besitzen.");
+  else if (!state.step2.photos) setFeedback("2-photos", "hint", "Wähle eine Ergänzung aus.");
+  else setFeedback("2-photos", "hint", "Noch nicht korrekt. Schau auf die Zuordnung zurück: Ein Benutzer durfte mehrfach gewählt werden.");
+  completeStep2IfSolved();
+  saveState();
+}
+
+function checkStep2Users() {
+  readStep2();
+  if (state.step2.users === "einem") setFeedback("2-users", "success", "Richtig: Ein Foto gehört genau einem Benutzer.");
+  else if (!state.step2.users) setFeedback("2-users", "hint", "Wähle eine Ergänzung aus.");
+  else setFeedback("2-users", "hint", "Noch nicht korrekt. Schau auf die Zuordnung zurück: Jedes Foto wurde nur einmal zugeordnet.");
+  completeStep2IfSolved();
   saveState();
 }
 
@@ -251,17 +266,34 @@ function checkStep3() {
   saveState();
 }
 
-function checkStep4() {
+function readStep4() {
   state.step4.key = document.querySelector('input[name="step4-key"]:checked')?.value ?? "";
-  state.step4.value = document.getElementById("new-photo-user-id").value.trim(); state.step4.checked = true;
+  state.step4.value = document.getElementById("new-photo-user-id").value.trim();
+}
+
+function completeStep4IfSolved() {
   const keyCorrect = state.step4.key === "photos.user_id";
   const valueCorrect = state.step4.value !== "" && Number(state.step4.value) === Number(lesson.targetUser.id);
-  if (keyCorrect && valueCorrect) { setFeedback(4, "success", "Beide Aufgaben sind richtig: photos.user_id ist der Fremdschlüssel und übernimmt die id des Benutzers."); markComplete(4); }
-  else if (!state.step4.key || !state.step4.value) setFeedback(4, "hint", "Bearbeite beide Teilaufgaben.");
-  else if (Number(state.step4.value) === 4) setFeedback(4, "hint", "Achtung: Verwechsle nicht user_id und photo_id!");
-  else if (keyCorrect) setFeedback(4, "hint", "Teil A stimmt. Übernimm für Teil B die id des genannten Benutzers.");
-  else if (valueCorrect) setFeedback(4, "hint", "Teil B stimmt. Welche Spalte in photos verweist auf users.id?");
-  else setFeedback(4, "hint", "Prüfe A: Die Verbindungs-Spalte steht in photos. Prüfe B: Übernimm die id des genannten Benutzers.");
+  if (keyCorrect && valueCorrect) { state.step4.checked = true; setFeedback(4, "success", "Beide Aufgaben sind richtig: photos.user_id ist der Fremdschlüssel und übernimmt die id des Benutzers."); markComplete(4); }
+  else clearFeedback(4);
+}
+
+function checkStep4Key() {
+  readStep4();
+  if (state.step4.key === "photos.user_id") setFeedback("4-key", "success", "Richtig: photos.user_id verweist auf users.id.");
+  else if (!state.step4.key) setFeedback("4-key", "hint", "Wähle eine Spalte aus.");
+  else setFeedback("4-key", "hint", "Noch nicht korrekt. Die Verbindungs-Spalte steht in photos und verweist auf users.id.");
+  completeStep4IfSolved();
+  saveState();
+}
+
+function checkStep4Value() {
+  readStep4();
+  if (state.step4.value !== "" && Number(state.step4.value) === Number(lesson.targetUser.id)) setFeedback("4-value", "success", "Richtig: user_id übernimmt die id des Benutzers.");
+  else if (!state.step4.value) setFeedback("4-value", "hint", "Trage einen Wert für user_id ein.");
+  else if (Number(state.step4.value) === 4) setFeedback("4-value", "hint", "Achtung: Verwechsle nicht user_id und photo_id!");
+  else setFeedback("4-value", "hint", "Noch nicht korrekt. Übernimm die id des genannten Benutzers.");
+  completeStep4IfSolved();
   saveState();
 }
 
@@ -326,29 +358,29 @@ function renderSummary() {
 
 function bindEvents() {
   document.getElementById("check-step1").addEventListener("click", checkStep1);
-  document.getElementById("check-step2").addEventListener("click", checkStep2);
+  document.getElementById("check-step2-photos").addEventListener("click", checkStep2Photos);
+  document.getElementById("check-step2-users").addEventListener("click", checkStep2Users);
   document.getElementById("check-step3").addEventListener("click", checkStep3);
-  document.getElementById("check-step4").addEventListener("click", checkStep4);
+  document.getElementById("check-step4-key").addEventListener("click", checkStep4Key);
+  document.getElementById("check-step4-value").addEventListener("click", checkStep4Value);
   document.getElementById("check-step5").addEventListener("click", checkStep5);
   document.getElementById("check-step6").addEventListener("click", checkStep6);
   document.getElementById("final-quiz").addEventListener("submit", checkStep7);
   document.getElementById("reset-module").addEventListener("click", () => { if (window.confirm("Möchtest du alle Eingaben und den Fortschritt zurücksetzen?")) { localStorage.removeItem(STORAGE_KEY); window.location.reload(); } });
 
   document.querySelectorAll('input[name="photos-per-user"], input[name="users-per-photo"]').forEach((input) => input.addEventListener("change", () => {
-    state.step2.photos = document.querySelector('input[name="photos-per-user"]:checked')?.value ?? "";
-    state.step2.users = document.querySelector('input[name="users-per-photo"]:checked')?.value ?? "";
-    state.step2.checked = false; clearFeedback(2); saveState();
+    readStep2();
+    state.step2.checked = false; clearFeedback(input.name === "photos-per-user" ? "2-photos" : "2-users"); clearFeedback(2); saveState();
   }));
   document.querySelectorAll('input[name="foreign-column"]').forEach((input) => input.addEventListener("change", () => {
     state.step3.answer = input.value; state.step3.checked = false; clearFeedback(3); saveState();
   }));
-  const persistStep4 = () => {
-    state.step4.key = document.querySelector('input[name="step4-key"]:checked')?.value ?? "";
-    state.step4.value = document.getElementById("new-photo-user-id").value.trim();
-    state.step4.checked = false; clearFeedback(4); saveState();
+  const persistStep4 = (part) => {
+    readStep4();
+    state.step4.checked = false; clearFeedback(`4-${part}`); clearFeedback(4); saveState();
   };
-  document.querySelectorAll('input[name="step4-key"]').forEach((input) => input.addEventListener("change", persistStep4));
-  document.getElementById("new-photo-user-id").addEventListener("input", persistStep4);
+  document.querySelectorAll('input[name="step4-key"]').forEach((input) => input.addEventListener("change", () => persistStep4("key")));
+  document.getElementById("new-photo-user-id").addEventListener("input", () => persistStep4("value"));
   document.querySelectorAll('#school-cardinality, #pupils-cardinality').forEach((input) => input.addEventListener("input", () => {
     state.step5.school = document.getElementById("school-cardinality").value;
     state.step5.pupils = document.getElementById("pupils-cardinality").value;

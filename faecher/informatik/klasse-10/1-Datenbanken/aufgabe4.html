@@ -8,7 +8,7 @@
     <link rel="stylesheet" href="../../../../styles.css?v=20260825">
     <link rel="stylesheet" href="redundanzen.css?v=20260916a">
     <link rel="stylesheet" href="tabellenschema.css?v=20260827">
-    <script type="module" src="tabellenschema.js?v=20260916a"></script>
+    <script type="module" src="tabellenschema.js?v=20260917a"></script>
   </head>
   <body class="redundancy-page schema-page">
     <div class="site-backdrop" aria-hidden="true"></div>
@@ -88,10 +88,13 @@
           <section class="task-card relationship-discovery" aria-labelledby="relationship-task-title">
             <h3 id="relationship-task-title">Beziehung entschlüsseln</h3>
             <fieldset><legend>1. Welche Zeile verbindet <code>photos</code> mit <code>users</code>?</legend><div id="foreign-key-choice" class="choice-list"></div></fieldset>
+            <div class="action-row"><button id="check-step5-1" class="primary-button" type="button">Antwort 1 prüfen</button></div><p id="feedback-step5-1" class="feedback" aria-live="polite"></p>
             <fieldset><legend>2. Was wird beim Klassendiagramm aus dieser Zeile?</legend><div id="relation-mapping-choice" class="choice-list"></div></fieldset>
+            <div class="action-row"><button id="check-step5-2" class="primary-button" type="button">Antwort 2 prüfen</button></div><p id="feedback-step5-2" class="feedback" aria-live="polite"></p>
             <fieldset class="cardinality-fields"><legend>3. Ergänze die Kardinalitäten.</legend><label><span>Bei <code>users</code></span><select id="users-cardinality"><option value="">auswählen</option><option value="1">1</option><option value="n">n</option></select></label><label><span>Bei <code>photos</code></span><select id="photos-cardinality"><option value="">auswählen</option><option value="1">1</option><option value="n">n</option></select></label></fieldset>
+            <div class="action-row"><button id="check-step5-3" class="primary-button" type="button">Kardinalitäten prüfen</button></div><p id="feedback-step5-3" class="feedback" aria-live="polite"></p>
             <div class="help-stack"><details><summary>Hilfe 1</summary><p>Achte auf den Namen in den eckigen Klammern.</p></details><details><summary>Hilfe 2</summary><p>Ein Benutzer kann mehrere Fotos hochladen. Jedes Foto gehört zu genau einem Benutzer.</p></details></div>
-            <div class="action-row"><button id="check-step5" class="primary-button" type="button">Beziehung prüfen</button></div><p id="feedback-step5" class="feedback" aria-live="polite"></p>
+            <p id="feedback-step5" class="feedback" aria-live="polite"></p>
           </section>
           <section id="relationship-result" class="relationship-result" aria-labelledby="relationship-result-title" hidden>
             <h3 id="relationship-result-title">Vom Fremdschlüssel zur 1:n-Beziehung</h3>

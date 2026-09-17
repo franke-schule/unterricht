@@ -13,6 +13,7 @@ import { evaluateSemanticAnswer } from "./semantic-answer.mjs";
 import { renderTreeEdges } from "./tree-edges.mjs?v=20260820d";
 
 const STORAGE_KEY = "informatik11-fish-tree-task3-v1";
+const SOLUTION_CODE = "M2HV-DNMF";
 const SCRIPT_SERVER_URL = "https://script.google.com/macros/s/AKfycby8RWL6uYrKZyoJ6m2GRpWyRmXjwsdskyCiqzKpRhIK5-wrDl-9lWWk8CiAGaVMoy0x/exec";
 const SEMANTIC_TASK_ID = "11-3a-f";
 const PALETTE_MIME = "application/x-fish-tree-palette";
@@ -920,6 +921,24 @@ function showTreeQuizSummary() {
   summary.append(list);
 }
 
+function normalizeSolutionCode(value) {
+  return value.toUpperCase().replace(/[^A-Z0-9]/g, "");
+}
+
+function unlockSolution(event) {
+  event.preventDefault();
+  const form = event.currentTarget;
+  const enteredCode = normalizeSolutionCode(form.elements["solution-code"].value);
+  const isCorrect = enteredCode === normalizeSolutionCode(SOLUTION_CODE);
+  const message = document.querySelector("#solution-code-message");
+
+  document.querySelector("#solution-download-link").hidden = !isCorrect;
+  message.className = `solution-code-message${isCorrect ? "" : " error"}`;
+  message.textContent = isCorrect
+    ? "Code korrekt. Das Sicherungsblatt ist freigeschaltet."
+    : "Der eingegebene Code ist nicht gültig.";
+}
+
 function checkTreeQuiz(event) {
   event.preventDefault();
   let correct = 0;
@@ -974,6 +993,7 @@ document.querySelector("#reset-fish-tree").addEventListener("click", () => {
 document.querySelector("#check-fish-tree").addEventListener("click", checkFishTree);
 document.querySelector("#check-algorithm").addEventListener("click", checkAlgorithm);
 document.querySelector("#final-quiz").addEventListener("submit", checkTreeQuiz);
+document.querySelector("#solution-code-form").addEventListener("submit", unlockSolution);
 document.querySelector("#entropy-quiz-form").addEventListener("submit", checkQuiz);
 document.querySelectorAll("[data-step-tab]").forEach((tab) => {
   tab.addEventListener("click", () => showStep(tab.dataset.stepTab));

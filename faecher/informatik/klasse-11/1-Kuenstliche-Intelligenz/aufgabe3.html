@@ -8,7 +8,7 @@
     <link rel="stylesheet" href="../../../../styles.css?v=20260707">
     <link rel="stylesheet" href="entscheidungbaeume/styles.css?v=20260820g">
     <link rel="stylesheet" href="entscheidungbaeume/task3.css?v=20260917c">
-    <script type="module" src="entscheidungbaeume/ui/task3.mjs?v=20260917c"></script>
+    <script type="module" src="entscheidungbaeume/ui/task3.mjs?v=20260917d"></script>
   </head>
   <body class="decision-tree-page dt-fish-page is-intro-active">
     <div class="site-backdrop" aria-hidden="true"></div>
@@ -255,6 +255,27 @@
           <h2 id="complete-title">Aufgabe 3a abgeschlossen</h2>
           <p>Ein Entscheidungsbaum entsteht schrittweise. In jedem Knoten wird ein möglichst geeignetes Attribut ausgewählt. Anschließend wird das Verfahren für die entstandenen Teilmengen wiederholt.</p>
         </section>
+        <section class="solution-download" aria-labelledby="solution-download-title">
+          <h2 id="solution-download-title">Sicherungsblatt zu Aufgabe 3a</h2>
+          <details class="solution-reveal">
+            <summary>Sicherungsblatt anzeigen</summary>
+            <form id="solution-code-form" class="solution-code-form">
+              <label for="solution-code">Lehrercode eingeben</label>
+              <div class="solution-code-controls">
+                <input id="solution-code" name="solution-code" type="text"
+                  maxlength="9" autocomplete="off" autocapitalize="characters"
+                  spellcheck="false" required>
+                <button type="submit">Code prüfen</button>
+              </div>
+              <p id="solution-code-message" class="solution-code-message"
+                aria-live="polite"></p>
+              <a id="solution-download-link" class="download-button"
+                href="sicherungsblatt-aufgabe-3a-loesungen.pdf" download hidden>
+                &#8595; Sicherungsblatt herunterladen
+              </a>
+            </form>
+          </details>
+        </section>
         <div class="flow-navigation" data-flow="quiz"></div>
       </section>
 
@@ -292,7 +313,7 @@
         </section>
         <section id="task3b-complete" class="dt-remember fish-complete" hidden>
           <p class="fish-kicker">Merke</p><h2>Vertiefungsaufgabe abgeschlossen</h2>
-          <p>Fehlklassifikationsrate und Entropie sind unterschiedliche Möglichkeiten, die Qualität eines Splits zu beurteilen. Beide verfolgen dasselbe Grundziel: Es sollen möglichst homogene Teilmengen entstehen.</p>
+          <p>Die Anzahl der Fehlklassifikationen und die Entropie sind unterschiedliche Möglichkeiten, die Qualität eines Splits zu beurteilen. Beide verfolgen dasselbe Grundziel: Es sollen möglichst homogene Teilmengen entstehen.</p>
         </section>
       </section>
     </main>
