@@ -73,6 +73,41 @@ export function entropyInformationGain(parentCounts, childCounts) {
   return before - weightedAfter;
 }
 
+// Abschlussquiz des Pflichtteils (Aufgabe 3a): nur Inhalte ohne Entropie,
+// Auswahlkästchen mit einer oder mehreren richtigen Aussagen.
+export const TREE_QUIZ = Object.freeze([
+  Object.freeze({
+    question: "Eine Teilmenge enthält 3 friedliche und 2 feindselige Fische. Welche Aussagen stimmen?",
+    options: ["Das Mehrheitslabel ist friedlich.", "Es entstehen 2 Fehlklassifikationen.", "Es entstehen 3 Fehlklassifikationen.", "Die Teilmenge ist bereits rein."],
+    correct: Object.freeze([0, 1]),
+    feedback: "Der Baum wählt das häufigere Label. Die Fische der kleineren Gruppe zählen als Fehler.",
+  }),
+  Object.freeze({
+    question: "Vor einem Split gibt es 4 Fehler. Nach einem Split mit Attribut A sind es 3 Fehler, mit Attribut B nur 2 Fehler. Welche Aussagen stimmen?",
+    options: ["Attribut A hat den Informationsgewinn 1.", "Attribut B hat den Informationsgewinn 2.", "Attribut A sollte gewählt werden, weil danach mehr Fehler übrig bleiben.", "Attribut B sollte gewählt werden."],
+    correct: Object.freeze([0, 1, 3]),
+    feedback: "Informationsgewinn = Fehler vorher − Fehler nachher. Gewählt wird das Attribut mit dem größten Informationsgewinn.",
+  }),
+  Object.freeze({
+    question: "Bei den blauen Fischen erreichen Muster und Bauchfarbe beide den Informationsgewinn 1. Welche Aussage stimmt?",
+    options: ["Beide Attribute sind nach diesem Kriterium gleich gut geeignet.", "Nur das Attribut, das in der Tabelle zuerst steht, ist richtig.", "Bei einem Gleichstand muss sofort ein Blatt eingesetzt werden.", "Der Informationsgewinn ist dann negativ."],
+    correct: Object.freeze([0]),
+    feedback: "Bei gleichem Informationsgewinn ist keines der beiden Attribute besser; beide Bäume sind fachlich korrekt.",
+  }),
+  Object.freeze({
+    question: "Wann wird beim Aufbau des Baums ein Blatt statt eines weiteren Entscheidungsknotens eingesetzt?",
+    options: ["Wenn alle Daten der Teilmenge dasselbe Label haben.", "Wenn keine weitere sinnvolle Aufteilung möglich ist.", "Immer nach genau zwei Entscheidungsknoten.", "Sobald ein Attribut zwei Attributwerte besitzt."],
+    correct: Object.freeze([0, 1]),
+    feedback: "Ein Blatt entsteht, wenn eine Teilmenge eindeutig ist oder kein weiterer Split mehr sinnvoll ist.",
+  }),
+  Object.freeze({
+    question: "Welche Aussagen beschreiben den Algorithmus zum Erstellen eines Entscheidungsbaums richtig?",
+    options: ["Das Attribut mit dem größten Informationsgewinn wird als Entscheidungsknoten gewählt.", "Die Trainingsdaten werden nach den Attributwerten in Teilmengen aufgeteilt.", "Für jede noch nicht eindeutige Teilmenge wird das Verfahren wiederholt.", "Die Attribute werden immer in alphabetischer Reihenfolge verwendet."],
+    correct: Object.freeze([0, 1, 2]),
+    feedback: "Der Algorithmus wählt ein Attribut, teilt die Daten auf und wiederholt das für jede Teilmenge, bis Blätter entstehen.",
+  }),
+]);
+
 export const ENTROPY_QUIZ = Object.freeze([
   Object.freeze({
     question: "Was beschreibt die Entropie einer Datenmenge bei einem Entscheidungsbaum?",
@@ -97,12 +132,6 @@ export const ENTROPY_QUIZ = Object.freeze([
     options: ["0,4", "0,6", "1,4", "2,5"],
     correct: 1,
     feedback: "IG = 1 − 0,4 = 0,6.",
-  }),
-  Object.freeze({
-    question: "Attribut A hat IG 0,18 und Attribut B hat IG 0,47. Welches Attribut sollte gewählt werden?",
-    options: ["Attribut A", "Attribut B", "Beide sind gleich gut", "Das Attribut mit dem kleineren Informationsgewinn"],
-    correct: 1,
-    feedback: "Das Attribut mit dem größeren Informationsgewinn erzeugt nach diesem Kriterium die bessere Aufteilung.",
   }),
 ]);
 

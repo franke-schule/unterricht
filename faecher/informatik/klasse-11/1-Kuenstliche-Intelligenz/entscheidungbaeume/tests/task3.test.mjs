@@ -7,6 +7,7 @@ import { CLASSIFICATIONS } from "../data/monkeys.mjs";
 import { FISH_DATASET, FISH_LABELS } from "../data/fish.mjs";
 import {
   ENTROPY_QUIZ,
+  TREE_QUIZ,
   calculateSplit,
   countLabels,
   entropyForCounts,
@@ -120,8 +121,19 @@ test("Zahleneingaben und Entropieformeln behandeln typische Eingaben robust", ()
   assert.ok(Math.abs(entropyInformationGain([10, 10], [[7, 0], [3, 10]]) - 0.4934) < 0.001);
 });
 
-test("Entropiequiz enthält fünf eindeutig auswertbare Fragen", () => {
-  assert.equal(ENTROPY_QUIZ.length, 5);
+test("Abschlussquiz des Pflichtteils nutzt Mehrfachauswahl ohne Entropie", () => {
+  assert.equal(TREE_QUIZ.length, 5);
+  assert.ok(TREE_QUIZ.filter((item) => item.correct.length > 1).length >= 2);
+  TREE_QUIZ.forEach((item) => {
+    assert.equal(item.options.length, 4);
+    assert.ok(item.correct.length >= 1 && item.correct.every((index) => index >= 0 && index < item.options.length));
+    assert.doesNotMatch(`${item.question} ${item.options.join(" ")}`, /Entropie/);
+    assert.ok(item.feedback.length > 15);
+  });
+});
+
+test("Entropiequiz enthält vier eindeutig auswertbare Fragen", () => {
+  assert.equal(ENTROPY_QUIZ.length, 4);
   ENTROPY_QUIZ.forEach((item) => {
     assert.equal(item.options.length, 4);
     assert.ok(item.correct >= 0 && item.correct < item.options.length);
@@ -167,8 +179,8 @@ test("Aufgabenseite besitzt eindeutige IDs, gültige lokale Links und responsive
   ["1050px", "760px", "430px"].forEach((breakpoint) => assert.match(css, new RegExp(breakpoint)));
   assert.match(page, /id="split-intro"/);
   assert.match(page, /class="fish-progress" role="tablist"/);
-  assert.equal([...page.matchAll(/data-step-tab="[^"]+"/g)].length, 7);
-  assert.equal([...page.matchAll(/data-step-panel="[^"]+"/g)].length, 7);
+  assert.equal([...page.matchAll(/data-step-tab="[^"]+"/g)].length, 8);
+  assert.equal([...page.matchAll(/data-step-panel="[^"]+"/g)].length, 8);
   assert.match(page, /id="erster-split"[^>]*hidden/);
   assert.match(page, /id="intro-before"/);
   assert.match(page, /id="intro-blue-errors"/);

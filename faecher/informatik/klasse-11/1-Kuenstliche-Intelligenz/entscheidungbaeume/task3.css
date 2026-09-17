@@ -124,6 +124,8 @@
 .fish-progress button.is-complete span { background: var(--dt-safe); }
 .fish-progress button:focus-visible { outline: 3px solid rgba(40, 86, 198, 0.25); outline-offset: -2px; }
 .fish-progress button:disabled { opacity: 0.48; cursor: not-allowed; }
+.fish-step .flow-navigation { display: flex; flex-wrap: wrap; justify-content: flex-end; gap: 10px; margin-top: 22px; }
+.fish-step .flow-navigation .dt-primary-button { width: auto; }
 .fish-save-status { margin: 0 auto 26px; color: var(--dt-muted); font-size: 0.8rem; text-align: center; }
 
 .fish-step {
@@ -357,12 +359,16 @@
 
 /* Nach der Einfuehrung bleibt die Seite ruhig; nur der aktive Reiter scrollt. */
 .tabs-ready .decision-tree-shell {
+  display: flex;
+  flex-direction: column;
   height: 100dvh;
   min-height: 650px;
   padding-top: 10px;
   padding-bottom: 10px;
   overflow: hidden;
 }
+/* Kopf und Reiterleiste behalten ihre Hoehe; nur der aktive Reiter fuellt den Rest. */
+.tabs-ready .decision-tree-shell > * { flex-shrink: 0; }
 .tabs-ready .topbar { margin-bottom: 4px; }
 .tabs-ready .dt-fish-hero { margin: 2px auto 8px; }
 .tabs-ready .dt-fish-hero h1 { font-size: clamp(1.55rem, 2.8vw, 2.45rem); line-height: 1.05; }
@@ -372,8 +378,8 @@
 .tabs-ready .fish-save-status { display: none; }
 .tabs-ready .fish-progress { position: static; flex: 0 0 auto; margin-bottom: 8px; }
 .tabs-ready .fish-tab-panel {
-  height: calc(100dvh - 188px);
-  min-height: 455px;
+  flex: 1 1 0;
+  min-height: 0;
   margin: 0 auto;
   padding: clamp(14px, 1.7vw, 22px);
   overflow: auto;
@@ -424,7 +430,7 @@
 .entropy-calculation strong { color: #4c348d; }
 .entropy-example blockquote { grid-column: 1 / -1; margin: 0; padding: 16px 20px; border-left: 5px solid #d5a52d; border-radius: 10px; background: #fff9df; font-weight: 850; }
 
-.entropy-quiz { margin-top: 25px; padding: 23px; border: 1px solid #d4dcea; border-radius: 18px; background: #fff; }
+.entropy-quiz, .fish-final-quiz { margin-top: 25px; padding: 23px; border: 1px solid #d4dcea; border-radius: 18px; background: #fff; }
 .entropy-quiz-heading { display: flex; align-items: center; justify-content: space-between; gap: 16px; }
 .entropy-quiz-heading h3 { margin: 0; font-size: 1.45rem; }
 .entropy-quiz-heading > p { color: var(--dt-muted); font-weight: 850; }
@@ -452,6 +458,8 @@
   .tabs-ready .fish-first-layout { grid-template-columns: minmax(245px, 285px) minmax(0, 1fr); }
   .tabs-ready .fish-training-sticky { position: sticky; max-height: calc(100dvh - 255px); overflow-y: auto; }
   .tabs-ready .fish-training-sticky .fish-grid { grid-template-columns: repeat(2, minmax(78px, 1fr)); }
+  .fish-progress { flex-wrap: wrap; }
+  .fish-progress button { gap: 6px; padding: 7px 8px; }
 }
 
 @media (max-width: 900px) {
@@ -468,7 +476,7 @@
   .intro-fish-group { grid-template-columns: repeat(3, minmax(64px, 1fr)); }
   .intro-fish-groups { grid-template-columns: 1fr; }
   .intro-fish-groups .intro-fish-group { grid-template-columns: repeat(3, minmax(62px, 1fr)); }
-  .fish-progress button { justify-content: center; padding: 8px; font-size: 0; }
+  .fish-progress button { min-width: 0; flex: 1 1 0; justify-content: center; padding: 8px 4px; font-size: 0; }
   .fish-progress button span { font-size: 0.8rem; }
   .fish-step { padding: 18px 14px; border-radius: 17px; }
   .fish-step-heading { display: grid; gap: 10px; }
@@ -482,7 +490,7 @@
 
 @media (max-width: 700px), (max-height: 649px) {
   .tabs-ready .decision-tree-shell { height: auto; min-height: 100vh; overflow: visible; }
-  .tabs-ready .fish-tab-panel { height: auto; min-height: 0; overflow: visible; }
+  .tabs-ready .fish-tab-panel { flex: 0 0 auto; height: auto; min-height: 0; overflow: visible; }
   .tabs-ready .fish-first-layout { grid-template-columns: 1fr; }
   .tabs-ready .fish-training-sticky { position: static; max-height: none; overflow: visible; }
   .tabs-ready .fish-tree-toolbox { position: static; max-height: none; overflow: visible; }

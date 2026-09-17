@@ -32,6 +32,8 @@ function evaluateWithGemini_(
   const payload = {
     model:
       model,
+    store:
+      false,
     input:
       buildPrompt_(
         task,

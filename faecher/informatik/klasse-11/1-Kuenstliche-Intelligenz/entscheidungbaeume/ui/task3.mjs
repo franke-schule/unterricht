@@ -1,5 +1,5 @@
 import { CLASSIFICATIONS } from "../data/monkeys.mjs";
-import { ENTROPY_QUIZ, expectedTableValues } from "../logic/fish-learning.mjs";
+import { ENTROPY_QUIZ, TREE_QUIZ, expectedTableValues } from "../logic/fish-learning.mjs";
 import { FISH_DATASET, FISH_FEATURES, FISH_LABELS } from "../data/fish.mjs";
 import {
   createFeatureNode,
@@ -45,6 +45,7 @@ const STEP_DEFINITIONS = Object.freeze([
   { id: "deep", panelId: "letzter-split" },
   { id: "tree", panelId: "baum-bauen" },
   { id: "algorithm", panelId: "algorithmus" },
+  { id: "quiz", panelId: "abschlussquiz" },
   { id: "entropy", panelId: "entropie" },
 ]);
 
@@ -59,6 +60,8 @@ const blankState = () => ({
   treeComplete: false,
   algorithm: "",
   algorithmComplete: false,
+  treeQuizAnswers: {},
+  treeQuizComplete: false,
   quizAnswers: {},
   quizComplete: false,
 });
@@ -462,14 +465,9 @@ function groupComplete(groupId) {
   return tableGroups[groupId].features.every((feature) => state.completedTables[`${groupId}.${feature}`]);
 }
 
+// Alle Reiter sind jederzeit frei wechselbar; der Fortschritt wird nur markiert.
 function stepIsAvailable(stepId) {
-  if (stepId === "tables" || stepId === "entropy") return true;
-  if (stepId === "blue") return state.rootComplete;
-  if (stepId === "orange") return state.rootComplete && groupComplete("blue");
-  if (stepId === "deep") return state.rootComplete && groupComplete("blue") && groupComplete("orange");
-  if (stepId === "tree") return state.rootComplete && groupComplete("blue") && groupComplete("orange") && groupComplete("bluePoints");
-  if (stepId === "algorithm") return state.treeComplete;
-  return false;
+  return STEP_DEFINITIONS.some((step) => step.id === stepId);
 }
 
 function stepIsComplete(stepId) {
@@ -479,6 +477,7 @@ function stepIsComplete(stepId) {
   if (stepId === "deep") return groupComplete("bluePoints");
   if (stepId === "tree") return state.treeComplete;
   if (stepId === "algorithm") return state.algorithmComplete;
+  if (stepId === "quiz") return state.treeQuizComplete;
   if (stepId === "entropy") return state.quizComplete;
   return false;
 }
@@ -516,10 +515,31 @@ function showStep(stepId, { updateHash = true } = {}) {
   if (updateHash) history.replaceState(null, "", `#${definition.panelId}`);
 }
 
+function stepLabel(stepId) {
+  return document.querySelector(`#tab-${stepId}`)?.lastChild.textContent.trim() ?? stepId;
+}
+
+function renderFlowNavigation() {
+  document.querySelectorAll("[data-flow]").forEach((container) => {
+    const index = STEP_DEFINITIONS.findIndex((step) => step.id === container.dataset.flow);
+    const next = STEP_DEFINITIONS[index + 1];
+    if (!next) return;
+    const button = document.createElement("button");
+    button.type = "button";
+    button.className = "dt-primary-button";
+    button.textContent = next.id === "entropy" ? "Zu den Aufgaben für die Schnellen" : `Weiter: ${stepLabel(next.id)}`;
+    button.addEventListener("click", () => {
+      showStep(next.id);
+      document.querySelector(`#tab-${next.id}`)?.focus({ preventScroll: true });
+    });
+    container.replaceChildren(button);
+  });
+}
+
 function updateUnlocks() {
   const allComplete = groupComplete("all");
   document.querySelector("#root-choice").hidden = !allComplete;
-  document.querySelector("#task3a-complete").hidden = !(state.treeComplete && state.algorithmComplete);
+  document.querySelector("#task3a-complete").hidden = !state.treeQuizComplete;
   renderStepTabs();
 }
 
@@ -810,7 +830,8 @@ function renderQuiz() {
 }
 
 function updateQuizProgress() {
-  document.querySelector("#quiz-progress").textContent = `${Object.keys(state.quizAnswers).length} von ${ENTROPY_QUIZ.length} beantwortet`;
+  const answered = ENTROPY_QUIZ.filter((_, index) => state.quizAnswers[index] != null).length;
+  document.querySelector("#quiz-progress").textContent = `${answered} von ${ENTROPY_QUIZ.length} beantwortet`;
 }
 
 function showQuizSummary() {
@@ -838,8 +859,95 @@ function checkQuiz(event) {
   const feedback = document.querySelector("#quiz-feedback");
   feedback.hidden = false;
   feedback.className = `dt-feedback ${correct === ENTROPY_QUIZ.length ? "success" : "wrong"}`;
-  feedback.textContent = correct === ENTROPY_QUIZ.length ? "Alle fünf Antworten sind richtig." : `${correct} von ${ENTROPY_QUIZ.length} Antworten sind richtig. Verbessere die übrigen Fragen und werte erneut aus.`;
+  feedback.textContent = correct === ENTROPY_QUIZ.length ? `Alle ${ENTROPY_QUIZ.length} Antworten sind richtig.` : `${correct} von ${ENTROPY_QUIZ.length} Antworten sind richtig. Verbessere die übrigen Fragen und werte erneut aus.`;
   if (correct === ENTROPY_QUIZ.length) { state.quizComplete = true; saveState(); showQuizSummary(); }
+}
+
+function treeQuizSelection(index) {
+  return Array.isArray(state.treeQuizAnswers[index]) ? state.treeQuizAnswers[index] : [];
+}
+
+function renderTreeQuiz() {
+  const container = document.querySelector("#tree-quiz-questions");
+  container.replaceChildren(...TREE_QUIZ.map((item, index) => {
+    const fieldset = document.createElement("fieldset");
+    fieldset.className = "quiz-question";
+    fieldset.dataset.treeQuizIndex = index;
+    const legend = document.createElement("legend");
+    legend.textContent = `Frage ${index + 1}: ${item.question}`;
+    const options = document.createElement("div");
+    options.className = "quiz-options";
+    item.options.forEach((option, optionIndex) => {
+      const label = document.createElement("label");
+      label.className = "quiz-option";
+      const input = document.createElement("input");
+      input.type = "checkbox"; input.name = `tree-quiz-${index}`; input.value = optionIndex;
+      input.checked = treeQuizSelection(index).includes(optionIndex);
+      input.addEventListener("change", () => {
+        state.treeQuizAnswers[index] = [...options.querySelectorAll("input:checked")].map((checked) => Number(checked.value));
+        state.treeQuizComplete = false;
+        document.querySelector("#tree-quiz-summary").hidden = true;
+        saveState();
+        updateTreeQuizProgress();
+        updateUnlocks();
+        fieldset.classList.remove("is-correct", "is-wrong");
+        fieldset.querySelector(".quiz-item-feedback").textContent = "";
+      });
+      label.append(input, document.createTextNode(option)); options.append(label);
+    });
+    const feedback = document.createElement("p"); feedback.className = "quiz-item-feedback";
+    fieldset.append(legend, options, feedback); return fieldset;
+  }));
+  updateTreeQuizProgress();
+  if (state.treeQuizComplete) showTreeQuizSummary();
+}
+
+function updateTreeQuizProgress() {
+  const answered = TREE_QUIZ.filter((_, index) => treeQuizSelection(index).length > 0).length;
+  document.querySelector("#tree-quiz-progress").textContent = `${answered} von ${TREE_QUIZ.length} beantwortet`;
+}
+
+function showTreeQuizSummary() {
+  const summary = document.querySelector("#tree-quiz-summary");
+  summary.hidden = false;
+  summary.innerHTML = "<h3>Abschlussübersicht</h3>";
+  const list = document.createElement("ol");
+  TREE_QUIZ.forEach((item) => {
+    const li = document.createElement("li");
+    li.append(document.createTextNode(item.question), Object.assign(document.createElement("strong"), { textContent: `Richtig: ${item.correct.map((index) => item.options[index]).join(" · ")}` }));
+    list.append(li);
+  });
+  summary.append(list);
+}
+
+function checkTreeQuiz(event) {
+  event.preventDefault();
+  let correct = 0;
+  TREE_QUIZ.forEach((item, index) => {
+    const fieldset = document.querySelector(`[data-tree-quiz-index="${index}"]`);
+    const selection = treeQuizSelection(index);
+    const wrongChoices = selection.filter((choice) => !item.correct.includes(choice)).length;
+    const foundChoices = selection.filter((choice) => item.correct.includes(choice)).length;
+    const isCorrect = wrongChoices === 0 && foundChoices === item.correct.length;
+    fieldset.classList.toggle("is-correct", isCorrect);
+    fieldset.classList.toggle("is-wrong", !isCorrect);
+    let text = `✓ Richtig. ${item.feedback}`;
+    if (selection.length === 0) text = "Kreuze zuerst mindestens eine Aussage an.";
+    else if (wrongChoices > 0) text = `Noch nicht: Mindestens eine angekreuzte Aussage stimmt nicht. Hinweis: ${item.feedback}`;
+    else if (!isCorrect) text = "Teilweise richtig: Deine Kreuze stimmen, aber es fehlt noch mindestens eine richtige Aussage.";
+    fieldset.querySelector(".quiz-item-feedback").textContent = text;
+    if (isCorrect) correct += 1;
+  });
+  const feedback = document.querySelector("#tree-quiz-feedback");
+  feedback.hidden = false;
+  feedback.className = `dt-feedback ${correct === TREE_QUIZ.length ? "success" : "wrong"}`;
+  feedback.textContent = correct === TREE_QUIZ.length
+    ? `Alle ${TREE_QUIZ.length} Fragen sind richtig beantwortet.`
+    : `${correct} von ${TREE_QUIZ.length} Fragen sind richtig beantwortet. Verbessere die übrigen Fragen und werte erneut aus.`;
+  state.treeQuizComplete = correct === TREE_QUIZ.length;
+  saveState();
+  if (state.treeQuizComplete) showTreeQuizSummary();
+  updateUnlocks();
 }
 
 renderFish("fish-all", subsets.all);
@@ -865,6 +973,7 @@ document.querySelector("#reset-fish-tree").addEventListener("click", () => {
 });
 document.querySelector("#check-fish-tree").addEventListener("click", checkFishTree);
 document.querySelector("#check-algorithm").addEventListener("click", checkAlgorithm);
+document.querySelector("#final-quiz").addEventListener("submit", checkTreeQuiz);
 document.querySelector("#entropy-quiz-form").addEventListener("submit", checkQuiz);
 document.querySelectorAll("[data-step-tab]").forEach((tab) => {
   tab.addEventListener("click", () => showStep(tab.dataset.stepTab));
@@ -892,7 +1001,9 @@ document.querySelector("#replay-intro").addEventListener("click", () => {
 });
 window.addEventListener("pagehide", clearIntroTimers);
 renderFishTree();
+renderTreeQuiz();
 renderQuiz();
+renderFlowNavigation();
 updateUnlocks();
 if (!state.introComplete && location.hash !== "#entropie") {
   startIntro();

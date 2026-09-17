@@ -173,8 +173,10 @@ Vorgaben:
   Keine eigene Quiz-Komponente entwickeln.
 
 Ist das Modul in Reiter gegliedert, steht das Abschlussquiz im letzten Reiter.
-Ein vorhandener Sicherungsblatt-Download gehört ebenfalls dorthin, damit er
-erst nach der Bearbeitung erreichbar ist.
+Ein vorhandener Sicherungsblatt-Download gehört ebenfalls dorthin. Er muss
+aber auch ohne Bearbeitung der Aufgaben erreichbar sein: einzige Hürde ist der
+Lehrercode, nie ein bestandenes Quiz oder eine erst danach freigeschaltete
+Übersicht.
 
 
 # 5. Didaktische Anforderungen

@@ -7,8 +7,8 @@
     <title>Aufgabe 3 – Entscheidungsbaum erstellen | Informatik 11</title>
     <link rel="stylesheet" href="../../../../styles.css?v=20260707">
     <link rel="stylesheet" href="entscheidungbaeume/styles.css?v=20260820g">
-    <link rel="stylesheet" href="entscheidungbaeume/task3.css?v=20260821b">
-    <script type="module" src="entscheidungbaeume/ui/task3.mjs?v=20260821b"></script>
+    <link rel="stylesheet" href="entscheidungbaeume/task3.css?v=20260917c">
+    <script type="module" src="entscheidungbaeume/ui/task3.mjs?v=20260917c"></script>
   </head>
   <body class="decision-tree-page dt-fish-page is-intro-active">
     <div class="site-backdrop" aria-hidden="true"></div>
@@ -76,6 +76,7 @@
         <button id="tab-deep" type="button" role="tab" data-step-tab="deep" aria-controls="letzter-split"><span>2c</span>Letzter Split</button>
         <button id="tab-tree" type="button" role="tab" data-step-tab="tree" aria-controls="baum-bauen"><span>3</span>Baum</button>
         <button id="tab-algorithm" type="button" role="tab" data-step-tab="algorithm" aria-controls="algorithmus"><span>4</span>Algorithmus</button>
+        <button id="tab-quiz" type="button" role="tab" data-step-tab="quiz" aria-controls="abschlussquiz"><span>5</span>Abschlussquiz</button>
         <button id="tab-entropy" type="button" role="tab" data-step-tab="entropy" aria-controls="entropie"><span>3b</span>Entropie</button>
       </nav>
       <p id="save-status" class="fish-save-status" role="status" aria-live="polite">Dein Bearbeitungsstand wird in diesem Browser gespeichert.</p>
@@ -119,6 +120,7 @@
           </div>
           <p id="root-feedback" class="fish-inline-feedback" role="status" aria-live="polite"></p>
         </section>
+        <div class="flow-navigation" data-flow="tables"></div>
       </section>
 
       <section id="teilmenge-blau" class="fish-step fish-tab-panel fish-subset-panel" role="tabpanel" tabindex="0" aria-labelledby="tab-blue blue-subset-title" data-step-panel="blue" hidden>
@@ -136,6 +138,7 @@
           <button class="dt-primary-button" id="check-blue-tables" type="button">Blaue Teilmenge überprüfen</button>
           <div id="blue-tables-feedback" class="dt-feedback" role="status" aria-live="polite" hidden></div>
         </article>
+        <div class="flow-navigation" data-flow="blue"></div>
       </section>
 
       <section id="teilmenge-orange" class="fish-step fish-tab-panel fish-subset-panel" role="tabpanel" tabindex="0" aria-labelledby="tab-orange orange-subset-title" data-step-panel="orange" hidden>
@@ -153,6 +156,7 @@
           <button class="dt-primary-button" id="check-orange-tables" type="button">Orange Teilmenge überprüfen</button>
           <div id="orange-tables-feedback" class="dt-feedback" role="status" aria-live="polite" hidden></div>
         </article>
+        <div class="flow-navigation" data-flow="orange"></div>
       </section>
 
       <section id="letzter-split" class="fish-step fish-tab-panel" role="tabpanel" tabindex="0" aria-labelledby="tab-deep deep-title" data-step-panel="deep" hidden>
@@ -167,6 +171,7 @@
           <button class="dt-primary-button" id="check-deep-tables" type="button">Letzten Split überprüfen</button>
           <div id="deep-tables-feedback" class="dt-feedback" role="status" aria-live="polite" hidden></div>
         </section>
+        <div class="flow-navigation" data-flow="deep"></div>
       </section>
 
       <section id="baum-bauen" class="fish-step fish-tab-panel" role="tabpanel" tabindex="0" aria-labelledby="tab-tree tree-title" data-step-panel="tree" hidden>
@@ -208,6 +213,7 @@
             <div id="fish-tree-feedback" class="dt-feedback" role="status" aria-live="polite" hidden></div>
           </div>
         </section>
+        <div class="flow-navigation" data-flow="tree"></div>
       </section>
 
       <section id="algorithmus" class="fish-step fish-tab-panel" role="tabpanel" tabindex="0" aria-labelledby="tab-algorithm algorithm-title" data-step-panel="algorithm" hidden>
@@ -227,12 +233,29 @@
           <summary>Hilfe zum Algorithmus</summary>
           <p>Denke an diese drei Fragen: Wie wird ein Attribut ausgewählt? Was geschieht mit den entstehenden Teilmengen? Wann wird ein Blatt erzeugt?</p>
         </details>
+        <div class="flow-navigation" data-flow="algorithm"></div>
+      </section>
+
+      <section id="abschlussquiz" class="fish-step fish-tab-panel" role="tabpanel" tabindex="0" aria-labelledby="tab-quiz final-quiz-title" data-step-panel="quiz" hidden>
+        <div class="fish-step-heading">
+          <span class="fish-step-number">Schritt 5</span>
+          <div>
+            <h2 id="final-quiz-title">Abschlussquiz</h2>
+            <p><strong>Kreuze</strong> bei jeder Frage alle richtigen Aussagen an. Bei manchen Fragen sind mehrere Aussagen richtig.</p>
+          </div>
+        </div>
+        <section class="fish-final-quiz" aria-labelledby="final-quiz-heading">
+          <div class="entropy-quiz-heading"><div><p class="fish-kicker">Pflichtteil sichern</p><h3 id="final-quiz-heading">Prüfe dein Verständnis</h3></div><p id="tree-quiz-progress">0 von 5 beantwortet</p></div>
+          <form id="final-quiz"><div id="tree-quiz-questions"></div><button class="dt-primary-button" type="submit">Quiz auswerten</button></form>
+          <div id="tree-quiz-feedback" class="dt-feedback" role="status" aria-live="polite" hidden></div>
+          <div id="tree-quiz-summary" class="quiz-summary" hidden></div>
+        </section>
         <section id="task3a-complete" class="dt-remember fish-complete" hidden aria-labelledby="complete-title">
           <p class="fish-kicker">Merke</p>
           <h2 id="complete-title">Aufgabe 3a abgeschlossen</h2>
           <p>Ein Entscheidungsbaum entsteht schrittweise. In jedem Knoten wird ein möglichst geeignetes Attribut ausgewählt. Anschließend wird das Verfahren für die entstandenen Teilmengen wiederholt.</p>
-          <button class="dt-secondary-button" type="button" data-open-step="entropy">Optional weiter zu Aufgabe 3b</button>
         </section>
+        <div class="flow-navigation" data-flow="quiz"></div>
       </section>
 
       <section id="entropie" class="fish-step fish-extension fish-tab-panel" role="tabpanel" tabindex="0" aria-labelledby="tab-entropy entropy-title" data-step-panel="entropy" hidden>
@@ -262,7 +285,7 @@
         </article>
 
         <section class="entropy-quiz" aria-labelledby="quiz-title">
-          <div class="entropy-quiz-heading"><div><p class="fish-kicker">Abschlussquiz</p><h3 id="quiz-title">Prüfe dein Verständnis</h3></div><p id="quiz-progress">0 von 5 beantwortet</p></div>
+          <div class="entropy-quiz-heading"><div><p class="fish-kicker">Vertiefungsquiz</p><h3 id="quiz-title">Prüfe dein Verständnis</h3></div><p id="quiz-progress">0 von 4 beantwortet</p></div>
           <form id="entropy-quiz-form"><div id="entropy-questions"></div><button class="dt-primary-button" type="submit">Quiz auswerten</button></form>
           <div id="quiz-feedback" class="dt-feedback" role="status" aria-live="polite" hidden></div>
           <div id="quiz-summary" class="quiz-summary" hidden></div>
