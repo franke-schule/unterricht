@@ -1,0 +1,236 @@
+\documentclass[10pt,a4paper]{article}
+
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage[ngerman]{babel}
+\usepackage[a4paper,margin=14mm]{geometry}
+\usepackage{lmodern}
+\usepackage[table]{xcolor}
+\usepackage{tabularx}
+\usepackage{array}
+\usepackage{microtype}
+\usepackage[most]{tcolorbox}
+\usepackage{tikz}
+\usetikzlibrary{arrows.meta}
+
+\pagestyle{empty}
+\setlength{\parindent}{0pt}
+\setlength{\parskip}{0pt}
+\renewcommand{\familydefault}{\sfdefault}
+
+\definecolor{Navy}{HTML}{17324D}
+\definecolor{Blue}{HTML}{3B6EA5}
+\definecolor{Sky}{HTML}{EAF3FA}
+\definecolor{Mint}{HTML}{E8F5EF}
+\definecolor{Gold}{HTML}{F3B33D}
+\definecolor{Ink}{HTML}{1E2935}
+\definecolor{Muted}{HTML}{617080}
+\definecolor{Line}{HTML}{D8E1E8}
+\definecolor{CodeBg}{HTML}{F5F7F9}
+
+\color{Ink}
+
+\newcommand{\sectiontitle}[1]{%
+  \vspace{2.3mm}
+  {\color{Blue}\bfseries\large #1}\par
+  \vspace{0.8mm}
+  {\color{Blue}\rule{\linewidth}{0.7pt}}\par
+  \vspace{1.2mm}
+}
+
+\tikzset{
+  func/.style={draw=Ink, line width=0.7pt, rounded corners=2pt, fill=white,
+               minimum width=20mm, minimum height=7mm, inner sep=1pt,
+               font=\small},
+  io/.style={font=\small, inner sep=1pt},
+  flow/.style={draw=Ink, line width=0.7pt,
+               -{Stealth[length=2.2mm,width=1.8mm]}},
+  wire/.style={draw=Ink, line width=0.7pt},
+  dot/.style={circle, fill=Ink, inner sep=0pt, minimum size=1.9mm},
+}
+
+\begin{document}
+
+\colorbox{Navy}{%
+  \parbox{\dimexpr\linewidth-2\fboxsep\relax}{%
+    \vspace{3mm}\color{white}
+    \begin{tabularx}{\linewidth}{@{}Xr@{}}
+      {\small\bfseries INFORMATIK · KLASSE 9} &
+      \colorbox{Gold}{\color{Navy}\small\bfseries\strut LÖSUNGEN}
+    \end{tabularx}
+    \vspace{2.5mm}
+
+    {\fontsize{22}{25}\selectfont\bfseries Sicherungsblatt: Aufgabe 5a}\par
+    \vspace{1mm}
+    {\large Datenflussdiagramme}
+    \vspace{3mm}
+  }%
+}
+
+\vspace{3mm}
+\colorbox{Sky}{%
+  \parbox{\dimexpr\linewidth-2\fboxsep\relax}{%
+    \vspace{1.8mm}
+    \textcolor{Blue}{\bfseries Ziel:}
+    Du kannst ein \textbf{Datenflussdiagramm} lesen, seine Bausteine benennen
+    und selbst eines zeichnen.
+    \vspace{1.8mm}
+  }%
+}
+
+\sectiontitle{1 · Bausteine am Beispiel Spendenlauf}
+
+{\small Arbeitsauftrag 3: Spendenlauf.\par}
+
+\vspace{2mm}
+\begin{tikzpicture}[x=1mm,y=1mm,
+    term/.style={font=\bfseries\small, text=Blue, anchor=west, inner sep=0pt},
+    desc/.style={font=\small, text=Ink, anchor=north west, inner sep=0pt,
+                 text width=62mm, align=left},
+    pointer/.style={draw=Blue, line width=0.5pt,
+                    dash pattern=on 1.2mm off 1.0mm,
+                    -{Stealth[length=1.8mm,width=1.5mm]}}]
+
+  % ---- Begriffsspalte ----
+  \node[term] (t-eingabe) at (0,106) {Eingabe};
+  \node[desc] at (0,103) {Wert, den man eingibt.};
+
+  \node[term] (t-verteiler) at (0,92) {Verteiler};
+  \node[desc] at (0,89) {Kreis; gibt denselben Wert an mehrere Funktionen
+    weiter.};
+
+  \node[term] (t-konstante) at (0,78) {Konstante};
+  \node[desc] at (0,75) {Fest eingetragener Wert.};
+
+  \node[term] (t-funktion) at (0,66) {Funktion};
+  \node[desc] at (0,63) {Rechen- oder Vergleichsschritt; mehrere
+    Eingangspfeile, genau ein Ausgangspfeil.};
+
+  \node[term] (t-ausgabe) at (0,36) {Ausgabe};
+  \node[desc] at (0,33) {Ergebnis am Ende.};
+
+  % ---- Datenflussdiagramm Spendenlauf ----
+  \node[io] (s) at (114,106) {erlaufene Summe \textcolor{Blue}{S}};
+  \node[io] (u) at (154,106) {Unkosten \textcolor{Blue}{U}};
+  \draw[wire] (114,103.6) -- (114,92);
+  \node[dot] (vert) at (114,92) {};
+  \draw[flow] (114,92) -- (114,69.5);
+  \draw[wire] (114,92) -- (144,92);
+  \draw[flow] (144,92) -- (144,69.5);
+
+  \node[io] (konst) at (102,78) {0,5};
+  \draw[flow] (konst.south) -- (102,69.5);
+  \draw[flow] (154,103.6) -- (154,69.5);
+
+  \node[func] (mal) at (108,66) {mal};
+  \node[func] (minus) at (149,66) {minus};
+
+  \draw[wire] (108,62.5) -- (108,56) -- (123,56);
+  \draw[flow] (123,56) -- (123,50.5);
+  \draw[wire] (149,62.5) -- (149,56) -- (135,56);
+  \draw[flow] (135,56) -- (135,50.5);
+
+  \node[func] (plus) at (129,47) {plus};
+  \draw[flow] (129,43.5) -- (129,39.2);
+  \node[io] (gesamt) at (129,36) {gespendete Gesamtsumme};
+
+  \node[font=\small, text=Blue] at (129,30.5)
+    {Gesamtsumme = S $-$ U + 0,5 $\cdot$ S};
+
+  % ---- Zeigerpfeile (enden am Baustein) ----
+  \draw[pointer] (t-eingabe.east) -- (s.west);
+  \draw[pointer] (t-verteiler.east) -- (vert.west);
+  \draw[pointer] (t-konstante.east) -- (konst.west);
+  \draw[pointer] (t-funktion.east) -- (mal.west);
+  \draw[pointer] (t-ausgabe.east) -- (gesamt.west);
+\end{tikzpicture}
+
+\sectiontitle{2 · Datenflussdiagramme lesen}
+
+\begin{minipage}[t]{0.48\linewidth}
+  \textcolor{Blue}{\bfseries Klettergarten (Arbeitsauftrag 1)}\par
+  \vspace{1.5mm}
+  \centering
+  \begin{tikzpicture}[x=1mm,y=1mm]
+    \node[io] (f) at (12,44) {Fahrkosten \textcolor{Blue}{f}};
+    \node[io] (k) at (46,44) {Kletterkarten \textcolor{Blue}{k}};
+    \draw[wire] (12,41.6) -- (12,39) -- (22,39);
+    \draw[flow] (22,39) -- (22,35.5);
+    \draw[wire] (46,41.6) -- (46,39) -- (34,39);
+    \draw[flow] (34,39) -- (34,35.5);
+    \node[func] (p) at (28,32) {plus};
+
+    \node[io] (a) at (72,32) {Mitfahrende \textcolor{Blue}{a}};
+    \draw[wire] (28,28.5) -- (28,24) -- (38,24);
+    \draw[flow] (38,24) -- (38,20.5);
+    \draw[wire] (72,29.6) -- (72,24) -- (50,24);
+    \draw[flow] (50,24) -- (50,20.5);
+    \node[func, minimum width=24mm] (d) at (44,17) {geteilt durch};
+    \draw[flow] (44,13.5) -- (44,8.2);
+    \node[io] at (44,5) {Kosten pro Person};
+  \end{tikzpicture}\par
+  \vspace{1mm}
+  \raggedright
+  \colorbox{CodeBg}{\small Formel: \textbf{(f + k) / a}}\ {\small Klammer
+  nötig.}
+\end{minipage}\hfill
+\begin{minipage}[t]{0.48\linewidth}
+  \textcolor{Blue}{\bfseries Rohr (Arbeitsauftrag 2)}\par
+  \vspace{1.5mm}
+  \centering
+  \begin{tikzpicture}[x=1mm,y=1mm]
+    \node[io] at (16,47) {Radius groß};
+    \node[io] at (42,47) {Höhe};
+    \node[io] at (68,47) {Radius klein};
+    \draw[flow] (16,44.6) -- (16,41.5);
+    \draw[flow] (68,44.6) -- (68,41.5);
+    \node[func, minimum width=18mm] (h1) at (16,38) {hoch zwei};
+    \node[func, minimum width=18mm] (h2) at (68,38) {hoch zwei};
+
+    \draw[wire] (42,44.6) -- (42,40);
+    \node[dot] at (42,40) {};
+    \draw[wire] (42,40) -- (28,40);
+    \draw[flow] (28,40) -- (28,29.5);
+    \draw[wire] (42,40) -- (56,40);
+    \draw[flow] (56,40) -- (56,29.5);
+    \draw[flow] (16,34.5) -- (16,29.5);
+    \draw[flow] (68,34.5) -- (68,29.5);
+    \node[func] (m1) at (22,26) {mal};
+    \node[func] (m2) at (62,26) {mal};
+
+    \draw[wire] (22,22.5) -- (22,19) -- (36,19);
+    \draw[flow] (36,19) -- (36,15.5);
+    \draw[wire] (62,22.5) -- (62,19) -- (48,19);
+    \draw[flow] (48,19) -- (48,15.5);
+    \node[func] (mi) at (42,12) {minus};
+    \draw[flow] (42,8.5) -- (42,5);
+  \end{tikzpicture}\par
+  \vspace{1mm}
+  \raggedright
+  \colorbox{CodeBg}{\small Ergebnis: \textbf{R\textsuperscript{2} $\cdot$ h $-$ r\textsuperscript{2} $\cdot$ h}}\ {\small Rohrvolumen ohne
+  Faktor $\pi$.}
+\end{minipage}
+
+\sectiontitle{3 · Merke}
+
+\begin{tcolorbox}[colback=Mint,colframe=Blue!40,arc=3mm,boxrule=0.7pt,
+  left=3mm,right=3mm,top=2mm,bottom=2mm]
+  Ein \textbf{Datenflussdiagramm} zeigt, wie Werte von den \textbf{Eingaben}
+  durch \textbf{Funktionen} bis zu den \textbf{Ausgaben} fließen; die Pfeile
+  geben die Richtung an.\par
+  \vspace{1.2mm}
+  Ein Verteiler gibt denselben Wert an mehrere Funktionen weiter, eine
+  Konstante wird nicht eingegeben.\par
+  \vspace{1.2mm}
+  Jede Funktion entspricht einem Teilschritt einer Formel.
+\end{tcolorbox}
+
+\vfill
+{\color{Line}\rule{\linewidth}{0.5pt}}\par
+\vspace{1.5mm}
+\begin{tabularx}{\linewidth}{@{}Xr@{}}
+  {\small\color{Muted}Klasse 9 · Tabellenkalkulation} &
+  {\small\color{Muted}Sicherungsblatt · Aufgabe 5a · Version 2}
+\end{tabularx}
+
+\end{document}

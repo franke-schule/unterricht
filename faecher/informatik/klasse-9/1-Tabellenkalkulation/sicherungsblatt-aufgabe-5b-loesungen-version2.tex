@@ -1,0 +1,212 @@
+\documentclass[10pt,a4paper]{article}
+
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage[ngerman]{babel}
+\usepackage[a4paper,margin=14mm]{geometry}
+\usepackage{lmodern}
+\usepackage[table]{xcolor}
+\usepackage{tabularx}
+\usepackage{array}
+\usepackage{microtype}
+\usepackage[most]{tcolorbox}
+\usepackage{tikz}
+\usetikzlibrary{arrows.meta,shapes.geometric}
+\usepackage{textcomp}
+
+% Gerade Anführungszeichen; " ist bei ngerman ein Kurzbefehl.
+\newcommand{\qd}[1]{\textquotedbl#1\textquotedbl}
+
+\pagestyle{empty}
+\setlength{\parindent}{0pt}
+\setlength{\parskip}{0pt}
+\renewcommand{\familydefault}{\sfdefault}
+
+\definecolor{Navy}{HTML}{17324D}
+\definecolor{Blue}{HTML}{3B6EA5}
+\definecolor{Sky}{HTML}{EAF3FA}
+\definecolor{Mint}{HTML}{E8F5EF}
+\definecolor{Gold}{HTML}{F3B33D}
+\definecolor{Ink}{HTML}{1E2935}
+\definecolor{Muted}{HTML}{617080}
+\definecolor{Line}{HTML}{D8E1E8}
+\definecolor{CodeBg}{HTML}{F5F7F9}
+\definecolor{Cell}{HTML}{FFF4DB}
+
+\color{Ink}
+
+\newcommand{\sectiontitle}[1]{%
+  \vspace{2.3mm}
+  {\color{Blue}\bfseries\large #1}\par
+  \vspace{0.8mm}
+  {\color{Blue}\rule{\linewidth}{0.7pt}}\par
+  \vspace{1.2mm}
+}
+
+\tikzset{
+  func/.style={draw=Ink, line width=0.7pt, ellipse, fill=white,
+               minimum width=22mm, minimum height=8mm, inner sep=1pt,
+               font=\small},
+  io/.style={font=\small, inner sep=1pt},
+  hint/.style={font=\scriptsize\bfseries, text=Blue, inner sep=1pt},
+  flow/.style={draw=Ink, line width=0.7pt,
+               -{Stealth[length=2.2mm,width=1.8mm]}},
+}
+
+\begin{document}
+
+\colorbox{Navy}{%
+  \parbox{\dimexpr\linewidth-2\fboxsep\relax}{%
+    \vspace{3mm}\color{white}
+    \begin{tabularx}{\linewidth}{@{}Xr@{}}
+      {\small\bfseries INFORMATIK · KLASSE 9} &
+      \colorbox{Gold}{\color{Navy}\small\bfseries\strut LÖSUNGEN}
+    \end{tabularx}
+    \vspace{2.5mm}
+
+    {\fontsize{22}{25}\selectfont\bfseries Sicherungsblatt: Aufgabe 5b}\par
+    \vspace{1mm}
+    {\large WENN-Funktion als Datenflussdiagramm}
+    \vspace{3mm}
+  }%
+}
+
+\vspace{3mm}
+\colorbox{Sky}{%
+  \parbox{\dimexpr\linewidth-2\fboxsep\relax}{%
+    \vspace{1.8mm}
+    \textcolor{Blue}{\bfseries Ziel:}
+    Du stellst \textbf{Aussagefunktion} und \textbf{WENN-Funktion} als
+    Datenflussdiagramm dar und findest einen Fehler darin.
+    \vspace{1.8mm}
+  }%
+}
+
+\sectiontitle{1 · Aussagefunktion}
+
+\begin{tikzpicture}[x=1mm,y=1mm,
+    desc/.style={font=\small, text=Ink, anchor=north west, inner sep=0pt,
+                 text width=62mm, align=left}]
+
+  \node[io] (note) at (16,30) {Note};
+  \node[io] (zwei) at (44,30) {2};
+  \node[func] (kleiner) at (30,17) {kleiner};
+  \draw[flow] (note.south) -- (kleiner.north west);
+  \draw[flow] (zwei.south) -- (kleiner.north east);
+  \node[io] (wert) at (30,3) {Wahrheitswert};
+  \draw[flow] (kleiner.south) -- (wert.north);
+  \node[hint] at (30,-1) {WAHR oder FALSCH};
+
+  \node[desc] at (62,29) {Eine \textbf{Aussagefunktion} vergleicht Werte. Ihr
+    Ergebnis ist ein \textbf{Wahrheitswert}: WAHR oder FALSCH.\\[1.5mm]
+    Weitere: größer (\texttt{>}), größer gleich (\texttt{>=}), gleich
+    (\texttt{=}), ISTGERADE (nur ein Eingang).};
+
+  \node[anchor=north west, inner sep=0pt] at (132,31) {%
+    \renewcommand{\arraystretch}{1.1}%
+    \begin{tabular}{@{}>{\centering\arraybackslash\small}p{9mm}>{\centering\arraybackslash\small}p{12mm}>{\centering\arraybackslash\small}p{16mm}@{}}
+      \rowcolor{Sky}\bfseries Note & \bfseries Vergleich & \bfseries Ergebnis \\
+      1 & $1 < 2$ & WAHR \\
+      \rowcolor{CodeBg}2 & $2 < 2$ & FALSCH \\
+      3 & $3 < 2$ & FALSCH \\
+    \end{tabular}};
+  \node[anchor=north west, font=\footnotesize, text=Muted, text width=42mm,
+        align=left, inner sep=0pt] at (132,11)
+    {2 ist nicht kleiner als 2.};
+\end{tikzpicture}
+
+\sectiontitle{2 · WENN-Funktion: Notengeld aus Aufgabe 4}
+
+\begin{tikzpicture}[x=1mm,y=1mm,
+    desc/.style={font=\small, text=Ink, anchor=north west, inner sep=0pt,
+                 text width=64mm, align=left}]
+
+  \node[io] (note) at (16,48) {Note};
+  \node[io] (zwei) at (44,48) {2};
+  \node[func] (kleiner) at (30,38) {kleiner};
+  \draw[flow] (note.south) -- (kleiner.north west);
+  \draw[flow] (zwei.south) -- (kleiner.north east);
+
+  \node[hint] at (72,33) {2 · Ja-Fall};
+  \node[io] (ja) at (72,28.5) {\qd{5\texteuro}};
+  \node[hint] at (100,33) {3 · Nein-Fall};
+  \node[io] (nein) at (100,28.5) {\qd{0\texteuro}};
+
+  \node[func] (wenn) at (62,15) {WENN};
+  \draw[flow] (kleiner.south) -- (wenn.north west);
+  \node[hint, anchor=east] at (38.5,26) {1 · Wahrheitswert};
+  \draw[flow] (ja.south) -- (wenn.north);
+  \draw[flow] (nein.south) -- (wenn.north east);
+
+  \node[io] (geld) at (62,2) {Notengeld};
+  \draw[flow] (wenn.south) -- (geld.north);
+
+  \node[desc] at (118,50) {Die \textbf{WENN-Funktion} hat drei Eingänge:\\[1mm]
+    \textbf{1.}~den Wahrheitswert einer Aussagefunktion,\\
+    \textbf{2.}~den Wert für den Ja-Fall,\\
+    \textbf{3.}~den Wert für den Nein-Fall.\\[1.5mm]
+    Note 1 \textrightarrow{} WAHR \textrightarrow{} \qd{5\texteuro}\\
+    Note 3 \textrightarrow{} FALSCH \textrightarrow{} \qd{0\texteuro}\\[1.5mm]
+    \textcolor{Blue}{\bfseries Termdarstellung:}\\[0.5mm]
+    \colorbox{CodeBg}{\ttfamily\small =WENN(Note<2; \qd{5\texteuro}; \qd{0\texteuro})}};
+\end{tikzpicture}
+
+\sectiontitle{3 · Fehler finden: Gewinnspiel}
+
+{\small Gewinn 10\,\texteuro{} nur bei Losnummer \textbf{größer als 70} --
+im Diagramm stand \textbf{größer gleich}.\par}
+
+\vspace{1.5mm}
+\begin{tikzpicture}[x=1mm,y=1mm,
+    desc/.style={font=\small, text=Ink, anchor=north west, inner sep=0pt,
+                 text width=64mm, align=left}]
+
+  \node[io] (los) at (16,40) {Losnummer};
+  \node[io] (siebzig) at (44,40) {70};
+  \node[func, draw=Blue, line width=1.2pt] (groesser) at (30,30) {größer};
+  \draw[flow] (los.south) -- (groesser.north west);
+  \draw[flow] (siebzig.south) -- (groesser.north east);
+  \node[hint, anchor=west] at (43,26) {korrigiert: \texttt{>} statt \texttt{>=}};
+
+  \node[io] (ja) at (80,25) {\qd{10\texteuro}};
+  \node[io] (nein) at (104,25) {\qd{0\texteuro}};
+  \node[func] (wenn) at (70,11) {WENN};
+  \draw[flow] (groesser.south) -- (wenn.north west);
+  \draw[flow] (ja.south) -- (wenn.north);
+  \draw[flow] (nein.south) -- (wenn.north east);
+  \node[io] (gewinn) at (70,-1) {Losgewinn};
+  \draw[flow] (wenn.south) -- (gewinn.north);
+
+  \node[anchor=north west, inner sep=0pt] at (118,42) {%
+    \renewcommand{\arraystretch}{1.1}%
+    \begin{tabular}{@{}>{\centering\arraybackslash\small}p{16mm}>{\centering\arraybackslash\small}p{20mm}>{\centering\arraybackslash\small}p{20mm}@{}}
+      \rowcolor{Sky}\bfseries Losnummer & \bfseries mit \texttt{>=} & \bfseries mit \texttt{>} \\
+      \cellcolor{Cell}70 & \cellcolor{Cell}10\,\texteuro & \cellcolor{Cell}0\,\texteuro \\
+      71 & 10\,\texteuro & 10\,\texteuro \\
+      \rowcolor{CodeBg}90 & 10\,\texteuro & 10\,\texteuro \\
+    \end{tabular}};
+  \node[desc] at (118,20.5) {Der Fehler wirkt sich nur bei der Losnummer 70
+    aus.\\[1mm]
+    \colorbox{CodeBg}{\ttfamily\small =WENN(Losnummer>70; \qd{10\texteuro}; \qd{0\texteuro})}};
+\end{tikzpicture}
+
+\sectiontitle{4 · Merke}
+
+\begin{tcolorbox}[colback=Mint,colframe=Blue!40,arc=3mm,boxrule=0.7pt,
+  left=3mm,right=3mm,top=2mm,bottom=2mm]
+  Eine \textbf{Aussagefunktion} vergleicht Werte und gibt einen
+  \textbf{Wahrheitswert} aus: WAHR oder FALSCH.\par
+  \vspace{1.2mm}
+  Die \textbf{WENN-Funktion} hat drei Eingänge: Wahrheitswert, Ja-Fall,
+  Nein-Fall. Sie gibt genau einen der beiden Werte aus.
+\end{tcolorbox}
+
+\vfill
+{\color{Line}\rule{\linewidth}{0.5pt}}\par
+\vspace{1.5mm}
+\begin{tabularx}{\linewidth}{@{}Xr@{}}
+  {\small\color{Muted}Klasse 9 · Tabellenkalkulation} &
+  {\small\color{Muted}Sicherungsblatt · Aufgabe 5b · Version 2}
+\end{tabularx}
+
+\end{document}

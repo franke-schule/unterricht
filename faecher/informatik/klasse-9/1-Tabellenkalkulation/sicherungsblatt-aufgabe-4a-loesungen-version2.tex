@@ -1,0 +1,173 @@
+\documentclass[10pt,a4paper]{article}
+
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage[ngerman]{babel}
+\usepackage[a4paper,margin=14mm]{geometry}
+\usepackage{lmodern}
+\usepackage[table]{xcolor}
+\usepackage{tabularx}
+\usepackage{array}
+\usepackage{microtype}
+\usepackage[most]{tcolorbox}
+
+\pagestyle{empty}
+\setlength{\parindent}{0pt}
+\setlength{\parskip}{0pt}
+\renewcommand{\familydefault}{\sfdefault}
+
+\definecolor{Navy}{HTML}{17324D}
+\definecolor{Blue}{HTML}{3B6EA5}
+\definecolor{Sky}{HTML}{EAF3FA}
+\definecolor{Mint}{HTML}{E8F5EF}
+\definecolor{Gold}{HTML}{F3B33D}
+\definecolor{Ink}{HTML}{1E2935}
+\definecolor{Muted}{HTML}{617080}
+\definecolor{Line}{HTML}{D8E1E8}
+\definecolor{CodeBg}{HTML}{F5F7F9}
+\definecolor{Cell}{HTML}{FFF4DB}
+\definecolor{GridHead}{HTML}{E9EDF1}
+\definecolor{GridLine}{HTML}{AEBBC6}
+
+\color{Ink}
+
+\newcommand{\sectiontitle}[1]{%
+  \vspace{2.3mm}
+  {\color{Blue}\bfseries\large #1}\par
+  \vspace{0.8mm}
+  {\color{Blue}\rule{\linewidth}{0.7pt}}\par
+  \vspace{1.2mm}
+}
+
+\newcommand{\gridhead}[1]{\cellcolor{GridHead}\textcolor{Muted}{\bfseries\small #1}}
+\newcommand{\gridrow}[1]{\cellcolor{GridHead}\textcolor{Muted}{\bfseries\small #1}}
+\newcommand{\sheetsetup}{%
+  \arrayrulecolor{GridLine}\setlength{\arrayrulewidth}{0.4pt}%
+  \renewcommand{\arraystretch}{1.25}}
+
+% Gerade Anführungszeichen; " ist bei ngerman ein Kurzbefehl.
+\newcommand{\qd}[1]{\textquotedbl#1\textquotedbl}
+
+\begin{document}
+
+\colorbox{Navy}{%
+  \parbox{\dimexpr\linewidth-2\fboxsep\relax}{%
+    \vspace{3mm}\color{white}
+    \begin{tabularx}{\linewidth}{@{}Xr@{}}
+      {\small\bfseries INFORMATIK · KLASSE 9} &
+      \colorbox{Gold}{\color{Navy}\small\bfseries\strut LÖSUNGEN}
+    \end{tabularx}
+    \vspace{2.5mm}
+
+    {\fontsize{22}{25}\selectfont\bfseries Sicherungsblatt: Aufgabe 4–4c}\par
+    \vspace{1mm}
+    {\large Funktionen mit Bedingung: WENN}
+    \vspace{3mm}
+  }%
+}
+
+\vspace{3mm}
+\colorbox{Sky}{%
+  \parbox{\dimexpr\linewidth-2\fboxsep\relax}{%
+    \vspace{1.8mm}
+    \textcolor{Blue}{\bfseries Ziel:}
+    Du triffst mit WENN Entscheidungen und verschachtelst WENN für mehr als
+    zwei Fälle.
+    \vspace{1.8mm}
+  }%
+}
+
+\sectiontitle{1 · Die WENN-Funktion}
+
+\begin{minipage}[t]{\dimexpr\linewidth-86mm\relax}
+  \vspace{0pt}
+  \colorbox{CodeBg}{\parbox{\dimexpr\linewidth-2\fboxsep\relax}{\centering
+    \vspace{1mm}
+    \ttfamily =WENN(\textcolor{Blue}{\bfseries Bed.};\textcolor{Blue}{\bfseries Dann};\textcolor{Blue}{\bfseries Sonst})
+    \vspace{1mm}}}\par
+  \vspace{1.5mm}
+  Bedingung \textbf{WAHR} $\rightarrow$ Dann-Fall\par
+  \vspace{1mm}
+  Bedingung \textbf{FALSCH} $\rightarrow$ Sonst-Fall\par
+  \vspace{1.5mm}
+  {\small Aufgabe 4: Note besser als 2 $\rightarrow$ 5\,€, sonst 0\,€}
+\end{minipage}\hfill
+\begin{minipage}[t]{80mm}
+  \vspace{0pt}
+  \sheetsetup
+  \begin{tabular}{|c|l|c|c|l|}
+    \hline
+    \cellcolor{GridHead} & \gridhead{A} & \gridhead{B} & \gridhead{C} & \gridhead{D} \\ \hline
+    \gridrow{4} & & \small Note & & \small Notengeld \\ \hline
+    \gridrow{5} & \small Informatik & \small 2 & & \cellcolor{Cell}\ttfamily\small =WENN(B5<2;5;0) \\ \hline
+    \gridrow{6} & \small Deutsch & \small 3 & & \ttfamily\small =WENN(B6<2;5;0) \\ \hline
+  \end{tabular}\par
+  \vspace{1mm}
+  {\small D5 zeigt 0,00\,€: 2 ist nicht kleiner als 2.}
+\end{minipage}
+
+\sectiontitle{2 · Vergleichsoperatoren}
+
+\renewcommand{\arraystretch}{1.1}
+\begin{tabularx}{\linewidth}{@{}>{\centering\ttfamily\bfseries}p{9mm}X>{\centering\ttfamily\bfseries}p{9mm}X>{\centering\ttfamily\bfseries}p{9mm}X@{}}
+  \rowcolor{CodeBg} = & gleich & < & kleiner & > & größer \\
+  <> & ungleich & <= & kleiner gleich & >= & größer gleich \\
+\end{tabularx}
+
+\vspace{1mm}
+{\small\textcolor{Blue}{\bfseries Achtung:} „besser als 2“ ist \texttt{B5<2},
+„ab 500\,€“ ist \texttt{C5>=500}.\par}
+
+\sectiontitle{3 · Texte und Rechnungen}
+
+\renewcommand{\arraystretch}{1.3}
+\begin{tabularx}{\linewidth}{@{}>{\small}p{34mm}>{\ttfamily\small}X@{}}
+  \rowcolor{Sky}\bfseries Beispiel & \normalfont\small\bfseries Formel \\
+  Texte in Anführungszeichen & =WENN(A2>=5;\qd{bestanden};\qd{nicht bestanden}) \\
+  \rowcolor{CodeBg}4b: Skonto bei Barzahlung & =WENN(E5=\qd{ja};D5*0,97;D5) \\
+  4a: GGT, größere Zahl verkleinern & =WENN(B10>C10;B10-C10;B10) \\
+  \rowcolor{CodeBg}4c: WENN in einer Rechnung & =E13/(H8*WENN(G8=\qd{m};I15;I16)) \\
+\end{tabularx}
+
+\sectiontitle{4 · Verschachtelung}
+
+Ein Parameter von WENN kann wieder eine WENN-Funktion sein.
+{\small Aufgabe 4b: ab 1000\,€ 50\,\%, ab 500\,€ 30\,\% Rabatt.\par}
+
+\vspace{1.5mm}
+\sheetsetup
+\begin{tabular}{|c|l|c|p{86mm}|}
+  \hline
+  \cellcolor{GridHead} & \gridhead{B} & \gridhead{C} & \gridhead{D} \\ \hline
+  \gridrow{4} & \small Teppiche & \small Preis & \small Preis nach Rabatt \\ \hline
+  \gridrow{5} & \small Teppich 1 & \small 1148,84 &
+    \cellcolor{Cell}\ttfamily\small =WENN(C5>=1000;C5*0,5;\newline
+    \textcolor{Blue}{WENN(C5>=500;C5*0,7;C5)}) \\ \hline
+  \gridrow{6} & \small Teppich 2 & \small 315,14 & \ttfamily\small =WENN(C6>=1000;\dots) \\ \hline
+\end{tabular}
+
+\vspace{1mm}
+{\small Ergebnisse: 574,42\,€ und 315,14\,€ -- die innere (blaue) WENN-Funktion
+prüft nur im Sonst-Fall.\par}
+
+\sectiontitle{5 · Merke}
+
+\begin{tcolorbox}[colback=Mint,colframe=Blue!40,arc=3mm,boxrule=0.7pt,
+  left=3mm,right=3mm,top=2mm,bottom=2mm]
+  \texttt{=WENN(Bedingung;Dann;Sonst)}: Bei WAHR erscheint der Dann-Fall,
+  sonst der Sonst-Fall.\par
+  \vspace{1.2mm}
+  Texte stehen in Anführungszeichen, zum Beispiel \texttt{\qd{ja}}.\par
+  \vspace{1.2mm}
+  Verschachtelte WENN-Funktionen unterscheiden drei oder mehr Fälle.
+\end{tcolorbox}
+
+\vfill
+{\color{Line}\rule{\linewidth}{0.5pt}}\par
+\vspace{1.5mm}
+\begin{tabularx}{\linewidth}{@{}Xr@{}}
+  {\small\color{Muted}Klasse 9 · Tabellenkalkulation} &
+  {\small\color{Muted}Sicherungsblatt · Aufgabe 4–4c · Version 2}
+\end{tabularx}
+
+\end{document}

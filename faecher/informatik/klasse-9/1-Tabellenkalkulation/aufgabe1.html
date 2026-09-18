@@ -142,20 +142,20 @@
             cells.set("B10", PI_VALUE);
           },
           formulaDefinitions: [
-            { cell: "F4", name: "Fläche Dreieck", requiredRefs: ["B4", "B8"], allowedNumbers: [2], expected: ({ a, h }) => a * h / 2 },
+            { cell: "F4", name: "Fläche Dreieck", requiredRefs: ["B4", "B8"], allowedNumbers: [1, 2, 0.5], expected: ({ a, h }) => a * h / 2 },
             { cell: "F5", name: "Fläche Rechteck", requiredRefs: ["B4", "B5"], expected: ({ a, b }) => a * b },
             { cell: "F6", name: "Fläche Quadrat", requiredRefs: ["B4"], allowedNumbers: [2], expected: ({ a }) => a ** 2 },
-            { cell: "F7", name: "Fläche Trapez", requiredRefs: ["B4", "B6", "B8"], allowedNumbers: [2], expected: ({ a, c, h }) => (a + c) * h / 2 },
+            { cell: "F7", name: "Fläche Trapez", requiredRefs: ["B4", "B6", "B8"], allowedNumbers: [1, 2, 0.5], expected: ({ a, c, h }) => (a + c) * h / 2 },
             { cell: "F8", name: "Fläche Kreis", requiredRefs: ["B9", "B10"], allowedNumbers: [2], expected: ({ r }) => r ** 2 * PI_VALUE },
             { cell: "F9", name: "Fläche Parallelogramm", requiredRefs: ["B4", "B8"], expected: ({ a, h }) => a * h },
             { cell: "F10", name: "Umfang Kreis", requiredRefs: ["B9", "B10"], allowedNumbers: [2], expected: ({ r }) => 2 * r * PI_VALUE },
             { cell: "F11", name: "Volumen Würfel", requiredRefs: ["B4"], allowedNumbers: [3], expected: ({ a }) => a ** 3 },
             { cell: "F12", name: "Volumen Quader", requiredRefs: ["B4", "B5", "B6"], expected: ({ a, b, c }) => a * b * c },
             { cell: "F13", name: "Oberfläche Quader", requiredRefs: ["B4", "B5", "B6"], allowedNumbers: [2], expected: ({ a, b, c }) => 2 * a * b + 2 * a * c + 2 * b * c },
-            { cell: "F14", name: "Volumen Prisma", requiredRefs: ["B4", "B7", "B8"], allowedNumbers: [2], expected: ({ a, d, h }) => a * h / 2 * d },
+            { cell: "F14", name: "Volumen Prisma", requiredRefs: ["B4", "B7", "B8"], allowedNumbers: [1, 2, 0.5], expected: ({ a, d, h }) => a * h / 2 * d },
             { cell: "F15", name: "Volumen Zylinder", requiredRefs: ["B8", "B9", "B10"], allowedNumbers: [2], expected: ({ r, h }) => r ** 2 * PI_VALUE * h },
-            { cell: "F16", name: "Volumen Kegel", requiredRefs: ["B8", "B9", "B10"], allowedNumbers: [2, 3], expected: ({ r, h }) => r ** 2 * PI_VALUE * h / 3 },
-            { cell: "F17", name: "Volumen Pyramide", requiredRefs: ["B4", "B8"], allowedNumbers: [2, 3], expected: ({ a, h }) => a ** 2 * h / 3 }
+            { cell: "F16", name: "Volumen Kegel", requiredRefs: ["B8", "B9", "B10"], allowedNumbers: [1, 2, 3], expected: ({ r, h }) => r ** 2 * PI_VALUE * h / 3 },
+            { cell: "F17", name: "Volumen Pyramide", requiredRefs: ["B4", "B8"], allowedNumbers: [1, 2, 3], expected: ({ a, h }) => a ** 2 * h / 3 }
           ],
           successMessage: "Sehr gut! Alle Formeln verwenden Zellbezüge und funktionieren auch mit veränderten Ausgangswerten."
         };

@@ -1,0 +1,159 @@
+\documentclass[10pt,a4paper]{article}
+
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage[ngerman]{babel}
+\usepackage[a4paper,margin=14mm]{geometry}
+\usepackage{lmodern}
+\usepackage[table]{xcolor}
+\usepackage{tabularx}
+\usepackage{array}
+\usepackage{microtype}
+\usepackage[most]{tcolorbox}
+
+\pagestyle{empty}
+\setlength{\parindent}{0pt}
+\setlength{\parskip}{0pt}
+\renewcommand{\familydefault}{\sfdefault}
+
+\definecolor{Navy}{HTML}{17324D}
+\definecolor{Blue}{HTML}{3B6EA5}
+\definecolor{Sky}{HTML}{EAF3FA}
+\definecolor{Mint}{HTML}{E8F5EF}
+\definecolor{Gold}{HTML}{F3B33D}
+\definecolor{Ink}{HTML}{1E2935}
+\definecolor{Muted}{HTML}{617080}
+\definecolor{Line}{HTML}{D8E1E8}
+\definecolor{CodeBg}{HTML}{F5F7F9}
+\definecolor{Cell}{HTML}{FFF4DB}
+\definecolor{GridHead}{HTML}{E9EDF1}
+\definecolor{GridLine}{HTML}{AEBBC6}
+
+\color{Ink}
+
+\newcommand{\sectiontitle}[1]{%
+  \vspace{2.3mm}
+  {\color{Blue}\bfseries\large #1}\par
+  \vspace{0.8mm}
+  {\color{Blue}\rule{\linewidth}{0.7pt}}\par
+  \vspace{1.2mm}
+}
+
+% Tabellenausschnitt: Kopfzeile (Spaltenbuchstaben) und Zeilennummern
+\newcommand{\gridhead}[1]{\cellcolor{GridHead}\textcolor{Muted}{\bfseries\small #1}}
+\newcommand{\gridrow}[1]{\cellcolor{GridHead}\textcolor{Muted}{\bfseries\small #1}}
+\newcommand{\sheetsetup}{%
+  \arrayrulecolor{GridLine}\setlength{\arrayrulewidth}{0.4pt}%
+  \renewcommand{\arraystretch}{1.25}}
+
+\begin{document}
+
+\colorbox{Navy}{%
+  \parbox{\dimexpr\linewidth-2\fboxsep\relax}{%
+    \vspace{3mm}\color{white}
+    \begin{tabularx}{\linewidth}{@{}Xr@{}}
+      {\small\bfseries INFORMATIK · KLASSE 9} &
+      \colorbox{Gold}{\color{Navy}\small\bfseries\strut LÖSUNGEN}
+    \end{tabularx}
+    \vspace{2.5mm}
+
+    {\fontsize{22}{25}\selectfont\bfseries Sicherungsblatt: Aufgabe 1}\par
+    \vspace{1mm}
+    {\large Formeln in der Tabellenkalkulation}
+    \vspace{3mm}
+  }%
+}
+
+\vspace{3mm}
+\colorbox{Sky}{%
+  \parbox{\dimexpr\linewidth-2\fboxsep\relax}{%
+    \vspace{1.8mm}
+    \textcolor{Blue}{\bfseries Ziel:}
+    Du benennst Zellen und rechnest mit Formeln und Zellbezügen.
+    \vspace{1.8mm}
+  }%
+}
+
+\sectiontitle{1 · Zellen benennen}
+
+\begin{minipage}[t]{62mm}
+  \vspace{0pt}
+  \sheetsetup
+  \begin{tabular}{|c|c|c|c|}
+    \hline
+    \cellcolor{GridHead} & \gridhead{A} & \gridhead{B} & \gridhead{C} \\ \hline
+    \gridrow{3} & \hspace{13mm} & \hspace{13mm} & \hspace{13mm} \\ \hline
+    \gridrow{4} & & & \\ \hline
+    \gridrow{5} & & \cellcolor{Cell}\small\bfseries B5 & \\ \hline
+    \gridrow{6} & & & \\ \hline
+  \end{tabular}
+\end{minipage}\hfill
+\begin{minipage}[t]{\dimexpr\linewidth-68mm\relax}
+  \vspace{2mm}
+  Spalte \textbf{B}, Zeile \textbf{5} $\Rightarrow$ Zelle \textbf{B5}\par
+  \vspace{2mm}
+  Programme: Microsoft Excel, LibreOffice Calc
+\end{minipage}
+
+\sectiontitle{2 · Formeln}
+
+Jede Formel beginnt mit \textbf{=}.
+
+\vspace{1.5mm}
+\renewcommand{\arraystretch}{1.2}
+\begin{tabularx}{\linewidth}{@{}>{\centering\ttfamily\bfseries}p{9mm}X>{\centering\ttfamily\bfseries}p{9mm}X>{\centering\ttfamily\bfseries}p{9mm}X@{}}
+  \rowcolor{CodeBg} + & plus & * & mal & \^{} & hoch \\
+  - & minus & / & geteilt durch & ( ) & Klammern \\
+\end{tabularx}
+
+\vspace{2mm}
+\begin{tabularx}{\linewidth}{@{}X X@{}}
+  \colorbox{CodeBg}{\parbox{\dimexpr\linewidth-4mm\relax}{%
+    \texttt{=3*4} \quad{\small liefert immer 12}}}
+  &
+  \colorbox{Mint}{\parbox{\dimexpr\linewidth-4mm\relax}{%
+    \texttt{=B4*B5} \quad{\small rechnet mit neuen Werten neu}}}
+  \\
+\end{tabularx}
+
+\sectiontitle{3 · Ausschnitt aus Aufgabe 1}
+
+\sheetsetup
+\begin{tabular}{|c|l|c|c|l|l|}
+  \hline
+  \cellcolor{GridHead} & \gridhead{A} & \gridhead{B} & \gridhead{\dots} &
+  \gridhead{E} & \gridhead{F} \\ \hline
+  \gridrow{4} & \small Seite a / Grundseite g: & \small 3 & &
+    \small A\_Dreieck = & \cellcolor{Cell}\ttfamily\small =B4*B8/2 \\ \hline
+  \gridrow{5} & \small Seite b: & \small 4 & & \small A\_Rechteck = & \\ \hline
+  \gridrow{6} & \small Seite c: & \small 5 & &
+    \small A\_Quadrat = & \cellcolor{Cell}\ttfamily\small =B4\^{}2 \\ \hline
+  \gridrow{7} & \small Seite d / Körperhöhe: & \small 6 & & \small A\_Trapez = & \\ \hline
+  \gridrow{8} & \small Höhe h: & \small 7 & & \small A\_Kreis = & \\ \hline
+\end{tabular}
+
+\vspace{1.5mm}
+{\small In der Zelle stehen die Ergebnisse \textbf{10,5} und \textbf{9},
+in der Formelleiste die Formel.\par}
+
+\sectiontitle{4 · Merke}
+
+\begin{tcolorbox}[colback=Mint,colframe=Blue!40,arc=3mm,boxrule=0.7pt,
+  left=3mm,right=3mm,top=2mm,bottom=2mm]
+  Eine Zelle wird durch Spalte und Zeile bezeichnet: \textbf{B5}.\par
+  \vspace{1.2mm}
+  Jede Formel beginnt mit \texttt{=} und rechnet mit
+  \texttt{+ - * / \^{}} und Klammern.\par
+  \vspace{1.2mm}
+  Formeln mit Zellbezügen rechnen bei neuen Werten automatisch neu.
+\end{tcolorbox}
+
+\vfill
+{\color{Line}\rule{\linewidth}{0.5pt}}\par
+\vspace{1.5mm}
+\begin{tabularx}{\linewidth}{@{}Xr@{}}
+  {\small\color{Muted}Klasse 9 · Tabellenkalkulation} &
+  {\small\color{Muted}Sicherungsblatt · Aufgabe 1 · Version 2}
+\end{tabularx}
+
+\end{document}

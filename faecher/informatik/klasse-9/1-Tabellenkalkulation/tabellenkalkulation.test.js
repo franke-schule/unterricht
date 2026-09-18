@@ -82,6 +82,24 @@ function verifyDefinitions(api, formulas) {
   api.rawCells.set("A16", 2);
   api.fillSelection(api.parseRange("A15:A16"), api.parseRange("A15:A17"));
   assert.equal(api.rawCells.get("A17"), 3, "Zahlenreihe aus mehreren Ausgangszellen wird fortgesetzt.");
+
+  const halfFactorFormulas = {
+    F4: ["=(1/2)*B4*B8", "=0,5*B4*B8", "=B4*B8/2"],
+    F7: ["=(1/2)*(B4+B6)*B8", "=(B4+B6)*B8/2"],
+    F14: ["=(1/2)*B4*B8*B7"],
+    F16: ["=(1/3)*B10*B9^2*B8"],
+    F17: ["=(1/3)*B4^2*B8"]
+  };
+  Object.entries(halfFactorFormulas).forEach(([cell, formulas]) => {
+    const definition = api.formulaDefinitions.find((entry) => entry.cell === cell);
+    formulas.forEach((formula) => {
+      const analysis = api.analyzeFormula(formula, definition);
+      assert.equal(analysis.forbiddenNumbers.length, 0, `${cell}: ${formula} darf nicht als feste Zahl beanstandet werden.`);
+      assert.equal(analysis.missingRefs.length, 0, `${cell}: ${formula} enthält alle nötigen Zellbezüge.`);
+      api.rawCells.set(cell, formula);
+      closeTo(api.evaluateCell(cell), definition.expected({ a: 3, b: 4, c: 5, d: 6, h: 7, r: 3 }));
+    });
+  });
 }
 
 {

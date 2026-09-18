@@ -1,0 +1,181 @@
+\documentclass[10pt,a4paper]{article}
+
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage[ngerman]{babel}
+\usepackage[a4paper,margin=14mm]{geometry}
+\usepackage{lmodern}
+\usepackage[table]{xcolor}
+\usepackage{tabularx}
+\usepackage{array}
+\usepackage{microtype}
+\usepackage[most]{tcolorbox}
+
+\pagestyle{empty}
+\setlength{\parindent}{0pt}
+\setlength{\parskip}{0pt}
+\renewcommand{\familydefault}{\sfdefault}
+
+\definecolor{Navy}{HTML}{17324D}
+\definecolor{Blue}{HTML}{3B6EA5}
+\definecolor{Sky}{HTML}{EAF3FA}
+\definecolor{Mint}{HTML}{E8F5EF}
+\definecolor{Gold}{HTML}{F3B33D}
+\definecolor{Ink}{HTML}{1E2935}
+\definecolor{Muted}{HTML}{617080}
+\definecolor{Line}{HTML}{D8E1E8}
+\definecolor{CodeBg}{HTML}{F5F7F9}
+\definecolor{Cell}{HTML}{FFF4DB}
+\definecolor{GridHead}{HTML}{E9EDF1}
+\definecolor{GridLine}{HTML}{AEBBC6}
+
+\color{Ink}
+
+\newcommand{\sectiontitle}[1]{%
+  \vspace{2.3mm}
+  {\color{Blue}\bfseries\large #1}\par
+  \vspace{0.8mm}
+  {\color{Blue}\rule{\linewidth}{0.7pt}}\par
+  \vspace{1.2mm}
+}
+
+\newcommand{\gridhead}[1]{\cellcolor{GridHead}\textcolor{Muted}{\bfseries\small #1}}
+\newcommand{\gridrow}[1]{\cellcolor{GridHead}\textcolor{Muted}{\bfseries\small #1}}
+\newcommand{\sheetsetup}{%
+  \arrayrulecolor{GridLine}\setlength{\arrayrulewidth}{0.4pt}%
+  \renewcommand{\arraystretch}{1.25}}
+
+% Hervorgehobenes $-Zeichen in Formeln
+\newcommand{\fix}{\textcolor{Blue}{\bfseries\$}}
+
+\begin{document}
+
+\colorbox{Navy}{%
+  \parbox{\dimexpr\linewidth-2\fboxsep\relax}{%
+    \vspace{3mm}\color{white}
+    \begin{tabularx}{\linewidth}{@{}Xr@{}}
+      {\small\bfseries INFORMATIK · KLASSE 9} &
+      \colorbox{Gold}{\color{Navy}\small\bfseries\strut LÖSUNGEN}
+    \end{tabularx}
+    \vspace{2.5mm}
+
+    {\fontsize{22}{25}\selectfont\bfseries Sicherungsblatt: Aufgabe 2a–2d}\par
+    \vspace{1mm}
+    {\large Relative und absolute Zellbezüge}
+    \vspace{3mm}
+  }%
+}
+
+\vspace{3mm}
+\colorbox{Sky}{%
+  \parbox{\dimexpr\linewidth-2\fboxsep\relax}{%
+    \vspace{1.8mm}
+    \textcolor{Blue}{\bfseries Ziel:}
+    Du nutzt relative, absolute und gemischte Zellbezüge beim Auto-Ausfüllen.
+    \vspace{1.8mm}
+  }%
+}
+
+\sectiontitle{1 · Relative Zellbezüge: wandern mit}
+
+\begin{minipage}[t]{\dimexpr\linewidth-62mm\relax}
+  \vspace{2mm}
+  Zellbezüge \textbf{ohne \$-Zeichen} passen sich beim Ausfüllen an.\par
+  \vspace{1.5mm}
+  {\small Aufgabe 2c: Fibonacci}
+\end{minipage}\hfill
+\begin{minipage}[t]{56mm}
+  \vspace{0pt}
+  \sheetsetup
+  \begin{tabular}{|c|l|}
+    \hline
+    \cellcolor{GridHead} & \gridhead{B} \\ \hline
+    \gridrow{7} & \small 0 \\ \hline
+    \gridrow{8} & \small 1 \\ \hline
+    \gridrow{9} & \cellcolor{Cell}\ttfamily\small =B7+B8 \\ \hline
+    \gridrow{10} & \ttfamily\small =B8+B9 \\ \hline
+  \end{tabular}
+\end{minipage}
+
+\sectiontitle{2 · Absolute Zellbezüge: bleiben fest}
+
+\begin{minipage}[t]{\dimexpr\linewidth-98mm\relax}
+  \vspace{2mm}
+  \texttt{\fix D\fix 8} meint immer genau D8.\par
+  \vspace{1.5mm}
+  {\small Aufgabe 2a: Rechnungs\-formular}
+\end{minipage}\hfill
+\begin{minipage}[t]{92mm}
+  \vspace{0pt}
+  \sheetsetup
+  \begin{tabular}{|c|l|c|l|}
+    \hline
+    \cellcolor{GridHead} & \gridhead{C} & \gridhead{D} & \gridhead{E} \\ \hline
+    \gridrow{1} & \small Artikelbezeichnung & \small netto & \small brutto \\ \hline
+    \gridrow{2} & \small Radiergummi & \small 1,20 & \cellcolor{Cell}\ttfamily\small =D2+D2*\fix D\fix 8 \\ \hline
+    \gridrow{3} & \small Füller & \small 12,95 & \ttfamily\small =D3+D3*\fix D\fix 8 \\ \hline
+    \gridrow{\dots} & & & \\ \hline
+    \gridrow{8} & \small MwSt & \small 19 \% & \\ \hline
+  \end{tabular}
+\end{minipage}
+
+\vspace{1mm}
+\colorbox{Sky}{\parbox{\dimexpr\linewidth-2\fboxsep\relax}{%
+  \textcolor{Blue}{\bfseries Typischer Fehler:}
+  Aus \texttt{=D2+D2*D8} wird in E3 \texttt{=D3+D3*D9} -- D9 ist leer.
+  Ebenso muss in Aufgabe 2b der Stundenlohn fest bleiben: \texttt{=C6*\$C\$3}.
+}}
+
+\sectiontitle{3 · Gemischte Zellbezüge}
+
+\begin{minipage}[t]{\dimexpr\linewidth-98mm\relax}
+  \vspace{2mm}
+  \texttt{\fix A1}: Spalte fest.\par
+  \vspace{1mm}
+  \texttt{A\fix 1}: Zeile fest.\par
+  \vspace{1.5mm}
+  {\small Aufgabe 2d: Einmaleins}
+\end{minipage}\hfill
+\begin{minipage}[t]{92mm}
+  \vspace{0pt}
+  \sheetsetup
+  \begin{tabular}{|c|c|l|l|}
+    \hline
+    \cellcolor{GridHead} & \gridhead{A} & \gridhead{B} & \gridhead{C} \\ \hline
+    \gridrow{1} & & \small 1 & \small 2 \\ \hline
+    \gridrow{2} & \small 1 & \cellcolor{Cell}\ttfamily\small =\fix A2*B\fix 1 & \ttfamily\small =\fix A2*C\fix 1 \\ \hline
+    \gridrow{3} & \small 2 & \ttfamily\small =\fix A3*B\fix 1 & \ttfamily\small =\fix A3*C\fix 1 \\ \hline
+  \end{tabular}
+\end{minipage}
+
+\sectiontitle{4 · Überblick: Ausfüllen einer Formel aus B2}
+
+\renewcommand{\arraystretch}{1.15}
+\begin{tabularx}{\linewidth}{@{}>{\ttfamily\bfseries}p{26mm}>{\ttfamily}p{34mm}>{\ttfamily}p{34mm}X@{}}
+  \rowcolor{Sky}\normalfont\bfseries Formel in B2 & \normalfont\bfseries nach unten (B3) & \normalfont\bfseries nach rechts (C2) & \bfseries Art des Bezugs \\
+  =A1 & =A2 & =B1 & relativ \\
+  \rowcolor{CodeBg}=\fix A\fix 1 & =\$A\$1 & =\$A\$1 & absolut \\
+  =\fix A1 & =\$A2 & =\$A1 & gemischt: Spalte fest \\
+  \rowcolor{CodeBg}=A\fix 1 & =A\$1 & =B\$1 & gemischt: Zeile fest \\
+\end{tabularx}
+
+\sectiontitle{5 · Merke}
+
+\begin{tcolorbox}[colback=Mint,colframe=Blue!40,arc=3mm,boxrule=0.7pt,
+  left=3mm,right=3mm,top=2mm,bottom=2mm]
+  Relative Zellbezüge passen sich beim Ausfüllen an, absolute wie
+  \texttt{\$D\$8} nicht.\par
+  \vspace{1.2mm}
+  Werte für alle Zeilen (Steuersatz, Stundenlohn) brauchen einen absoluten
+  Bezug; \texttt{\$A1} hält die Spalte fest, \texttt{A\$1} die Zeile.
+\end{tcolorbox}
+
+\vfill
+{\color{Line}\rule{\linewidth}{0.5pt}}\par
+\vspace{1.5mm}
+\begin{tabularx}{\linewidth}{@{}Xr@{}}
+  {\small\color{Muted}Klasse 9 · Tabellenkalkulation} &
+  {\small\color{Muted}Sicherungsblatt · Aufgabe 2a–2d · Version 2}
+\end{tabularx}
+
+\end{document}

@@ -1,0 +1,185 @@
+\documentclass[10pt,a4paper]{article}
+
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage[ngerman]{babel}
+\usepackage[a4paper,margin=14mm]{geometry}
+\usepackage{lmodern}
+\usepackage[table]{xcolor}
+\usepackage{tabularx}
+\usepackage{array}
+\usepackage{microtype}
+\usepackage[most]{tcolorbox}
+
+\pagestyle{empty}
+\setlength{\parindent}{0pt}
+\setlength{\parskip}{0pt}
+\renewcommand{\familydefault}{\sfdefault}
+
+\definecolor{Navy}{HTML}{17324D}
+\definecolor{Blue}{HTML}{3B6EA5}
+\definecolor{Sky}{HTML}{EAF3FA}
+\definecolor{Mint}{HTML}{E8F5EF}
+\definecolor{Gold}{HTML}{F3B33D}
+\definecolor{Ink}{HTML}{1E2935}
+\definecolor{Muted}{HTML}{617080}
+\definecolor{Line}{HTML}{D8E1E8}
+\definecolor{CodeBg}{HTML}{F5F7F9}
+\definecolor{Cell}{HTML}{FFF4DB}
+\definecolor{GridHead}{HTML}{E9EDF1}
+\definecolor{GridLine}{HTML}{AEBBC6}
+
+\color{Ink}
+
+\newcommand{\sectiontitle}[1]{%
+  \vspace{2.3mm}
+  {\color{Blue}\bfseries\large #1}\par
+  \vspace{0.8mm}
+  {\color{Blue}\rule{\linewidth}{0.7pt}}\par
+  \vspace{1.2mm}
+}
+
+\newcommand{\gridhead}[1]{\cellcolor{GridHead}\textcolor{Muted}{\bfseries\small #1}}
+\newcommand{\gridrow}[1]{\cellcolor{GridHead}\textcolor{Muted}{\bfseries\small #1}}
+\newcommand{\sheetsetup}{%
+  \arrayrulecolor{GridLine}\setlength{\arrayrulewidth}{0.4pt}%
+  \renewcommand{\arraystretch}{1.25}}
+
+% Gerade Anführungszeichen; " ist bei ngerman ein Kurzbefehl.
+\newcommand{\qd}[1]{\textquotedbl#1\textquotedbl}
+
+\begin{document}
+
+\colorbox{Navy}{%
+  \parbox{\dimexpr\linewidth-2\fboxsep\relax}{%
+    \vspace{3mm}\color{white}
+    \begin{tabularx}{\linewidth}{@{}Xr@{}}
+      {\small\bfseries INFORMATIK · KLASSE 9} &
+      \colorbox{Gold}{\color{Navy}\small\bfseries\strut LÖSUNGEN}
+    \end{tabularx}
+    \vspace{2.5mm}
+
+    {\fontsize{22}{25}\selectfont\bfseries Sicherungsblatt: Aufgabe 3}\par
+    \vspace{1mm}
+    {\large Vorgefertigte Funktionen}
+    \vspace{3mm}
+  }%
+}
+
+\vspace{3mm}
+\colorbox{Sky}{%
+  \parbox{\dimexpr\linewidth-2\fboxsep\relax}{%
+    \vspace{1.8mm}
+    \textcolor{Blue}{\bfseries Ziel:}
+    Du wertest Zellbereiche mit Funktionen aus, rundest und zählst Zellen.
+    \vspace{1.8mm}
+  }%
+}
+
+\sectiontitle{1 · Aufbau}
+
+\begin{minipage}[t]{\dimexpr\linewidth-70mm\relax}
+  \vspace{1mm}
+  Parameter stehen in Klammern, getrennt durch \textbf{;}\par
+  \vspace{1.5mm}
+  Zellbereich: \texttt{A1:A8} = Zelle A1 bis A8
+\end{minipage}\hfill
+\begin{minipage}[t]{64mm}
+  \vspace{0pt}
+  \colorbox{CodeBg}{\parbox{\dimexpr\linewidth-2\fboxsep\relax}{%
+    \centering\vspace{1.5mm}
+    {\large\ttfamily =\textcolor{Blue}{\bfseries RUNDEN}(F10;1)}\par
+    \vspace{1mm}
+    {\small\color{Muted}\textcolor{Blue}{\bfseries Name}(Parameter\,;\,Parameter)}\par
+    \vspace{1.5mm}
+  }}
+\end{minipage}
+
+\sectiontitle{2 · Funktionen}
+
+\renewcommand{\arraystretch}{1.15}
+\begin{tabularx}{\linewidth}{@{}>{\ttfamily\bfseries\small}p{32mm}X>{\ttfamily\small}p{52mm}@{}}
+  \rowcolor{Sky}\normalfont\small\bfseries Funktion & \small\bfseries berechnet & \normalfont\small\bfseries Beispiel \\
+  SUMME(…) & Summe & =SUMME(F5:F8) \\
+  \rowcolor{CodeBg}MITTELWERT(…) & Durchschnitt & =MITTELWERT(F5:F8) \\
+  MAX(…) & größten Wert & =MAX(F5:F8) \\
+  \rowcolor{CodeBg}MIN(…) & kleinsten Wert & =MIN(F5:F8) \\
+  PRODUKT(…) & Produkt & \normalfont\small auch: \texttt{POTENZ(Basis;Exponent)} \\
+\end{tabularx}
+
+\sectiontitle{3 · Runden}
+
+\begin{minipage}[t]{\dimexpr\linewidth-66mm\relax}
+  \vspace{0pt}
+  \renewcommand{\arraystretch}{1.15}%
+  \begin{tabularx}{\linewidth}[t]{@{}>{\ttfamily\small}p{40mm}X@{}}
+    \rowcolor{Sky}\normalfont\small\bfseries Formel & \small\bfseries rundet auf \\
+    =RUNDEN(F10;1) & 1 Nachkommastelle \\
+    \rowcolor{CodeBg}=ABRUNDEN(F10;1) & 1 Nachkommastelle, abwärts \\
+    =AUFRUNDEN(F10;-1) & volle Zehner, aufwärts \\
+  \end{tabularx}
+\end{minipage}\hfill
+\begin{minipage}[t]{60mm}
+  \vspace{0pt}
+  \renewcommand{\arraystretch}{1.1}%
+  \begin{tabular}{@{}>{\centering\arraybackslash\ttfamily\small}p{6mm}>{\small}p{19mm}>{\centering\arraybackslash\ttfamily\small}p{6mm}>{\small}p{16mm}@{}}
+    \rowcolor{Sky}3 & Tausendstel & -1 & Zehner \\
+    1 & Zehntel & -2 & Hunderter \\
+    \rowcolor{CodeBg}0 & ganze Zahl & -3 & Tausender \\
+  \end{tabular}\par
+  \vspace{1mm}
+  {\small 2.\,Parameter = Stelle}
+\end{minipage}
+
+\sectiontitle{4 · Zellen zählen}
+
+\begin{minipage}[t]{\dimexpr\linewidth-52mm\relax}
+  \vspace{0pt}
+  \renewcommand{\arraystretch}{1.15}%
+  \begin{tabularx}{\linewidth}[t]{@{}>{\ttfamily\small}p{58mm}X>{\raggedleft\arraybackslash\small}p{10mm}@{}}
+    \rowcolor{Sky}\normalfont\small\bfseries Formel & \small\bfseries zählt & \bfseries Wert \\
+    =ANZAHL(F30:F36) & Zahlen & 4 \\
+    \rowcolor{CodeBg}=ANZAHL2(F30:F36) & Zahlen und Texte & 6 \\
+    =ANZAHLLEEREZELLEN(F30:F36) & leere Zellen & 1 \\
+    \rowcolor{CodeBg}=ZÄHLENWENN(F30:F36;\qd{Urlaub}) & Zellen mit „Urlaub“ & 2 \\
+  \end{tabularx}
+\end{minipage}\hfill
+\begin{minipage}[t]{46mm}
+  \vspace{0pt}
+  \sheetsetup
+  \begin{tabular}{|c|l|c|}
+    \hline
+    \cellcolor{GridHead} & \gridhead{E} & \gridhead{F} \\ \hline
+    \gridrow{30} & \small Montag & \small 3 \\ \hline
+    \gridrow{31} & \small Dienstag & \small 5 \\ \hline
+    \gridrow{32} & \small Mittwoch & \\ \hline
+    \gridrow{33} & \small Donnerstag & \small Urlaub \\ \hline
+    \gridrow{34} & \small Freitag & \small 5 \\ \hline
+    \gridrow{35} & \small Samstag & \small 4 \\ \hline
+    \gridrow{36} & \small Sonntag & \small Urlaub \\ \hline
+  \end{tabular}
+\end{minipage}
+
+\sectiontitle{5 · Merke}
+
+\begin{tcolorbox}[colback=Mint,colframe=Blue!40,arc=3mm,boxrule=0.7pt,
+  left=3mm,right=3mm,top=2mm,bottom=2mm]
+  Funktionen beginnen mit \texttt{=}; Parameter werden durch \texttt{;}
+  getrennt.\par
+  \vspace{1.2mm}
+  \texttt{RUNDEN}, \texttt{ABRUNDEN} und \texttt{AUFRUNDEN} brauchen Zahl und
+  Stelle; \texttt{-1} rundet auf Zehner.\par
+  \vspace{1.2mm}
+  \texttt{ANZAHL} zählt nur Zahlen, \texttt{ANZAHL2} auch Texte,
+  \texttt{ANZAHLLEEREZELLEN} leere Zellen.
+\end{tcolorbox}
+
+\vfill
+{\color{Line}\rule{\linewidth}{0.5pt}}\par
+\vspace{1.5mm}
+\begin{tabularx}{\linewidth}{@{}Xr@{}}
+  {\small\color{Muted}Klasse 9 · Tabellenkalkulation} &
+  {\small\color{Muted}Sicherungsblatt · Aufgabe 3 · Version 2}
+\end{tabularx}
+
+\end{document}
