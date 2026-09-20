@@ -1,6 +1,7 @@
 const VIEW_WIDTH = 640;
 const VIEW_HEIGHT = 440;
 const PADDING = 48;
+const ARROW_HEAD_SIZE = 5;
 
 export function gridPointKey(point) {
   return `${point.x},${point.y}`;
@@ -42,17 +43,20 @@ function svgElement(name, attributes = {}) {
   return element;
 }
 
-function createMarker(definitions, id, color) {
+// size steuert die Größe der Pfeilspitze in Vielfachen der Strichstärke.
+// Kraftpfeile sind deutlich dicker gezeichnet als Vektorpfeile und brauchen
+// deshalb eine kleinere Spitze, damit sie die Abbildung nicht überdecken.
+function createMarker(definitions, id, color, size = 9) {
   const marker = svgElement("marker", {
     id,
-    markerWidth: 9,
-    markerHeight: 9,
-    refX: 7,
-    refY: 4.5,
+    markerWidth: size,
+    markerHeight: size,
+    refX: size - 2,
+    refY: size / 2,
     orient: "auto",
     markerUnits: "strokeWidth",
   });
-  marker.append(svgElement("path", { d: "M0,0 L9,4.5 L0,9 z", fill: color }));
+  marker.append(svgElement("path", { d: `M0,0 L${size},${size / 2} L0,${size} z`, fill: color }));
   definitions.append(marker);
 }
 
@@ -370,8 +374,8 @@ export function createForceArrowGrid(container, config) {
   svg.append(title);
 
   const definitions = svgElement("defs");
-  createMarker(definitions, `${svgId}-first`, "#2563eb");
-  createMarker(definitions, `${svgId}-second`, "#7c3aed");
+  createMarker(definitions, `${svgId}-first`, "#2563eb", ARROW_HEAD_SIZE);
+  createMarker(definitions, `${svgId}-second`, "#7c3aed", ARROW_HEAD_SIZE);
   svg.append(definitions);
 
   const illustrationLayer = svgElement("g", { "aria-hidden": "true", class: "force-illustration" });

@@ -17,6 +17,11 @@
   stroke-width: 5;
 }
 
+/* Pfeilfarbe und Farbe der Pfeilspitze müssen übereinstimmen. */
+.force-arrow-grid .force-arrow-1 {
+  stroke: #2563eb;
+}
+
 .force-arrow-grid .force-arrow-2 {
   stroke: #7c3aed;
 }
@@ -45,6 +50,15 @@
   fill: #c4b5fd;
   stroke: #475569;
   stroke-width: 3;
+}
+
+/* Bruchlinien am Auto zeigen den Schaden beim Aufprall auf die Wand. */
+.force-arrow-grid .scene-damage {
+  fill: none;
+  stroke: #ea580c;
+  stroke-width: 4;
+  stroke-linecap: round;
+  stroke-linejoin: round;
 }
 
 .force-arrow-grid .force-origin-marker {
@@ -109,9 +123,14 @@
 
 .law-term-matching {
   display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: 14px;
   margin-top: 18px;
+}
+
+.law-term-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 14px;
 }
 
 .law-term-card {
@@ -123,23 +142,32 @@
   background: #f8fafc;
 }
 
-.law-term-card label,
-.law-term-card select {
-  min-width: 0;
-}
-
-.law-term-card select {
-  min-height: 42px;
-  border: 1px solid #94a3b8;
-  border-radius: 8px;
-  padding: 8px;
-  color: #0f172a;
-  background: #ffffff;
-  font: inherit;
+.law-term-card h4 {
+  margin: 0;
+  font-size: 1.35rem;
 }
 
 .law-term-card .physics-feedback {
   margin: 0;
+}
+
+/* Ablagefeld einer Zuordnungskarte: gleiche Optik wie eine Lücke im
+   Lückentext, aber als eigene Zeile in der Karte. */
+.law-term-slot {
+  display: block;
+  width: 100%;
+  min-height: 46px;
+  text-align: left;
+}
+
+.law-term-slot.is-correct {
+  border-color: #059669;
+  background: #ecfdf5;
+}
+
+.law-term-slot.is-wrong {
+  border-color: #dc2626;
+  background: #fef2f2;
 }
 
 .formula-display {
@@ -181,7 +209,7 @@
 }
 
 .cloze-token {
-  min-height: 42px;
+  min-height: 44px;
   border: 1px solid #93c5fd;
   border-radius: 9px;
   padding: 8px 12px;
@@ -190,33 +218,76 @@
   font: inherit;
   font-weight: 750;
   cursor: grab;
+  touch-action: none;
+  user-select: none;
 }
 
-.cloze-token:disabled {
+.cloze-token.is-picked,
+.cloze-gap.is-picked {
+  outline: 3px solid #2563eb;
+  outline-offset: 2px;
+}
+
+.cloze-token.is-dragging,
+.cloze-gap.is-dragging {
   opacity: 0.45;
-  cursor: default;
+}
+
+/* Mitgezogene Karte am Mauszeiger beziehungsweise am Finger. */
+.cloze-drag-ghost {
+  position: fixed;
+  z-index: 1000;
+  display: inline-flex;
+  align-items: center;
+  transform: translate(-50%, -50%);
+  box-shadow: 0 6px 18px rgba(30, 58, 138, 0.25);
+  pointer-events: none;
 }
 
 .cloze-sentence {
   margin: 0;
-  line-height: 2.6;
-}
-
-.cloze-sentence select {
-  min-height: 42px;
-  max-width: 100%;
-  margin: 0 4px;
-  border: 1px solid #94a3b8;
-  border-radius: 8px;
-  padding: 6px 8px;
-  color: #0f172a;
+  border: 1px solid #cbd5e1;
+  border-radius: 14px;
+  padding: 14px 16px;
   background: #ffffff;
-  font: inherit;
+  line-height: 2.4;
+  text-align: left;
 }
 
-.cloze-sentence select.is-drop-target {
-  outline: 3px solid rgba(37, 99, 235, 0.22);
-  border-color: #2563eb;
+/* Lücke im Fließtext: schmales Inline-Feld auf der Textgrundlinie, in das
+   eine Wortkarte gezogen wird. */
+.cloze-gap {
+  display: inline-block;
+  min-width: 7em;
+  margin: 0 0.2em;
+  border: 0;
+  border-bottom: 2px dashed #2563eb;
+  border-radius: 6px 6px 0 0;
+  padding: 0.15em 0.5em;
+  color: #0f172a;
+  background: #eff6ff;
+  font: inherit;
+  font-weight: 750;
+  line-height: 1.8;
+  vertical-align: baseline;
+  cursor: pointer;
+  touch-action: none;
+}
+
+.cloze-gap.is-filled {
+  min-width: 0;
+  border-bottom-style: solid;
+  background: #f8fafc;
+  cursor: grab;
+}
+
+.cloze-gap.is-attached {
+  margin-right: 0;
+}
+
+.cloze-gap.is-drop-target {
+  border-bottom-color: #1e3a8a;
+  background: #dbeafe;
 }
 
 .cloze-actions {
@@ -285,10 +356,24 @@
   cursor: pointer;
 }
 
+/* Weiter-Button am Ende jedes Reiterinhalts (außer im letzten Reiter). */
+.physics-step-next {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: 20px;
+}
+
+.physics-step-next .physics-primary-button {
+  margin-top: 0;
+}
+
 @media (max-width: 520px) {
-  .cloze-sentence select {
+  .cloze-gap {
+    min-width: 5.5em;
+  }
+
+  .physics-step-next .physics-primary-button {
     width: 100%;
-    margin: 4px 0;
   }
 
   .sortable-step {
@@ -303,7 +388,7 @@
 
 @media (max-width: 760px) {
   .force-situation-grid,
-  .law-term-matching {
+  .law-term-grid {
     grid-template-columns: 1fr;
   }
 }

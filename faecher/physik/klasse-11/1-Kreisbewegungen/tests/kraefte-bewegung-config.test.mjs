@@ -9,15 +9,18 @@ const grid = fs.readFileSync(new URL("../components/point-vector-grid.mjs", impo
 assert.match(html, /Wiederholung 2/);
 assert.equal((html.match(/data-physics-tab=/g) || []).length, 5);
 assert.equal((html.match(/data-physics-panel=/g) || []).length, 5);
-assert.match(html, /<legend class="sr-only">Einheit der Beschleunigung auswählen<\/legend>/);
+// Einheit als Dropdown direkt neben dem Eingabefeld (manifest-physikaufgaben 3)
+assert.match(html, /<select id="force-acceleration-unit" aria-label="Einheit der Beschleunigung"><option value="">Einheit<\/option>/);
+assert.doesNotMatch(html, /class="unit-choice"/);
 assert.match(html, /class="vector-symbol"[^>]*>F<\/span> · Δt = m · Δ<span class="vector-symbol"[^>]*>v<\/span>/);
-assert.match(html, /Drag-and-Drop/);
+assert.match(html, /<strong>Ziehe<\/strong> jede Größe aus dem Wortspeicher auf das passende Formelzeichen/);
+assert.match(html, /<strong>Ziehe<\/strong> die Begriffe aus dem Wortspeicher in die Lücken/);
 assert.match(html, /id="reset-law-cloze"/);
 assert.match(html, /Rechenschritte sortieren/);
 assert.match(html, /mehrere Antworten richtig/);
-assert.match(html, /kraefte-bewegung\.css\?v=20260901b/);
+assert.match(html, /kraefte-bewegung\.css\?v=20260920a/);
 assert.match(html, /bewegung-koerpern\.css\?v=20260910a/);
-assert.match(html, /kraefte-bewegung\.mjs\?v=20260911a/);
+assert.match(html, /kraefte-bewegung\.mjs\?v=20260920a/);
 assert.match(html, /Sicherungsblatt zu Wiederholung 2/);
 assert.match(html, /onsubmit="unlockSolution\(event, 'R8NT-DKPV', 'solution-download-link', 'solution-code-message'\)"/);
 assert.match(html, /href="sicherungsblatt-aufgabe-2-loesungen\.pdf\?v=20260911a" download hidden/);
@@ -33,7 +36,34 @@ assert.match(source, /correct: \["law", "impulse"\]/);
 assert.match(source, /correct: \["same", "different"\]/);
 assert.match(grid, /export function createForceArrowGrid/);
 assert.match(grid, /force-arrow-grid-point/);
-assert.match(source, /isSelectablePoint: isCardinalForcePoint, hitRadius: 48/);
+assert.match(source, /isSelectablePoint: isForceArrowPoint, hitRadius: 26/);
+// 45-Grad-Pfeile sind zeichenbar (Fehlvorstellung) und bekommen eigenes Feedback
+assert.match(source, /const DIAGONAL_DIRECTIONS = \["up-left", "up-right", "down-left", "down-right"\]/);
+assert.match(source, /Ein schräger Pfeil passt hier nicht\. Die Gravitationskraft zieht jeden Körper auf der Erde zum Erdmittelpunkt/);
+assert.match(source, /Der Luftwiderstand bremst den Fall und zeigt senkrecht nach oben\./);
+assert.doesNotMatch(source, /Prüfe die Richtungen der beiden Kräfte/);
+// Kleinere Pfeilspitzen an den Kraftpfeilen
+assert.match(grid, /const ARROW_HEAD_SIZE = 5;/);
+assert.match(grid, /createMarker\(definitions, `\$\{svgId\}-first`, "#2563eb", ARROW_HEAD_SIZE\)/);
+// Drag-and-Drop mit Pointer Events für Aufgabe 1 und Aufgabe 2, inklusive Entfernen
+assert.match(source, /function enableTokenDrag\(element, \{ getLabel, dropSelector, bankSelector, onDrop \}\)/);
+assert.equal((source.match(/else if \(onBank\) place\(/g) || []).length, 2);
+assert.doesNotMatch(source, /select\[data-cloze-gap\]|Begriff wählen …|Auswahl wählen …/);
+// Crashtest: Auto berührt die Wand und zeigt Schaden
+assert.match(source, /class: "scene-damage"/);
+assert.match(source, /M\$\{wallFace\} \$\{origin\.y \+ 50\}/);
+assert.match(css, /\.scene-damage/);
+// Zusätzliche Fehlvorstellung und eigene Rückmeldung in Aufgabe 4b
+assert.match(source, /\["smaller", "Die Gewichtskraft \{\{F_G\}\} ist kleiner als die Luftwiderstandskraft \{\{F_R\}\}\."\]/);
+assert.match(source, /Achtung: Der Fallschirmspringer fliegt nach einer gewissen Zeit mit konstanter Geschwindigkeit nach unten\. Was gilt immer bei konstanter Geschwindigkeit\?/);
+assert.match(source, /optionHints = \{\}/);
+// Weiter-Buttons am Ende jedes Reiterinhalts (außer im letzten Reiter "quiz")
+assert.deepEqual(
+  [...html.matchAll(/data-next-tab="([^"]+)"/g)].map((match) => match[1]),
+  ["parachute", "balance", "crash", "quiz"],
+);
+assert.match(source, /function setupNextTabButtons\(stepTabs\)/);
+assert.match(css, /\.physics-step-next/);
 assert.match(grid, /Math\.max\(hitRadius, Math\.min\(scaleX, scaleY\) \* 0\.42\)/);
 assert.match(css, /\.cloze-token/);
 assert.match(css, /\.sortable-step/);

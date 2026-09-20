@@ -8,7 +8,7 @@
     <link rel="stylesheet" href="../../../../styles.css?v=20260911a">
     <link rel="stylesheet" href="bewegung-koerpern.css?v=20260917a">
     <link rel="stylesheet" href="components/physics-notation.css?v=20260911a">
-    <script type="module" src="bewegung-koerpern.mjs?v=20260911a"></script>
+    <script type="module" src="bewegung-koerpern.mjs?v=20260920a"></script>
   </head>
   <body class="physics-revision-page">
     <div class="site-backdrop" aria-hidden="true"></div>
@@ -111,7 +111,7 @@
               <label for="acceleration-answer">Geschwindigkeit</label>
               <div class="physics-number-controls">
                 <input id="acceleration-answer" inputmode="decimal" autocomplete="off">
-                <fieldset class="unit-choice" id="acceleration-unit" data-unit-choice><legend class="sr-only">Einheit der berechneten Geschwindigkeit</legend><label class="unit-choice__option"><input type="radio" name="acceleration-unit" value="m/s" checked><span class="physics-fraction" role="img" aria-label="Meter pro Sekunde"><span class="physics-fraction__numerator">m</span><span class="physics-fraction__denominator">s</span></span></label><label class="unit-choice__option"><input type="radio" name="acceleration-unit" value="km/h"><span class="physics-fraction" role="img" aria-label="Kilometer pro Stunde"><span class="physics-fraction__numerator">km</span><span class="physics-fraction__denominator">h</span></span></label></fieldset>
+                <select id="acceleration-unit" aria-label="Einheit der berechneten Geschwindigkeit"><option value="">Einheit</option><option value="m/s">m/s</option><option value="km/h">km/h</option><option value="m/s²">m/s²</option><option value="m">m</option></select>
               </div>
             </div>
             <button class="physics-primary-button" id="check-acceleration" type="button">Geschwindigkeit prüfen</button>
@@ -163,7 +163,7 @@
                 <label for="way-answer">Weg</label>
                 <div class="physics-number-controls">
                   <input id="way-answer" inputmode="decimal" autocomplete="off">
-                  <select id="way-unit" aria-label="Einheit des zurückgelegten Weges"><option value="m">m</option><option value="km">km</option></select>
+                  <select id="way-unit" aria-label="Einheit des zurückgelegten Weges"><option value="">Einheit</option><option value="m">m</option><option value="km">km</option><option value="m/s">m/s</option><option value="s">s</option></select>
                 </div>
               </div>
               <button class="physics-primary-button" id="check-way" type="button">Weg prüfen</button>
@@ -219,6 +219,23 @@
           <article><h3>Vektoren</h3><p>Addiere Komponenten getrennt und zeichne die Resultierende vom gemeinsamen Ursprung.</p></article>
           <article><h3>Weg</h3><p>Der Weg entspricht der Fläche unter dem v(t)-Diagramm.</p></article>
         </div>
+        <section class="solution-download" aria-labelledby="solution-download-summary-title">
+          <h3 id="solution-download-summary-title">Sicherungsblatt zu Wiederholung 1</h3>
+          <details class="solution-reveal">
+            <summary>Sicherungsblatt anzeigen</summary>
+            <form class="solution-code-form" onsubmit="unlockSolution(event, 'R5KV-DQ2M', 'solution-download-link-summary', 'solution-code-message-summary')">
+              <label for="solution-code-summary">Lehrercode eingeben</label>
+              <div class="solution-code-controls">
+                <input id="solution-code-summary" name="solution-code" type="text" maxlength="9" autocomplete="off" autocapitalize="characters" spellcheck="false" required>
+                <button class="physics-primary-button" type="submit">Code prüfen</button>
+              </div>
+              <p id="solution-code-message-summary" class="solution-code-message" aria-live="polite"></p>
+              <a id="solution-download-link-summary" class="download-button" href="sicherungsblatt-aufgabe-1-loesungen.pdf?v=20260911a" download hidden>
+                &#8595; Sicherungsblatt herunterladen
+              </a>
+            </form>
+          </details>
+        </section>
       </section>
     </main>
   </body>

@@ -20,22 +20,20 @@ assert.match(notationCss, /\.physics-fraction__denominator \{[^}]*border-top/);
 
 // Zusammengesetzte Einheiten werden nie als Schrägstrich im Text ausgegeben.
 //
-// Lehrkraft-Entscheidung (Zentripetalkraft-Zusatzspezifikation, Rückfrage
-// "Einheiten in Aufgabe 13"): Ein natives <option>-Element kann keinen
-// waagerechten Bruchstrich darstellen. Für genau dieses eine Dropdown
-// (select#task13-unit in aufgabe4.html) hat die Lehrkraft eine eng begrenzte
-// Ausnahme vom Schrägstrich-Verbot genehmigt: nur die <option>-Texte dieses
-// Selects dürfen "m/s", "km/h" und "m/s²" anzeigen. Die Werte bleiben
-// mps/kmh/mps2/m; überall sonst auf der Seite (Aufgabentext, Feedback,
-// Hilfen, Sicherungsblatt) stehen Einheiten weiterhin als Bruch. Alle
-// anderen Prüfungen dieser Datei bleiben unverändert wirksam.
+// Ausnahme laut manifest-physikaufgaben.txt Abschnitt 4: Ein natives
+// <option>-Element kann keinen waagerechten Bruchstrich darstellen. Deshalb
+// dürfen die Optionstexte der Einheiten-Dropdowns "m/s", "km/h" und "m/s²"
+// anzeigen. Überall sonst (Aufgabentext, Feedback, Hilfen, Sicherungsblatt)
+// stehen Einheiten weiterhin als Bruch.
 const forbiddenUnit = /(?:^|[\s\d,.(>])(m|km|rad|N)\/(s²|s|h|kg)(?![\w-])/;
+const withoutUnitOptionTexts = (html) => html.replace(
+  /<select id="[^"]*unit[^"]*"[\s\S]*?<\/select>/g,
+  (block) => block.replace(/<option value="[^"]*">[^<]*<\/option>/g, "<option></option>")
+);
 for (const page of pages) {
   const html = read(page);
   assert.match(html, /components\/physics-notation\.css/, `${page} bindet die Notations-CSS nicht ein`);
-  const html_for_slash_check = page === "aufgabe4.html"
-    ? html.replace(/<select id="task13-unit"[\s\S]*?<\/select>/, (block) => block.replace(/<option value="[^"]*">[^<]*<\/option>/g, "<option></option>"))
-    : html;
+  const html_for_slash_check = withoutUnitOptionTexts(html);
   html_for_slash_check.split("\n").forEach((line, index) => {
     line.split(/(<[^>]*>)/g).forEach((segment, position) => {
       if (position % 2 === 1) return;
@@ -60,11 +58,22 @@ for (const name of modules) {
   assert.match(source, /physicsTextSpan\(labelText, "quiz-option-text"\)/, `${name} rendert Optionstexte nicht als ein Element`);
 }
 
-// Einheitenauswahl nutzt Auswahlfelder mit Bruchdarstellung statt eines <select>.
+// Einheiten bei Rechenaufgaben: Dropdown direkt neben dem Eingabefeld, erste
+// Option leer und plausible falsche Einheiten zur Auswahl
+// (manifest-physikaufgaben.txt Abschnitt 3).
 for (const page of ["aufgabe1.html", "aufgabe2.html", "aufgabe4.html"]) {
   const html = read(page);
-  assert.match(html, /class="unit-choice"/, `${page} nutzt keine Einheitenauswahl mit Bruchdarstellung`);
-  assert.doesNotMatch(html, /<option value="m\/s/, `${page} enthält noch ein <select> mit Einheiten`);
+  const unitSelects = [...html.matchAll(/<select id="[^"]*unit[^"]*"[\s\S]*?<\/select>/g)].map((match) => match[0]);
+  assert.ok(unitSelects.length, `${page} enthält kein Einheiten-Dropdown`);
+  unitSelects.forEach((block) => {
+    assert.match(block, /<option value="">Einheit<\/option>/, `${page}: Einheiten-Dropdown ohne leere erste Option`);
+    assert.ok((block.match(/<option /g) || []).length >= 4, `${page}: Einheiten-Dropdown ohne plausible falsche Einheiten`);
+  });
+  assert.equal(
+    (html.match(/<div class="physics-number-controls">\s*<input[^>]*>(?:\s|<!--[\s\S]*?-->)*<select id="[^"]*unit/g) || []).length,
+    unitSelects.length,
+    `${page}: Einheiten-Dropdown steht nicht direkt neben dem Eingabefeld`
+  );
 }
 
 // Divisionen in den Sicherungsblättern sind als Bruch gesetzt.
