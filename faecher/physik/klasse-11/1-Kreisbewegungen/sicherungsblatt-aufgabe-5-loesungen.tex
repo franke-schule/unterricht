@@ -1,0 +1,125 @@
+\documentclass[10pt,a4paper]{article}
+
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage[ngerman]{babel}
+\usepackage[a4paper,margin=12mm]{geometry}
+\usepackage{lmodern}
+\usepackage[table]{xcolor}
+\usepackage{tabularx}
+\usepackage{array}
+\usepackage{booktabs}
+\usepackage{amsmath}
+\usepackage{microtype}
+\usepackage[most]{tcolorbox}
+\usepackage{tikz}
+\usetikzlibrary{arrows.meta,calc}
+
+\pagestyle{empty}
+\setlength{\parindent}{0pt}
+\setlength{\parskip}{0pt}
+\renewcommand{\familydefault}{\sfdefault}
+\renewcommand{\arraystretch}{1.08}
+
+\definecolor{Navy}{HTML}{17324D}
+\definecolor{Blue}{HTML}{3B6EA5}
+\definecolor{Sky}{HTML}{EAF3FA}
+\definecolor{Mint}{HTML}{E8F5EF}
+\definecolor{Gold}{HTML}{F3B33D}
+\definecolor{Ink}{HTML}{1E2935}
+\definecolor{Muted}{HTML}{617080}
+\definecolor{Line}{HTML}{D8E1E8}
+
+\color{Ink}
+\newcommand{\sectiontitle}[1]{\vspace{0.4mm}{\color{Blue}\bfseries\large #1}\par\vspace{0.15mm}{\color{Blue}\rule{\linewidth}{0.7pt}}\par\vspace{0.25mm}}
+\newcommand{\unit}[1]{\,\mathrm{#1}}
+\newcommand{\unitfrac}[2]{\,\frac{\mathrm{#1}}{\mathrm{#2}}}
+\newcommand{\pagefooter}[1]{\vfill{\color{Line}\rule{\linewidth}{0.5pt}}\par\vspace{1mm}\begin{tabularx}{\linewidth}{@{}Xc r@{}}{\small\color{Muted}Klasse 11 · Physik · Kreisbewegungen} & {\small\color{Muted}#1 / 2} & {\small\color{Muted}Sicherungsblatt · Aufgabe 3}\end{tabularx}}
+
+\begin{document}
+\colorbox{Navy}{\parbox{\dimexpr\linewidth-2\fboxsep\relax}{\vspace{1.3mm}\color{white}\small\bfseries PHYSIK · KLASSE 11\hfill\textcolor{Gold}{LÖSUNGEN}\par\vspace{1.1mm}{\large Sicherungsblatt}\vspace{1.1mm}}}
+
+\vspace{1.6mm}
+{\color{Navy}\fontsize{15}{18}\selectfont\bfseries Aufgabe 3 -- Die Haftreibungskraft als Zentripetalkraft\par}
+\vspace{0.9mm}
+\colorbox{Sky}{\parbox{\dimexpr\linewidth-2\fboxsep\relax}{\vspace{0.55mm}\textcolor{Blue}{\bfseries Ziel:} Haft- und Gleitreibung unterscheiden und die Grenzgeschwindigkeit einer ebenen Kurve begründen.\vspace{0.55mm}}}
+
+\sectiontitle{1 · Haft- und Gleitreibung}
+\small
+\begin{tabularx}{\linewidth}{@{}>{\bfseries}p{42mm}X@{}}
+\toprule[0.4pt]
+Zustand & Bedeutung \\
+\midrule[0.3pt]
+$F_{\mathrm S}<F_{\mathrm{Haft,max}}$ & Die Haftreibung passt sich an: $F_{\mathrm{Haft}}=F_{\mathrm S}$. Die Kontaktflächen rutschen nicht gegeneinander. \\
+$F_{\mathrm S}=F_{\mathrm{Haft,max}}$ & Grenzfall: Die maximale Haftreibung ist gerade erreicht. \\
+$F_{\mathrm S}>F_{\mathrm{Haft,max}}$ & Die Kontaktflächen rutschen gegeneinander. Es wirkt Gleitreibung; $F_{\mathrm{Gleit}}<F_{\mathrm{Haft,max}}$. \\
+\bottomrule[0.4pt]
+\end{tabularx}
+\vspace{1.1mm}
+\begin{tcolorbox}[colback=Sky,colframe=Line,arc=1.2mm,boxrule=.6pt,left=2mm,right=2mm,top=.7mm,bottom=.7mm]
+\small Die Haftreibungskraft verhindert eine drohende Relativbewegung zweier Kontaktflächen. Ihr Betrag passt sich bis zum Maximalwert $F_{\mathrm{Haft,max}}=\mu\cdot F_{\mathrm N}$ an.
+\end{tcolorbox}
+
+\sectiontitle{2 · Haftreibung in der Kurve}
+\begin{minipage}[t]{0.30\linewidth}
+\vspace{0pt}\centering
+\begin{tikzpicture}[x=1mm,y=1mm,>=Latex]
+  \draw[Blue,line width=.8pt] (22,22) circle (17);
+  \fill[Gold] (39,22) circle (2.5);
+  \draw[-{Latex},Blue,line width=1pt] (39,22) -- (23,22) node[midway,above,font=\scriptsize] {$F_{\mathrm{Haft}}=F_{\mathrm Z}$};
+  \node[font=\scriptsize,align=center] at (22,1) {Kreismittelpunkt};
+\end{tikzpicture}
+\end{minipage}\hfill
+\begin{minipage}[t]{0.67\linewidth}
+\vspace{0pt}\small
+Bei einer ebenen Kurvenfahrt übernimmt die Haftreibungskraft zwischen Reifen und Straße die Rolle der Zentripetalkraft. Sie ist keine zusätzliche Kraft neben der Zentripetalkraft.
+
+\vspace{1mm}
+Ohne seitliches Rutschen gilt:
+\[
+F_{\mathrm Z}\leq F_{\mathrm{Haft,max}}.
+\]
+\end{minipage}
+
+\sectiontitle{3 · Herleitung der Grenzgeschwindigkeit}
+\small
+\begin{align*}
+F_{\mathrm Z}&\leq F_{\mathrm{Haft,max}}\\
+\frac{m\cdot v_{\mathrm B}^{2}}{r}&\leq\mu\cdot F_{\mathrm N}=\mu\cdot m\cdot g\\
+\frac{v_{\mathrm B}^{2}}{r}&\leq\mu\cdot g\qquad\text{(Masse $m$ auf beiden Seiten gekürzt)}\\
+v_{\mathrm B}^{2}&\leq\mu\cdot g\cdot r\\
+\boxed{v_{\mathrm B}}&\boxed{\leq\sqrt{\mu\cdot g\cdot r}}
+\end{align*}
+\begin{tcolorbox}[colback=Mint,colframe=Line,arc=1.2mm,boxrule=.6pt,left=2mm,right=2mm,top=.7mm,bottom=.7mm]
+\small Je größer die Haftreibungszahl $\mu$ und der Kurvenradius $r$ sind, desto größer ist die mögliche Grenzgeschwindigkeit. Hohe Geschwindigkeit ist besonders kritisch, weil $F_{\mathrm Z}$ proportional zu $v_{\mathrm B}^{2}$ ist.
+\end{tcolorbox}
+\pagefooter{1}
+
+\newpage
+\sectiontitle{4 · Musterlösung: Gefährliche Kurvenfahrten}
+\small
+Eine Kurvenfahrt wird gefährlich, wenn die benötigte Zentripetalkraft größer als die maximal mögliche Haftreibungskraft wird. Eine hohe Geschwindigkeit erhöht $F_{\mathrm Z}$ wegen des Quadrats besonders stark; auch ein kleiner Kurvenradius erhöht die benötigte Kraft. Bei Nässe, Schnee oder Eis ist die Haftreibungszahl $\mu$ kleiner, sodass weniger Haftreibung verfügbar ist. Deshalb muss die Geschwindigkeit rechtzeitig vor der Kurve verringert und an Radius und Fahrbahnzustand angepasst werden. Abruptes Lenken, Bremsen oder Beschleunigen sollte besonders bei geringer Griffigkeit vermieden werden.
+
+\sectiontitle{5 · Musterlösung: Warum fällt die Masse heraus?}
+\small
+Für eine Kurvenfahrt ohne Rutschen gilt
+\[
+\frac{m\cdot v_{\mathrm B}^{2}}{r}\leq\mu\cdot m\cdot g.
+\]
+Die Masse $m$ steht auf beiden Seiten als gleicher Faktor und kann gekürzt werden. Damit folgt $v_{\mathrm B}\leq\sqrt{\mu\cdot g\cdot r}$; die Masse kommt in der Grenzgeschwindigkeit nicht mehr vor.
+
+\sectiontitle{6 · Voraussetzungen des Modells}
+\begin{tcolorbox}[colback=Sky,colframe=Line,arc=1.2mm,boxrule=.6pt,left=2mm,right=2mm,top=.8mm,bottom=.8mm]
+\small
+\begin{itemize}\setlength{\itemsep}{1.5pt}\setlength{\parskip}{0pt}
+  \item Die Straße ist eben und nicht überhöht.
+  \item Für die Beträge gilt $F_{\mathrm N}=F_{\mathrm G}=m\cdot g$.
+  \item Die verglichenen Fahrzeuge durchfahren denselben Radius bei gleicher Haftreibungszahl und vergleichbaren Kontaktbedingungen.
+  \item Zusätzliche vertikale Kräfte und aerodynamische Effekte werden nicht berücksichtigt.
+\end{itemize}
+\end{tcolorbox}
+
+\vspace{1mm}
+\colorbox{Gold}{\parbox{\dimexpr\linewidth-2\fboxsep\relax}{\small\centering\bfseries Die Massenunabhängigkeit gilt nur innerhalb dieser Modellannahmen. Reale Fahrzeuge können sich deshalb dennoch unterschiedlich verhalten.}}
+\pagefooter{2}
+\end{document}

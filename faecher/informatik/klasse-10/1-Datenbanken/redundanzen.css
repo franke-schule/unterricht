@@ -73,6 +73,12 @@ code { font-family: "SFMono-Regular", Consolas, "Liberation Mono", monospace; }
 .task-card { background: white; }
 .task-card.prominent { max-width: 860px; margin-inline: auto; }
 .task-card h3 { margin: 0 0 8px; color: #1b426f; font-size: 1.05rem; }
+.task-card.locked { border-style: dashed; background: #f8fafd; }
+.task-card.locked .choice-list, .task-card.locked .action-row { opacity: 0.55; }
+.task-card.locked .choice-option { cursor: not-allowed; }
+.task-card.locked .choice-option:hover { border-color: var(--db-line); background: #fbfcfe; }
+.task-gate { display: flex; align-items: flex-start; gap: 8px; padding: 10px 13px; margin: 0 0 12px !important; border: 1px solid #f2bf72; border-radius: 12px; background: #fff8e8; color: #77410c; font-weight: 700; line-height: 1.45; }
+.task-gate[hidden] { display: none; }
 
 .table-shell { margin: 0 0 22px; border: 1px solid var(--db-line); border-radius: 16px; overflow: hidden; background: white; }
 .table-caption { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 12px 15px; border-bottom: 1px solid var(--db-line); background: #eef4fa; color: #315170; font-size: 0.82rem; }
@@ -98,6 +104,7 @@ code { font-family: "SFMono-Regular", Consolas, "Liberation Mono", monospace; }
 
 .aha-alert { padding: 15px 18px; margin: -7px 0 22px; border: 1px solid #f2bf72; border-radius: 14px; background: #fff8e8; color: #77410c; }
 .aha-alert strong { display: block; margin-bottom: 4px; }
+.concept-reveal[hidden], .split-visual[hidden] { display: none; }
 .concept-reveal { display: grid; grid-template-columns: 1fr auto 1fr; align-items: center; gap: 18px; padding: 22px; margin-top: 18px; border: 1px solid #bfdacb; border-radius: 18px; background: linear-gradient(135deg, #f1fff9, #f4f8ff); }
 .concept-reveal > div:not(.concept-arrow) { padding: 14px; border-radius: 12px; background: white; }
 .concept-reveal span { color: #126c55; font-weight: 900; font-size: 1.08rem; }
@@ -115,6 +122,8 @@ code { font-family: "SFMono-Regular", Consolas, "Liberation Mono", monospace; }
 .primary-button, .secondary-button, .danger-button { min-height: 43px; padding: 10px 16px; border: 1px solid transparent; border-radius: 11px; font-weight: 800; cursor: pointer; transition: 0.16s ease; }
 .primary-button { color: white; border-color: #1455b1; background: linear-gradient(135deg, #087f9e, #2459c6); box-shadow: 0 8px 18px rgba(28, 91, 176, 0.18); }
 .primary-button:hover, .primary-button:focus-visible { filter: brightness(1.06); transform: translateY(-1px); }
+.primary-button:disabled { opacity: 0.45; cursor: not-allowed; box-shadow: none; }
+.primary-button:disabled:hover { filter: none; transform: none; }
 .secondary-button { color: #244d78; border-color: #b8c9dd; background: white; }
 .secondary-button:hover, .secondary-button:focus-visible { border-color: #6e9bcf; background: #f5f9ff; }
 .danger-button { color: #9d2632; border-color: #efb6bc; background: #fff7f8; }

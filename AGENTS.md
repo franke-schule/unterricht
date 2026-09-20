@@ -178,6 +178,14 @@ aber auch ohne Bearbeitung der Aufgaben erreichbar sein: einzige Hürde ist der
 Lehrercode, nie ein bestandenes Quiz oder eine erst danach freigeschaltete
 Übersicht.
 
+Besitzt das Modul zusätzlich einen Auswertungs- bzw. Übersichtsreiter, steht
+der Sicherungsblatt-Download **auch dort**. Wer das Modul durchgearbeitet hat,
+landet am Ende auf der Auswertung und soll das Blatt ohne Zurückblättern
+erreichen. Liegen alle Reiter-Panels gleichzeitig im DOM, braucht die zweite
+Kopie eigene IDs (Suffix `-summary`); das `name`-Attribut des Eingabefelds
+bleibt `solution-code`, weil `unlockSolution` es darüber ausliest. Referenz:
+Informatik Klasse 10, Einheit Datenbanken, Aufgaben 1 bis 4.
+
 
 # 5. Didaktische Anforderungen
 

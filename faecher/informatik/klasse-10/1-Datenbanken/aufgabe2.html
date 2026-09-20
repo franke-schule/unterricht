@@ -64,12 +64,14 @@
           </div>
           <div class="scenario-card accent">
             <p><strong id="email-user-label">Der Benutzer</strong> ändert seine E-Mail-Adresse.</p>
-            <p>Trage in allen Datensätzen die neue Adresse <code id="target-email"></code> ein.</p>
+            <p><strong>Zuerst: Trage</strong> in der Tabelle unten in allen Datensätzen die neue Adresse <code id="target-email"></code> ein.</p>
+            <p><strong>Danach: Beantworte</strong> die Frage unter der Tabelle.</p>
           </div>
           <div id="email-table"></div>
           <div id="inconsistency-alert" class="aha-alert" hidden aria-live="polite"></div>
-          <div class="task-card">
-            <h3>Welches Problem ist entstanden?</h3>
+          <div id="step2-question-card" class="task-card">
+            <h3>Danach: Welches Problem ist entstanden?</h3>
+            <p id="step2-gate" class="task-gate" aria-live="polite"><span aria-hidden="true">🔒</span> Diese Frage wird freigeschaltet, sobald du in der Tabelle die erste E-Mail-Adresse geändert hast.</p>
             <p>Wähle alle passenden Aussagen aus.</p>
             <div id="step2-problems" class="choice-list"></div>
             <div class="action-row">
@@ -214,6 +216,24 @@
           </div>
           <p class="summary-intro">Hier siehst du alle Eingaben und Ergebnisse aus den sieben Lernschritten.</p>
           <div id="answer-summary" class="answer-summary"></div>
+          <section class="solution-download" aria-labelledby="solution-download-title-summary">
+            <h2 id="solution-download-title-summary">Sicherungsblatt zu Aufgabe 2</h2>
+            <details class="solution-reveal">
+              <summary>Sicherungsblatt anzeigen</summary>
+              <form class="solution-code-form" onsubmit="unlockSolution(event, 'M8KR-XQPT', 'solution-download-link-summary', 'solution-code-message-summary')">
+                <label for="solution-code-summary">Lehrercode eingeben</label>
+                <div class="solution-code-controls">
+                  <input id="solution-code-summary" name="solution-code" type="text" maxlength="9" autocomplete="off" autocapitalize="characters" spellcheck="false" required>
+                  <button class="secondary-button" type="submit">Code prüfen</button>
+                </div>
+                <p id="solution-code-message-summary" class="solution-code-message" aria-live="polite"></p>
+                <a id="solution-download-link-summary" class="download-button" href="sicherungsblatt-aufgabe-2-loesungen.pdf" download hidden>
+                  &#8595; Sicherungsblatt herunterladen
+                </a>
+              </form>
+            </details>
+          </section>
+
           <div class="summary-actions">
             <button class="secondary-button" id="print-summary" type="button">Auswertung drucken</button>
             <button class="danger-button" id="reset-module" type="button">Alle Eingaben zurücksetzen</button>

@@ -1,0 +1,81 @@
+/* Aufgabe 3 – Haftreibungskraft als Zentripetalkraft. Die Grundgestaltung
+   kommt aus den vorhandenen Kreisbewegungs-Stylesheets. */
+
+.friction-page .physics-revision-hero { margin: 10px auto 14px; }
+.friction-page .physics-revision-hero h1 { font-size: clamp(1.65rem, 3.2vw, 2.5rem); line-height: 1.15; }
+.friction-page .physics-step-tabs { margin-bottom: 12px; }
+.friction-page .physics-card-heading { padding: 12px 16px; }
+.friction-page .physics-card-heading > p:last-child { margin-top: 4px; }
+.friction-page .physics-help-stack { gap: 6px; margin-top: 12px; }
+.friction-page .physics-help-stack details { padding: 6px 10px; }
+
+.force-match-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; margin: 14px 0; }
+.force-match-card { display: grid; grid-template-columns: 48px minmax(0, 1fr); gap: 9px; align-items: center; min-width: 0; padding: 11px; border: 1px solid #cbd5e1; border-radius: 10px; background: #f8fafc; }
+.force-match-card select { grid-column: 1 / -1; width: 100%; min-height: 42px; }
+.force-match-card strong, .force-match-card small { display: block; }
+.force-match-card small { color: #475569; margin-top: 2px; }
+.force-scene { display: grid; place-items: center; min-height: 43px; color: #1d4ed8; font-size: 2rem; font-weight: 800; border-radius: 8px; background: #dbeafe; }
+.force-scene--truck { color: #b91c1c; }
+.force-scene--centrifuge { color: #0f766e; }
+.force-scene--coaster { color: #7c3aed; }
+
+.friction-model, .decomposition-animation { margin: 14px 0; padding: 12px; border: 1px solid #bfdbfe; border-radius: 12px; background: #f8fbff; }
+.friction-model svg, .decomposition-animation svg { display: block; width: min(100%, 650px); margin: 0 auto; }
+.rough-surface { fill: #d7c5a2; stroke: #8a6b37; stroke-width: 2; }
+.rough-line { fill: none; stroke: #8a6b37; stroke-width: 2; }
+.friction-block { fill: #cbd5e1; stroke: #475569; stroke-width: 2.5; }
+.side-force-vector, .decomp-side, .decomp-normal { stroke: #dc2626; stroke-width: 4; stroke-linecap: round; }
+.friction-response-vector, .decomp-friction { stroke: #2563eb; stroke-width: 4; stroke-linecap: round; }
+.decomp-force { stroke: #334155; stroke-width: 4; stroke-linecap: round; }
+.decomp-guide { stroke: #94a3b8; stroke-width: 2; stroke-dasharray: 8 7; }
+.decomp-motion { fill: none; stroke: #dc2626; stroke-width: 2.5; stroke-dasharray: 5 5; }
+.friction-controls { display: grid; gap: 9px; max-width: 650px; margin: 5px auto 0; }
+.friction-controls label { font-weight: 700; }
+.friction-controls input[type="range"] { width: 100%; min-height: 36px; }
+.friction-readout { display: flex; flex-wrap: wrap; gap: 10px 18px; color: #1e3a8a; }
+.friction-mapping-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 10px; margin-top: 8px; }
+.friction-mapping-grid label { display: grid; gap: 5px; min-width: 0; color: #1e3a8a; font-weight: 800; }
+.friction-mapping-grid select { width: 100%; min-height: 42px; font: inherit; }
+
+.decomposition-animation .simulation-actions { justify-content: center; margin-top: 6px; }
+.decomposition-labels { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 10px; margin: 12px 0; }
+.decomposition-notation { grid-column: 1 / -1; margin: 0; color: #1e3a8a; font-weight: 700; }
+.decomposition-labels label { display: grid; gap: 5px; color: #1e3a8a; font-weight: 800; }
+.decomposition-labels select { min-height: 42px; width: 100%; }
+.decomp-preview { min-height: 1.45rem; color: #334155; font-weight: 600; }
+
+.condition-builder { display: grid; gap: 12px; margin: 14px 0; }
+.condition-step { display: grid; gap: 8px; padding: 12px; border: 1px solid #cbd5e1; border-radius: 10px; background: #f8fafc; }
+.condition-step legend { padding: 0 5px; color: #1e3a8a; font-weight: 800; }
+.formula-option { display: flex; align-items: center; gap: 8px; min-height: 42px; padding: 7px 9px; border: 1px solid #dbe4ee; border-radius: 8px; background: #fff; cursor: pointer; }
+.formula-option:has(input:checked) { border-color: #2563eb; background: #eff6ff; font-weight: 700; }
+.formula-option:focus-within { outline: 2px solid #60a5fa; outline-offset: 2px; }
+
+.summary-cloze { display: grid; gap: 10px; margin: 12px 0; }
+.summary-row { display: block; padding: 10px; border-left: 4px solid #60a5fa; background: #f8fafc; line-height: 1.75; }
+.summary-row input { width: min(100%, 255px); min-height: 36px; margin: 2px 4px; border: 1px solid #94a3b8; border-radius: 6px; padding: 3px 7px; font: inherit; }
+.summary-row input:focus { outline: 2px solid #2563eb; outline-offset: 2px; }
+
+.friction-page .physics-multiple-choice { gap: 10px; margin-top: 10px; }
+.friction-page .physics-quiz-question { padding: 10px; }
+.friction-page .physics-quiz-question .quiz-options { gap: 6px; margin-top: 7px; }
+.friction-page .physics-quiz-question .quiz-option { padding: 7px 9px; }
+.friction-page .physics-step-next { margin-top: 16px; }
+.friction-page .download-button[hidden] { display: none; }
+
+@media (min-width: 701px) {
+  .friction-model { display: grid; grid-template-columns: minmax(0, 1.3fr) minmax(230px, .7fr); align-items: center; gap: 12px; }
+  .friction-model .friction-controls { margin: 0; }
+}
+
+@media (max-width: 620px) {
+  .force-match-grid, .decomposition-labels, .friction-mapping-grid { grid-template-columns: 1fr; }
+  .friction-page .physics-step-tabs [role="tab"] { flex-basis: 135px; }
+  .friction-page .simulation-actions { display: grid; grid-template-columns: 1fr; }
+  .friction-page .simulation-actions button { width: 100%; }
+  .summary-row input { width: 100%; margin: 5px 0; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .decomposition-animation *, .friction-model * { transition-duration: 0.01ms !important; animation-duration: 0.01ms !important; }
+}

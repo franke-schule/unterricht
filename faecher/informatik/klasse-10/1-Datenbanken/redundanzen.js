@@ -337,6 +337,18 @@ function updateEmailVisuals() {
   if (hasConflict) alert.innerHTML = `<strong>Jetzt widersprechen sich die Zeilen.</strong> Für ${escapeHtml(example.user.username)} stehen verschiedene E-Mail-Adressen in derselben Tabelle.`;
 }
 
+function emailsTouched() {
+  return state.step2.emails.some((value) => value.trim().toLowerCase() !== example.user.email.trim().toLowerCase());
+}
+
+function updateStep2Gate() {
+  const unlocked = emailsTouched();
+  document.getElementById("step2-question-card").classList.toggle("locked", !unlocked);
+  document.getElementById("step2-gate").hidden = unlocked;
+  document.querySelectorAll('input[name="step2Problems"]').forEach((input) => { input.disabled = !unlocked; });
+  document.getElementById("check-step2-problem").disabled = !unlocked;
+}
+
 function renderEmailTable() {
   ensureEmailState();
   const distinct = new Set(state.step2.emails.map((value) => value.trim().toLowerCase()));
@@ -368,6 +380,7 @@ function renderEmailTable() {
       state.step2.checked = false;
       saveState();
       updateEmailVisuals();
+      updateStep2Gate();
       if (state.step2.conceptRevealed && state.step2.emails.every((value) => value.trim().toLowerCase() === example.newEmail.toLowerCase())) {
         setFeedback(2, "success", `Jetzt sind alle ${example.photos.length} Datensätze aktualisiert. Genau dieser Mehrfachaufwand ist das Problem.`);
         markComplete(2);
@@ -413,6 +426,7 @@ function renderStep2() {
     document.getElementById("concept-reveal").hidden = !state.step2.conceptRevealed;
   };
   document.getElementById("concept-reveal").hidden = !state.step2.conceptRevealed;
+  updateStep2Gate();
   if (state.step2.checked && state.completed.includes(2)) setFeedback(2, "success", `Richtig erkannt – und alle ${example.photos.length} Datensätze sind aktualisiert.`);
 }
 

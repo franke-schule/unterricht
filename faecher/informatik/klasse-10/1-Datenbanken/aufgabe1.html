@@ -331,6 +331,24 @@
           </div>
           <p class="summary-intro">Hier siehst du alle sechs Lernschritte mit deiner Eingabe und dem richtigen Ergebnis.</p>
           <div id="answer-summary" class="answer-summary"></div>
+          <section class="solution-download" aria-labelledby="solution-download-title-summary">
+            <h2 id="solution-download-title-summary">Sicherungsblatt zu Aufgabe 1</h2>
+            <details class="solution-reveal">
+              <summary>Sicherungsblatt anzeigen</summary>
+              <form class="solution-code-form" onsubmit="unlockSolution(event, 'M5PN-XT2W', 'solution-download-link-summary', 'solution-code-message-summary')">
+                <label for="solution-code-summary">Lehrercode eingeben</label>
+                <div class="solution-code-controls">
+                  <input id="solution-code-summary" name="solution-code" type="text" maxlength="9" autocomplete="off" autocapitalize="characters" spellcheck="false" required>
+                  <button class="secondary-button" type="submit">Code prüfen</button>
+                </div>
+                <p id="solution-code-message-summary" class="solution-code-message" aria-live="polite"></p>
+                <a id="solution-download-link-summary" class="download-button" href="sicherungsblatt-aufgabe-1-loesungen.pdf" download hidden>
+                  &#8595; Sicherungsblatt herunterladen
+                </a>
+              </form>
+            </details>
+          </section>
+
           <div class="summary-actions">
             <button class="secondary-button" id="print-summary" type="button">Auswertung drucken</button>
             <button class="danger-button" id="reset-module" type="button">Alle Eingaben zurücksetzen</button>

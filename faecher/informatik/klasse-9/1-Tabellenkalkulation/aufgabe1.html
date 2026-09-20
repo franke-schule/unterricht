@@ -148,11 +148,11 @@
             { cell: "F7", name: "Fläche Trapez", requiredRefs: ["B4", "B6", "B8"], allowedNumbers: [1, 2, 0.5], expected: ({ a, c, h }) => (a + c) * h / 2 },
             { cell: "F8", name: "Fläche Kreis", requiredRefs: ["B9", "B10"], allowedNumbers: [2], expected: ({ r }) => r ** 2 * PI_VALUE },
             { cell: "F9", name: "Fläche Parallelogramm", requiredRefs: ["B4", "B8"], expected: ({ a, h }) => a * h },
-            { cell: "F10", name: "Umfang Kreis", requiredRefs: ["B9", "B10"], allowedNumbers: [2], expected: ({ r }) => 2 * r * PI_VALUE },
+            { cell: "F10", name: "Umfang Kreis", requiredRefs: ["B9", "B10"], allowedNumbers: [2], expected: ({ r }) => 2 * r * PI_VALUE, errorMessage: "In B9 steht der Radius. Für den Umfang brauchst du den Durchmesser." },
             { cell: "F11", name: "Volumen Würfel", requiredRefs: ["B4"], allowedNumbers: [3], expected: ({ a }) => a ** 3 },
             { cell: "F12", name: "Volumen Quader", requiredRefs: ["B4", "B5", "B6"], expected: ({ a, b, c }) => a * b * c },
             { cell: "F13", name: "Oberfläche Quader", requiredRefs: ["B4", "B5", "B6"], allowedNumbers: [2], expected: ({ a, b, c }) => 2 * a * b + 2 * a * c + 2 * b * c },
-            { cell: "F14", name: "Volumen Prisma", requiredRefs: ["B4", "B7", "B8"], allowedNumbers: [1, 2, 0.5], expected: ({ a, d, h }) => a * h / 2 * d },
+            { cell: "F14", name: "Volumen Prisma", requiredRefs: ["B4", "B7", "B8"], allowedNumbers: [1, 2, 0.5], expected: ({ a, d, h }) => a * h / 2 * d, errorMessage: "Rechne in zwei Schritten: Die Grundfläche ist das Dreieck aus Grundseite B4 und Dreieckshöhe B8 – also halbiert. Diese Grundfläche wird dann mit der Körperhöhe B7 multipliziert. Achtung: B8 ist die Höhe im Dreieck, B7 die Höhe des Körpers." },
             { cell: "F15", name: "Volumen Zylinder", requiredRefs: ["B8", "B9", "B10"], allowedNumbers: [2], expected: ({ r, h }) => r ** 2 * PI_VALUE * h },
             { cell: "F16", name: "Volumen Kegel", requiredRefs: ["B8", "B9", "B10"], allowedNumbers: [1, 2, 3], expected: ({ r, h }) => r ** 2 * PI_VALUE * h / 3 },
             { cell: "F17", name: "Volumen Pyramide", requiredRefs: ["B4", "B8"], allowedNumbers: [1, 2, 3], expected: ({ a, h }) => a ** 2 * h / 3 }
