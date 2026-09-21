@@ -18,12 +18,33 @@ assert.match(html, /<strong>Ziehe<\/strong> die Begriffe aus dem Wortspeicher in
 assert.match(html, /id="reset-law-cloze"/);
 assert.match(html, /Rechenschritte sortieren/);
 assert.match(html, /mehrere Antworten richtig/);
-assert.match(html, /kraefte-bewegung\.css\?v=20260920a/);
+assert.match(html, /kraefte-bewegung\.css\?v=20260920c/);
 assert.match(html, /bewegung-koerpern\.css\?v=20260910a/);
-assert.match(html, /kraefte-bewegung\.mjs\?v=20260920a/);
+assert.match(html, /kraefte-bewegung\.mjs\?v=20260920c/);
 assert.match(html, /Sicherungsblatt zu Wiederholung 2/);
 assert.match(html, /onsubmit="unlockSolution\(event, 'R8NT-DKPV', 'solution-download-link', 'solution-code-message'\)"/);
-assert.match(html, /href="sicherungsblatt-aufgabe-2-loesungen\.pdf\?v=20260911a" download hidden/);
+assert.match(html, /href="sicherungsblatt-aufgabe-2-loesungen\.pdf\?v=20260920d" download hidden/);
+// Merksatz zu den Angriffspunkten steht in jeder Rückmeldung zu Aufgabe 5
+assert.match(source, /function forceBalanceFeedback\(result\)/);
+assert.match(source, /\*\*Die Gewichtskraft greift immer im Körpermittelpunkt per Definition\. Die Gegenkraft des Tisches greift am Kontaktpunkt zwischen Körper und Tisch\.\*\*/);
+assert.match(source, /feedbackBuilder: forceBalanceFeedback/);
+assert.match(css, /\.physics-semantic-feedback \.physics-semantic-note/);
+// Sicherungsblatt: Angriffspunkte, Beschriftungen und Crashtest-Grafik
+const sheet = fs.readFileSync(new URL("../sicherungsblatt-aufgabe-2-loesungen.tex", import.meta.url), "utf8");
+assert.doesNotMatch(sheet, /Körper auf dem Tisch\}\\par\\scriptsize Ruhe/);
+assert.doesNotMatch(sheet, /Waagerechte Kräfte|Antriebs-|Widerstands-/);
+assert.match(sheet, /\\textbf\{Auto\}\\par\\scriptsize fährt mit konstanter Geschwindigkeit/);
+assert.match(sheet, /Kraft durch\\\\Motor \$F_M\$/);
+assert.match(sheet, /Reibungs-\\\\kraft/);
+assert.match(sheet, /\\fill\[Gold\] \(20,-7\) circle/);
+assert.match(sheet, /\\definecolor\{Crack\}/);
+assert.equal((sheet.match(/\\draw\[Crack/g) || []).length, 2);
+// Merksätze stehen als Zeile unter der jeweiligen Grafik, nicht mehr im Kasten
+assert.match(sheet, /Kräftegleichgewicht -- zwei Kräfte wirken auf denselben Körper/);
+assert.match(sheet, /Wechselwirkung -- zwei Kräfte wirken auf unterschiedliche Körper/);
+assert.doesNotMatch(sheet, /colorbox\{Gold\}\{\\parbox/);
+assert.doesNotMatch(sheet, /Die Kräfte wirken auf denselben Körper\. Ihre Summe ist null/);
+assert.doesNotMatch(sheet, /Resultierende Kraft: \$0\\unit\{N\}\$/);
 assert.match(source, /function unlockSolution\(event, expectedCode, downloadLinkId, messageId\)/);
 assert.match(source, /Code korrekt\. Das Sicherungsblatt ist freigeschaltet\./);
 assert.match(source, /Der eingegebene Code ist nicht gültig\./);
@@ -36,7 +57,21 @@ assert.match(source, /correct: \["law", "impulse"\]/);
 assert.match(source, /correct: \["same", "different"\]/);
 assert.match(grid, /export function createForceArrowGrid/);
 assert.match(grid, /force-arrow-grid-point/);
-assert.match(source, /isSelectablePoint: isForceArrowPoint, hitRadius: 26/);
+assert.match(source, /isSelectablePoint: isForceArrowPoint \}/);
+// Hitboxen sind Kreissektoren entlang der Richtung, nicht einzelne Punkte
+assert.match(grid, /export function hitWedgePoints/);
+assert.match(grid, /svgElement\("polygon"/);
+assert.doesNotMatch(grid, /hitRadius/);
+assert.match(grid, /Die ganze gedachte Linie ist anklickbar/);
+// Aufgabe 1: Ablagefeld und Prüfbutton mittig
+assert.match(css, /\.law-term-slot \{[\s\S]*?text-align: center;/);
+assert.match(css, /\.law-term-card \.direct-check-button \{[\s\S]*?justify-self: center;/);
+// Aufgabe 2: vertauschte Reihenfolge der beiden letzten Lücken gilt auch
+assert.match(source, /const swappableGaps = \[4, 5\];/);
+assert.match(source, /const correct = countCorrectGaps\(\);/);
+// Aufgabe 3: gültige Ziffern richtig begründet
+assert.match(source, /Die Angabe 100 g besitzt drei gültige Ziffern, die Angabe 1,2 N zwei gültige Ziffern\./);
+assert.doesNotMatch(source, /Die Angaben 100 g und 1,2 N werden hier jeweils mit zwei gültigen Ziffern verwendet/);
 // 45-Grad-Pfeile sind zeichenbar (Fehlvorstellung) und bekommen eigenes Feedback
 assert.match(source, /const DIAGONAL_DIRECTIONS = \["up-left", "up-right", "down-left", "down-right"\]/);
 assert.match(source, /Ein schräger Pfeil passt hier nicht\. Die Gravitationskraft zieht jeden Körper auf der Erde zum Erdmittelpunkt/);
@@ -64,7 +99,6 @@ assert.deepEqual(
 );
 assert.match(source, /function setupNextTabButtons\(stepTabs\)/);
 assert.match(css, /\.physics-step-next/);
-assert.match(grid, /Math\.max\(hitRadius, Math\.min\(scaleX, scaleY\) \* 0\.42\)/);
 assert.match(css, /\.cloze-token/);
 assert.match(css, /\.sortable-step/);
 assert.match(css, /@media \(max-width: 520px\)/);

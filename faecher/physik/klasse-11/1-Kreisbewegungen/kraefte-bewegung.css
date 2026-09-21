@@ -157,7 +157,12 @@
   display: block;
   width: 100%;
   min-height: 46px;
-  text-align: left;
+  text-align: center;
+}
+
+/* Prüfbutton mittig unter dem Ablagefeld statt am linken Kartenrand. */
+.law-term-card .direct-check-button {
+  justify-self: center;
 }
 
 .law-term-slot.is-correct {
@@ -354,6 +359,14 @@
   font: inherit;
   font-weight: 850;
   cursor: pointer;
+}
+
+/* Merksatz in der Rückmeldung zu Aufgabe 5: Er steht nicht im
+   Erwartungshorizont, soll aber in jeder Rückmeldung auffallen. */
+.physics-semantic-feedback .physics-semantic-note {
+  margin: 10px 0 0;
+  border-top: 1px solid currentColor;
+  padding-top: 8px;
 }
 
 /* Weiter-Button am Ende jedes Reiterinhalts (außer im letzten Reiter). */

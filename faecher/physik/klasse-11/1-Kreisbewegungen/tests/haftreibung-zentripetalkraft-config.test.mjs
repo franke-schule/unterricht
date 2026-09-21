@@ -4,65 +4,61 @@ import fs from "node:fs";
 const html = fs.readFileSync(new URL("../aufgabe5.html", import.meta.url), "utf8");
 const source = fs.readFileSync(new URL("../haftreibung-zentripetalkraft.mjs", import.meta.url), "utf8");
 const css = fs.readFileSync(new URL("../haftreibung-zentripetalkraft.css", import.meta.url), "utf8");
-const menu = fs.readFileSync(new URL("../../index.html", import.meta.url), "utf8");
-const sheet = fs.readFileSync(new URL("../sicherungsblatt-aufgabe-5-loesungen.tex", import.meta.url), "utf8");
-const decoding = fs.readFileSync(new URL("../../../../../lehrercodes-dekodierung.tex", import.meta.url), "utf8");
 
 assert.match(html, /Aufgabe 3 – Die Haftreibungskraft als Zentripetalkraft/);
-assert.match(html, /haftreibung-zentripetalkraft\.mjs\?v=20260920b/);
+assert.match(html, /haftreibung-zentripetalkraft\.mjs\?v=20260921a/);
+assert.match(html, /haftreibung-zentripetalkraft\.css\?v=20260921a/);
 assert.equal((html.match(/data-physics-tab=/g) || []).length, 6);
 assert.equal((html.match(/data-physics-panel=/g) || []).length, 6);
-const eyebrows = [...html.matchAll(/<p class="eyebrow">([^<]+)<\/p>/g)].map((match) => match[1]).filter((text) => text !== "Kreisbewegungen · Aufgabe 3");
-assert.deepEqual(eyebrows, ["Entdecken", "Verstehen", "Herleiten", "Anwenden", "Sichern", "Übertragen"]);
-assert.deepEqual([...html.matchAll(/data-next-tab="([^"]+)"/g)].map((match) => match[1]), ["decomposition", "condition", "apply", "summary", "quiz"]);
+assert.deepEqual([...html.matchAll(/data-next-tab="([^"]+)"/g)].map((match) => match[1]), ["curve", "grip", "limit", "calculate", "quiz"]);
 
-assert.match(html, /id="side-force"/);
-assert.match(html, /id="decomposition-animation"/);
-assert.match(html, /id="decomp-start"/);
-assert.match(html, /id="decomp-pause"/);
-assert.match(html, /id="decomp-reset"/);
-assert.match(html, /id="decomp-preview-force"/);
-assert.match(html, /id="decomp-force" x1="320" y1="204" x2="448" y2="238"/);
-assert.match(html, /id="decomp-guide-v" x1="448" y1="204" x2="448" y2="238"/);
-assert.match(html, /id="decomp-normal" x1="320" y1="204" x2="320" y2="238"/);
-assert.match(html, /id="decomp-side" x1="320" y1="204" x2="448" y2="204"/);
-assert.doesNotMatch(html, /²\/r/);
-assert.match(source, /createIndexedSymbol\("F", "N"\)/);
-assert.match(source, /createIndexedSymbol\("F", "Haft"\).*createIndexedSymbol\("F", "S"\).*createIndexedSymbol\("F", "Haft,max"\)/s);
-assert.match(source, /prefers-reduced-motion/);
-assert.match(source, /MutationObserver/);
-assert.match(source, /setupPhysicsSemanticTask/);
-assert.match(source, /ph11-haftreibung-kurvenfahrt-gefahren/);
-assert.match(source, /ph11-haftreibung-kurvenfahrt-massenunabhaengigkeit/);
-assert.doesNotMatch(html, /F_ZP/);
-assert.match(html, /F<sub>Haft,max<\/sub>/);
-assert.match(html, /v<sub>B<\/sub>/);
+const images = [
+  ["haftreibung-situation-hammerwurf.webp", "Hammerwerferin im Ring, die einen Hammer an einem gespannten Seil im Kreis schwingt."],
+  ["haftreibung-situation-lkw-kurve.webp", "Lastwagen auf einer ebenen, deutlich gekrümmten Straße."],
+  ["haftreibung-situation-zentrifuge.webp", "Geöffnete Laborzentrifuge mit Probengefäßen in rotierenden Halterungen."],
+  ["haftreibung-situation-achterbahn.webp", "Achterbahnwagen auf einer deutlich gekrümmten Schiene."],
+];
+images.forEach(([file, alt]) => {
+  assert.match(html, new RegExp(file.replace(".", "\\.")));
+  assert.match(html, new RegExp(alt.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")));
+  assert.ok(fs.existsSync(new URL(`../assets/haftreibung-zentripetalkraft/${file}`, import.meta.url)), `${file} fehlt`);
+});
 
-assert.equal((html.match(/class="physics-semantic-task"/g) || []).length, 2);
-assert.equal((html.match(/class="privacy-note"/g) || []).length, 2);
-assert.equal((html.match(/class="physics-help-stack"/g) || []).length, 8);
-assert.equal((html.match(/type="checkbox"/g) || []).length, 0, "Checkboxen werden erst dynamisch im Abschlussquiz erzeugt");
-assert.match(source, /correct: \["role", "friction", "direction"\]/);
-assert.match(source, /correct: \["speed", "radius", "mu"\]/);
-assert.match(source, /correct: \["cannot", "slide", "kinetic", "smaller"\]/);
-assert.match(source, /correct: \["flat", "normal", "radius", "mu"\]/);
+assert.match(html, /id="check-real-forces"/);
+assert.match(html, /id="check-centripetal-role"/);
+assert.match(html, /id="real-forces-feedback"[^>]+aria-live="polite"/);
+assert.match(html, /id="centripetal-role-feedback"[^>]+aria-live="polite"/);
+
+for (const obsolete of ["side-force", "friction-state", "decomposition-animation", "curve-danger-answer", "mass-answer", "summary-cloze"]) {
+  assert.doesNotMatch(html, new RegExp(obsolete));
+  assert.doesNotMatch(source, new RegExp(obsolete));
+}
+assert.doesNotMatch(html, /Gleitreibung/i);
+assert.doesNotMatch(source, /Gleitreibung/i);
+assert.doesNotMatch(source, /setupPhysicsSemanticTask/);
+
+assert.equal((html.match(/class="speed-entry"/g) || []).length, 2);
+assert.match(html, /id="wet-speed-answer"[\s\S]*id="wet-speed-unit"[\s\S]*id="check-wet-speed"[\s\S]*id="wet-speed-feedback"/);
+assert.match(html, /id="ice-speed-answer"[\s\S]*id="ice-speed-unit"[\s\S]*id="check-ice-speed"[\s\S]*id="ice-speed-feedback"/);
+for (const value of ["mps", "kmh", "mps2", "N"]) assert.equal((html.match(new RegExp(`<option value="${value}">`, "g")) || []).length, 2);
+for (const value of ["19.8", "71.3", "9.9", "35.7"]) assert.match(source, new RegExp(value.replace(".", "\\.")));
+assert.match(source, /replace\(",", "\."\)/);
+assert.match(source, /decimalPlaces\(raw\) === 1/);
+
+assert.match(html, /<details><summary>Vollständiges Beispiel: trockene Straße<\/summary>/);
+assert.match(html, /22,1[\s\S]*79,7/);
+assert.equal((source.match(/question:/g) || []).length, 5);
+assert.equal((source.match(/input\.type = "checkbox"/g) || []).length, 1);
+assert.ok((source.match(/correct: \[[^\]]*,[^\]]*\]/g) || []).length >= 4, "Mindestens zwei Quizfragen brauchen mehrere richtige Antworten");
 
 assert.match(html, /solution-download-link-summary/);
 assert.match(html, /name="solution-code"/);
 assert.match(html, /unlockSolution\(event, 'R3KM-DQX8', 'solution-download-link-summary'/);
 assert.match(html, /unlockSolution\(event, 'R3KM-DQX8', 'solution-download-link'/);
-assert.match(html, /sicherungsblatt-aufgabe-5-loesungen\.pdf/);
-assert.match(sheet, /Aufgabe 3 -- Die Haftreibungskraft/);
-assert.match(sheet, /als Zentripetalkraft/);
-assert.match(sheet, /F_\{\\mathrm\{Haft,max\}\}=\\mu/);
-assert.match(decoding, /R3KM-DQX8/);
-
-const task4Index = menu.indexOf("1-Kreisbewegungen/aufgabe4.html");
-const task5Index = menu.indexOf("1-Kreisbewegungen/aufgabe5.html");
-assert.ok(task4Index >= 0 && task5Index > task4Index, "aufgabe5.html muss nach aufgabe4.html im Menü stehen");
-assert.match(menu, /<strong>Aufgabe 3<\/strong>\s*<span>Die Haftreibungskraft als Zentripetalkraft<\/span>/);
-assert.match(css, /@media \(max-width: 620px\)/);
-assert.match(css, /@media \(prefers-reduced-motion: reduce\)/);
+assert.equal((html.match(/sicherungsblatt-aufgabe-5-loesungen\.pdf/g) || []).length, 2);
+assert.match(css, /object-fit: cover/);
+assert.match(css, /grid-template-columns: minmax\(0, 1fr\) auto/);
+assert.match(css, /@media \(max-width: 390px\)/);
 assert.match(css, /\.download-button\[hidden\]/);
 
-console.log("Haftreibungskraft: Seite, Animation, Freitextaufgaben, Quiz, Sicherungsblatt und Menü sind konfiguriert.");
+console.log("Haftreibungskraft: sechs Reiter, Bilder, getrennte Prüfungen, Zahleneingaben, Quiz und Downloads sind konfiguriert.");

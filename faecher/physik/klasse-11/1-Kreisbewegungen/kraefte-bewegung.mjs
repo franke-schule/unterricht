@@ -119,7 +119,7 @@ function drawCrash(layer, { toSvgPoint, svgElement }) {
 }
 
 function setupForceDrawingTasks() {
-  const gridConfig = { xRange: { min: -3, max: 3 }, yRange: { min: -3, max: 3 }, isSelectablePoint: isForceArrowPoint, hitRadius: 26 };
+  const gridConfig = { xRange: { min: -3, max: 3 }, yRange: { min: -3, max: 3 }, isSelectablePoint: isForceArrowPoint };
   const parachute = createForceArrowGrid(document.getElementById("parachute-force-grid"), { ...gridConfig, origin: { x: 0, y: 0 }, renderIllustration: drawParachutist, directionKey: directionFromOrigin, label: "Fallschirmspringer: Kraftpfeile vom Bezugspunkt an der Person" });
   const crash = createForceArrowGrid(document.getElementById("crash-force-grid"), { ...gridConfig, origin: { x: 0, y: 0 }, renderIllustration: drawCrash, directionKey: directionFromOrigin, label: "Crashtest: Kraftpfeile am Kontaktpunkt zwischen Auto und Wand" });
   document.getElementById("check-parachute-forces").addEventListener("click", () => {
@@ -370,6 +370,13 @@ function setupLawCloze() {
   // Alphabetisch, damit die Reihenfolge im Wortspeicher nichts verrät.
   const bankOrder = [...terms].sort((left, right) => left.localeCompare(right, "de"));
   const choices = terms.map(() => "");
+  // Der letzte Satz beschreibt eine Gleichheit. Deshalb ist auch die
+  // vertauschte Reihenfolge der beiden letzten Lücken fachlich richtig.
+  const swappableGaps = [4, 5];
+  const countCorrectGaps = () => {
+    const swapped = swappableGaps.every((gap, index) => choices[gap] === terms[swappableGaps[1 - index]]);
+    return choices.filter((choice, index) => (swapped && swappableGaps.includes(index) ? true : choice === terms[index])).length;
+  };
   let picked = null; // { value, from } mit from = Lückenindex oder -1 (Wortspeicher)
 
   const target = document.getElementById("law-cloze");
@@ -455,8 +462,8 @@ function setupLawCloze() {
   render();
 
   document.getElementById("check-law-cloze").addEventListener("click", () => {
-    const correct = choices.filter((choice, index) => choice === terms[index]).length;
-    if (correct === terms.length) setFeedback(feedback, "success", "Korrekt: Der Text beschreibt alle sechs Größen fachlich richtig.");
+    const correct = countCorrectGaps();
+    if (correct === terms.length) setFeedback(feedback, "success", "Korrekt: Der Text beschreibt alle sechs Größen fachlich richtig. Im letzten Satz dürfen die beiden Richtungen auch vertauscht stehen, denn beide Richtungen sind gleich.");
     else if (correct) setFeedback(feedback, "partial", `${correct} von ${terms.length} Lücken stimmen. Prüfe noch die Begriffe an den anderen Stellen.`);
     else setFeedback(feedback, "error", "Noch nicht korrekt. Ziehe die Begriffe in die sechs Lücken und prüfe erneut.");
   });
@@ -510,8 +517,8 @@ function setupAccelerationCalculation() {
   document.getElementById("check-force-acceleration").addEventListener("click", () => {
     const input = document.getElementById("force-acceleration-answer"); const value = numberValue(input.value); const digits = significantDigitCount(input.value); const unit = document.getElementById("force-acceleration-unit").value; const valueCorrect = Number.isFinite(value) && Math.abs(value - 12) <= 0.01; const unitCorrect = unit === "m/s²";
     if (!unit) setFeedback("force-acceleration-feedback", "error", "Wähle zuerst die Einheit im Auswahlfeld neben dem Eingabefeld aus.");
-    else if (valueCorrect && unitCorrect && digits === 2) setFeedback("force-acceleration-feedback", "success", "Richtig: 12 {{m/s²}} besitzt zwei gültige Ziffern. Die Angaben 100 g und 1,2 N werden hier jeweils mit zwei gültigen Ziffern verwendet und geben damit die Genauigkeit des Ergebnisses vor.");
-    else if (valueCorrect && unitCorrect && digits !== 2) setFeedback("force-acceleration-feedback", "partial", "Dein Zahlenwert ist richtig, aber 12,0 besitzt drei gültige Ziffern. Die Angaben 100 g und 1,2 N werden hier jeweils mit zwei gültigen Ziffern verwendet. Gib deshalb auch das Ergebnis mit zwei gültigen Ziffern an.");
+    else if (valueCorrect && unitCorrect && digits === 2) setFeedback("force-acceleration-feedback", "success", "Richtig: 12 {{m/s²}} besitzt zwei gültige Ziffern. Die Angabe 100 g besitzt drei gültige Ziffern, die Angabe 1,2 N zwei gültige Ziffern. Das Endergebnis wird auf die ungenaueste Angabe gerundet – also auf die Angabe mit der geringsten Anzahl gültiger Ziffern.");
+    else if (valueCorrect && unitCorrect && digits !== 2) setFeedback("force-acceleration-feedback", "partial", "Dein Zahlenwert ist richtig, aber 12,0 besitzt drei gültige Ziffern. Die ungenaueste Angabe ist 1,2 N mit zwei gültigen Ziffern. Gib das Endergebnis deshalb ebenfalls mit zwei gültigen Ziffern an.");
     else if (valueCorrect && !unitCorrect) setFeedback("force-acceleration-feedback", "partial", "Der Zahlenwert ist richtig. Wähle als Einheit der Beschleunigung {{m/s²}} und achte auf zwei gültige Ziffern.");
     else setFeedback("force-acceleration-feedback", "error", "Noch nicht korrekt. Rechne 100 g zuerst in Kilogramm um und nutze a = {{F|m}}. Prüfe Zahlenwert, Einheit und gültige Ziffern getrennt.");
   });
@@ -536,4 +543,20 @@ setupAccelerationCalculation();
 setupForceDrawingTasks();
 setupMultipleChoiceTasks();
 setupFinalQuiz();
-setupPhysicsSemanticTask({ answerId: "force-balance-answer", buttonId: "check-force-balance", feedbackId: "force-balance-feedback", countId: "force-balance-count", taskId: "ph11-kreisbewegungen-kraeftegleichgewicht-beschreibung", serverUrl: SCRIPT_SERVER_URL });
+// Der Angriffspunkt der Kräfte gehört nicht zum Erwartungshorizont, soll aber
+// in jeder Rückmeldung zu Aufgabe 5 hervorgehoben werden.
+function forceBalanceFeedback(result) {
+  const content = document.createDocumentFragment();
+  if (result.feedback) {
+    const serverFeedback = document.createElement("p");
+    serverFeedback.textContent = result.feedback;
+    content.append(serverFeedback);
+  }
+  const note = document.createElement("p");
+  note.className = "physics-semantic-note";
+  appendPhysicsText(note, "**Die Gewichtskraft greift immer im Körpermittelpunkt per Definition. Die Gegenkraft des Tisches greift am Kontaktpunkt zwischen Körper und Tisch.**");
+  content.append(note);
+  return content;
+}
+
+setupPhysicsSemanticTask({ answerId: "force-balance-answer", buttonId: "check-force-balance", feedbackId: "force-balance-feedback", countId: "force-balance-count", taskId: "ph11-kreisbewegungen-kraeftegleichgewicht-beschreibung", serverUrl: SCRIPT_SERVER_URL, feedbackBuilder: forceBalanceFeedback, shortAnswerHint: "Formuliere eine etwas ausführlichere Begründung zu beiden Abbildungen." });

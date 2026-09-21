@@ -18,6 +18,49 @@ export function pointInRange(point, xRange, yRange) {
   );
 }
 
+// Hitbox-Geometrie der Kraftpfeile, gemessen im Raster und in Vielfachen des
+// kurzen Pfeils: Jeder Rasterpunkt bekommt einen Kreissektor entlang seiner
+// Richtung statt eines kleinen Kreises. Dadurch ist die ganze gedachte Linie
+// vom Bezugspunkt aus anklickbar. Der kurze und der lange Pfeil teilen sich
+// die Linie bei HIT_WEDGE_SPLIT; zwischen benachbarten Richtungen bleibt ein
+// schmaler toter Bereich, damit ein Klick eindeutig bleibt.
+const HIT_WEDGE_HALF_ANGLE = 20;
+const HIT_WEDGE_INNER = 0.4;
+const HIT_WEDGE_SPLIT = 2;
+const HIT_WEDGE_OUTER = 3.5;
+
+function rotateGridPoint(point, degrees) {
+  const angle = (degrees * Math.PI) / 180;
+  const cos = Math.cos(angle);
+  const sin = Math.sin(angle);
+  return { x: point.x * cos - point.y * sin, y: point.x * sin + point.y * cos };
+}
+
+/**
+ * Eckpunkte der Hitbox eines Rasterpunktes, im Raster gerechnet.
+ *
+ * @param {{x: number, y: number}} point Endpunkt des Pfeils.
+ * @param {{x: number, y: number}} [origin] Gemeinsamer Pfeilursprung.
+ * @returns {Array<{x: number, y: number}>} Sechs Eckpunkte des Sektors.
+ */
+export function hitWedgePoints(point, origin = { x: 0, y: 0 }) {
+  const offset = { x: point.x - origin.x, y: point.y - origin.y };
+  const steps = Math.max(Math.abs(offset.x), Math.abs(offset.y));
+  const unit = { x: offset.x / steps, y: offset.y / steps };
+  const isLongArrow = steps > HIT_WEDGE_SPLIT;
+  const inner = isLongArrow ? HIT_WEDGE_SPLIT : HIT_WEDGE_INNER;
+  const outer = isLongArrow ? HIT_WEDGE_OUTER : HIT_WEDGE_SPLIT;
+  const left = rotateGridPoint(unit, -HIT_WEDGE_HALF_ANGLE);
+  const right = rotateGridPoint(unit, HIT_WEDGE_HALF_ANGLE);
+  return [
+    [left, inner], [left, outer], [unit, outer],
+    [right, outer], [right, inner], [unit, inner],
+  ].map(([direction, factor]) => ({
+    x: origin.x + direction.x * factor,
+    y: origin.y + direction.y * factor,
+  }));
+}
+
 export function nextSelectablePoint(point, direction, origin) {
   const nextPoint = {
     x: point.x + direction.x,
@@ -323,7 +366,6 @@ export function createPointVectorGrid(container, config) {
  * @param {(SVGElement, {toSvgPoint: (point: {x: number, y: number}) => {x: number, y: number}, svgElement: typeof svgElement}) => void} config.renderIllustration
  * @param {(point: {x: number, y: number}) => string} config.directionKey Ordnet einen Endpunkt einer ersetzbaren Richtung zu.
  * @param {(point: {x: number, y: number}) => boolean} [config.isSelectablePoint]
- * @param {number} [config.hitRadius] Radius der unsichtbaren SVG-Hitbox.
  * @param {{min: number, max: number}} [config.xRange]
  * @param {{min: number, max: number}} [config.yRange]
  * @param {string} [config.label]
@@ -335,7 +377,6 @@ export function createForceArrowGrid(container, config) {
     renderIllustration,
     directionKey,
     isSelectablePoint = () => true,
-    hitRadius = 24,
     xRange = { min: -4, max: 4 },
     yRange = { min: -4, max: 4 },
     label = "Abbildung zum Einzeichnen von Kräften",
@@ -367,7 +408,7 @@ export function createForceArrowGrid(container, config) {
   const svg = svgElement("svg", {
     viewBox: `0 0 ${VIEW_WIDTH} ${VIEW_HEIGHT}`,
     role: "group",
-    "aria-label": `${label}. Wähle die Endpunkte der Kraftpfeile auf unsichtbaren Rasterpunkten.`,
+    "aria-label": `${label}. Wähle die Richtung und die Länge der Kraftpfeile; jede Richtung ist auf ihrer ganzen Linie anklickbar.`,
   });
   const title = svgElement("title");
   title.textContent = label;
@@ -423,7 +464,7 @@ export function createForceArrowGrid(container, config) {
     clearButton.disabled = selections.size === 0;
     status.textContent = selections.size
       ? `${selections.size} von 2 Kraftpfeilen eingezeichnet. Ein Klick in dieselbe Richtung ersetzt den dortigen Pfeil.`
-      : "Wähle die Endpunkte von bis zu zwei Kraftpfeilen. Die Pfeile beginnen am markierten Bezugspunkt der Abbildung.";
+      : "Klicke vom markierten Bezugspunkt aus in die Richtung, in die eine Kraft zeigt. Die ganze gedachte Linie ist anklickbar; weiter außen entsteht ein längerer Pfeil.";
   }
 
   function selectPoint(point) {
@@ -443,12 +484,25 @@ export function createForceArrowGrid(container, config) {
     target.focus();
   }
 
+  // Tastaturbedienung: Pfeiltasten springen zum nächsten wählbaren Punkt in
+  // dieser Richtung und überspringen dabei nicht wählbare Rasterpunkte.
+  const selectableKeys = new Set(selectablePoints.map(gridPointKey));
+  function nextSelectableInDirection(point, direction) {
+    let candidate = nextSelectablePoint(point, direction, origin);
+    while (pointInRange(candidate, xRange, yRange) && !selectableKeys.has(gridPointKey(candidate))) {
+      candidate = nextSelectablePoint(candidate, direction, origin);
+    }
+    return candidate;
+  }
+
   selectablePoints.forEach((point, index) => {
-    const svgPoint = toSvgPoint(point);
-    const control = svgElement("circle", {
-      cx: svgPoint.x,
-      cy: svgPoint.y,
-      r: Math.max(hitRadius, Math.min(scaleX, scaleY) * 0.42),
+    const control = svgElement("polygon", {
+      points: hitWedgePoints(point, origin)
+        .map((corner) => {
+          const svgPoint = toSvgPoint(corner);
+          return `${svgPoint.x.toFixed(1)},${svgPoint.y.toFixed(1)}`;
+        })
+        .join(" "),
       class: "grid-point force-arrow-grid-point",
       role: "button",
       tabindex: index === 0 ? 0 : -1,
@@ -470,7 +524,7 @@ export function createForceArrowGrid(container, config) {
       }[event.key];
       if (direction) {
         event.preventDefault();
-        focusGridPoint(nextSelectablePoint(point, direction, origin));
+        focusGridPoint(nextSelectableInDirection(point, direction));
       }
     });
     pointLayer.append(control);
