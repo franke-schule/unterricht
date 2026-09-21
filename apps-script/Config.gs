@@ -5,6 +5,7 @@
  * - inf10/2-Modellierung-und-Programmierung-Online-IDE/aufgabe1.html
  * - inf10/2-Modellierung-und-Programmierung-Online-IDE/aufgabe2.html
  * - inf10/1-Datenbanken/aufgabe5.html (zwei Beschreibe-Aufgaben)
+ * - inf10/1-Datenbanken/aufgabe1-quiz.html (eine Beschreibe-Aufgabe, nicht verlinkter Test)
  * - inf9/1-Tabellenkalkulation/aufgabe5a.html und aufgabe5b.html (je eine Beschreibe-Aufgabe)
  *
  * Einrichtung:

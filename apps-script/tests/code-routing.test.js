@@ -284,7 +284,8 @@ assert.equal(
 
 [
   'sql-b2-3',
-  'sql-b3-1'
+  'sql-b3-1',
+  'inf10-db-a1-primaerschluessel'
 ].forEach(
   function(taskId) {
     const sqlDescriptionGet =

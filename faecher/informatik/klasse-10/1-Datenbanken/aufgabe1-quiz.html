@@ -1,0 +1,83 @@
+<!doctype html>
+<html lang="de">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="robots" content="noindex, nofollow">
+    <title>Test zu Aufgabe 1 – Grundlagen Datenbanken | Informatik 10</title>
+    <link rel="stylesheet" href="../../../../styles.css?v=20260825">
+    <link rel="stylesheet" href="redundanzen.css?v=20260916a">
+    <link rel="stylesheet" href="grundlagen.css?v=20260911">
+    <link rel="stylesheet" href="aufgabe1-quiz.css?v=20260921">
+    <script type="module" src="aufgabe1-quiz.js?v=20260921"></script>
+  </head>
+  <body class="redundancy-page grundlagen-page quiz-test-page">
+    <div class="site-backdrop" aria-hidden="true"></div>
+    <main class="learning-shell">
+      <nav class="module-topbar" aria-label="Seitennavigation">
+        <a class="back-link" href="../index.html">Zur Aufgabenübersicht</a>
+        <a class="back-link" href="../../../../index.html">Startseite</a>
+      </nav>
+
+      <header class="module-header">
+        <div class="eyebrow"><span aria-hidden="true">◎</span> Test · Datenbank-Grundlagen</div>
+        <h1>Test zu Aufgabe 1</h1>
+        <p>Bearbeite alle vier Aufgaben. Die Auswertung erhältst du erst, wenn du den Test abgibst.</p>
+      </header>
+
+      <div class="progress-card" aria-label="Bearbeitungsstand">
+        <div class="progress-copy">
+          <span id="progress-label">0 von 4 Aufgaben bearbeitet</span>
+          <strong id="progress-points">22 Punkte erreichbar</strong>
+        </div>
+        <div class="progress-track" aria-hidden="true"><span id="progress-bar"></span></div>
+      </div>
+
+      <form id="quiz-test" class="step-panel quiz-test" novalidate>
+        <section class="task-card" aria-labelledby="task1-title">
+          <h3 id="task1-title">Aufgabe 1 – Begriffe aus Programmierung und Datenbank <span class="task-points">6 Punkte</span></h3>
+          <p id="task1-instruction"><strong>Ziehe</strong> die passenden Begriffe aus dem Wortspeicher in die Lücken. Zwei Begriffe bleiben übrig.</p>
+          <p class="drag-help">Ohne Ziehen: Begriff antippen, dann Lücke antippen. Eine belegte Lücke zweimal antippen, um den Begriff zurückzulegen.</p>
+          <div id="term-cloze" class="quiz-cloze" aria-describedby="task1-instruction"></div>
+        </section>
+
+        <section class="task-card" aria-labelledby="task2-title">
+          <h3 id="task2-title">Aufgabe 2 – SQL-Datentypen zuordnen <span class="task-points">8 Punkte</span></h3>
+          <p id="task2-instruction"><strong>Ordne</strong> jeden Wert dem passenden SQL-Datentyp zu. Zu jedem Datentyp gehören zwei Werte.</p>
+          <p class="drag-help">Ohne Ziehen: Wert antippen, dann Datentyp antippen. Einen zugeordneten Wert zweimal antippen, um ihn zurückzulegen.</p>
+          <div id="type-sort" class="quiz-sort" aria-describedby="task2-instruction"></div>
+        </section>
+
+        <section class="task-card" aria-labelledby="task3-title">
+          <h3 id="task3-title">Aufgabe 3 – Multiple Choice <span class="task-points">5 Punkte</span></h3>
+          <p><strong>Kreuze</strong> alle richtigen Antworten an. Bei manchen Fragen sind mehrere Antworten richtig. Eine Frage zählt nur, wenn sie vollständig richtig ist.</p>
+          <div id="mc-questions" class="final-quiz"></div>
+        </section>
+
+        <section class="task-card" aria-labelledby="task4-title">
+          <h3 id="task4-title">Aufgabe 4 – Primärschlüssel <span class="task-points">3 Punkte</span></h3>
+          <label class="describe-label" for="describe-answer"><strong>Beschreibe</strong>, warum ein Primärschlüssel in Datenbanken benötigt wird.</label>
+          <textarea id="describe-answer" class="describe-input" maxlength="1200" rows="6"></textarea>
+        </section>
+
+        <div class="action-row submit-row">
+          <button id="submit-test" class="primary-button" type="submit">Test abgeben und auswerten</button>
+        </div>
+        <p id="submit-feedback" class="feedback" aria-live="polite"></p>
+      </form>
+
+      <section id="evaluation" class="step-panel summary-panel evaluation-panel" aria-labelledby="evaluation-title" hidden>
+        <div class="step-heading">
+          <span class="step-number complete">✓</span>
+          <div><p class="step-kicker">Auswertung</p><h2 id="evaluation-title">Dein Testergebnis</h2></div>
+        </div>
+        <p id="evaluation-total" class="evaluation-total" aria-live="polite"></p>
+        <div id="evaluation-details" class="answer-summary"></div>
+        <div class="summary-actions">
+          <button class="secondary-button" id="print-evaluation" type="button">Auswertung drucken</button>
+          <button class="danger-button" id="reset-test" type="button">Test neu starten</button>
+        </div>
+      </section>
+    </main>
+  </body>
+</html>
