@@ -227,6 +227,25 @@
   user-select: none;
 }
 
+/* Diese Datei wird auch von Aufgabe 1 bis 3 geladen; dort sind benutzte
+   Karten ausgegraut und die Lücken teils noch Auswahlfelder. */
+.cloze-token:disabled {
+  opacity: 0.45;
+  cursor: default;
+}
+
+.cloze-sentence select {
+  min-height: 42px;
+  max-width: 100%;
+  margin: 0 4px;
+  border: 1px solid #94a3b8;
+  border-radius: 8px;
+  padding: 6px 8px;
+  color: #0f172a;
+  background: #ffffff;
+  font: inherit;
+}
+
 .cloze-token.is-picked,
 .cloze-gap.is-picked {
   outline: 3px solid #2563eb;
@@ -251,6 +270,11 @@
 
 .cloze-sentence {
   margin: 0;
+  line-height: 2.6;
+}
+
+/* Fließtext-Lückentext mit Drag-and-Drop-Lücken (Wiederholung 2, Aufgabe 2). */
+#law-cloze .cloze-sentence {
   border: 1px solid #cbd5e1;
   border-radius: 14px;
   padding: 14px 16px;
@@ -381,6 +405,11 @@
 }
 
 @media (max-width: 520px) {
+  .cloze-sentence select {
+    width: 100%;
+    margin: 4px 0;
+  }
+
   .cloze-gap {
     min-width: 5.5em;
   }

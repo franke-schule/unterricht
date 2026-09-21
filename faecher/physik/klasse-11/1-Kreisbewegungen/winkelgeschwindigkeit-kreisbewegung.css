@@ -27,6 +27,30 @@
 .circle-simulation--compact svg { width: min(100%, 360px); }
 .circle-simulation--compact .simulation-readout strong { padding: 6px 10px; }
 .circle-simulation--compact .simulation-controls { gap: 12px; }
+
+/* Aufgabe 3 (Bahngeschwindigkeit): wie die Hammerwurf-Simulation in
+   zentripetalkraft.css – Regler, Buttons, Anzeigewerte und Status stehen in
+   EINER Spalte neben der Animation, damit alles ohne Scrollen sichtbar ist.
+   Die Grafik bleibt groß; gespart wird an Reglern und Buttons. */
+.circle-simulation--compact[data-circle-simulation="speed"] svg { width: min(100%, 420px); }
+.circle-simulation--compact[data-circle-simulation="speed"] .simulation-panel { display: grid; align-content: start; gap: 8px; }
+.circle-simulation--compact[data-circle-simulation="speed"] .simulation-controls { grid-template-columns: minmax(0, 1fr); gap: 4px; }
+.circle-simulation--compact[data-circle-simulation="speed"] .simulation-controls label { gap: 2px; font-size: .9rem; }
+.circle-simulation--compact[data-circle-simulation="speed"] .simulation-controls input[type="range"] { min-height: 44px; }
+.circle-simulation--compact[data-circle-simulation="speed"] .simulation-actions { gap: 8px; }
+.circle-simulation--compact[data-circle-simulation="speed"] .simulation-actions .physics-primary-button,
+.circle-simulation--compact[data-circle-simulation="speed"] .simulation-actions .secondary-action { min-height: 44px; margin-top: 0; padding: 8px 14px; font-size: .92rem; }
+.circle-simulation--compact[data-circle-simulation="speed"] .simulation-readout { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 6px; }
+.circle-simulation--compact[data-circle-simulation="speed"] .simulation-readout strong { padding: 5px 8px; font-size: .86rem; }
+.circle-simulation--compact[data-circle-simulation="speed"] .formula-display { margin: 0; font-size: 1.15rem; }
+.circle-simulation--compact[data-circle-simulation="speed"] .simulation-status,
+.circle-simulation--compact[data-circle-simulation="speed"] .simulation-note { font-size: .88rem; text-align: left; }
+.simulation-scale-details { margin: 0; }
+.simulation-scale-details > summary { display: flex; align-items: center; min-height: 36px; color: #1e3a8a; font-size: .88rem; font-weight: 750; cursor: pointer; }
+.simulation-scale-details .simulation-note { margin-top: 4px; }
+@media (min-width: 701px) {
+  .circle-simulation--compact[data-circle-simulation="speed"] { grid-template-columns: minmax(240px, 420px) minmax(220px, 1fr); column-gap: 24px; align-items: start; }
+}
 .simulation-status, .simulation-note { margin: 0; color: #475569; text-align: center; }
 .simulation-status { font-weight: 750; }
 .simulation-note { font-size: .9rem; }
@@ -45,6 +69,11 @@
 .formula-fraction { display: flex; flex-direction: column; align-items: stretch; gap: 6px; }
 .formula-fraction__bar { height: 3px; border-radius: 2px; background: #1e3a8a; }
 .formula-slot.is-selected, .formula-slot:focus-visible { outline: 3px solid rgba(37, 99, 235, .22); border-color: #2563eb; }
+/* Belegte Felder lassen sich wieder herausziehen (Tablet: kein Scrollen beim Ziehen). */
+.formula-slot { touch-action: none; user-select: none; }
+.formula-slot.is-filled { border-style: solid; background: #ffffff; cursor: grab; }
+.formula-slot.is-drop-target { border-color: #1e3a8a; background: #dbeafe; }
+.formula-slot.is-dragging { opacity: .45; }
 .blue-remember { margin: 0; border-left: 5px solid #2563eb; border-radius: 10px; padding: 15px 17px; color: #1e3a8a; background: #eff6ff; font-weight: 750; }
 .frequency-layout { display: grid; grid-template-columns: minmax(180px, .8fr) minmax(0, 1fr); align-items: center; gap: 24px; margin-top: 18px; }
 .frequency-animation, .frequency-controls { display: grid; gap: 14px; }

@@ -1,5 +1,6 @@
 import { setupPhysicsStepTabs } from "./components/physics-step-tabs.mjs";
 import { setupPhysicsSemanticTask } from "./components/physics-semantic-task.mjs";
+import { enableTokenDrag, wasDragged } from "./components/token-drag.mjs";
 import { appendPhysicsText, createIndexedSymbol, physicsTextSpan } from "./components/physics-notation.mjs?v=20260912a";
 import { angleAtCycleElapsed, angleAtElapsed, angularSpeed, circleVectors, clamp, elapsedInCycle, frequencyFromPeriod, sectorPath, shuffleIncorrect, tangentialSpeed } from "./components/circle-kinematics.mjs";
 
@@ -156,14 +157,28 @@ function setupFormulaBuilder({ id, expected, equation, rememberId }) {
   const target = document.getElementById(id); let selected = "";
   let values = shuffleIncorrect(expected, expected);
   const slots = expected.map((_, index) => ({ index, value: "" }));
+  // Zeichen per Pointer-Drag ablegen, zwischen Feldern tauschen oder zurück
+  // in den Speicher ziehen. Antippen bleibt als Alternative ohne Ziehen.
+  const dragTargets = { dropSelector: `#${id} .formula-slot`, bankSelector: `#${id} .formula-token-bank` };
+  const place = (value, from, to) => {
+    if (from >= 0) slots[from].value = "";
+    if (to >= 0) {
+      const previous = slots[to].value;
+      slots[to].value = value;
+      if (from >= 0 && previous) slots[from].value = previous;
+    }
+    selected = "";
+    document.getElementById(rememberId).hidden = true;
+    render();
+  };
   const render = () => {
     target.replaceChildren();
-    const bank = document.createElement("div"); bank.className = "formula-token-bank";
-    values.forEach((value) => { const token = document.createElement("button"); token.type = "button"; token.className = "cloze-token"; renderFormulaSymbol(token, value); token.draggable = true; token.disabled = slots.some((slot) => slot.value === value); token.addEventListener("dragstart", (event) => event.dataTransfer.setData("text/plain", value)); bindKeyboardButton(token, () => { selected = value; target.querySelectorAll(".formula-slot").forEach((slot) => slot.classList.toggle("is-selected", !slot.dataset.value)); }); bank.append(token); });
+    const bank = document.createElement("div"); bank.className = "formula-token-bank"; bank.setAttribute("aria-label", "Formelzeichen");
+    values.forEach((value) => { const token = document.createElement("button"); token.type = "button"; token.className = "cloze-token"; renderFormulaSymbol(token, value); token.disabled = slots.some((slot) => slot.value === value); token.classList.toggle("is-picked", selected === value); enableTokenDrag(token, { ...dragTargets, getLabel: () => value, renderGhost: (ghost) => renderFormulaSymbol(ghost, value), onDrop: (slot) => { if (slot) place(value, -1, Number(slot.dataset.index)); else render(); } }); bindKeyboardButton(token, () => { if (wasDragged(token)) return; selected = selected === value ? "" : value; render(); }); bank.append(token); });
     const line = document.createElement("div"); line.className = "formula-line"; line.setAttribute("aria-label", equation);
     const isQuotient = id !== "formula-speed";
     const slotRoles = isQuotient ? ["", ", Zähler", ", Nenner"] : ["", "", ""];
-    const buttons = slots.map((slot, index) => { const button = document.createElement("button"); button.type = "button"; button.className = "formula-slot"; button.dataset.value = slot.value; if (slot.value) renderFormulaSymbol(button, slot.value); else button.textContent = "?"; button.setAttribute("aria-label", slot.value === "vB" ? `Feld ${index + 1}: v mit Index B${slotRoles[index]}` : `Feld ${index + 1} der Formel${slotRoles[index]}`); bindKeyboardButton(button, () => { if (selected) { slots[index].value = selected; selected = ""; } else if (slots[index].value) slots[index].value = ""; document.getElementById(rememberId).hidden = true; render(); }); button.addEventListener("dragover", (event) => event.preventDefault()); button.addEventListener("drop", (event) => { event.preventDefault(); slots[index].value = event.dataTransfer.getData("text/plain"); document.getElementById(rememberId).hidden = true; render(); }); return button; });
+    const buttons = slots.map((slot, index) => { const button = document.createElement("button"); button.type = "button"; button.className = "formula-slot"; button.dataset.value = slot.value; button.dataset.index = String(index); button.classList.toggle("is-filled", Boolean(slot.value)); button.classList.toggle("is-selected", Boolean(selected) && !slot.value); if (slot.value) renderFormulaSymbol(button, slot.value); else button.textContent = "?"; button.setAttribute("aria-label", slot.value === "vB" ? `Feld ${index + 1}: v mit Index B${slotRoles[index]}` : `Feld ${index + 1} der Formel${slotRoles[index]}${slot.value ? `: ${slot.value}` : ": leer"}`); enableTokenDrag(button, { ...dragTargets, getLabel: () => slots[index].value, renderGhost: (ghost) => renderFormulaSymbol(ghost, slots[index].value), onDrop: (dropSlot, onBank) => { const value = slots[index].value; const to = dropSlot ? Number(dropSlot.dataset.index) : -1; if (to >= 0 && to !== index) place(value, index, to); else if (onBank) place(value, index, -1); else render(); } }); bindKeyboardButton(button, () => { if (wasDragged(button)) return; if (selected) place(selected, -1, index); else if (slots[index].value) place(slots[index].value, index, -1); }); return button; });
     line.append(buttons[0], document.createTextNode(" = "));
     if (isQuotient) { const fraction = document.createElement("div"); fraction.className = "formula-fraction"; const bar = document.createElement("span"); bar.className = "formula-fraction__bar"; bar.setAttribute("aria-hidden", "true"); fraction.append(buttons[1], bar, buttons[2]); line.append(fraction); }
     else line.append(buttons[1], document.createTextNode(" · "), buttons[2]);

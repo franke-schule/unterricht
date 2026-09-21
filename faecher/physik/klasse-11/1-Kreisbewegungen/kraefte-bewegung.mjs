@@ -1,6 +1,7 @@
 import { createForceArrowGrid } from "./components/point-vector-grid.mjs";
 import { setupPhysicsSemanticTask } from "./components/physics-semantic-task.mjs";
 import { setupPhysicsStepTabs } from "./components/physics-step-tabs.mjs";
+import { enableTokenDrag, wasDragged } from "./components/token-drag.mjs";
 import { appendPhysicsText, physicsTextSpan } from "./components/physics-notation.mjs?v=20260911a";
 
 const SCRIPT_SERVER_URL = "https://script.google.com/macros/s/AKfycby8RWL6uYrKZyoJ6m2GRpWyRmXjwsdskyCiqzKpRhIK5-wrDl-9lWWk8CiAGaVMoy0x/exec";
@@ -146,65 +147,6 @@ function setupForceDrawingTasks() {
     else if (Math.abs(left.x) !== Math.abs(right.x)) setFeedback("crash-feedback", "partial", "Die Richtungen stimmen. Wechselwirkungskräfte sind immer gleich groß, deshalb müssen beide Pfeile gleich lang sein.");
     else setFeedback("crash-feedback", "success", "Korrekt: Die Kräfte sind gleich groß und entgegengesetzt gerichtet. Sie wirken auf verschiedene Körper und bilden deshalb kein Kräftegleichgewicht an einem einzelnen Körper.");
   });
-}
-
-/**
- * Gemeinsames Ziehen für Aufgabe 1 und Aufgabe 2. Pointer Events statt
- * HTML5-Drag-and-Drop, damit Maus, Stift und Touch auf dem Tablet gleich
- * funktionieren. Vorlage: setupCloze in
- * faecher/informatik/klasse-11/1-Kuenstliche-Intelligenz/was-ist-ki/ui/task0.mjs
- *
- * getLabel() liefert den gezogenen Begriff oder einen leeren Wert, wenn an
- * dieser Stelle nichts zu ziehen ist. onDrop bekommt das getroffene Ziel und
- * die Information, ob im Wortspeicher losgelassen wurde; so lässt sich ein
- * Begriff auch wieder entfernen.
- */
-function enableTokenDrag(element, { getLabel, dropSelector, bankSelector, onDrop }) {
-  element.addEventListener("pointerdown", (event) => {
-    if (event.button !== 0) return;
-    const label = getLabel();
-    if (!label) return;
-    const startX = event.clientX;
-    const startY = event.clientY;
-    let ghost = null;
-    element.setPointerCapture(event.pointerId);
-    const clearDropTargets = () => document.querySelectorAll(`${dropSelector}.is-drop-target`).forEach((slot) => slot.classList.remove("is-drop-target"));
-    const move = (moveEvent) => {
-      if (!ghost && Math.hypot(moveEvent.clientX - startX, moveEvent.clientY - startY) < 6) return;
-      if (!ghost) {
-        ghost = document.createElement("span");
-        ghost.className = "cloze-token cloze-drag-ghost";
-        ghost.textContent = label;
-        document.body.append(ghost);
-        element.classList.add("is-dragging");
-      }
-      ghost.style.left = `${moveEvent.clientX}px`;
-      ghost.style.top = `${moveEvent.clientY}px`;
-      clearDropTargets();
-      document.elementFromPoint(moveEvent.clientX, moveEvent.clientY)?.closest(dropSelector)?.classList.add("is-drop-target");
-    };
-    const end = (endEvent) => {
-      element.removeEventListener("pointermove", move);
-      element.removeEventListener("pointerup", end);
-      element.removeEventListener("pointercancel", end);
-      if (!ghost) return; // kein Ziehen, der Klick-Handler übernimmt
-      ghost.remove();
-      clearDropTargets();
-      element.classList.remove("is-dragging");
-      element.dataset.dragged = "true";
-      const drop = endEvent.type === "pointerup" ? document.elementFromPoint(endEvent.clientX, endEvent.clientY) : null;
-      onDrop(drop?.closest(dropSelector) || null, Boolean(drop?.closest(bankSelector)));
-    };
-    element.addEventListener("pointermove", move);
-    element.addEventListener("pointerup", end);
-    element.addEventListener("pointercancel", end);
-  });
-}
-
-function wasDragged(element) {
-  if (element.dataset.dragged !== "true") return false;
-  delete element.dataset.dragged;
-  return true;
 }
 
 // Formelzeichen werden als mathematisches Symbol angezeigt (F mit Vektorpfeil,

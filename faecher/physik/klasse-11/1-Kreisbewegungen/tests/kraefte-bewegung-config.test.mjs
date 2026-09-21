@@ -18,9 +18,9 @@ assert.match(html, /<strong>Ziehe<\/strong> die Begriffe aus dem Wortspeicher in
 assert.match(html, /id="reset-law-cloze"/);
 assert.match(html, /Rechenschritte sortieren/);
 assert.match(html, /mehrere Antworten richtig/);
-assert.match(html, /kraefte-bewegung\.css\?v=20260920c/);
+assert.match(html, /kraefte-bewegung\.css\?v=20260921a/);
 assert.match(html, /bewegung-koerpern\.css\?v=20260910a/);
-assert.match(html, /kraefte-bewegung\.mjs\?v=20260920c/);
+assert.match(html, /kraefte-bewegung\.mjs\?v=20260921a/);
 assert.match(html, /Sicherungsblatt zu Wiederholung 2/);
 assert.match(html, /onsubmit="unlockSolution\(event, 'R8NT-DKPV', 'solution-download-link', 'solution-code-message'\)"/);
 assert.match(html, /href="sicherungsblatt-aufgabe-2-loesungen\.pdf\?v=20260920d" download hidden/);
@@ -81,7 +81,14 @@ assert.doesNotMatch(source, /Prüfe die Richtungen der beiden Kräfte/);
 assert.match(grid, /const ARROW_HEAD_SIZE = 5;/);
 assert.match(grid, /createMarker\(definitions, `\$\{svgId\}-first`, "#2563eb", ARROW_HEAD_SIZE\)/);
 // Drag-and-Drop mit Pointer Events für Aufgabe 1 und Aufgabe 2, inklusive Entfernen
-assert.match(source, /function enableTokenDrag\(element, \{ getLabel, dropSelector, bankSelector, onDrop \}\)/);
+const tokenDrag = fs.readFileSync(new URL("../components/token-drag.mjs", import.meta.url), "utf8");
+assert.match(source, /import \{ enableTokenDrag, wasDragged \} from "\.\/components\/token-drag\.mjs";/);
+assert.match(tokenDrag, /export function enableTokenDrag\(element, \{ getLabel, dropSelector, bankSelector, onDrop, renderGhost \}\)/);
+// Die Datei wird auch von Aufgabe 1 bis 3 geladen: deren Auswahlfeld-Lücken
+// und ausgegraute Karten dürfen nicht verloren gehen; der Kasten gilt nur hier.
+assert.match(css, /\.cloze-token:disabled \{/);
+assert.match(css, /\.cloze-sentence select \{/);
+assert.match(css, /#law-cloze \.cloze-sentence \{/);
 assert.equal((source.match(/else if \(onBank\) place\(/g) || []).length, 2);
 assert.doesNotMatch(source, /select\[data-cloze-gap\]|Begriff wählen …|Auswahl wählen …/);
 // Crashtest: Auto berührt die Wand und zeigt Schaden
