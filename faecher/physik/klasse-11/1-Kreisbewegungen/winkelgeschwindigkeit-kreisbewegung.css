@@ -42,7 +42,6 @@
 .circle-simulation--compact[data-circle-simulation="speed"] .simulation-actions .secondary-action { min-height: 44px; margin-top: 0; padding: 8px 14px; font-size: .92rem; }
 .circle-simulation--compact[data-circle-simulation="speed"] .simulation-readout { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 6px; }
 .circle-simulation--compact[data-circle-simulation="speed"] .simulation-readout strong { padding: 5px 8px; font-size: .86rem; }
-.circle-simulation--compact[data-circle-simulation="speed"] .formula-display { margin: 0; font-size: 1.15rem; }
 .circle-simulation--compact[data-circle-simulation="speed"] .simulation-status,
 .circle-simulation--compact[data-circle-simulation="speed"] .simulation-note { font-size: .88rem; text-align: left; }
 .simulation-scale-details { margin: 0; }
