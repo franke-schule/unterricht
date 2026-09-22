@@ -10,7 +10,7 @@
     <link rel="stylesheet" href="kraefte-bewegung.css?v=20260921a">
     <link rel="stylesheet" href="winkelgeschwindigkeit-kreisbewegung.css?v=20260912a">
     <link rel="stylesheet" href="components/physics-notation.css?v=20260911a">
-    <link rel="stylesheet" href="zentripetalkraft.css?v=20260917a">
+    <link rel="stylesheet" href="zentripetalkraft.css?v=20260922a">
     <script type="module" src="zentripetalkraft.mjs?v=20260917a"></script>
   </head>
   <body class="physics-revision-page circular-motion-page">
@@ -295,42 +295,58 @@
 
           <article class="physics-task-card" aria-labelledby="radius-reason-title">
             <h3 id="radius-reason-title">Aufgabe 4c · Warum braucht der kleine Kreis mehr Kraft?</h3>
-            <figure class="centripetal-figure centripetal-figure--vectors">
-              <svg viewBox="0 0 560 300" role="img" aria-label="Zwei Kreisbahnen um denselben Mittelpunkt mit gleich langen Bögen Δx. Daneben die Vektordreiecke: Auf dem inneren Kreis ist die Geschwindigkeitsänderung Δv etwa doppelt so lang wie auf dem äußeren Kreis.">
+            <figure class="centripetal-figure centripetal-figure--vectors centripetal-figure--reason">
+              <svg viewBox="0 0 740 342" role="img" aria-label="Zwei getrennte Kreisbahnen. Links eine kleine Kreisbahn mit Radius r, rechts eine große Kreisbahn mit Radius 2r. Auf beiden legt der Körper mit gleich langen Geschwindigkeitspfeilen den gleich langen Bogen Δx zurück. Auf der kleinen Kreisbahn ist der Winkel Δφ am Mittelpunkt doppelt so groß, und im Vektordreieck daneben ist die Geschwindigkeitsänderung Δv etwa doppelt so lang wie auf der großen Kreisbahn.">
                 <defs>
                   <marker id="reason-blue" markerUnits="userSpaceOnUse" markerWidth="12" markerHeight="8" refX="7.5" refY="4" orient="auto"><path d="M0,0 L12,4 L0,8 z" fill="#2563eb"/></marker>
                   <marker id="reason-red" markerUnits="userSpaceOnUse" markerWidth="12" markerHeight="8" refX="7.5" refY="4" orient="auto"><path d="M0,0 L12,4 L0,8 z" fill="#dc2626"/></marker>
                 </defs>
-                <circle cx="200" cy="280" r="4" class="center-point"/>
-                <text x="184" y="272" class="svg-label">M</text>
-                <path d="M 200 170 A 110 110 0 0 1 295.26 225.00" class="angle-arc"/>
-                <path d="M 200 60 A 220 220 0 0 1 310.00 89.47" class="angle-arc"/>
-                <text x="266" y="166" class="svg-label">Δx</text>
-                <text x="264" y="46" class="svg-label">Δx</text>
-                <circle cx="200" cy="170" r="5" class="center-point"/>
-                <circle cx="295.26" cy="225.00" r="5" class="center-point"/>
-                <circle cx="200" cy="60" r="5" class="center-point"/>
-                <circle cx="310.00" cy="89.47" r="5" class="center-point"/>
-                <line x1="200" y1="170" x2="240.5" y2="170" class="speed-vector" marker-end="url(#reason-blue)"/>
-                <line x1="295.26" y1="225.00" x2="315.51" y2="260.07" class="speed-vector" marker-end="url(#reason-blue)"/>
-                <line x1="200" y1="60" x2="240.5" y2="60" class="speed-vector" marker-end="url(#reason-blue)"/>
-                <line x1="310.00" y1="89.47" x2="345.07" y2="109.72" class="speed-vector" marker-end="url(#reason-blue)"/>
-
-                <circle cx="400" cy="190" r="3" class="center-point"/>
-                <line x1="400" y1="190" x2="455.5" y2="190" class="speed-vector" marker-end="url(#reason-blue)"/>
-                <line x1="400" y1="190" x2="427.75" y2="238.06" class="speed-vector" marker-end="url(#reason-blue)"/>
-                <line x1="460" y1="190" x2="432.25" y2="238.06" class="force-vector" marker-end="url(#reason-red)"/>
-                <text x="452" y="222" class="svg-label vector-force-label">Δv</text>
-                <text x="430" y="265" text-anchor="middle" class="svg-label">innerer Kreis</text>
-
-                <circle cx="400" cy="60" r="3" class="center-point"/>
-                <line x1="400" y1="60" x2="455.5" y2="60" class="speed-vector" marker-end="url(#reason-blue)"/>
-                <line x1="400" y1="60" x2="448.06" y2="87.75" class="speed-vector" marker-end="url(#reason-blue)"/>
-                <line x1="460" y1="60" x2="453.13" y2="85.65" class="force-vector" marker-end="url(#reason-red)"/>
-                <text x="465" y="80" class="svg-label vector-force-label">Δv</text>
-                <text x="430" y="112" text-anchor="middle" class="svg-label">äußerer Kreis</text>
+                <rect x="4" y="4" width="292" height="334" rx="12" class="reason-panel"/>
+                <rect x="308" y="4" width="428" height="334" rx="12" class="reason-panel"/>
+                <text x="150" y="24" text-anchor="middle" class="svg-label">Kreisbahn 1 · Radius r</text>
+                <circle cx="95" cy="185" r="70" class="orbit"/>
+                <path d="M 95 185 L 82.53 162.18 A 26 26 0 0 1 107.47 162.18 Z" class="angle-arc"/>
+                <line x1="95" y1="185" x2="61.44" y2="123.57" class="reason-radius"/>
+                <line x1="95" y1="185" x2="128.56" y2="123.57" class="reason-radius"/>
+                <path d="M 61.44 123.57 A 70 70 0 0 1 128.56 123.57" class="derivation-arc"/>
+                <circle cx="95" cy="185" r="4" class="center-point"/>
+                <text x="95" y="207" text-anchor="middle" class="svg-label">M</text>
+                <text x="109" y="177" class="svg-label reason-angle-label">Δφ</text>
+                <text x="95" y="141" text-anchor="middle" class="svg-label reason-arc-label">Δx</text>
+                <text x="62.22" y="158.28" text-anchor="end" class="svg-label">r</text>
+                <circle cx="61.44" cy="123.57" r="5" class="center-point"/>
+                <circle cx="128.56" cy="123.57" r="5" class="center-point"/>
+                <line x1="61.44" y1="123.57" x2="109.71" y2="97.2" class="speed-vector" marker-end="url(#reason-blue)"/>
+                <line x1="128.56" y1="123.57" x2="176.83" y2="149.94" class="speed-vector" marker-end="url(#reason-blue)"/>
+                <circle cx="196" cy="205" r="3" class="center-point"/>
+                <line x1="196" y1="205" x2="244.27" y2="178.63" class="speed-vector" marker-end="url(#reason-blue)"/>
+                <line x1="196" y1="205" x2="244.27" y2="231.37" class="speed-vector" marker-end="url(#reason-blue)"/>
+                <line x1="244.27" y1="178.63" x2="244.27" y2="231.37" class="force-vector" marker-end="url(#reason-red)"/>
+                <text x="252.27" y="211" class="svg-label vector-force-label">Δv</text>
+                <text x="224" y="255.37" text-anchor="middle" class="svg-label reason-small-label">Vektordreieck</text>
+                <text x="522" y="24" text-anchor="middle" class="svg-label">Kreisbahn 2 · Radius 2r</text>
+                <circle cx="468" cy="192" r="140" class="orbit"/>
+                <path d="M 468 192 L 461.57 166.81 A 26 26 0 0 1 474.43 166.81 Z" class="angle-arc"/>
+                <line x1="468" y1="192" x2="433.36" y2="56.35" class="reason-radius"/>
+                <line x1="468" y1="192" x2="502.64" y2="56.35" class="reason-radius"/>
+                <path d="M 433.36 56.35 A 140 140 0 0 1 502.64 56.35" class="derivation-arc"/>
+                <circle cx="468" cy="192" r="4" class="center-point"/>
+                <text x="468" y="214" text-anchor="middle" class="svg-label">M</text>
+                <text x="482" y="184" class="svg-label reason-angle-label">Δφ</text>
+                <text x="468" y="78" text-anchor="middle" class="svg-label reason-arc-label">Δx</text>
+                <text x="434.68" y="128.18" text-anchor="end" class="svg-label">2r</text>
+                <circle cx="433.36" cy="56.35" r="5" class="center-point"/>
+                <circle cx="502.64" cy="56.35" r="5" class="center-point"/>
+                <line x1="433.36" y1="56.35" x2="486.65" y2="42.74" class="speed-vector" marker-end="url(#reason-blue)"/>
+                <line x1="502.64" y1="56.35" x2="555.93" y2="69.96" class="speed-vector" marker-end="url(#reason-blue)"/>
+                <circle cx="638" cy="205" r="3" class="center-point"/>
+                <line x1="638" y1="205" x2="691.29" y2="191.39" class="speed-vector" marker-end="url(#reason-blue)"/>
+                <line x1="638" y1="205" x2="691.29" y2="218.61" class="speed-vector" marker-end="url(#reason-blue)"/>
+                <line x1="691.29" y1="191.39" x2="691.29" y2="218.61" class="force-vector" marker-end="url(#reason-red)"/>
+                <text x="699.29" y="211" class="svg-label vector-force-label">Δv</text>
+                <text x="666" y="242.61" text-anchor="middle" class="svg-label reason-small-label">Vektordreieck</text>
               </svg>
-              <figcaption>Gleiche Bahngeschwindigkeit, gleicher Bogen Δx – unterschiedliche Richtungsänderung</figcaption>
+              <figcaption>Zwei verschiedene Kreisbahnen: gleiche Bahngeschwindigkeit, gleicher Bogen Δx</figcaption>
             </figure>
             <p>Beide Körper bewegen sich gleich schnell und legen in derselben Zeit den gleichen Bogen Δx zurück. <strong>Wähle</strong> alle Aussagen aus, die erklären, warum auf dem kleineren Kreis eine größere Zentripetalkraft nötig ist.</p>
             <div id="radius-reason-quiz" class="physics-multiple-choice" aria-label="Multiple-Choice-Aufgabe zum Vergleich der Kreisbahnen"></div>

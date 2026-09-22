@@ -88,6 +88,40 @@
   stroke-linecap: butt;
 }
 
+/* Aufgabe 4c: zwei getrennte Kreisbahnen, jede in einem eigenen Feld. Die
+   Bahn ist vollständig gestrichelt, der zurückgelegte Bogen Δx hervorgehoben. */
+.reason-panel {
+  fill: #f8fafc;
+  stroke: #cbd5e1;
+  stroke-width: 1.5;
+}
+
+.reason-radius {
+  stroke: #64748b;
+  stroke-width: 2;
+}
+
+.centripetal-figure--reason .orbit {
+  stroke-width: 2.5;
+}
+
+.centripetal-figure--reason .angle-arc {
+  stroke-width: 2;
+}
+
+.reason-arc-label {
+  fill: #b45309;
+}
+
+.reason-angle-label {
+  fill: #1d4ed8;
+}
+
+.reason-small-label {
+  font-size: 13px;
+  font-weight: 700;
+}
+
 /* Aufgabe 6, Skizze 1: Radiuspfeile, Sehne Δs, Winkelbogen und die
    nummerierten Badges an den vier markierten Stellen. */
 .derivation-arc {

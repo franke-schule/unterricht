@@ -6,7 +6,7 @@ const source = fs.readFileSync(new URL("../haftreibung-zentripetalkraft.mjs", im
 const css = fs.readFileSync(new URL("../haftreibung-zentripetalkraft.css", import.meta.url), "utf8");
 
 assert.match(html, /Aufgabe 3 – Die Haftreibungskraft als Zentripetalkraft/);
-assert.match(html, /haftreibung-zentripetalkraft\.mjs\?v=20260922b/);
+assert.match(html, /haftreibung-zentripetalkraft\.mjs\?v=20260922c/);
 assert.match(html, /haftreibung-zentripetalkraft\.css\?v=20260922b/);
 assert.equal((html.match(/data-physics-tab=/g) || []).length, 6);
 assert.equal((html.match(/data-physics-panel=/g) || []).length, 6);
@@ -51,7 +51,8 @@ assert.match(css, /\.derivation-sort \{ display: grid; grid-template-columns: mi
 // Wurzeln in Aufgabe 4 und 5 mit durchgehendem Wurzelstrich.
 assert.match(source, /createSquareRoot\(/);
 assert.match(source, /addSquareRootSigns\(\);/);
-assert.equal((html.match(/class="physics-sqrt" role="img" aria-label="Wurzel aus /g) || []).length, 6);
+assert.equal((html.match(/class="physics-sqrt" role="img" aria-label="Wurzel aus /g) || []).length, 7);
+assert.doesNotMatch(html + source, /√/);
 assert.match(html, /physics-notation\.css\?v=20260922b/);
 
 assert.equal((html.match(/class="speed-entry"/g) || []).length, 2);
