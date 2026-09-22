@@ -82,6 +82,13 @@ gehoert auf die Aufgabenseite.
 3. Sicherungsblaetter und Loesungsblaetter
 ------------------------------------------
 
+Ein Sicherungsblatt wird nur erstellt, wenn der Auftrag es ausdruecklich
+verlangt. Ein neues Lernmodul erhaelt also nicht automatisch ein
+Sicherungsblatt, auch wenn benachbarte Module eines besitzen. Wer einen
+Auftrag oder eine Spezifikation formuliert, nimmt es nicht eigenstaendig auf,
+sondern nennt es hoechstens als ausdruecklich gekennzeichneten Vorschlag. Ist
+ein Sicherungsblatt beauftragt, gelten die folgenden Regeln.
+
 Bevorzugte Dateinamen fuer neue Aufgaben:
 
   sicherungsblatt-aufgabe-N-loesungen.tex
@@ -381,5 +388,6 @@ Kurz-Checkliste fuer jede neue Aufgabe
   [ ] Menueeintrag ergaenzt.
   [ ] Allgemeine Navigation und Barrierearmut umgesetzt.
   [ ] Fachmanifest angewendet.
-  [ ] Sicherungsblatt und Lehrercode umgesetzt, falls vorgesehen.
+  [ ] Sicherungsblatt und Lehrercode umgesetzt, falls ausdruecklich
+      beauftragt (Abschnitt 3).
   [ ] Links, Skripte, Interaktionen und Git-Diff geprueft.

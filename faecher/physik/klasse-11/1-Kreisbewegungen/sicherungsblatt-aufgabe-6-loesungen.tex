@@ -56,26 +56,9 @@ F_{\mathrm Z}=m\cdot\left(\frac{2\pi}{T}\right)^{2}\cdot r=\frac{4\pi^{2}\cdot m
 \]
 \end{tcolorbox}
 
-\sectiontitle{2 · Satellit: Wechselwirkung}
-\begin{minipage}[t]{0.30\linewidth}
-\vspace{0pt}\centering
-\begin{tikzpicture}[x=1mm,y=1mm,>=Latex]
-  \fill[Blue!22] (10,18) circle (9);
-  \node[font=\scriptsize] at (10,6) {Erde};
-  \fill[Gold] (40,18) circle (2);
-  \node[font=\scriptsize] at (40,25) {Satellit};
-  \draw[-{Latex},Blue,line width=1pt] (10,18) -- (25,18);
-  \draw[-{Latex},Blue,line width=1pt] (40,18) -- (25,18);
-\end{tikzpicture}
-\end{minipage}\hfill
-\begin{minipage}[t]{0.67\linewidth}
-\vspace{0pt}\small
-Erde und Satellit ziehen sich wegen ihrer Massen gegenseitig an. Beide Kräfte sind gleich groß, entgegengesetzt gerichtet und greifen an verschiedenen Körpern an. Die Gravitationskraft der Erde auf den Satelliten wirkt als Zentripetalkraft.
-\end{minipage}
-
-\sectiontitle{3 · Kräfteparallelogramm beim Kettenkarussell}
-\begin{center}
-\begin{tikzpicture}[x=1.15mm,y=1.15mm,>=Latex]
+\sectiontitle{2 · Kräfteparallelogramm beim Kettenkarussell}
+\begin{minipage}[c]{0.44\linewidth}\centering
+\begin{tikzpicture}[x=1.0mm,y=1.0mm,>=Latex]
   \coordinate (P) at (24,20);
   \coordinate (FZ) at (48,20);
   \coordinate (FS) at (48,38);
@@ -93,28 +76,29 @@ Erde und Satellit ziehen sich wegen ihrer Massen gegenseitig an. Beide Kräfte s
   \draw[-{Latex},red!80!black,line width=1.1pt] (P) -- (FZ) node[midway,below,font=\scriptsize]{$F_{\mathrm Z}$};
   \fill (P) circle (0.9);
 \end{tikzpicture}
-\end{center}
+\end{minipage}\hfill
+\begin{minipage}[c]{0.53\linewidth}
 \[
 \vec{F}_{\mathrm S}+\vec{F}_{\mathrm G}=\vec{F}_{\mathrm Z}
-\qquad\qquad
+\]
+\[
 \tan\alpha=\frac{F_{\mathrm Z}}{F_{\mathrm G}}=\frac{m\cdot\omega^{2}\cdot r}{m\cdot g}=\frac{\omega^{2}\cdot r}{g}
 \]
 \begin{tcolorbox}[colback=Sky,colframe=Line,arc=1.2mm,boxrule=.6pt,left=2mm,right=2mm,top=.7mm,bottom=.7mm]
 \small Beim Kettenkarussell ist die Zentripetalkraft keine zusätzliche Kraft, sondern die Resultierende aus Seilkraft und Gewichtskraft. Sie zeigt waagerecht zur Drehachse. Die Masse hat keinen Einfluss auf den Winkel $\alpha$.
 \end{tcolorbox}
+\end{minipage}
 
-\sectiontitle{4 · Musterlösungen: Beschreiben und Erläutern}
+\sectiontitle{3 · Musterlösungen: Beschreiben und Erläutern}
 \small
 \textbf{$\omega$ wird erhöht:} Die nötige Zentripetalkraft $F_{\mathrm Z}=m\cdot\omega^{2}\cdot r$ wird größer. Da $F_{\mathrm G}$ gleich bleibt, schwenkt die Kette weiter aus: $\alpha$ wird größer und damit auch $r$. Die Seilkraft $F_{\mathrm S}$ wird größer. Unverändert bleiben $m$, $F_{\mathrm G}$ und die Kettenlänge.
 
 \vspace{1.5mm}
 \textbf{Zwei Sitzreihen:} Beide Reihen haben dieselbe Winkelgeschwindigkeit $\omega$. Die äußere Reihe bewegt sich auf dem größeren Radius $r$. Nach $\tan\alpha=\omega^{2}\cdot r/g$ werden die äußeren Sitze deshalb stärker ausgelenkt -- unabhängig von der Besetzung, denn die Masse kürzt sich.
-\pagefooter{1 / 2}
-
-\newpage
-\sectiontitle{5 · Kräfte einzeichnen (Aufgabe 7)}
-\begin{center}
-\begin{tikzpicture}[x=1.4mm,y=1.4mm,>=Latex]
+\par\vspace{1mm}
+\sectiontitle{4 · Kräfte einzeichnen (Aufgabe 6)}
+\begin{minipage}[c]{0.44\linewidth}\centering
+\begin{tikzpicture}[x=1.0mm,y=1.0mm,>=Latex]
   \coordinate (A) at (6,45);
   \coordinate (P) at (46,18);
   \coordinate (FG) at (46,-2);
@@ -132,9 +116,11 @@ Erde und Satellit ziehen sich wegen ihrer Massen gegenseitig an. Beide Kräfte s
   \draw[-{Latex},Blue,line width=1.1pt] (P) -- (FS) node[above,font=\scriptsize]{$F_{\mathrm S}$};
   \draw[-{Latex},red!80!black,line width=1.1pt] (P) -- (FZ) node[midway,below,font=\scriptsize]{$F_{\mathrm Z}$};
 \end{tikzpicture}
-\end{center}
+\end{minipage}\hfill
+\begin{minipage}[c]{0.53\linewidth}
 \begin{tcolorbox}[colback=white,colframe=Line,arc=1.2mm,boxrule=.6pt,left=2mm,right=2mm,top=.7mm,bottom=.7mm]
 \small $F_{\mathrm G}=m\cdot g\approx0{,}74\unit{kN}$ senkrecht nach unten; $F_{\mathrm S}$ entlang der Kette zum Aufhängepunkt, $F_{\mathrm S}=F_{\mathrm G}/\cos56^{\circ}\approx1{,}3\unit{kN}$; Resultierende $F_{\mathrm Z}=F_{\mathrm G}\cdot\tan56^{\circ}\approx1{,}1\unit{kN}$ waagerecht zur Drehachse (Zentripetalkraft).
 \end{tcolorbox}
-\pagefooter{2 / 2}
+\end{minipage}
+\pagefooter{1 / 1}
 \end{document}

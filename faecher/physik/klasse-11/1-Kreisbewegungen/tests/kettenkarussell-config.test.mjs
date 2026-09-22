@@ -2,10 +2,8 @@ import assert from "node:assert/strict";
 import fs from "node:fs";
 import {
   CAROUSEL_ORIGIN,
-  SATELLITE_ORIGINS,
   evaluateCarouselForces,
   evaluateCentripetalForce,
-  evaluateSatelliteForces,
   isForceArrowPoint,
   quizItems,
 } from "../kettenkarussell.mjs";
@@ -45,8 +43,6 @@ function angularDiff(a, b) {
 
 [
   [CAROUSEL_ORIGIN, { min: -3, max: 3 }],
-  [SATELLITE_ORIGINS.onSatellite, { min: -4, max: 4 }],
-  [SATELLITE_ORIGINS.onEarth, { min: -4, max: 4 }],
 ].forEach(([origin, xRange]) => {
   const points = selectablePoints(origin, xRange);
   assert.ok(points.length >= 8, `Zu wenige wählbare Punkte für Ursprung ${JSON.stringify(origin)}`);
@@ -107,34 +103,6 @@ const mixedLengthResult = evaluateCarouselForces(mixedLength);
 assert.equal(mixedLengthResult.status, "partial");
 assert.match(mixedLengthResult.text, /zu kurz/);
 
-// ---- Rückmeldelogik: evaluateSatelliteForces ----
-
-const satelliteShort = [
-  { kind: "onSatellite", direction: "left", dx: -1, dy: 0 },
-  { kind: "onEarth", direction: "right", dx: 1, dy: 0 },
-];
-assert.equal(evaluateSatelliteForces(satelliteShort).status, "success");
-
-const satelliteLong = [
-  { kind: "onSatellite", direction: "left", dx: -3, dy: 0 },
-  { kind: "onEarth", direction: "right", dx: 3, dy: 0 },
-];
-assert.equal(evaluateSatelliteForces(satelliteLong).status, "success");
-
-const earthLonger = [
-  { kind: "onSatellite", direction: "left", dx: -1, dy: 0 },
-  { kind: "onEarth", direction: "right", dx: 3, dy: 0 },
-];
-const earthLongerResult = evaluateSatelliteForces(earthLonger);
-assert.equal(earthLongerResult.status, "partial");
-assert.match(earthLongerResult.text, /gleich groß/);
-
-const satelliteRight = [{ kind: "onSatellite", direction: "right", dx: 1, dy: 0 }];
-assert.equal(evaluateSatelliteForces(satelliteRight).status, "error");
-
-const onlySatellite = [{ kind: "onSatellite", direction: "left", dx: -1, dy: 0 }];
-assert.equal(evaluateSatelliteForces(onlySatellite).status, "partial");
-
 // ---- Rückmeldelogik: evaluateCentripetalForce ----
 
 assert.equal(evaluateCentripetalForce("340", "N").status, "success");
@@ -152,23 +120,22 @@ assert.equal(evaluateCentripetalForce("340", "").status, "error");
 // ---- Quiz ----
 
 assert.equal(quizItems.length, 5);
+assert.deepEqual(quizItems.map((item) => item.taskNumber), ["7a", "7b", "7c", "7d", "7e"]);
 assert.ok(quizItems.filter((item) => item.correct.length >= 2).length >= 2);
 assert.match(script, /input\.type = "checkbox"/);
 
 // ---- HTML ----
 
-assert.equal((html.match(/data-physics-tab=/g) || []).length, 6);
-assert.equal((html.match(/data-physics-panel=/g) || []).length, 6);
+assert.equal((html.match(/data-physics-tab=/g) || []).length, 5);
+assert.equal((html.match(/data-physics-panel=/g) || []).length, 5);
 assert.deepEqual(
   [...html.matchAll(/data-next-tab="([^"]+)"/g)].map((match) => match[1]),
-  ["satellite", "parallelogram", "describe", "summary", "quiz"]
+  ["parallelogram", "describe", "summary", "quiz"]
 );
 
 [
   "check-direction-force", "direction-force-feedback", "check-direction-release", "direction-release-feedback",
   "force-answer", "force-unit", "check-force", "force-feedback",
-  "satellite-force-grid", "check-satellite-forces", "satellite-feedback",
-  "satellite-origin-choice", "satellite-centripetal-choice",
   "parallelogram-cause-choice", "parallelogram-tan-choice",
   "omega-change-answer", "check-omega-change", "omega-change-feedback", "omega-change-count",
   "rows-answer", "check-rows", "rows-feedback", "rows-count",
@@ -179,7 +146,7 @@ assert.deepEqual(
   "solution-download-link", "solution-download-link-summary",
 ].forEach((id) => assert.match(html, new RegExp(`id="${id}"`), `Fehlendes Element #${id}`));
 
-const feedbackIds = ["direction-force-feedback", "direction-release-feedback", "force-feedback", "satellite-feedback", "carousel-feedback"];
+const feedbackIds = ["direction-force-feedback", "direction-release-feedback", "force-feedback", "carousel-feedback"];
 feedbackIds.forEach((id) => {
   const match = html.match(new RegExp(`id="${id}"[^>]*`));
   assert.ok(match && /aria-live="polite"/.test(match[0]), `${id} braucht aria-live="polite"`);
@@ -196,6 +163,12 @@ assert.match(html, /Erläutere<\/strong>, ob die Sitze gleich weit ausgelenkt we
 
 assert.doesNotMatch(html, /Alle Sitze werden gleich weit ausgelenkt/i);
 assert.doesNotMatch(html, /je schneller/i);
+assert.doesNotMatch(html, /satellit/i);
+
+// Antwortoptionen (Verständnis-Check und Abschlussquiz) enthalten keine Zentrifugalkraft.
+assert.ok(quizItems.every((item) => item.options.every(([, text]) => !/zentrifugal/i.test(text))), "Quiz-Antwort mit Zentrifugalkraft");
+// Rückmeldetexte ("error"/"partial"/"success") dürfen die Fehlvorstellung benennen, Antwortoptionen nicht.
+assert.doesNotMatch(script, /\["(?!error"|partial"|success")[^"]+", "[^"]*Zentrifugal/);
 
 // ---- Weitere Dateien ----
 

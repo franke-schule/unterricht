@@ -205,7 +205,7 @@ function setupCentripetalForceTask() {
   });
 }
 
-// ---- Geometrie für die Kraftraster (Aufgabe 3a und 7), siehe 5.2/5.3/5.4 ----
+// ---- Geometrie für die Kraftraster (Aufgabe 6), siehe 5.2/5.3/5.4 ----
 
 const ARROW_LENGTHS = [1, 3];
 
@@ -232,76 +232,7 @@ export function isForceArrowPoint(point, origin = { x: 0, y: 0 }) {
 }
 
 export const CAROUSEL_ORIGIN = { x: 1, y: 0 };
-export const SATELLITE_ORIGINS = { onSatellite: { x: 3, y: 0 }, onEarth: { x: -3, y: 0 } };
-
-// ---- Aufgabe 3a: Kräfte zwischen Erde und Satellit ----
-
-function drawEarthSatellite(layer, { toSvgPoint, svgElement }) {
-  const earth = toSvgPoint(SATELLITE_ORIGINS.onEarth);
-  const satellite = toSvgPoint(SATELLITE_ORIGINS.onSatellite);
-  const radiusPx = satellite.x - earth.x;
-  layer.append(svgElement("circle", { cx: earth.x, cy: earth.y, r: radiusPx, class: "orbit" }));
-  layer.append(svgElement("circle", { cx: earth.x, cy: earth.y, r: 80, class: "scene-fill" }));
-  const earthLabel = svgElement("text", { x: earth.x, y: earth.y + 55, "text-anchor": "middle", class: "svg-label" });
-  earthLabel.textContent = "Erde";
-  layer.append(earthLabel);
-  layer.append(svgElement("rect", { x: satellite.x - 11, y: satellite.y - 7, width: 22, height: 14, class: "scene-fill" }));
-  layer.append(svgElement("rect", { x: satellite.x - 34, y: satellite.y - 4, width: 20, height: 8, class: "scene-accent" }));
-  layer.append(svgElement("rect", { x: satellite.x + 14, y: satellite.y - 4, width: 20, height: 8, class: "scene-accent" }));
-  const satelliteLabel = svgElement("text", { x: satellite.x + 39, y: satellite.y - 15, "text-anchor": "start", class: "svg-label" });
-  satelliteLabel.textContent = "Satellit";
-  layer.append(satelliteLabel);
-  layer.append(svgElement("circle", { cx: earth.x, cy: earth.y, r: 6, class: "force-origin-marker" }));
-  layer.append(svgElement("circle", { cx: satellite.x, cy: satellite.y, r: 6, class: "force-origin-marker" }));
-}
-
-export function evaluateSatelliteForces(selections) {
-  const onSatellite = selections.find((selection) => selection.kind === "onSatellite");
-  const onEarth = selections.find((selection) => selection.kind === "onEarth");
-
-  if (!selections.length) return { status: "error", text: "Es fehlen beide Kraftpfeile. Wähle oben zuerst den Körper aus und klicke dann von seinem markierten Mittelpunkt aus in die Richtung der Kraft." };
-
-  if (onSatellite && onSatellite.direction !== "left") {
-    if (onSatellite.direction === "right") return { status: "error", text: "Noch nicht korrekt. Auf den Satelliten wirkt keine Kraft nach außen. Die Erde zieht ihn mit der Gravitationskraft zu sich heran – der Pfeil zeigt vom Satelliten zum Erdmittelpunkt." };
-    return { status: "error", text: "Noch nicht korrekt. Die Gravitationskraft wirkt entlang der Verbindungslinie der beiden Mittelpunkte. Der Pfeil am Satelliten zeigt deshalb genau zur Erde." };
-  }
-  if (onEarth && onEarth.direction !== "right") {
-    if (onEarth.direction === "left") return { status: "error", text: "Noch nicht korrekt. Auch die Erde wird angezogen – aber zum Satelliten hin, nicht von ihm weg. Der Pfeil am Erdmittelpunkt zeigt zum Satelliten." };
-    return { status: "error", text: "Noch nicht korrekt. Die Gravitationskraft wirkt entlang der Verbindungslinie der beiden Mittelpunkte. Der Pfeil am Erdmittelpunkt zeigt deshalb genau zum Satelliten." };
-  }
-  if (onSatellite && !onEarth) return { status: "partial", text: "Teilweise korrekt. Der Pfeil am Satelliten stimmt. Es fehlt noch die Gegenkraft: Nach dem Wechselwirkungsprinzip zieht auch der Satellit an der Erde. Wähle „Kraft auf die Erde“ und zeichne sie am Erdmittelpunkt ein." };
-  if (onEarth && !onSatellite) return { status: "partial", text: "Teilweise korrekt. Der Pfeil an der Erde stimmt. Es fehlt noch die Kraft, mit der die Erde den Satelliten anzieht. Wähle „Kraft auf den Satelliten“ und zeichne sie am Satelliten ein." };
-
-  const earthLength = Math.abs(onEarth.dx);
-  const satelliteLength = Math.abs(onSatellite.dx);
-  if (earthLength > satelliteLength) return { status: "partial", text: "Teilweise korrekt. Die Richtungen stimmen. Die Erde zieht aber nicht stärker als der Satellit: Nach dem Wechselwirkungsprinzip sind beide Kräfte gleich groß, obwohl die Erde viel mehr Masse hat. Zeichne beide Pfeile gleich lang." };
-  if (satelliteLength > earthLength) return { status: "partial", text: "Teilweise korrekt. Die Richtungen stimmen. Beide Kräfte bilden ein Wechselwirkungspaar und sind deshalb gleich groß. Zeichne beide Pfeile gleich lang." };
-
-  return { status: "success", text: "Korrekt: Erde und Satellit ziehen sich gegenseitig an. Beide Kräfte sind gleich groß, entgegengesetzt gerichtet und greifen an verschiedenen Körpern an – jeweils im Mittelpunkt des Körpers." };
-}
-
-function setupSatelliteForcesTask() {
-  const grid = createForceArrowGrid(document.getElementById("satellite-force-grid"), {
-    xRange: { min: -4, max: 4 },
-    yRange: { min: -3, max: 3 },
-    origin: { x: 2, y: 0 },
-    isSelectablePoint: isForceArrowPoint,
-    directionKey: directionFromOrigin,
-    renderIllustration: drawEarthSatellite,
-    label: "Erde und Satellit: Kraftpfeile an den Mittelpunkten der beiden Körper",
-    kindLegend: "Auf welchen Körper wirkt die Kraft, die du zeichnest?",
-    arrowKinds: [
-      { id: "onSatellite", symbol: "F", index: "Sat", name: "Kraft auf den Satelliten", color: "#2563eb", origin: SATELLITE_ORIGINS.onSatellite },
-      { id: "onEarth", symbol: "F", index: "Erde", name: "Kraft auf die Erde", color: "#7c3aed", origin: SATELLITE_ORIGINS.onEarth },
-    ],
-  });
-  document.getElementById("check-satellite-forces").addEventListener("click", () => {
-    const { status, text } = evaluateSatelliteForces(grid.getSelections());
-    setFeedback("satellite-feedback", status, text);
-  });
-}
-
-// ---- Aufgabe 7: Kräfte am Kettenkarussell ----
+// ---- Aufgabe 6: Kräfte am Kettenkarussell ----
 
 function drawCarousel(layer, { toSvgPoint, svgElement }) {
   const bodyPoint = toSvgPoint(CAROUSEL_ORIGIN);
@@ -401,7 +332,7 @@ function setupCarouselForcesTask() {
   });
 }
 
-// ---- Aufgabe 5 und 6: Freitext über physics-semantic-task ----
+// ---- Aufgabe 4 und 5: Freitext über physics-semantic-task ----
 
 function semanticFeedbackParagraph(text) {
   const paragraph = document.createElement("p");
@@ -466,28 +397,28 @@ function setupRowsTask() {
   });
 }
 
-// ---- Aufgabe 8: Abschlussquiz ----
+// ---- Aufgabe 7: Abschlussquiz ----
 
 export const quizItems = [
   {
-    taskNumber: "8a", question: "Welche Aussagen zur Zentripetalkraft beim Kettenkarussell sind richtig?", correct: ["resultant", "horizontal"],
+    taskNumber: "7a", question: "Welche Aussagen zur Zentripetalkraft beim Kettenkarussell sind richtig?", correct: ["resultant", "horizontal"],
     options: [
       ["resultant", "Sie ist die Resultierende aus Seilkraft und Gewichtskraft."],
       ["horizontal", "Sie zeigt waagerecht zur Drehachse."],
       ["chain", "Sie wird allein von der Kette übertragen und zeigt entlang der Kette."],
-      ["outward", "Sie zeigt nach außen und drückt die Sitze von der Achse weg."],
+      ["slower", "Sie wird kleiner, wenn sich das Karussell schneller dreht."],
       ["extra", "Sie wirkt als dritte Kraft zusätzlich zu Seilkraft und Gewichtskraft."],
     ],
     success: "Korrekt: Seilkraft und Gewichtskraft addieren sich zu einer waagerechten Resultierenden, die zur Drehachse zeigt und als Zentripetalkraft wirkt.",
     hint: "Stell dir das Kräfteparallelogramm aus {{F_S}} und {{F_G}} vor.",
     optionHints: {
       chain: "Die Kette zieht schräg nach oben. Erst zusammen mit der Gewichtskraft entsteht eine waagerechte Resultierende.",
-      outward: "Für einen Beobachter am Boden gibt es keine Kraft nach außen. Die Resultierende zeigt zur Drehachse.",
+      slower: "Nach {{F_Z}} = m · ω² · r ist bei größerem ω eine größere Zentripetalkraft nötig, nicht eine kleinere.",
       extra: "Die Zentripetalkraft ist keine dritte Kraft, sondern die Rolle der Resultierenden aus {{F_S}} und {{F_G}}.",
     },
   },
   {
-    taskNumber: "8b", question: "Das Karussell dreht sich schneller. Welche Größen werden größer?", correct: ["fz", "alpha", "fs", "r"],
+    taskNumber: "7b", question: "Das Karussell dreht sich schneller. Welche Größen werden größer?", correct: ["fz", "alpha", "fs", "r"],
     options: [
       ["fz", "die Zentripetalkraft {{F_Z}}"],
       ["alpha", "der Winkel α"],
@@ -504,7 +435,7 @@ export const quizItems = [
     },
   },
   {
-    taskNumber: "8c", question: "Welche Aussagen zum Auslenkwinkel α sind richtig?", correct: ["outer", "mass"],
+    taskNumber: "7c", question: "Welche Aussagen zum Auslenkwinkel α sind richtig?", correct: ["outer", "mass"],
     options: [
       ["outer", "Bei gleichem ω werden Sitze mit größerem Radius stärker ausgelenkt."],
       ["mass", "Die Masse der Person hat keinen Einfluss auf α."],
@@ -521,23 +452,24 @@ export const quizItems = [
     },
   },
   {
-    taskNumber: "8d", question: "Ein Satellit kreist um die Erde. Welche Aussagen sind richtig?", correct: ["gravity", "equal", "tangent"],
+    taskNumber: "7d", question: "Bei einem Karussell löst sich plötzlich die Aufhängung einer Gondel. Welche Aussagen sind richtig?", correct: ["tangent", "inertia"],
     options: [
-      ["gravity", "Die Gravitationskraft der Erde wirkt als Zentripetalkraft."],
-      ["equal", "Der Satellit zieht die Erde mit gleich großer Kraft an wie die Erde den Satelliten."],
-      ["tangent", "Ohne Gravitationskraft würde sich der Satellit tangential geradlinig weiterbewegen."],
-      ["earthStronger", "Die Erde zieht den Satelliten stärker an, weil sie die größere Masse hat."],
-      ["noforce", "Im Weltraum wirkt auf den Satelliten keine Kraft."],
+      ["tangent", "Von oben gesehen bewegt sich die Gondel tangential geradlinig weiter."],
+      ["inertia", "Ohne Zentripetalkraft wird die Gondel nicht mehr zur Mitte umgelenkt."],
+      ["radial", "Die Gondel fliegt radial nach außen, von der Drehachse weg."],
+      ["circle", "Die Gondel bewegt sich zunächst noch ein Stück auf der Kreisbahn weiter."],
+      ["center", "Die Gondel bewegt sich zur Drehachse hin."],
     ],
-    success: "Korrekt: Erde und Satellit ziehen sich gegenseitig mit gleich großen Kräften an. Die Kraft der Erde auf den Satelliten hält ihn als Zentripetalkraft auf seiner Bahn.",
-    hint: "Denke an das Wechselwirkungsprinzip und an den Trägheitssatz.",
+    success: "Korrekt: Ohne Zentripetalkraft wird die Gondel nicht mehr zur Mitte umgelenkt. Nach dem Trägheitssatz bewegt sie sich von oben gesehen tangential geradlinig in ihrer momentanen Bewegungsrichtung weiter.",
+    hint: "Denke an den Trägheitssatz: Was geschieht mit der momentanen Bewegungsrichtung, wenn keine Kraft mehr zur Mitte wirkt?",
     optionHints: {
-      earthStronger: "Nach dem Wechselwirkungsprinzip sind beide Kräfte gleich groß – unabhängig davon, welcher Körper die größere Masse hat.",
-      noforce: "Auch im Weltraum wirkt die Gravitationskraft der Erde. Ohne sie würde der Satellit tangential davonfliegen.",
+      radial: "Nach außen zieht keine Kraft. Die Gondel behält ihre momentane Bewegungsrichtung bei, und die zeigt tangential zur Kreisbahn.",
+      circle: "Für jede noch so kurze Kreisbewegung ist eine Kraft zur Mitte nötig. Sobald sie fehlt, verläuft die Bahn von oben gesehen sofort geradlinig.",
+      center: "Die Zentripetalkraft zeigt zwar zur Drehachse, sie fehlt aber nach dem Lösen. Ohne sie gibt es keinen Grund für eine Bewegung zur Mitte.",
     },
   },
   {
-    taskNumber: "8e", question: "Ein Karussell braucht für eine Umdrehung die Zeit T. Welche Formeln liefern die Zentripetalkraft auf eine Person der Masse m im Abstand r von der Drehachse?", correct: ["omega", "fourpi"],
+    taskNumber: "7e", question: "Ein Karussell braucht für eine Umdrehung die Zeit T. Welche Formeln liefern die Zentripetalkraft auf eine Person der Masse m im Abstand r von der Drehachse?", correct: ["omega", "fourpi"],
     options: [
       ["omega", "{{F_Z}} = m · ({{2π|T}})² · r"],
       ["fourpi", "{{F_Z}} = {{4π² · m · r|T²}}"],
@@ -564,60 +496,25 @@ if (typeof document !== "undefined") {
   setupNextTabButtons(stepTabs);
   setupDirectionTasks();
   setupCentripetalForceTask();
-  setupSatelliteForcesTask();
   renderMultipleChoice({
-    targetId: "satellite-origin-choice", taskNumber: "3b", question: "Wie kommen die Kräfte zwischen Erde und Satellit zustande, und was gilt für ihre Beträge?", correct: ["masses", "equal", "opposite"],
-    options: [
-      ["masses", "Erde und Satellit ziehen sich wegen ihrer Massen gegenseitig an."],
-      ["equal", "Beide Kräfte sind gleich groß."],
-      ["opposite", "Beide Kräfte sind entgegengesetzt gerichtet."],
-      ["earthStronger", "Die Erde zieht den Satelliten stärker an als der Satellit die Erde, weil die Erde die größere Masse hat."],
-      ["oneway", "Nur die Erde zieht den Satelliten an; auf die Erde wirkt keine Kraft."],
-      ["balance", "Die beiden Kräfte heben sich auf, weil sie gleich groß und entgegengesetzt gerichtet sind."],
-    ],
-    success: "Korrekt: Erde und Satellit ziehen sich aufgrund ihrer Massen gegenseitig an. Die beiden Kräfte sind gleich groß und entgegengesetzt gerichtet – sie wirken aber auf verschiedene Körper.",
-    hint: "Denke an das Wechselwirkungsprinzip: Übt ein Körper auf einen zweiten eine Kraft aus, dann übt auch der zweite auf den ersten eine Kraft aus.",
-    optionHints: {
-      earthStronger: "Die größere Masse der Erde ändert nichts am Wechselwirkungsprinzip: Beide Kräfte sind gleich groß. Die Erde merkt davon nur kaum etwas, weil dieselbe Kraft bei ihrer riesigen Masse fast keine Bewegungsänderung bewirkt.",
-      oneway: "Auch der Satellit zieht die Erde an. Kräfte treten immer paarweise auf – zu jeder Kraft gibt es eine gleich große Gegenkraft auf den anderen Körper.",
-      balance: "Die Kräfte heben sich nicht auf: Sie greifen an zwei verschiedenen Körpern an. Aufheben können sich nur Kräfte, die auf denselben Körper wirken.",
-    },
-  });
-  renderMultipleChoice({
-    targetId: "satellite-centripetal-choice", taskNumber: "3c", question: "Welche Kraft wirkt für den Satelliten als Zentripetalkraft?", correct: ["gravity"],
-    options: [
-      ["gravity", "die Gravitationskraft der Erde auf den Satelliten"],
-      ["onEarth", "die Kraft des Satelliten auf die Erde"],
-      ["centrifugal", "eine Zentrifugalkraft, die den Satelliten nach außen drückt"],
-      ["extra", "eine zusätzliche Zentripetalkraft neben der Gravitationskraft"],
-    ],
-    success: "Korrekt: Die Gravitationskraft der Erde auf den Satelliten zeigt zum Erdmittelpunkt, also zum Mittelpunkt der Kreisbahn. Sie übernimmt die Rolle der Zentripetalkraft.",
-    hint: "Die Zentripetalkraft muss auf den Satelliten selbst wirken und zum Mittelpunkt seiner Kreisbahn zeigen.",
-    optionHints: {
-      onEarth: "Diese Kraft wirkt auf die Erde, nicht auf den Satelliten. Für die Kreisbahn des Satelliten zählen nur Kräfte, die an ihm selbst angreifen.",
-      centrifugal: "Eine Kraft nach außen gibt es für einen Beobachter auf der Erde nicht. Ohne die Kraft zur Mitte würde der Satellit tangential weiterfliegen.",
-      extra: "Die Zentripetalkraft ist keine zusätzliche Kraft. Hier übernimmt die Gravitationskraft der Erde diese Rolle.",
-    },
-  });
-  renderMultipleChoice({
-    targetId: "parallelogram-cause-choice", taskNumber: "4a", question: "Welche Aussagen zur Zentripetalkraft beim Kettenkarussell sind richtig?", correct: ["ok1", "ok2"],
+    targetId: "parallelogram-cause-choice", taskNumber: "3a", question: "Welche Aussagen zur Zentripetalkraft beim Kettenkarussell sind richtig?", correct: ["ok1", "ok2"],
     options: [
       ["ok1", "Die Zentripetalkraft ist die Resultierende aus Seilkraft {{F_S}} und Gewichtskraft {{F_G}}."],
-      ["ok2", "Die Resultierende zeigt waagerecht zur Drehachse."],
+      ["ok2", "Die resultierende Kraft zeigt waagerecht zur Drehachse."],
       ["extra", "Neben {{F_S}} und {{F_G}} wirkt zusätzlich eine eigene Zentripetalkraft."],
-      ["outward", "Die Sitze werden von einer Zentrifugalkraft nach außen gedrückt."],
+      ["ropeOnly", "Die Seilkraft {{F_S}} allein wirkt als Zentripetalkraft."],
       ["vertical", "Die Seilkraft zeigt senkrecht nach oben."],
     ],
     success: "Korrekt: {{F_S}} und {{F_G}} addieren sich vektoriell zu einer waagerechten Resultierenden. Sie zeigt zur Drehachse und wirkt als Zentripetalkraft.",
     hint: "Überlege, welche Kräfte am Schwerpunkt tatsächlich angreifen und in welche Richtung ihre Summe zeigt.",
     optionHints: {
       extra: "Die Zentripetalkraft ist keine dritte Kraft. Sie ist der Name für die Rolle, die die Resultierende aus {{F_S}} und {{F_G}} übernimmt – würdest du sie zusätzlich einzeichnen, wäre sie doppelt gezählt.",
-      outward: "Für einen Beobachter am Boden gibt es keine Kraft nach außen. Die Sitze hängen schräg, weil nur so die Resultierende aus {{F_S}} und {{F_G}} zur Drehachse zeigen kann.",
+      ropeOnly: "{{F_S}} zeigt schräg nach oben zum Aufhängepunkt, nicht waagerecht zur Drehachse. Erst zusammen mit {{F_G}} ergibt sich eine waagerechte Resultierende – sie wirkt als Zentripetalkraft.",
       vertical: "Die Kette hängt schräg, und ein Seil zieht immer entlang seiner Richtung. Deshalb zeigt {{F_S}} schräg nach oben zum Aufhängepunkt.",
     },
   });
   renderMultipleChoice({
-    targetId: "parallelogram-tan-choice", taskNumber: "4b", question: "Welche Aussagen folgen aus tan α = {{F_Z|F_G}} = {{ω² · r|g}}?", correct: ["cancel", "ratio", "samerow"],
+    targetId: "parallelogram-tan-choice", taskNumber: "3b", question: "Welche Aussagen folgen aus tan α = {{F_Z|F_G}} = {{ω² · r|g}}?", correct: ["cancel", "ratio", "samerow"],
     options: [
       ["cancel", "Die Masse m kürzt sich, weil sowohl {{F_Z}} als auch {{F_G}} proportional zu m sind."],
       ["ratio", "tan α ist das Verhältnis von {{F_Z}} zu {{F_G}}."],
