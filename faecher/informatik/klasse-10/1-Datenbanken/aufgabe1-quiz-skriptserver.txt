@@ -1,0 +1,105 @@
+Befristete Tests zu Aufgabe 1 und 2 – Skriptserver-Aufgaben und Rückbau
+=======================================================================
+
+Diese Notiz gilt für beide nicht verlinkten Tests im Ordner 1-Datenbanken:
+
+  Test A  aufgabe1-quiz.html  Test zu Aufgabe 1 (Grundlagen Datenbanken)
+  Test B  aufgabe2-quiz.html  Test zu Aufgabe 2 (Redundanzen in Datenbanken)
+
+Beide wurden am 21.09.2026 angelegt. Sie sind befristet und sollen
+vollständig und ohne Reste wieder gelöscht werden; für Test A ist das etwa
+eine Woche später geplant (ca. 28.09.2026).
+
+Die Tests sind voneinander unabhängig: Keiner bindet eine Datei des anderen
+ein. Sie lassen sich deshalb getrennt und in beliebiger Reihenfolge löschen.
+Diese Notiz wird erst gelöscht, wenn beide Tests entfernt sind.
+
+
+1. Dem Skriptserver hinzugefügte Aufgaben
+-----------------------------------------
+
+Test A:
+  Aufgaben-ID (taskId):  inf10-db-a1-primaerschluessel
+  Datei:                 apps-script/Tasks.gs (Eintrag direkt nach 'sql-b3-1')
+  Aufgabe:               "Beschreibe, warum ein Primärschlüssel in Datenbanken
+                         benötigt wird." (Aufgabe 4 des Tests, 3 Punkte)
+  Verwendet von:         aufgabe1-quiz.js (Konstante DESCRIBE_TASK_ID)
+
+Test B:
+  Aufgaben-ID (taskId):  inf10-db-a2-aufteilung
+  Datei:                 apps-script/Tasks.gs (Eintrag direkt nach
+                         'inf10-db-a1-primaerschluessel', vor
+                         'inf9-dfd-zylinder-beschreibung')
+  Aufgabe:               "Beschreibe, warum InstaHub die Daten auf die
+                         Tabellen users und photos aufteilt." (Aufgabe 4 des
+                         Tests, 3 Punkte)
+  Verwendet von:         aufgabe2-quiz.js (Konstante DESCRIBE_TASK_ID)
+
+Weitere Aufgaben wurden dem Skriptserver nicht hinzugefügt.
+
+
+2. Alle Änderungen, die zu den Tests gehören
+--------------------------------------------
+
+Neue Dateien in faecher/informatik/klasse-10/1-Datenbanken/:
+
+  Test A:  aufgabe1-quiz.html, aufgabe1-quiz.js, aufgabe1-quiz.css
+  Test B:  aufgabe2-quiz.html, aufgabe2-quiz.js, aufgabe2-quiz.css
+  Beide:   aufgabe1-quiz-skriptserver.txt   (diese Notiz)
+
+Geänderte Dateien in apps-script/ (je Test ein Eintrag):
+
+  Tasks.gs                   Aufgabenblock 'inf10-db-a1-primaerschluessel'
+                             bzw. 'inf10-db-a2-aufteilung' ergänzt
+  Config.gs                  je eine Kommentarzeile im Kopf ergänzt:
+                             " * - inf10/1-Datenbanken/aufgabe1-quiz.html (...)"
+                             " * - inf10/1-Datenbanken/aufgabe2-quiz.html (...)"
+  tests/code-routing.test.js beide Aufgaben-IDs in der Liste der geprüften
+                             Beschreibe-Aufgaben ergänzt (hinter 'sql-b2-3'
+                             und 'sql-b3-1')
+
+Nicht geändert: Menüs und Übersichtsseiten. Die Tests sind nirgends
+verlinkt, beim Löschen muss deshalb kein Link entfernt werden. Gemeinsam
+genutzte Dateien (redundanzen.css, grundlagen.css, sql-lab-core.mjs,
+styles.css) wurden nur eingebunden, nicht verändert – sie bleiben
+unangetastet.
+
+
+3. Rückbau-Checkliste
+---------------------
+
+Für jeden Test getrennt abarbeiten. Platzhalter:
+
+                  Test A                           Test B
+  <DATEI>         aufgabe1-quiz                    aufgabe2-quiz
+  <ID>            inf10-db-a1-primaerschluessel    inf10-db-a2-aufteilung
+
+  [ ] Die drei Dateien <DATEI>.html, <DATEI>.js und <DATEI>.css in
+      1-Datenbanken löschen (git rm).
+  [ ] apps-script/Tasks.gs: den kompletten Block '<ID>': { ... }, entfernen.
+  [ ] apps-script/Config.gs: die Kommentarzeile zu <DATEI>.html entfernen.
+  [ ] apps-script/tests/code-routing.test.js: die Zeile '<ID>' aus der Liste
+      entfernen. Danach darf nur hinter dem letzten Listeneintrag kein Komma
+      stehen.
+  [ ] Kontrolle, dass keine Reste bleiben:
+        git grep -n "<DATEI>"
+        git grep -n "<ID>"
+      Solange der andere Test noch besteht, darf es nur noch Treffer in
+      dieser Notiz geben. Nach dem Löschen beider Tests: gar keine Treffer.
+  [ ] Tests ausführen:
+        node apps-script/tests/code-routing.test.js
+        node apps-script/tests/sql-description-tasks.test.js
+  [ ] Falls die Aufgabe in Google Apps Script bereitgestellt wurde:
+      Tasks.gs und Config.gs dort ebenfalls aktualisieren und die
+      Bereitstellung auf eine neue Version setzen (die /exec-URL bleibt
+      gleich). Sonst kennt der Online-Server die Aufgabe weiterhin.
+  [ ] Website neu hochladen, damit <DATEI>.html auch online entfernt ist.
+  [ ] In dieser Notiz den gelöschten Test als entfernt vermerken. Sind
+      beide Tests entfernt, die Notiz selbst löschen
+      (git rm aufgabe1-quiz-skriptserver.txt).
+
+Hinweis: In den Browsern der Schülerinnen und Schüler bleiben ggf. die
+localStorage-Einträge "informatik10-datenbanken-aufgabe1-test-v1" und
+"informatik10-datenbanken-aufgabe2-test-v1" zurück. Sie enthalten nur deren
+Testeingaben, werden von keiner anderen Seite gelesen und müssen nicht
+entfernt werden.

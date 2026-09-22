@@ -6,8 +6,8 @@ const source = fs.readFileSync(new URL("../haftreibung-zentripetalkraft.mjs", im
 const css = fs.readFileSync(new URL("../haftreibung-zentripetalkraft.css", import.meta.url), "utf8");
 
 assert.match(html, /Aufgabe 3 – Die Haftreibungskraft als Zentripetalkraft/);
-assert.match(html, /haftreibung-zentripetalkraft\.mjs\?v=20260921a/);
-assert.match(html, /haftreibung-zentripetalkraft\.css\?v=20260921a/);
+assert.match(html, /haftreibung-zentripetalkraft\.mjs\?v=20260922b/);
+assert.match(html, /haftreibung-zentripetalkraft\.css\?v=20260922b/);
 assert.equal((html.match(/data-physics-tab=/g) || []).length, 6);
 assert.equal((html.match(/data-physics-panel=/g) || []).length, 6);
 assert.deepEqual([...html.matchAll(/data-next-tab="([^"]+)"/g)].map((match) => match[1]), ["curve", "grip", "limit", "calculate", "quiz"]);
@@ -36,6 +36,23 @@ for (const obsolete of ["side-force", "friction-state", "decomposition-animation
 assert.doesNotMatch(html, /Gleitreibung/i);
 assert.doesNotMatch(source, /Gleitreibung/i);
 assert.doesNotMatch(source, /setupPhysicsSemanticTask/);
+
+// Aufgabe 4: Herleitung als Drag-and-Drop-Zuordnung statt Formelauswahl.
+assert.match(html, /id="derivation-sort"[\s\S]*id="check-derivation"[\s\S]*id="reset-derivation"[\s\S]*id="derivation-feedback"[^>]+aria-live="polite"/);
+assert.match(html, /id="derivation-remember"[^>]+hidden/);
+assert.doesNotMatch(html, /limit-formula|derivation-steps/);
+assert.doesNotMatch(source, /limit-formula/);
+assert.match(source, /from "\.\/components\/token-drag\.mjs"/);
+assert.equal((source.match(/^  \{ id: "(limit|insert|cancel|multiply|root)", formula:/gm) || []).length, 5);
+assert.match(source, /id: "no-root"/);
+assert.match(source, /id: "divide"/);
+assert.match(css, /\.derivation-sort \{ display: grid; grid-template-columns: minmax\(0, 1\.15fr\) minmax\(0, 1fr\)/);
+
+// Wurzeln in Aufgabe 4 und 5 mit durchgehendem Wurzelstrich.
+assert.match(source, /createSquareRoot\(/);
+assert.match(source, /addSquareRootSigns\(\);/);
+assert.equal((html.match(/class="physics-sqrt" role="img" aria-label="Wurzel aus /g) || []).length, 6);
+assert.match(html, /physics-notation\.css\?v=20260922b/);
 
 assert.equal((html.match(/class="speed-entry"/g) || []).length, 2);
 assert.match(html, /id="wet-speed-answer"[\s\S]*id="wet-speed-unit"[\s\S]*id="check-wet-speed"[\s\S]*id="wet-speed-feedback"/);

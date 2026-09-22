@@ -1,5 +1,6 @@
 import { setupPhysicsStepTabs } from "./components/physics-step-tabs.mjs";
-import { appendPhysicsText, createIndexedSymbol, createQuotient, createUnitFraction } from "./components/physics-notation.mjs";
+import { addSquareRootSigns, appendPhysicsText, createIndexedSymbol, createQuotient, createSquareRoot, createUnitFraction } from "./components/physics-notation.mjs?v=20260922b";
+import { enableTokenDrag, wasDragged } from "./components/token-drag.mjs";
 
 function unlockSolution(event, expectedCode, downloadLinkId, messageId) {
   event.preventDefault();
@@ -19,12 +20,8 @@ function appendLearningText(target, text) {
     if (!part) return;
     if (index % 2 === 0) { target.append(document.createTextNode(part)); return; }
     if (part.startsWith("sqrt:")) {
-      const root = document.createElement("span");
-      root.setAttribute("role", "img");
-      root.setAttribute("aria-label", `Wurzel aus ${part.slice(5).replace("μ", "mü")}`);
-      root.append(document.createTextNode("√("));
-      appendLearningText(root, part.slice(5));
-      root.append(document.createTextNode(")"));
+      const { root, radicand } = createSquareRoot(`Wurzel aus ${part.slice(5).replace("μ", "mü").replaceAll("·", "mal")}`);
+      appendLearningText(radicand, part.slice(5));
       target.append(root);
       return;
     }
@@ -102,14 +99,203 @@ function setupGripStatements() {
   });
 }
 
-function setupLimitFormula() {
-  document.getElementById("check-limit-formula").addEventListener("click", () => {
-    const value = document.querySelector("input[name='limit-formula']:checked")?.value;
-    if (!value) setFeedback("limit-formula-feedback", "error", "Wähle zuerst eine Formel aus.");
-    else if (value === "correct") setFeedback("limit-formula-feedback", "success", "Richtig. Im Grenzfall ergibt sich {{v_B,max}} = {{sqrt:μ · g · r}}.");
-    else if (value === "mass") setFeedback("limit-formula-feedback", "partial", "Fast richtig. Die Wurzel stimmt, aber die Masse steht auf beiden Seiten der Ausgangsgleichung und kürzt sich.");
-    else setFeedback("limit-formula-feedback", "error", "Noch nicht korrekt. Multipliziere nach dem Kürzen mit r und ziehe anschließend die Quadratwurzel.");
+// Herleitung als Zuordnung: links die Rechenschritte in Reihenfolge, rechts
+// daneben die Umformung, die zum Schritt führt. Eine Beschreibung gilt als
+// richtig, wenn sie zur Gleichung in derselben Zeile passt. Je eine Karte pro
+// Speicher greift eine typische Fehlvorstellung auf und bleibt übrig.
+// Ziehen und Antippen wie in kraefte-bewegung.mjs (setupLawTermMatching).
+const derivationSteps = [
+  { id: "limit", formula: "{{F_Z}} = {{F_Haft,max}}", spoken: "F mit Index Z gleich F mit Index Haft,max", description: "Grenzfall ansetzen" },
+  { id: "insert", formula: "m · {{v_B²|r}} = μ · m · g", spoken: "m mal v mit Index B zum Quadrat durch r gleich mü mal m mal g", description: "Formeln einsetzen" },
+  { id: "cancel", formula: "{{v_B²|r}} = μ · g", spoken: "v mit Index B zum Quadrat durch r gleich mü mal g", description: "Masse kürzen" },
+  { id: "multiply", formula: "{{v_B}}² = μ · g · r", spoken: "v mit Index B zum Quadrat gleich mü mal g mal r", description: "Mit r multiplizieren" },
+  { id: "root", formula: "{{v_B,max}} = {{sqrt:μ · g · r}}", spoken: "v mit Index B,max gleich Wurzel aus mü mal g mal r", description: "Wurzel ziehen" },
+];
+const derivationFormulaCards = [
+  ...derivationSteps.map(({ id, formula, spoken }) => ({ id, text: formula, spoken })),
+  { id: "no-root", text: "{{v_B,max}} = μ · g · r", spoken: "v mit Index B,max gleich mü mal g mal r" },
+];
+const derivationDescriptionCards = [
+  ...derivationSteps.map(({ id, description }) => ({ id, text: description, spoken: description })),
+  { id: "divide", text: "Durch r teilen", spoken: "Durch r teilen" },
+];
+
+function setupDerivationSort() {
+  const target = document.getElementById("derivation-sort");
+  const feedback = document.getElementById("derivation-feedback");
+  const remember = document.getElementById("derivation-remember");
+  // Feste, gemischte Speicherreihenfolge; Beschreibungen alphabetisch, damit
+  // die Reihenfolge nichts verrät.
+  const formulaOrder = ["insert", "cancel", "no-root", "root", "limit", "multiply"];
+  const groups = {
+    formula: { cards: formulaOrder.map((id) => derivationFormulaCards.find((card) => card.id === id)), title: "Rechenschritte", column: "Reihenfolge der Rechenschritte", slotName: "Rechenschritt" },
+    description: { cards: [...derivationDescriptionCards].sort((left, right) => left.text.localeCompare(right.text, "de")), title: "Beschreibungen", column: "Was wird gemacht?", slotName: "Beschreibung" },
+  };
+  Object.values(groups).forEach((group) => { group.values = derivationSteps.map(() => ""); group.slots = []; });
+  let picked = null; // { group, value, from } mit from = Zeilenindex oder -1 (Speicher)
+
+  const cardOf = (groupName, id) => groups[groupName].cards.find((card) => card.id === id);
+  const selectors = (groupName) => ({
+    dropSelector: `#derivation-sort .formula-slot[data-group="${groupName}"]`,
+    bankSelector: `#derivation-sort .derivation-bank[data-group="${groupName}"]`,
   });
+
+  function place(groupName, value, from, to) {
+    const values = groups[groupName].values;
+    if (from >= 0) values[from] = "";
+    if (to >= 0) {
+      const previous = values[to];
+      values[to] = value;
+      if (from >= 0 && previous) values[from] = previous;
+    }
+    picked = null;
+    feedback.hidden = true;
+    render();
+  }
+
+  function renderCard(element, groupName, id) {
+    element.replaceChildren();
+    appendLearningText(element, cardOf(groupName, id).text);
+  }
+
+  // Die Speicher stehen auf breiten Bildschirmen als dritte Spalte rechts,
+  // sonst über den Zeilen (siehe CSS); die Spaltenköpfe nur im ersten Fall.
+  const banks = document.createElement("div");
+  banks.className = "derivation-banks";
+  Object.entries(groups).forEach(([groupName, group]) => {
+    const block = document.createElement("div");
+    block.className = "derivation-bank-block";
+    const heading = document.createElement("h4");
+    heading.textContent = group.title;
+    group.bank = document.createElement("div");
+    group.bank.className = "cloze-term-bank derivation-bank";
+    group.bank.dataset.group = groupName;
+    group.bank.setAttribute("aria-label", `Speicher: ${group.title}`);
+    block.append(heading, group.bank);
+    banks.append(block);
+  });
+  target.append(banks);
+  Object.entries(groups).forEach(([groupName, group]) => {
+    const head = document.createElement("p");
+    head.className = `derivation-column-head derivation-cell-${groupName}`;
+    head.textContent = group.column;
+    head.setAttribute("aria-hidden", "true");
+    target.append(head);
+  });
+
+  derivationSteps.forEach((step, index) => {
+    Object.entries(groups).forEach(([groupName, group]) => {
+      const cell = document.createElement("div");
+      cell.className = `derivation-cell derivation-cell-${groupName}`;
+      cell.style.setProperty("--derivation-row", String(index + 2));
+      if (groupName === "formula") {
+        const number = document.createElement("span");
+        number.className = "derivation-step-number";
+        number.textContent = String(index + 1);
+        number.setAttribute("aria-hidden", "true");
+        cell.append(number);
+      }
+      const slot = document.createElement("button");
+      slot.type = "button";
+      slot.className = "formula-slot";
+      slot.dataset.group = groupName;
+      slot.dataset.index = String(index);
+      enableTokenDrag(slot, {
+        ...selectors(groupName),
+        getLabel: () => group.values[index],
+        renderGhost: (ghost) => renderCard(ghost, groupName, group.values[index]),
+        onDrop: (dropSlot, onBank) => {
+          const value = group.values[index];
+          const to = dropSlot ? Number(dropSlot.dataset.index) : -1;
+          if (to >= 0 && to !== index) place(groupName, value, index, to);
+          else if (onBank) place(groupName, value, index, -1);
+          else render();
+        },
+      });
+      slot.addEventListener("click", () => {
+        if (wasDragged(slot)) return;
+        const value = group.values[index];
+        if (picked?.group === groupName && picked.from !== index) { place(groupName, picked.value, picked.from, index); slot.focus(); return; }
+        if (picked?.group === groupName && picked.from === index) { place(groupName, value, index, -1); return; }
+        if (value) { picked = { group: groupName, value, from: index }; render(); slot.focus(); }
+      });
+      group.slots.push(slot);
+      cell.append(slot);
+      target.append(cell);
+    });
+  });
+
+  function render() {
+    Object.entries(groups).forEach(([groupName, group]) => {
+      group.bank.replaceChildren(...group.cards.filter((card) => !group.values.includes(card.id)).map((card) => {
+        const token = document.createElement("button");
+        token.type = "button";
+        token.className = "cloze-token";
+        renderCard(token, groupName, card.id);
+        const isPicked = picked?.group === groupName && picked.value === card.id && picked.from === -1;
+        token.setAttribute("aria-pressed", String(isPicked));
+        token.setAttribute("aria-label", card.spoken);
+        token.classList.toggle("is-picked", isPicked);
+        enableTokenDrag(token, {
+          ...selectors(groupName),
+          getLabel: () => card.id,
+          renderGhost: (ghost) => renderCard(ghost, groupName, card.id),
+          onDrop: (slot) => { if (slot) place(groupName, card.id, -1, Number(slot.dataset.index)); else render(); },
+        });
+        token.addEventListener("click", () => {
+          if (wasDragged(token)) return;
+          picked = isPicked ? null : { group: groupName, value: card.id, from: -1 };
+          render();
+          if (picked) (group.slots.find((slot) => !slot.classList.contains("is-filled")) || group.slots[0])?.focus();
+        });
+        return token;
+      }));
+      group.slots.forEach((slot, index) => {
+        const value = group.values[index];
+        if (value) renderCard(slot, groupName, value);
+        else slot.textContent = "Hierher ziehen";
+        slot.classList.toggle("is-filled", Boolean(value));
+        slot.classList.toggle("is-picked", picked?.group === groupName && picked.from === index);
+        slot.classList.toggle("is-selected", picked?.group === groupName && !value);
+        slot.setAttribute("aria-label", `${group.slotName} in Zeile ${index + 1}: ${value ? cardOf(groupName, value).spoken : "leer"}`);
+      });
+    });
+  }
+
+  document.getElementById("check-derivation").addEventListener("click", () => {
+    const formulas = groups.formula.values;
+    const descriptions = groups.description.values;
+    const total = derivationSteps.length;
+    remember.hidden = true;
+    if (formulas.includes("") || descriptions.includes("")) {
+      setFeedback(feedback, "error", `Fülle zuerst alle ${total} Zeilen: links je einen Rechenschritt, rechts je eine Beschreibung.`);
+      return;
+    }
+    const orderHits = formulas.filter((id, index) => id === derivationSteps[index].id).length;
+    const pairHits = descriptions.filter((id, index) => id === formulas[index]).length;
+    if (orderHits === total && pairHits === total) {
+      setFeedback(feedback, "success", "Richtig. Jede Gleichung entsteht durch genau eine Umformung aus der Zeile darüber, und jede Beschreibung nennt diese Umformung. Am Ende steht {{v_B,max}} = {{sqrt:μ · g · r}}.");
+      remember.hidden = false;
+      return;
+    }
+    const hints = [];
+    if (formulas.includes("no-root")) hints.push("Die Gleichung {{v_B,max}} = μ · g · r gehört nicht in die Herleitung: Nach dem Multiplizieren mit r steht links noch {{v_B}}². Erst die Quadratwurzel liefert {{v_B,max}}.");
+    if (descriptions.includes("divide")) hints.push("„Durch r teilen“ passt zu keinem Schritt: r steht bereits im Nenner. Um r aus dem Nenner zu holen, multiplizierst du mit r.");
+    if (orderHits < total) hints.push(`${orderHits} von ${total} Rechenschritten stehen an der richtigen Stelle. Jede Gleichung muss durch genau eine Umformung aus der Zeile darüber entstehen.`);
+    if (pairHits < total) hints.push(`${pairHits} von ${total} Beschreibungen passen zum Rechenschritt links daneben. Eine Beschreibung nennt die Umformung, die zu dieser Gleichung führt.`);
+    const status = orderHits + pairHits > 0 ? "partial" : "error";
+    setFeedback(feedback, status, `${status === "partial" ? "Teilweise korrekt." : "Noch nicht korrekt."} ${hints.join(" ")}`);
+  });
+
+  document.getElementById("reset-derivation").addEventListener("click", () => {
+    Object.values(groups).forEach((group) => group.values.fill(""));
+    picked = null;
+    feedback.hidden = true;
+    remember.hidden = true;
+    render();
+  });
+
+  render();
 }
 
 function numberValue(raw) {
@@ -210,12 +396,13 @@ function setupFinalQuiz() {
   items.forEach((item, index) => renderQuizQuestion(target, item, index));
 }
 
+addSquareRootSigns();
 const stepTabs = setupPhysicsStepTabs();
 setupNextTabButtons(stepTabs);
 setupRealForces();
 setupCurveStatement();
 setupGripStatements();
-setupLimitFormula();
+setupDerivationSort();
 setupSpeedTask(speedTasks.wet);
 setupSpeedTask(speedTasks.ice);
 setupFinalQuiz();

@@ -27,10 +27,34 @@
 .friction-value-table th { color: #1e3a8a; background: #dbeafe; }
 .friction-value-table td:last-child, .friction-value-table th:last-child { text-align: center; font-weight: 700; }
 
-.derivation-steps { display: grid; gap: 12px; margin: 16px 0; padding-left: 1.6rem; }
-.derivation-steps li { padding: 12px 14px; border-left: 4px solid #60a5fa; background: #f8fafc; }
-.derivation-steps strong { display: block; color: #1e3a8a; }
-.derivation-formula { display: block; width: fit-content; max-width: 100%; margin: 9px auto 1px; font-size: clamp(1.05rem, 2.5vw, 1.35rem); line-height: 1.9; text-align: center; }
+/* Aufgabe 4: Rechenschritte links untereinander, Beschreibungen rechts
+   daneben. Kompakt gehalten, damit Speicher und alle Zeilen beim Ziehen auf
+   einem Laptop-Bildschirm gleichzeitig sichtbar sind. */
+.derivation-sort { display: grid; grid-template-columns: minmax(0, 1.15fr) minmax(0, 1fr); gap: 7px 14px; margin: 10px 0 12px; }
+.derivation-banks { display: contents; }
+.derivation-column-head { display: none; margin: 0; color: #1e3a8a; font-size: .92rem; font-weight: 800; }
+@media (min-width: 1000px) {
+  .derivation-sort { grid-template-columns: minmax(0, 1fr) minmax(0, .62fr) minmax(0, 1.2fr); align-items: center; }
+  .derivation-sort .cloze-token { padding-inline: 7px; }
+  .derivation-banks { display: grid; grid-column: 3; grid-row: 1 / span 6; align-self: start; gap: 8px; }
+  .derivation-column-head { display: block; grid-row: 1; align-self: end; }
+  .derivation-cell { grid-row: var(--derivation-row); }
+  .derivation-cell-formula { grid-column: 1; }
+  .derivation-cell-description { grid-column: 2; }
+  .derivation-bank-block { margin-bottom: 0; }
+}
+.derivation-bank-block { display: grid; align-content: start; gap: 4px; margin-bottom: 4px; padding: 6px 8px; border: 1px solid #cbd5e1; border-radius: 10px; background: #f8fafc; }
+.derivation-bank-block h4 { margin: 0; color: #1e3a8a; font-size: .92rem; line-height: 1.2; }
+.derivation-bank { gap: 6px; min-height: 46px; align-content: flex-start; }
+.derivation-sort .cloze-token { min-height: 40px; padding: 2px 9px; line-height: 1.25; }
+.derivation-cell { display: flex; align-items: center; gap: 8px; min-width: 0; }
+.derivation-step-number { display: grid; flex: 0 0 28px; place-items: center; width: 28px; height: 28px; border-radius: 50%; color: #fff; background: #1e3a8a; font-weight: 800; }
+.derivation-sort .formula-slot { flex: 1 1 auto; width: 100%; min-width: 0; min-height: 46px; padding: 2px 10px; font-weight: 750; line-height: 1.25; }
+.derivation-sort .formula-slot:not(.is-filled) { color: #64748b; font-weight: 600; }
+.derivation-sort .formula-slot.is-picked { outline: 3px solid #2563eb; outline-offset: 2px; }
+.derivation-cell-description .formula-slot { text-align: left; }
+/* Hilfen nebeneinander, damit die Aufgabe samt Hilfen in die Laptop-Höhe passt. */
+#panel-limit .physics-help-stack { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); align-items: start; }
 
 .speed-task-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 14px; margin: 16px 0; }
 .speed-entry { min-width: 0; padding: 14px; border: 1px solid #bfdbfe; border-radius: 10px; background: #f8fbff; }
@@ -51,6 +75,9 @@
 
 @media (max-width: 700px) {
   .curve-introduction, .speed-task-grid { grid-template-columns: 1fr; }
+  /* Einspaltig: Die Beschreibung steht eingerückt unter ihrem Rechenschritt. */
+  .derivation-sort, #panel-limit .physics-help-stack { grid-template-columns: 1fr; }
+  .derivation-cell-description { padding-left: 36px; margin-bottom: 6px; }
 }
 
 @media (max-width: 620px) {
@@ -58,7 +85,6 @@
   .friction-page .physics-step-tabs [role="tab"] { flex-basis: 135px; }
   .force-match-card img { object-position: center; }
   .speed-entry { padding: 11px; }
-  .derivation-steps { padding-left: 1.35rem; }
 }
 
 @media (max-width: 390px) {

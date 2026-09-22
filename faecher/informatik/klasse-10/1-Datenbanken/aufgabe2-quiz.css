@@ -1,4 +1,5 @@
-/* Test zu Aufgabe 1. Wortkarten und Lücken nach was-ist-ki/task0.css (Informatik 11). */
+/* Test zu Aufgabe 2. Eigenständige Kopie der Gestaltung des Tests zu Aufgabe 1, damit beide Tests getrennt gelöscht werden können.
+   Wortkarten und Lücken nach was-ist-ki/task0.css (Informatik 11). */
 .quiz-test-page .quiz-test { min-height: 0; }
 .quiz-test-page .evaluation-panel { margin-top: 22px; }
 .quiz-test-page .task-card h3 { display: flex; flex-wrap: wrap; align-items: baseline; justify-content: space-between; gap: 6px 12px; }
@@ -70,6 +71,19 @@
   .quiz-test-page .sort-zone { min-height: 0; }
 }
 
+/* Zuordnung zu zwei Tabellen: Attributkarten nebeneinander, in Codeschrift. */
+.quiz-test-page .quiz-sort-two .sort-zones { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+.quiz-test-page .quiz-sort-two .sort-zone-items { display: flex; flex-wrap: wrap; gap: 8px; }
+.quiz-test-page .quiz-sort-two .sort-zone-items .cloze-token { width: auto; }
+.quiz-test-page .quiz-sort-two .cloze-token { font-family: "SFMono-Regular", Consolas, monospace; }
+
+/* Tabellenausschnitt in einer Multiple-Choice-Frage */
+.quiz-test-page .given-table { margin: 0 0 12px; }
+.quiz-test-page .given-table .data-table { min-width: 520px; table-layout: auto; }
+
+@media (max-width: 480px) {
+  .quiz-test-page .quiz-sort-two .sort-zones { grid-template-columns: 1fr; }
+}
 @media print {
   .quiz-test-page .quiz-test, .quiz-test-page .progress-card, .quiz-test-page .module-topbar, .quiz-test-page .summary-actions { display: none; }
 }

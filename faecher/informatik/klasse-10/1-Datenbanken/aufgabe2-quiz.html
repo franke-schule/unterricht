@@ -4,12 +4,12 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="robots" content="noindex, nofollow">
-    <title>Test zu Aufgabe 1 – Grundlagen Datenbanken | Informatik 10</title>
+    <title>Test zu Aufgabe 2 – Redundanzen in Datenbanken | Informatik 10</title>
     <link rel="stylesheet" href="../../../../styles.css?v=20260825">
     <link rel="stylesheet" href="redundanzen.css?v=20260916a">
     <link rel="stylesheet" href="grundlagen.css?v=20260911">
-    <link rel="stylesheet" href="aufgabe1-quiz.css?v=20260921b">
-    <script type="module" src="aufgabe1-quiz.js?v=20260921b"></script>
+    <link rel="stylesheet" href="aufgabe2-quiz.css?v=20260921">
+    <script type="module" src="aufgabe2-quiz.js?v=20260921"></script>
   </head>
   <body class="redundancy-page grundlagen-page quiz-test-page">
     <div class="site-backdrop" aria-hidden="true"></div>
@@ -20,8 +20,8 @@
       </nav>
 
       <header class="module-header">
-        <div class="eyebrow"><span aria-hidden="true">◎</span> Test · Datenbank-Grundlagen</div>
-        <h1>Test zu Aufgabe 1</h1>
+        <div class="eyebrow"><span aria-hidden="true">◎</span> Test · Redundanzen in Datenbanken</div>
+        <h1>Test zu Aufgabe 2</h1>
         <p>Bearbeite alle vier Aufgaben. Die Auswertung erhältst du erst, wenn du den Test abgibst.</p>
       </header>
 
@@ -35,17 +35,17 @@
 
       <form id="quiz-test" class="step-panel quiz-test" novalidate>
         <section class="task-card" aria-labelledby="task1-title">
-          <h3 id="task1-title">Aufgabe 1 – Begriffe aus Programmierung und Datenbank <span class="task-points">6 Punkte</span></h3>
+          <h3 id="task1-title">Aufgabe 1 – Redundanz und Aufteilung <span class="task-points">6 Punkte</span></h3>
           <p id="task1-instruction"><strong>Ziehe</strong> die passenden Begriffe aus dem Wortspeicher in die Lücken. Zwei Begriffe bleiben übrig.</p>
           <p class="drag-help">Ohne Ziehen: Begriff antippen, dann Lücke antippen. Eine belegte Lücke zweimal antippen, um den Begriff zurückzulegen.</p>
           <div id="term-cloze" class="quiz-cloze" aria-describedby="task1-instruction"></div>
         </section>
 
         <section class="task-card" aria-labelledby="task2-title">
-          <h3 id="task2-title">Aufgabe 2 – SQL-Datentypen zuordnen <span class="task-points">8 Punkte</span></h3>
-          <p id="task2-instruction"><strong>Ordne</strong> jeden Wert dem passenden SQL-Datentyp zu. Zu jedem Datentyp gehören zwei Werte.</p>
-          <p class="drag-help">Ohne Ziehen: Wert antippen, dann Datentyp antippen. Einen zugeordneten Wert zweimal antippen, um ihn zurückzulegen.</p>
-          <div id="type-sort" class="quiz-sort" aria-describedby="task2-instruction"></div>
+          <h3 id="task2-title">Aufgabe 2 – Attribute zuordnen <span class="task-points">8 Punkte</span></h3>
+          <p id="task2-instruction"><strong>Ordne</strong> jedes Attribut der Tabelle zu, in der es bei InstaHub gespeichert wird.</p>
+          <p class="drag-help">Ohne Ziehen: Attribut antippen, dann Tabelle antippen. Ein zugeordnetes Attribut zweimal antippen, um es zurückzulegen.</p>
+          <div id="type-sort" class="quiz-sort quiz-sort-two" aria-describedby="task2-instruction"></div>
         </section>
 
         <section class="task-card" aria-labelledby="task3-title">
@@ -55,8 +55,8 @@
         </section>
 
         <section class="task-card" aria-labelledby="task4-title">
-          <h3 id="task4-title">Aufgabe 4 – Primärschlüssel <span class="task-points">3 Punkte</span></h3>
-          <label class="describe-label" for="describe-answer"><strong>Beschreibe</strong>, warum ein Primärschlüssel in Datenbanken benötigt wird.</label>
+          <h3 id="task4-title">Aufgabe 4 – Aufteilung begründen <span class="task-points">3 Punkte</span></h3>
+          <label class="describe-label" for="describe-answer"><strong>Beschreibe</strong>, warum InstaHub die Daten auf die Tabellen <code>users</code> und <code>photos</code> aufteilt.</label>
           <textarea id="describe-answer" class="describe-input" maxlength="1200" rows="6"></textarea>
         </section>
 

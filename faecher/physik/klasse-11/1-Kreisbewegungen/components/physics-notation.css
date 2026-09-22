@@ -36,6 +36,42 @@
   border-top: 1px solid currentColor;
 }
 
+/* Quadratwurzel: Der Strich liegt als obere Linie über dem ganzen
+   Radikanden, das SVG-Zeichen links wächst mit dessen Höhe mit. */
+.physics-sqrt {
+  display: inline-block;
+  margin: 0 0.1em;
+  padding-left: 0.62em;
+  white-space: nowrap;
+}
+
+.physics-sqrt__radicand {
+  position: relative;
+  display: inline-block;
+  border-top: 1.5px solid currentColor;
+  padding: 0.14em 0.12em 0 0.08em;
+  line-height: 1.2;
+}
+
+/* Liegt links neben dem Radikanden; oben beginnt es in der Mitte des
+   Wurzelstrichs, damit Zeichen und Strich lückenlos ineinander übergehen. */
+.physics-sqrt__sign {
+  position: absolute;
+  top: -0.75px;
+  left: -0.62em;
+  width: 0.62em;
+  height: calc(100% + 0.75px);
+  overflow: visible;
+}
+
+.physics-sqrt__sign path {
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.5px;
+  stroke-linejoin: round;
+  vector-effect: non-scaling-stroke;
+}
+
 /* Zähler, Bruchstrich und Nenner brauchen mehr Zeilenabstand, damit sie
    angrenzende Zeilen und andere Inhalte nicht berühren. */
 p:has(.physics-fraction),

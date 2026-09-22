@@ -1,114 +1,123 @@
 import { classifyDescriptionResult, isValidScriptServerUrl } from './sql-lab-core.mjs?v=20260906b';
 
-// Test zu Aufgabe 1: nicht verlinkte Seite, Auswertung erst nach der Abgabe.
-const STORAGE_KEY = 'informatik10-datenbanken-aufgabe1-test-v1';
+// Test zu Aufgabe 2 (Redundanzen): nicht verlinkte Seite, Auswertung erst nach der Abgabe.
+// Bewusst eigenständig und ohne Abhängigkeit zum Test zu Aufgabe 1, damit beide Tests getrennt gelöscht werden können.
+const STORAGE_KEY = 'informatik10-datenbanken-aufgabe2-test-v1';
 const SCRIPT_SERVER_URL = 'https://script.google.com/macros/s/AKfycby8RWL6uYrKZyoJ6m2GRpWyRmXjwsdskyCiqzKpRhIK5-wrDl-9lWWk8CiAGaVMoy0x/exec';
-const DESCRIBE_TASK_ID = 'inf10-db-a1-primaerschluessel';
+const DESCRIBE_TASK_ID = 'inf10-db-a2-aufteilung';
 const DESCRIBE_MAX_POINTS = 3;
+const DESCRIBE_PROMPT = 'Beschreibe, warum InstaHub die Daten auf die Tabellen users und photos aufteilt.';
+const DESCRIBE_SHORT_HINT = 'Stünden Benutzerdaten bei jedem Foto, wären sie redundant gespeichert. In users stehen sie nur einmal, eine Änderung erfolgt an einer Stelle, und es entstehen keine Inkonsistenzen.';
 
 // Aufgabe 1: Lückentext. Drag-and-Drop-Bedienung nach setupCloze (Informatik 11, was-ist-ki/ui/task0.mjs).
 const CLOZE_TERMS = [
-  { key: 'Attribut', reason: 'Ein Attribut beschreibt eine einzelne Eigenschaft wie den Vornamen.' },
-  { key: 'Datensatz/Zeile', reason: 'Alle Werte eines einzelnen Objekts stehen gemeinsam in einer Zeile, dem Datensatz.' },
-  { key: 'Datentyp', reason: 'Ein Datentyp legt nur fest, welche Art von Werten eine Spalte aufnimmt. Er ist kein Teil der Übersetzung Klasse – Objekt – Attribut.' },
-  { key: 'Klasse', reason: 'Die Klasse ist der Bauplan, der für alle gleichartigen Objekte festlegt, welche Attribute sie haben.' },
-  { key: 'Objekt', reason: 'Ein Objekt ist ein konkretes Exemplar, das nach dem Bauplan der Klasse erzeugt wird.' },
-  { key: 'Primärschlüssel', reason: 'Der Primärschlüssel ist ein besonderes Attribut, das jeden Datensatz eindeutig kennzeichnet. Er ist keiner der gesuchten Grundbegriffe.' },
-  { key: 'Spalte', reason: 'Eine Spalte enthält für alle Datensätze die Werte derselben Eigenschaft – genau wie ein Attribut.' },
-  { key: 'Tabelle', reason: 'Eine Klasse beschreibt viele gleichartige Objekte. In der Datenbank ist das die ganze Tabelle.' },
+  { key: 'einmal', reason: 'Nach der Aufteilung steht jede Benutzerinformation nur noch an einer Stelle in users.' },
+  { key: 'id', reason: 'photos.id kennzeichnet das Foto selbst. Den Benutzer eines Fotos erkennt man nicht an der Foto-ID.' },
+  { key: 'Inkonsistenz', reason: 'Widersprechen sich zusammengehörige Informationen, zum Beispiel zwei E-Mail-Adressen für dieselbe Person, spricht man von Inkonsistenz.' },
+  { key: 'mehrfach', reason: 'Mehrfaches Speichern ist gerade die Redundanz, die durch die Aufteilung vermieden wird.' },
+  { key: 'photos', reason: 'Beschreibung, URL und Zeitpunkte gehören zu einem einzelnen Foto und stehen deshalb in photos.' },
+  { key: 'Redundanz', reason: 'Wird dieselbe Information mehrfach gespeichert, spricht man von Redundanz.' },
+  { key: 'user_id', reason: 'photos.user_id enthält denselben Wert wie users.id des Benutzers, der das Foto hochgeladen hat.' },
+  { key: 'users', reason: 'Benutzername und E-Mail-Adresse beschreiben die Person und gehören deshalb in users.' },
 ];
-const CLOZE_SOLUTION = ['Klasse', 'Objekt', 'Attribut', 'Tabelle', 'Spalte', 'Datensatz/Zeile'];
+const CLOZE_SOLUTION = ['Redundanz', 'Inkonsistenz', 'einmal', 'users', 'photos', 'user_id'];
 const CLOZE_PARTS = [
-  'In Java beschreibt eine ',
-  ' den Bauplan, zum Beispiel für alle Lehrkräfte. Ein konkretes ',
-  ' wie die Lehrkraft Berta Baumbart wird nach diesem Bauplan erzeugt. Eine einzelne Eigenschaft wie der Vorname heißt ',
-  '. In der Datenbank wird aus der Klasse eine ',
-  '. Jedes Attribut wird dort zu einer ',
-  ', und jedes Objekt wird als ',
-  ' gespeichert.',
+  'Speichert eine Tabelle zu jedem Foto erneut den Benutzernamen und die E-Mail-Adresse, wird dieselbe Information mehrfach gespeichert. Das nennt man ',
+  '. Ändert Mia ihre E-Mail-Adresse nur bei einem Foto, widersprechen sich die gespeicherten Daten. Das nennt man ',
+  '. Besser ist es, die Daten aufzuteilen: Benutzerinformationen stehen nur ',
+  ' in der Tabelle ',
+  ', Fotoinformationen in der Tabelle ',
+  '. Über das Attribut ',
+  ' in photos lässt sich jedem Foto der passende Benutzer zuordnen.',
 ];
 const CLOZE_SLOTS = CLOZE_SOLUTION.map((_, index) => `gap-${index}`);
 const GAP_SNAP_DISTANCE = 32; // px um eine Lücke, in denen eine losgelassene Karte noch einrastet
 
-// Aufgabe 2: Zuordnung zu den vier SQL-Datentypen aus Aufgabe 1.
-const TYPE_ZONES = [
-  { id: 'integer', label: 'INTEGER' },
-  { id: 'varchar', label: 'VARCHAR(n)' },
-  { id: 'char', label: 'CHAR(n)' },
-  { id: 'date', label: 'DATE' },
+// Aufgabe 2: Attribute den Tabellen users und photos zuordnen (wie Reiter 4 in aufgabe2.html).
+const SORT_ZONES = [
+  { id: 'users', label: 'users' },
+  { id: 'photos', label: 'photos' },
 ];
-const TYPE_VALUES = [
-  { key: 'w', label: '„w“ (Geschlecht, genau ein Zeichen)', zone: 'char', reason: 'Der Wert hat immer genau ein Zeichen. Text mit fester Länge speichert man als CHAR(n).' },
-  { key: 'year', label: '2019 (Erscheinungsjahr)', zone: 'integer', reason: 'Eine Jahreszahl allein ist kein Datum im Format YYYY-MM-DD, sondern eine ganze Zahl.' },
-  { key: 'anna', label: '„Anna-Maria“ (Vorname)', zone: 'varchar', reason: 'Vornamen sind unterschiedlich lang. Für Text mit variabler Länge nimmt man VARCHAR(n).' },
-  { key: 'birth', label: "'2008-05-12' (Geburtsdatum)", zone: 'date', reason: 'Das Format YYYY-MM-DD kennzeichnet ein Datum.' },
-  { key: 'bab', label: '„bab“ (Kürzel, immer genau drei Zeichen)', zone: 'char', reason: 'Alle Kürzel haben genau drei Zeichen. Bei fester Länge passt CHAR(n), hier CHAR(3).' },
-  { key: 'age', label: '42 (Alter)', zone: 'integer', reason: 'Ein Alter ist eine ganze Zahl ohne Nachkommastellen.' },
-  { key: 'hire', label: "'2024-08-01' (Einstellungsdatum)", zone: 'date', reason: 'Auch dieser Wert hat das Datumsformat YYYY-MM-DD.' },
-  { key: 'name', label: '„Baumbart“ (Nachname)', zone: 'varchar', reason: 'Nachnamen haben unterschiedliche Längen. Deshalb passt VARCHAR(n) mit einer Höchstlänge.' },
+const SORT_VALUES = [
+  { key: 'url', label: 'url', zone: 'photos', reason: 'Die URL gehört zu genau einem Foto.' },
+  { key: 'email', label: 'email', zone: 'users', reason: 'Die E-Mail-Adresse beschreibt die Person. Bei jedem Foto gespeichert, wäre sie redundant.' },
+  { key: 'created_at', label: 'created_at', zone: 'photos', reason: 'Der Erstellungszeitpunkt gehört zum einzelnen Foto.' },
+  { key: 'user_id', label: 'user_id', zone: 'photos', reason: 'user_id steht beim Foto und verweist auf den Benutzer, der es hochgeladen hat.' },
+  { key: 'username', label: 'username', zone: 'users', reason: 'Der Benutzername beschreibt die Person und wird nur einmal gespeichert.' },
+  { key: 'description', label: 'description', zone: 'photos', reason: 'Jede Beschreibung gehört zu einem anderen Foto.' },
+  { key: 'city', label: 'city', zone: 'users', reason: 'Der Wohnort beschreibt die Person, nicht ein einzelnes Foto.' },
+  { key: 'updated_at', label: 'updated_at', zone: 'photos', reason: 'Der Aktualisierungszeitpunkt gehört zum einzelnen Foto.' },
 ];
 
-// Aufgabe 3: Multiple Choice mit Auswahlkästchen wie #final-quiz in grundlagen.js.
+// Aufgabe 3: Multiple Choice mit Auswahlkästchen wie #final-quiz in redundanzen.js.
 const MC_QUESTIONS = [
   {
     id: 'q1',
-    text: 'Welche Aussagen über die Begriffe stimmen?',
-    why: 'Relation ist der Fachbegriff für Tabelle. Ein Attribut wird zu einer Spalte, ein Objekt zu einer Zeile (Datensatz).',
+    text: 'Was versteht man unter Redundanz?',
+    why: 'Redundanz bedeutet: Dieselbe Information wird mehrfach gespeichert.',
     options: [
-      { id: 'column-object', text: 'Eine Spalte enthält alle Werte eines einzelnen Objekts.', reason: 'Eine Spalte gehört zu einer Eigenschaft und enthält diese Eigenschaft für alle Objekte.' },
-      { id: 'relation', text: '„Relation“ ist der Fachbegriff für eine strukturierte Tabelle mit Spalten und Zeilen.', correct: true },
-      { id: 'class-row', text: 'Eine Klasse entspricht einem einzelnen Datensatz.', reason: 'Eine Klasse beschreibt alle gleichartigen Objekte. Das entspricht der ganzen Tabelle, nicht einer Zeile.' },
-      { id: 'row', text: 'Eine Zeile enthält alle Werte eines einzelnen Objekts.', correct: true },
+      { id: 'contradict', text: 'Zusammengehörige Informationen widersprechen sich.', reason: 'Das beschreibt eine Inkonsistenz, also eine mögliche Folge von Redundanz.' },
+      { id: 'repeat', text: 'Dieselbe Information wird mehrfach gespeichert.', correct: true },
+      { id: 'names', text: 'Zwei Tabellen besitzen denselben Namen.', reason: 'Redundanz betrifft gespeicherte Informationen, nicht Tabellennamen.' },
+      { id: 'delete', text: 'Alte Daten werden automatisch gelöscht.', reason: 'Bei Redundanz wird nichts gelöscht, sondern dieselbe Information wiederholt gespeichert.' },
     ],
   },
   {
     id: 'q2',
-    text: 'Welches Attribut eignet sich als Primärschlüssel der Tabelle Schueler?',
-    why: 'Nur eine eigens vergebene Nummer ist sicher eindeutig (UNIQUE) und nie leer (NOT NULL).',
+    text: 'Welche Probleme können durch Redundanz entstehen?',
+    why: 'Redundanz kostet Speicher und macht Änderungen aufwendig und fehleranfällig.',
     options: [
-      { id: 'lastname', text: 'Nachname', reason: 'Nachnamen kommen mehrfach vor. Damit wäre die Regel UNIQUE verletzt.' },
-      { id: 'birthday', text: 'Geburtsdatum', reason: 'Mehrere Schülerinnen und Schüler können am selben Tag geboren sein.' },
-      { id: 'id', text: 'Schueler_ID (fortlaufend und eindeutig vergeben)', correct: true },
-      { id: 'email', text: 'E-Mail-Adresse', reason: 'Eine E-Mail-Adresse kann sich ändern oder ganz fehlen. NOT NULL ist dann nicht sicher erfüllt.' },
+      { id: 'repetition', text: 'Eine Änderung muss an mehreren Stellen durchgeführt werden.', correct: true },
+      { id: 'automatic', text: 'Die Datenbank korrigiert widersprüchliche Einträge automatisch.', reason: 'Die Datenbank weiß nicht, welcher von zwei Einträgen stimmt. Sie korrigiert nichts von selbst.' },
+      { id: 'forget', text: 'Eine Stelle kann bei einer Änderung leicht vergessen werden.', correct: true },
+      { id: 'storage', text: 'Gleiche Informationen belegen unnötig mehrfach Speicherplatz.', correct: true },
     ],
   },
   {
     id: 'q3',
-    text: 'Welche Aussagen über SQL-Datentypen stimmen?',
-    why: 'VARCHAR(n) legt eine Höchstlänge fest, CHAR(n) eine feste Länge, DATE ein Datum im Format YYYY-MM-DD und INTEGER ganze Zahlen.',
+    text: 'Welche Aussagen treffen auf diesen Tabellenausschnitt zu?',
+    table: {
+      caption: 'Tabellenausschnitt mit Fotos von Mia',
+      columns: ['photo_id', 'username', 'email', 'description'],
+      rows: [
+        ['41', 'mia', 'mia@example.org', 'Sonnenuntergang'],
+        ['42', 'mia', 'mia.neu@example.org', 'Mein Fahrrad'],
+        ['43', 'mia', 'mia@example.org', 'Ausflug am See'],
+      ],
+    },
+    why: 'username und email wiederholen sich bei jedem Foto. Weil die Änderung der E-Mail-Adresse nur in einem Datensatz erfolgte, widersprechen sich die Daten.',
     options: [
-      { id: 'varchar', text: 'In einer Spalte vom Typ VARCHAR(20) darf ein Text höchstens 20 Zeichen lang sein.', correct: true },
-      { id: 'integer', text: 'INTEGER speichert auch Kommazahlen wie 3,5.', reason: 'INTEGER speichert nur ganze Zahlen ohne Nachkommastellen.' },
-      { id: 'char', text: 'Bei CHAR(5) wird ein kürzerer Text mit Leerzeichen auf 5 Zeichen aufgefüllt.', correct: true },
-      { id: 'date', text: 'DATE speichert ein Datum im Format YYYY-MM-DD.', correct: true },
+      { id: 'redundant', text: 'username und email sind redundant gespeichert.', correct: true },
+      { id: 'description', text: 'description ist redundant, weil jedes Foto eine Beschreibung hat.', reason: 'Jede Beschreibung ist eine andere Information zu einem anderen Foto. Nichts wird wiederholt.' },
+      { id: 'inconsistent', text: 'Die Daten sind inkonsistent, weil für Mia zwei verschiedene E-Mail-Adressen gespeichert sind.', correct: true },
+      { id: 'clear', text: 'Man kann eindeutig erkennen, welche E-Mail-Adresse stimmt.', reason: 'Beide Adressen stehen gleichberechtigt da. Welche aktuell ist, lässt sich nicht erkennen.' },
     ],
   },
   {
     id: 'q4',
-    text: 'Welche Aussagen über dieses Schema stimmen?',
-    code: 'CREATE TABLE Buch (\n  Buch_ID INTEGER PRIMARY KEY,\n  Titel VARCHAR(80),\n  Autor VARCHAR(60),\n  Seitenzahl INTEGER\n);',
-    why: 'Hinter CREATE TABLE steht der Name der Relation, PRIMARY KEY markiert das eindeutige Attribut. Das Schema legt nur Spalten fest, noch keine Datensätze.',
+    text: 'Wie wurde das Problem bei InstaHub gelöst?',
+    why: 'Die Daten werden auf users und photos aufgeteilt. Jeder Sachverhalt wird möglichst nur einmal gespeichert.',
     options: [
-      { id: 'rows', text: 'Die Tabelle enthält vier Datensätze.', reason: 'Das Schema legt vier Spalten (Attribute) fest. Datensätze kommen erst später als Zeilen hinzu.' },
-      { id: 'name', text: 'Die Relation (Tabelle) heißt Buch.', correct: true },
-      { id: 'exact', text: 'Jeder Titel muss genau 80 Zeichen lang sein.', reason: 'VARCHAR(80) legt nur die Höchstlänge fest. Kürzere Titel sind erlaubt.' },
-      { id: 'pk', text: 'Buch_ID identifiziert jedes Buch eindeutig.', correct: true },
+      { id: 'copy', text: 'Die Benutzerdaten werden bei jedem Foto zusätzlich kopiert, damit nichts verloren geht.', reason: 'Zusätzliche Kopien würden die Redundanz noch vergrößern.' },
+      { id: 'split', text: 'Benutzer- und Fotoinformationen werden in den Tabellen users und photos getrennt gespeichert.', correct: true },
+      { id: 'once', text: 'Jede Benutzerinformation wird nur einmal in users gespeichert.', correct: true },
+      { id: 'in-users', text: 'Die Fotos werden zusätzlich in der Tabelle users gespeichert.', reason: 'Fotoinformationen gehören in photos. In users stehen nur Informationen über die Person.' },
     ],
   },
   {
     id: 'q5',
-    text: 'In Java gibt es die Klasse Lehrkraft mit den Attributen kuerzel, name und vorname. Es werden 25 Lehrkraft-Objekte erzeugt. Was gilt für die passende Tabelle?',
-    why: 'Jedes Attribut wird zu einer Spalte, jedes Objekt zu einer Zeile – alle Objekte einer Klasse stehen in derselben Tabelle.',
+    text: 'Woran erkennt die Datenbank, wer ein Foto hochgeladen hat?',
+    why: 'photos.user_id enthält denselben Wert wie users.id. So lassen sich Foto und Benutzer wieder zuordnen.',
     options: [
-      { id: 'three-columns', text: 'Die Tabelle hat drei Spalten.', correct: true },
-      { id: 'tables', text: 'Es entstehen 25 Tabellen – eine für jedes Objekt.', reason: 'Alle Objekte einer Klasse stehen gemeinsam in einer einzigen Tabelle.' },
-      { id: 'rows', text: 'Die Tabelle hat 25 Datensätze (Zeilen).', correct: true },
-      { id: 'columns', text: 'Die Tabelle hat 25 Spalten.', reason: 'Jedes Objekt wird zu einer Zeile, nicht zu einer Spalte.' },
+      { id: 'email', text: 'An der erneut gespeicherten E-Mail-Adresse in photos', reason: 'Nach der Aufteilung steht die E-Mail-Adresse nur noch in users.' },
+      { id: 'photo-id', text: 'An der Foto-ID photos.id', reason: 'photos.id kennzeichnet das Foto selbst, nicht den Benutzer.' },
+      { id: 'order', text: 'An der Reihenfolge der Datensätze', reason: 'Die Reihenfolge der Zeilen legt keine Zuordnung fest.' },
+      { id: 'user-id', text: 'An photos.user_id, die denselben Wert wie users.id enthält', correct: true },
     ],
   },
 ];
 
-const MAX_POINTS = { cloze: CLOZE_SOLUTION.length, sort: TYPE_VALUES.length, mc: MC_QUESTIONS.length, describe: DESCRIBE_MAX_POINTS };
+const MAX_POINTS = { cloze: CLOZE_SOLUTION.length, sort: SORT_VALUES.length, mc: MC_QUESTIONS.length, describe: DESCRIBE_MAX_POINTS };
 const TOTAL_POINTS = Object.values(MAX_POINTS).reduce((sum, value) => sum + value, 0);
 
 const DEFAULT_STATE = {
@@ -325,10 +334,10 @@ function clozeLayout({ bank, card, target, assignment, picked }) {
 
 function sortLayout({ bank, card, target, assignment, picked }) {
   const grid = element('div', 'sort-zones');
-  TYPE_ZONES.forEach((zone) => {
+  SORT_ZONES.forEach((zone) => {
     const box = target(element('div', 'sort-zone'), zone.id);
     box.setAttribute('role', 'group');
-    box.setAttribute('aria-label', `Datentyp ${zone.label}`);
+    box.setAttribute('aria-label', `Tabelle ${zone.label}`);
     const label = element(state.submitted ? 'span' : 'button', 'sort-zone-label');
     label.append(element('code', '', zone.label));
     if (!state.submitted) {
@@ -338,7 +347,7 @@ function sortLayout({ bank, card, target, assignment, picked }) {
     }
     box.append(label);
     const list = element('div', 'sort-zone-items');
-    TYPE_VALUES.filter((value) => assignment[value.key] === zone.id).forEach((value) => {
+    SORT_VALUES.filter((value) => assignment[value.key] === zone.id).forEach((value) => {
       const mark = state.submitted ? (value.zone === zone.id ? 'correct' : 'wrong') : '';
       list.append(card(value.key, 'cloze-token', mark));
     });
@@ -346,6 +355,28 @@ function sortLayout({ bank, card, target, assignment, picked }) {
     grid.append(box);
   });
   return [bank(), grid];
+}
+
+// Tabellenausschnitt mit den Tabellenklassen aus redundanzen.css (table-shell, data-table).
+function renderGivenTable({ caption, columns, rows }) {
+  const shell = element('div', 'table-shell given-table');
+  const scroll = element('div', 'table-scroll');
+  const table = element('table', 'data-table');
+  table.append(element('caption', 'visually-hidden', caption));
+  const head = document.createElement('thead');
+  const headRow = document.createElement('tr');
+  columns.forEach((column) => { const th = element('th', '', column); th.scope = 'col'; headRow.append(th); });
+  head.append(headRow);
+  const body = document.createElement('tbody');
+  rows.forEach((values) => {
+    const tr = document.createElement('tr');
+    values.forEach((value) => tr.append(element('td', '', value)));
+    body.append(tr);
+  });
+  table.append(head, body);
+  scroll.append(table);
+  shell.append(scroll);
+  return shell;
 }
 
 function renderMcQuestions() {
@@ -356,11 +387,7 @@ function renderMcQuestions() {
     const legend = element('legend');
     legend.append(element('span', '', String(index + 1)), document.createTextNode(` ${question.text}`));
     fieldset.append(legend);
-    if (question.code) {
-      const pre = element('pre', 'given-sql');
-      pre.append(element('code', '', question.code));
-      fieldset.append(pre);
-    }
+    if (question.table) fieldset.append(renderGivenTable(question.table));
     const list = element('div', 'choice-list');
     question.options.forEach((option) => {
       const label = element('label', 'choice-option');
@@ -389,7 +416,7 @@ function correctIds(question) { return question.options.filter((option) => optio
 function taskStatus() {
   return [
     CLOZE_SLOTS.every((slot) => Object.values(state.cloze).includes(slot)),
-    TYPE_VALUES.every((value) => state.sort[value.key]),
+    SORT_VALUES.every((value) => state.sort[value.key]),
     MC_QUESTIONS.every((question) => state.mc[question.id].length > 0),
     state.text.trim().length >= 10,
   ];
@@ -410,7 +437,7 @@ function scoreCloze() {
 }
 
 function scoreSort() {
-  return TYPE_VALUES.map((value) => ({ value, chosen: state.sort[value.key] || '', correct: state.sort[value.key] === value.zone }));
+  return SORT_VALUES.map((value) => ({ value, chosen: state.sort[value.key] || '', correct: state.sort[value.key] === value.zone }));
 }
 
 function scoreMc() {
@@ -430,7 +457,7 @@ function pointsLine() {
   return `${local + describe} von ${TOTAL_POINTS} Punkten`;
 }
 
-function zoneLabel(id) { return TYPE_ZONES.find((zone) => zone.id === id)?.label || 'nicht zugeordnet'; }
+function zoneLabel(id) { return SORT_ZONES.find((zone) => zone.id === id)?.label || 'nicht zugeordnet'; }
 function termReason(key) { return CLOZE_TERMS.find((term) => term.key === key)?.reason || ''; }
 
 function resultList(rows) {
@@ -459,7 +486,7 @@ function renderEvaluation() {
   const mc = scoreMc();
   const details = document.getElementById('evaluation-details');
   details.replaceChildren(
-    evaluationSection('Aufgabe 1 – Begriffe', cloze.filter((row) => row.correct).length, MAX_POINTS.cloze, 'Lückentext zu Klasse, Objekt, Attribut, Tabelle, Spalte und Datensatz/Zeile.',
+    evaluationSection('Aufgabe 1 – Redundanz und Aufteilung', cloze.filter((row) => row.correct).length, MAX_POINTS.cloze, 'Lückentext zu Redundanz, Inkonsistenz und der Aufteilung in users und photos.',
       resultList(cloze.map((row) => ({
         ok: row.correct,
         text: row.correct
@@ -467,7 +494,7 @@ function renderEvaluation() {
           : `Lücke ${row.index + 1}: deine Antwort „${row.chosen || 'leer'}“, richtig ist „${CLOZE_SOLUTION[row.index]}“.`,
         why: row.correct ? '' : [row.chosen && !CLOZE_SOLUTION.includes(row.chosen) ? termReason(row.chosen) : '', termReason(CLOZE_SOLUTION[row.index])].filter(Boolean).join(' '),
       })))),
-    evaluationSection('Aufgabe 2 – SQL-Datentypen', sort.filter((row) => row.correct).length, MAX_POINTS.sort, 'Ordne jeden Wert dem passenden SQL-Datentyp zu.',
+    evaluationSection('Aufgabe 2 – Attribute zuordnen', sort.filter((row) => row.correct).length, MAX_POINTS.sort, 'Ordne jedes Attribut der Tabelle users oder photos zu.',
       resultList(sort.map((row) => ({
         ok: row.correct,
         text: row.correct
@@ -490,7 +517,7 @@ function renderEvaluation() {
           why: row.correct ? '' : why,
         };
       }))),
-    evaluationSection('Aufgabe 4 – Primärschlüssel', aiPoints(), MAX_POINTS.describe, 'Beschreibe, warum ein Primärschlüssel in Datenbanken benötigt wird.', describeEvaluation()),
+    evaluationSection('Aufgabe 4 – Aufteilung begründen', aiPoints(), MAX_POINTS.describe, DESCRIBE_PROMPT, describeEvaluation()),
   );
   document.getElementById('evaluation-total').textContent = `Ergebnis: ${pointsLine()}`;
   updateProgress();
@@ -501,7 +528,7 @@ function describeEvaluation() {
   const answer = state.text.trim();
   box.append(element('p', 'describe-answer', answer ? `Deine Antwort: ${answer}` : 'Deine Antwort: (leer)'));
   if (answer.length < 10) {
-    box.append(element('p', 'feedback error', 'Keine ausreichende Antwort – 0 Punkte. Ein Primärschlüssel kennzeichnet jeden Datensatz eindeutig; dafür muss sein Wert eindeutig (UNIQUE) und nie leer (NOT NULL) sein.'));
+    box.append(element('p', 'feedback error', `Keine ausreichende Antwort – 0 Punkte. ${DESCRIBE_SHORT_HINT}`));
     return box;
   }
   if (!state.ai || state.ai.level === 'loading') {
@@ -525,7 +552,7 @@ function describeEvaluation() {
 
 // JSONP-Anfrage an den gemeinsamen Apps-Script-Server, Ablauf wie submitDescription in sql-lab.js.
 let pendingRequest = null;
-window.__handleQuizDescriptionResult = (message) => {
+window.__handleQuiz2DescriptionResult = (message) => {
   if (message?.type && message.type !== 'GEMINI_EVALUATION_RESULT') return;
   if (pendingRequest && message?.requestId === pendingRequest.requestId) finishDescription(message.result);
 };
@@ -546,7 +573,7 @@ function requestDescriptionEvaluation() {
   if (!isValidScriptServerUrl(SCRIPT_SERVER_URL)) { finishWithoutRequest('Der Auswertungsserver ist nicht korrekt eingerichtet.'); return; }
   const requestId = globalThis.crypto?.randomUUID?.() || `${Date.now()}-${Math.random().toString(36).slice(2)}`;
   const url = new URL(SCRIPT_SERVER_URL);
-  url.searchParams.set('callback', '__handleQuizDescriptionResult');
+  url.searchParams.set('callback', '__handleQuiz2DescriptionResult');
   url.searchParams.set('requestId', requestId);
   url.searchParams.set('taskId', DESCRIBE_TASK_ID);
   url.searchParams.set('answer', answer);
@@ -614,7 +641,7 @@ function init() {
     }),
     setupBoard({
       root: document.getElementById('type-sort'),
-      items: TYPE_VALUES.map((value) => ({ key: value.key, label: value.label })),
+      items: SORT_VALUES.map((value) => ({ key: value.key, label: value.label })),
       assignment: state.sort,
       capacity: () => Infinity,
       layout: sortLayout,
