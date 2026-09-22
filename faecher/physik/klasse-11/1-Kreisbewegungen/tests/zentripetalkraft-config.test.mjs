@@ -126,6 +126,12 @@ assert.match(source, /correct: \["too-small", "tangent"\]/);
 assert.doesNotMatch(source, /"extra", "Auf das Auto/);
 assert.doesNotMatch(source, /"no-extra"/);
 
+// Aufgabe 14: Lückentext mit ziehbaren Wortkarten wie Aufgabe 4 in Aufgabe 3, ohne Auswahlfelder
+assert.match(source, /import \{ enableTokenDrag, wasDragged \} from "\.\/components\/token-drag\.mjs"/);
+assert.doesNotMatch(source, /Karte auswählen …/);
+assert.match(source, /dropSelector: `#\$\{targetId\} \.cloze-gap`/);
+assert.doesNotMatch(html, /wähle sie im Auswahlfeld/);
+
 // Aufgabe 11-13: <select> statt Radio-Fieldset
 assert.match(html, /<select id="task11-unit"/);
 assert.match(html, /<select id="task12-unit"/);

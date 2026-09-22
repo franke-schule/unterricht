@@ -360,16 +360,23 @@ export function createPointVectorGrid(container, config) {
  * ohne die zugrunde liegende Abbildung mit Achsen, Linien oder Punkten zu
  * überlagern.
  *
+ * Optional können mehrere unterscheidbare Kräfte über `arrowKinds` verwaltet
+ * werden (Radio-Auswahl, je Kraft ein eigener Ursprung, eigene Farbe und
+ * Beschriftung). Ohne `arrowKinds` ist das Verhalten byte-gleich zur bisherigen,
+ * auf zwei Pfeile mit gemeinsamem Ursprung begrenzten Variante.
+ *
  * @param {HTMLElement} container Zielcontainer der Aufgabenkarten.
  * @param {object} config Fachliche Konfiguration der Karte.
  * @param {{x: number, y: number}} config.origin Gemeinsamer Pfeilursprung.
  * @param {(SVGElement, {toSvgPoint: (point: {x: number, y: number}) => {x: number, y: number}, svgElement: typeof svgElement}) => void} config.renderIllustration
- * @param {(point: {x: number, y: number}) => string} config.directionKey Ordnet einen Endpunkt einer ersetzbaren Richtung zu.
- * @param {(point: {x: number, y: number}) => boolean} [config.isSelectablePoint]
+ * @param {(point: {x: number, y: number}, origin?: {x: number, y: number}) => string} config.directionKey Ordnet einen Endpunkt einer ersetzbaren Richtung zu.
+ * @param {(point: {x: number, y: number}, origin?: {x: number, y: number}, kindId?: string) => boolean} [config.isSelectablePoint]
  * @param {{min: number, max: number}} [config.xRange]
  * @param {{min: number, max: number}} [config.yRange]
  * @param {string} [config.label]
- * @returns {{clear: () => void, getSelections: () => Array<{x: number, y: number, direction: string}>}}
+ * @param {Array<{id: string, symbol: string, index: string, name: string, color: string, origin?: {x: number, y: number}}>} [config.arrowKinds]
+ * @param {string} [config.kindLegend]
+ * @returns {{clear: () => void, getSelections: () => Array<object>}}
  */
 export function createForceArrowGrid(container, config) {
   const {
@@ -380,6 +387,8 @@ export function createForceArrowGrid(container, config) {
     xRange = { min: -4, max: 4 },
     yRange = { min: -4, max: 4 },
     label = "Abbildung zum Einzeichnen von Kräften",
+    arrowKinds,
+    kindLegend,
   } = config;
 
   if (!container || !pointInRange(origin, xRange, yRange)) {
@@ -388,6 +397,8 @@ export function createForceArrowGrid(container, config) {
   if (typeof renderIllustration !== "function" || typeof directionKey !== "function" || typeof isSelectablePoint !== "function") {
     throw new Error("Die Kraftpfeile benötigen eine Abbildung und eine Richtungszuordnung.");
   }
+
+  const hasKinds = Array.isArray(arrowKinds) && arrowKinds.length > 0;
 
   const width = VIEW_WIDTH - PADDING * 2;
   const height = VIEW_HEIGHT - PADDING * 2;
@@ -415,8 +426,12 @@ export function createForceArrowGrid(container, config) {
   svg.append(title);
 
   const definitions = svgElement("defs");
-  createMarker(definitions, `${svgId}-first`, "#2563eb", ARROW_HEAD_SIZE);
-  createMarker(definitions, `${svgId}-second`, "#7c3aed", ARROW_HEAD_SIZE);
+  if (hasKinds) {
+    arrowKinds.forEach((kind) => createMarker(definitions, `${svgId}-kind-${kind.id}`, kind.color, ARROW_HEAD_SIZE));
+  } else {
+    createMarker(definitions, `${svgId}-first`, "#2563eb", ARROW_HEAD_SIZE);
+    createMarker(definitions, `${svgId}-second`, "#7c3aed", ARROW_HEAD_SIZE);
+  }
   svg.append(definitions);
 
   const illustrationLayer = svgElement("g", { "aria-hidden": "true", class: "force-illustration" });
@@ -424,6 +439,226 @@ export function createForceArrowGrid(container, config) {
   svg.append(illustrationLayer);
 
   const resultLayer = svgElement("g", { "aria-hidden": "true", class: "force-arrow-results" });
+
+  // ---- Verzweigung: mehrere unterscheidbare Kräfte über arrowKinds ----
+  if (hasKinds) {
+    let activeKindId = arrowKinds[0].id;
+    const findKind = (id) => arrowKinds.find((kind) => kind.id === id);
+    const activeOrigin = () => findKind(activeKindId).origin ?? origin;
+
+    const picker = document.createElement("fieldset");
+    picker.className = "force-kind-picker";
+    const legend = document.createElement("legend");
+    legend.textContent = kindLegend || "";
+    picker.append(legend);
+    arrowKinds.forEach((kind, index) => {
+      const optionLabel = document.createElement("label");
+      optionLabel.className = "force-kind-option";
+      optionLabel.style.setProperty("--kind-color", kind.color);
+      const input = document.createElement("input");
+      input.type = "radio";
+      input.name = `${svgId}-kind`;
+      input.value = kind.id;
+      input.checked = index === 0;
+      input.setAttribute("aria-label", `${kind.name} ${kind.symbol} mit Index ${kind.index}`);
+      input.addEventListener("change", () => {
+        if (!input.checked) return;
+        activeKindId = kind.id;
+        rebuildPointLayer();
+        renderKinds();
+      });
+      const text = document.createElement("span");
+      text.append(document.createTextNode(`${kind.name} ${kind.symbol}`));
+      const sub = document.createElement("sub");
+      sub.textContent = kind.index;
+      text.append(sub);
+      optionLabel.append(input, text);
+      picker.append(optionLabel);
+    });
+
+    const activeOriginMarker = svgElement("circle", { r: 11, class: "force-active-origin", "aria-hidden": "true" });
+    svg.append(activeOriginMarker);
+    svg.append(resultLayer);
+
+    const pointLayer = svgElement("g");
+    svg.append(pointLayer);
+
+    const status = document.createElement("p");
+    status.className = "vector-grid-status force-arrow-status";
+    status.setAttribute("role", "status");
+    status.setAttribute("aria-live", "polite");
+
+    const clearButton = document.createElement("button");
+    clearButton.type = "button";
+    clearButton.textContent = "Kraftpfeile löschen";
+    clearButton.disabled = true;
+    const actions = document.createElement("div");
+    actions.className = "vector-grid-actions";
+    actions.append(clearButton);
+
+    function updateActiveOriginMarker() {
+      const svgOrigin = toSvgPoint(activeOrigin());
+      activeOriginMarker.setAttribute("cx", svgOrigin.x);
+      activeOriginMarker.setAttribute("cy", svgOrigin.y);
+    }
+
+    function updateStatus() {
+      if (!selections.size) {
+        status.textContent = "Wähle oben eine Kraft aus. Klicke dann vom markierten Bezugspunkt aus in ihre Richtung; weiter außen entsteht ein längerer Pfeil.";
+        return;
+      }
+      status.textContent = `${selections.size} von ${arrowKinds.length} Kraftpfeilen eingezeichnet. Aktive Kraft: ${findKind(activeKindId).name}. Ein Klick in eine andere Richtung ersetzt ihren Pfeil, ein zweiter Klick auf dieselbe Stelle entfernt ihn.`;
+    }
+
+    function renderKinds() {
+      resultLayer.replaceChildren();
+      arrowKinds.forEach((kind) => {
+        const selection = selections.get(kind.id);
+        if (!selection) return;
+        const kindOrigin = kind.origin ?? origin;
+        const originPoint = toSvgPoint(kindOrigin);
+        const tipPoint = toSvgPoint(selection);
+        resultLayer.append(svgElement("line", {
+          x1: originPoint.x,
+          y1: originPoint.y,
+          x2: tipPoint.x,
+          y2: tipPoint.y,
+          class: `result-vector force-arrow force-arrow-kind-${kind.id}`,
+          style: `stroke:${kind.color}`,
+          "marker-end": `url(#${svgId}-kind-${kind.id})`,
+        }));
+        const dx = tipPoint.x - originPoint.x;
+        const dy = tipPoint.y - originPoint.y;
+        const length = Math.hypot(dx, dy) || 1;
+        // Beschriftung 16 px seitlich der Pfeilspitze, senkrecht zur
+        // Pfeilrichtung (statt dahinter). So liegen Beschriftungen zweier
+        // gegenläufiger Pfeile auf derselben Linie auf gegenüberliegenden
+        // Seiten und verdecken sich nicht gegenseitig.
+        const labelX = Math.min(624, Math.max(16, tipPoint.x + (dy / length) * 16));
+        const labelY = Math.min(430, Math.max(16, tipPoint.y + (-dx / length) * 16));
+        const text = svgElement("text", {
+          x: labelX,
+          y: labelY,
+          class: "force-arrow-label",
+          "text-anchor": "middle",
+          "dominant-baseline": "middle",
+          style: `fill:${kind.color}`,
+        });
+        text.append(document.createTextNode(kind.symbol));
+        const tspan = svgElement("tspan", { "baseline-shift": "sub", "font-size": 12 });
+        tspan.textContent = kind.index;
+        text.append(tspan);
+        resultLayer.append(text);
+      });
+      updateActiveOriginMarker();
+      updateStatus();
+      clearButton.disabled = selections.size === 0;
+    }
+
+    function selectPoint(point) {
+      const existing = selections.get(activeKindId);
+      if (existing && existing.x === point.x && existing.y === point.y) {
+        selections.delete(activeKindId);
+      } else {
+        selections.set(activeKindId, { x: point.x, y: point.y });
+      }
+      renderKinds();
+    }
+
+    function focusGridPoint(point) {
+      const target = pointLayer.querySelector(`[data-point-key="${gridPointKey(point)}"]`);
+      if (!target) return;
+      pointLayer.querySelectorAll(".grid-point").forEach((element) => element.setAttribute("tabindex", "-1"));
+      target.setAttribute("tabindex", "0");
+      target.focus();
+    }
+
+    function rebuildPointLayer() {
+      pointLayer.replaceChildren();
+      const kindOrigin = activeOrigin();
+      const points = rangePoints(xRange, yRange)
+        .filter((point) => gridPointKey(point) !== gridPointKey(kindOrigin) && isSelectablePoint(point, kindOrigin, activeKindId));
+      const selectableKeys = new Set(points.map(gridPointKey));
+      function nextSelectableInDirection(point, direction) {
+        let candidate = nextSelectablePoint(point, direction, kindOrigin);
+        while (pointInRange(candidate, xRange, yRange) && !selectableKeys.has(gridPointKey(candidate))) {
+          candidate = nextSelectablePoint(candidate, direction, kindOrigin);
+        }
+        return candidate;
+      }
+      points.forEach((point, index) => {
+        const control = svgElement("polygon", {
+          points: hitWedgePoints(point, kindOrigin)
+            .map((corner) => {
+              const svgPoint = toSvgPoint(corner);
+              return `${svgPoint.x.toFixed(1)},${svgPoint.y.toFixed(1)}`;
+            })
+            .join(" "),
+          class: "grid-point force-arrow-grid-point",
+          role: "button",
+          tabindex: index === 0 ? 0 : -1,
+          "aria-label": `${findKind(activeKindId).name} mit Endpunkt bei (${point.x}|${point.y}) einzeichnen`,
+          "data-point-key": gridPointKey(point),
+        });
+        control.addEventListener("click", () => selectPoint(point));
+        control.addEventListener("keydown", (event) => {
+          if (event.key === "Enter" || event.key === " ") {
+            event.preventDefault();
+            selectPoint(point);
+            return;
+          }
+          const direction = {
+            ArrowLeft: { x: -1, y: 0 },
+            ArrowRight: { x: 1, y: 0 },
+            ArrowDown: { x: 0, y: -1 },
+            ArrowUp: { x: 0, y: 1 },
+          }[event.key];
+          if (direction) {
+            event.preventDefault();
+            focusGridPoint(nextSelectableInDirection(point, direction));
+          }
+        });
+        pointLayer.append(control);
+      });
+      updateActiveOriginMarker();
+    }
+
+    clearButton.addEventListener("click", () => {
+      selections.clear();
+      renderKinds();
+    });
+
+    wrapper.append(picker, svg, status, actions);
+    container.replaceChildren(wrapper);
+    rebuildPointLayer();
+    renderKinds();
+
+    return {
+      clear() {
+        selections.clear();
+        renderKinds();
+      },
+      getSelections() {
+        return arrowKinds
+          .filter((kind) => selections.has(kind.id))
+          .map((kind) => {
+            const kindOrigin = kind.origin ?? origin;
+            const selection = selections.get(kind.id);
+            return {
+              kind: kind.id,
+              direction: String(directionKey(selection, kindOrigin)),
+              x: selection.x,
+              y: selection.y,
+              dx: selection.x - kindOrigin.x,
+              dy: selection.y - kindOrigin.y,
+            };
+          });
+      },
+    };
+  }
+
+  // ---- Bisheriges Verhalten ohne arrowKinds: höchstens zwei Pfeile,
+  // gemeinsamer Ursprung, keine Beschriftung. Byte-gleich zum Vorzustand. ----
   svg.append(resultLayer);
 
   const pointLayer = svgElement("g");

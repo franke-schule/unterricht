@@ -1,0 +1,387 @@
+<!doctype html>
+<html lang="de">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="robots" content="noindex, nofollow">
+    <title>Aufgabe 4 – Kräfte beim Kettenkarussell | Physik 11</title>
+    <link rel="stylesheet" href="../../../../styles.css?v=20260911a">
+    <link rel="stylesheet" href="bewegung-koerpern.css?v=20260831c">
+    <link rel="stylesheet" href="kraefte-bewegung.css?v=20260921a">
+    <link rel="stylesheet" href="winkelgeschwindigkeit-kreisbewegung.css?v=20260912a">
+    <link rel="stylesheet" href="components/physics-notation.css?v=20260922b">
+    <link rel="stylesheet" href="kettenkarussell.css?v=20260922a">
+    <script type="module" src="kettenkarussell.mjs?v=20260922a"></script>
+  </head>
+  <body class="physics-revision-page circular-motion-page carousel-page">
+    <div class="site-backdrop" aria-hidden="true"></div>
+    <main class="page-shell physics-revision-shell">
+      <nav class="topbar" aria-label="Navigation">
+        <a class="back-link" href="../index.html">Zur Aufgabenübersicht</a>
+        <a class="back-link" href="../../../../">Startseite</a>
+      </nav>
+      <header class="physics-revision-hero">
+        <p class="eyebrow">Kreisbewegungen · Aufgabe 4</p>
+        <h1>Aufgabe 4 – Kräfte beim Kettenkarussell</h1>
+        <p>Untersuche, welche Kräfte bei einem Karussell und bei einem Satelliten wirken. Erkläre mit dem Kräfteparallelogramm, woher beim Kettenkarussell die Zentripetalkraft kommt.</p>
+      </header>
+
+      <div class="physics-step-tabs" role="tablist" aria-label="Arbeitsschritte des Lernmoduls">
+        <button id="tab-carousel" type="button" role="tab" aria-selected="true" aria-controls="panel-carousel" data-physics-tab="carousel">1 · Karussell</button>
+        <button id="tab-satellite" type="button" role="tab" aria-selected="false" aria-controls="panel-satellite" data-physics-tab="satellite" tabindex="-1">2 · Satellit</button>
+        <button id="tab-parallelogram" type="button" role="tab" aria-selected="false" aria-controls="panel-parallelogram" data-physics-tab="parallelogram" tabindex="-1">3 · Kräfteparallelogramm</button>
+        <button id="tab-describe" type="button" role="tab" aria-selected="false" aria-controls="panel-describe" data-physics-tab="describe" tabindex="-1">4 · Beschreiben</button>
+        <button id="tab-summary" type="button" role="tab" aria-selected="false" aria-controls="panel-summary" data-physics-tab="summary" tabindex="-1">5 · Auswertung</button>
+        <button id="tab-quiz" type="button" role="tab" aria-selected="false" aria-controls="panel-quiz" data-physics-tab="quiz" tabindex="-1">6 · Abschlussquiz</button>
+      </div>
+
+      <div class="physics-revision-panels">
+
+        <section id="panel-carousel" class="physics-revision-panel" role="tabpanel" aria-labelledby="tab-carousel" data-physics-panel="carousel">
+          <div class="physics-card-heading"><p class="eyebrow">Entdecken</p><h2>Karussell: Richtung und Betrag der Zentripetalkraft</h2><p>Ein Karussell braucht für eine volle Umdrehung T = 9,0 s. Die Aufhängung der Gondeln ist 5,0 m von der Drehachse entfernt, Gondeln und Personen 6,0 m.</p></div>
+
+          <article class="physics-task-card" aria-labelledby="direction-title">
+            <h3 id="direction-title">Aufgabe 1 · Richtung der Kräfte</h3>
+            <figure class="carousel-top-figure">
+              <svg viewBox="0 0 360 310" role="img" aria-label="Karussell von oben: Kreisbahn um die Drehachse, Gondel oben rechts, Drehrichtung gegen den Uhrzeigersinn. An der Gondel beginnen vier Pfeile: A zur Drehachse, B radial nach außen, C tangential in Drehrichtung, D tangential entgegen der Drehrichtung.">
+                <defs>
+                  <marker id="carousel-choice-arrow" markerWidth="10" markerHeight="10" refX="8" refY="4" orient="auto"><path d="M0,0 L0,8 L9,4 z" fill="#334155"/></marker>
+                </defs>
+                <circle cx="180" cy="150" r="5" class="center-point"/>
+                <text x="180" y="172" text-anchor="middle" class="svg-label">Drehachse</text>
+                <circle cx="180" cy="150" r="110" class="orbit"/>
+                <circle cx="257.8" cy="72.2" r="12" class="moving-body"/>
+                <line x1="249.3" y1="80.7" x2="206.9" y2="123.1" class="choice-vector" marker-end="url(#carousel-choice-arrow)"/>
+                <line x1="266.3" y1="63.7" x2="308.7" y2="21.3" class="choice-vector" marker-end="url(#carousel-choice-arrow)"/>
+                <line x1="249.3" y1="63.7" x2="206.9" y2="21.3" class="choice-vector" marker-end="url(#carousel-choice-arrow)"/>
+                <line x1="266.3" y1="80.7" x2="308.7" y2="123.1" class="choice-vector" marker-end="url(#carousel-choice-arrow)"/>
+                <g class="choice-badge"><circle cx="197" cy="133" r="11"/><text x="197" y="133">A</text></g>
+                <g class="choice-badge"><circle cx="318.6" cy="16" r="11"/><text x="318.6" y="16">B</text></g>
+                <g class="choice-badge"><circle cx="197" cy="16" r="11"/><text x="197" y="16">C</text></g>
+                <g class="choice-badge"><circle cx="318.6" cy="133" r="11"/><text x="318.6" y="133">D</text></g>
+                <path d="M 116 260.9 A 128 128 0 0 0 244 260.9" fill="none" stroke="#334155" stroke-width="2" marker-end="url(#carousel-choice-arrow)"/>
+                <text x="180" y="300" text-anchor="middle" class="svg-label">Drehrichtung</text>
+              </svg>
+              <figcaption>Karussell von oben: Die Gondel mit Person bewegt sich gegen den Uhrzeigersinn auf der Kreisbahn.</figcaption>
+            </figure>
+            <p><strong>Betrachte</strong> die Skizze und <strong>wähle</strong> jeweils den passenden Pfeil aus.</p>
+            <div class="direction-questions">
+              <div>
+                <fieldset class="physics-quiz-question" id="direction-force-question">
+                  <legend>Aufgabe 1a · In welche Richtung wirkt die Zentripetalkraft auf Gondel und Person?</legend>
+                  <div class="quiz-options">
+                    <label class="quiz-option"><input type="radio" name="direction-force" value="A"> A · zur Drehachse hin</label>
+                    <label class="quiz-option"><input type="radio" name="direction-force" value="B"> B · radial nach außen</label>
+                    <label class="quiz-option"><input type="radio" name="direction-force" value="C"> C · tangential in Bewegungsrichtung</label>
+                    <label class="quiz-option"><input type="radio" name="direction-force" value="D"> D · tangential entgegen der Bewegungsrichtung</label>
+                  </div>
+                </fieldset>
+                <button id="check-direction-force" class="physics-primary-button" type="button">Aufgabe 1a prüfen</button>
+                <p id="direction-force-feedback" class="physics-feedback" role="status" aria-live="polite" hidden></p>
+              </div>
+              <div>
+                <fieldset class="physics-quiz-question" id="direction-release-question">
+                  <legend>Aufgabe 1b · In welche Richtung bewegen sich Gondel und Person, wenn sich die Aufhängung plötzlich löst?</legend>
+                  <div class="quiz-options">
+                    <label class="quiz-option"><input type="radio" name="direction-release" value="A"> A · zur Drehachse hin</label>
+                    <label class="quiz-option"><input type="radio" name="direction-release" value="B"> B · radial nach außen</label>
+                    <label class="quiz-option"><input type="radio" name="direction-release" value="C"> C · tangential in Bewegungsrichtung</label>
+                    <label class="quiz-option"><input type="radio" name="direction-release" value="D"> D · tangential entgegen der Bewegungsrichtung</label>
+                    <label class="quiz-option"><input type="radio" name="direction-release" value="circle"> Sie bewegen sich zunächst noch ein Stück auf der Kreisbahn weiter.</label>
+                  </div>
+                </fieldset>
+                <button id="check-direction-release" class="physics-primary-button" type="button">Aufgabe 1b prüfen</button>
+                <p id="direction-release-feedback" class="physics-feedback" role="status" aria-live="polite" hidden></p>
+              </div>
+            </div>
+            <div class="physics-help-stack">
+              <details><summary>Hilfe 1: Hinweis</summary><p>Achte auf die Drehrichtung in der Skizze: Pfeil C zeigt in die Richtung, in die sich die Gondel gerade bewegt.</p></details>
+              <details><summary>Hilfe 2: Denkansatz</summary><p>Eine Kraft, die einen Körper auf einer Kreisbahn hält, muss ihn ständig zur Mitte umlenken. Fehlt sie, gilt der Trägheitssatz.</p></details>
+              <details><summary>Hilfe 3: Teillösung</summary><p>Die Zentripetalkraft zeigt zur Drehachse. Überlege für 1b, was nach dem Trägheitssatz mit der momentanen Bewegungsrichtung geschieht, wenn diese Kraft wegfällt.</p></details>
+            </div>
+          </article>
+
+          <article class="physics-task-card" aria-labelledby="force-title">
+            <h3 id="force-title">Aufgabe 2 · Zentripetalkraft berechnen</h3>
+            <p><strong>Berechne</strong> die Zentripetalkraft, die mindestens wirken muss, damit sich die Gondel (50 kg) und die Person (65 kg) sicher auf der Kreisbahn bewegen. <strong>Gib</strong> das Ergebnis mit zwei gültigen Ziffern an.</p>
+            <div class="physics-number-entry">
+              <label for="force-answer">Zentripetalkraft</label>
+              <div class="physics-number-controls">
+                <input id="force-answer" inputmode="decimal" autocomplete="off">
+                <select id="force-unit" aria-label="Einheit der Zentripetalkraft">
+                  <option value="">Einheit</option>
+                  <option value="N">N</option>
+                  <option value="kN">kN</option>
+                  <option value="kg">kg</option>
+                  <option value="J">J</option>
+                </select>
+              </div>
+            </div>
+            <button class="physics-primary-button" id="check-force" type="button">Zentripetalkraft prüfen</button>
+            <div id="force-feedback" class="physics-feedback" role="status" aria-live="polite" hidden></div>
+            <div class="physics-help-stack">
+              <details><summary>Hilfe 1: Hinweis</summary><p>Die Zentripetalkraft muss Gondel und Person gemeinsam auf der Kreisbahn halten. Überlege, welche Masse und welcher Radius dazu gehören.</p></details>
+              <details><summary>Hilfe 2: Denkansatz</summary><p>Nutze F<sub>Z</sub> = m · ω² · r mit ω = <span class="physics-fraction" role="img" aria-label="2 Pi durch T"><span class="physics-fraction__numerator">2π</span><span class="physics-fraction__denominator">T</span></span>. Gondel und Person bewegen sich auf dem Kreis mit r = 6,0 m; der Abstand der Aufhängung ist hier nicht entscheidend.</p></details>
+              <details><summary>Hilfe 3: Teillösung</summary><p>m = 50 kg + 65 kg = 115 kg und ω = <span class="physics-fraction" role="img" aria-label="2 Pi durch 9,0 Sekunden"><span class="physics-fraction__numerator">2π</span><span class="physics-fraction__denominator">9,0 s</span></span> ≈ 0,698 rad/s. Setze nun m, ω und r = 6,0 m in F<sub>Z</sub> = m · ω² · r ein.</p></details>
+            </div>
+          </article>
+          <nav class="physics-step-next" aria-label="Weiter zum nächsten Reiter"><button type="button" class="physics-primary-button" data-next-tab="satellite">Weiter: Satellit</button></nav>
+        </section>
+
+        <section id="panel-satellite" class="physics-revision-panel" role="tabpanel" aria-labelledby="tab-satellite" data-physics-panel="satellite" hidden>
+          <div class="physics-card-heading"><p class="eyebrow">Verstehen</p><h2>Satellit: Welche Kräfte wirken zwischen Erde und Satellit?</h2><p>Ein Satellit bewegt sich auf einer näherungsweise kreisförmigen Bahn in 270 km Höhe über der Erdoberfläche.</p></div>
+
+          <article class="physics-task-card" aria-labelledby="satellite-forces-title">
+            <h3 id="satellite-forces-title">Aufgabe 3a · Kräfte zwischen Erde und Satellit einzeichnen</h3>
+            <p><strong>Zeichne</strong> die Kräfte ein, die zwischen Erde und Satellit wirken. <strong>Wähle</strong> dazu zuerst oben den Körper, auf den die Kraft wirkt; der Pfeil beginnt dann in dessen Mittelpunkt.</p>
+            <div id="satellite-force-grid" class="force-grid-host"></div>
+            <p class="carousel-note">Größen und Abstand sind nicht maßstäblich.</p>
+            <button class="physics-primary-button" id="check-satellite-forces" type="button">Kraftpfeile prüfen</button>
+            <div id="satellite-feedback" class="physics-feedback" role="status" aria-live="polite" hidden></div>
+            <div class="physics-help-stack">
+              <details><summary>Hilfe 1: Hinweis</summary><p>Die Gravitationskraft wirkt zwischen zwei Körpern mit Masse. Sie greift jeweils im Mittelpunkt eines Körpers an.</p></details>
+              <details><summary>Hilfe 2: Denkansatz</summary><p>Nach dem Wechselwirkungsprinzip gibt es zu jeder Kraft eine Gegenkraft, die auf den anderen Körper wirkt.</p></details>
+              <details><summary>Hilfe 3: Teillösung</summary><p>Am Satelliten zeigt der Pfeil zum Erdmittelpunkt. Überlege, wohin und wie lang der Pfeil am Erdmittelpunkt sein muss.</p></details>
+            </div>
+          </article>
+
+          <article class="physics-task-card" aria-labelledby="satellite-choice-title">
+            <h3 id="satellite-choice-title">Aufgabe 3b und 3c · Kräfte beurteilen</h3>
+            <p><strong>Wähle</strong> bei jeder Frage alle richtigen Aussagen aus.</p>
+            <div class="carousel-mc-pair">
+              <div id="satellite-origin-choice"></div>
+              <div id="satellite-centripetal-choice"></div>
+            </div>
+          </article>
+          <nav class="physics-step-next" aria-label="Weiter zum nächsten Reiter"><button type="button" class="physics-primary-button" data-next-tab="parallelogram">Weiter: Kräfteparallelogramm</button></nav>
+        </section>
+
+        <section id="panel-parallelogram" class="physics-revision-panel" role="tabpanel" aria-labelledby="tab-parallelogram" data-physics-panel="parallelogram" hidden>
+          <div class="physics-card-heading"><p class="eyebrow">Verstehen</p><h2>Woher kommt beim Kettenkarussell die Zentripetalkraft?</h2></div>
+
+          <article class="physics-task-card" aria-labelledby="parallelogram-explain-title">
+            <h3 id="parallelogram-explain-title">Kräfte am Sitz</h3>
+            <div class="parallelogram-explain">
+              <div>
+                <p>Dreht sich ein Kettenkarussell, hängen die Sitze nicht mehr senkrecht nach unten, sondern schräg nach außen. Trotzdem zieht keine Kette waagerecht zur Drehachse. Woher kommt dann die Zentripetalkraft, die die Sitze auf ihrer Kreisbahn hält?</p>
+                <p>Am Schwerpunkt von Person und Sitz greifen zwei Kräfte an: die Gewichtskraft F<sub>G</sub> senkrecht nach unten und die Seilkraft F<sub>S</sub> entlang der Kette schräg nach oben.</p>
+                <p>Beide Kräfte addieren sich vektoriell. Ihre Resultierende ist die Diagonale des Kräfteparallelogramms und zeigt waagerecht zur Drehachse – sie wirkt als Zentripetalkraft F<sub>Z</sub>:</p>
+                <p class="formula-display"><strong><span class="vector-symbol" aria-hidden="true">F</span><sub aria-hidden="true">S</sub> + <span class="vector-symbol" aria-hidden="true">F</span><sub aria-hidden="true">G</sub> = <span class="vector-symbol" aria-hidden="true">F</span><sub aria-hidden="true">Z</sub></strong><span class="sr-only"> Vektor F mit Index S plus Vektor F mit Index G gleich Vektor F mit Index Z</span></p>
+                <p>Der senkrechte Anteil der Seilkraft hält der Gewichtskraft das Gleichgewicht. Für den Winkel α zwischen Kette und Senkrechter liest man im Parallelogramm ab:</p>
+                <p class="formula-display"><strong>tan α = <span class="physics-fraction" role="img" aria-label="F mit Index Z durch F mit Index G"><span class="physics-fraction__numerator">F<sub>Z</sub></span><span class="physics-fraction__denominator">F<sub>G</sub></span></span> = <span class="physics-fraction" role="img" aria-label="m mal Omega Quadrat mal r durch m mal g"><span class="physics-fraction__numerator">m · ω² · r</span><span class="physics-fraction__denominator">m · g</span></span> = <span class="physics-fraction" role="img" aria-label="Omega Quadrat mal r durch g"><span class="physics-fraction__numerator">ω² · r</span><span class="physics-fraction__denominator">g</span></span></strong></p>
+                <p class="blue-remember">Beim Kettenkarussell ist die Zentripetalkraft keine zusätzliche Kraft, sondern die Resultierende aus Seilkraft und Gewichtskraft. Die Masse m kürzt sich, deshalb hat sie keinen Einfluss auf den Winkel α.</p>
+              </div>
+              <figure class="parallelogram-figure">
+                <svg viewBox="0 0 420 380" role="img" aria-label="Kettenkarussell von der Seite: Am Schwerpunkt von Sitz und Person beginnen die Gewichtskraft F mit Index G senkrecht nach unten, die Seilkraft F mit Index S entlang der Kette schräg nach oben und die Resultierende F mit Index Z waagerecht zur Drehachse. Gestrichelte Linien ergänzen das Kräfteparallelogramm. α ist der Winkel zwischen Kette und Senkrechter, r der Radius der Kreisbahn.">
+                  <defs>
+                    <marker id="pg-arrow-g" markerWidth="9" markerHeight="9" refX="7" refY="3.5" orient="auto"><path d="M0,0 L0,7 L8,3.5 z" fill="#b45309"/></marker>
+                    <marker id="pg-arrow-s" markerWidth="9" markerHeight="9" refX="7" refY="3.5" orient="auto"><path d="M0,0 L0,7 L8,3.5 z" fill="#2563eb"/></marker>
+                    <marker id="pg-arrow-z" markerWidth="9" markerHeight="9" refX="7" refY="3.5" orient="auto"><path d="M0,0 L0,7 L8,3.5 z" fill="#dc2626"/></marker>
+                  </defs>
+                  <line x1="360" y1="20" x2="360" y2="370" class="carousel-axis"/>
+                  <text x="360" y="14" text-anchor="middle" class="svg-label">Drehachse</text>
+                  <line x1="360" y1="40" x2="300" y2="40" class="scene-line"/>
+                  <line x1="300" y1="40" x2="171.4" y2="193.2" class="dimension-line"/>
+                  <line x1="300" y1="40" x2="300" y2="200" class="parallelogram-guide"/>
+                  <path d="M 300 80 A 40 40 0 0 1 274.3 70.6" class="angle-arc"/>
+                  <text x="281" y="92" class="svg-label">α</text>
+                  <g transform="rotate(40 171.4 193.2)"><rect x="157.4" y="199.2" width="28" height="18" rx="6" class="scene-fill"/><circle cx="171.4" cy="189.2" r="9" class="scene-accent"/></g>
+                  <line x1="171.4" y1="193.2" x2="171.4" y2="303.2" class="force-g" stroke-width="5" marker-end="url(#pg-arrow-g)"/>
+                  <line x1="171.4" y1="193.2" x2="263.7" y2="83.2" class="force-s" stroke-width="5" marker-end="url(#pg-arrow-s)"/>
+                  <line x1="171.4" y1="193.2" x2="263.7" y2="193.2" class="force-z" stroke-width="5" marker-end="url(#pg-arrow-z)"/>
+                  <line x1="263.7" y1="83.2" x2="263.7" y2="193.2" class="parallelogram-guide"/>
+                  <line x1="171.4" y1="303.2" x2="263.7" y2="193.2" class="parallelogram-guide"/>
+                  <line x1="171.4" y1="345" x2="360" y2="345" class="dimension-line"/>
+                  <line x1="171.4" y1="339" x2="171.4" y2="351" class="dimension-line"/>
+                  <line x1="360" y1="339" x2="360" y2="351" class="dimension-line"/>
+                  <text x="265" y="340" text-anchor="middle" class="svg-label">r</text>
+                  <circle cx="171.4" cy="193.2" r="6" class="force-origin-marker"/>
+                  <text x="180" y="290" text-anchor="start" class="svg-label force-g">F<tspan baseline-shift="sub" font-size="12">G</tspan></text>
+                  <text x="205" y="120" text-anchor="end" class="svg-label force-s">F<tspan baseline-shift="sub" font-size="12">S</tspan></text>
+                  <text x="215" y="214" text-anchor="middle" class="svg-label force-z">F<tspan baseline-shift="sub" font-size="12">Z</tspan></text>
+                </svg>
+              </figure>
+            </div>
+          </article>
+
+          <article class="physics-task-card" aria-labelledby="parallelogram-check-title">
+            <h3 id="parallelogram-check-title">Aufgabe 4 · Verständnis-Check</h3>
+            <p><strong>Wähle</strong> bei jeder Frage alle richtigen Aussagen aus.</p>
+            <div class="carousel-mc-pair">
+              <div id="parallelogram-cause-choice"></div>
+              <div id="parallelogram-tan-choice"></div>
+            </div>
+          </article>
+          <nav class="physics-step-next" aria-label="Weiter zum nächsten Reiter"><button type="button" class="physics-primary-button" data-next-tab="describe">Weiter: Beschreiben</button></nav>
+        </section>
+
+        <section id="panel-describe" class="physics-revision-panel" role="tabpanel" aria-labelledby="tab-describe" data-physics-panel="describe" hidden>
+          <div class="physics-card-heading"><p class="eyebrow">Anwenden</p><h2>Das Kräfteparallelogramm nutzen</h2></div>
+
+          <article class="physics-task-card" aria-labelledby="omega-change-title">
+            <h3 id="omega-change-title">Aufgabe 5 · Die Winkelgeschwindigkeit wird erhöht</h3>
+            <div class="describe-layout">
+              <figure class="describe-figure">
+                <svg viewBox="0 0 400 300" role="img" aria-label="Zwei Kräfteparallelogramme nebeneinander. Links vorher: Gewichtskraft F mit Index G nach unten, Seilkraft F mit Index S schräg nach oben entlang der Kette, Resultierende F mit Index Z waagerecht zur Drehachse, Winkel α 1 zwischen Kette und Senkrechter. Rechts bei größerem ω: gleich lange Gewichtskraft, längere Seilkraft, längere Resultierende und größerer Winkel α 2.">
+                  <defs>
+                    <marker id="dg-arrow-g" markerWidth="9" markerHeight="9" refX="7" refY="3.5" orient="auto"><path d="M0,0 L0,7 L8,3.5 z" fill="#b45309"/></marker>
+                    <marker id="dg-arrow-s" markerWidth="9" markerHeight="9" refX="7" refY="3.5" orient="auto"><path d="M0,0 L0,7 L8,3.5 z" fill="#2563eb"/></marker>
+                    <marker id="dg-arrow-z" markerWidth="9" markerHeight="9" refX="7" refY="3.5" orient="auto"><path d="M0,0 L0,7 L8,3.5 z" fill="#dc2626"/></marker>
+                  </defs>
+
+                  <line x1="60" y1="130" x2="60" y2="90" class="parallelogram-guide"/>
+                  <path d="M 60 102 A 28 28 0 0 1 74 105.75" class="angle-arc"/>
+                  <text x="70" y="118" class="svg-label">α<tspan baseline-shift="sub" font-size="11">1</tspan></text>
+                  <line x1="60" y1="130" x2="129.3" y2="10" class="dimension-line"/>
+                  <line x1="123.5" y1="20" x2="123.5" y2="130" class="parallelogram-guide"/>
+                  <line x1="60" y1="240" x2="123.5" y2="130" class="parallelogram-guide"/>
+                  <line x1="60" y1="130" x2="60" y2="240" class="force-g" stroke-width="5" marker-end="url(#dg-arrow-g)"/>
+                  <line x1="60" y1="130" x2="123.5" y2="20" class="force-s" stroke-width="5" marker-end="url(#dg-arrow-s)"/>
+                  <line x1="60" y1="130" x2="123.5" y2="130" class="force-z" stroke-width="5" marker-end="url(#dg-arrow-z)"/>
+                  <circle cx="60" cy="130" r="6" class="force-origin-marker"/>
+                  <text x="60" y="288" text-anchor="middle" class="svg-label">vorher</text>
+
+                  <line x1="230" y1="130" x2="230" y2="90" class="parallelogram-guide"/>
+                  <path d="M 230 102 A 28 28 0 0 1 251.4 112" class="angle-arc"/>
+                  <text x="248" y="126" class="svg-label">α<tspan baseline-shift="sub" font-size="11">2</tspan></text>
+                  <line x1="230" y1="130" x2="373" y2="10" class="dimension-line"/>
+                  <line x1="361.1" y1="20" x2="361.1" y2="130" class="parallelogram-guide"/>
+                  <line x1="230" y1="240" x2="361.1" y2="130" class="parallelogram-guide"/>
+                  <line x1="230" y1="130" x2="230" y2="240" class="force-g" stroke-width="5" marker-end="url(#dg-arrow-g)"/>
+                  <line x1="230" y1="130" x2="361.1" y2="20" class="force-s" stroke-width="5" marker-end="url(#dg-arrow-s)"/>
+                  <line x1="230" y1="130" x2="361.1" y2="130" class="force-z" stroke-width="5" marker-end="url(#dg-arrow-z)"/>
+                  <circle cx="230" cy="130" r="6" class="force-origin-marker"/>
+                  <text x="296" y="288" text-anchor="middle" class="svg-label">nachher: größeres ω</text>
+                </svg>
+                <figcaption>Kräfteparallelogramme am Schwerpunkt von Sitz und Person: links vorher, rechts bei größerer Winkelgeschwindigkeit</figcaption>
+              </figure>
+              <section class="physics-semantic-task" aria-labelledby="omega-change-question-title">
+                <p id="omega-change-question-title">Die Winkelgeschwindigkeit ω des Kettenkarussells wird erhöht.</p>
+                <p><strong>Beschreibe</strong> die Veränderungen, die sich daraus ergeben, anhand des nebenstehenden Kräfteparallelogramms.</p>
+                <label for="omega-change-answer">Deine Beschreibung</label>
+                <textarea id="omega-change-answer" maxlength="3000" rows="6"></textarea>
+                <div class="physics-semantic-task__actions"><span id="omega-change-count">0 von 3000 Zeichen</span><button id="check-omega-change" type="button">Antwort prüfen</button></div>
+                <p class="privacy-note"><strong>Hinweis:</strong> Gib keine personenbezogenen Informationen ein. Deine Antwort wird zur automatischen Auswertung an den Skriptserver und dort an ein KI-System übertragen.</p>
+                <div id="omega-change-feedback" class="physics-semantic-feedback" role="status" aria-live="polite" hidden></div>
+              </section>
+            </div>
+            <div class="physics-help-stack">
+              <details><summary>Hilfe 1: Hinweis</summary><p>Vergleiche die beiden Parallelogramme: Welcher Pfeil ist gleich geblieben, welche Pfeile haben sich verändert?</p></details>
+              <details><summary>Hilfe 2: Denkansatz</summary><p>Nutze F<sub>Z</sub> = m · ω² · r: Was folgt aus einem größeren ω für die nötige Zentripetalkraft? Überlege dann, was mit dem Winkel α und dem Radius r geschieht.</p></details>
+              <details><summary>Hilfe 3: Teillösung</summary><p>F<sub>G</sub> bleibt gleich, weil sich Masse und Ortsfaktor nicht ändern. F<sub>Z</sub> muss größer werden. Beschreibe nun, was daraus für α, r und F<sub>S</sub> folgt.</p></details>
+            </div>
+          </article>
+
+          <article class="physics-task-card" aria-labelledby="rows-title">
+            <h3 id="rows-title">Aufgabe 6 · Zwei Sitzreihen</h3>
+            <section class="physics-semantic-task" aria-labelledby="rows-question-title">
+              <p id="rows-question-title">Bei einem Kettenkarussell hängen die Sitze in zwei Reihen, also in zwei verschiedenen Abständen zur Drehachse. <strong>Erläutere</strong>, ob die Sitze gleich weit ausgelenkt werden.</p>
+              <label for="rows-answer">Deine Erläuterung</label>
+              <textarea id="rows-answer" maxlength="3000" rows="6"></textarea>
+              <div class="physics-semantic-task__actions"><span id="rows-count">0 von 3000 Zeichen</span><button id="check-rows" type="button">Antwort prüfen</button></div>
+              <p class="privacy-note"><strong>Hinweis:</strong> Gib keine personenbezogenen Informationen ein. Deine Antwort wird zur automatischen Auswertung an den Skriptserver und dort an ein KI-System übertragen.</p>
+              <div id="rows-feedback" class="physics-semantic-feedback" role="status" aria-live="polite" hidden></div>
+            </section>
+            <div class="physics-help-stack">
+              <details><summary>Hilfe 1: Hinweis</summary><p>Überlege, ob sich beide Sitzreihen gleich schnell drehen, wenn sich das Karussell dreht.</p></details>
+              <details><summary>Hilfe 2: Denkansatz</summary><p>Vergleiche die beiden Reihen mithilfe von tan α = <span class="physics-fraction" role="img" aria-label="Omega Quadrat mal r durch g"><span class="physics-fraction__numerator">ω² · r</span><span class="physics-fraction__denominator">g</span></span>: Welche Größen sind für beide Reihen gleich, welche nicht?</p></details>
+              <details><summary>Hilfe 3: Teillösung</summary><p>Beide Reihen haben dieselbe Winkelgeschwindigkeit ω, weil sie für eine Umdrehung gleich lange brauchen. Vergleiche nun die Radien der beiden Reihen.</p></details>
+            </div>
+          </article>
+          <nav class="physics-step-next" aria-label="Weiter zum nächsten Reiter"><button type="button" class="physics-primary-button" data-next-tab="summary">Weiter: Auswertung</button></nav>
+        </section>
+
+        <section id="panel-summary" class="physics-revision-panel" role="tabpanel" aria-labelledby="tab-summary" data-physics-panel="summary" hidden>
+          <div class="physics-card-heading"><p class="eyebrow">Sichern</p><h2>Auswertung</h2></div>
+          <p id="summary-pending">Die Auswertung erscheint, sobald du Aufgabe 6 geprüft hast. Das Sicherungsblatt kannst du unabhängig davon unten öffnen.</p>
+          <div id="summary-content" hidden>
+            <article class="physics-task-card compact-summary" aria-labelledby="compact-summary-title">
+              <h3 id="compact-summary-title">Kompakte Sicherung</h3>
+              <p>Die Zentripetalkraft zeigt immer zum Mittelpunkt der Kreisbahn. Fehlt sie, bewegt sich ein Körper tangential geradlinig weiter.</p>
+              <p>Erde und Satellit ziehen sich gegenseitig mit gleich großen, entgegengesetzt gerichteten Kräften an. Die Gravitationskraft der Erde auf den Satelliten wirkt als Zentripetalkraft.</p>
+              <p class="formula-display"><strong><span class="vector-symbol" aria-hidden="true">F</span><sub aria-hidden="true">S</sub> + <span class="vector-symbol" aria-hidden="true">F</span><sub aria-hidden="true">G</sub> = <span class="vector-symbol" aria-hidden="true">F</span><sub aria-hidden="true">Z</sub></strong><span class="sr-only"> Vektor F mit Index S plus Vektor F mit Index G gleich Vektor F mit Index Z</span></p>
+              <p class="formula-display"><strong>tan α = <span class="physics-fraction" role="img" aria-label="F mit Index Z durch F mit Index G"><span class="physics-fraction__numerator">F<sub>Z</sub></span><span class="physics-fraction__denominator">F<sub>G</sub></span></span> = <span class="physics-fraction" role="img" aria-label="Omega Quadrat mal r durch g"><span class="physics-fraction__numerator">ω² · r</span><span class="physics-fraction__denominator">g</span></span></strong></p>
+              <p>Beim Kettenkarussell ist die Zentripetalkraft die Resultierende aus Seilkraft und Gewichtskraft. Wird ω größer, werden α, r und F<sub>S</sub> größer. Bei gleichem ω werden Sitze mit größerem Radius stärker ausgelenkt; die Masse hat keinen Einfluss.</p>
+            </article>
+            <article class="physics-task-card" aria-labelledby="results-title">
+              <h3 id="results-title">Ergebnisübersicht</h3>
+              <div class="table-scroll">
+                <table class="results-table">
+                  <thead><tr><th scope="col">Aufgabe</th><th scope="col">Auftrag</th><th scope="col">Ergebnis</th></tr></thead>
+                  <tbody>
+                    <tr><td data-label="Aufgabe">1a</td><td data-label="Auftrag">Richtung der Zentripetalkraft</td><td data-label="Ergebnis">zur Drehachse hin (Pfeil A)</td></tr>
+                    <tr><td data-label="Aufgabe">1b</td><td data-label="Auftrag">Bewegung nach dem Lösen der Aufhängung</td><td data-label="Ergebnis">von oben gesehen tangential geradlinig weiter (Pfeil C)</td></tr>
+                    <tr><td data-label="Aufgabe">2</td><td data-label="Auftrag">Mindest-Zentripetalkraft für Gondel und Person</td><td data-label="Ergebnis">F<sub>Z</sub> = m·ω²·r mit m = 115 kg, r = 6,0 m, ω = 2π/T: ≈ 336 N, also 340 N = 0,34 kN</td></tr>
+                    <tr><td data-label="Aufgabe">3a</td><td data-label="Auftrag">Kräfte zwischen Erde und Satellit</td><td data-label="Ergebnis">je ein Pfeil im Mittelpunkt von Satellit und Erde, zueinander gerichtet, gleich lang</td></tr>
+                    <tr><td data-label="Aufgabe">3b</td><td data-label="Auftrag">Entstehung und Beträge</td><td data-label="Ergebnis">gegenseitige Anziehung wegen der Massen; gleich groß, entgegengesetzt gerichtet, an verschiedenen Körpern</td></tr>
+                    <tr><td data-label="Aufgabe">3c</td><td data-label="Auftrag">Zentripetalkraft des Satelliten</td><td data-label="Ergebnis">Gravitationskraft der Erde auf den Satelliten</td></tr>
+                    <tr><td data-label="Aufgabe">4</td><td data-label="Auftrag">Kräfteparallelogramm</td><td data-label="Ergebnis"><span class="vector-symbol" aria-hidden="true">F</span><sub aria-hidden="true">S</sub> + <span class="vector-symbol" aria-hidden="true">F</span><sub aria-hidden="true">G</sub> = <span class="vector-symbol" aria-hidden="true">F</span><sub aria-hidden="true">Z</sub><span class="sr-only"> Vektor F mit Index S plus Vektor F mit Index G gleich Vektor F mit Index Z</span>, waagerecht zur Drehachse; tan α = ω²·r/g, unabhängig von m</td></tr>
+                    <tr><td data-label="Aufgabe">5</td><td data-label="Auftrag">ω wird erhöht</td><td data-label="Ergebnis">F<sub>Z</sub>, α, r und F<sub>S</sub> werden größer; m, F<sub>G</sub> und Kettenlänge bleiben gleich</td></tr>
+                    <tr><td data-label="Aufgabe">6</td><td data-label="Auftrag">Zwei Sitzreihen</td><td data-label="Ergebnis">gleiches ω, äußere Reihe mit größerem r wird stärker ausgelenkt; Masse ohne Einfluss</td></tr>
+                  </tbody>
+                </table>
+              </div>
+            </article>
+          </div>
+          <section class="solution-download" aria-labelledby="solution-download-title-summary">
+            <h2 id="solution-download-title-summary">Sicherungsblatt zu Aufgabe 4 – Kettenkarussell</h2>
+            <details class="solution-reveal">
+              <summary>Sicherungsblatt anzeigen</summary>
+              <form class="solution-code-form" onsubmit="unlockSolution(event, 'R7HZ-DWB4', 'solution-download-link-summary', 'solution-code-message-summary')">
+                <label for="solution-code-summary">Lehrercode eingeben</label>
+                <div class="solution-code-controls">
+                  <input id="solution-code-summary" name="solution-code" type="text" maxlength="9" autocomplete="off" autocapitalize="characters" spellcheck="false" required>
+                  <button type="submit">Code prüfen</button>
+                </div>
+                <p id="solution-code-message-summary" class="solution-code-message" aria-live="polite"></p>
+                <a id="solution-download-link-summary" class="download-button" href="sicherungsblatt-aufgabe-6-loesungen.pdf?v=20260922a" download hidden>↓ Sicherungsblatt herunterladen</a>
+              </form>
+            </details>
+          </section>
+          <nav class="physics-step-next" aria-label="Weiter zum nächsten Reiter"><button type="button" class="physics-primary-button" data-next-tab="quiz">Weiter: Abschlussquiz</button></nav>
+        </section>
+
+        <section id="panel-quiz" class="physics-revision-panel" role="tabpanel" aria-labelledby="tab-quiz" data-physics-panel="quiz" hidden>
+          <div class="physics-card-heading"><p class="eyebrow">Übertragen</p><h2>Abschlussquiz</h2><p>Prüfe, ob du die Kräfte beim Kettenkarussell sicher einzeichnen und erklären kannst.</p></div>
+
+          <article class="physics-task-card" aria-labelledby="carousel-forces-title">
+            <h3 id="carousel-forces-title">Aufgabe 7 · Kräfte am Kettenkarussell einzeichnen</h3>
+            <p>Die Kette eines Kettenkarussells ist bis zum Körperschwerpunkt l = 15 m lang und bildet mit der Drehachse den Winkel α = 56°. Der Mann im Sitz hat die Masse m = 75 kg.</p>
+            <p><strong>Zeichne</strong> am markierten Körperschwerpunkt die Gewichtskraft F<sub>G</sub>, die Seilkraft F<sub>S</sub> und ihre Resultierende F<sub>Z</sub> ein. <strong>Wähle</strong> dazu jeweils zuerst oben die Kraft aus.</p>
+            <div id="carousel-force-grid" class="force-grid-host"></div>
+            <p>Der schwarze Punkt markiert den Körperschwerpunkt.</p>
+            <button class="physics-primary-button" id="check-carousel-forces" type="button">Kraftpfeile prüfen</button>
+            <div id="carousel-feedback" class="physics-feedback" role="status" aria-live="polite" hidden></div>
+            <div class="physics-help-stack">
+              <details><summary>Hilfe 1: Hinweis</summary><p>Die Gewichtskraft zeigt immer senkrecht nach unten. Eine Kette kann nur entlang ihrer eigenen Richtung ziehen.</p></details>
+              <details><summary>Hilfe 2: Denkansatz</summary><p>Die Resultierende ist die Diagonale des Parallelogramms aus F<sub>S</sub> und F<sub>G</sub>. Weil sich der Mann auf einer waagerechten Kreisbahn bewegt, muss sie waagerecht zur Drehachse zeigen.</p></details>
+              <details><summary>Hilfe 3: Teillösung</summary><p>F<sub>G</sub> zeigt senkrecht nach unten, F<sub>S</sub> entlang der Kette zum Aufhängepunkt. Wähle die Länge von F<sub>S</sub> so, dass ihr senkrechter Anteil genau so groß ist wie F<sub>G</sub>.</p></details>
+            </div>
+          </article>
+
+          <article class="physics-task-card" aria-labelledby="final-quiz-title">
+            <h3 id="final-quiz-title">Aufgabe 8 · Wissen überprüfen</h3>
+            <p><strong>Wähle</strong> bei jeder Frage alle richtigen Aussagen aus und prüfe deine Auswahl. Bei Fragen mit dem Hinweis „mehrere Antworten“ sind mindestens zwei Aussagen richtig.</p>
+            <div id="carousel-final-quiz" class="physics-multiple-choice" aria-label="Abschlussquiz zum Kettenkarussell"></div>
+          </article>
+
+          <section class="solution-download" aria-labelledby="solution-download-title">
+            <h2 id="solution-download-title">Sicherungsblatt zu Aufgabe 4 – Kettenkarussell</h2>
+            <details class="solution-reveal">
+              <summary>Sicherungsblatt anzeigen</summary>
+              <form class="solution-code-form" onsubmit="unlockSolution(event, 'R7HZ-DWB4', 'solution-download-link', 'solution-code-message')">
+                <label for="solution-code">Lehrercode eingeben</label>
+                <div class="solution-code-controls">
+                  <input id="solution-code" name="solution-code" type="text" maxlength="9" autocomplete="off" autocapitalize="characters" spellcheck="false" required>
+                  <button type="submit">Code prüfen</button>
+                </div>
+                <p id="solution-code-message" class="solution-code-message" aria-live="polite"></p>
+                <a id="solution-download-link" class="download-button" href="sicherungsblatt-aufgabe-6-loesungen.pdf?v=20260922a" download hidden>↓ Sicherungsblatt herunterladen</a>
+              </form>
+            </details>
+          </section>
+        </section>
+      </div>
+    </main>
+  </body>
+</html>

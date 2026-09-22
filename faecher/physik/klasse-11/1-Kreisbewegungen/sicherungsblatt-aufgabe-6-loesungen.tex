@@ -1,0 +1,140 @@
+\documentclass[10pt,a4paper]{article}
+
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage[ngerman]{babel}
+\usepackage[a4paper,margin=12mm]{geometry}
+\usepackage{lmodern}
+\usepackage[table]{xcolor}
+\usepackage{tabularx}
+\usepackage{array}
+\usepackage{booktabs}
+\usepackage{amsmath}
+\usepackage{microtype}
+\usepackage[most]{tcolorbox}
+\usepackage{tikz}
+\usetikzlibrary{arrows.meta,calc}
+
+\pagestyle{empty}
+\setlength{\parindent}{0pt}
+\setlength{\parskip}{0pt}
+\renewcommand{\familydefault}{\sfdefault}
+\renewcommand{\arraystretch}{1.08}
+
+\definecolor{Navy}{HTML}{17324D}
+\definecolor{Blue}{HTML}{3B6EA5}
+\definecolor{Sky}{HTML}{EAF3FA}
+\definecolor{Mint}{HTML}{E8F5EF}
+\definecolor{Gold}{HTML}{F3B33D}
+\definecolor{Ink}{HTML}{1E2935}
+\definecolor{Muted}{HTML}{617080}
+\definecolor{Line}{HTML}{D8E1E8}
+
+\color{Ink}
+\newcommand{\sectiontitle}[1]{\vspace{0.4mm}{\color{Blue}\bfseries\large #1}\par\vspace{0.15mm}{\color{Blue}\rule{\linewidth}{0.7pt}}\par\vspace{0.25mm}}
+\newcommand{\unit}[1]{\,\mathrm{#1}}
+\newcommand{\unitfrac}[2]{\,\frac{\mathrm{#1}}{\mathrm{#2}}}
+\newcommand{\pagefooter}[1]{\vfill{\color{Line}\rule{\linewidth}{0.5pt}}\par\vspace{1mm}\begin{tabularx}{\linewidth}{@{}Xc r@{}}{\small\color{Muted}Klasse 11 · Physik · Kreisbewegungen} & {\small\color{Muted}#1} & {\small\color{Muted}Sicherungsblatt · Aufgabe 4}\end{tabularx}}
+
+\begin{document}
+\colorbox{Navy}{\parbox{\dimexpr\linewidth-2\fboxsep\relax}{\vspace{1.3mm}\color{white}\small\bfseries PHYSIK · KLASSE 11\hfill\textcolor{Gold}{LÖSUNGEN}\par\vspace{1.1mm}{\large Sicherungsblatt}\vspace{1.1mm}}}
+
+\vspace{1.6mm}
+{\color{Navy}\fontsize{15}{18}\selectfont\bfseries Aufgabe 4 -- Kräfte beim Kettenkarussell\par}
+\vspace{0.9mm}
+\colorbox{Sky}{\parbox{\dimexpr\linewidth-2\fboxsep\relax}{\vspace{0.55mm}\textcolor{Blue}{\bfseries Ziel:} Die Zentripetalkraft beim Kettenkarussell als Resultierende aus Seilkraft und Gewichtskraft erklären.\vspace{0.55mm}}}
+
+\sectiontitle{1 · Karussell: Richtung und Betrag}
+\begin{tcolorbox}[colback=Mint,colframe=Line,arc=1.2mm,boxrule=.6pt,left=2mm,right=2mm,top=.7mm,bottom=.7mm]
+\small Die Zentripetalkraft zeigt immer zum Mittelpunkt der Kreisbahn. Fehlt sie, bewegt sich ein Körper tangential geradlinig weiter.
+\end{tcolorbox}
+\vspace{1mm}
+\begin{tcolorbox}[colback=white,colframe=Line,arc=1.2mm,boxrule=.6pt,left=2mm,right=2mm,top=.7mm,bottom=.7mm]
+\small\textbf{Musterlösung Aufgabe 2:} $m=50\unit{kg}+65\unit{kg}=115\unit{kg}$; $r=6{,}0\unit{m}$ (Kreis von Gondel und Person, \textbf{nicht} $5{,}0\unit{m}$); $T=9{,}0\unit{s}$.
+\[
+F_{\mathrm Z}=m\cdot\left(\frac{2\pi}{T}\right)^{2}\cdot r=\frac{4\pi^{2}\cdot m\cdot r}{T^{2}}=\frac{4\pi^{2}\cdot115\unit{kg}\cdot6{,}0\unit{m}}{(9{,}0\unit{s})^{2}}\approx336\unit{N}\approx3{,}4\cdot10^{2}\unit{N}
+\]
+\end{tcolorbox}
+
+\sectiontitle{2 · Satellit: Wechselwirkung}
+\begin{minipage}[t]{0.30\linewidth}
+\vspace{0pt}\centering
+\begin{tikzpicture}[x=1mm,y=1mm,>=Latex]
+  \fill[Blue!22] (10,18) circle (9);
+  \node[font=\scriptsize] at (10,6) {Erde};
+  \fill[Gold] (40,18) circle (2);
+  \node[font=\scriptsize] at (40,25) {Satellit};
+  \draw[-{Latex},Blue,line width=1pt] (10,18) -- (25,18);
+  \draw[-{Latex},Blue,line width=1pt] (40,18) -- (25,18);
+\end{tikzpicture}
+\end{minipage}\hfill
+\begin{minipage}[t]{0.67\linewidth}
+\vspace{0pt}\small
+Erde und Satellit ziehen sich wegen ihrer Massen gegenseitig an. Beide Kräfte sind gleich groß, entgegengesetzt gerichtet und greifen an verschiedenen Körpern an. Die Gravitationskraft der Erde auf den Satelliten wirkt als Zentripetalkraft.
+\end{minipage}
+
+\sectiontitle{3 · Kräfteparallelogramm beim Kettenkarussell}
+\begin{center}
+\begin{tikzpicture}[x=1.15mm,y=1.15mm,>=Latex]
+  \coordinate (P) at (24,20);
+  \coordinate (FZ) at (48,20);
+  \coordinate (FS) at (48,38);
+  \coordinate (FG) at (24,2);
+  \coordinate (A) at (60,47);
+  \draw[Muted,dash dot,line width=.6pt] (60,-2) -- (60,54);
+  \node[font=\scriptsize,anchor=south] at (60,54) {Drehachse};
+  \draw[Muted,line width=.7pt] (A) -- (P);
+  \draw ($(A)+(-90:8)$) arc[start angle=-90,end angle=-143,radius=8];
+  \node[font=\scriptsize] at (56,38) {$\alpha$};
+  \draw[Blue!45,densely dashed,line width=.5pt] (FS) -- (FZ);
+  \draw[Blue!45,densely dashed,line width=.5pt] (FG) -- (FZ);
+  \draw[-{Latex},color=Gold!85!black,line width=1.1pt] (P) -- (FG) node[below,font=\scriptsize]{$F_{\mathrm G}$};
+  \draw[-{Latex},Blue,line width=1.1pt] (P) -- (FS) node[above,font=\scriptsize]{$F_{\mathrm S}$};
+  \draw[-{Latex},red!80!black,line width=1.1pt] (P) -- (FZ) node[midway,below,font=\scriptsize]{$F_{\mathrm Z}$};
+  \fill (P) circle (0.9);
+\end{tikzpicture}
+\end{center}
+\[
+\vec{F}_{\mathrm S}+\vec{F}_{\mathrm G}=\vec{F}_{\mathrm Z}
+\qquad\qquad
+\tan\alpha=\frac{F_{\mathrm Z}}{F_{\mathrm G}}=\frac{m\cdot\omega^{2}\cdot r}{m\cdot g}=\frac{\omega^{2}\cdot r}{g}
+\]
+\begin{tcolorbox}[colback=Sky,colframe=Line,arc=1.2mm,boxrule=.6pt,left=2mm,right=2mm,top=.7mm,bottom=.7mm]
+\small Beim Kettenkarussell ist die Zentripetalkraft keine zusätzliche Kraft, sondern die Resultierende aus Seilkraft und Gewichtskraft. Sie zeigt waagerecht zur Drehachse. Die Masse hat keinen Einfluss auf den Winkel $\alpha$.
+\end{tcolorbox}
+
+\sectiontitle{4 · Musterlösungen: Beschreiben und Erläutern}
+\small
+\textbf{$\omega$ wird erhöht:} Die nötige Zentripetalkraft $F_{\mathrm Z}=m\cdot\omega^{2}\cdot r$ wird größer. Da $F_{\mathrm G}$ gleich bleibt, schwenkt die Kette weiter aus: $\alpha$ wird größer und damit auch $r$. Die Seilkraft $F_{\mathrm S}$ wird größer. Unverändert bleiben $m$, $F_{\mathrm G}$ und die Kettenlänge.
+
+\vspace{1.5mm}
+\textbf{Zwei Sitzreihen:} Beide Reihen haben dieselbe Winkelgeschwindigkeit $\omega$. Die äußere Reihe bewegt sich auf dem größeren Radius $r$. Nach $\tan\alpha=\omega^{2}\cdot r/g$ werden die äußeren Sitze deshalb stärker ausgelenkt -- unabhängig von der Besetzung, denn die Masse kürzt sich.
+\pagefooter{1 / 2}
+
+\newpage
+\sectiontitle{5 · Kräfte einzeichnen (Aufgabe 7)}
+\begin{center}
+\begin{tikzpicture}[x=1.4mm,y=1.4mm,>=Latex]
+  \coordinate (A) at (6,45);
+  \coordinate (P) at (46,18);
+  \coordinate (FG) at (46,-2);
+  \coordinate (FZ) at (16.3,18);
+  \coordinate (FS) at (16.3,38);
+  \draw[Muted,dash dot,line width=.6pt] (6,-6) -- (6,52);
+  \node[font=\scriptsize,anchor=south] at (6,52) {Drehachse};
+  \draw[Muted,line width=.7pt] (A) -- (P);
+  \draw ($(A)+(-90:8)$) arc[start angle=-90,end angle=-34,radius=8];
+  \node[font=\scriptsize] at (12,36) {$\alpha=56^{\circ}$};
+  \draw[Blue!45,densely dashed,line width=.5pt] (FS) -- (FZ);
+  \draw[Blue!45,densely dashed,line width=.5pt] (FG) -- (FZ);
+  \fill (P) circle (0.9);
+  \draw[-{Latex},color=Gold!85!black,line width=1.1pt] (P) -- (FG) node[below,font=\scriptsize]{$F_{\mathrm G}$};
+  \draw[-{Latex},Blue,line width=1.1pt] (P) -- (FS) node[above,font=\scriptsize]{$F_{\mathrm S}$};
+  \draw[-{Latex},red!80!black,line width=1.1pt] (P) -- (FZ) node[midway,below,font=\scriptsize]{$F_{\mathrm Z}$};
+\end{tikzpicture}
+\end{center}
+\begin{tcolorbox}[colback=white,colframe=Line,arc=1.2mm,boxrule=.6pt,left=2mm,right=2mm,top=.7mm,bottom=.7mm]
+\small $F_{\mathrm G}=m\cdot g\approx0{,}74\unit{kN}$ senkrecht nach unten; $F_{\mathrm S}$ entlang der Kette zum Aufhängepunkt, $F_{\mathrm S}=F_{\mathrm G}/\cos56^{\circ}\approx1{,}3\unit{kN}$; Resultierende $F_{\mathrm Z}=F_{\mathrm G}\cdot\tan56^{\circ}\approx1{,}1\unit{kN}$ waagerecht zur Drehachse (Zentripetalkraft).
+\end{tcolorbox}
+\pagefooter{2 / 2}
+\end{document}

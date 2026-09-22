@@ -2,6 +2,7 @@ import { setupPhysicsStepTabs } from "./components/physics-step-tabs.mjs";
 import { appendPhysicsText, createIndexedSymbol, physicsTextSpan, unitChoiceValue } from "./components/physics-notation.mjs?v=20260915a";
 import { centripetalForce, circleVectors, clamp, shuffleIncorrect, tangentialSpeed } from "./components/circle-kinematics.mjs";
 import { setupPhysicsSemanticTask } from "./components/physics-semantic-task.mjs";
+import { enableTokenDrag, wasDragged } from "./components/token-drag.mjs";
 
 // ---- Unverändert aus kraefte-bewegung.mjs / winkelgeschwindigkeit-kreisbewegung.mjs übernommen ----
 
@@ -505,57 +506,100 @@ function setupRadiusReasonQuiz() {
 }
 
 // ---- Reiter 3 · Herleitung ----
-// setupCentripetalCloze → generisches setupCloze(config)
+// Lückentext mit Wortkarten: Ziehen und Antippen wie in haftreibung-zentripetalkraft.mjs
+// (setupDerivationSort) und kraefte-bewegung.mjs (law-cloze). Gesetzte Karten
+// lassen sich in eine andere Lücke oder zurück in den Speicher ziehen.
 
 function setupCloze({ targetId, sentenceParts, terms, distractors, feedbackId, checkButtonId, resetButtonId, rememberIds = [], successText, partialText, errorText, wrongText }) {
   const target = document.getElementById(targetId);
   const allTerms = [...terms, ...distractors];
   const order = [...allTerms].sort(() => Math.random() - 0.5);
   const choices = new Array(terms.length).fill("");
+  const textOf = (key) => allTerms.find((term) => term.key === key)?.text || "";
+  const dragSelectors = { dropSelector: `#${targetId} .cloze-gap`, bankSelector: `#${targetId} .cloze-term-bank` };
+  let picked = null; // { value, from } mit from = Lückenindex oder -1 (Speicher)
+
+  const bank = document.createElement("div");
+  bank.className = "cloze-term-bank";
+  bank.setAttribute("aria-label", "Wortspeicher");
+  const sentence = document.createElement("p");
+  sentence.className = "cloze-sentence";
 
   function hideRemember() {
     rememberIds.forEach((id) => { document.getElementById(id).hidden = true; });
   }
 
+  function place(value, from, gapIndex) {
+    if (from >= 0) choices[from] = "";
+    if (gapIndex >= 0) {
+      const previous = choices[gapIndex];
+      choices[gapIndex] = value;
+      if (from >= 0 && previous) choices[from] = previous;
+    }
+    picked = null;
+    document.getElementById(feedbackId).hidden = true;
+    hideRemember();
+    render();
+  }
+
   function render() {
-    target.replaceChildren();
-    const bank = document.createElement("div");
-    bank.className = "cloze-term-bank";
-    order.forEach((term) => {
+    bank.replaceChildren(...order.filter((term) => !choices.includes(term.key)).map((term) => {
       const token = document.createElement("button");
       token.type = "button";
       token.className = "cloze-token";
       token.textContent = term.text;
-      token.draggable = true;
-      token.disabled = choices.includes(term.key);
-      token.addEventListener("dragstart", (event) => event.dataTransfer.setData("text/plain", term.key));
-      token.addEventListener("click", () => {
-        const empty = choices.findIndex((value) => !value);
-        if (empty >= 0) { choices[empty] = term.key; hideRemember(); render(); }
+      const isPicked = picked?.value === term.key && picked.from === -1;
+      token.setAttribute("aria-pressed", String(isPicked));
+      token.classList.toggle("is-picked", isPicked);
+      enableTokenDrag(token, {
+        ...dragSelectors,
+        getLabel: () => term.text,
+        onDrop: (gap) => { if (gap) place(term.key, -1, Number(gap.dataset.index)); else render(); },
       });
-      bank.append(token);
-    });
+      token.addEventListener("click", () => {
+        if (wasDragged(token)) return;
+        picked = isPicked ? null : { value: term.key, from: -1 };
+        render();
+        if (picked) (sentence.querySelector(".cloze-gap:not(.is-filled)") || sentence.querySelector(".cloze-gap"))?.focus();
+      });
+      return token;
+    }));
 
-    const sentence = document.createElement("p");
-    sentence.className = "cloze-sentence";
+    sentence.replaceChildren();
     sentenceParts.forEach((part, index) => {
       appendPhysicsText(sentence, part);
-      if (index < terms.length) {
-        const select = document.createElement("select");
-        select.setAttribute("aria-label", `Lücke ${index + 1}`);
-        select.innerHTML = '<option value="">Karte auswählen …</option>' + allTerms
-          .filter((term) => !choices.includes(term.key) || choices[index] === term.key)
-          .map((term) => `<option value="${term.key}">${term.text}</option>`).join("");
-        select.value = choices[index];
-        select.addEventListener("change", () => { choices[index] = select.value; hideRemember(); render(); });
-        select.addEventListener("dragover", (event) => event.preventDefault());
-        select.addEventListener("drop", (event) => { event.preventDefault(); choices[index] = event.dataTransfer.getData("text/plain"); hideRemember(); render(); });
-        sentence.append(select);
-      }
+      if (index >= terms.length) return;
+      const value = choices[index];
+      const gap = document.createElement("button");
+      gap.type = "button";
+      gap.className = "cloze-gap";
+      gap.dataset.index = String(index);
+      gap.textContent = value ? textOf(value) : " ";
+      gap.classList.toggle("is-filled", Boolean(value));
+      // Kein Abstand vor einem Satzzeichen, das direkt an die Lücke anschließt.
+      gap.classList.toggle("is-attached", /^[.,:;!?]/.test(sentenceParts[index + 1] || ""));
+      gap.classList.toggle("is-picked", picked?.from === index);
+      gap.setAttribute("aria-label", `Lücke ${index + 1}: ${value ? textOf(value) : "leer"}`);
+      enableTokenDrag(gap, {
+        ...dragSelectors,
+        getLabel: () => textOf(choices[index]),
+        onDrop: (dropGap, onBank) => {
+          if (dropGap && Number(dropGap.dataset.index) !== index) place(value, index, Number(dropGap.dataset.index));
+          else if (onBank) place(value, index, -1);
+          else render();
+        },
+      });
+      gap.addEventListener("click", () => {
+        if (wasDragged(gap)) return;
+        if (picked && picked.from !== index) { place(picked.value, picked.from, index); sentence.querySelector(`[data-index="${index}"]`)?.focus(); return; }
+        if (picked && picked.from === index) { place(value, index, -1); return; }
+        if (value) { picked = { value, from: index }; render(); sentence.querySelector(`[data-index="${index}"]`)?.focus(); }
+      });
+      sentence.append(gap);
     });
-    target.append(bank, sentence);
   }
 
+  target.append(bank, sentence);
   render();
 
   document.getElementById(checkButtonId).addEventListener("click", () => {
@@ -573,9 +617,11 @@ function setupCloze({ targetId, sentenceParts, terms, distractors, feedbackId, c
 
   document.getElementById(resetButtonId).addEventListener("click", () => {
     choices.fill("");
+    picked = null;
     document.getElementById(feedbackId).hidden = true;
     hideRemember();
     render();
+    sentence.querySelector(".cloze-gap")?.focus();
   });
 }
 
