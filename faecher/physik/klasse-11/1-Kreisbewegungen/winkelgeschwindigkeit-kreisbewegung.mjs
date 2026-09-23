@@ -268,13 +268,86 @@ function centripetalFeedback(result) {
 function setupCentripetalCloze() {
   const terms = [{ key: "force", text: "Kraft" }, { key: "motion", text: "Kreisbewegung" }, { key: "inside", text: "innen" }, { key: "outside", text: "außen" }, { key: "magnitude", text: "der Betrag der Geschwindigkeit" }, { key: "direction-a", text: "die Richtung der Geschwindigkeit" }, { key: "direction-b", text: "die Richtung der Geschwindigkeit" }];
   const expected = ["force", "magnitude", "direction", "motion", "inside", "direction"];
+  const parts = ["Wirkt eine ", " auf einen Körper, ändert sich ", " und/oder ", ". Bei einer ", " wirkt die Zentripetalkraft nach ", ", denn es ändert sich ständig ", "."];
   const target = document.getElementById("centripetal-cloze"); const choices = new Array(expected.length).fill("");
   const order = [...terms].sort(() => Math.random() - 0.5);
-  const render = () => { target.replaceChildren(); const bank = document.createElement("div"); bank.className = "cloze-term-bank"; order.forEach((term) => { const token = document.createElement("button"); token.type = "button"; token.className = "cloze-token"; token.textContent = term.text; token.draggable = true; token.disabled = choices.includes(term.key); token.addEventListener("dragstart", (event) => event.dataTransfer.setData("text/plain", term.key)); token.addEventListener("click", () => { const empty = choices.findIndex((value) => !value); if (empty >= 0) { choices[empty] = term.key; render(); } }); bank.append(token); }); const sentence = document.createElement("p"); sentence.className = "cloze-sentence"; const parts = ["Wirkt eine ", " auf einen Körper, ändert sich ", " und/oder ", ". Bei einer ", " wirkt die Zentripetalkraft nach ", ", denn es ändert sich ständig ", "."]; parts.forEach((part, index) => { sentence.append(document.createTextNode(part)); if (index < expected.length) { const select = document.createElement("select"); select.setAttribute("aria-label", `Lücke ${index + 1}`); select.innerHTML = '<option value="">Karte auswählen …</option>' + terms.filter((term) => !choices.includes(term.key) || choices[index] === term.key).map((term) => `<option value="${term.key}">${term.text}</option>`).join(""); select.value = choices[index]; select.addEventListener("change", () => { choices[index] = select.value; document.getElementById("notebook-reminder").hidden = true; render(); }); select.addEventListener("dragover", (event) => event.preventDefault()); select.addEventListener("drop", (event) => { event.preventDefault(); choices[index] = event.dataTransfer.getData("text/plain"); document.getElementById("notebook-reminder").hidden = true; render(); }); sentence.append(select); } }); target.append(bank, sentence); };
+  const textOf = (key) => terms.find((term) => term.key === key)?.text || "";
+  const dragSelectors = { dropSelector: "#centripetal-cloze .cloze-gap", bankSelector: "#centripetal-cloze .cloze-term-bank" };
+  let picked = null; // { value, from } mit from = Lückenindex oder -1 (Wortspeicher)
+  const bank = document.createElement("div"); bank.className = "cloze-term-bank"; bank.setAttribute("aria-label", "Wortspeicher");
+  const sentence = document.createElement("p"); sentence.className = "cloze-sentence";
+
+  function place(value, from, gapIndex) {
+    if (from >= 0) choices[from] = "";
+    if (gapIndex >= 0) {
+      const previous = choices[gapIndex];
+      choices[gapIndex] = value;
+      if (from >= 0 && previous) choices[from] = previous; // Tausch zwischen zwei Lücken
+    }
+    picked = null;
+    document.getElementById("centripetal-cloze-feedback").hidden = true;
+    document.getElementById("notebook-reminder").hidden = true;
+    render();
+  }
+
+  const render = () => {
+    bank.replaceChildren(...order.filter((term) => !choices.includes(term.key)).map((term) => {
+      const token = document.createElement("button");
+      token.type = "button";
+      token.className = "cloze-token";
+      token.textContent = term.text;
+      const isPicked = picked?.value === term.key && picked.from === -1;
+      token.setAttribute("aria-pressed", String(isPicked));
+      token.classList.toggle("is-picked", isPicked);
+      enableTokenDrag(token, { ...dragSelectors, getLabel: () => term.text, onDrop: (gap) => { if (gap) place(term.key, -1, Number(gap.dataset.index)); else render(); } });
+      token.addEventListener("click", () => {
+        if (wasDragged(token)) return;
+        picked = isPicked ? null : { value: term.key, from: -1 };
+        render();
+        if (picked) (sentence.querySelector(".cloze-gap:not(.is-filled)") || sentence.querySelector(".cloze-gap"))?.focus();
+      });
+      return token;
+    }));
+
+    sentence.replaceChildren();
+    parts.forEach((part, index) => {
+      sentence.append(document.createTextNode(part));
+      if (index >= expected.length) return;
+      const value = choices[index];
+      const gap = document.createElement("button");
+      gap.type = "button";
+      gap.className = "cloze-gap";
+      gap.dataset.index = String(index);
+      gap.textContent = value ? textOf(value) : " ";
+      gap.classList.toggle("is-filled", Boolean(value));
+      // Kein Abstand vor einem Satzzeichen, das direkt an die Lücke anschließt.
+      gap.classList.toggle("is-attached", /^[.,:;!?]/.test(parts[index + 1] || ""));
+      gap.classList.toggle("is-picked", picked?.from === index);
+      gap.setAttribute("aria-label", `Lücke ${index + 1}: ${value ? textOf(value) : "leer"}`);
+      enableTokenDrag(gap, {
+        ...dragSelectors,
+        getLabel: () => textOf(choices[index]),
+        onDrop: (dropGap, onBank) => {
+          if (dropGap && Number(dropGap.dataset.index) !== index) place(value, index, Number(dropGap.dataset.index));
+          else if (onBank) place(value, index, -1);
+          else render();
+        },
+      });
+      gap.addEventListener("click", () => {
+        if (wasDragged(gap)) return;
+        if (picked && picked.from !== index) { place(picked.value, picked.from, index); sentence.querySelector(`[data-index="${index}"]`)?.focus(); return; }
+        if (picked && picked.from === index) { place(value, index, -1); return; }
+        if (value) { picked = { value, from: index }; render(); sentence.querySelector(`[data-index="${index}"]`)?.focus(); }
+      });
+      sentence.append(gap);
+    });
+  };
+
+  target.append(bank, sentence);
   render();
   const category = (key) => key.startsWith("direction") ? "direction" : key;
   document.getElementById("check-centripetal-cloze").addEventListener("click", () => { const correct = choices.filter((choice, index) => category(choice) === expected[index]).length; if (correct === expected.length) { setFeedback("centripetal-cloze-feedback", "success", "Korrekt: Der Merksatz ist vollständig und fachlich richtig."); document.getElementById("notebook-reminder").hidden = false; } else { document.getElementById("notebook-reminder").hidden = true; if (correct) setFeedback("centripetal-cloze-feedback", "partial", `${correct} von ${expected.length} Lücken stimmen. Prüfe besonders, was sich bei einer Kreisbewegung ändert.`); else setFeedback("centripetal-cloze-feedback", "error", "Noch nicht korrekt. Setze zunächst die Karten in die Lücken ein."); } });
-  document.getElementById("reset-centripetal-cloze").addEventListener("click", () => { choices.fill(""); document.getElementById("centripetal-cloze-feedback").hidden = true; document.getElementById("notebook-reminder").hidden = true; render(); });
+  document.getElementById("reset-centripetal-cloze").addEventListener("click", () => { choices.fill(""); picked = null; document.getElementById("centripetal-cloze-feedback").hidden = true; document.getElementById("notebook-reminder").hidden = true; render(); sentence.querySelector(".cloze-gap")?.focus(); });
 }
 
 function renderQuizQuestion(target, item, index) {

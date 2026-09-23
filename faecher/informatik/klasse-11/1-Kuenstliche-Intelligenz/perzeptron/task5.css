@@ -110,3 +110,24 @@
 .perceptron-page .geometry-side #check-fox { margin-top:.75rem; }
 .perceptron-page .geometry-plot.accepts-fox { cursor:crosshair; }
 @media (max-width:900px){.perceptron-page .geometry-layout{grid-template-columns:1fr}.perceptron-page .geometry-side .step-status{min-height:0}}
+.perceptron-page .perceptron-diagram { margin:1rem auto; max-width:40rem; padding:.75rem; border:1px solid #b9d1df; border-radius:.85rem; background:#f9fcfe; }
+.perceptron-page .perceptron-diagram svg { display:block; width:100%; height:auto; font-family:inherit; }
+.perceptron-page .perceptron-diagram line { stroke:#5d7889; stroke-width:4; stroke-linecap:round; marker-end:url(#perceptron-diagram-arrowhead); }
+.perceptron-page .perceptron-diagram marker path { fill:#5d7889; }
+.perceptron-page .perceptron-diagram text { fill:#12324a; font-size:20px; font-weight:700; text-anchor:middle; }
+.perceptron-page .perceptron-diagram .diagram-symbol { font-size:28px; }
+.perceptron-page .diagram-input rect,.perceptron-page .diagram-core circle { fill:#fff; stroke:#126e9c; stroke-width:4; }
+.perceptron-page .diagram-output rect { fill:#fff3cf; stroke:#bd8900; stroke-width:4; }
+.perceptron-page .signal-layout { grid-template-columns:minmax(0,3fr) minmax(12.5rem,1fr); }
+.perceptron-page .signal-layout .signal-flow-region { margin:0; padding:.6rem; }
+.perceptron-page .signal-layout .signal-node { padding:.4rem; font-size:.92rem; overflow-wrap:normal; hyphens:auto; }
+.perceptron-page .signal-layout .signal-node h3 { font-size:.95rem; }
+.perceptron-page .calc-steps { list-style:none; max-width:46rem; margin:1rem auto; padding:0; text-align:left; }
+.perceptron-page .calc-steps li { position:relative; display:grid; grid-template-columns:2.4rem minmax(0,1fr) minmax(9rem,13rem); gap:.75rem; align-items:center; padding:.45rem 0; }
+.perceptron-page .calc-steps li:not(:last-child)::after { content:""; position:absolute; left:calc(1.2rem - 2px); top:calc(50% + 1.2rem); height:calc(100% - 2.4rem); width:4px; border-radius:2px; background:#b9d1df; }
+.perceptron-page .calc-step-number { display:grid; place-items:center; width:2.4rem; height:2.4rem; border-radius:50%; background:#126e9c; color:#fff; font-weight:800; }
+.perceptron-page .calc-steps label { margin:0; }
+.perceptron-page .calc-steps input,.perceptron-page .calc-steps select { margin:0; }
+.perceptron-page .calc-term { white-space:nowrap; }
+@media (max-width:900px){.perceptron-page .signal-layout{grid-template-columns:1fr}}
+@media (max-width:700px){.perceptron-page .perceptron-diagram{padding:.45rem}.perceptron-page .perceptron-diagram text{font-size:26px}.perceptron-page .perceptron-diagram .diagram-symbol{font-size:32px}.perceptron-page .calc-steps li{grid-template-columns:2.4rem minmax(0,1fr);row-gap:.35rem}.perceptron-page .calc-step-number{grid-row:span 2}.perceptron-page .calc-steps li > input,.perceptron-page .calc-steps li > select{grid-column:2}}
