@@ -270,7 +270,14 @@
 
 .cloze-sentence {
   margin: 0;
-  line-height: 2.6;
+}
+
+/* Zeilenabstand größer als das Ablagefeld (46 px), damit sich die Felder
+   benachbarter Zeilen nicht berühren. Die Auswahl muss spezifischer sein als
+   die allgemeine Absatzregel .physics-task-card p. */
+.physics-cloze .cloze-sentence,
+#law-cloze .cloze-sentence {
+  line-height: 3.6;
 }
 
 /* Fließtext-Lückentext mit Drag-and-Drop-Lücken (Wiederholung 2, Aufgabe 2). */
@@ -279,34 +286,37 @@
   border-radius: 14px;
   padding: 14px 16px;
   background: #ffffff;
-  line-height: 2.4;
+  line-height: 3.4;
   text-align: left;
 }
 
-/* Lücke im Fließtext: schmales Inline-Feld auf der Textgrundlinie, in das
-   eine Wortkarte gezogen wird. */
+/* Lücke im Fließtext: Ablagefeld in der Größe von .formula-slot
+   (Aufgabe 3, Reiter 4), damit die Trefferfläche auf dem Tablet ausreicht.
+   Leeres und belegtes Feld sind gleich groß, damit der Umbruch stehen bleibt. */
 .cloze-gap {
-  display: inline-block;
-  min-width: 7em;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 76px;
+  min-height: 46px;
   margin: 0 0.2em;
-  border: 0;
-  border-bottom: 2px dashed #2563eb;
-  border-radius: 6px 6px 0 0;
-  padding: 0.15em 0.5em;
+  border: 2px dashed #93c5fd;
+  border-radius: 9px;
+  padding: 4px 10px;
   color: #0f172a;
   background: #eff6ff;
   font: inherit;
   font-weight: 750;
-  line-height: 1.8;
-  vertical-align: baseline;
+  line-height: 1.25;
+  vertical-align: middle;
   cursor: pointer;
   touch-action: none;
 }
 
 .cloze-gap.is-filled {
-  min-width: 0;
-  border-bottom-style: solid;
-  background: #f8fafc;
+  border-style: solid;
+  border-color: #2563eb;
+  background: #ffffff;
   cursor: grab;
 }
 
@@ -315,7 +325,7 @@
 }
 
 .cloze-gap.is-drop-target {
-  border-bottom-color: #1e3a8a;
+  border-color: #1e3a8a;
   background: #dbeafe;
 }
 

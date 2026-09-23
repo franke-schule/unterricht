@@ -22,9 +22,8 @@
 .physics-test-page .test-submit-row, .physics-test-page .test-actions { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 20px; }
 .physics-test-page .physics-semantic-task__actions { justify-content: flex-end; }
 
-/* Größere Trefferfläche an den Lücken, ohne den Zeilenfluss zu verändern. */
-.physics-test-page .cloze-gap { position: relative; }
-.physics-test-page .cloze-gap:not(.is-locked)::before { content: ""; position: absolute; inset: -7px -10px; }
+/* Die Größe der Ablagefelder kommt aus kraefte-bewegung.css (.cloze-gap,
+   Maß wie .formula-slot in Aufgabe 3, Reiter 4). */
 .physics-test-page .cloze-gap.is-awaiting { background: #d7ebf6; }
 .physics-test-page .cloze-term-bank { min-height: 60px; padding: 8px; border: 2px dashed rgba(148, 163, 184, 0.6); border-radius: 12px; }
 .physics-test-page .cloze-term-bank.is-drop-target { border-color: #0f7391; background: rgba(15, 115, 145, 0.08); }

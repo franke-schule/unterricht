@@ -17,15 +17,16 @@
 .quiz-test-page .cloze-token.is-dragging, .quiz-test-page .cloze-gap.is-dragging { opacity: 0.45; }
 .cloze-drag-ghost { position: fixed; z-index: 1000; pointer-events: none; transform: translate(-50%, -50%); min-height: 44px; display: inline-flex; align-items: center; border: 1px solid #126e9c; border-radius: 9px; padding: 8px 12px; color: #12324a; background: #f9fcfe; font-weight: 750; box-shadow: 0 10px 22px rgba(18, 50, 74, 0.2); }
 
-.quiz-test-page .cloze-sentence { margin: 0; padding: 1rem 1.1rem; border: 1px solid #b9d1df; border-radius: 0.85rem; background: white; font-size: 1.05rem; line-height: 2.3; color: #12324a; }
-.quiz-test-page .cloze-gap { display: inline-block; min-width: 7.5em; min-height: 0; margin: 0 0.15em; padding: 0.15em 0.5em; border: 0; border-bottom: 2px dashed #126e9c; border-radius: 6px 6px 0 0; background: #eef6fb; color: #12324a; font: inherit; font-weight: 750; line-height: 1.8; vertical-align: baseline; cursor: pointer; touch-action: none; }
-.quiz-test-page .cloze-gap { position: relative; }
-/* Unsichtbar vergrößerte Tipp- und Ablagefläche, ohne den Zeilenfluss zu verändern. */
-.quiz-test-page .cloze-gap:not(.is-locked)::before { content: ""; position: absolute; inset: -7px -10px; }
+/* Zeilenabstand größer als das Ablagefeld (46 px), damit sich die Felder
+   benachbarter Zeilen nicht berühren. */
+.quiz-test-page .cloze-sentence { margin: 0; padding: 1rem 1.1rem; border: 1px solid #b9d1df; border-radius: 0.85rem; background: white; font-size: 1.05rem; line-height: 3.4; color: #12324a; }
+/* Ablagefeld in der Größe von .formula-slot (Physik 11, Aufgabe 3, Reiter 4):
+   volle Fläche als Treffer, leeres und belegtes Feld gleich groß. */
+.quiz-test-page .cloze-gap { display: inline-flex; align-items: center; justify-content: center; min-width: 76px; min-height: 46px; margin: 0 0.15em; padding: 4px 10px; border: 2px dashed #126e9c; border-radius: 9px; background: #eef6fb; color: #12324a; font: inherit; font-weight: 750; line-height: 1.25; vertical-align: middle; cursor: pointer; touch-action: none; }
 .quiz-test-page .cloze-gap.is-awaiting { background: #d7ebf6; }
-.quiz-test-page .cloze-gap.is-filled { min-width: 0; padding-inline: 0.3em; border-bottom-style: solid; background: #f9fcfe; cursor: grab; }
+.quiz-test-page .cloze-gap.is-filled { border-style: solid; background: #f9fcfe; cursor: grab; }
 .quiz-test-page .cloze-gap.is-attached { margin-right: 0; }
-.quiz-test-page .cloze-gap.is-drop-target { background: #d7ebf6; border-bottom-color: #12324a; }
+.quiz-test-page .cloze-gap.is-drop-target { background: #d7ebf6; border-color: #12324a; }
 .quiz-test-page .cloze-gap.is-locked { cursor: default; }
 
 .quiz-test-page .sort-zones { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 12px; }

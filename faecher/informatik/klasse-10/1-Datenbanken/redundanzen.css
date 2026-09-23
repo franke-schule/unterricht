@@ -140,7 +140,7 @@ code { font-family: "SFMono-Regular", Consolas, "Liberation Mono", monospace; }
 .attribute-zone h3 { display: flex; justify-content: space-between; gap: 8px; margin: 0 0 12px; color: #294f77; }
 .attribute-zone h3 small { color: var(--db-muted); font-weight: 500; }
 .attribute-list, .attribute-bank { display: flex; flex-wrap: wrap; gap: 9px; }
-.attribute-chip { display: inline-flex; align-items: center; gap: 7px; min-height: 39px; padding: 8px 11px; border: 1px solid #aec1d8; border-radius: 10px; background: white; color: #274966; font-family: "SFMono-Regular", Consolas, monospace; font-weight: 800; cursor: grab; box-shadow: 0 3px 8px rgba(37, 62, 91, 0.06); }
+.attribute-chip { display: inline-flex; align-items: center; gap: 7px; min-height: 44px; padding: 8px 11px; border: 1px solid #aec1d8; border-radius: 10px; background: white; color: #274966; font-family: "SFMono-Regular", Consolas, monospace; font-weight: 800; cursor: grab; box-shadow: 0 3px 8px rgba(37, 62, 91, 0.06); }
 .attribute-chip::after { content: "↻"; color: #8295aa; font-family: sans-serif; font-size: 0.78rem; }
 .attribute-chip:active { cursor: grabbing; }
 .attribute-chip.selected { color: #0b6e53; border-color: #53b493; background: #edfff8; }
