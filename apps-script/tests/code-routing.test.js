@@ -286,7 +286,8 @@ assert.equal(
   'sql-b2-3',
   'sql-b3-1',
   'inf10-db-a1-primaerschluessel',
-  'inf10-db-a2-aufteilung'
+  'inf10-db-a2-aufteilung',
+  'ph11-wdh2-quiz-crashtest-beschreibung'
 ].forEach(
   function(taskId) {
     const sqlDescriptionGet =

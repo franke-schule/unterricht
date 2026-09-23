@@ -1,0 +1,81 @@
+<!doctype html>
+<html lang="de">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="robots" content="noindex, nofollow">
+    <title>Test zu Wiederholung 2 – Kräfte und Bewegung | Physik 11</title>
+    <link rel="stylesheet" href="../../../../styles.css?v=20260911a">
+    <link rel="stylesheet" href="bewegung-koerpern.css?v=20260910a">
+    <link rel="stylesheet" href="kraefte-bewegung.css?v=20260921a">
+    <link rel="stylesheet" href="components/physics-notation.css?v=20260911a">
+    <link rel="stylesheet" href="wdh2-quiz.css?v=20260923">
+    <script type="module" src="wdh2-quiz.mjs?v=20260923"></script>
+  </head>
+  <body class="physics-revision-page force-revision-page physics-test-page">
+    <div class="site-backdrop" aria-hidden="true"></div>
+    <main class="page-shell physics-revision-shell">
+      <nav class="topbar" aria-label="Navigation">
+        <a class="back-link" href="../index.html">Zur Aufgabenübersicht</a>
+        <a class="back-link" href="../../../../">Startseite</a>
+      </nav>
+
+      <header class="physics-revision-hero">
+        <p class="eyebrow">Kreisbewegungen · Test zu Wiederholung 2</p>
+        <h1>Kräfte und Bewegung</h1>
+        <p>Bearbeite alle vier Aufgaben. Die Auswertung erhältst du erst, wenn du den Test abgibst.</p>
+      </header>
+
+      <div class="test-progress" aria-label="Bearbeitungsstand">
+        <span id="progress-label">0 von 4 Aufgaben bearbeitet</span>
+        <strong id="progress-points">23 Punkte erreichbar</strong>
+      </div>
+
+      <form id="quiz-test" class="physics-revision-panel physics-test-form" novalidate>
+        <article class="physics-task-card" aria-labelledby="task1-title">
+          <h3 id="task1-title">Aufgabe 1 · Kräftegleichgewicht und Wechselwirkung <span class="task-points">6 Punkte</span></h3>
+          <p id="task1-instruction"><strong>Ziehe</strong> die passenden Begriffe aus dem Wortspeicher in die Lücken. Zwei Begriffe bleiben übrig.</p>
+          <p class="drag-help">Ohne Ziehen: Begriff antippen, dann Lücke antippen. Eine belegte Lücke zweimal antippen, um den Begriff zurückzulegen.</p>
+          <div id="term-cloze" class="physics-cloze" aria-describedby="task1-instruction"></div>
+        </article>
+
+        <article class="physics-task-card" aria-labelledby="task2-title">
+          <h3 id="task2-title">Aufgabe 2 · Situationen einordnen <span class="task-points">8 Punkte</span></h3>
+          <p id="task2-instruction"><strong>Ordne</strong> jede Karte der passenden Spalte zu.</p>
+          <p class="drag-help">Ohne Ziehen: Karte antippen, dann Spalte antippen. Eine zugeordnete Karte zweimal antippen, um sie zurückzulegen.</p>
+          <div id="situation-sort" class="situation-sort" aria-describedby="task2-instruction"></div>
+        </article>
+
+        <article class="physics-task-card" aria-labelledby="task3-title">
+          <h3 id="task3-title">Aufgabe 3 · Multiple Choice <span class="task-points">5 Punkte</span></h3>
+          <p><strong>Wähle</strong> bei jeder Frage alle richtigen Aussagen aus. Bei manchen Fragen sind mehrere Aussagen richtig. Eine Frage zählt nur, wenn sie vollständig richtig ist.</p>
+          <div id="mc-questions" class="physics-multiple-choice" aria-label="Multiple-Choice-Aufgaben des Tests"></div>
+        </article>
+
+        <article class="physics-task-card" aria-labelledby="task4-title">
+          <h3 id="task4-title">Aufgabe 4 · Crashtest beschreiben <span class="task-points">4 Aspekte</span></h3>
+          <section class="physics-semantic-task" aria-labelledby="task4-title">
+            <label for="describe-answer"><strong>Beschreibe</strong> die Kräfte und deren Richtung, die bei einem Crashtest im Moment des Aufpralls wirken. <strong>Erkläre</strong> den Unterschied im Vergleich zur Situation bei einem Fallschirmspringer und gehe auf den Begriff Kräftegleichgewicht ein.</label>
+            <textarea id="describe-answer" maxlength="3000" rows="8" placeholder="Beim Aufprall …"></textarea>
+            <div class="physics-semantic-task__actions"><span id="describe-count">0 von 3000 Zeichen</span></div>
+            <p class="privacy-note"><strong>Hinweis:</strong> Gib keine personenbezogenen Informationen ein. Deine Antwort wird zur automatischen Auswertung an den Skriptserver und dort an ein KI-System übertragen.</p>
+          </section>
+        </article>
+
+        <div class="test-submit-row">
+          <button id="submit-test" class="physics-primary-button" type="submit">Test abgeben und auswerten</button>
+        </div>
+      </form>
+
+      <section id="evaluation" class="physics-revision-panel test-evaluation" aria-labelledby="evaluation-title" hidden>
+        <div class="physics-card-heading"><p class="eyebrow">Auswertung</p><h2 id="evaluation-title">Dein Testergebnis</h2></div>
+        <p id="evaluation-total" class="evaluation-total" role="status" aria-live="polite"></p>
+        <div id="evaluation-details" class="evaluation-details"></div>
+        <div class="test-actions">
+          <button class="physics-primary-button secondary-button" id="print-evaluation" type="button">Auswertung drucken</button>
+          <button class="physics-primary-button secondary-button" id="reset-test" type="button">Test neu starten</button>
+        </div>
+      </section>
+    </main>
+  </body>
+</html>

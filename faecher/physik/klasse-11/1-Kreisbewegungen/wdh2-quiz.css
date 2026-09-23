@@ -1,0 +1,82 @@
+/* Test zu Wiederholung 2. Ergänzt bewegung-koerpern.css und kraefte-bewegung.css
+   um die Teile, die nur dieser Test braucht: Kopfzeile, Zuordnungsspalten und Auswertung. */
+.physics-test-page .test-progress {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 6px 16px;
+  margin: 0 0 18px;
+  padding: 12px 18px;
+  border: 1px solid rgba(148, 163, 184, 0.45);
+  border-radius: 14px;
+  background: rgba(255, 255, 255, 0.92);
+  color: #475569;
+}
+.physics-test-page .test-progress strong { color: #1d3a63; }
+
+.physics-test-page .physics-test-form { display: block; }
+.physics-test-page .task-points { float: right; color: #64748b; font-size: 0.82rem; font-weight: 700; }
+.physics-test-page .drag-help { color: #64748b; font-size: 0.88rem; }
+.physics-test-page .drag-help[hidden], .physics-test-page .test-submit-row[hidden] { display: none; }
+.physics-test-page .test-submit-row, .physics-test-page .test-actions { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 20px; }
+.physics-test-page .physics-semantic-task__actions { justify-content: flex-end; }
+
+/* Größere Trefferfläche an den Lücken, ohne den Zeilenfluss zu verändern. */
+.physics-test-page .cloze-gap { position: relative; }
+.physics-test-page .cloze-gap:not(.is-locked)::before { content: ""; position: absolute; inset: -7px -10px; }
+.physics-test-page .cloze-gap.is-awaiting { background: #d7ebf6; }
+.physics-test-page .cloze-term-bank { min-height: 60px; padding: 8px; border: 2px dashed rgba(148, 163, 184, 0.6); border-radius: 12px; }
+.physics-test-page .cloze-term-bank.is-drop-target { border-color: #0f7391; background: rgba(15, 115, 145, 0.08); }
+.physics-test-page .bank-empty { color: #64748b; font-size: 0.86rem; }
+
+/* Aufgabe 2: zwei Ablagespalten */
+.physics-test-page .situation-sort { display: grid; gap: 14px; margin-top: 12px; }
+.physics-test-page .situation-zones { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; }
+.physics-test-page .situation-zone { display: grid; align-content: start; gap: 10px; min-height: 160px; padding: 10px; border: 2px dashed rgba(148, 163, 184, 0.6); border-radius: 14px; background: rgba(248, 250, 252, 0.8); }
+.physics-test-page .situation-zone.is-drop-target { border-color: #0f7391; background: rgba(15, 115, 145, 0.08); }
+.physics-test-page .situation-zone-label { display: flex; flex-wrap: wrap; align-items: baseline; justify-content: space-between; gap: 4px 8px; min-height: 44px; padding: 8px 10px; border: 1px solid rgba(148, 163, 184, 0.5); border-radius: 10px; background: white; color: #1d3a63; text-align: left; font: inherit; }
+.physics-test-page button.situation-zone-label { cursor: pointer; }
+.physics-test-page .situation-zone-label small { color: #64748b; font-size: 0.74rem; font-weight: 700; }
+.physics-test-page .situation-zone-items { display: grid; gap: 8px; }
+.physics-test-page .situation-card { width: 100%; text-align: left; line-height: 1.35; }
+.physics-test-page .cloze-token.is-locked { display: inline-flex; align-items: center; gap: 6px; cursor: default; }
+.physics-test-page .is-correct.is-locked { border-color: #15803d; background: rgba(21, 128, 61, 0.1); }
+.physics-test-page .is-wrong.is-locked { border-color: #b91c1c; background: rgba(185, 28, 28, 0.08); }
+/* Nur für Screenreader; die Physikseiten bringen dafür keine eigene Regel mit. */
+.physics-test-page .visually-hidden { position: absolute !important; width: 1px !important; height: 1px !important; padding: 0 !important; margin: -1px !important; overflow: hidden !important; clip: rect(0, 0, 0, 0) !important; white-space: nowrap !important; border: 0 !important; }
+.physics-test-page .result-mark { font-weight: 900; }
+.physics-test-page .is-correct .result-mark { color: #15803d; }
+.physics-test-page .is-wrong .result-mark { color: #b91c1c; }
+
+/* Auswertung nach der Abgabe */
+.physics-test-page .test-evaluation { margin-top: 20px; }
+.physics-test-page .evaluation-total { margin: 0 0 16px; color: #1d3a63; font-size: 1.2rem; font-weight: 800; }
+.physics-test-page .evaluation-details { display: grid; gap: 14px; }
+.physics-test-page .evaluation-section { padding: 16px 18px; border: 1px solid rgba(148, 163, 184, 0.45); border-radius: 14px; background: rgba(255, 255, 255, 0.9); }
+.physics-test-page .evaluation-section h3 { margin: 0 0 4px; color: #1d3a63; }
+.physics-test-page .evaluation-score { display: inline-flex; align-items: center; padding: 3px 9px; border-radius: 999px; font-size: 0.76rem; font-weight: 800; }
+.physics-test-page .evaluation-score.is-complete { color: #14653b; background: #dcfce7; }
+.physics-test-page .evaluation-score.is-open { color: #8a4b0b; background: #fef3c7; }
+.physics-test-page .evaluation-prompt { margin: 0 0 12px; color: #64748b; font-size: 0.88rem; }
+.physics-test-page .evaluation-list { display: grid; gap: 8px; margin: 0; padding: 0; list-style: none; }
+.physics-test-page .evaluation-list li { padding: 9px 12px; border-left: 4px solid rgba(148, 163, 184, 0.5); border-radius: 6px; background: rgba(248, 250, 252, 0.9); line-height: 1.45; }
+.physics-test-page .evaluation-list li.is-correct { border-left-color: #15803d; }
+.physics-test-page .evaluation-list li.is-correct > strong { color: #14653b; }
+.physics-test-page .evaluation-list li.is-wrong { border-left-color: #b91c1c; }
+.physics-test-page .evaluation-list li.is-wrong > strong { color: #b91c1c; }
+.physics-test-page .evaluation-why { display: block; margin-top: 4px; color: #64748b; }
+.physics-test-page .describe-answer { white-space: pre-wrap; overflow-wrap: anywhere; }
+
+@media (max-width: 640px) {
+  .physics-test-page .situation-zones { grid-template-columns: 1fr; }
+  .physics-test-page .situation-zone { min-height: 0; }
+  .physics-test-page .task-points { float: none; display: block; margin-top: 4px; }
+}
+
+@media print {
+  .physics-test-page .physics-test-form,
+  .physics-test-page .test-progress,
+  .physics-test-page .topbar,
+  .physics-test-page .test-actions { display: none; }
+}

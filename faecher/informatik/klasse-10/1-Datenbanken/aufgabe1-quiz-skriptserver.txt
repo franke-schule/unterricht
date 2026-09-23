@@ -1,18 +1,25 @@
-Befristete Tests zu Aufgabe 1 und 2 – Skriptserver-Aufgaben und Rückbau
-=======================================================================
+Befristete Tests – Skriptserver-Aufgaben und Rückbau
+====================================================
 
-Diese Notiz gilt für beide nicht verlinkten Tests im Ordner 1-Datenbanken:
+Diese Notiz gilt für alle befristeten, nicht verlinkten Tests. Sie liegt aus
+historischen Gründen im Ordner 1-Datenbanken und deckt auch den Physiktest mit
+ab.
 
-  Test A  aufgabe1-quiz.html  Test zu Aufgabe 1 (Grundlagen Datenbanken)
-  Test B  aufgabe2-quiz.html  Test zu Aufgabe 2 (Redundanzen in Datenbanken)
+  Test A  faecher/informatik/klasse-10/1-Datenbanken/aufgabe1-quiz.html
+          Test zu Aufgabe 1 (Grundlagen Datenbanken)
+  Test B  faecher/informatik/klasse-10/1-Datenbanken/aufgabe2-quiz.html
+          Test zu Aufgabe 2 (Redundanzen in Datenbanken)
+  Test C  faecher/physik/klasse-11/1-Kreisbewegungen/wdh2-quiz.html
+          Test zu Wiederholung 2 (Kräfte und Bewegung)
 
-Beide wurden am 21.09.2026 angelegt. Sie sind befristet und sollen
-vollständig und ohne Reste wieder gelöscht werden; für Test A ist das etwa
-eine Woche später geplant (ca. 28.09.2026).
+Test A und B wurden am 21.09.2026 angelegt, Test C am 23.09.2026. Alle drei
+sind befristet und sollen vollständig und ohne Reste wieder gelöscht werden;
+für Test A ist das etwa eine Woche nach dem Anlegen geplant (ca. 28.09.2026),
+für Test C entsprechend ca. 30.09.2026.
 
-Die Tests sind voneinander unabhängig: Keiner bindet eine Datei des anderen
-ein. Sie lassen sich deshalb getrennt und in beliebiger Reihenfolge löschen.
-Diese Notiz wird erst gelöscht, wenn beide Tests entfernt sind.
+Die Tests sind voneinander unabhängig: Keiner bindet eine Datei eines anderen
+Tests ein. Sie lassen sich getrennt und in beliebiger Reihenfolge löschen.
+Diese Notiz wird erst gelöscht, wenn alle drei Tests entfernt sind.
 
 
 1. Dem Skriptserver hinzugefügte Aufgaben
@@ -27,13 +34,24 @@ Test A:
 
 Test B:
   Aufgaben-ID (taskId):  inf10-db-a2-aufteilung
-  Datei:                 apps-script/Tasks.gs (Eintrag direkt nach
-                         'inf10-db-a1-primaerschluessel', vor
+  Datei:                 apps-script/Tasks.gs (Eintrag direkt vor
                          'inf9-dfd-zylinder-beschreibung')
   Aufgabe:               "Beschreibe, warum InstaHub die Daten auf die
                          Tabellen users und photos aufteilt." (Aufgabe 4 des
                          Tests, 3 Punkte)
   Verwendet von:         aufgabe2-quiz.js (Konstante DESCRIBE_TASK_ID)
+
+Test C:
+  Aufgaben-ID (taskId):  ph11-wdh2-quiz-crashtest-beschreibung
+  Datei:                 apps-script/Tasks.gs (Eintrag direkt vor
+                         'ph11-kreisbewegungen-zentripetalkraft-beschreibung')
+  Aufgabe:               "Beschreibe die Kräfte und deren Richtung, die bei
+                         einem Crashtest im Moment des Aufpralls wirken.
+                         Erkläre den Unterschied im Vergleich zur Situation
+                         bei einem Fallschirmspringer und gehe auf den Begriff
+                         Kräftegleichgewicht ein." (Aufgabe 4 des Tests,
+                         4 Aspekte)
+  Verwendet von:         wdh2-quiz.mjs (Konstante DESCRIBE_TASK_ID)
 
 Weitere Aufgaben wurden dem Skriptserver nicht hinzugefügt.
 
@@ -41,28 +59,35 @@ Weitere Aufgaben wurden dem Skriptserver nicht hinzugefügt.
 2. Alle Änderungen, die zu den Tests gehören
 --------------------------------------------
 
-Neue Dateien in faecher/informatik/klasse-10/1-Datenbanken/:
+Neue Dateien:
 
-  Test A:  aufgabe1-quiz.html, aufgabe1-quiz.js, aufgabe1-quiz.css
-  Test B:  aufgabe2-quiz.html, aufgabe2-quiz.js, aufgabe2-quiz.css
-  Beide:   aufgabe1-quiz-skriptserver.txt   (diese Notiz)
+  Test A (in faecher/informatik/klasse-10/1-Datenbanken/):
+    aufgabe1-quiz.html, aufgabe1-quiz.js, aufgabe1-quiz.css
+  Test B (in faecher/informatik/klasse-10/1-Datenbanken/):
+    aufgabe2-quiz.html, aufgabe2-quiz.js, aufgabe2-quiz.css
+  Test C (in faecher/physik/klasse-11/1-Kreisbewegungen/):
+    wdh2-quiz.html, wdh2-quiz.mjs, wdh2-quiz.css
+  Für alle: aufgabe1-quiz-skriptserver.txt (diese Notiz)
 
 Geänderte Dateien in apps-script/ (je Test ein Eintrag):
 
-  Tasks.gs                   Aufgabenblock 'inf10-db-a1-primaerschluessel'
-                             bzw. 'inf10-db-a2-aufteilung' ergänzt
-  Config.gs                  je eine Kommentarzeile im Kopf ergänzt:
+  Tasks.gs                   je ein Aufgabenblock mit der oben genannten
+                             Aufgaben-ID
+  Config.gs                  je eine Kommentarzeile im Kopf:
                              " * - inf10/1-Datenbanken/aufgabe1-quiz.html (...)"
                              " * - inf10/1-Datenbanken/aufgabe2-quiz.html (...)"
-  tests/code-routing.test.js beide Aufgaben-IDs in der Liste der geprüften
+                             " * - phy11/1-Kreisbewegungen/wdh2-quiz.html (...)"
+  tests/code-routing.test.js alle drei Aufgaben-IDs in der Liste der geprüften
                              Beschreibe-Aufgaben ergänzt (hinter 'sql-b2-3'
                              und 'sql-b3-1')
 
-Nicht geändert: Menüs und Übersichtsseiten. Die Tests sind nirgends
-verlinkt, beim Löschen muss deshalb kein Link entfernt werden. Gemeinsam
-genutzte Dateien (redundanzen.css, grundlagen.css, sql-lab-core.mjs,
-styles.css) wurden nur eingebunden, nicht verändert – sie bleiben
-unangetastet.
+Nicht geändert: Menüs und Übersichtsseiten. Die Tests sind nirgends verlinkt,
+beim Löschen muss deshalb kein Link entfernt werden. Gemeinsam genutzte
+Dateien wurden nur eingebunden, nicht verändert – sie bleiben unangetastet.
+Das betrifft in Informatik redundanzen.css, grundlagen.css, sql-lab-core.mjs
+und styles.css, in Physik bewegung-koerpern.css, kraefte-bewegung.css,
+components/token-drag.mjs, components/physics-notation.mjs bzw. .css sowie
+perzeptron/ui/semantic-answer.mjs.
 
 
 3. Rückbau-Checkliste
@@ -71,11 +96,19 @@ unangetastet.
 Für jeden Test getrennt abarbeiten. Platzhalter:
 
                   Test A                           Test B
+  <ORDNER>        faecher/informatik/klasse-10/1-Datenbanken
   <DATEI>         aufgabe1-quiz                    aufgabe2-quiz
+  <ENDUNG>        .html .js .css                   .html .js .css
   <ID>            inf10-db-a1-primaerschluessel    inf10-db-a2-aufteilung
 
-  [ ] Die drei Dateien <DATEI>.html, <DATEI>.js und <DATEI>.css in
-      1-Datenbanken löschen (git rm).
+                  Test C
+  <ORDNER>        faecher/physik/klasse-11/1-Kreisbewegungen
+  <DATEI>         wdh2-quiz
+  <ENDUNG>        .html .mjs .css
+  <ID>            ph11-wdh2-quiz-crashtest-beschreibung
+
+  [ ] Die drei Dateien <DATEI> mit den Endungen <ENDUNG> in <ORDNER> löschen
+      (git rm).
   [ ] apps-script/Tasks.gs: den kompletten Block '<ID>': { ... }, entfernen.
   [ ] apps-script/Config.gs: die Kommentarzeile zu <DATEI>.html entfernen.
   [ ] apps-script/tests/code-routing.test.js: die Zeile '<ID>' aus der Liste
@@ -84,22 +117,27 @@ Für jeden Test getrennt abarbeiten. Platzhalter:
   [ ] Kontrolle, dass keine Reste bleiben:
         git grep -n "<DATEI>"
         git grep -n "<ID>"
-      Solange der andere Test noch besteht, darf es nur noch Treffer in
-      dieser Notiz geben. Nach dem Löschen beider Tests: gar keine Treffer.
+      Solange noch ein anderer Test besteht, darf es nur noch Treffer in
+      dieser Notiz geben. Nach dem Löschen aller Tests: gar keine Treffer.
   [ ] Tests ausführen:
         node apps-script/tests/code-routing.test.js
         node apps-script/tests/sql-description-tasks.test.js
+      Bei Test C zusätzlich die Modultests:
+        Get-ChildItem faecher/physik/klasse-11/1-Kreisbewegungen/tests/*.mjs |
+          % { node $_.FullName }
   [ ] Falls die Aufgabe in Google Apps Script bereitgestellt wurde:
       Tasks.gs und Config.gs dort ebenfalls aktualisieren und die
       Bereitstellung auf eine neue Version setzen (die /exec-URL bleibt
       gleich). Sonst kennt der Online-Server die Aufgabe weiterhin.
   [ ] Website neu hochladen, damit <DATEI>.html auch online entfernt ist.
-  [ ] In dieser Notiz den gelöschten Test als entfernt vermerken. Sind
-      beide Tests entfernt, die Notiz selbst löschen
+  [ ] In dieser Notiz den gelöschten Test als entfernt vermerken. Sind alle
+      Tests entfernt, die Notiz selbst löschen
       (git rm aufgabe1-quiz-skriptserver.txt).
 
-Hinweis: In den Browsern der Schülerinnen und Schüler bleiben ggf. die
-localStorage-Einträge "informatik10-datenbanken-aufgabe1-test-v1" und
-"informatik10-datenbanken-aufgabe2-test-v1" zurück. Sie enthalten nur deren
-Testeingaben, werden von keiner anderen Seite gelesen und müssen nicht
-entfernt werden.
+Hinweis: In den Browsern der Schülerinnen und Schüler bleiben ggf.
+localStorage-Einträge zurück:
+  "informatik10-datenbanken-aufgabe1-test-v1"
+  "informatik10-datenbanken-aufgabe2-test-v1"
+  "physik11-kreisbewegungen-wdh2-test-v1"
+Sie enthalten nur deren Testeingaben, werden von keiner anderen Seite gelesen
+und müssen nicht entfernt werden.
