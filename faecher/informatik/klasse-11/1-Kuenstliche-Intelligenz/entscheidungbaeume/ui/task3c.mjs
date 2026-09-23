@@ -105,6 +105,8 @@ function showFeedback(id, kind, message) { const box = document.querySelector(`#
 function markVisited(step) { if (!state.visited.includes(step)) { state.visited.push(step); saveState(); } updateProgress(); }
 function updateProgress() { const completed = state.visited.length; document.querySelector("#progress-bar").style.width = `${Math.round((completed / STEPS.length) * 100)}%`; document.querySelector("#progress-percent").textContent = `${Math.round((completed / STEPS.length) * 100)} % bearbeitet`; document.querySelector("#progress-label").textContent = `Schritt ${STEPS.indexOf(state.activeStep) + 1} von ${STEPS.length}`; document.querySelectorAll("[data-step-tab]").forEach((tab) => tab.classList.toggle("is-complete", state.visited.includes(tab.dataset.stepTab))); }
 function showStep(step) { if (!STEPS.includes(step)) return; state.activeStep = step; const index = STEPS.indexOf(step); document.querySelectorAll("[data-step-panel]").forEach((panel) => { panel.hidden = panel.dataset.stepPanel !== step; }); document.querySelectorAll("[data-step-tab]").forEach((tab) => { const active = tab.dataset.stepTab === step; tab.setAttribute("aria-selected", String(active)); tab.tabIndex = active ? 0 : -1; }); document.querySelector("#previous-step").disabled = index === 0; document.querySelector("#next-step").hidden = index === STEPS.length - 1; saveState(); updateProgress(); if (step === "classify") requestAnimationFrame(() => renderTreeEdges(document.querySelector("#reference-tree"))); document.querySelector(`[data-step-panel="${step}"]`).focus({ preventScroll: true }); }
+// Beim Blaettern mit Weiter/Zurueck beginnt der neue Reiter oben, auch wenn der alte lang war.
+function goToStep(step) { showStep(step); const tabs = document.querySelector(".task3c-tabs"); if (tabs.getBoundingClientRect().top < 0) tabs.scrollIntoView({ block: "start" }); }
 
 function checkClassification(event) {
   event.preventDefault(); state.classificationAttempts += 1;
@@ -183,8 +185,8 @@ function checkQuiz(event) {
 
 function bindNavigation() {
   document.querySelectorAll("[data-step-tab]").forEach((tab) => { tab.addEventListener("click", () => showStep(tab.dataset.stepTab)); tab.addEventListener("keydown", (event) => { if (!["ArrowLeft", "ArrowRight", "Home", "End"].includes(event.key)) return; const index = STEPS.indexOf(tab.dataset.stepTab); const next = event.key === "Home" ? 0 : event.key === "End" ? STEPS.length - 1 : (index + (event.key === "ArrowRight" ? 1 : -1) + STEPS.length) % STEPS.length; event.preventDefault(); document.querySelector(`[data-step-tab="${STEPS[next]}"]`).focus(); }); });
-  document.querySelector("#previous-step").addEventListener("click", () => { const index = STEPS.indexOf(state.activeStep); if (index > 0) showStep(STEPS[index - 1]); });
-  document.querySelector("#next-step").addEventListener("click", () => { const index = STEPS.indexOf(state.activeStep); markVisited(state.activeStep); if (index < STEPS.length - 1) showStep(STEPS[index + 1]); });
+  document.querySelector("#previous-step").addEventListener("click", () => { const index = STEPS.indexOf(state.activeStep); if (index > 0) goToStep(STEPS[index - 1]); });
+  document.querySelector("#next-step").addEventListener("click", () => { const index = STEPS.indexOf(state.activeStep); markVisited(state.activeStep); if (index < STEPS.length - 1) goToStep(STEPS[index + 1]); });
 }
 
 if (typeof document !== "undefined") {

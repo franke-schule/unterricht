@@ -94,19 +94,26 @@ Rechnung: & $a=\dfrac{1{,}2\unit{N}}{0{,}100\unit{kg}}=12\,\accunit$
 \centering\textbf{Fallschirmspringer}\par\scriptsize Konstante Sinkgeschwindigkeit
 \begin{tikzpicture}[x=.8mm,y=.62mm,>=Latex]
   \draw[fill=Sky,draw=Blue] (0,5) .. controls (10,18) and (30,18) .. (40,5) -- cycle;
-  \draw[Line] (5,7)--(16,0) (35,7)--(24,0); \draw[Blue] (20,-1) circle (2); \draw[Blue] (20,-1)--(20,-11);
-  \draw[-{Latex},Blue,line width=.7pt] (20,-1)--(20,17) node[above,font=\scriptsize] {Luftwiderstandskraft $F_R$};
-  \draw[-{Latex},Blue,line width=.7pt] (20,-1)--(20,-13) node[below,font=\scriptsize] {Gewichtskraft $F_G$};
-  \fill[Blue] (20,-1) circle (1.15);
-  \node[font=\scriptsize] at (20,-21) {$F_R=F_G$};
+  % Springer: Hände an den Leinen, Kraftpfeile gleich lang (F_R = F_G).
+  \draw[Line] (5,7)--(16.5,-1) (35,7)--(23.5,-1);
+  \draw[Navy,line width=.6pt,line cap=round,line join=round]
+    (16.5,-1)--(20,-4.5)--(23.5,-1)
+    (18.3,-17)--(19.2,-10) (21.7,-17)--(20.8,-10);
+  \draw[fill=Mint,draw=Navy,line width=.45pt,rounded corners=.5mm] (18.6,-3.6) rectangle (21.4,-10.4);
+  \draw[fill=Mint,draw=Navy,line width=.45pt] (20,-0.4) circle[radius=1mm];
+  \draw[-{Latex},Blue,line width=.7pt] (20,-6.5)--(20,17) node[above,font=\scriptsize] {Luftwiderstandskraft $F_R$};
+  \draw[-{Latex},Blue,line width=.7pt] (20,-6.5)--(20,-30) node[below,font=\scriptsize] {Gewichtskraft $F_G$};
+  \fill[Blue] (20,-6.5) circle[radius=.55mm];
+  \node[font=\scriptsize] at (20,-38) {$F_R=F_G$};
 \end{tikzpicture}
 &\centering\textbf{Körper auf dem Tisch}\par
 \begin{tikzpicture}[x=.8mm,y=.62mm,>=Latex]
   \draw[fill=Sky,draw=Blue] (5,-10) rectangle (35,-7); \draw[Blue] (10,-7)--(10,-13) (30,-7)--(30,-13); \draw[fill=Mint,draw=Blue] (14,-7) rectangle (26,1);
-  \draw[-{Latex},Blue,line width=.7pt] (20,-7)--(20,16) node[above,font=\scriptsize,align=center] {Kraft des Tisches\\auf den Körper};
-  \draw[-{Latex},Blue,line width=.7pt] (20,-3)--(20,-16) node[below,font=\scriptsize] {Gewichtskraft};
-  \fill[Blue] (20,-3) circle (1.15);
-  \fill[Gold] (20,-7) circle (1.5); \draw[Navy,line width=.25pt] (20,-7) circle (1.5);
+  % Gleich lange Pfeile; die Tischkraft greift leicht versetzt an der Auflagefläche an, damit sich die Pfeile nicht überdecken.
+  \draw[-{Latex},Blue,line width=.7pt] (22,-7)--(22,15) node[above,font=\scriptsize,align=center] {Kraft des Tisches\\auf den Körper};
+  \draw[-{Latex},Crack,line width=.7pt] (20,-3)--(20,-25) node[below,font=\scriptsize] {Gewichtskraft};
+  \fill[Crack] (20,-3) circle[radius=.55mm];
+  \fill[Blue] (22,-7) circle[radius=.55mm];
 \end{tikzpicture}
 &\centering\textbf{Auto}\par\scriptsize fährt mit konstanter Geschwindigkeit\par
 \begin{tikzpicture}[x=.8mm,y=.62mm,>=Latex]

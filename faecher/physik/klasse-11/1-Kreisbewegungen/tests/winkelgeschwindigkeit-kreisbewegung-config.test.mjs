@@ -69,4 +69,16 @@ assert.match(semantic, /Automatische Prüfung nicht erreichbar/);
 assert.doesNotMatch(semantic, /innerHTML\s*=\s*result\.feedback/);
 assert.doesNotMatch(semantic, /textarea\.value\s*=/);
 
-console.log("Kreisbewegungsmodul: Formeln, Lückentext, Freitextfeedback und responsive Animationen sind konfiguriert.");
+// Sicherungsblatt im letzten Reiter, nur über den Lehrercode erreichbar.
+const quizPanel = html.slice(html.indexOf('id="panel-quiz"'));
+assert.match(quizPanel, /class="solution-download"/);
+assert.match(html, /name="solution-code"/);
+assert.match(html, /unlockSolution\(event, 'R4JX-DNM9', 'solution-download-link', 'solution-code-message'\)/);
+assert.match(html, /href="sicherungsblatt-aufgabe-3-loesungen\.pdf\?v=20260923b" download hidden/);
+assert.match(source, /window\.unlockSolution = unlockSolution;/);
+const decoding = fs.readFileSync(new URL("../../../../../lehrercodes-dekodierung.tex", import.meta.url), "utf8");
+assert.match(decoding, /Physik, Klasse 11, Aufgabe 3 &\s*\\texttt\{R4JX-DNM9\}/);
+const sheet = fs.readFileSync(new URL("../sicherungsblatt-aufgabe-3-loesungen.tex", import.meta.url), "utf8");
+assert.match(sheet, /Aufgabe 3 -- Winkelgeschwindigkeit und Ursache der Kreisbewegung/);
+
+console.log("Kreisbewegungsmodul:Formeln, Lückentext, Freitextfeedback und responsive Animationen sind konfiguriert.");

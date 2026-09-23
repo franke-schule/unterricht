@@ -1,0 +1,197 @@
+\documentclass[10pt,a4paper]{article}
+
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage[ngerman]{babel}
+\usepackage[a4paper,margin=14mm]{geometry}
+\usepackage{lmodern}
+\usepackage[table]{xcolor}
+\usepackage{tabularx}
+\usepackage{array}
+\usepackage{amsmath}
+\usepackage{microtype}
+\usepackage[most]{tcolorbox}
+\usepackage{tikz}
+\usetikzlibrary{arrows.meta,calc}
+
+\pagestyle{empty}
+\setlength{\parindent}{0pt}
+\setlength{\parskip}{0pt}
+\renewcommand{\familydefault}{\sfdefault}
+\renewcommand{\arraystretch}{1.08}
+
+\definecolor{Navy}{HTML}{17324D}
+\definecolor{Blue}{HTML}{3B6EA5}
+\definecolor{Sky}{HTML}{EAF3FA}
+\definecolor{Mint}{HTML}{E8F5EF}
+\definecolor{Gold}{HTML}{F3B33D}
+\definecolor{Ink}{HTML}{1E2935}
+\definecolor{Muted}{HTML}{617080}
+\definecolor{Line}{HTML}{D8E1E8}
+\colorlet{Force}{red!80!black}
+
+\color{Ink}
+\newcommand{\sectiontitle}[1]{%
+  \vspace{1.0mm}{\color{Blue}\bfseries\large #1}\par
+  \vspace{0.15mm}{\color{Blue}\rule{\linewidth}{0.7pt}}\par
+  \vspace{0.6mm}}
+\newcommand{\unit}[1]{\,\mathrm{#1}}
+\newcommand{\unitfrac}[2]{\,\frac{\mathrm{#1}}{\mathrm{#2}}}
+\newcommand{\vB}{v_{\mathrm B}}
+\newcommand{\FZ}{F_{\mathrm Z}}
+% Formelkasten: Formel groß, darunter die Größen mit Einheit.
+\newcommand{\formulabox}[2]{%
+  \begin{tcolorbox}[colback=Sky,colframe=Line,arc=1.2mm,boxrule=.6pt,left=2mm,right=2mm,top=.8mm,bottom=.8mm]
+  {\centering\fontsize{15}{18}\selectfont #1\par}
+  \vspace{0.3mm}{\centering\footnotesize #2\par}
+  \end{tcolorbox}}
+% Beispiel aus der Simulation des Lernmoduls.
+\newcommand{\example}[1]{%
+  \vspace{0.8mm}{\small\textcolor{Blue}{\bfseries Beispiel aus der Simulation:}\enspace #1\par}\vspace{0.8mm}}
+% Zwei Je-desto-Kästen nebeneinander.
+\newcommand{\twofacts}[2]{%
+  \begin{tabularx}{\linewidth}{@{}X@{\hspace{1.5mm}}X@{}}
+  \colorbox{Mint}{\parbox{\dimexpr\linewidth-2\fboxsep\relax}{\centering\small\vspace{0.4mm}#1\vspace{0.4mm}}} &
+  \colorbox{Mint}{\parbox{\dimexpr\linewidth-2\fboxsep\relax}{\centering\small\vspace{0.4mm}#2\vspace{0.4mm}}}
+  \end{tabularx}}
+
+\begin{document}
+
+\colorbox{Navy}{%
+  \parbox{\dimexpr\linewidth-2\fboxsep\relax}{%
+    \vspace{1.3mm}\color{white}
+    \begin{tabularx}{\linewidth}{@{}Xr@{}}
+      {\small\bfseries PHYSIK · KLASSE 11} &
+      \colorbox{Gold}{\color{Navy}\small\bfseries\strut LÖSUNGEN}
+    \end{tabularx}
+    \vspace{0.9mm}
+    {\fontsize{16}{19}\selectfont\bfseries Aufgabe 3 -- Winkelgeschwindigkeit und Ursache der Kreisbewegung}\par
+    \vspace{0.3mm}{\large Sicherungsblatt}\vspace{1.1mm}
+  }%
+}
+
+\vspace{0.9mm}
+\colorbox{Sky}{\parbox{\dimexpr\linewidth-2\fboxsep\relax}{%
+  \vspace{0.55mm}\textcolor{Blue}{\bfseries Ziel:} Eine Drehbewegung mit $\omega$, $\vB$, $f$ und $T$ beschreiben und erklären, warum ein Körper auf der Kreisbahn bleibt.\vspace{0.55mm}}}
+
+% ---------------------------------------------------------------------------
+\sectiontitle{1 · Winkelgeschwindigkeit}
+\begin{minipage}[c]{0.27\linewidth}\centering
+\begin{tikzpicture}[x=1mm,y=1mm]
+  % Drehung von oben im Uhrzeigersinn wie in der Simulation.
+  \fill[Sky] (0,0) -- (90:16) arc[start angle=90,end angle=0,radius=16] -- cycle;
+  \draw[Muted,line width=.6pt] (0,0) circle (16);
+  \draw[Muted,densely dashed,line width=.6pt] (0,0) -- (90:16);
+  \draw[Navy,line width=.9pt] (0,0) -- (0:16);
+  \draw[-{Latex[length=1.8mm]},Blue,line width=.9pt] (90:8) arc[start angle=90,end angle=4,radius=8];
+  \node[Blue,font=\small\bfseries] at (45:4.6) {$\Delta\varphi$};
+  \fill[Navy] (0,0) circle (.8);
+  \node[font=\scriptsize,anchor=north] at (0,-1.2) {Zentrum};
+  \fill[Muted!45] (90:16) circle (1.8);
+  \fill[Navy] (0:16) circle (1.8);
+  \node[font=\scriptsize,Muted,anchor=south] at (90:18) {Start};
+  \node[font=\scriptsize,anchor=west] at (0:18.2) {nach $\Delta t$};
+\end{tikzpicture}
+\end{minipage}\hfill
+\begin{minipage}[c]{0.70\linewidth}
+\formulabox{$\omega=\dfrac{\Delta\varphi}{\Delta t}$}%
+  {$\Delta\varphi$: Drehwinkel im Bogenmaß (rad) \quad $\Delta t$: Zeitintervall (s) \quad $\omega$: Winkelgeschwindigkeit $\left(\unitfrac{rad}{s}\right)$}
+\example{$\Delta\varphi=\dfrac{\pi}{2}$, $\Delta t=1{,}0\unit{s}$ \quad$\Rightarrow$\quad $\omega=\dfrac{\pi/2}{1{,}0\unit{s}}\approx1{,}6\unitfrac{rad}{s}$}
+\twofacts{Gleicher Winkel $\Delta\varphi$ in \textbf{kürzerer} Zeit\\$\to$ \textbf{größeres} $\omega$}%
+         {\textbf{Kleinerer} Winkel $\Delta\varphi$ in gleicher Zeit\\$\to$ \textbf{kleineres} $\omega$}
+\end{minipage}
+
+% ---------------------------------------------------------------------------
+\sectiontitle{2 · Bahngeschwindigkeit}
+\begin{minipage}[c]{0.27\linewidth}\centering
+\begin{tikzpicture}[x=1mm,y=1mm]
+  % Gleiches omega: Beide Körper liegen auf derselben Verbindungslinie.
+  \draw[Muted,line width=.6pt] (0,0) circle (8);
+  \draw[Muted,line width=.6pt] (0,0) circle (16);
+  \draw[Navy,line width=.7pt] (0,0) -- (0,16);
+  \draw[-{Latex[length=2mm]},Blue,line width=1.1pt] (0,8) -- (9,8);
+  \draw[-{Latex[length=2mm]},Blue,line width=1.1pt] (0,16) -- (18,16);
+  \fill[Navy] (0,8) circle (1.5);
+  \fill[Navy] (0,16) circle (1.5);
+  \fill[Navy] (0,0) circle (.8);
+  \node[Blue,font=\scriptsize,anchor=west] at (9.2,8) {$\vB$};
+  \node[Blue,font=\scriptsize,anchor=west] at (18.2,16) {$\vB$};
+  \node[font=\scriptsize,anchor=north] at (0,-1.2) {Zentrum};
+  \node[font=\scriptsize,Muted,anchor=north] at (0,-17.2) {gleiches $\omega$};
+\end{tikzpicture}
+\end{minipage}\hfill
+\begin{minipage}[c]{0.70\linewidth}
+\formulabox{$\vB=\omega\cdot r$}%
+  {$\omega$: Winkelgeschwindigkeit $\left(\unitfrac{rad}{s}\right)$ \quad $r$: Radius (m) \quad $\vB$: Bahngeschwindigkeit $\left(\unitfrac{m}{s}\right)$}
+\example{$r=2{,}0\unit{m}$, $\omega=2{,}0\unitfrac{rad}{s}$ \quad$\Rightarrow$\quad $\vB=2{,}0\unitfrac{rad}{s}\cdot2{,}0\unit{m}=4{,}0\unitfrac{m}{s}$}
+\twofacts{Gleicher Radius $r$, \textbf{größeres} $\omega$\\$\to$ \textbf{größeres} $\vB$}%
+         {Gleiches $\omega$, \textbf{größerer} Radius $r$\\$\to$ \textbf{größeres} $\vB$}
+\end{minipage}
+
+% ---------------------------------------------------------------------------
+\sectiontitle{3 · Frequenz und Umlaufdauer}
+\begin{minipage}[c]{0.40\linewidth}
+\formulabox{$f=\dfrac{1}{T}$}%
+  {$T$: Umlaufdauer (s)\\[0.3mm] $f$: Frequenz in Hertz $\left(1\unit{Hz}=\tfrac{1}{\mathrm{s}}\right)$}
+\end{minipage}\hfill
+\begin{minipage}[c]{0.57\linewidth}
+\example{$T=2{,}0\unit{s}$ \quad$\Rightarrow$\quad $f=\dfrac{1}{2{,}0\unit{s}}=0{,}50\unit{Hz}$}
+\colorbox{Mint}{\parbox{\dimexpr\linewidth-2\fboxsep\relax}{\centering\small\vspace{0.4mm}$f$ und $T$ sind \textbf{Kehrwerte}: \textbf{kurze} Umlaufdauer $\to$ viele Umläufe pro Sekunde $\to$ \textbf{große} Frequenz\vspace{0.4mm}}}
+\end{minipage}
+\par\vspace{1.5mm}
+
+% ---------------------------------------------------------------------------
+\sectiontitle{4 · Ursache der Kreisbewegung}
+\begin{minipage}[c]{0.24\linewidth}\centering
+\begin{tikzpicture}[x=1mm,y=1mm]
+  \coordinate (M) at (0,0);
+  \coordinate (K) at (45:15);
+  \draw[Muted,line width=.6pt] (M) circle (15);
+  \fill[Navy] (M) circle (.8);
+  \node[font=\scriptsize,anchor=north] at (0,-1.2) {Mittelpunkt};
+  \draw[-{Latex[length=2mm]},Force,line width=1.1pt] (K) -- ($(K)!0.93!(M)$);
+  \draw[-{Latex[length=2mm]},Blue,line width=1.1pt] (K) -- ($(K)+(-45:12)$);
+  \fill[Navy] (K) circle (1.8);
+  \node[Force,font=\small] at ($(K)!0.5!(M)+(-2.8,2.8)$) {$\FZ$};
+  \node[Blue,font=\small,anchor=west] at ($(K)+(-45:12)+(0.4,0)$) {$\vB$};
+  \node[font=\scriptsize,Muted,anchor=north] at (0,-17.2) {mit $\FZ$: Kreisbahn};
+\end{tikzpicture}
+\end{minipage}\hfill
+\begin{minipage}[c]{0.24\linewidth}\centering
+\begin{tikzpicture}[x=1mm,y=1mm]
+  \coordinate (M) at (0,0);
+  \coordinate (K) at (45:15);
+  \draw[Muted,line width=.6pt] (M) circle (15);
+  \fill[Navy] (M) circle (.8);
+  \node[font=\scriptsize,anchor=north] at (0,-1.2) {Mittelpunkt};
+  \draw[Blue,densely dashed,line width=.9pt] (K) -- ($(K)+(-45:20)$);
+  \draw[-{Latex[length=2mm]},Blue,line width=1.1pt] (K) -- ($(K)+(-45:12)$);
+  \fill[Navy] (K) circle (1.8);
+  \node[Blue,font=\small,anchor=west] at ($(K)+(-45:12)+(0.4,0)$) {$\vB$};
+  \node[font=\scriptsize,Muted,anchor=north] at (0,-17.2) {ohne $\FZ$: geradlinig weiter};
+\end{tikzpicture}
+\end{minipage}\hfill
+\begin{minipage}[c]{0.48\linewidth}
+\small\textcolor{Blue}{\bfseries Musterlösung Teilaufgabe 7:} Der Geschwindigkeitspfeil beginnt am Körper und liegt tangential zur Kreisbahn. Der Pfeil der Zentripetalkraft $\FZ$ beginnt ebenfalls am Körper und zeigt \textbf{nach innen} zum Kreismittelpunkt.
+
+\vspace{1.2mm}
+Fällt $\FZ$ weg, bewegt sich der Körper wegen seiner Trägheit \textbf{tangential geradlinig} weiter.
+\end{minipage}
+
+\vspace{2mm}
+\begin{tcolorbox}[colback=Mint,colframe=Blue,arc=1.2mm,boxrule=.7pt,left=2.5mm,right=2.5mm,top=1.2mm,bottom=1.2mm]
+\textcolor{Blue}{\bfseries Merksatz}\par\vspace{0.6mm}
+Wirkt eine \textbf{Kraft} auf einen Körper, ändert sich \textbf{der Betrag der Geschwindigkeit} und/oder \textbf{die Richtung der Geschwindigkeit}.
+
+\vspace{0.8mm}
+Bei einer \textbf{Kreisbewegung} wirkt die Zentripetalkraft nach \textbf{innen}, denn es ändert sich ständig \textbf{die Richtung der Geschwindigkeit}.
+\end{tcolorbox}
+
+\vfill
+{\color{Line}\rule{\linewidth}{0.5pt}}\par\vspace{1mm}
+\begin{tabularx}{\linewidth}{@{}Xr@{}}
+  {\small\color{Muted}Klasse 11 · Physik · Kreisbewegungen} &
+  {\small\color{Muted}Sicherungsblatt · Aufgabe 3}
+\end{tabularx}
+
+\end{document}

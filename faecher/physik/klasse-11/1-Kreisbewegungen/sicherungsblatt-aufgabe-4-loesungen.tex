@@ -40,9 +40,9 @@
 \newcommand{\pagefooter}[1]{%
   \vfill{\color{Line}\rule{\linewidth}{0.5pt}}\par\vspace{1mm}
   \begin{tabularx}{\linewidth}{@{}Xc r@{}}
-    {\small\color{Muted}Klasse 11 · Physik · Kreisbewegungen} &
-    {\small\color{Muted}#1 / 2} &
-    {\small\color{Muted}Sicherungsblatt · Aufgabe 4}
+    {\leavevmode\small\color{Muted}Klasse 11 · Physik · Kreisbewegungen} &
+    {\leavevmode\small\color{Muted}#1} &
+    {\leavevmode\small\color{Muted}Sicherungsblatt · Aufgabe 4}
   \end{tabularx}}
 
 \begin{document}
@@ -79,29 +79,7 @@ $r$ bei gleichem $v_{\mathrm B}$ & Je größer $r$, desto kleiner $F_{\mathrm Z}
 \end{tabularx}
 \vspace{1.5mm}
 
-\sectiontitle{2 · Herleitung}
-\begin{minipage}[t]{0.24\linewidth}
-\vspace{0pt}\centering
-\begin{tikzpicture}[x=1mm,y=1mm,>=Latex]
-  \coordinate (P) at (0,0);
-  \draw[-{Latex},Blue,line width=.8pt] (P) -- ++(50:18) coordinate (V1) node[above,font=\scriptsize] {$v_{1}$};
-  \draw[-{Latex},Blue,line width=.8pt] (P) -- ++(-50:18) coordinate (V2) node[below,font=\scriptsize] {$v_{2}$};
-  \draw[-{Latex},Navy,line width=.9pt] (V1) -- (V2) node[midway,right,font=\scriptsize] {$\Delta v$};
-  \draw[Muted] (P) ++(50:7) arc (50:-50:7);
-  \node[font=\scriptsize] at (4.2,0) {$\alpha$};
-\end{tikzpicture}
-\end{minipage}\hfill
-\begin{minipage}[t]{0.74\linewidth}
-\vspace{0pt}\small
-\begin{tabularx}{\linewidth}{@{}>{\bfseries}p{27mm}X@{}}
-Grundgesetz: & $F\cdot\Delta t=m\cdot\Delta v$ \\[0.9mm]
-\mbox{Ähnliche Dreiecke:} & $\dfrac{\Delta v}{\Delta s}=\dfrac{v_{\mathrm B}}{r}$ (beide gleichschenklig, gleicher Winkel $\alpha$, SWS) \\[0.9mm]
-Näherung: & (kleines $\Delta t$) \quad $\Delta s\approx\Delta x=v_{\mathrm B}\cdot\Delta t \;\Rightarrow\; \Delta v=\dfrac{v_{\mathrm B}^{2}\cdot\Delta t}{r}$ \\[0.9mm]
-Einsetzen: & $F_{\mathrm Z}=\dfrac{m\cdot v_{\mathrm B}^{2}}{r}$, mit $v_{\mathrm B}=\omega\cdot r$: $F_{\mathrm Z}=m\cdot\omega^{2}\cdot r$
-\end{tabularx}
-\end{minipage}
-
-\sectiontitle{3 · Merksatz}
+\sectiontitle{2 · Merksatz}
 \begin{tcolorbox}[colback=Sky,colframe=Line,arc=1.2mm,boxrule=.6pt,left=2mm,right=2mm,top=.7mm,bottom=.7mm]
 {\centering\fontsize{14}{17}\selectfont $F_{\mathrm Z}=\dfrac{m\cdot v_{\mathrm B}^{2}}{r}=m\cdot\omega^{2}\cdot r$\par}
 \vspace{0.3mm}
@@ -110,18 +88,17 @@ Einsetzen: & $F_{\mathrm Z}=\dfrac{m\cdot v_{\mathrm B}^{2}}{r}$, mit $v_{\mathr
 \small Bewegt sich ein Körper der Masse $m$ mit der Bahngeschwindigkeit $v_{\mathrm B}$ auf einer Kreisbahn mit dem Radius $r$, hat die nötige Zentripetalkraft den Betrag $F_{\mathrm Z}=\dfrac{m\cdot v_{\mathrm B}^{2}}{r}=m\cdot\omega^{2}\cdot r$.
 \end{tcolorbox}
 
-\sectiontitle{4 · Richtung der Zentripetalkraft}
+\sectiontitle{3 · Richtung der Zentripetalkraft}
 \begin{tcolorbox}[colback=Sky,colframe=Line,arc=1.2mm,boxrule=.6pt,left=2mm,right=2mm,top=.7mm,bottom=.7mm]
 \small Damit sich ein Körper mit gleichbleibender Bahngeschwindigkeit auf einer Kreisbahn bewegt, muss auf ihn eine Kraft wirken, die zum \textbf{Mittelpunkt} hin gerichtet ist. Diese Kraft nennt man Zentripetalkraft $F_{\mathrm Z}$.
 \end{tcolorbox}
 \vspace{1mm}
 \colorbox{Gold}{\parbox{\dimexpr\linewidth-2\fboxsep\relax}{\small\centering\bfseries Fehlt die Kraft zum Mittelpunkt $\to$ tangential geradlinig weiter · Kraft zu klein $\to$ Bahnradius wird größer}}
 
-\pagefooter{1}
-
-\newpage
-\sectiontitle{5 · Rechenbeispiele}
+\vspace{1.5mm}
+\sectiontitle{4 · Rechenbeispiele}
 {\renewcommand{\arraystretch}{1.42}%
+\begin{tcbraster}[raster columns=2,raster equal height,raster column skip=3mm]
 \begin{tcolorbox}[colback=white,colframe=Line,arc=1.2mm,boxrule=.65pt,left=2.2mm,right=2.2mm,top=1.1mm,bottom=1.1mm]
 \textcolor{Blue}{\bfseries Hammerwurf}\par\vspace{0.35mm}
 {\small
@@ -131,10 +108,8 @@ Gesucht: & $F_{\mathrm Z}$ \\
 Ansatz: & $F_{\mathrm Z}=\dfrac{m\cdot v_{\mathrm B}^{2}}{r}$ \\[2mm]
 Rechnung: & $F_{\mathrm Z}=\dfrac{7{,}26\unit{kg}\cdot(25\unitfrac{m}{s})^{2}}{1{,}8\unit{m}}$
 \end{tabularx}}
-\vspace{0.3mm}\hfill\textcolor{Blue}{\bfseries Ergebnis: $2\,521\unit{N}\approx 2{,}5\unit{kN}$ \quad 2 gültige Ziffern}
+\par\vspace{1.2mm}\hfill\textcolor{Blue}{\bfseries Ergebnis: $2\,521\unit{N}\approx 2{,}5\unit{kN}$ \quad 2 gültige Ziffern}
 \end{tcolorbox}
-
-\vspace{3mm}
 \begin{tcolorbox}[colback=white,colframe=Line,arc=1.2mm,boxrule=.65pt,left=2.2mm,right=2.2mm,top=1.1mm,bottom=1.1mm]
 \textcolor{Blue}{\bfseries Auto in der Kurve}\par\vspace{0.35mm}
 {\small
@@ -144,8 +119,9 @@ Gesucht: & $F_{\mathrm Z}$ \\
 Ansatz: & $F_{\mathrm Z}=\dfrac{m\cdot v_{\mathrm B}^{2}}{r}$ \\[2mm]
 Rechnung: & $F_{\mathrm Z}=\dfrac{1200\unit{kg}\cdot(15\unitfrac{m}{s})^{2}}{40\unit{m}}$
 \end{tabularx}}
-\vspace{0.3mm}\hfill\textcolor{Blue}{\bfseries Ergebnis: $6\,750\unit{N}\approx 6{,}8\unit{kN}$ \quad 2 gültige Ziffern}
+\par\vspace{1.2mm}\hfill\textcolor{Blue}{\bfseries Ergebnis: $6\,750\unit{N}\approx 6{,}8\unit{kN}$ \quad 2 gültige Ziffern}
 \end{tcolorbox}
+\end{tcbraster}
 
 \vspace{3mm}
 \begin{tcolorbox}[colback=white,colframe=Line,arc=1.2mm,boxrule=.65pt,left=2.2mm,right=2.2mm,top=1.1mm,bottom=1.1mm]
@@ -157,9 +133,9 @@ Gesucht: & $v_{\mathrm B}$ \\
 Ansatz: & $v_{\mathrm B}=\sqrt{\dfrac{F_{\mathrm Z}\cdot r}{m}}$ \\[2mm]
 Rechnung: & $v_{\mathrm B}=\sqrt{\dfrac{9\,600\unit{N}\cdot 40\unit{m}}{1200\unit{kg}}}=\sqrt{320}\unitfrac{m}{s}$
 \end{tabularx}}
-\vspace{0.3mm}\hfill\textcolor{Blue}{\bfseries Ergebnis: $\approx 18\unitfrac{m}{s}$ \quad ($17{,}89\unitfrac{m}{s}\cdot 3{,}6\approx 64\unitfrac{km}{h}$) \quad 2 gültige Ziffern}
+\par\vspace{1.2mm}\hfill\textcolor{Blue}{\bfseries Ergebnis: $\approx 18\unitfrac{m}{s}$ \quad ($17{,}89\unitfrac{m}{s}\cdot 3{,}6\approx 64\unitfrac{km}{h}$) \quad 2 gültige Ziffern}
 \end{tcolorbox}}
 
-\pagefooter{2}
+\pagefooter{1 / 1}
 
 \end{document}
