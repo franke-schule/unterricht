@@ -23,7 +23,7 @@ assert.match(html, /bewegung-koerpern\.css\?v=20260910a/);
 assert.match(html, /kraefte-bewegung\.mjs\?v=20260921a/);
 assert.match(html, /Sicherungsblatt zu Wiederholung 2/);
 assert.match(html, /onsubmit="unlockSolution\(event, 'R8NT-DKPV', 'solution-download-link', 'solution-code-message'\)"/);
-assert.match(html, /href="sicherungsblatt-aufgabe-2-loesungen\.pdf\?v=20260920d" download hidden/);
+assert.match(html, /href="sicherungsblatt-aufgabe-2-loesungen\.pdf\?v=20260923a" download hidden/);
 // Merksatz zu den Angriffspunkten steht in jeder Rückmeldung zu Aufgabe 5
 assert.match(source, /function forceBalanceFeedback\(result\)/);
 assert.match(source, /\*\*Die Gewichtskraft greift immer im Körpermittelpunkt per Definition\. Die Gegenkraft des Tisches greift am Kontaktpunkt zwischen Körper und Tisch\.\*\*/);

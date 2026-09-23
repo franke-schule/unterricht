@@ -11,10 +11,10 @@ const sheet = fs.readFileSync(new URL("../sicherungsblatt-aufgabe-4-loesungen.te
 const decoding = fs.readFileSync(new URL("../../../../../lehrercodes-dekodierung.tex", import.meta.url), "utf8");
 
 // Titel, Reiter und Eyebrow-Reihenfolge
-assert.match(html, /Aufgabe 2 – Zentripetalkraft/);
+assert.match(html, /Aufgabe 4 – Zentripetalkraft/);
 assert.equal((html.match(/data-physics-tab=/g) || []).length, 6);
 assert.equal((html.match(/data-physics-panel=/g) || []).length, 6);
-const eyebrows = [...html.matchAll(/<p class="eyebrow">([^<]+)<\/p>/g)].map((match) => match[1]).filter((text) => text !== "Kreisbewegungen · Aufgabe 2");
+const eyebrows = [...html.matchAll(/<p class="eyebrow">([^<]+)<\/p>/g)].map((match) => match[1]).filter((text) => text !== "Kreisbewegungen · Aufgabe 4");
 assert.deepEqual(eyebrows, ["Entdecken", "Verstehen", "Verstehen", "Anwenden", "Sichern", "Übertragen"]);
 
 // Simulationen
@@ -43,7 +43,7 @@ assert.match(html, /id="je-desto-radius-1"/);
 assert.equal((html.match(/class="cloze-text-input"/g) || []).length, 7);
 assert.equal((html.match(/id="check-je-desto-(mass|omega|radius)"/g) || []).length, 3);
 
-// Korrekturrunde: Buttonsystem wie in Aufgabe 1 (Winkelgeschwindigkeit,
+// Korrekturrunde: Buttonsystem wie in Aufgabe 3 (Winkelgeschwindigkeit,
 // Simulation "angle") – genau zwei Buttons "Neustarten"/"Pausieren" statt
 // "Bewegung starten"/"Zurücksetzen", einheitlich für alle drei Simulationen.
 assert.equal((html.match(/data-cf-action="restart"/g) || []).length, 3);
@@ -82,7 +82,7 @@ assert.deepEqual(
 // Download-Bereich nach dem Abschlussquiz im Panel "quiz"
 assert.match(html, /data-physics-panel="quiz"[\s\S]*id="centripetal-quiz"[\s\S]*class="solution-download"/);
 assert.match(html, /unlockSolution\(event, 'R6WF-DH7K', 'solution-download-link', 'solution-code-message'\)/);
-assert.match(html, /href="sicherungsblatt-aufgabe-4-loesungen\.pdf\?v=20260917a" download hidden/);
+assert.match(html, /href="sicherungsblatt-aufgabe-4-loesungen\.pdf\?v=20260923a" download hidden/);
 assert.match(html, /maxlength="9"/);
 
 // Reiter 3 (Herleitung): neue Aufgaben 5-8 + "Für Schnelle", alte Aufgaben entfernt
@@ -196,7 +196,7 @@ assert.match(css, /@media \(max-width: 620px\)/);
 const aufgabe3Index = menu.indexOf("1-Kreisbewegungen/aufgabe3.html");
 const aufgabe4Index = menu.indexOf("1-Kreisbewegungen/aufgabe4.html");
 assert.ok(aufgabe3Index >= 0 && aufgabe4Index > aufgabe3Index, "aufgabe4.html muss nach aufgabe3.html im Menü stehen");
-assert.match(menu, /<a class="module-button" href="1-Kreisbewegungen\/aufgabe4\.html">\s*<strong>Aufgabe 2<\/strong>\s*<span>Zentripetalkraft<\/span>/);
+assert.match(menu, /<a class="module-button" href="1-Kreisbewegungen\/aufgabe4\.html">\s*<strong>Aufgabe 4<\/strong>\s*<span>Zentripetalkraft<\/span>/);
 
 // circle-kinematics.mjs exportiert die neuen Funktionen
 assert.match(kinematics, /export function centripetalForce/);
@@ -215,7 +215,7 @@ assert.match(css, /\.cf-variable-row/);
 assert.match(css, /\.physics-step-next/);
 
 // TeX: Titel, keine Schrägstrich-Einheiten, Lehrercode in der Dekodierdatei
-assert.match(sheet, /Aufgabe 2 -- Zentripetalkraft/);
+assert.match(sheet, /Aufgabe 4 -- Zentripetalkraft/);
 assert.doesNotMatch(sheet, /m\/s|km\/h/);
 assert.match(decoding, /R6WF-DH7K/);
 

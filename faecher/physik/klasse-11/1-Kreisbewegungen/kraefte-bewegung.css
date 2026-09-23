@@ -227,7 +227,7 @@
   user-select: none;
 }
 
-/* Diese Datei wird auch von Aufgabe 1 bis 3 geladen; dort sind benutzte
+/* Diese Datei wird auch von den Lernmodulen Aufgabe 3 bis 6 geladen; dort sind benutzte
    Karten ausgegraut und die Lücken teils noch Auswahlfelder. */
 .cloze-token:disabled {
   opacity: 0.45;

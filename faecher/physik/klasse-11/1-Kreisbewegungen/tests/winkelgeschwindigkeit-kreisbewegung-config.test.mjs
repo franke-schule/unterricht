@@ -7,7 +7,7 @@ const css = fs.readFileSync(new URL("../winkelgeschwindigkeit-kreisbewegung.css"
 const semantic = fs.readFileSync(new URL("../components/physics-semantic-task.mjs", import.meta.url), "utf8");
 const kinematics = fs.readFileSync(new URL("../components/circle-kinematics.mjs", import.meta.url), "utf8");
 
-assert.match(html, /Aufgabe 1 – Winkelgeschwindigkeit und Ursache der Kreisbewegung/);
+assert.match(html, /Aufgabe 3 – Winkelgeschwindigkeit und Ursache der Kreisbewegung/);
 assert.equal((html.match(/data-physics-tab=/g) || []).length, 6);
 assert.equal((html.match(/data-physics-panel=/g) || []).length, 6);
 assert.match(html, /Δφ im Bogenmaß/);

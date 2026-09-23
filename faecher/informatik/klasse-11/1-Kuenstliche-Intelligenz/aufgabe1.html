@@ -6,7 +6,7 @@
     <meta name="robots" content="noindex, nofollow">
     <title>Aufgabe 1 – Gutes Äffchen / Böses Äffchen | Informatik 11</title>
     <link rel="stylesheet" href="../../../../styles.css?v=20260707">
-    <link rel="stylesheet" href="entscheidungbaeume/styles.css?v=20260912a">
+    <link rel="stylesheet" href="entscheidungbaeume/styles.css?v=20260923a">
     <script type="module" src="entscheidungbaeume/ui/app.mjs?v=20260820d"></script>
   </head>
   <body class="decision-tree-page dt-monkey-page">
@@ -31,20 +31,31 @@
       </div>
 
       <section class="dt-workspace" aria-label="Entscheidungsbaum-Labor">
-        <aside class="dt-training-panel" aria-labelledby="training-title">
-          <div class="dt-section-heading">
-            <span>Trainingsdaten</span>
-            <h2 id="training-title">Bekannte Äffchen</h2>
-            <p>Vergleiche die Bilder jederzeit mit deinen Regeln.</p>
-            <p class="dt-feature-hint"><strong>Hinweis:</strong> Affen mit herausgestreckter Zunge und Affen mit sichtbaren Zähnen gelten nicht als lächelnd.</p>
-          </div>
-          <div id="training-groups"></div>
-          <details class="dt-source-note">
-            <summary>Quellen und Lizenz</summary>
-            <p>Äffchengrafiken: Annabel Lindner und Stefan Seegerer, AI Unplugged, <a href="https://creativecommons.org/licenses/by-nc/3.0/de/" target="_blank" rel="noreferrer">CC BY-NC 3.0</a>.</p>
-            <p><a href="https://www.aiunplugged.org/german.pdf" target="_blank" rel="noreferrer">Unterrichtsmaterial</a> · <a href="https://www.stefanseegerer.de/decision-tree-monkey-game/" target="_blank" rel="noreferrer">digitale Referenz</a></p>
-          </details>
-        </aside>
+        <div class="dt-side-column">
+          <aside class="dt-training-panel" aria-labelledby="training-title">
+            <div class="dt-section-heading">
+              <span>Trainingsdaten</span>
+              <h2 id="training-title">Bekannte Äffchen</h2>
+              <p>Vergleiche die Bilder jederzeit mit deinen Regeln.</p>
+              <p class="dt-feature-hint"><strong>Hinweis:</strong> Affen mit herausgestreckter Zunge und Affen mit sichtbaren Zähnen gelten nicht als lächelnd.</p>
+            </div>
+            <div id="training-groups"></div>
+            <details class="dt-source-note">
+              <summary>Quellen und Lizenz</summary>
+              <p>Äffchengrafiken: Annabel Lindner und Stefan Seegerer, AI Unplugged, <a href="https://creativecommons.org/licenses/by-nc/3.0/de/" target="_blank" rel="noreferrer">CC BY-NC 3.0</a>.</p>
+              <p><a href="https://www.aiunplugged.org/german.pdf" target="_blank" rel="noreferrer">Unterrichtsmaterial</a> · <a href="https://www.stefanseegerer.de/decision-tree-monkey-game/" target="_blank" rel="noreferrer">digitale Referenz</a></p>
+            </details>
+          </aside>
+
+          <section class="dt-palette" aria-labelledby="palette-title">
+            <div class="dt-palette-heading">
+              <h2 id="palette-title">Bausteine</h2>
+              <span>ziehen oder anklicken</span>
+            </div>
+            <div id="feature-palette"></div>
+            <div class="dt-leaf-palette" id="leaf-palette"></div>
+          </section>
+        </div>
 
         <div class="dt-builder-column">
           <section class="dt-example-card" aria-labelledby="example-title">
@@ -71,18 +82,8 @@
                 <span>Dein Modell</span>
                 <h2 id="editor-title">Dein Entscheidungsbaum</h2>
                 <p>Ziehe Bausteine in den Baum oder wähle erst einen Baustein und dann das Ziel.</p>
-                <p class="dt-feature-hint"><strong>Hinweis:</strong> Affen mit herausgestreckter Zunge und Affen mit sichtbaren Zähnen gelten nicht als lächelnd.</p>
               </div>
               <button class="dt-danger-button" id="reset-tree" type="button">Baum zurücksetzen</button>
-            </div>
-
-            <div class="dt-palette" aria-labelledby="palette-title">
-              <div class="dt-palette-heading">
-                <h3 id="palette-title">Bausteine</h3>
-                <span>ziehen oder anklicken</span>
-              </div>
-              <div id="feature-palette"></div>
-              <div class="dt-leaf-palette" id="leaf-palette"></div>
             </div>
 
             <p id="interaction-status" class="dt-interaction-status" role="status" aria-live="polite">Wähle einen Baustein oder ziehe ihn in die leere Wurzel.</p>

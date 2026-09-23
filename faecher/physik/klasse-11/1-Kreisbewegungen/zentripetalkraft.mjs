@@ -126,7 +126,7 @@ function setupHammerQuiz() {
       ["noforce", "Die Kugel würde auch ohne Kraft auf der Kreisbahn bleiben."],
     ],
     feedback: "Das Seil zieht die Kugel ständig zum Kreismittelpunkt. Ohne diese Kraft bewegt sie sich nach dem Trägheitssatz tangential geradlinig weiter.",
-    hint: "Erinnere dich an Aufgabe 1 zur Winkelgeschwindigkeit: Wohin zeigt die Zentripetalkraft, und was geschieht, wenn sie wegfällt?",
+    hint: "Erinnere dich an das Lernmodul Aufgabe 3 (Winkelgeschwindigkeit): Wohin zeigt die Zentripetalkraft, und was geschieht, wenn sie wegfällt?",
   }, 0);
 }
 
