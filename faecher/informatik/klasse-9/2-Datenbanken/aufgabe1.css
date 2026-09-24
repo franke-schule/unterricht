@@ -1,0 +1,90 @@
+/* Aufgabe 1 – Warum Datenbanken? (Informatik 9). Alle Regeln unter .db-einstieg-page. */
+
+.db-einstieg-page .step-tabs { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+
+/* Board-Regeln aus klasse-10/1-Datenbanken/aufgabe1-quiz.css, Zeilen 6-45 und 54-60,
+   Praefix .quiz-test-page ersetzt durch .db-einstieg-page. .cloze-drag-ghost bleibt ohne Praefix. */
+.db-einstieg-page .drag-help { color: var(--db-muted); font-size: 0.88rem; }
+.db-einstieg-page .drag-help[hidden], .db-einstieg-page .submit-row[hidden] { display: none; }
+
+.db-einstieg-page .quiz-cloze, .db-einstieg-page .quiz-sort { display: grid; gap: 14px; margin-top: 14px; }
+.db-einstieg-page .cloze-term-bank { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; min-height: 60px; padding: 8px; border: 2px dashed #bdcad9; border-radius: 12px; background: #f9fbfd; }
+.db-einstieg-page .cloze-term-bank.is-drop-target { border-color: var(--db-cyan); background: #effcff; }
+.db-einstieg-page .bank-empty { color: var(--db-muted); font-size: 0.86rem; }
+
+.db-einstieg-page .cloze-token { min-height: 44px; border: 1px solid #b9d1df; border-radius: 9px; padding: 8px 12px; color: #12324a; background: white; font: inherit; font-weight: 750; text-align: left; cursor: grab; touch-action: none; user-select: none; }
+.db-einstieg-page .cloze-token.is-locked { display: inline-flex; align-items: center; cursor: default; }
+.db-einstieg-page .cloze-token.is-picked, .db-einstieg-page .cloze-gap.is-picked { outline: 3px solid #126e9c; outline-offset: 2px; }
+.db-einstieg-page .cloze-token.is-dragging, .db-einstieg-page .cloze-gap.is-dragging { opacity: 0.45; }
+.cloze-drag-ghost { position: fixed; z-index: 1000; pointer-events: none; transform: translate(-50%, -50%); min-height: 44px; display: inline-flex; align-items: center; border: 1px solid #126e9c; border-radius: 9px; padding: 8px 12px; color: #12324a; background: #f9fcfe; font-weight: 750; box-shadow: 0 10px 22px rgba(18, 50, 74, 0.2); }
+
+.db-einstieg-page .cloze-sentence { margin: 0; padding: 1rem 1.1rem; border: 1px solid #b9d1df; border-radius: 0.85rem; background: white; font-size: 1.05rem; line-height: 3.4; color: #12324a; }
+.db-einstieg-page .cloze-gap { display: inline-flex; align-items: center; justify-content: center; min-width: 76px; min-height: 46px; margin: 0 0.15em; padding: 4px 10px; border: 2px dashed #126e9c; border-radius: 9px; background: #eef6fb; color: #12324a; font: inherit; font-weight: 750; line-height: 1.25; vertical-align: middle; cursor: pointer; touch-action: none; }
+.db-einstieg-page .cloze-gap.is-awaiting { background: #d7ebf6; }
+.db-einstieg-page .cloze-gap.is-filled { border-style: solid; background: #f9fcfe; cursor: grab; }
+.db-einstieg-page .cloze-gap.is-attached { margin-right: 0; }
+.db-einstieg-page .cloze-gap.is-drop-target { background: #d7ebf6; border-color: #12324a; }
+.db-einstieg-page .cloze-gap.is-locked { cursor: default; }
+
+.db-einstieg-page .sort-zones { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 12px; }
+.db-einstieg-page .sort-zone { display: grid; align-content: start; gap: 10px; min-height: 150px; padding: 10px; border: 2px dashed #bdcad9; border-radius: 14px; background: #f9fbfd; }
+.db-einstieg-page .sort-zone.is-drop-target { border-color: var(--db-cyan); background: #effcff; }
+.db-einstieg-page .sort-zone-label { display: flex; flex-wrap: wrap; align-items: baseline; justify-content: space-between; gap: 4px 8px; min-height: 44px; padding: 8px 10px; border: 1px solid #cbe0f0; border-radius: 10px; background: #f4fbff; color: #155f83; font-weight: 900; text-align: left; }
+.db-einstieg-page button.sort-zone-label { cursor: pointer; }
+.db-einstieg-page .sort-zone-label small { color: var(--db-muted); font-size: 0.74rem; font-weight: 700; }
+.db-einstieg-page .sort-zone-items { display: grid; gap: 8px; }
+.db-einstieg-page .sort-zone-items .cloze-token { width: 100%; }
+
+.db-einstieg-page .is-correct.is-locked { border-color: var(--db-green); background: color-mix(in srgb, var(--db-green) 10%, white); }
+.db-einstieg-page .is-wrong.is-locked { border-color: var(--db-red); background: color-mix(in srgb, var(--db-red) 8%, white); }
+.db-einstieg-page .result-mark { font-weight: 900; }
+.db-einstieg-page .is-correct .result-mark { color: var(--db-green); }
+.db-einstieg-page .is-wrong .result-mark { color: var(--db-red); }
+
+.db-einstieg-page .evaluation-list { display: grid; gap: 8px; margin: 0; padding: 0; list-style: none; }
+.db-einstieg-page .evaluation-list li { padding: 9px 12px; border-left: 4px solid var(--db-line); border-radius: 6px; background: white; line-height: 1.45; }
+.db-einstieg-page .evaluation-list li.is-correct { border-left-color: var(--db-green); }
+.db-einstieg-page .evaluation-list li.is-correct > strong { color: #0c7455; }
+.db-einstieg-page .evaluation-list li.is-wrong { border-left-color: var(--db-red); }
+.db-einstieg-page .evaluation-list li.is-wrong > strong { color: #ad2936; }
+.db-einstieg-page .evaluation-why { display: block; margin-top: 4px; color: var(--db-muted); }
+
+/* Unsere Karten werden nie "gesperrt" (kein state.submitted); Markierung deshalb
+   ohne .is-locked, mit denselben Farben wie oben. */
+.db-einstieg-page .cloze-token.is-correct, .db-einstieg-page .dbs-slot.is-correct { border-color: var(--db-green); background: color-mix(in srgb, var(--db-green) 10%, white); }
+.db-einstieg-page .cloze-token.is-wrong, .db-einstieg-page .dbs-slot.is-wrong { border-color: var(--db-red); background: color-mix(in srgb, var(--db-red) 8%, white); }
+
+/* Sortierzonen: 2.2 und 3.1 haben je zwei Zonen. */
+.db-einstieg-page .sort-zones { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+
+/* Auswahllisten (1.2 und Abschlussquiz) */
+.db-einstieg-page .choice-list.is-two-col { grid-template-columns: 1fr; }
+
+/* Tabellenausschnitt 1.1 */
+.db-einstieg-page .sheet-table { min-width: 520px; table-layout: auto; }
+.db-einstieg-page .sheet-table th, .db-einstieg-page .sheet-table td { white-space: nowrap; }
+.db-einstieg-page .sheet-table th[scope="row"] { width: 44px; text-align: center; background: #fafcff; }
+
+/* Arbeitsbereich 2.1: Wortspeicher steht im DOM zuerst (mobil oben), ab 700px rechts neben der Grafik. */
+.db-einstieg-page .dbs-workspace { display: grid; grid-template-columns: 1fr; gap: 18px; }
+.db-einstieg-page .dbs-workspace > .dbs-diagram { margin-inline: auto; }
+
+.db-einstieg-page .dbs-diagram { position: relative; width: 100%; max-width: 440px; aspect-ratio: 520 / 600; }
+.db-einstieg-page .dbs-diagram svg { position: absolute; inset: 0; width: 100%; height: 100%; }
+.db-einstieg-page .dbs-slot { position: absolute; margin: 0; min-width: 0; font-size: clamp(0.72rem, 2.6vw, 0.9rem); line-height: 1.2; text-align: center; hyphens: manual; white-space: normal; }
+
+@media (min-width: 700px) {
+  .db-einstieg-page .dbs-workspace { grid-template-columns: minmax(0, 1.2fr) minmax(0, 1fr); align-items: start; }
+  .db-einstieg-page .dbs-workspace > .cloze-term-bank { grid-column: 2; grid-row: 1; }
+  .db-einstieg-page .dbs-workspace > .dbs-diagram { grid-column: 1; grid-row: 1; margin-inline: 0; }
+  .db-einstieg-page .choice-list.is-two-col { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+
+@media (max-width: 860px) {
+  .db-einstieg-page .step-tabs { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+}
+
+@media (max-width: 480px) {
+  .db-einstieg-page .sort-zones { grid-template-columns: 1fr; }
+  .db-einstieg-page .sort-zone { min-height: 0; }
+}

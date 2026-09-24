@@ -1,0 +1,341 @@
+<!doctype html>
+<html lang="de">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="robots" content="noindex, nofollow">
+    <title>Aufgabe 1 – Warum Datenbanken? | Informatik 9</title>
+    <link rel="stylesheet" href="../../../../styles.css?v=20260825">
+    <link rel="stylesheet" href="../../klasse-10/1-Datenbanken/redundanzen.css?v=20260923a">
+    <link rel="stylesheet" href="../../klasse-10/1-Datenbanken/grundlagen.css?v=20260911">
+    <link rel="stylesheet" href="aufgabe1.css?v=20260924">
+    <script type="module" src="aufgabe1.js?v=20260924"></script>
+  </head>
+  <body class="redundancy-page db-einstieg-page">
+    <div class="site-backdrop" aria-hidden="true"></div>
+    <main class="learning-shell">
+      <nav class="module-topbar" aria-label="Seitennavigation">
+        <a class="back-link" href="../index.html">Zur Aufgabenübersicht</a>
+        <a class="back-link" href="../../../../index.html">Startseite</a>
+      </nav>
+
+      <header class="module-header">
+        <div class="eyebrow"><span aria-hidden="true">◎</span> Datenbanken · Einstieg</div>
+        <h1>Warum Datenbanken?</h1>
+        <p>Finde heraus, wann eine Tabellenkalkulation an ihre Grenzen stößt und woraus ein Datenbanksystem besteht.</p>
+      </header>
+
+      <section id="learning-module">
+        <div class="progress-card" aria-label="Bearbeitungsfortschritt">
+          <div class="progress-copy">
+            <span id="progress-label">Reiter 1 von 3</span>
+            <strong id="progress-percent">0 % bearbeitet</strong>
+          </div>
+          <div class="progress-track" aria-hidden="true"><span id="progress-bar"></span></div>
+        </div>
+
+        <nav id="step-tabs" class="step-tabs" aria-label="Lernschritte" role="tablist"></nav>
+
+        <section id="step-1" class="step-panel" role="tabpanel" aria-labelledby="tab-1">
+          <div class="step-heading">
+            <span class="step-number">1</span>
+            <div><p class="step-kicker">Entdecken</p><h2>Viele Daten verwalten</h2></div>
+          </div>
+
+          <div class="scenario-card">
+            <p><strong>Rückblick:</strong> Mit einer Tabellenkalkulation rechnest du mit Daten. Daten stellen Dinge oder Sachverhalte aus der realen Welt dar und enthalten Informationen – zum Beispiel über einen Account auf einer Plattform.</p>
+            <p><strong>Leitfrage:</strong> Wie verwaltet man sehr viele Daten am besten – also wie speichert, bearbeitet und wertet man sie aus?</p>
+          </div>
+
+          <div class="scenario-card">
+            <p>Instahub ist eine ausgedachte Plattform zum Teilen von Fotos. Jeder Account hat einen Benutzernamen, einen Namen und eine E-Mail-Adresse. Instahub hat mehrere Millionen Accounts.</p>
+          </div>
+
+          <div class="table-shell">
+            <div class="table-caption">
+              <strong>Tabellenkalkulation: Instahub-Accounts</strong>
+              <span>Ausschnitt</span>
+            </div>
+            <div class="table-scroll">
+              <table class="data-table sheet-table">
+                <caption class="visually-hidden">Ausschnitt aus einer Tabellenkalkulation mit Instahub-Accounts in den Spalten Benutzername, Name und E-Mail</caption>
+                <thead>
+                  <tr>
+                    <th scope="col"></th>
+                    <th scope="col">A</th>
+                    <th scope="col">B</th>
+                    <th scope="col">C</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <th scope="row">1</th>
+                    <td><strong>Benutzername</strong></td>
+                    <td><strong>Name</strong></td>
+                    <td><strong>E-Mail</strong></td>
+                  </tr>
+                  <tr>
+                    <th scope="row">2</th>
+                    <td>aktivlese_alina</td>
+                    <td>Alina Keller</td>
+                    <td>aktivlese_alina@instahub.test</td>
+                  </tr>
+                  <tr>
+                    <th scope="row">3</th>
+                    <td>aktivlesealva</td>
+                    <td>Alva Sonnenfeld</td>
+                    <td>aktivlesealva@instahub.test</td>
+                  </tr>
+                  <tr>
+                    <th scope="row">4</th>
+                    <td>aktivlottin</td>
+                    <td>Matilda Helgig</td>
+                    <td>aktivlottin@instahub.test</td>
+                  </tr>
+                  <tr>
+                    <th scope="row">5</th>
+                    <td>aktivschwimmyara</td>
+                    <td>Yara Kleinschmidt</td>
+                    <td>aktivschwimmyara@instahub.test</td>
+                  </tr>
+                  <tr>
+                    <th scope="row">6</th>
+                    <td>amaliazockt</td>
+                    <td>Amalia Wunderlich</td>
+                    <td>amaliazockt@instahub.test</td>
+                  </tr>
+                  <tr>
+                    <th scope="row">7</th>
+                    <td>ameliezauber</td>
+                    <td>Amelie Kornblume</td>
+                    <td>ameliezauber@instahub.test</td>
+                  </tr>
+                  <tr>
+                    <th scope="row">…</th>
+                    <td>…</td>
+                    <td>…</td>
+                    <td>…</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+          <section class="task-card">
+            <h3>1.1 Schätzfrage</h3>
+            <p><strong>Schätze</strong>, wie viele Zeilen ein Tabellenblatt in Excel oder LibreOffice Calc höchstens hat. <strong>Gib</strong> deine Schätzung als Zahl ein.</p>
+            <div class="gap-row">
+              <label for="estimate-input">Deine Schätzung (Anzahl der Zeilen)</label>
+              <input id="estimate-input" class="gap-input" type="text" inputmode="numeric" autocomplete="off">
+            </div>
+            <div class="action-row"><button class="primary-button" id="check-estimate" type="button">Schätzung prüfen</button></div>
+            <div id="feedback-estimate" class="feedback" aria-live="polite"></div>
+            <div id="estimate-reveal" class="short-summary" hidden>
+              <h3>Auflösung</h3>
+              <p>Ein Tabellenblatt in Excel oder LibreOffice Calc hat höchstens <strong>1&nbsp;048&nbsp;576 Zeilen</strong> – also gut eine Million.</p>
+              <p>Das klingt viel. Doch es gibt rund 2 Milliarden Websites, deren Informationen zum Beispiel Google speichert. Große soziale Netzwerke haben mehr als eine Milliarde Accounts. Für 2 Milliarden Zeilen bräuchte man über 1&nbsp;900 volle Tabellenblätter.</p>
+            </div>
+          </section>
+
+          <section class="task-card">
+            <h3>1.2 Anforderungen an die Datenverwaltung</h3>
+            <p><strong>Wähle</strong> alle Anforderungen aus, die die Datenverwaltung von Instahub erfüllen muss. Mehrere Antworten sind richtig.</p>
+            <div class="choice-list is-two-col" id="mc-requirements">
+              <label class="choice-option"><input type="checkbox" name="requirements" value="amount"><span>Sie muss sehr viele Daten speichern können.</span></label>
+              <label class="choice-option"><input type="checkbox" name="requirements" value="diagram"><span>Die Daten müssen als Diagramm dargestellt werden.</span></label>
+              <label class="choice-option"><input type="checkbox" name="requirements" value="access"><span>Viele Personen müssen gleichzeitig auf die Daten zugreifen können.</span></label>
+              <label class="choice-option"><input type="checkbox" name="requirements" value="copies"><span>Jede Person bekommt eine eigene Kopie aller Daten.</span></label>
+              <label class="choice-option"><input type="checkbox" name="requirements" value="connected"><span>Die Daten müssen zusammenhängend gespeichert sein und dürfen nicht auf viele einzelne Dateien verteilt werden.</span></label>
+            </div>
+            <div class="help-stack">
+              <details><summary>Hilfe 1</summary><p>Stell dir vor, was bei Instahub jeden Tag passiert: Wie viele Menschen nutzen die Plattform – und wie viele davon zur selben Zeit?</p></details>
+              <details><summary>Hilfe 2</summary><p>Eine Anforderung beschreibt, was die Datenverwaltung unbedingt leisten muss – nicht, was man mit den Daten zusätzlich machen könnte. Denk an die Menge der Daten, an die Menschen, die zugreifen, und daran, wie die Daten gespeichert sein müssen.</p></details>
+              <details><summary>Hilfe 3</summary><p>Drei Aussagen sind richtig. Sie handeln von der Menge der Daten, vom gleichzeitigen Zugriff und davon, dass die Daten zusammenhängend gespeichert sind.</p></details>
+            </div>
+            <div class="action-row"><button class="primary-button" id="check-requirements" type="button">Antwort prüfen</button></div>
+            <div id="feedback-requirements" class="feedback" aria-live="polite"></div>
+          </section>
+        </section>
+
+        <section id="step-2" class="step-panel" role="tabpanel" aria-labelledby="tab-2" hidden>
+          <div class="step-heading">
+            <span class="step-number">2</span>
+            <div><p class="step-kicker">Verstehen und anwenden</p><h2>Das Datenbanksystem</h2></div>
+          </div>
+
+          <div class="scenario-card">
+            <p>Für so viele Daten wie bei Instahub braucht man ein <strong>Datenbanksystem</strong>. Meist ist das eine relationale, also tabellenorientierte Datenbank.</p>
+          </div>
+
+          <section class="short-summary" aria-labelledby="dbs-summary-title">
+            <h3 id="dbs-summary-title">Merke: Datenbanksystem (DBS)</h3>
+            <p><strong>Datenbanksystem (DBS):</strong> Es speichert Daten so, dass man auch komplexe Informationen schnell abrufen kann. <strong>DBS = DB + DBMS</strong></p>
+            <p><strong>Datenbank (DB):</strong> Sie ist die Menge der zu verwaltenden Daten und speichert diese in Tabellen.</p>
+            <p><strong>Datenbankmanagementsystem (DBMS)</strong>, auch: Datenbankverwaltungssystem: Es ist die Software, die die Daten der DB verwaltet und alle Zugriffe auf die Daten regelt.</p>
+          </section>
+
+          <section class="task-card">
+            <h3>2.1 Grafik beschriften</h3>
+            <p><strong>Ziehe</strong> die drei Begriffe auf die passenden Felder der Grafik.</p>
+            <p class="drag-help">Ohne Ziehen: Begriff antippen, dann Feld antippen. Ein belegtes Feld zweimal antippen, um den Begriff zurückzulegen.</p>
+            <div id="dbs-board" class="dbs-workspace"></div>
+            <div class="help-stack">
+              <details><summary>Hilfe 1</summary><p>Lies noch einmal den Merke-Kasten: Aus welchen zwei Teilen besteht ein Datenbanksystem?</p></details>
+              <details><summary>Hilfe 2</summary><p>Der äußere Rahmen umschließt alles. Nutzer und Anwendungen greifen nie direkt auf die Daten zu, sondern immer über die Software, die die Zugriffe regelt.</p></details>
+              <details><summary>Hilfe 3</summary><p>Der äußere Rahmen ist das Datenbanksystem (DBS). Überlege für die beiden inneren Teile: Welcher ist das Programm, über das der Pfeil von „Nutzer / Anwendung“ läuft?</p></details>
+            </div>
+            <div class="action-row"><button class="primary-button" id="check-dbs" type="button">Beschriftung prüfen</button></div>
+            <div id="feedback-dbs" class="feedback" aria-live="polite"></div>
+          </section>
+
+          <section class="task-card">
+            <h3>2.2 Wer macht was?</h3>
+            <p><strong>Ordne</strong> jede Karte der Datenbank (DB) oder dem Datenbankmanagementsystem (DBMS) zu.</p>
+            <p class="drag-help">Ohne Ziehen: Karte antippen, dann Feld antippen. Eine zugeordnete Karte zweimal antippen, um sie zurückzulegen.</p>
+            <div id="role-board" class="quiz-sort"></div>
+            <div class="help-stack">
+              <details><summary>Hilfe 1</summary><p>Die Datenbank ist die Menge der Daten selbst. Das DBMS ist ein Programm, das etwas mit den Daten tut.</p></details>
+              <details><summary>Hilfe 2</summary><p>Frag bei jeder Karte: Beschreibt sie, was gespeichert ist – oder eine Tätigkeit, die ein Programm ausführen muss?</p></details>
+              <details><summary>Hilfe 3</summary><p>Nur zwei Karten gehören zur Datenbank. Beide beschreiben, was in ihr liegt und wie es gespeichert ist.</p></details>
+            </div>
+            <div class="action-row"><button class="primary-button" id="check-roles" type="button">Zuordnung prüfen</button></div>
+            <div id="feedback-roles" class="feedback" aria-live="polite"></div>
+          </section>
+        </section>
+
+        <section id="step-3" class="step-panel" role="tabpanel" aria-labelledby="tab-3" hidden>
+          <div class="step-heading">
+            <span class="step-number">3</span>
+            <div><p class="step-kicker">Übertragen und sichern</p><h2>Tabellenkalkulation oder Datenbank?</h2></div>
+          </div>
+
+          <div class="scenario-card">
+            <p>Nicht immer braucht man ein Datenbanksystem.</p>
+            <p>Stell dir eine lange Bücherliste vor. Fragen wie „Von wie vielen verschiedenen Verlagen gibt es Bücher?“ oder „Wie viele Bücher gibt es von jedem Autor?“ lassen sich in einer Tabellenkalkulation nur mühsam beantworten. Ein Datenbanksystem beantwortet solche <strong>komplexen Abfragen</strong> schnell.</p>
+          </div>
+
+          <section class="task-card">
+            <h3>3.1 Tabellenkalkulation oder Datenbanksystem?</h3>
+            <p><strong>Ordne</strong> jede Situation der passenden Spalte zu. <strong>Achte</strong> darauf, welches Kriterium den Ausschlag gibt.</p>
+            <p class="drag-help">Ohne Ziehen: Karte antippen, dann Feld antippen. Eine zugeordnete Karte zweimal antippen, um sie zurückzulegen.</p>
+            <div id="case-board" class="quiz-sort"></div>
+            <div class="help-stack">
+              <details><summary>Hilfe 1</summary><p>Prüfe jede Karte mit vier Fragen: Sind es sehr viele Daten? Greifen viele Personen gleichzeitig zu? Müssen Daten zusammenhängend gespeichert sein? Sind komplexe Abfragen nötig?</p></details>
+              <details><summary>Hilfe 2</summary><p>Eine Tabellenkalkulation ist stark beim Rechnen und bei Diagrammen – solange es um wenige Daten geht, die nur wenige Personen bearbeiten.</p></details>
+              <details><summary>Hilfe 3</summary><p>Zu jedem Thema gibt es zwei Karten: Klassenbibliothek und Stadtbibliothek, Kassenbuch und Onlineshop, Notenberechnung und Instahub. Von jedem Paar gehört genau eine Karte zu „Datenbanksystem nötig“.</p></details>
+            </div>
+            <div class="action-row"><button class="primary-button" id="check-cases" type="button">Zuordnung prüfen</button></div>
+            <div id="feedback-cases" class="feedback" aria-live="polite"></div>
+          </section>
+
+          <section class="short-summary" aria-labelledby="tks-summary-title">
+            <h3 id="tks-summary-title">Merke: Tabellenkalkulation oder Datenbanksystem?</h3>
+            <p>Eine Tabellenkalkulation stößt an ihre Grenzen, wenn</p>
+            <ul>
+              <li>sehr viele Daten gespeichert werden müssen – ein Tabellenblatt hat höchstens 1&nbsp;048&nbsp;576 Zeilen,</li>
+              <li>viele Personen gleichzeitig auf die Daten zugreifen,</li>
+              <li>die Daten zusammenhängend gespeichert sein müssen,</li>
+              <li>komplexe Fragen an die Daten gestellt werden, zum Beispiel „Wie viele Bücher gibt es von jedem Autor?“.</li>
+            </ul>
+            <p>In solchen Fällen ist ein <strong>Datenbanksystem</strong> besser geeignet.</p>
+            <p>Eine Tabellenkalkulation ist aber nicht schlechter: Sie verwaltet nur wenige Daten, bietet dafür mehr fertige Funktionen zum Rechnen und für Diagramme. Oft verwaltet ein Datenbanksystem die Daten, und in einer Tabellenkalkulation wird danach mit ihnen weitergerechnet. <strong>Beide eignen sich für unterschiedliche Anwendungsgebiete.</strong></p>
+          </section>
+
+          <section class="task-card">
+            <h3>Abschlussquiz</h3>
+            <div class="scenario-card">
+              <p><strong>Kreuze</strong> alle richtigen Antworten an. Bei manchen Fragen sind mehrere Antworten richtig.</p>
+            </div>
+            <form id="final-quiz" class="final-quiz" novalidate>
+              <fieldset>
+                <legend><span>1</span> Welche Anforderungen sprechen für ein Datenbanksystem?</legend>
+                <div class="choice-list is-two-col">
+                  <label class="choice-option"><input type="checkbox" name="q1" value="amount"><span>Es müssen sehr viele Daten gespeichert werden.</span></label>
+                  <label class="choice-option"><input type="checkbox" name="q1" value="diagram"><span>Aus wenigen Daten soll ein Diagramm entstehen.</span></label>
+                  <label class="choice-option"><input type="checkbox" name="q1" value="access"><span>Viele Personen greifen gleichzeitig auf die Daten zu.</span></label>
+                  <label class="choice-option"><input type="checkbox" name="q1" value="complex"><span>Man will komplexe Fragen an die Daten stellen, zum Beispiel: Wie viele Bücher gibt es von jedem Autor?</span></label>
+                </div>
+              </fieldset>
+              <fieldset>
+                <legend><span>2</span> Welche Aussagen über Datenbank (DB) und Datenbankmanagementsystem (DBMS) stimmen?</legend>
+                <div class="choice-list is-two-col">
+                  <label class="choice-option"><input type="checkbox" name="q2" value="db-data"><span>Die DB ist die Menge der zu verwaltenden Daten.</span></label>
+                  <label class="choice-option"><input type="checkbox" name="q2" value="db-rights"><span>Die DB legt fest, wer welche Daten sehen darf.</span></label>
+                  <label class="choice-option"><input type="checkbox" name="q2" value="dbms-access"><span>Das DBMS ist die Software, die die Zugriffe auf die Daten regelt.</span></label>
+                  <label class="choice-option"><input type="checkbox" name="q2" value="dbs-parts"><span>Ein Datenbanksystem (DBS) besteht aus DB und DBMS.</span></label>
+                </div>
+              </fieldset>
+              <fieldset>
+                <legend><span>3</span> Eine Nutzerin ändert bei Instahub ihre E-Mail-Adresse. Welcher Teil führt die Änderung aus?</legend>
+                <div class="choice-list is-two-col">
+                  <label class="choice-option"><input type="checkbox" name="q3" value="db-self"><span>Die Datenbank (DB) ändert sich selbst.</span></label>
+                  <label class="choice-option"><input type="checkbox" name="q3" value="dbms"><span>Das Datenbankmanagementsystem (DBMS).</span></label>
+                  <label class="choice-option"><input type="checkbox" name="q3" value="direct"><span>Die Nutzerin schreibt die neue Adresse ohne DBMS direkt in die Datenbank.</span></label>
+                  <label class="choice-option"><input type="checkbox" name="q3" value="spreadsheet"><span>Eine Tabellenkalkulation auf dem Handy der Nutzerin.</span></label>
+                </div>
+              </fieldset>
+              <fieldset>
+                <legend><span>4</span> Für welche Aufgaben reicht eine Tabellenkalkulation aus?</legend>
+                <div class="choice-list is-two-col">
+                  <label class="choice-option"><input type="checkbox" name="q4" value="bank"><span>Eine Bank verwaltet die Konten von drei Millionen Kundinnen und Kunden.</span></label>
+                  <label class="choice-option"><input type="checkbox" name="q4" value="club"><span>Ein Sportverein berechnet für seine 25 Mitglieder die Beiträge und erstellt ein Diagramm.</span></label>
+                  <label class="choice-option"><input type="checkbox" name="q4" value="cinema"><span>Ein Kino verkauft online Tickets, viele Menschen buchen gleichzeitig Plätze.</span></label>
+                  <label class="choice-option"><input type="checkbox" name="q4" value="party"><span>Eine Schülerin plant ihre Geburtstagsfeier mit 15 Gästen und rechnet die Kosten aus.</span></label>
+                </div>
+              </fieldset>
+              <fieldset>
+                <legend><span>5</span> Welche Aussagen zu Tabellenkalkulation und Datenbanksystem stimmen?</legend>
+                <div class="choice-list is-two-col">
+                  <label class="choice-option"><input type="checkbox" name="q5" value="replace"><span>Datenbanksysteme ersetzen Tabellenkalkulationen vollständig.</span></label>
+                  <label class="choice-option"><input type="checkbox" name="q5" value="functions"><span>Eine Tabellenkalkulation bietet mehr fertige Funktionen zum Rechnen und für Diagramme.</span></label>
+                  <label class="choice-option"><input type="checkbox" name="q5" value="nostore"><span>Eine Tabellenkalkulation kann grundsätzlich keine Daten speichern.</span></label>
+                  <label class="choice-option"><input type="checkbox" name="q5" value="reuse"><span>Daten aus einem Datenbanksystem können in einer Tabellenkalkulation weiterverarbeitet werden.</span></label>
+                </div>
+              </fieldset>
+              <div class="action-row"><button class="primary-button" type="submit">Quiz auswerten</button></div>
+              <div id="feedback-quiz" class="feedback" aria-live="polite"></div>
+            </form>
+          </section>
+
+          <section id="quiz-overview" class="short-summary" aria-labelledby="quiz-overview-title" hidden>
+            <h3 id="quiz-overview-title">Übersicht: alle Aufgaben mit Lösung</h3>
+            <ol>
+              <li>1.1 Wie viele Zeilen hat ein Tabellenblatt höchstens? → 1&nbsp;048&nbsp;576 Zeilen.</li>
+              <li>1.2 Anforderungen an die Datenverwaltung von Instahub → sehr viele Daten speichern, viele Personen greifen gleichzeitig zu, die Daten zusammenhängend speichern.</li>
+              <li>2.1 Grafik beschriften → äußerer Rahmen: Datenbanksystem (DBS); Rechteck: Datenbankmanagementsystem (DBMS); Zylinder: Datenbank (DB).</li>
+              <li>2.2 Wer macht was? → DB: speichert die Daten in Tabellen, enthält die Daten aller Instahub-Accounts. DBMS: fügt neue Daten ein, löscht Daten, ändert Daten, sucht Daten für eine Abfrage heraus, regelt Benutzerrechte.</li>
+              <li>3.1 Tabellenkalkulation oder Datenbanksystem? → Tabellenkalkulation reicht: Klassenbibliothek, Kassenbuch, Notenberechnung. Datenbanksystem nötig: Stadtbibliothek, Onlineshop, Instahub.</li>
+              <li>Abschlussquiz → Frage 1: sehr viele Daten, gleichzeitiger Zugriff, komplexe Fragen · Frage 2: DB = Menge der Daten, DBMS regelt die Zugriffe, DBS besteht aus DB und DBMS · Frage 3: das DBMS · Frage 4: Sportverein, Geburtstagsfeier · Frage 5: mehr fertige Funktionen in der Tabellenkalkulation, Daten aus dem DBS lassen sich dort weiterverarbeiten.</li>
+            </ol>
+          </section>
+
+          <div class="summary-actions">
+            <button class="danger-button" id="reset-module" type="button">Alle Eingaben zurücksetzen</button>
+          </div>
+        </section>
+      </section>
+
+      <template id="dbs-svg-template">
+        <svg viewBox="0 0 520 600" role="img" aria-labelledby="dbs-svg-title dbs-svg-desc" xmlns="http://www.w3.org/2000/svg">
+          <title id="dbs-svg-title">Aufbau eines Datenbanksystems</title>
+          <desc id="dbs-svg-desc">Links steht eine Figur mit der Beschriftung Nutzer / Anwendung. Ein Doppelpfeil führt von ihr in einen großen abgerundeten Rahmen zu einem Rechteck. Vom Rechteck führt ein zweiter Doppelpfeil nach unten zu einem Zylinder. Der Rahmen, das Rechteck und der Zylinder haben je ein leeres Beschriftungsfeld.</desc>
+          <defs>
+            <marker id="dbs-arrow" viewBox="0 0 10 10" refX="10" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+              <path d="M0,0 L10,5 L0,10 z" fill="#12324a"></path>
+            </marker>
+          </defs>
+          <rect x="130" y="10" width="380" height="580" rx="32" style="fill:#f9fbfd; stroke:var(--db-muted); stroke-width:2;"></rect>
+          <rect x="160" y="120" width="320" height="130" rx="4" fill="#f4fbff" stroke="#155f83" stroke-width="2"></rect>
+          <path d="M200,330 L200,540 A120,16 0 0 0 440,540 L440,330" fill="#eef6fb" stroke="#155f83" stroke-width="2"></path>
+          <ellipse cx="320" cy="330" rx="120" ry="16" fill="#eef6fb" stroke="#155f83" stroke-width="2"></ellipse>
+          <circle cx="58" cy="150" r="18" fill="#cbe0f0" stroke="#155f83" stroke-width="2"></circle>
+          <rect x="28" y="176" width="60" height="56" rx="22" fill="#cbe0f0" stroke="#155f83" stroke-width="2"></rect>
+          <text x="58" y="258" text-anchor="middle" font-size="15" fill="#12324a">Nutzer /</text>
+          <text x="58" y="276" text-anchor="middle" font-size="15" fill="#12324a">Anwendung</text>
+          <line x1="88" y1="204" x2="160" y2="204" stroke="#12324a" stroke-width="2.5" marker-start="url(#dbs-arrow)" marker-end="url(#dbs-arrow)"></line>
+          <line x1="320" y1="250" x2="320" y2="314" stroke="#12324a" stroke-width="2.5" marker-start="url(#dbs-arrow)" marker-end="url(#dbs-arrow)"></line>
+        </svg>
+      </template>
+    </main>
+  </body>
+</html>
