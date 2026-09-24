@@ -78,6 +78,34 @@ Bestehende Layoutklassen wiederverwenden, bevor neue Klassen angelegt werden.
 Auf Menueebenen wenig erklaerenden Text verwenden; die eigentliche Anleitung
 gehoert auf die Aufgabenseite.
 
+Zwischenstaende erhalten:
+
+Lernmodule werden so gebaut, dass die Zwischenstaende der Schuelerinnen und
+Schueler beim Aufgabenwechsel erhalten bleiben. Wer zur Aufgabenuebersicht
+oder zu einer anderen Aufgabe wechselt und spaeter zurueckkehrt, findet seine
+Bearbeitung unveraendert vor.
+
+  - Im localStorage des Browsers speichern, mit einem eigenen, versionierten
+    Schluessel pro Seite (z. B. informatik9-tabellenkalkulation-aufgabe2a-v1).
+  - Bei jeder Aenderung speichern, nicht erst beim Verlassen der Seite.
+  - Alle Eingaben erhalten: Textfelder, Formeln und Tabellenzellen, Auswahlen,
+    Kontrollkaestchen, Zuordnungen sowie Freischaltungen wie eine nach
+    bestandenem Quiz sichtbare Uebersicht. Rueckmeldungen muessen nicht
+    wiederhergestellt werden; ein erneuter Klick auf Pruefen erzeugt sie neu.
+  - Erst wiederherstellen, wenn alle Listener der Seite registriert sind,
+    damit abhaengige Anzeigen (Zeichenzaehler, Animationen) zum
+    wiederhergestellten Stand passen.
+  - Gespeicherte Daten vor dem Wiederherstellen pruefen und unbekannte oder
+    ungueltige Eintraege ignorieren. Lese- und Schreibzugriffe in try/catch
+    fassen: Ist der Speicher gesperrt oder beschaedigt, funktioniert die Seite
+    ohne Sicherung weiter.
+  - Ein vorhandener Zuruecksetzen-Button loescht auch den gespeicherten Stand.
+  - Vorhandene Loesungen wiederverwenden: die Speicherung in
+    tabellenkalkulation.js (Tabellenaufgaben),
+    faecher/informatik/klasse-9/eingaben-speichern.js (Formularfelder) sowie
+    die Speicherlogik in Informatik Klasse 10, Einheit Datenbanken, und
+    Informatik Klasse 11, Entscheidungsbaeume.
+
 
 3. Sicherungsblaetter und Loesungsblaetter
 ------------------------------------------
@@ -366,6 +394,7 @@ Vor Abschluss mindestens pruefen:
   [ ] Aufgaben stehen in allen Menues in aufsteigender numerischer Reihenfolge.
   [ ] Rueck- und Startseitenlink zeigen auf die richtigen Ziele.
   [ ] Dynamische Rueckmeldungen sind verstaendlich und barrierearm.
+  [ ] Eingaben bleiben nach Wechsel zur Uebersicht und Rueckkehr erhalten.
   [ ] Jede MC-Frage ausserhalb des Abschlussquiz hat einen eigenen
       Pruefen-Button.
   [ ] Inline-JavaScript ist syntaktisch gueltig.
