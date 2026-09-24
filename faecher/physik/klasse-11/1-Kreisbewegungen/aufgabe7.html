@@ -1,0 +1,482 @@
+<!doctype html>
+<html lang="de">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="robots" content="noindex, nofollow">
+    <title>Aufgabe 7 – Übungen zur Zentripetalkraft | Physik 11</title>
+    <link rel="stylesheet" href="../../../../styles.css?v=20260911a">
+    <link rel="stylesheet" href="bewegung-koerpern.css?v=20260831c">
+    <link rel="stylesheet" href="kraefte-bewegung.css?v=20260923a">
+    <link rel="stylesheet" href="winkelgeschwindigkeit-kreisbewegung.css?v=20260912a">
+    <link rel="stylesheet" href="components/physics-notation.css?v=20260922b">
+    <link rel="stylesheet" href="kettenkarussell.css?v=20260922a">
+    <link rel="stylesheet" href="uebungen-zentripetalkraft.css?v=20260924a">
+    <script type="module" src="uebungen-zentripetalkraft.mjs?v=20260924a"></script>
+  </head>
+  <body class="physics-revision-page circular-motion-page exercise-page">
+    <div class="site-backdrop" aria-hidden="true"></div>
+    <main class="page-shell physics-revision-shell">
+      <nav class="topbar" aria-label="Navigation">
+        <a class="back-link" href="../index.html">Zur Aufgabenübersicht</a>
+        <a class="back-link" href="../../../../">Startseite</a>
+      </nav>
+      <header class="physics-revision-hero">
+        <p class="eyebrow">Kreisbewegungen · Aufgabe 7</p>
+        <h1>Aufgabe 7 – Übungen zur Zentripetalkraft</h1>
+        <p>Wende die Zentripetalkraft in drei Situationen an: beim Hammerwurf, in einer geneigten Kurve und beim Kettenkarussell.</p>
+      </header>
+
+      <div class="physics-step-tabs" role="tablist" aria-label="Arbeitsschritte des Lernmoduls">
+        <button id="tab-hammer" type="button" role="tab" aria-selected="true" aria-controls="panel-hammer" data-physics-tab="hammer">1 · Hammerwurf</button>
+        <button id="tab-track" type="button" role="tab" aria-selected="false" aria-controls="panel-track" data-physics-tab="track" tabindex="-1">2 · Rennbahn</button>
+        <button id="tab-carousel" type="button" role="tab" aria-selected="false" aria-controls="panel-carousel" data-physics-tab="carousel" tabindex="-1">3 · Kettenkarussell</button>
+        <button id="tab-quiz" type="button" role="tab" aria-selected="false" aria-controls="panel-quiz" data-physics-tab="quiz" tabindex="-1">4 · Abschlussquiz und Auswertung</button>
+      </div>
+
+      <div class="physics-revision-panels">
+
+        <section id="panel-hammer" class="physics-revision-panel" role="tabpanel" aria-labelledby="tab-hammer" data-physics-panel="hammer">
+          <div class="physics-card-heading hammer-heading">
+            <div>
+              <p class="eyebrow">Anwenden</p>
+              <h2>Hammerwurf</h2>
+              <p>Der Hammer besteht aus einer Stahlkugel an einem 1,22 m langen Stahlseil. Der Werfer will ihn mit 25,0&nbsp;<span class="physics-fraction" role="img" aria-label="Meter pro Sekunde"><span class="physics-fraction__numerator">m</span><span class="physics-fraction__denominator">s</span></span> abwerfen; seine Armlänge beträgt 86,0 cm. Er vollführt drei Drehungen und wird dabei immer schneller.</p>
+            </div>
+            <img src="assets/haftreibung-zentripetalkraft/haftreibung-situation-hammerwurf.webp" alt="Hammerwerferin im Ring, die einen Hammer an einem gespannten Seil im Kreis schwingt.">
+          </div>
+
+          <article class="physics-task-card" aria-labelledby="task1a-title">
+            <h3 id="task1a-title">Aufgabe 1a · Frequenz kurz vor dem Abwurf</h3>
+            <p><strong>Bestimme</strong> die Frequenz der Drehung kurz vor dem Abwurf. <strong>Gib</strong> das Ergebnis mit drei gültigen Ziffern <strong>an</strong>.</p>
+            <div class="physics-number-entry">
+              <label for="task1a-answer">Frequenz f</label>
+              <div class="physics-number-controls">
+                <input id="task1a-answer" inputmode="decimal" autocomplete="off">
+                <select id="task1a-unit" aria-label="Einheit der Frequenz">
+                  <option value="">Einheit</option>
+                  <option value="Hz">Hz</option>
+                  <option value="per-s">1/s</option>
+                  <option value="per-min">1/min</option>
+                  <option value="s">s</option>
+                  <option value="mps">m/s</option>
+                </select>
+              </div>
+            </div>
+            <button class="physics-primary-button" id="check-task1a" type="button">Frequenz prüfen</button>
+            <div id="task1a-feedback" class="physics-feedback" role="status" aria-live="polite" hidden></div>
+            <div class="physics-help-stack">
+              <details>
+                <summary>Hilfe 1: Ansatz</summary>
+                <p>Gegeben sind v<sub>B</sub> = 25,0&nbsp;<span class="physics-fraction" role="img" aria-label="Meter pro Sekunde"><span class="physics-fraction__numerator">m</span><span class="physics-fraction__denominator">s</span></span>, l<sub>Seil</sub> = 1,22 m und l<sub>Arm</sub> = 86,0 cm. Der Radius der Kreisbahn reicht von der Drehachse des Werfers bis zur Kugel. Nutze v<sub>B</sub> = ω · r mit ω = <span class="physics-fraction" role="img" aria-label="2 Pi durch T"><span class="physics-fraction__numerator">2π</span><span class="physics-fraction__denominator">T</span></span> = 2π · f.</p>
+              </details>
+              <details>
+                <summary>Hilfe 2: Rechnung ordnen</summary>
+                <p><strong>Ordne</strong> die Rechenschritte in die richtige Reihenfolge.</p>
+                <p class="drag-help">Ziehe jede Karte in ein nummeriertes Feld oder tippe erst die Karte und dann das Feld an. Eine Karte bleibt übrig.</p>
+                <div id="task1a-steps" class="step-order" aria-label="Rechenschritte zu Aufgabe 1a ordnen"></div>
+                <div class="cloze-actions">
+                  <button id="check-task1a-steps" class="physics-primary-button" type="button">Reihenfolge prüfen</button>
+                  <button id="reset-task1a-steps" class="physics-primary-button secondary-button" type="button">Zurücksetzen</button>
+                </div>
+                <p id="task1a-steps-feedback" class="physics-feedback" role="status" aria-live="polite" hidden></p>
+              </details>
+            </div>
+          </article>
+
+          <article class="physics-task-card" aria-labelledby="task1b-title">
+            <h3 id="task1b-title">Aufgabe 1b · Haltekraft kurz vor dem Abwurf</h3>
+            <p>Die Kugel hat die Masse 7,16 kg. <strong>Berechne</strong> den Betrag der Kraft, mit der die Kugel kurz vor dem Abwurf gehalten werden muss, und <strong>gib</strong> das Ergebnis mit drei gültigen Ziffern <strong>an</strong>.</p>
+            <div class="physics-number-entry">
+              <label for="task1b-answer">Kraft</label>
+              <div class="physics-number-controls">
+                <input id="task1b-answer" inputmode="decimal" autocomplete="off">
+                <select id="task1b-unit" aria-label="Einheit der Kraft">
+                  <option value="">Einheit</option>
+                  <option value="N">N</option>
+                  <option value="kN">kN</option>
+                  <option value="kg">kg</option>
+                  <option value="J">J</option>
+                </select>
+              </div>
+            </div>
+            <button class="physics-primary-button" id="check-task1b" type="button">Kraft prüfen</button>
+            <div id="task1b-feedback" class="physics-feedback" role="status" aria-live="polite" hidden></div>
+            <div class="physics-help-stack">
+              <details>
+                <summary>Hilfe 1: Ansatz</summary>
+                <p>Die Haltekraft zeigt zur Drehachse und wirkt als Zentripetalkraft: F<sub>Z</sub> = <span class="physics-fraction" role="img" aria-label="m mal v mit Index B zum Quadrat durch r"><span class="physics-fraction__numerator">m · v<sub>B</sub>²</span><span class="physics-fraction__denominator">r</span></span>. Gegeben sind m = 7,16 kg und v<sub>B</sub> = 25,0&nbsp;<span class="physics-fraction" role="img" aria-label="Meter pro Sekunde"><span class="physics-fraction__numerator">m</span><span class="physics-fraction__denominator">s</span></span>. Den Radius r = 2,08 m kennst du aus Aufgabe 1a.</p>
+              </details>
+              <details>
+                <summary>Hilfe 2: Rechnung ordnen</summary>
+                <p><strong>Ordne</strong> die Rechenschritte in die richtige Reihenfolge.</p>
+                <p class="drag-help">Ziehe jede Karte in ein nummeriertes Feld oder tippe erst die Karte und dann das Feld an. Eine Karte bleibt übrig.</p>
+                <div id="task1b-steps" class="step-order" aria-label="Rechenschritte zu Aufgabe 1b ordnen"></div>
+                <div class="cloze-actions">
+                  <button id="check-task1b-steps" class="physics-primary-button" type="button">Reihenfolge prüfen</button>
+                  <button id="reset-task1b-steps" class="physics-primary-button secondary-button" type="button">Zurücksetzen</button>
+                </div>
+                <p id="task1b-steps-feedback" class="physics-feedback" role="status" aria-live="polite" hidden></p>
+              </details>
+            </div>
+          </article>
+
+          <article class="physics-task-card" aria-labelledby="task1c-title">
+            <h3 id="task1c-title">Aufgabe 1c · Wo muss der Hammer losgelassen werden?</h3>
+            <p>Seitlich und hinter dem Werfer schützt ein Netz die Zuschauer. <strong>Skizziere</strong> die Situation von oben und <strong>zeichne</strong> geeignete Positionen zum Loslassen ein.</p>
+            <p class="notebook-reminder">Bearbeite die Aufgabe auf einem Blatt oder auf dem Tablet.</p>
+            <details id="task1c-solution" class="physics-help-stack">
+              <summary>Musterlösung zum Vergleich anzeigen</summary>
+              <p>Beim Loslassen fehlt die Kraft zur Drehachse. Der Hammer bewegt sich deshalb geradlinig weiter, und zwar tangential zur Kreisbahn in Richtung seiner momentanen Geschwindigkeit. Geeignet ist die Stelle der Kreisbahn, an der die Tangente in den offenen Wurfsektor zeigt. Welche der beiden markierten Stellen gilt, hängt vom Drehsinn ab.</p>
+              <figure class="exercise-figure exercise-figure--single">
+                <svg viewBox="0 0 480 240" role="img" aria-label="Blick von oben: Der Werfer steht im Mittelpunkt der Kreisbahn. Hinter und seitlich von ihm verläuft das Schutznetz, nach rechts öffnet sich der Wurfsektor. Oben und unten auf der Kreisbahn sind die Abwurfpositionen markiert; dort zeigt die Tangente nach rechts in den Wurfsektor, oben bei Drehung im Uhrzeigersinn, unten bei Drehung gegen den Uhrzeigersinn.">
+                  <defs>
+                    <marker id="ex1c-tangent" markerWidth="9" markerHeight="9" refX="7" refY="3.5" orient="auto"><path d="M0,0 L0,7 L8,3.5 z" fill="#15803d"/></marker>
+                  </defs>
+                  <polygon points="130,120 470,30 470,210" fill="#dbeafe" stroke="#1e3a8a" stroke-width="2"/>
+                  <text x="400" y="125" text-anchor="middle" class="svg-label">Wurfsektor</text>
+                  <path d="M 185 24.7 A 110 110 0 1 0 185 215.3" fill="none" stroke="#475569" stroke-width="5"/>
+                  <text x="196" y="20" text-anchor="start" class="svg-label">Schutznetz</text>
+                  <circle cx="130" cy="120" r="70" class="orbit"/>
+                  <circle cx="130" cy="120" r="7" fill="#1e3a8a"/>
+                  <text x="130" y="142" text-anchor="middle" class="svg-label">Werfer</text>
+                  <circle cx="130" cy="50" r="8" fill="#dc2626"/>
+                  <circle cx="130" cy="190" r="8" fill="#dc2626"/>
+                  <line x1="130" y1="50" x2="440" y2="50" stroke="#15803d" stroke-width="4" marker-end="url(#ex1c-tangent)"/>
+                  <text x="200" y="40" text-anchor="start" class="svg-label">Drehung im Uhrzeigersinn</text>
+                  <line x1="130" y1="190" x2="440" y2="190" stroke="#15803d" stroke-width="4" marker-end="url(#ex1c-tangent)"/>
+                  <text x="200" y="226" text-anchor="start" class="svg-label">Drehung gegen den Uhrzeigersinn</text>
+                </svg>
+                <figcaption>Blick von oben, Skizze nicht maßstäblich. Rot: geeignete Abwurfpositionen, grün: Flugrichtung beim Loslassen.</figcaption>
+              </figure>
+            </details>
+          </article>
+          <nav class="physics-step-next" aria-label="Weiter zum nächsten Reiter"><button type="button" class="physics-primary-button" data-next-tab="track">Weiter: Kurve einer Rennbahn</button></nav>
+        </section>
+
+        <section id="panel-track" class="physics-revision-panel" role="tabpanel" aria-labelledby="tab-track" data-physics-panel="track" hidden>
+          <div class="physics-card-heading">
+            <p class="eyebrow">Anwenden</p>
+            <h2>Kurve einer Rennbahn</h2>
+            <p>Die Kurve einer Rennbahn soll bei einem Kurvenradius von 50 m für die Geschwindigkeit 36&nbsp;<span class="physics-fraction" role="img" aria-label="Kilometer pro Stunde"><span class="physics-fraction__numerator">km</span><span class="physics-fraction__denominator">h</span></span> gebaut werden.</p>
+          </div>
+
+          <article class="physics-task-card" aria-labelledby="task2-title">
+            <h3 id="task2-title">Aufgabe 2 · Optimale Neigung der Bahn</h3>
+            <p>Optimal ist die Neigung, bei der ein Fahrzeug ganz ohne seitliche Reibung durch die Kurve fährt. Dann wirken nur die Gewichtskraft F<sub>G</sub> und die Normalkraft F<sub>N</sub> der Bahn. Ihre Resultierende ist die Zentripetalkraft F<sub>Z</sub>.</p>
+
+            <figure class="exercise-figure">
+              <div class="exercise-scene">
+                <svg viewBox="0 0 340 290" role="img" aria-label="Querschnitt durch die geneigte Kurve: Die Bahn ist um den Winkel α gegen die Waagerechte geneigt, die Kurvenmitte liegt rechts. Die Gewichtskraft F mit Index G zeigt vom Körpermittelpunkt senkrecht nach unten, die Normalkraft F mit Index N vom Berührpunkt senkrecht zur Bahn schräg nach rechts oben, die Zentripetalkraft F mit Index Z vom Körpermittelpunkt waagerecht zur Kurvenmitte.">
+                  <defs>
+                    <marker id="ex2-scene-g" markerWidth="9" markerHeight="9" refX="7" refY="3.5" orient="auto"><path d="M0,0 L0,7 L8,3.5 z" fill="#b45309"/></marker>
+                    <marker id="ex2-scene-n" markerWidth="9" markerHeight="9" refX="7" refY="3.5" orient="auto"><path d="M0,0 L0,7 L8,3.5 z" fill="#2563eb"/></marker>
+                    <marker id="ex2-scene-z" markerWidth="9" markerHeight="9" refX="7" refY="3.5" orient="auto"><path d="M0,0 L0,7 L8,3.5 z" fill="#dc2626"/></marker>
+                  </defs>
+                  <line x1="10" y1="260" x2="330" y2="260" class="dimension-line"/>
+                  <polygon points="48.1,133.2 320,260 48.1,260" class="scene-fill"/>
+                  <line x1="48.1" y1="133.2" x2="320" y2="260" class="scene-line"/>
+                  <path d="M 276 260 A 44 44 0 0 1 280.1 241.4" class="angle-arc"/>
+                  <text x="263" y="248" text-anchor="middle" class="svg-label">α</text>
+                  <rect x="151.8" y="161.9" width="60" height="32" rx="7" class="scene-accent" transform="rotate(25 181.8 177.9)"/>
+                  <circle cx="181.8" cy="177.9" r="5" class="force-origin-marker"/>
+                  <circle cx="175.0" cy="192.4" r="4" class="force-origin-marker"/>
+                  <line x1="181.8" y1="177.9" x2="181.8" y2="267.9" class="force-g" stroke-width="4" marker-end="url(#ex2-scene-g)"/>
+                  <line x1="175.0" y1="192.4" x2="217.0" y2="102.4" class="force-n" stroke-width="4" marker-end="url(#ex2-scene-n)"/>
+                  <line x1="181.8" y1="177.9" x2="223.8" y2="177.9" class="force-z" stroke-width="4" marker-end="url(#ex2-scene-z)"/>
+                  <text x="190" y="262" text-anchor="start" class="svg-label force-g">F<tspan baseline-shift="sub" font-size="12">G</tspan></text>
+                  <text x="224" y="106" text-anchor="start" class="svg-label force-n">F<tspan baseline-shift="sub" font-size="12">N</tspan></text>
+                  <text x="230" y="182" text-anchor="start" class="svg-label force-z">F<tspan baseline-shift="sub" font-size="12">Z</tspan></text>
+                  <text x="330" y="24" text-anchor="end" class="svg-label">Kurvenmitte →</text>
+                </svg>
+                <p>Querschnitt durch die geneigte Kurve. Skizze nicht maßstäblich.</p>
+              </div>
+              <div class="exercise-triangle">
+                <svg viewBox="0 0 250 265" role="img" aria-label="Kräftedreieck: Die Normalkraft F mit Index N ist die Hypotenuse. Daran hängt die Gewichtskraft F mit Index G senkrecht nach unten; sie ist die Ankathete von α. Die Zentripetalkraft F mit Index Z verbindet waagerecht Anfang und Ende; sie ist die Gegenkathete. α liegt zwischen F mit Index N und der Senkrechten.">
+                  <defs>
+                    <marker id="ex2-tri-n" markerWidth="9" markerHeight="9" refX="7" refY="3.5" orient="auto"><path d="M0,0 L0,7 L8,3.5 z" fill="#2563eb"/></marker>
+                    <marker id="ex2-tri-g" markerWidth="9" markerHeight="9" refX="7" refY="3.5" orient="auto"><path d="M0,0 L0,7 L8,3.5 z" fill="#b45309"/></marker>
+                    <marker id="ex2-tri-z" markerWidth="9" markerHeight="9" refX="7" refY="3.5" orient="auto"><path d="M0,0 L0,7 L8,3.5 z" fill="#dc2626"/></marker>
+                  </defs>
+                  <line x1="50" y1="225" x2="130.3" y2="52.8" class="force-n" stroke-width="4" marker-end="url(#ex2-tri-n)"/>
+                  <line x1="130.3" y1="52.8" x2="130.3" y2="225" class="force-g" stroke-width="4" marker-end="url(#ex2-tri-g)"/>
+                  <line x1="50" y1="225" x2="130.3" y2="225" class="force-z" stroke-width="4" marker-end="url(#ex2-tri-z)"/>
+                  <path d="M 118.3 225 L 118.3 213 L 130.3 213" fill="none" stroke="#334155" stroke-width="2"/>
+                  <path d="M 130.3 86.8 A 34 34 0 0 1 115.9 83.6" class="angle-arc"/>
+                  <text x="119" y="102" class="svg-label">α</text>
+                  <text x="70" y="160" text-anchor="end" class="svg-label force-n">F<tspan baseline-shift="sub" font-size="12">N</tspan></text>
+                  <text x="140" y="150" text-anchor="start" class="svg-label force-g">F<tspan baseline-shift="sub" font-size="12">G</tspan></text>
+                  <text x="70" y="248" text-anchor="middle" class="svg-label force-z">F<tspan baseline-shift="sub" font-size="12">Z</tspan></text>
+                  <text x="8" y="98" text-anchor="start" class="side-name">Hypotenuse</text>
+                  <line x1="40" y1="104" x2="98.2" y2="121.7" class="dimension-line"/>
+                  <text x="150" y="110" text-anchor="start" class="side-name">Ankathete</text>
+                  <line x1="148" y1="106" x2="130.3" y2="106" class="dimension-line"/>
+                  <text x="150" y="254" text-anchor="start" class="side-name">Gegenkathete</text>
+                  <line x1="148" y1="250" x2="115" y2="225" class="dimension-line"/>
+                </svg>
+                <p>Kräftedreieck: F<sub>N</sub> und F<sub>G</sub> aneinandergehängt ergeben F<sub>Z</sub>. F<sub>N</sub> steht senkrecht auf der Bahn, deshalb liegt zwischen F<sub>N</sub> und der Senkrechten derselbe Winkel α wie zwischen Bahn und Waagerechter.</p>
+              </div>
+              <div class="trig-definitions">
+                <h4>Im rechtwinkligen Dreieck gilt:</h4>
+                <p class="formula-display">sin α = <span class="physics-fraction" role="img" aria-label="Sinus Alpha gleich Gegenkathete durch Hypotenuse"><span class="physics-fraction__numerator">Gegenkathete</span><span class="physics-fraction__denominator">Hypotenuse</span></span></p>
+                <p class="formula-display">cos α = <span class="physics-fraction" role="img" aria-label="Kosinus Alpha gleich Ankathete durch Hypotenuse"><span class="physics-fraction__numerator">Ankathete</span><span class="physics-fraction__denominator">Hypotenuse</span></span></p>
+              </div>
+            </figure>
+
+            <p><strong>Berechne</strong> die optimale Neigung α der Bahn. Rechne mit g = 9,81&nbsp;<span class="physics-fraction" role="img" aria-label="Meter pro Sekunde zum Quadrat"><span class="physics-fraction__numerator">m</span><span class="physics-fraction__denominator">s²</span></span> und <strong>gib</strong> α mit zwei gültigen Ziffern <strong>an</strong>.</p>
+            <div class="physics-number-entry">
+              <label for="task2-answer">Neigungswinkel α</label>
+              <div class="physics-number-controls">
+                <input id="task2-answer" inputmode="decimal" autocomplete="off">
+                <select id="task2-unit" aria-label="Einheit des Winkels">
+                  <option value="">Einheit</option>
+                  <option value="deg">°</option>
+                  <option value="rad">rad</option>
+                  <option value="m">m</option>
+                  <option value="N">N</option>
+                </select>
+              </div>
+            </div>
+            <button class="physics-primary-button" id="check-task2" type="button">Neigung prüfen</button>
+            <div id="task2-feedback" class="physics-feedback" role="status" aria-live="polite" hidden></div>
+            <div class="physics-help-stack">
+              <details>
+                <summary>Hilfe 1: Zwei Teilgleichungen</summary>
+                <p>Lies die beiden Katheten im Kräftedreieck ab:</p>
+                <p class="formula-display">senkrecht: F<sub>N</sub> · cos α = F<sub>G</sub> = m · g</p>
+                <p class="formula-display">waagerecht: F<sub>N</sub> · sin α = F<sub>Z</sub> = <span class="physics-fraction" role="img" aria-label="m mal v mit Index B zum Quadrat durch r"><span class="physics-fraction__numerator">m · v<sub>B</sub>²</span><span class="physics-fraction__denominator">r</span></span></p>
+              </details>
+              <details>
+                <summary>Hilfe 2: Ansatz</summary>
+                <p>Teile die beiden Gleichungen Schritt für Schritt durcheinander:</p>
+                <ol>
+                  <li>Teile die waagerechte durch die senkrechte Gleichung: <span class="physics-fraction" role="img" aria-label="F mit Index N mal Sinus Alpha durch F mit Index N mal Kosinus Alpha"><span class="physics-fraction__numerator">F<sub>N</sub> · sin α</span><span class="physics-fraction__denominator">F<sub>N</sub> · cos α</span></span> = <span class="physics-fraction" role="img" aria-label="m mal v mit Index B zum Quadrat durch r mal m mal g"><span class="physics-fraction__numerator">m · v<sub>B</sub>²</span><span class="physics-fraction__denominator">r · m · g</span></span></li>
+                  <li>Kürze F<sub>N</sub> links und m rechts: <span class="physics-fraction" role="img" aria-label="Sinus Alpha durch Kosinus Alpha"><span class="physics-fraction__numerator">sin α</span><span class="physics-fraction__denominator">cos α</span></span> = <span class="physics-fraction" role="img" aria-label="v mit Index B zum Quadrat durch r mal g"><span class="physics-fraction__numerator">v<sub>B</sub>²</span><span class="physics-fraction__denominator">r · g</span></span></li>
+                  <li>Ersetze sin α/cos α durch tan α: tan α = <span class="physics-fraction" role="img" aria-label="v mit Index B zum Quadrat durch r mal g"><span class="physics-fraction__numerator">v<sub>B</sub>²</span><span class="physics-fraction__denominator">r · g</span></span></li>
+                  <li>Löse nach α auf: α = tan⁻¹(<span class="physics-fraction" role="img" aria-label="v mit Index B zum Quadrat durch r mal g"><span class="physics-fraction__numerator">v<sub>B</sub>²</span><span class="physics-fraction__denominator">r · g</span></span>). Rechne v<sub>B</sub> vorher in&nbsp;<span class="physics-fraction" role="img" aria-label="Meter pro Sekunde"><span class="physics-fraction__numerator">m</span><span class="physics-fraction__denominator">s</span></span> um und stelle den Taschenrechner auf Grad (DEG).</li>
+                </ol>
+              </details>
+              <details>
+                <summary>Hilfe 3: Rechnung ordnen</summary>
+                <p><strong>Ordne</strong> die Rechenschritte in die richtige Reihenfolge.</p>
+                <p class="drag-help">Ziehe jede Karte in ein nummeriertes Feld oder tippe erst die Karte und dann das Feld an. Eine Karte bleibt übrig.</p>
+                <div id="task2-steps" class="step-order" aria-label="Rechenschritte zu Aufgabe 2 ordnen"></div>
+                <div class="cloze-actions">
+                  <button id="check-task2-steps" class="physics-primary-button" type="button">Reihenfolge prüfen</button>
+                  <button id="reset-task2-steps" class="physics-primary-button secondary-button" type="button">Zurücksetzen</button>
+                </div>
+                <p id="task2-steps-feedback" class="physics-feedback" role="status" aria-live="polite" hidden></p>
+              </details>
+            </div>
+          </article>
+          <nav class="physics-step-next" aria-label="Weiter zum nächsten Reiter"><button type="button" class="physics-primary-button" data-next-tab="carousel">Weiter: Kettenkarussell</button></nav>
+        </section>
+
+        <section id="panel-carousel" class="physics-revision-panel" role="tabpanel" aria-labelledby="tab-carousel" data-physics-panel="carousel" hidden>
+          <div class="physics-card-heading">
+            <p class="eyebrow">Anwenden</p>
+            <h2>Bahngeschwindigkeit im Kettenkarussell</h2>
+            <p>Ein Kettenkarussell dreht sich mit konstanter Winkelgeschwindigkeit. Die Kette ist bis zum Körperschwerpunkt l = 15 m lang und bildet mit der Drehachse den Winkel α = 56°. Der Mann auf dem Karussell hat die Masse 75 kg.</p>
+          </div>
+
+          <article class="physics-task-card" aria-labelledby="task3a-title">
+            <h3 id="task3a-title">Aufgabe 3a · Kräfte am Mann einzeichnen</h3>
+            <p><strong>Zeichne</strong> am markierten Körperschwerpunkt die äußeren Kräfte und ihre Resultierende ein. <strong>Wähle</strong> dazu jeweils zuerst oben die Kraft aus.</p>
+            <div id="carousel-force-grid" class="force-grid-host"></div>
+            <p>Der schwarze Punkt markiert den Körperschwerpunkt. Bis dorthin reicht die Kette, deshalb greift auch die Seilkraft dort an. Skizze nicht maßstäblich.</p>
+            <button class="physics-primary-button" id="check-carousel-forces" type="button">Kraftpfeile prüfen</button>
+            <div id="carousel-feedback" class="physics-feedback" role="status" aria-live="polite" hidden></div>
+            <div class="physics-help-stack">
+              <details><summary>Hilfe 1: Hinweis</summary><p>Die Gewichtskraft zeigt immer senkrecht nach unten. Eine Kette kann nur entlang ihrer eigenen Richtung ziehen.</p></details>
+              <details><summary>Hilfe 2: Denkansatz</summary><p>Der Mann bewegt sich auf einer waagerechten Kreisbahn. Die Resultierende aus F<sub>S</sub> und F<sub>G</sub> muss deshalb waagerecht zum Mittelpunkt der Kreisbahn zeigen.</p></details>
+              <details><summary>Hilfe 3: Teillösung</summary><p>F<sub>G</sub> zeigt senkrecht nach unten, F<sub>S</sub> entlang der Kette zum Aufhängepunkt. Wähle F<sub>S</sub> so lang, dass ihr senkrechter Anteil genau so groß ist wie F<sub>G</sub>. Die Resultierende ist die Diagonale des Kräfteparallelogramms aus F<sub>S</sub> und F<sub>G</sub>.</p></details>
+            </div>
+          </article>
+
+          <article class="physics-task-card" aria-labelledby="task3b-title">
+            <h3 id="task3b-title">Aufgabe 3b · Bahngeschwindigkeit berechnen</h3>
+            <p>Im Kräftedreieck sind die Kräfte aus Aufgabe 3a aneinandergehängt.</p>
+
+            <p id="task3b-figure-pending">Die Skizze zu Aufgabe 3b erscheint, sobald du deine Kraftpfeile in Aufgabe 3a geprüft hast.</p>
+            <figure id="task3b-figure" class="exercise-figure" hidden>
+              <div class="exercise-scene">
+                <svg viewBox="0 0 320 300" role="img" aria-label="Kettenkarussell von der Seite: Die Kette der Länge l hängt an der Drehachse und schließt mit ihr den Winkel α ein. r ist der waagerechte Abstand des Körperschwerpunkts von der Drehachse. Am Körperschwerpunkt zeigen die Gewichtskraft F mit Index G senkrecht nach unten, die Seilkraft F mit Index S entlang der Kette zum Aufhängepunkt und die Zentripetalkraft F mit Index Z waagerecht zur Drehachse.">
+                  <defs>
+                    <marker id="ex3-scene-g" markerWidth="9" markerHeight="9" refX="7" refY="3.5" orient="auto"><path d="M0,0 L0,7 L8,3.5 z" fill="#b45309"/></marker>
+                    <marker id="ex3-scene-s" markerWidth="9" markerHeight="9" refX="7" refY="3.5" orient="auto"><path d="M0,0 L0,7 L8,3.5 z" fill="#2563eb"/></marker>
+                    <marker id="ex3-scene-z" markerWidth="9" markerHeight="9" refX="7" refY="3.5" orient="auto"><path d="M0,0 L0,7 L8,3.5 z" fill="#dc2626"/></marker>
+                  </defs>
+                  <line x1="60" y1="14" x2="60" y2="292" class="carousel-axis"/>
+                  <text x="68" y="290" text-anchor="start" class="svg-label">Drehachse</text>
+                  <path d="M 48 46 L 60 34 L 72 46 Z" class="scene-fill"/>
+                  <line x1="60" y1="40" x2="217.5" y2="146.2" class="scene-line carousel-chain"/>
+                  <path d="M 60 74 A 34 34 0 0 0 88.2 59" class="angle-arc"/>
+                  <text x="82" y="90" class="svg-label">α</text>
+                  <text x="146" y="80" class="svg-label">l</text>
+                  <line x1="60" y1="24" x2="217.5" y2="24" class="dimension-line"/>
+                  <line x1="60" y1="18" x2="60" y2="30" class="dimension-line"/>
+                  <line x1="217.5" y1="18" x2="217.5" y2="30" class="dimension-line"/>
+                  <line x1="217.5" y1="30" x2="217.5" y2="128" class="parallelogram-guide"/>
+                  <text x="139" y="18" text-anchor="middle" class="svg-label">r</text>
+                  <rect x="203.5" y="152.2" width="28" height="18" rx="6" class="scene-fill" transform="rotate(-56 217.5 146.2)"/>
+                  <circle cx="217.5" cy="142.2" r="9" class="scene-accent" transform="rotate(-56 217.5 146.2)"/>
+                  <circle cx="217.5" cy="146.2" r="6" class="force-origin-marker"/>
+                  <line x1="217.5" y1="146.2" x2="217.5" y2="216.2" class="force-g" stroke-width="4" marker-end="url(#ex3-scene-g)"/>
+                  <line x1="217.5" y1="146.2" x2="113.7" y2="76.2" class="force-s" stroke-width="4" marker-end="url(#ex3-scene-s)"/>
+                  <line x1="217.5" y1="146.2" x2="113.7" y2="146.2" class="force-z" stroke-width="4" marker-end="url(#ex3-scene-z)"/>
+                  <text x="226" y="212" text-anchor="start" class="svg-label force-g">F<tspan baseline-shift="sub" font-size="12">G</tspan></text>
+                  <text x="157" y="126" text-anchor="middle" class="svg-label force-s">F<tspan baseline-shift="sub" font-size="12">S</tspan></text>
+                  <text x="160" y="166" text-anchor="middle" class="svg-label force-z">F<tspan baseline-shift="sub" font-size="12">Z</tspan></text>
+                </svg>
+                <p>Kettenkarussell von der Seite. Die Kette reicht bis zum Körperschwerpunkt. Skizze nicht maßstäblich.</p>
+              </div>
+              <div class="exercise-triangle">
+                <svg viewBox="0 0 270 235" role="img" aria-label="Kräftedreieck: Die Seilkraft F mit Index S ist die Hypotenuse. Daran hängt die Gewichtskraft F mit Index G senkrecht nach unten; sie ist die Ankathete von α. Die Zentripetalkraft F mit Index Z verbindet waagerecht Anfang und Ende; sie ist die Gegenkathete. α liegt zwischen F mit Index S und der Senkrechten.">
+                  <defs>
+                    <marker id="ex3-tri-s" markerWidth="9" markerHeight="9" refX="7" refY="3.5" orient="auto"><path d="M0,0 L0,7 L8,3.5 z" fill="#2563eb"/></marker>
+                    <marker id="ex3-tri-g" markerWidth="9" markerHeight="9" refX="7" refY="3.5" orient="auto"><path d="M0,0 L0,7 L8,3.5 z" fill="#b45309"/></marker>
+                    <marker id="ex3-tri-z" markerWidth="9" markerHeight="9" refX="7" refY="3.5" orient="auto"><path d="M0,0 L0,7 L8,3.5 z" fill="#dc2626"/></marker>
+                  </defs>
+                  <line x1="230" y1="195" x2="84.9" y2="97.1" class="force-s" stroke-width="4" marker-end="url(#ex3-tri-s)"/>
+                  <line x1="84.9" y1="97.1" x2="84.9" y2="195" class="force-g" stroke-width="4" marker-end="url(#ex3-tri-g)"/>
+                  <line x1="230" y1="195" x2="84.9" y2="195" class="force-z" stroke-width="4" marker-end="url(#ex3-tri-z)"/>
+                  <path d="M 96.9 195 L 96.9 183 L 84.9 183" fill="none" stroke="#334155" stroke-width="2"/>
+                  <path d="M 84.9 127.1 A 30 30 0 0 0 109.8 113.9" class="angle-arc"/>
+                  <text x="106" y="138" class="svg-label">α</text>
+                  <text x="130" y="108" text-anchor="start" class="svg-label force-s">F<tspan baseline-shift="sub" font-size="12">S</tspan></text>
+                  <text x="74" y="178" text-anchor="end" class="svg-label force-g">F<tspan baseline-shift="sub" font-size="12">G</tspan></text>
+                  <text x="170" y="216" text-anchor="middle" class="svg-label force-z">F<tspan baseline-shift="sub" font-size="12">Z</tspan></text>
+                  <text x="190" y="120" text-anchor="start" class="side-name">Hypotenuse</text>
+                  <line x1="188" y1="124" x2="186.5" y2="165.6" class="dimension-line"/>
+                  <text x="8" y="128" text-anchor="start" class="side-name">Ankathete</text>
+                  <line x1="68" y1="128" x2="84.9" y2="135" class="dimension-line"/>
+                  <text x="8" y="224" text-anchor="start" class="side-name">Gegenkathete</text>
+                  <line x1="92" y1="219" x2="105" y2="195" class="dimension-line"/>
+                </svg>
+                <p>Kräftedreieck: F<sub>S</sub> und F<sub>G</sub> aneinandergehängt ergeben F<sub>Z</sub>. F<sub>S</sub> zeigt entlang der Kette, deshalb liegt zwischen F<sub>S</sub> und der Senkrechten derselbe Winkel α wie zwischen Kette und Drehachse.</p>
+              </div>
+              <div class="trig-definitions">
+                <h4>Im rechtwinkligen Dreieck gilt:</h4>
+                <p class="formula-display">sin α = <span class="physics-fraction" role="img" aria-label="Sinus Alpha gleich Gegenkathete durch Hypotenuse"><span class="physics-fraction__numerator">Gegenkathete</span><span class="physics-fraction__denominator">Hypotenuse</span></span></p>
+                <p class="formula-display">cos α = <span class="physics-fraction" role="img" aria-label="Kosinus Alpha gleich Ankathete durch Hypotenuse"><span class="physics-fraction__numerator">Ankathete</span><span class="physics-fraction__denominator">Hypotenuse</span></span></p>
+              </div>
+            </figure>
+
+            <p><strong>Berechne</strong> mithilfe des Kräftedreiecks die Bahngeschwindigkeit des Mannes. Rechne mit g = 9,81&nbsp;<span class="physics-fraction" role="img" aria-label="Meter pro Sekunde zum Quadrat"><span class="physics-fraction__numerator">m</span><span class="physics-fraction__denominator">s²</span></span> und <strong>gib</strong> das Ergebnis mit zwei gültigen Ziffern <strong>an</strong>.</p>
+            <div class="physics-number-entry">
+              <label for="task3b-answer">Bahngeschwindigkeit v<sub>B</sub></label>
+              <div class="physics-number-controls">
+                <input id="task3b-answer" inputmode="decimal" autocomplete="off">
+                <select id="task3b-unit" aria-label="Einheit der Bahngeschwindigkeit">
+                  <option value="">Einheit</option>
+                  <option value="mps">m/s</option>
+                  <option value="kmh">km/h</option>
+                  <option value="mps2">m/s²</option>
+                  <option value="N">N</option>
+                </select>
+              </div>
+            </div>
+            <button class="physics-primary-button" id="check-task3b" type="button">Bahngeschwindigkeit prüfen</button>
+            <div id="task3b-feedback" class="physics-feedback" role="status" aria-live="polite" hidden></div>
+            <div class="physics-help-stack">
+              <details>
+                <summary>Hilfe 1: Zwei Teilgleichungen</summary>
+                <p>Lies die beiden Katheten im Kräftedreieck ab:</p>
+                <p class="formula-display">senkrecht: F<sub>S</sub> · cos α = F<sub>G</sub> = m · g</p>
+                <p class="formula-display">waagerecht: F<sub>S</sub> · sin α = F<sub>Z</sub> = <span class="physics-fraction" role="img" aria-label="m mal v mit Index B zum Quadrat durch r"><span class="physics-fraction__numerator">m · v<sub>B</sub>²</span><span class="physics-fraction__denominator">r</span></span></p>
+                <p>Den Radius r liest du im Dreieck aus Kette, Drehachse und r ab: r liegt gegenüber von α, die Kette l ist die Hypotenuse.</p>
+              </details>
+              <details>
+                <summary>Hilfe 2: Ansatz</summary>
+                <p>Teile die beiden Gleichungen Schritt für Schritt durcheinander:</p>
+                <ol>
+                  <li>Teile die waagerechte durch die senkrechte Gleichung: <span class="physics-fraction" role="img" aria-label="F mit Index S mal Sinus Alpha durch F mit Index S mal Kosinus Alpha"><span class="physics-fraction__numerator">F<sub>S</sub> · sin α</span><span class="physics-fraction__denominator">F<sub>S</sub> · cos α</span></span> = <span class="physics-fraction" role="img" aria-label="m mal v mit Index B zum Quadrat durch r mal m mal g"><span class="physics-fraction__numerator">m · v<sub>B</sub>²</span><span class="physics-fraction__denominator">r · m · g</span></span></li>
+                  <li>Kürze F<sub>S</sub> links und m rechts: <span class="physics-fraction" role="img" aria-label="Sinus Alpha durch Kosinus Alpha"><span class="physics-fraction__numerator">sin α</span><span class="physics-fraction__denominator">cos α</span></span> = <span class="physics-fraction" role="img" aria-label="v mit Index B zum Quadrat durch r mal g"><span class="physics-fraction__numerator">v<sub>B</sub>²</span><span class="physics-fraction__denominator">r · g</span></span></li>
+                  <li>Ersetze sin α/cos α durch tan α: tan α = <span class="physics-fraction" role="img" aria-label="v mit Index B zum Quadrat durch r mal g"><span class="physics-fraction__numerator">v<sub>B</sub>²</span><span class="physics-fraction__denominator">r · g</span></span></li>
+                  <li>Löse nach v<sub>B</sub> auf: v<sub>B</sub>² = r · g · tan α, also v<sub>B</sub> = <span class="physics-sqrt" role="img" aria-label="Wurzel aus r mal g mal Tangens Alpha"><span class="physics-sqrt__radicand">r · g · tan α</span></span>. Stelle den Taschenrechner auf Grad (DEG).</li>
+                </ol>
+              </details>
+              <details>
+                <summary>Hilfe 3: Rechnung ordnen</summary>
+                <p><strong>Ordne</strong> die Rechenschritte in die richtige Reihenfolge.</p>
+                <p class="drag-help">Ziehe jede Karte in ein nummeriertes Feld oder tippe erst die Karte und dann das Feld an. Eine Karte bleibt übrig.</p>
+                <div id="task3b-steps" class="step-order" aria-label="Rechenschritte zu Aufgabe 3b ordnen"></div>
+                <div class="cloze-actions">
+                  <button id="check-task3b-steps" class="physics-primary-button" type="button">Reihenfolge prüfen</button>
+                  <button id="reset-task3b-steps" class="physics-primary-button secondary-button" type="button">Zurücksetzen</button>
+                </div>
+                <p id="task3b-steps-feedback" class="physics-feedback" role="status" aria-live="polite" hidden></p>
+              </details>
+            </div>
+          </article>
+          <nav class="physics-step-next" aria-label="Weiter zum nächsten Reiter"><button type="button" class="physics-primary-button" data-next-tab="quiz">Weiter: Abschlussquiz und Auswertung</button></nav>
+        </section>
+
+        <section id="panel-quiz" class="physics-revision-panel" role="tabpanel" aria-labelledby="tab-quiz" data-physics-panel="quiz" hidden>
+          <div class="physics-card-heading">
+            <p class="eyebrow">Sichern und übertragen</p>
+            <h2>Abschlussquiz und Auswertung</h2>
+            <p>Prüfe dein Wissen zur Zentripetalkraft. Darunter findest du die Ergebnisse aller Aufgaben im Überblick.</p>
+          </div>
+
+          <article class="physics-task-card" aria-labelledby="final-quiz-title">
+            <h3 id="final-quiz-title">Aufgabe 4 · Wissen überprüfen</h3>
+            <p><strong>Wähle</strong> bei jeder Frage alle richtigen Aussagen aus und prüfe deine Auswahl. Bei Fragen mit dem Hinweis „mehrere Antworten“ sind mindestens zwei Aussagen richtig.</p>
+            <div id="exercise-final-quiz" class="physics-multiple-choice" aria-label="Abschlussquiz zur Zentripetalkraft"></div>
+          </article>
+
+          <p id="summary-pending">Die Ergebnisübersicht erscheint, sobald du Aufgabe 3b geprüft hast.</p>
+          <div id="summary-content" hidden>
+            <article class="physics-task-card exercise-summary" aria-labelledby="exercise-summary-title">
+              <h3 id="exercise-summary-title">Kompakte Sicherung</h3>
+              <p>Die Zentripetalkraft ist keine zusätzliche Kraft, sondern die Resultierende der realen Kräfte. Sie zeigt zum Mittelpunkt der Kreisbahn.</p>
+              <p>Liegt eine Kraft schräg, zerlegst du sie im rechtwinkligen Kräftedreieck: Der Anteil am Winkel α (Ankathete) gehört zum Kosinus, der Anteil gegenüber von α (Gegenkathete) zum Sinus.</p>
+              <p>Teilt man die beiden Teilgleichungen durcheinander, kürzen sich die schräge Kraft und die Masse: tan α = <span class="physics-fraction" role="img" aria-label="v mit Index B zum Quadrat durch r mal g"><span class="physics-fraction__numerator">v<sub>B</sub>²</span><span class="physics-fraction__denominator">r · g</span></span>.</p>
+            </article>
+            <article class="physics-task-card" aria-labelledby="results-title">
+              <h3 id="results-title">Ergebnisübersicht</h3>
+              <div class="table-scroll">
+                <table class="results-table">
+                  <thead><tr><th scope="col">Aufgabe</th><th scope="col">Auftrag</th><th scope="col">Ergebnis</th></tr></thead>
+                  <tbody>
+                    <tr>
+                      <td data-label="Aufgabe">1a</td>
+                      <td data-label="Auftrag">Frequenz kurz vor dem Abwurf</td>
+                      <td data-label="Ergebnis">r = 1,22 m + 0,860 m = 2,08 m; f = <span class="physics-fraction" role="img" aria-label="v mit Index B durch 2 Pi mal r"><span class="physics-fraction__numerator">v<sub>B</sub></span><span class="physics-fraction__denominator">2π · r</span></span> ≈ 1,91 Hz</td>
+                    </tr>
+                    <tr>
+                      <td data-label="Aufgabe">1b</td>
+                      <td data-label="Auftrag">Haltekraft kurz vor dem Abwurf</td>
+                      <td data-label="Ergebnis">F<sub>Z</sub> = <span class="physics-fraction" role="img" aria-label="m mal v mit Index B zum Quadrat durch r"><span class="physics-fraction__numerator">m · v<sub>B</sub>²</span><span class="physics-fraction__denominator">r</span></span> ≈ 2 150 N = 2,15 kN</td>
+                    </tr>
+                    <tr>
+                      <td data-label="Aufgabe">1c</td>
+                      <td data-label="Auftrag">Positionen zum Loslassen</td>
+                      <td data-label="Ergebnis">dort, wo die Tangente an die Kreisbahn in den offenen Wurfsektor zeigt; der Hammer fliegt tangential weiter</td>
+                    </tr>
+                    <tr>
+                      <td data-label="Aufgabe">2</td>
+                      <td data-label="Auftrag">Optimale Neigung der Rennbahn</td>
+                      <td data-label="Ergebnis">F<sub>N</sub> · cos α = m · g und F<sub>N</sub> · sin α = <span class="physics-fraction" role="img" aria-label="m mal v mit Index B zum Quadrat durch r"><span class="physics-fraction__numerator">m · v<sub>B</sub>²</span><span class="physics-fraction__denominator">r</span></span> ergeben tan α = <span class="physics-fraction" role="img" aria-label="v mit Index B zum Quadrat durch r mal g"><span class="physics-fraction__numerator">v<sub>B</sub>²</span><span class="physics-fraction__denominator">r · g</span></span> ≈ 0,204; α ≈ 12°</td>
+                    </tr>
+                    <tr>
+                      <td data-label="Aufgabe">3a</td>
+                      <td data-label="Auftrag">Kräfte am Mann</td>
+                      <td data-label="Ergebnis">F<sub>G</sub> senkrecht nach unten, F<sub>S</sub> entlang der Kette zum Aufhängepunkt; ihre Resultierende F<sub>Z</sub> zeigt waagerecht zur Drehachse</td>
+                    </tr>
+                    <tr>
+                      <td data-label="Aufgabe">3b</td>
+                      <td data-label="Auftrag">Bahngeschwindigkeit</td>
+                      <td data-label="Ergebnis">r = l · sin α ≈ 12,4 m; v<sub>B</sub> = <span class="physics-sqrt" role="img" aria-label="Wurzel aus r mal g mal Tangens Alpha"><span class="physics-sqrt__radicand">r · g · tan α</span></span> ≈ 13&nbsp;<span class="physics-fraction" role="img" aria-label="Meter pro Sekunde"><span class="physics-fraction__numerator">m</span><span class="physics-fraction__denominator">s</span></span> ≈ 48&nbsp;<span class="physics-fraction" role="img" aria-label="Kilometer pro Stunde"><span class="physics-fraction__numerator">km</span><span class="physics-fraction__denominator">h</span></span></td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            </article>
+          </div>
+          <nav class="physics-step-next" aria-label="Weiter zum nächsten Reiter"><a class="physics-primary-button" href="../index.html" aria-label="Weiter zur Aufgabenübersicht">Weiter: Zur Aufgabenübersicht</a></nav>
+        </section>
+      </div>
+    </main>
+  </body>
+</html>

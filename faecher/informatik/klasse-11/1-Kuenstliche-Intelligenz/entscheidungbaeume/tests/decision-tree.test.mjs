@@ -148,7 +148,7 @@ test("Zungen-Affen gehören nicht zur Merkmalsklasse Lächeln", () => {
 });
 
 test("Lächelnde Mundform ist von Zunge und sichtbaren Zähnen getrennt", () => {
-  const smilingIds = ["05", "06", "08", "21", "25", "28"];
+  const smilingIds = ["05", "06", "07", "08", "21", "25", "28"];
   assert.deepEqual(
     Array.from({ length: 40 }, (_, index) => getMonkeyById(String(index + 1).padStart(2, "0")))
       .filter((monkey) => monkey.features.smilingMouth)

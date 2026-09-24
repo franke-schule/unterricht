@@ -87,7 +87,7 @@ export const MONKEYS = Object.freeze([
   monkey("04", { openMouth: true, teethVisible: true }),
   monkey("05", { eyeOpen: true, smilingMouth: true }),
   monkey("06", { eyeOpen: true, smilingMouth: true }),
-  monkey("07", { xEyes: true }),
+  monkey("07", { smilingMouth: true, xEyes: true }),
   monkey("08", { smilingMouth: true }),
   monkey("09", { eyeOpen: true }),
   monkey("10", { eyeOpen: true }),

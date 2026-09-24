@@ -193,6 +193,12 @@
       background: #f9fafb;
     }
 
+    .tool-placeholder {
+      margin: 0;
+      padding: 1rem;
+      color: var(--muted);
+    }
+
     .tool-embed iframe {
       display: block;
       width: 100%;
@@ -644,12 +650,9 @@ class Hund {
       </p>
 
       <div class="tool-embed">
-        <iframe
-          title="Klassenkarte zu Aufgabe 2d"
-          src="klassenkarte-klasse-only.html"
-          loading="lazy"
-          referrerpolicy="no-referrer-when-downgrade">
-        </iframe>
+        <p class="tool-placeholder">
+          Hier erscheint bald ein Werkzeug zur Erstellung von Klassenkarten.
+        </p>
       </div>
 
     </section>
@@ -1746,6 +1749,11 @@ function isTrustedAppsScriptOrigin(origin) {
       message.textContent =
         'Der eingegebene Code ist nicht gültig.';
     }
+  </script>
+  <script src="../eingaben-speichern.js?v=20260924"></script>
+  <script>
+    /* Eingaben bleiben beim Verlassen der Seite erhalten. Den Programmcode speichert die Online-IDE selbst. */
+    persistTaskInputs('informatik9-online-ide-aufgabe2-v1', '#answer-2b');
   </script>
 
 </body>

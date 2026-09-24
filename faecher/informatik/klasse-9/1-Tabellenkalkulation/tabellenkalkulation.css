@@ -854,6 +854,12 @@ body.is-filling-sheet {
   border: 0;
 }
 
+.tool-placeholder {
+  margin: 0;
+  padding: 1rem;
+  color: var(--muted);
+}
+
 .dfd-card {
   margin-top: 1rem;
   padding: 1.3rem;
@@ -1077,12 +1083,6 @@ body.is-filling-sheet {
   border-radius: 8px;
   background: #eff6ff;
   line-height: 1.5;
-}
-
-.dfd-tool-hint {
-  margin: 0.6rem 0 0;
-  color: var(--muted);
-  font-size: 0.88rem;
 }
 
 .dfd-scenario {

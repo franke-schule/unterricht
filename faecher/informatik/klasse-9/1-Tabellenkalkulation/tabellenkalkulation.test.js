@@ -21,20 +21,33 @@ const instrumentedEngine = engineSource.replace(
     displayValue,
     analyzeFormula,
     fillSelection,
-    fillGroupIsComplete
+    fillGroupIsComplete,
+    saveCells,
+    restoreCells
   };
 })();`
 );
 
 assert.notEqual(instrumentedEngine, engineSource, "Testinstrumentierung konnte nicht eingesetzt werden.");
 
-function loadTask(fileName) {
+function createMemoryStorage() {
+  const values = new Map();
+  return {
+    getItem: (key) => (values.has(key) ? values.get(key) : null),
+    setItem: (key, value) => values.set(key, String(value)),
+    removeItem: (key) => values.delete(key),
+    values
+  };
+}
+
+function loadTask(fileName, localStorage = createMemoryStorage()) {
   const html = fs.readFileSync(path.join(directory, fileName), "utf8");
   const inlineScript = html.match(/<script>([\s\S]*?)<\/script>/)?.[1];
   assert.ok(inlineScript, `${fileName}: Konfiguration fehlt.`);
   const sandbox = {
-    window: {},
+    window: { location: { pathname: `/faecher/informatik/klasse-9/1-Tabellenkalkulation/${fileName}` } },
     document: { getElementById: () => ({}) },
+    localStorage,
     console,
     Intl
   };
@@ -132,9 +145,11 @@ function verifyDefinitions(api, formulas) {
 {
   const api = loadTask("aufgabe2c.html");
   api.rawCells.set("B9", "=B7+B8");
-  api.fillSelection(api.parseRange("B9"), api.parseRange("B9:B37"));
+  api.fillSelection(api.parseRange("B9"), api.parseRange("B9:B23"));
   assert.equal(api.rawCells.get("B10"), "=B8+B9");
   assert.equal(api.evaluateCell("B10"), 2);
+  assert.equal(api.evaluateCell("B23"), 987, "Die Folge endet mit der letzten Fibonacci-Zahl unter 1000.");
+  assert.equal(api.config.rowCount, 23, "Unterhalb von B23 kann nicht weiter ausgefüllt werden.");
   assert.equal(api.fillGroupIsComplete(api.fillGroups[0]), true);
 }
 
@@ -243,6 +258,39 @@ function verifyDefinitions(api, formulas) {
   closeTo(api.evaluateCell("E19"), 1.331);
   assert.equal(api.fillGroupIsComplete(api.fillGroups[0]), true);
   verifyDefinitions(api, formulas);
+}
+
+{
+  const storage = createMemoryStorage();
+  const api = loadTask("aufgabe1.html", storage);
+  const initialB4 = api.rawCells.get("B4");
+  api.rawCells.set("F4", "=B4*B8/2");
+  api.saveCells();
+  assert.deepEqual(JSON.parse(storage.getItem("informatik9-tabellenkalkulation-aufgabe1-v1")), { F4: "=B4*B8/2" }, "Nur geänderte Zellen werden gespeichert.");
+
+  const reloaded = loadTask("aufgabe1.html", storage);
+  assert.equal(reloaded.rawCells.get("F4"), "", "Vor dem Wiederherstellen ist die Zielzelle leer.");
+  reloaded.restoreCells();
+  assert.equal(reloaded.rawCells.get("F4"), "=B4*B8/2", "Gespeicherte Formel wird wiederhergestellt.");
+  assert.equal(reloaded.rawCells.get("B4"), initialB4, "Ausgangswerte bleiben unverändert.");
+
+  reloaded.rawCells.set("F4", "");
+  reloaded.saveCells();
+  assert.equal(storage.getItem("informatik9-tabellenkalkulation-aufgabe1-v1"), null, "Ohne Änderungen bleibt nichts gespeichert.");
+
+  storage.setItem("informatik9-tabellenkalkulation-aufgabe1-v1", "{kaputt");
+  const damaged = loadTask("aufgabe1.html", storage);
+  damaged.restoreCells();
+  assert.equal(damaged.rawCells.get("F4"), "", "Beschädigte Daten blockieren die Aufgabe nicht.");
+
+  storage.setItem("informatik9-tabellenkalkulation-aufgabe1-v1", JSON.stringify({ Z99: "=1", F5: { x: 1 } }));
+  const invalid = loadTask("aufgabe1.html", storage);
+  invalid.restoreCells();
+  assert.equal(invalid.rawCells.has("Z99"), false, "Zellen außerhalb der Tabelle werden ignoriert.");
+  assert.equal(invalid.rawCells.get("F5"), "", "Ungültige Werte werden ignoriert.");
+
+  const otherPage = loadTask("aufgabe2a.html", storage);
+  assert.notEqual(otherPage.rawCells.get("F4"), "=B4*B8/2", "Jede Seite hat ihren eigenen Speicherstand.");
 }
 
 console.log("Tabellenlogik: Formeln, Funktionen, WENN-Entscheidungen und alle Ausfüllmuster sind OK.");

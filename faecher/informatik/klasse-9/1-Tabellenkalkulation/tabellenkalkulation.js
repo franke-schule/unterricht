@@ -63,6 +63,13 @@
     if (!containsCell(group.source, parseCellName(cellName))) rawCells.set(cellName, "");
   }));
 
+  // Eingaben bleiben im Browser erhalten, auch wenn die Seite zwischendurch
+  // verlassen wird. Gespeichert werden nur Abweichungen vom Ausgangszustand,
+  // damit spätere Änderungen an den Vorgabewerten trotzdem ankommen.
+  const pageName = String(window.location?.pathname || "").split("/").pop().replace(/\.html?$/i, "") || "aufgabe";
+  const storageKey = config.storageKey || `informatik9-tabellenkalkulation-${pageName}-v1`;
+  const baselineCells = new Map(rawCells);
+
   const appElement = document.getElementById("spreadsheet-app");
   const gridElement = document.getElementById("spreadsheet-grid");
   const viewportElement = document.getElementById("spreadsheet-viewport");
@@ -708,6 +715,7 @@
       activeFill = null;
       document.body.classList.remove("is-filling-sheet");
       fillSelection(source, preview);
+      saveCells();
       selection = { ...preview };
       selectionAnchor = { row: preview.top, column: preview.left };
       activeCell = { ...selectionAnchor };
@@ -966,9 +974,44 @@
     tableElement = table;
   }
 
+  function saveCells() {
+    const changedCells = {};
+    rawCells.forEach((value, cellName) => {
+      if (value !== (baselineCells.get(cellName) ?? "")) changedCells[cellName] = value;
+    });
+    try {
+      if (Object.keys(changedCells).length > 0) localStorage.setItem(storageKey, JSON.stringify(changedCells));
+      else localStorage.removeItem(storageKey);
+    } catch {
+      // Ohne Speicherzugriff funktioniert die Aufgabe weiter, nur ohne Sicherung.
+    }
+  }
+
+  function restoreCells() {
+    let savedCells;
+    try {
+      savedCells = JSON.parse(localStorage.getItem(storageKey));
+    } catch {
+      return;
+    }
+    if (!savedCells || typeof savedCells !== "object") return;
+    Object.entries(savedCells).forEach(([cellName, value]) => {
+      if (typeof value !== "string" && typeof value !== "number") return;
+      let cell;
+      try {
+        cell = parseCellName(cellName);
+      } catch {
+        return;
+      }
+      if (cell.row < 1 || cell.row > rowCount || cell.column < 1 || cell.column > columns.length) return;
+      rawCells.set(normalizeCellName(cellName), value);
+    });
+  }
+
   function commitFormulaBar() {
     const cellName = toCellName(activeCell.column, activeCell.row);
     rawCells.set(cellName, parseEnteredValue(cellName, formulaInput.value));
+    saveCells();
     refreshGrid();
     clearResult();
   }
@@ -1013,6 +1056,7 @@
     if (event.key === "Delete" || event.key === "Backspace") {
       event.preventDefault();
       forEachCell(selection, (cellName) => rawCells.set(cellName, ""));
+      saveCells();
       refreshGrid();
       clearResult();
       return;
@@ -1033,6 +1077,7 @@
     fillGroups.forEach((group) => forEachCell(group.target, (cellName, cell) => {
       if (!containsCell(group.source, cell)) rawCells.set(cellName, "");
     }));
+    saveCells();
     clearResult();
     setSelection(parseCellName(config.startCell || formulaDefinitions[0]?.cell || "A1"));
     refreshGrid();
@@ -1074,6 +1119,7 @@
     setZoom(zoomLevel + (event.deltaY < 0 ? 0.1 : -0.1));
   }, { passive: false });
 
+  restoreCells();
   createGrid();
   refreshGrid();
   setSelection(activeCell);

@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Aufgabe 5a – Datenflussdiagramme</title>
     <link rel="stylesheet" href="../../../../styles.css?v=20260821">
-    <link rel="stylesheet" href="tabellenkalkulation.css?v=20260915-2">
+    <link rel="stylesheet" href="tabellenkalkulation.css?v=20260924">
   </head>
   <body>
     <div class="site-backdrop" aria-hidden="true"></div>
@@ -126,7 +126,7 @@
               <img src="dfd-bausteine.png" alt="Die fünf Bausteine eines Datenflussdiagramms: Eingabe, Funktion, Ausgabe, Konstante und Verteiler.">
             </figure>
           </div>
-          <p class="dfd-note">Ob ein Funktionsbaustein als Ellipse oder als abgerundetes Rechteck gezeichnet wird, spielt keine Rolle. Wichtig sind die Beschriftung und die Richtung der Pfeile. Im Zeichenwerkzeug heißen die Funktionen teilweise anders: mal heißt dort <code>*</code>, geteilt durch heißt <code>/</code> und größer heißt <code>&gt;</code>.</p>
+          <p class="dfd-note">Ob ein Funktionsbaustein als Ellipse oder als abgerundetes Rechteck gezeichnet wird, spielt keine Rolle. Wichtig sind die Beschriftung und die Richtung der Pfeile.</p>
         </section>
 
         <section id="panel-beschreiben" class="step-panel dfd-card" role="tabpanel" aria-labelledby="tab-beschreiben" data-dfd-panel="beschreiben" hidden>
@@ -170,13 +170,11 @@
           <h2>2b) Ein Datenflussdiagramm zeichnen</h2>
           <p class="dfd-scenario">Jedes Jahr findet an Annas Schule ein Spendenlauf statt. Pro gelaufenem Kilometer sponsern Eltern und Verwandte einen Betrag; die Summe daraus heißt erlaufene Summe. Die SMV zieht davon ihre Unkosten für die Werbeplakate ab. Der Förderverein gibt am Ende noch einmal 50 % der erlaufenen Summe dazu.</p>
 
-          <div class="work-order"><strong>Arbeitsauftrag 3:</strong> Zeichne im Werkzeug ein Datenflussdiagramm, das die gespendete Gesamtsumme berechnet.</div>
+          <div class="work-order"><strong>Arbeitsauftrag 3:</strong> Zeichne in dein Heft ein Datenflussdiagramm, das die gespendete Gesamtsumme berechnet.</div>
 
           <div class="tool-embed">
-            <iframe title="Zeichenwerkzeug für Aufgabe 2b" src="orinoco-dfd.html"
-                    loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
+            <p class="tool-placeholder">Hier erscheint bald ein Werkzeug zum Zeichnen von Datenflussdiagrammen.</p>
           </div>
-          <p class="dfd-tool-hint">Doppelklicke einen Baustein, um ihn zu beschriften. Das Werkzeug speichert nichts – mache am Ende einen Screenshot oder übertrage das Diagramm in dein Heft.</p>
 
           <div class="help-stack">
             <details>
@@ -320,6 +318,7 @@
       </nav>
     </main>
 
+    <script src="../eingaben-speichern.js?v=20260924"></script>
     <script>
       (() => {
         "use strict";
@@ -752,6 +751,7 @@
           onSuccess: () => {
             const summary = document.getElementById("quiz-summary");
             if (summary) summary.hidden = false;
+            savedInputs.setFlag("quizPassed");
           }
         });
 
@@ -941,6 +941,16 @@
         document.getElementById('button-2a').addEventListener('click', function () {
           submitDescription('2a');
         });
+
+        /* Eingaben bleiben beim Verlassen der Seite erhalten. */
+        const savedInputs = window.persistTaskInputs(
+          "informatik9-tabellenkalkulation-aufgabe5a-v1",
+          '#formula-input, #answer-2a, #final-quiz input[type="checkbox"]'
+        );
+        if (savedInputs.hasFlag("quizPassed")) {
+          const summary = document.getElementById("quiz-summary");
+          if (summary) summary.hidden = false;
+        }
       })();
     </script>
   </body>

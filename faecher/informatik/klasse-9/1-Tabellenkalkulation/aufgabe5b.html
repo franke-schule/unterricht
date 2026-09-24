@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Aufgabe 5b – WENN-Funktion als Datenflussdiagramm</title>
     <link rel="stylesheet" href="../../../../styles.css?v=20260821">
-    <link rel="stylesheet" href="tabellenkalkulation.css?v=20260915-2">
+    <link rel="stylesheet" href="tabellenkalkulation.css?v=20260924">
   </head>
   <body>
     <div class="site-backdrop" aria-hidden="true"></div>
@@ -311,15 +311,13 @@
           </div>
 
           <h3>Korrigiertes Diagramm zeichnen</h3>
-          <div class="work-order"><strong>Arbeitsauftrag 5:</strong> Zeichne das korrigierte Datenflussdiagramm im Werkzeug nach.</div>
+          <div class="work-order"><strong>Arbeitsauftrag 5:</strong> Zeichne das korrigierte Datenflussdiagramm in dein Heft.</div>
           <div class="tool-embed">
-            <iframe title="Zeichenwerkzeug für Aufgabe 5b" src="orinoco-dfd.html"
-                    loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
+            <p class="tool-placeholder">Hier erscheint bald ein Werkzeug zum Zeichnen von Datenflussdiagrammen.</p>
           </div>
-          <p class="dfd-tool-hint">Doppelklicke einen Baustein, um ihn zu beschriften. Das Werkzeug speichert nichts – mache am Ende einen Screenshot oder übertrage das Diagramm in dein Heft.</p>
           <details class="dfd-selfcheck">
             <summary>Selbstkontrolle anzeigen</summary>
-            <p>Nur ein Baustein ändert sich: Der Vergleichsknoten muss „größer“ heißen, im Werkzeug also <code>&gt;</code>. Alles andere bleibt gleich: die Eingabe Losnummer, die Konstante 70, die WENN-Funktion mit „10€“ und „0€“ sowie die Ausgabe Losgewinn.</p>
+            <p>Nur ein Baustein ändert sich: Der Vergleichsknoten muss „größer“ heißen. Alles andere bleibt gleich: die Eingabe Losnummer, die Konstante 70, die WENN-Funktion mit „10€“ und „0€“ sowie die Ausgabe Losgewinn.</p>
           </details>
         </section>
 
@@ -364,7 +362,7 @@
               <div class="choice-list">
                 <label class="choice-option"><input type="checkbox" name="quiz-3" value="a"><span>Bei der Losnummer 70 gibt das Diagramm 10 € aus, richtig wären 0 €.</span></label>
                 <label class="choice-option"><input type="checkbox" name="quiz-3" value="b"><span>Bei der Losnummer 71 liefern Text und Diagramm dasselbe Ergebnis.</span></label>
-                <label class="choice-option"><input type="checkbox" name="quiz-3" value="c"><span>Der Vergleichsknoten muss „größer“ heißen, im Werkzeug also &gt;.</span></label>
+                <label class="choice-option"><input type="checkbox" name="quiz-3" value="c"><span>Der Vergleichsknoten muss „größer“ heißen.</span></label>
                 <label class="choice-option"><input type="checkbox" name="quiz-3" value="d"><span>Der Fehler wirkt sich bei jeder Losnummer aus.</span></label>
               </div>
             </fieldset>
@@ -413,8 +411,8 @@
             </section>
             <section class="summary-section">
               <h4>2 · Korrigiertes Diagramm</h4>
-              <p class="prompt">Arbeitsauftrag 5: Zeichne das korrigierte Datenflussdiagramm im Werkzeug nach.</p>
-              <dl class="summary-grid"><dt>Richtiges Ergebnis</dt><dd>Nur ein Baustein ändert sich: Der Vergleichsknoten heißt „größer“, im Werkzeug &gt;. Eingabe Losnummer, Konstante 70, WENN mit „10€“ und „0€“ sowie die Ausgabe Losgewinn bleiben unverändert.</dd></dl>
+              <p class="prompt">Arbeitsauftrag 5: Zeichne das korrigierte Datenflussdiagramm in dein Heft.</p>
+              <dl class="summary-grid"><dt>Richtiges Ergebnis</dt><dd>Nur ein Baustein ändert sich: Der Vergleichsknoten heißt „größer“. Eingabe Losnummer, Konstante 70, WENN mit „10€“ und „0€“ sowie die Ausgabe Losgewinn bleiben unverändert.</dd></dl>
             </section>
             <section class="summary-section">
               <h4>Abschlussquiz – Frage 1</h4>
@@ -464,6 +462,7 @@
       </nav>
     </main>
 
+    <script src="../eingaben-speichern.js?v=20260924"></script>
     <script>
       (() => {
         "use strict";
@@ -899,6 +898,7 @@
           onSuccess: () => {
             const summary = document.getElementById("quiz-summary");
             if (summary) summary.hidden = false;
+            savedInputs.setFlag("quizPassed");
           }
         });
 
@@ -1088,6 +1088,16 @@
         document.getElementById('button-fehler').addEventListener('click', function () {
           submitDescription('fehler');
         });
+
+        /* Eingaben bleiben beim Verlassen der Seite erhalten. */
+        const savedInputs = window.persistTaskInputs(
+          "informatik9-tabellenkalkulation-aufgabe5b-v1",
+          '[data-flow-select], #answer-fehler, #wenn-quiz input[type="checkbox"], #final-quiz input[type="checkbox"]'
+        );
+        if (savedInputs.hasFlag("quizPassed")) {
+          const summary = document.getElementById("quiz-summary");
+          if (summary) summary.hidden = false;
+        }
       })();
     </script>
   </body>
