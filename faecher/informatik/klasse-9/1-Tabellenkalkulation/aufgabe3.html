@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Aufgabe 3 – Vorgefertigte Funktionen</title>
     <link rel="stylesheet" href="../../../../styles.css?v=20260821">
-    <link rel="stylesheet" href="tabellenkalkulation.css?v=20260821-sicherung">
+    <link rel="stylesheet" href="tabellenkalkulation.css?v=20260925-hinweis">
   </head>
   <body>
     <div class="site-backdrop" aria-hidden="true"></div>
@@ -25,8 +25,15 @@
         <div class="card-heading">
           <div>
             <h2 id="spreadsheet-title">Vorgefertigte Funktionen in Excel</h2>
-            <p><strong>Hinweis:</strong> Eine Formel mit Funktion beginnt mit <code>=</code>. Mit <code>=SUMME(F5:F8)</code> addierst du die Zahlen von F5 bis F8; der Doppelpunkt kennzeichnet den Zellbereich.</p>
-            <p>Beim Runden beziehst du dich auf genau eine Zelle: <code>=RUNDEN(F10;1)</code> rundet den Wert aus F10 auf eine Nachkommastelle. Die Zahl nach dem Semikolon bestimmt die Rundungsstelle: <code>0</code> bedeutet ganze Zahlen, <code>-1</code> volle Zehner.</p>
+            <div class="function-hint">
+              <p><strong>Hinweis:</strong> <code>=FUNKTION(Bereich)</code> – dabei bedeutet <code>F5:F8</code> „F5 bis F8“.</p>
+              <ul>
+                <li><strong>SUMME</strong>, <strong>MITTELWERT</strong>, <strong>MAX</strong>, <strong>MIN</strong> werten einen Bereich aus: <code>=SUMME(F5:F8)</code></li>
+                <li><strong>RUNDEN(Zelle;Stellen)</strong>: <code>=RUNDEN(F10;1)</code> → 1 Nachkommastelle, <code>0</code> → ganze Zahl, <code>-1</code> → volle Zehner. <strong>AUFRUNDEN</strong> und <strong>ABRUNDEN</strong> funktionieren genauso.</li>
+                <li><strong>ANZAHL</strong> zählt Zahlen, <strong>ANZAHL2</strong> alle gefüllten Zellen, <strong>ANZAHLLEEREZELLEN</strong> leere Zellen. Bei <code>3</code>, <code>Urlaub</code> und einer leeren Zelle ergeben sie 1, 2 und 1.</li>
+                <li><strong>ZÄHLENWENN(Bereich;"Text")</strong> zählt Zellen mit genau diesem Inhalt: <code>=ZÄHLENWENN(F18:F24;"Frei")</code></li>
+              </ul>
+            </div>
             <p class="work-order"><strong>Arbeitsauftrag:</strong> Ergänze alle orange markierten Ergebniszellen mit passenden Funktionen und Zellbereichen. Die Beispiele rechts helfen dir bei der Auswahl der Funktion.</p>
           </div>
           <span class="load-status ready" role="status">Bereit</span>

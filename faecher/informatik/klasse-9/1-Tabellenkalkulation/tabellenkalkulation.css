@@ -34,6 +34,17 @@
   max-width: 78ch;
 }
 
+.function-hint ul {
+  max-width: 78ch;
+  margin: 0.35rem 0 0 1.15rem;
+  padding: 0;
+  line-height: 1.55;
+}
+
+.function-hint li + li {
+  margin-top: 0.2rem;
+}
+
 .work-order {
   margin: 0.8rem 0 0;
   padding: 0.8rem 0.95rem;
