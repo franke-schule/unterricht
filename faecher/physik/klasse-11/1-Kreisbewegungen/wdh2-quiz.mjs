@@ -41,9 +41,9 @@ const SORT_ZONES = [
 ];
 const SORT_VALUES = [
   { key: "car-wall", label: "Das Auto drückt gegen die Wand, die Wand drückt gegen das Auto.", zone: "interaction", reason: "Zwei Körper üben Kräfte aufeinander aus – das ist eine Wechselwirkung." },
-  { key: "book", label: "Ein Buch liegt ruhig auf dem Tisch.", zone: "balance", reason: "Gewichtskraft und Kraft der Tischplatte greifen am Buch an und ergänzen sich zu null." },
+  { key: "book", label: "Auf ein ruhendes Buch wirken seine Gewichtskraft und die Kraft der Tischplatte.", zone: "balance", reason: "Beide Kräfte greifen am Buch an und ergänzen sich zu null. „Das Buch drückt auf den Tisch, der Tisch drückt auf das Buch“ wäre dagegen ein Wechselwirkungspaar." },
   { key: "two-bodies", label: "Die beiden Kräfte greifen an zwei verschiedenen Körpern an.", zone: "interaction", reason: "Kräfte an verschiedenen Körpern können sich nicht gegenseitig aufheben." },
-  { key: "parachute", label: "Ein Fallschirmspringer sinkt mit konstanter Geschwindigkeit.", zone: "balance", reason: "Gewichtskraft und Luftwiderstandskraft greifen am Springer an und sind gleich groß." },
+  { key: "parachute", label: "Auf einen Fallschirmspringer, der gleichmäßig sinkt, wirken Gewichtskraft und Luftwiderstandskraft.", zone: "balance", reason: "Beide Kräfte greifen am Springer an und sind gleich groß. Luft und Springer, die sich gegenseitig anschieben, wären dagegen ein Wechselwirkungspaar." },
   { key: "foot-ball", label: "Der Fuß tritt gegen den Ball, der Ball drückt gegen den Fuß.", zone: "interaction", reason: "Auch hier üben zwei Körper Kräfte aufeinander aus." },
   { key: "same-body", label: "Die beiden Kräfte greifen am selben Körper an.", zone: "balance", reason: "Nur Kräfte am selben Körper können sich zu null ergänzen." },
   { key: "earth", label: "Die Erde zieht den Springer an, der Springer zieht die Erde an.", zone: "interaction", reason: "Die beiden Anziehungskräfte wirken auf Erde und Springer, also auf zwei Körper." },
