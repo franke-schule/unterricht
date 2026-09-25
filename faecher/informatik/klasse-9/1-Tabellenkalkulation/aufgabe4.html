@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Aufgabe 4 – Einführung in die WENN-Funktion</title>
     <link rel="stylesheet" href="../../../../styles.css?v=20260821">
-    <link rel="stylesheet" href="tabellenkalkulation.css?v=20260821">
+    <link rel="stylesheet" href="tabellenkalkulation.css?v=20260925-hinweis">
   </head>
   <body>
     <div class="site-backdrop" aria-hidden="true"></div>
@@ -21,34 +21,33 @@
         <p>Triff in einer Formel eine Entscheidung zwischen zwei Ergebnissen.</p>
       </header>
 
-      <section class="if-intro-card" aria-labelledby="if-intro-title">
-        <div class="if-intro-heading">
-          <p class="eyebrow">So arbeitet WENN</p>
-          <h2 id="if-intro-title">Bedingung prüfen → Ergebnis auswählen</h2>
-        </div>
-        <div class="if-flow" role="img" aria-label="Ist die Punktzahl mindestens 5, erscheint bestanden, sonst nicht bestanden. Daraus entsteht eine WENN-Formel.">
-          <div class="if-step if-condition">
-            <span>1 · Bedingung</span>
-            <strong>Ist die Punktzahl ≥ 5?</strong>
-          </div>
-          <div class="if-branches">
-            <div class="if-step if-true">
-              <span>2 · WAHR</span>
-              <strong>JA → „bestanden“</strong>
-            </div>
-            <div class="if-step if-false">
-              <span>3 · FALSCH</span>
-              <strong>NEIN → „nicht bestanden“</strong>
-            </div>
-          </div>
-          <code class="if-formula">=WENN(A2&gt;=5;"bestanden";"nicht bestanden")</code>
-        </div>
-      </section>
-
       <section class="spreadsheet-card" aria-labelledby="spreadsheet-title">
         <div class="card-heading">
           <div>
             <h2 id="spreadsheet-title">Notengeld</h2>
+            <div class="function-hint">
+              <p><strong>Hinweis:</strong> <strong>=WENN(Bedingung;Dann;Sonst)</strong> – ist die Bedingung erfüllt, erscheint der Dann-Wert, sonst der Sonst-Wert.</p>
+              <figure class="if-example">
+                <div class="if-anatomy" aria-hidden="true">
+                  <code class="if-seg">=WENN(</code>
+                  <span class="if-seg if-seg-condition"><code>A2&gt;=5</code><small>Bedingung</small></span>
+                  <code class="if-seg">;</code>
+                  <span class="if-seg if-seg-true"><code>"bestanden"</code><small>Dann</small></span>
+                  <code class="if-seg">;</code>
+                  <span class="if-seg if-seg-false"><code>"nicht bestanden"</code><small>Sonst</small></span>
+                  <code class="if-seg">)</code>
+                </div>
+                <ul class="if-cases">
+                  <li><span class="if-case-input">A2 = 7</span> → <span class="if-seg-condition">7 &gt;= 5 ✓</span> → <strong class="if-seg-true">bestanden</strong></li>
+                  <li><span class="if-case-input">A2 = 3</span> → <span class="if-seg-condition">3 &gt;= 5 ✗</span> → <strong class="if-seg-false">nicht bestanden</strong></li>
+                </ul>
+                <figcaption class="sr-only">Beispiel: =WENN(A2&gt;=5;"bestanden";"nicht bestanden"). A2&gt;=5 ist die Bedingung, "bestanden" der Dann-Wert, "nicht bestanden" der Sonst-Wert.</figcaption>
+              </figure>
+              <ul>
+                <li><strong>Vergleiche:</strong> <code>&lt;</code> <code>&gt;</code> <code>&lt;=</code> <code>&gt;=</code> <code>=</code> <code>&lt;&gt;</code> (ungleich)</li>
+                <li><strong>Text</strong> steht in Anführungszeichen (<code>"bestanden"</code>), <strong>Zahlen</strong> ohne (<code>5</code>).</li>
+              </ul>
+            </div>
             <p class="work-order"><strong>Arbeitsauftrag:</strong> Trage in D5 mit WENN ein: Bei einer Note besser als 2 gibt es 5 €, sonst 0 €. Übertrage die Formel anschließend bis D8.</p>
           </div>
           <span class="load-status ready" role="status">Bereit</span>

@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Aufgabe 4a – GGT mit WENN</title>
     <link rel="stylesheet" href="../../../../styles.css?v=20260821">
-    <link rel="stylesheet" href="tabellenkalkulation.css?v=20260821-sicherung">
+    <link rel="stylesheet" href="tabellenkalkulation.css?v=20260925-hinweis">
   </head>
   <body>
     <div class="site-backdrop" aria-hidden="true"></div>
@@ -25,6 +25,18 @@
         <div class="card-heading">
           <div>
             <h2 id="spreadsheet-title">GGT zweier Zahlen</h2>
+            <div class="function-hint">
+              <p><strong>Hinweis:</strong> Ziehe immer die <strong>kleinere</strong> Zahl von der <strong>größeren</strong> ab. Sind beide Zahlen gleich, ist das der <strong>GGT</strong>.</p>
+              <figure class="ggt-example">
+                <ol class="ggt-steps">
+                  <li><span>15</span><span>6</span></li>
+                  <li><span class="is-changed">9<small>15 − 6</small></span><span>6</span></li>
+                  <li><span class="is-changed">3<small>9 − 6</small></span><span>6</span></li>
+                  <li><span>3</span><span class="is-changed">3<small>6 − 3</small></span></li>
+                </ol>
+                <figcaption><strong>Beide gleich → GGT(15; 6) = 3</strong></figcaption>
+              </figure>
+            </div>
             <p class="work-order"><strong>Arbeitsauftrag:</strong> Ergänze B11 und C11 mit den beschriebenen WENN-Entscheidungen. Markiere beide Formeln und fülle sie gemeinsam bis Zeile 83 aus.</p>
           </div>
           <span class="load-status ready" role="status">Bereit</span>
