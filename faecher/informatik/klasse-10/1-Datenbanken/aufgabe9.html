@@ -1,0 +1,311 @@
+<!doctype html>
+<html lang="de">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="robots" content="noindex, nofollow">
+    <title>Aufgabe 9 – Transaktionen und Integrität | Informatik 10</title>
+    <link rel="stylesheet" href="../../../../styles.css?v=20260825">
+    <link rel="stylesheet" href="redundanzen.css?v=20260923a">
+    <link rel="stylesheet" href="tabellenschema.css?v=20260827">
+    <link rel="stylesheet" href="beziehungen.css?v=20260826b">
+    <link rel="stylesheet" href="beziehungsarten.css?v=20260926a">
+    <link rel="stylesheet" href="transaktionen.css?v=20260926a">
+    <script type="module" src="transaktionen.js?v=20260926a"></script>
+  </head>
+  <body class="redundancy-page relation-page transactions-page">
+    <div class="site-backdrop" aria-hidden="true"></div>
+    <main class="learning-shell">
+      <nav class="module-topbar" aria-label="Seitennavigation">
+        <a class="back-link" href="../index.html">Zur Aufgabenübersicht</a>
+        <a class="back-link" href="../../../../index.html">Startseite</a>
+      </nav>
+
+      <header class="module-header">
+        <div class="eyebrow"><span aria-hidden="true">◎</span> InstaHub-Datenbanklabor</div>
+        <h1>Transaktionen und Integrität</h1>
+        <p>Finde heraus, welche Fehler beim Einfügen, Ändern und Löschen von Daten entstehen können – und wie sich eine Datenbank davor schützt.</p>
+      </header>
+
+      <section id="data-status" class="data-status" role="status" aria-live="polite" hidden></section>
+
+      <section id="learning-module">
+        <div class="progress-card" aria-label="Bearbeitungsfortschritt">
+          <div class="progress-copy"><span id="progress-label">Schritt 1 von 7</span><strong id="progress-percent">0 % bearbeitet</strong></div>
+          <div class="progress-track" aria-hidden="true"><span id="progress-bar"></span></div>
+        </div>
+        <nav id="step-tabs" class="step-tabs" aria-label="Lernschritte" role="tablist"></nav>
+
+        <!-- Schritt 1: Datenpflege -->
+        <section id="step-1" class="step-panel" role="tabpanel" aria-labelledby="tab-1">
+          <div class="step-heading"><span class="step-number">1</span><div><p class="step-kicker">Entdecken</p><h2>Was passiert mit den Daten?</h2></div></div>
+          <div class="scenario-card"><p>In InstaHub werden ständig Daten gelesen, gespeichert, geändert und gelöscht. Zu jeder Situation gehört ein SQL-Befehl.</p></div>
+
+          <h3 class="assignment-heading"><strong>Ziehe</strong> jeden SQL-Befehl in das Feld der passenden Situation.</h3>
+          <div id="s1-dragdrop" class="dragdrop-assignment"></div>
+          <p class="table-legend">Tipp: Karte antippen, dann Feld antippen. Eine gesetzte Karte zweimal antippen, um sie zurückzulegen.</p>
+          <div class="action-row"><button id="check-s1-drag" class="primary-button" type="button">Zuordnung prüfen</button></div>
+          <p id="feedback-s1-drag" class="feedback" aria-live="polite"></p>
+
+          <div class="task-card">
+            <h3>Deine Beobachtung</h3>
+            <p><strong>Kreuze an</strong>: Nach welchen Befehlen sind die gespeicherten Daten anders als vorher?</p>
+            <div id="s1-f1b-choices" class="choice-list"></div>
+            <div class="action-row"><button id="check-s1-f1b" class="primary-button" type="button">Antwort prüfen</button></div>
+            <p id="feedback-s1-f1b" class="feedback" aria-live="polite"></p>
+          </div>
+
+          <div class="help-stack">
+            <details><summary>Hilfe 1</summary><p>SELECT kennst du schon aus den SQL-Aufgaben. Die anderen drei Befehle sind englische Verben.</p></details>
+            <details><summary>Hilfe 2</summary><p>insert heißt einfügen, update heißt aktualisieren, delete heißt löschen. Welche Situation passt zu welchem Verb?</p></details>
+            <details><summary>Hilfe 3</summary><p>Hochladen erzeugt einen neuen Datensatz – das ist INSERT. Beim Ändern der Beschreibung bleibt das Foto, nur ein Wert wird ersetzt. Ordne SELECT und DELETE genauso zu.</p></details>
+          </div>
+
+          <div id="s1-merke" class="foreign-key-reveal" hidden>
+            <strong>Merke: Datenpflege und Transaktionen</strong>
+            <p>Daten müssen gepflegt werden: Datensätze werden eingefügt, geändert und gelöscht. Das nennt man Datenpflege.</p>
+            <p>Eine Transaktion besteht aus einer oder mehreren Datenbankoperationen, mit denen Daten eingefügt, geändert oder gelöscht werden. Sie soll fehlerfrei ausgeführt werden: Danach müssen die Daten in der Datenbank stimmig sein.</p>
+            <p>CRUD fasst die vier Grundoperationen zusammen:</p>
+            <ul>
+              <li>Create (erstellen) – INSERT</li>
+              <li>Read (lesen) – SELECT</li>
+              <li>Update (ändern) – UPDATE</li>
+              <li>Delete (löschen) – DELETE</li>
+            </ul>
+            <p>Nur SELECT verändert den Datenbestand nicht.</p>
+            <pre class="given-sql"><code>INSERT INTO tabelle (spalte1, spalte2)
+VALUES (wert1, wert2)
+
+UPDATE tabelle
+SET spalte = wert
+WHERE bedingung
+
+DELETE FROM tabelle
+WHERE bedingung</code></pre>
+            <p>Achtung: Ohne WHERE ändert UPDATE bzw. löscht DELETE alle Zeilen der Tabelle.</p>
+          </div>
+        </section>
+
+        <!-- Schritt 2: UPDATE -->
+        <section id="step-2" class="step-panel" role="tabpanel" aria-labelledby="tab-2" hidden>
+          <div class="step-heading"><span class="step-number">2</span><div><p class="step-kicker">Entdecken</p><h2>Nele heißt jetzt anders</h2></div></div>
+          <div class="scenario-card"><p>InstaHub speichert hier Benutzer- und Fotodaten wieder in einer einzigen Tabelle – wie bei der Idee aus Aufgabe 2. Nele Hohenstein heißt jetzt Nele Schweizer und schreibt dem Support: »Ich bin die mit dem Park-Foto.«</p></div>
+          <div class="scenario-card"><p><code>users_photos(name: varchar(255), username: varchar(255), url: varchar(255), description: varchar(255))</code></p></div>
+
+          <h3 class="assignment-heading"><strong>Führe</strong> die Anweisung des Supports aus und <strong>vergleiche</strong> die Tabelle vorher und nachher.</h3>
+          <pre class="given-sql"><code>UPDATE users_photos
+SET name = 'Nele Schweizer'
+WHERE description LIKE '%Park%'</code></pre>
+          <div class="action-row"><button id="s2-execute" class="primary-button" type="button" aria-pressed="false">Anweisung ausführen</button></div>
+          <p id="s2-status" class="execution-status" aria-live="polite"></p>
+          <div id="s2-table"></div>
+
+          <h3 class="assignment-heading"><strong>Wähle</strong>: Was zeigt die Tabelle nach der Anweisung?</h3>
+          <div id="s2-f2a-choices" class="choice-list"></div>
+          <div class="action-row"><button id="check-s2-f2a" class="primary-button" type="button">Antwort 1 prüfen</button></div>
+          <p id="feedback-s2-f2a" class="feedback" aria-live="polite"></p>
+
+          <h3 class="assignment-heading"><strong>Kreuze an</strong>: Welche Probleme sind jetzt entstanden?</h3>
+          <div id="s2-f2b-choices" class="choice-list"></div>
+          <div class="action-row"><button id="check-s2-f2b" class="primary-button" type="button">Antwort 2 prüfen</button></div>
+          <p id="feedback-s2-f2b" class="feedback" aria-live="polite"></p>
+
+          <div class="help-stack">
+            <details><summary>Hilfe 1</summary><p>Lies die WHERE-Bedingung: Welche Zeilen enthalten in description das Wort Park?</p></details>
+            <details><summary>Hilfe 2</summary><p>Vergleiche die Spalte name in allen Zeilen, in denen username nelefitmuse steht.</p></details>
+            <details><summary>Hilfe 3</summary><p>Nur die Zeile mit dem Park-Foto wurde geändert. Für nelefitmuse stehen jetzt zwei verschiedene Namen in der Tabelle – überlege, was das für die Daten bedeutet.</p></details>
+          </div>
+
+          <div id="s2-reveal" class="foreign-key-reveal" hidden>
+            <strong>UPDATE-Anomalie</strong>
+            <p>Beim Ändern von Daten können Inkonsistenzen (= Unstimmigkeiten) entstehen. Solche Fehler bei der Datenpflege nennt man Anomalien.</p>
+            <p>Neles Name steht dreimal in der Tabelle, geändert wurde er aber nur einmal. Mit WHERE username = 'nelefitmuse' hätte es geklappt – aber nur, weil man daran gedacht hat. Bei Redundanz muss jede Änderung alle Kopien treffen.</p>
+            <p>Du kennst das Problem aus Aufgabe 2, als du die E-Mail-Adresse geändert hast.</p>
+          </div>
+        </section>
+
+        <!-- Schritt 3: DELETE -->
+        <section id="step-3" class="step-panel" role="tabpanel" aria-labelledby="tab-3" hidden>
+          <div class="step-heading"><span class="step-number">3</span><div><p class="step-kicker">Verstehen</p><h2>Jannik räumt sein Profil auf</h2></div></div>
+          <div class="scenario-card"><p>Jannik Wegener möchte seine Fotos loswerden, sein Konto mit Name und Benutzername soll aber bleiben. Der Support löscht deshalb die Zeilen mit seinem Namen.</p></div>
+          <div class="scenario-card"><p><code>users_photos(name: varchar(255), username: varchar(255), url: varchar(255), description: varchar(255))</code></p></div>
+
+          <h3 class="assignment-heading"><strong>Führe</strong> die Anweisung aus und <strong>beobachte</strong>, was aus der Tabelle verschwindet.</h3>
+          <pre class="given-sql"><code>DELETE FROM users_photos
+WHERE name LIKE 'Jannik%'</code></pre>
+          <div class="action-row"><button id="s3-execute" class="primary-button" type="button" aria-pressed="false">Anweisung ausführen</button></div>
+          <p id="s3-status" class="execution-status" aria-live="polite"></p>
+          <div id="s3-table"></div>
+
+          <h3 class="assignment-heading"><strong>Wähle</strong>: Was ist nach der Anweisung noch über Jannik gespeichert?</h3>
+          <div id="s3-f3a-choices" class="choice-list"></div>
+          <div class="action-row"><button id="check-s3-f3a" class="primary-button" type="button">Antwort 1 prüfen</button></div>
+          <p id="feedback-s3-f3a" class="feedback" aria-live="polite"></p>
+
+          <h3 class="assignment-heading"><strong>Kreuze an</strong>: Was ist das Problem?</h3>
+          <div id="s3-f3b-choices" class="choice-list"></div>
+          <div class="action-row"><button id="check-s3-f3b" class="primary-button" type="button">Antwort 2 prüfen</button></div>
+          <p id="feedback-s3-f3b" class="feedback" aria-live="polite"></p>
+
+          <div class="help-stack">
+            <details><summary>Hilfe 1</summary><p>Lies die Anweisung: Welche Zeilen erfüllen die Bedingung name LIKE 'Jannik%'?</p></details>
+            <details><summary>Hilfe 2</summary><p>DELETE löscht immer ganze Zeilen. Wo in der Tabelle standen Janniks Name und Benutzername?</p></details>
+            <details><summary>Hilfe 3</summary><p>Janniks Name und Benutzername standen nur in den Zeilen seiner beiden Fotos. Beide Zeilen sind gelöscht – überlege, was jetzt noch über Jannik bekannt ist.</p></details>
+          </div>
+
+          <div id="s3-reveal" class="foreign-key-reveal" hidden>
+            <strong>DELETE-Anomalie</strong>
+            <p>Beim Löschen von Daten können mehr Informationen verloren gehen als gewollt.</p>
+            <p>Mit den beiden Zeilen sind nicht nur Janniks Fotos samt Hashtags verschwunden, sondern auch sein Name und sein Benutzername. Jannik ist gar nicht mehr gespeichert.</p>
+          </div>
+        </section>
+
+        <!-- Schritt 4: INSERT -->
+        <section id="step-4" class="step-panel" role="tabpanel" aria-labelledby="tab-4" hidden>
+          <div class="step-heading"><span class="step-number">4</span><div><p class="step-kicker">Anwenden</p><h2>Ein neues Foto aus Florida</h2></div></div>
+          <div class="scenario-card"><p>Ein Foto aus Florida wird eingefügt. In der Anweisung fehlt, wer es hochgeladen hat.</p></div>
+          <div class="scenario-card"><p><code>users_photos(name: varchar(255), username: varchar(255), url: varchar(255), description: varchar(255))</code></p></div>
+
+          <h3 class="assignment-heading"><strong>Führe</strong> die Anweisung aus und <strong>untersuche</strong> die neue Zeile.</h3>
+          <pre class="given-sql"><code>INSERT INTO users_photos (url, description)
+VALUES ('storage/photos/2/1480.webp', '#usa #florida #everglades')</code></pre>
+          <div class="action-row"><button id="s4-execute" class="primary-button" type="button" aria-pressed="false">Anweisung ausführen</button></div>
+          <p id="s4-status" class="execution-status" aria-live="polite"></p>
+          <div id="s4-table"></div>
+          <p class="table-legend">NULL bedeutet: In dieser Zelle ist kein Wert gespeichert.</p>
+
+          <h3 class="assignment-heading"><strong>Wähle</strong>: Wem gehört das neue Foto laut Tabelle?</h3>
+          <div id="s4-f4a-choices" class="choice-list"></div>
+          <div class="action-row"><button id="check-s4-f4a" class="primary-button" type="button">Antwort 1 prüfen</button></div>
+          <p id="feedback-s4-f4a" class="feedback" aria-live="polite"></p>
+
+          <h3 class="assignment-heading"><strong>Kreuze an</strong>: Was ist das Problem?</h3>
+          <div id="s4-f4b-choices" class="choice-list"></div>
+          <div class="action-row"><button id="check-s4-f4b" class="primary-button" type="button">Antwort 2 prüfen</button></div>
+          <p id="feedback-s4-f4b" class="feedback" aria-live="polite"></p>
+
+          <div class="help-stack">
+            <details><summary>Hilfe 1</summary><p>Vergleiche die Spalten in der Anweisung mit den Spalten der Tabelle. Welche fehlen?</p></details>
+            <details><summary>Hilfe 2</summary><p>Für Spalten, die in der Anweisung fehlen, wird kein Wert gespeichert. Die Tabelle zeigt dann NULL.</p></details>
+            <details><summary>Hilfe 3</summary><p>name und username der neuen Zeile sind NULL – das Foto hat keinen Besitzer. Überlege außerdem umgekehrt: Welche Spalten blieben leer, wenn ein Benutzer ohne Foto eingefügt würde?</p></details>
+          </div>
+
+          <div id="s4-reveal" class="foreign-key-reveal" hidden>
+            <strong>INSERT-Anomalie</strong>
+            <p>Beim Einfügen von Daten können relevante Informationen fehlen.</p>
+            <p>Das Foto aus Florida steht ohne Besitzer in der Tabelle. Umgekehrt ließe sich ein neuer Benutzer ohne Foto nur mit leeren Foto-Spalten speichern.</p>
+            <p><strong>Ursache aller drei Anomalien:</strong> Benutzer- und Fotodaten stehen redundant in einer Tabelle. Die Lösung kennst du aus den Aufgaben 2 bis 4: getrennte Tabellen users und photos, verbunden über den Fremdschlüssel user_id[users].</p>
+          </div>
+        </section>
+
+        <!-- Schritt 5: Regeln -->
+        <section id="step-5" class="step-panel" role="tabpanel" aria-labelledby="tab-5" hidden>
+          <div class="step-heading"><span class="step-number">5</span><div><p class="step-kicker">Verstehen</p><h2>Welche Regeln prüft die Datenbank?</h2></div></div>
+          <div class="scenario-card"><p>InstaHub speichert Benutzer und Fotos jetzt in getrennten Tabellen. Die Datenbank enthält hier nur die Datensätze von Nele und Jannik.</p></div>
+          <div class="scenario-card">
+            <p><code>users(id: int, name: varchar(255), username: varchar(255), birthday: date, …)</code></p>
+            <p><code>photos(id: int, description: varchar(255), url: varchar(255), user_id[users]: int, …)</code></p>
+          </div>
+          <div id="s5-tables" class="table-excerpts" aria-label="Tabellenauszüge users und photos"></div>
+
+          <h3 class="assignment-heading">Das Datenbanksystem lehnt die Anweisungen A, B und C ab. <strong>Ziehe</strong> zu jeder Anweisung den passenden Grund.</h3>
+          <div id="s5-dragdrop" class="dragdrop-assignment"></div>
+          <p class="table-legend">Tipp: Karte antippen, dann Feld antippen. Eine gesetzte Karte zweimal antippen, um sie zurückzulegen.</p>
+          <div class="action-row"><button id="check-s5-drag" class="primary-button" type="button">Zuordnung prüfen</button></div>
+          <p id="feedback-s5-drag" class="feedback" aria-live="polite"></p>
+
+          <div class="help-stack">
+            <details><summary>Hilfe 1</summary><p>Sieh dir bei jeder Anweisung die Werte hinter VALUES bzw. SET an und suche sie in den Tabellen.</p></details>
+            <details><summary>Hilfe 2</summary><p>Prüfe drei Dinge: Ist die neue id schon vergeben? Gibt es den Benutzer, auf den user_id verweist? Passt der Wert zum Datentyp im Tabellenschema?</p></details>
+            <details><summary>Hilfe 3</summary><p>In A ist die id 1001 schon vergeben – sie gehört zu Neles Park-Foto. Prüfe B und C genauso.</p></details>
+          </div>
+
+          <div id="s5-merke" class="foreign-key-reveal" hidden>
+            <strong>Merke: Integrität</strong>
+            <p>Integrität (lat. integritas) bedeutet »Unversehrtheit«. Bei Änderungen der Daten muss die logische Übereinstimmung in der Datenbank erhalten bleiben.</p>
+            <p>Ein Datenbanksystem fordert dafür Bedingungen, die Integritätsbedingungen. Sind sie erfüllt, ist die Datenbank konsistent (stimmig): Es gibt keine widersprüchlichen Datensätze. Verstößt eine Anweisung gegen eine Integritätsbedingung, führt das Datenbanksystem sie nicht aus.</p>
+            <ul>
+              <li>Integrität mit Primärschlüssel (Entitätsintegrität): Der Primärschlüssel muss eindeutig sein – keine zwei Datensätze mit gleichem Primärschlüsselwert –, und er darf nicht den Wert NULL annehmen. Beispiel: Anweisung A.</li>
+              <li>Wertebereichsintegrität: Attributwerte dürfen nur im festgelegten Wertebereich liegen, also den richtigen Datentyp haben. Beispiel: Anweisung B.</li>
+              <li>Referentielle Integrität (Integrität der Beziehungen): Zu jedem Fremdschlüssel gibt es einen zugehörigen Datensatz mit gleichem Primärschlüsselwert. Grundregel: Fremdschlüssel müssen immer auf existierende Datensätze verweisen. Beispiel: Anweisung C.</li>
+            </ul>
+            <p>Integrität ist nicht dasselbe wie Datenschutz: Wer Daten sehen oder ändern darf, regeln Benutzerrechte.</p>
+          </div>
+
+          <div class="task-card">
+            <h3 class="assignment-heading"><strong>Kreuze an</strong>: Was gilt, wenn InstaHub users und photos getrennt speichert und das Datenbanksystem diese Regeln prüft?</h3>
+            <div id="s5-f5b-choices" class="choice-list"></div>
+            <div class="action-row"><button id="check-s5-f5b" class="primary-button" type="button">Antwort prüfen</button></div>
+            <p id="feedback-s5-f5b" class="feedback" aria-live="polite"></p>
+          </div>
+        </section>
+
+        <!-- Schritt 6: Schule -->
+        <section id="step-6" class="step-panel" role="tabpanel" aria-labelledby="tab-6" hidden>
+          <div class="step-heading"><span class="step-number">6</span><div><p class="step-kicker">Übertragen</p><h2>Anmeldungen für die AGs</h2></div></div>
+          <div class="scenario-card"><p>Du kennst die AG-Anmeldungen der Schule aus Aufgabe 8. Die Tabelle ag hat jetzt zusätzlich die Spalte plaetze.</p></div>
+          <div class="scenario-card">
+            <p><code>schueler(id: int, name: varchar(255))</code></p>
+            <p><code>ag(id: int, name: varchar(255), plaetze: int)</code></p>
+            <p><code>teilnahme(schueler_id[schueler]: int, ag_id[ag]: int)</code></p>
+          </div>
+          <div id="s6-tables" class="table-excerpts three-up" aria-label="Tabellenauszüge schueler, ag und teilnahme"></div>
+
+          <h3 class="assignment-heading"><strong>Ziehe</strong> zu jeder Anweisung die Integritätsbedingung, gegen die sie verstößt. Verstößt sie gegen keine, wähle »wird ausgeführt«.</h3>
+          <div id="s6-dragdrop" class="dragdrop-assignment"></div>
+          <p class="table-legend">Tipp: Karte antippen, dann Feld antippen. Eine gesetzte Karte zweimal antippen, um sie zurückzulegen.</p>
+          <div class="action-row"><button id="check-s6-drag" class="primary-button" type="button">Zuordnung prüfen</button></div>
+          <p id="feedback-s6-drag" class="feedback" aria-live="polite"></p>
+
+          <div class="task-card">
+            <h3 class="assignment-heading">Anweisung 3 wird abgelehnt. <strong>Wähle</strong> die beste Begründung.</h3>
+            <div id="s6-f6b-choices" class="choice-list"></div>
+            <div class="action-row"><button id="check-s6-f6b" class="primary-button" type="button">Antwort prüfen</button></div>
+            <p id="feedback-s6-f6b" class="feedback" aria-live="polite"></p>
+          </div>
+
+          <div class="help-stack">
+            <details><summary>Hilfe 1</summary><p>Suche die Werte aus jeder Anweisung in den drei Tabellen und vergleiche sie mit den Datentypen im Tabellenschema.</p></details>
+            <details><summary>Hilfe 2</summary><p>Stelle zu jeder Anweisung drei Fragen: Ist die neue id schon vergeben? Gibt es den Datensatz, auf den ein Fremdschlüssel zeigt? Passt jeder Wert zum Datentyp?</p></details>
+            <details><summary>Hilfe 3</summary><p>Anweisung 1 verwendet die id 3, die der Chor schon hat – das verletzt die Entitätsintegrität. Prüfe die anderen drei Anweisungen genauso.</p></details>
+          </div>
+        </section>
+
+        <!-- Schritt 7: Abschlussquiz -->
+        <section id="step-7" class="step-panel" role="tabpanel" aria-labelledby="tab-7" hidden>
+          <div class="step-heading"><span class="step-number">7</span><div><p class="step-kicker">Sichern</p><h2>Abschlussquiz</h2></div></div>
+          <div class="scenario-card"><p>Kreuze alle richtigen Antworten an. Bei manchen Fragen sind mehrere Antworten richtig.</p></div>
+          <form id="final-quiz" class="final-quiz" novalidate>
+            <fieldset><legend><span>1</span> Was gilt für die Datenpflege?</legend><div id="quiz-q1" class="choice-list"></div></fieldset>
+            <fieldset><legend><span>2</span> In users_photos steht Neles Name bei drei Fotos. Eine Anweisung ändert ihn nur in einer Zeile. Was gilt?</legend><div id="quiz-q2" class="choice-list"></div></fieldset>
+            <fieldset><legend><span>3</span> Jannik löscht in users_photos alle Zeilen mit seinem Namen, um seine Fotos loszuwerden. Was gilt?</legend><div id="quiz-q3" class="choice-list"></div></fieldset>
+            <fieldset><legend><span>4</span> In users_photos wird ein Foto ohne name und username eingefügt. Was gilt?</legend><div id="quiz-q4" class="choice-list"></div></fieldset>
+            <fieldset><legend><span>5</span> Welche Aussagen über Integritätsbedingungen stimmen?</legend><div id="quiz-q5" class="choice-list"></div></fieldset>
+            <fieldset><legend><span>6</span> Was bedeutet Integrität einer Datenbank?</legend><div id="quiz-q6" class="choice-list"></div></fieldset>
+            <div class="action-row"><button class="primary-button" type="submit">Quiz auswerten</button></div>
+            <p id="feedback-step7" class="feedback" aria-live="polite"></p>
+          </form>
+        </section>
+
+        <!-- Übersicht -->
+        <section id="step-summary" class="step-panel summary-panel" role="tabpanel" aria-labelledby="tab-summary" hidden>
+          <div class="step-heading"><span class="step-number complete">✓</span><div><p class="step-kicker">Abschlussübersicht</p><h2>Transaktionen und Integrität auf einen Blick</h2></div></div>
+          <p class="summary-intro">Hier siehst du die Merksätze und die richtigen Ergebnisse aller sieben Lernschritte.</p>
+          <div class="summary-key-points">
+            <article><h3>Transaktionen</h3><code>INSERT · UPDATE · DELETE</code><p>Eine oder mehrere Datenbankoperationen, die Daten einfügen, ändern oder löschen. Danach müssen die Daten stimmig sein. CRUD: Create, Read, Update, Delete.</p></article>
+            <article><h3>Anomalien</h3><code>users_photos</code><p>UPDATE-Anomalie: Beim Ändern entstehen Inkonsistenzen. DELETE-Anomalie: Beim Löschen geht mehr verloren als gewollt. INSERT-Anomalie: Beim Einfügen fehlen relevante Informationen. Ursache: Redundanz.</p></article>
+            <article><h3>Integritätsbedingungen</h3><code>Primärschlüssel · Datentyp · Fremdschlüssel</code><p>Entitätsintegrität: Primärschlüssel eindeutig und nie NULL. Wertebereichsintegrität: Wert im festgelegten Wertebereich. Referentielle Integrität: Fremdschlüssel verweist auf einen existierenden Datensatz.</p></article>
+          </div>
+          <div id="answer-summary" class="answer-summary"></div>
+
+          <div class="summary-actions">
+            <button id="print-summary" class="secondary-button" type="button">Auswertung drucken</button>
+            <button id="reset-module" class="danger-button" type="button">Alle Eingaben zurücksetzen</button>
+            <a class="secondary-button" href="../index.html">Zur Aufgabenübersicht</a>
+          </div>
+        </section>
+
+      </section>
+    </main>
+  </body>
+</html>
