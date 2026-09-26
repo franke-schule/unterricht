@@ -3,6 +3,7 @@ import { evaluateSemanticAnswer } from './semantic-answer.mjs';
 
 const SERVER_URL = 'https://script.google.com/macros/s/AKfycby8RWL6uYrKZyoJ6m2GRpWyRmXjwsdskyCiqzKpRhIK5-wrDl-9lWWk8CiAGaVMoy0x/exec';
 const STORAGE_KEY = 'informatik11-perzeptron-aufgabe5-v1';
+const SOLUTION_CODE = 'M3VN-DKXT';
 const STEPS = ['discover', 'structure', 'decide', 'learn', 'simulator', 'fast', 'limits', 'summary'];
 const epoch = runEpoch();
 const GEOMETRY_STEPS = [
@@ -156,4 +157,23 @@ function setupQuiz() {
 }
 function setupReset() { document.querySelector('#reset-progress').addEventListener('click',() => { if (!confirm('Bearbeitungsstand wirklich zurücksetzen?')) return; try { localStorage.removeItem(STORAGE_KEY); } catch {} location.reload(); }); }
 
-setupTabs(); setupDiscovery(); setupStructure(); setupDecision(); setupEpoch(); setupSemantic(); setupSimulator(); setupFast(); setupLimits(); setupQuiz(); setupReset();
+function normalizeSolutionCode(value) {
+  return value.toUpperCase().replace(/[^A-Z0-9]/g, '');
+}
+
+function unlockSolution(event) {
+  event.preventDefault();
+  const form = event.currentTarget;
+  const enteredCode = normalizeSolutionCode(form.elements['solution-code'].value);
+  const isCorrect = enteredCode === normalizeSolutionCode(SOLUTION_CODE);
+  const message = document.querySelector('#solution-code-message');
+
+  document.querySelector('#solution-download-link').hidden = !isCorrect;
+  message.className = 'solution-code-message' + (isCorrect ? '' : ' error');
+  message.textContent = isCorrect
+    ? 'Code korrekt. Das Sicherungsblatt ist freigeschaltet.'
+    : 'Der eingegebene Code ist nicht gültig.';
+}
+function setupSolution() { document.querySelector('#solution-code-form').addEventListener('submit', unlockSolution); }
+
+setupTabs(); setupDiscovery(); setupStructure(); setupDecision(); setupEpoch(); setupSemantic(); setupSimulator(); setupFast(); setupLimits(); setupQuiz(); setupReset(); setupSolution();

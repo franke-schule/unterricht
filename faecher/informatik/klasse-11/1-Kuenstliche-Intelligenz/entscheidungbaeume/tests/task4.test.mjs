@@ -54,8 +54,10 @@ test("Aufgabe 4 bindet Tabs, Material und Skriptserver passend ein", async () =>
   assert.equal(testPosition > task42Position && testPosition < task4aPosition, true);
   assert.equal(largePosition > task4aPosition, true);
   const extension = page.match(/<section id="task4a"[\s\S]*?<\/section>/)?.[0] ?? "";
-  assert.doesNotMatch(extension, /<(?:input|textarea|button)\b/i, "Vertiefungen dürfen keine Eingabefelder oder Prüfbuttons enthalten");
+  const extensionTask = extension.split('<section class="solution-download"')[0];
+  assert.doesNotMatch(extensionTask, /<(?:input|textarea|button)\b/i, "Vertiefungen dürfen keine Eingabefelder oder Prüfbuttons enthalten");
   assert.match(extension, /kein Eingabefeld und keine automatische Korrektur/i);
+  assert.match(extension, /href="sicherungsblatt-aufgabe-4-loesungen\.pdf" download hidden/);
   assert.match(page, /id="depth-learning-note"[^>]*hidden/);
   assert.equal((page.match(/Hilfe 3:/g) ?? []).length, 0);
   assert.match(page, /Maximale Baumtiefe<\/th><th scope="col">Anzahl falsch klassifizierter Trainingsdaten<\/th><th scope="col">Genauigkeit des Entscheidungsbaums nach Testphase/);
@@ -102,8 +104,10 @@ test("UI-Interaktionen prüfen Tabelle und zeigen den Lernhinweis erst beim Abse
     "depth-one-answer", "check-depth-one", "depth-one-feedback", "depth-one-count",
     "depth-description-answer", "check-depth-description", "depth-description-feedback", "depth-description-count", "depth-learning-note",
     "depth-table-form", "depth-table-feedback", "task4-previous", "task4-next",
+    "solution-code-form", "solution-code-message", "solution-download-link",
   ];
   const elements = Object.fromEntries(ids.map((id) => [id, fakeElement()]));
+  elements["solution-code-form"].elements = { "solution-code": fakeElement() };
   const tabs = ["task41", "task42", "task4a"].map((step) => fakeElement({ dataset: { stepTab: step } }));
   const panels = ["task41", "task42", "task4a"].map((step) => fakeElement({ dataset: { stepPanel: step } }));
   const tableInputs = FISH_DEPTH_RESULTS.flatMap((row) => [
@@ -148,6 +152,13 @@ test("UI-Interaktionen prüfen Tabelle und zeigen den Lernhinweis erst beim Abse
     assert.equal(elements["depth-table-feedback"].className, "dt-feedback incomplete");
     assert.match(elements["depth-table-feedback"].textContent, /Tiefe 1: Anzahl falsch klassifizierter Trainingsdaten/);
     assert.doesNotMatch(elements["depth-table-feedback"].textContent, /3/);
+
+    elements["solution-code-form"].elements["solution-code"].value = "falsch";
+    await elements["solution-code-form"].dispatch("submit", { currentTarget: elements["solution-code-form"] });
+    assert.equal(elements["solution-download-link"].hidden, true);
+    elements["solution-code-form"].elements["solution-code"].value = "m8tr dp7h";
+    await elements["solution-code-form"].dispatch("submit", { currentTarget: elements["solution-code-form"] });
+    assert.equal(elements["solution-download-link"].hidden, false);
   } finally {
     delete globalThis.document;
   }

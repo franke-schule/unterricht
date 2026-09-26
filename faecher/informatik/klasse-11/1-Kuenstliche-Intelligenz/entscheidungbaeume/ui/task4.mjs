@@ -4,6 +4,7 @@ import { evaluateSemanticAnswer } from "./semantic-answer.mjs";
 const SCRIPT_SERVER_URL = "https://script.google.com/macros/s/AKfycby8RWL6uYrKZyoJ6m2GRpWyRmXjwsdskyCiqzKpRhIK5-wrDl-9lWWk8CiAGaVMoy0x/exec";
 const MAX_LENGTH = 3000;
 const DEPTH_NOTE = "Ein tieferer Baum kann Trainingsdaten besser klassifizieren. Für die Auswahl eines Modells ist jedoch entscheidend, wie gut es unbekannte Testdaten klassifiziert.";
+const SOLUTION_CODE = "M8TR-DP7H";
 const STEP_IDS = ["task41", "task42", "task4a"];
 
 const semanticTasks = [
@@ -148,6 +149,25 @@ function checkDepthTable(event) {
   }
 }
 
+function normalizeSolutionCode(value) {
+  return value.toUpperCase().replace(/[^A-Z0-9]/g, "");
+}
+
+function unlockSolution(event) {
+  event.preventDefault();
+  const form = event.currentTarget;
+  const enteredCode = normalizeSolutionCode(form.elements["solution-code"].value);
+  const isCorrect = enteredCode === normalizeSolutionCode(SOLUTION_CODE);
+  const message = document.querySelector("#solution-code-message");
+
+  document.querySelector("#solution-download-link").hidden = !isCorrect;
+  message.className = `solution-code-message${isCorrect ? "" : " error"}`;
+  message.textContent = isCorrect
+    ? "Code korrekt. Das Sicherungsblatt ist freigeschaltet."
+    : "Der eingegebene Code ist nicht gültig.";
+}
+
 setupTabs();
 semanticTasks.forEach(setupSemanticTask);
 document.querySelector("#depth-table-form").addEventListener("submit", checkDepthTable);
+document.querySelector("#solution-code-form").addEventListener("submit", unlockSolution);

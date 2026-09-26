@@ -131,3 +131,20 @@
 .perceptron-page .calc-term { white-space:nowrap; }
 @media (max-width:900px){.perceptron-page .signal-layout{grid-template-columns:1fr}}
 @media (max-width:700px){.perceptron-page .perceptron-diagram{padding:.45rem}.perceptron-page .perceptron-diagram text{font-size:26px}.perceptron-page .perceptron-diagram .diagram-symbol{font-size:32px}.perceptron-page .calc-steps li{grid-template-columns:2.4rem minmax(0,1fr);row-gap:.35rem}.perceptron-page .calc-step-number{grid-row:span 2}.perceptron-page .calc-steps li > input,.perceptron-page .calc-steps li > select{grid-column:2}}
+/* Sicherungsblatt-Download (Aufbau wie entscheidungbaeume/styles.css, Farben dieses Moduls) */
+.perceptron-page .solution-download { margin:1.5rem 0 0; padding:1.1rem 1.25rem; border:1px solid #b9d1df; border-left:5px solid #126e9c; border-radius:.85rem; background:#f9fcfe; }
+.perceptron-page .solution-download h2 { margin:0; color:#12324a; font-size:1.25rem; }
+.perceptron-page .solution-reveal { margin-top:.75rem; }
+.perceptron-page .solution-reveal summary { width:fit-content; color:#126e9c; font-weight:800; cursor:pointer; }
+.perceptron-page .solution-reveal[open] summary { margin-bottom:.9rem; }
+.perceptron-page .solution-code-form { display:grid; gap:.7rem; max-width:31rem; }
+.perceptron-page .solution-code-form label { font-weight:800; }
+.perceptron-page .solution-code-controls { display:flex; gap:.6rem; }
+.perceptron-page .solution-code-controls input { min-width:0; flex:1 1 12rem; padding:.65rem .8rem; border:1px solid #9db4c2; border-radius:.55rem; font:inherit; letter-spacing:.08em; text-transform:uppercase; }
+.perceptron-page .solution-code-controls button,.perceptron-page .download-button { min-height:44px; padding:.65rem 1rem; border:1px solid #126e9c; border-radius:.55rem; color:#fff; background:#126e9c; font:inherit; font-weight:700; }
+.perceptron-page .solution-code-controls button { cursor:pointer; }
+.perceptron-page .solution-code-message { min-height:1.4rem; margin:0; color:#4f6878; }
+.perceptron-page .solution-code-message.error { color:#9c252c; }
+.perceptron-page .download-button { display:inline-flex; width:fit-content; align-items:center; text-decoration:none; }
+.perceptron-page .download-button[hidden] { display:none; }
+@media (max-width:700px){.perceptron-page .solution-code-controls{flex-direction:column;align-items:stretch}.perceptron-page .download-button{width:100%;justify-content:center;box-sizing:border-box}}

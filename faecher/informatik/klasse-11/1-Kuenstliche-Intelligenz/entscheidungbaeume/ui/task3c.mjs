@@ -2,6 +2,7 @@ import { FISH_LABELS, FISH_TEST_DATASET } from "../data/fish.mjs";
 import { renderTreeEdges } from "./tree-edges.mjs?v=20260820d";
 
 const STORAGE_KEY = "informatik11-fish-test-task3c-v1";
+const SOLUTION_CODE = "M8KT-DWMR";
 const STEPS = ["test", "matrix", "accuracy-intro", "classify", "fill-matrix", "evaluate", "quiz"];
 const MATRIX_ANSWERS = Object.freeze({
   "peaceful-peaceful": 3, "peaceful-hostile": 0, "peaceful-total": 3,
@@ -183,6 +184,24 @@ function checkQuiz(event) {
   saveState();
 }
 
+function normalizeSolutionCode(value) {
+  return value.toUpperCase().replace(/[^A-Z0-9]/g, "");
+}
+
+function unlockSolution(event) {
+  event.preventDefault();
+  const form = event.currentTarget;
+  const enteredCode = normalizeSolutionCode(form.elements["solution-code"].value);
+  const isCorrect = enteredCode === normalizeSolutionCode(SOLUTION_CODE);
+  const message = document.querySelector("#solution-code-message");
+
+  document.querySelector("#solution-download-link").hidden = !isCorrect;
+  message.className = `solution-code-message${isCorrect ? "" : " error"}`;
+  message.textContent = isCorrect
+    ? "Code korrekt. Das Sicherungsblatt ist freigeschaltet."
+    : "Der eingegebene Code ist nicht gültig.";
+}
+
 function bindNavigation() {
   document.querySelectorAll("[data-step-tab]").forEach((tab) => { tab.addEventListener("click", () => showStep(tab.dataset.stepTab)); tab.addEventListener("keydown", (event) => { if (!["ArrowLeft", "ArrowRight", "Home", "End"].includes(event.key)) return; const index = STEPS.indexOf(tab.dataset.stepTab); const next = event.key === "Home" ? 0 : event.key === "End" ? STEPS.length - 1 : (index + (event.key === "ArrowRight" ? 1 : -1) + STEPS.length) % STEPS.length; event.preventDefault(); document.querySelector(`[data-step-tab="${STEPS[next]}"]`).focus(); }); });
   document.querySelector("#previous-step").addEventListener("click", () => { const index = STEPS.indexOf(state.activeStep); if (index > 0) goToStep(STEPS[index - 1]); });
@@ -196,6 +215,7 @@ if (typeof document !== "undefined") {
   document.querySelector("#accuracy-form").addEventListener("submit", checkAccuracy);
   document.querySelector("#check-accuracy-values").addEventListener("click", checkAccuracyValues);
   document.querySelector("#quiz-form").addEventListener("submit", checkQuiz);
+  document.querySelector("#solution-code-form").addEventListener("submit", unlockSolution);
   bindNavigation(); showStep(STEPS.includes(state.activeStep) ? state.activeStep : "test");
   if (state.quizComplete) { markVisited("quiz"); showQuizSummary(); }
 }

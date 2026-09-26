@@ -1,0 +1,199 @@
+\documentclass[11pt,a4paper]{article}
+
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage[ngerman]{babel}
+\usepackage{lmodern}
+\usepackage{amsmath,amssymb}
+\usepackage{graphicx}
+\usepackage{booktabs,tabularx,array}
+\usepackage[table]{xcolor}
+\usepackage{tikz}
+\usetikzlibrary{arrows.meta,positioning,shapes.geometric,calc}
+\usepackage[most]{tcolorbox}
+\usepackage{enumitem}
+\usepackage{microtype}
+\usepackage{hyperref}
+\usepackage[a4paper,left=18mm,right=18mm,top=15mm,bottom=15mm,headheight=0pt]{geometry}
+
+\definecolor{navy}{HTML}{174A63}
+\definecolor{blue}{HTML}{2E7698}
+\definecolor{lightblue}{HTML}{EAF3F7}
+\definecolor{lightgray}{HTML}{F2F3F4}
+\definecolor{midgray}{HTML}{66727A}
+\definecolor{green}{HTML}{477A63}
+\definecolor{orange}{HTML}{B96A2B}
+
+\hypersetup{colorlinks=true,linkcolor=navy,urlcolor=blue,pdftitle={Sicherungsblatt Aufgabe 3c -- Klassifikation der Testdaten}}
+\setlength{\parindent}{0pt}
+\setlength{\parskip}{4pt}
+\setlist[itemize]{leftmargin=5mm,itemsep=1.5pt,topsep=2pt}
+\setlist[enumerate]{leftmargin=6mm,itemsep=2pt,topsep=2pt}
+\renewcommand{\familydefault}{\sfdefault}
+
+\pagestyle{empty}
+
+\newtcolorbox{definition}[1][]{enhanced,breakable,colback=lightblue,colframe=blue,
+  boxrule=0.8pt,arc=1.5mm,left=3mm,right=3mm,top=2mm,bottom=2mm,
+  fonttitle=\bfseries,title=Definition,#1}
+\newtcolorbox{merke}[1][]{enhanced,breakable,colback=lightgray,colframe=navy,
+  boxrule=0.9pt,arc=1.5mm,left=3mm,right=3mm,top=2mm,bottom=2mm,
+  fonttitle=\bfseries,title=Merke,#1}
+\newtcolorbox{beispiel}[1][]{enhanced,breakable,colback=white,colframe=midgray,
+  boxrule=0.7pt,arc=1.5mm,left=3mm,right=3mm,top=2mm,bottom=2mm,
+  fonttitle=\bfseries,title=Beispiel,#1}
+
+\newcommand{\fach}[1]{\textbf{\color{navy}#1}}
+\newcommand{\sectionline}[1]{%
+  \vspace{1mm}{\Large\bfseries\color{navy}#1}\par\vspace{1mm}%
+  {\color{blue}\rule{\linewidth}{0.8pt}}\vspace{1mm}}
+\newcommand{\sheettitle}[2]{%
+  \begin{tcolorbox}[colback=navy,colframe=navy,arc=2mm,boxrule=0pt,left=5mm,right=5mm,top=2.5mm,bottom=2.5mm]
+    {\color{white}\fontsize{20}{24}\selectfont\bfseries #1}\par
+    \vspace{0.5mm}{\color{white}\large #2}
+  \end{tcolorbox}}
+
+\definecolor{fishblue}{HTML}{377ED1}
+\definecolor{fishorange}{HTML}{E87931}
+\definecolor{fishyellow}{HTML}{F2C94C}
+\definecolor{fishred}{HTML}{D84B53}
+\definecolor{fishdark}{HTML}{23324A}
+\definecolor{peaceful}{HTML}{08705A}
+\definecolor{hostile}{HTML}{992D35}
+
+% Wie in Sicherungsblatt 3a; das Label unter dem Fisch ist das tatsaechliche Label.
+% \fisch{(Position)}{Schuppenfarbe}{Punkte 0/1}{Bauchfarbe}{Flossenfarbe}{ID}{Label f/h}{Fehler 0/1}
+\newcommand{\fisch}[8]{%
+  \begin{scope}[shift={#1}]
+    \filldraw[fill=#5,draw=fishdark,line width=0.5pt,line join=round] (0.46,0) -- (0.74,0.21) -- (0.74,-0.21) -- cycle;
+    \filldraw[fill=#5,draw=fishdark,line width=0.5pt,line join=round] (-0.12,0.21) -- (0.08,0.36) -- (0.2,0.19) -- cycle;
+    \begin{scope}
+      \clip (0,0) ellipse (0.5 and 0.26);
+      \fill[#2] (-0.6,-0.3) rectangle (0.6,0.3);
+      \fill[#4] (-0.6,-0.3) rectangle (0.6,-0.1);
+      \ifnum#3=1
+        \fill[fishdark] (-0.12,0.09) circle (0.035) (0.1,0.14) circle (0.035) (0.28,0.05) circle (0.035)
+          (0.05,-0.01) circle (0.035) (-0.2,-0.03) circle (0.035);
+      \fi
+    \end{scope}
+    \draw[fishdark,line width=0.7pt] (0,0) ellipse (0.5 and 0.26);
+    \filldraw[fill=fishdark,draw=white,line width=0.4pt] (-0.32,0.06) circle (0.055);
+    \if#7f
+      \node[font=\tiny,text=peaceful,align=center,inner sep=0pt] at (0.12,-0.66) {\textbf{#6}\\friedlich};
+    \else
+      \node[font=\tiny,text=hostile,align=center,inner sep=0pt] at (0.12,-0.66) {\textbf{#6}\\feindselig};
+    \fi
+    \ifnum#8=1
+      \draw[fishred,line width=0.9pt,dashed,rounded corners=1mm] (-0.6,-0.98) rectangle (0.84,0.5);
+      \node[fill=fishred,text=white,font=\tiny\bfseries,rounded corners=0.8mm,inner sep=1pt] at (0.12,0.5) {Fehler};
+    \fi
+  \end{scope}}
+
+\newcommand{\zelle}[3]{\textbf{\large #1}\quad{\footnotesize #2}\newline{\scriptsize\color{midgray}#3}}
+
+\begin{document}
+
+\sheettitle{Klassifikation der Testdaten}{Entscheidungsbäume · Sicherungsblatt zu Aufgabe 3c · Informatik 11}
+
+\sectionline{1. Testdaten klassifizieren}
+
+\fach{Testdaten} wurden nicht zum Erstellen des Baums verwendet. Ihr tatsächliches Label ist bekannt.
+
+\begin{center}
+\begin{tikzpicture}[font=\small,every node/.style={align=center},
+  decision/.style={draw=navy,fill=lightblue,rounded corners=1mm,minimum width=27mm,minimum height=8mm},
+  leaf/.style={draw=midgray,fill=lightgray,rounded corners=1mm,minimum width=21mm,minimum height=8mm},
+  group/.style={draw=midgray,fill=white,rounded corners=2mm,line width=0.7pt}]
+  \node[decision] (root) at (0,0) {Schuppenfarbe?};
+  \node[decision] (pattern) at (-4.2,-1.4) {Muster?};
+  \node[decision] (bellyorange) at (4.6,-1.4) {Bauchfarbe?};
+  \node[leaf] (none) at (-6.6,-2.8) {friedlich};
+  \node[decision] (bellyblue) at (-1.8,-2.8) {Bauchfarbe?};
+  \node[leaf] (bbBlack) at (-3.4,-4.2) {feindselig};
+  \node[leaf] (bbWhite) at (-0.2,-4.2) {friedlich};
+  \node[leaf] (obBlack) at (3.0,-2.8) {friedlich};
+  \node[leaf] (obWhite) at (6.2,-2.8) {feindselig};
+  \draw (root) -- node[above left,font=\footnotesize]{Blau} (pattern);
+  \draw (root) -- node[above right,font=\footnotesize]{Orange} (bellyorange);
+  \draw (pattern) -- node[above left,font=\footnotesize]{Ohne} (none);
+  \draw (pattern) -- node[above right,font=\footnotesize]{Punkte} (bellyblue);
+  \draw (bellyblue) -- node[above left,font=\footnotesize]{Schwarz} (bbBlack);
+  \draw (bellyblue) -- node[above right,font=\footnotesize]{Weiß} (bbWhite);
+  \draw (bellyorange) -- node[above left,font=\footnotesize]{Schwarz} (obBlack);
+  \draw (bellyorange) -- node[above right,font=\footnotesize]{Weiß} (obWhite);
+
+  % Testfische unter dem Blatt, in dem sie ankommen
+  \draw[group] (-8.05,-3.35) rectangle (-5.15,-5.2);
+  \draw (none.south) -- (-6.6,-3.35);
+  \fisch{(-7.45,-4.05)}{fishblue}{0}{fishdark}{fishred}{T1}{f}{0}
+  \fisch{(-6.0,-4.05)}{fishblue}{0}{white}{fishred}{T5}{f}{0}
+
+  \draw[group] (1.55,-3.35) rectangle (4.45,-5.2);
+  \draw (obBlack.south) -- (3.0,-3.35);
+  \fisch{(2.15,-4.05)}{fishorange}{0}{fishdark}{fishyellow}{T3}{f}{0}
+  \fisch{(3.6,-4.05)}{fishorange}{1}{fishdark}{fishyellow}{T4}{h}{1}
+
+  \draw[group] (5.4,-3.35) rectangle (7.0,-5.2);
+  \draw (obWhite.south) -- (6.2,-3.35);
+  \fisch{(6.08,-4.05)}{fishorange}{1}{white}{fishred}{T2}{h}{0}
+\end{tikzpicture}
+
+{\scriptsize\color{midgray}Blatt = \textbf{Vorhersage}, darunter die dort ankommenden Testfische mit \textbf{tatsächlichem Label}.
+Körper = Schuppenfarbe, Punkte = Muster, Streifen = Bauchfarbe, Flossen = Flossenfarbe.}
+\end{center}
+
+\sectionline{2. Konfusionsmatrix}
+
+\begin{minipage}[t]{0.63\linewidth}
+\vspace{0pt}
+\renewcommand{\arraystretch}{1.15}\setlength{\tabcolsep}{4pt}
+\begin{tabularx}{\linewidth}{@{}>{\raggedright\arraybackslash}p{19mm}XX>{\centering\arraybackslash}p{13mm}@{}}
+\toprule
+{\scriptsize\textbf{erwartet} $\backslash$\newline\textbf{berechnet}} & \textbf{friedlich} & \textbf{feindselig} & \textbf{Summe}\\
+\midrule
+\textbf{friedlich}  & \cellcolor{peaceful!12}\zelle{3}{richtig positiv}{T1, T3, T5} & \cellcolor{fishred!10}\zelle{0}{falsch negativ}{--} & 3\\
+\textbf{feindselig} & \cellcolor{fishred!10}\zelle{1}{falsch positiv}{T4} & \cellcolor{peaceful!12}\zelle{1}{richtig negativ}{T2} & 2\\
+\midrule
+\textbf{Summe} & \multicolumn{1}{c}{4} & \multicolumn{1}{c}{1} & \textbf{5}\\
+\bottomrule
+\end{tabularx}
+\end{minipage}\hfill
+\begin{minipage}[t]{0.33\linewidth}
+\vspace{1mm}
+\small\raggedright
+\textbf{Zeile:} erwartetes, also tatsächliches Label
+
+\textbf{Spalte:} berechnetes Label, also die Vorhersage
+
+\medskip
+\fach{positiv} = friedlich\\
+\fach{negativ} = feindselig
+
+\medskip
+{\color{peaceful}\rule[-0.5mm]{3mm}{3mm}}\ Diagonale: richtig klassifiziert
+\end{minipage}
+
+\sectionline{3. Genauigkeit}
+
+\begin{definition}[title=Definition: Genauigkeit]
+Die \fach{Genauigkeit} ist der Anteil richtig klassifizierter Testdaten an allen Testdaten.
+\[
+  \text{Genauigkeit}=\frac{\text{richtig positiv}+\text{richtig negativ}}
+  {\text{richtig positiv}+\text{falsch negativ}+\text{falsch positiv}+\text{richtig negativ}}
+\]
+\begin{center}
+\begin{tikzpicture}[font=\scriptsize]
+  \foreach \id/\x in {T1/0,T2/1,T3/2,T5/3}
+    \node[draw=peaceful,fill=peaceful!15,minimum width=12mm,minimum height=6mm] at (1.25*\x,0) {\id\ \checkmark};
+  \node[draw=fishred,fill=fishred!12,minimum width=12mm,minimum height=6mm] at (5,0) {T4 \texttimes};
+  \node[anchor=west,font=\small] at (5.8,0) {$\displaystyle\Rightarrow\ \frac{3+1}{3+0+1+1}=\frac{4}{5}=\mathbf{80\,\%}$};
+\end{tikzpicture}
+\end{center}
+\end{definition}
+
+\begin{merke}
+Die Qualität eines Entscheidungsbaums wird mit Testdaten geprüft, nicht mit den Trainingsdaten.\par
+Die Genauigkeit beschreibt nur die verwendeten Testdaten. Sie ist keine Garantie für alle künftigen Daten.
+\end{merke}
+
+\end{document}

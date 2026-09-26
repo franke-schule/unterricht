@@ -1,0 +1,110 @@
+\documentclass[11pt,a4paper]{article}
+
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage[ngerman]{babel}
+\usepackage{lmodern}
+\usepackage{amsmath,amssymb}
+\usepackage{graphicx}
+\usepackage{booktabs,tabularx,array}
+\usepackage[table]{xcolor}
+\usepackage{tikz}
+\usetikzlibrary{arrows.meta,positioning,shapes.geometric,calc}
+\usepackage[most]{tcolorbox}
+\usepackage{enumitem}
+\usepackage{microtype}
+\usepackage{hyperref}
+\usepackage[a4paper,left=18mm,right=18mm,top=15mm,bottom=15mm,headheight=0pt]{geometry}
+
+\definecolor{navy}{HTML}{174A63}
+\definecolor{blue}{HTML}{2E7698}
+\definecolor{lightblue}{HTML}{EAF3F7}
+\definecolor{lightgray}{HTML}{F2F3F4}
+\definecolor{midgray}{HTML}{66727A}
+\definecolor{green}{HTML}{477A63}
+\definecolor{orange}{HTML}{B96A2B}
+
+\hypersetup{colorlinks=true,linkcolor=navy,urlcolor=blue,pdftitle={Sicherungsblatt Aufgabe 4 -- Baumtiefe und Genauigkeit}}
+\setlength{\parindent}{0pt}
+\setlength{\parskip}{4pt}
+\setlist[itemize]{leftmargin=5mm,itemsep=1.5pt,topsep=2pt}
+\setlist[enumerate]{leftmargin=6mm,itemsep=2pt,topsep=2pt}
+\renewcommand{\familydefault}{\sfdefault}
+\pagestyle{empty}
+
+\newtcolorbox{definition}[1][]{enhanced,breakable,colback=lightblue,colframe=blue,
+  boxrule=0.8pt,arc=1.5mm,left=3mm,right=3mm,top=2mm,bottom=2mm,
+  fonttitle=\bfseries,title=Definition,#1}
+\newtcolorbox{merke}[1][]{enhanced,breakable,colback=lightgray,colframe=navy,
+  boxrule=0.9pt,arc=1.5mm,left=3mm,right=3mm,top=2mm,bottom=2mm,
+  fonttitle=\bfseries,title=Merke,#1}
+\newtcolorbox{beispiel}[1][]{enhanced,breakable,colback=white,colframe=midgray,
+  boxrule=0.7pt,arc=1.5mm,left=3mm,right=3mm,top=2mm,bottom=2mm,
+  fonttitle=\bfseries,title=Beispiel,#1}
+\newtcolorbox{ueberblick}[1][]{enhanced,breakable,colback=lightblue,colframe=navy,
+  boxrule=1.1pt,arc=1.5mm,left=3mm,right=3mm,top=2.5mm,bottom=2.5mm,
+  fonttitle=\bfseries,title=Überblick,#1}
+
+\newcommand{\fach}[1]{\textbf{\color{navy}#1}}
+\newcommand{\sectionline}[1]{%
+  \vspace{1mm}{\Large\bfseries\color{navy}#1}\par\vspace{1mm}%
+  {\color{blue}\rule{\linewidth}{0.8pt}}\vspace{1mm}}
+\newcommand{\sheettitle}[2]{%
+  \begin{tcolorbox}[colback=navy,colframe=navy,arc=2mm,boxrule=0pt,left=5mm,right=5mm,top=2.5mm,bottom=2.5mm]
+    {\color{white}\fontsize{20}{24}\selectfont\bfseries #1}\par
+    \vspace{0.5mm}{\color{white}\large #2}
+  \end{tcolorbox}}
+
+\begin{document}
+
+\sheettitle{Baumtiefe und Genauigkeit}{Entscheidungsbäume · Sicherungsblatt zu Aufgabe 4 · Informatik 11}
+
+\sectionline{1. Baumtiefe 1: eine Entscheidungsebene}
+
+\begin{center}
+\begin{tikzpicture}[font=\small,every node/.style={align=center},
+  decision/.style={draw=navy,fill=lightblue,rounded corners=1mm,minimum width=32mm,minimum height=9mm},
+  leaf/.style={draw=midgray,fill=lightgray,rounded corners=1mm,minimum width=43mm,minimum height=18mm}]
+  \node[decision] (root) at (0,0) {Schuppenfarbe?};
+  \node[leaf] (blau) at (-4.1,-2.2) {\textbf{friedlich}\\3 friedlich, 2 feindselig\\\textcolor{orange}{2 Trainingsfehler}};
+  \node[leaf] (orangeleaf) at (4.1,-2.2) {\textbf{feindselig}\\1 friedlich, 3 feindselig\\\textcolor{orange}{1 Trainingsfehler}};
+  \draw (root) -- node[above left]{Blau} (blau);
+  \draw (root) -- node[above right]{Orange} (orangeleaf);
+\end{tikzpicture}
+\end{center}
+
+\begin{beispiel}[title=Ergebnis zu 4.1]
+Der Baum trennt nach der Schuppenfarbe. In beiden Blättern liegen noch Fische mit verschiedenen Labels:
+\fach{3 von 9} Trainingsfischen werden falsch klassifiziert. Weitere Entscheidungsebenen können die Gruppen
+genauer aufteilen.
+\end{beispiel}
+
+\sectionline{2. Drei Baumtiefen im Vergleich}
+
+\begin{center}
+\renewcommand{\arraystretch}{1.45}
+\begin{tabularx}{0.93\linewidth}{@{}>{\centering\arraybackslash}p{26mm}>{\centering\arraybackslash}p{50mm}X@{}}
+\toprule
+\textbf{Maximale Tiefe} & \textbf{Trainingsdaten: falsch} & \textbf{Testdaten: richtig} \\
+\midrule
+1 & 3 von 9 & 4 von 5 = \textbf{80\,\%} \\
+2 & 1 von 9 & 4 von 5 = \textbf{80\,\%} \\
+3 & 0 von 9 & 4 von 5 = \textbf{80\,\%} \\
+\bottomrule
+\end{tabularx}
+\end{center}
+
+\begin{merke}
+Mit größerer Tiefe sinken hier die \fach{Trainingsfehler} von 3 auf 0. Die \fach{Testgenauigkeit} bleibt bei
+allen drei Bäumen gleich: 80\,\%. Deshalb genügt für diese Testdaten bereits der einfachere Baum der Tiefe 1.
+Für die Wahl eines Baums zählt, wie gut er \emph{unbekannte Testdaten} klassifiziert.
+\end{merke}
+
+\begin{beispiel}[title=Vertiefung 4a: großer Datensatz]
+\fach{75\,\% Training} $\longrightarrow$ Baum erstellen \qquad
+\fach{25\,\% Test} $\longrightarrow$ Vorhersagen beurteilen.\\
+Ein Baum der Tiefe 1 trennt nur einmal. Damit bildet er die Zusammenhänge des großen Fischdatensatzes
+noch nicht ausreichend ab.
+\end{beispiel}
+
+\end{document}

@@ -7,8 +7,8 @@
     <title>Aufgabe 5 – Das Perzeptron | Informatik 11</title>
     <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns=%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22 viewBox=%220 0 16 16%22%3E%3Ccircle cx=%228%22 cy=%228%22 r=%227%22 fill=%22%23126e9c%22%2F%3E%3C%2Fsvg%3E">
     <link rel="stylesheet" href="../../../../styles.css?v=20260707">
-    <link rel="stylesheet" href="perzeptron/task5.css?v=20260923a">
-    <script type="module" src="perzeptron/ui/task5.mjs?v=20260923a"></script>
+    <link rel="stylesheet" href="perzeptron/task5.css?v=20260926a">
+    <script type="module" src="perzeptron/ui/task5.mjs?v=20260926a"></script>
   </head>
   <body class="perceptron-page">
     <div class="site-backdrop" aria-hidden="true"></div>
@@ -161,6 +161,27 @@
       <section id="summary" class="step-panel" role="tabpanel" aria-labelledby="tab-summary" data-panel="summary" hidden>
         <p class="kicker">Zusammenfassung</p><h2>Das Wichtigste sichern</h2><ul><li>a = w<sub>1</sub> · x<sub>1</sub> + w<sub>2</sub> · x<sub>2</sub> fasst die gewichteten Eingaben zusammen.</li><li>f(a) liefert 1 bei a ≥ θ, sonst 0.</li><li>δ = t − f(a) steuert die Änderung der Gewichte und des Schwellenwerts.</li><li>Ein Perzeptron kann nur linear separierbare Daten vollständig trennen.</li><li>Eine Trefferquote auf Trainingsdaten beschreibt noch nicht die Leistung bei unbekannten Daten.</li></ul>
         <section id="final-quiz" aria-labelledby="quiz-title"><h3 id="quiz-title">Abschlussquiz</h3><p id="quiz-progress">0 von 6 Fragen vollständig richtig</p><form id="quiz-form"><div id="quiz-questions"></div><button class="primary-button" type="submit">Quiz auswerten</button></form><div id="quiz-feedback" class="feedback" role="status" aria-live="polite" hidden></div><div id="quiz-summary" class="remember" hidden></div></section>
+        <section class="solution-download" aria-labelledby="solution-download-title">
+          <h2 id="solution-download-title">Sicherungsblatt zu Aufgabe 5</h2>
+          <details class="solution-reveal">
+            <summary>Sicherungsblatt anzeigen</summary>
+            <form id="solution-code-form" class="solution-code-form">
+              <label for="solution-code">Lehrercode eingeben</label>
+              <div class="solution-code-controls">
+                <input id="solution-code" name="solution-code" type="text"
+                  maxlength="9" autocomplete="off" autocapitalize="characters"
+                  spellcheck="false" required>
+                <button type="submit">Code prüfen</button>
+              </div>
+              <p id="solution-code-message" class="solution-code-message"
+                aria-live="polite"></p>
+              <a id="solution-download-link" class="download-button"
+                href="sicherungsblatt-aufgabe-5-loesungen.pdf" download hidden>
+                &#8595; Sicherungsblatt herunterladen
+              </a>
+            </form>
+          </details>
+        </section>
         <button id="reset-progress" class="secondary-button" type="button">Bearbeitungsstand zurücksetzen</button>
       </section>
     </main>

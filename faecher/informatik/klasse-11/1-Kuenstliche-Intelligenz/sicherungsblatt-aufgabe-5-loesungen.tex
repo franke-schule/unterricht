@@ -1,0 +1,223 @@
+\documentclass[11pt,a4paper]{article}
+
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage[ngerman]{babel}
+\usepackage{lmodern}
+\usepackage{amsmath,amssymb}
+\usepackage{graphicx}
+\usepackage{booktabs,tabularx,array}
+\usepackage[table]{xcolor}
+\usepackage{tikz}
+\usetikzlibrary{arrows.meta,positioning,shapes.geometric,calc}
+\usepackage[most]{tcolorbox}
+\usepackage{enumitem}
+\usepackage{microtype}
+\usepackage{hyperref}
+\usepackage[a4paper,left=18mm,right=18mm,top=15mm,bottom=15mm,headheight=0pt]{geometry}
+
+\definecolor{navy}{HTML}{174A63}
+\definecolor{blue}{HTML}{2E7698}
+\definecolor{lightblue}{HTML}{EAF3F7}
+\definecolor{lightgray}{HTML}{F2F3F4}
+\definecolor{midgray}{HTML}{66727A}
+\definecolor{green}{HTML}{477A63}
+\definecolor{orange}{HTML}{B96A2B}
+
+\hypersetup{colorlinks=true,linkcolor=navy,urlcolor=blue,pdftitle={Sicherungsblatt Aufgabe 5 -- Das Perzeptron}}
+\setlength{\parindent}{0pt}
+\setlength{\parskip}{4pt}
+\setlist[itemize]{leftmargin=5mm,itemsep=1.5pt,topsep=2pt}
+\setlist[enumerate]{leftmargin=6mm,itemsep=2pt,topsep=2pt}
+\renewcommand{\familydefault}{\sfdefault}
+
+\pagestyle{empty}
+
+\newtcolorbox{definition}[1][]{enhanced,breakable,colback=lightblue,colframe=blue,
+  boxrule=0.8pt,arc=1.5mm,left=3mm,right=3mm,top=2mm,bottom=2mm,
+  fonttitle=\bfseries,title=Definition,#1}
+\newtcolorbox{merke}[1][]{enhanced,breakable,colback=lightgray,colframe=navy,
+  boxrule=0.9pt,arc=1.5mm,left=3mm,right=3mm,top=2mm,bottom=2mm,
+  fonttitle=\bfseries,title=Merke,#1}
+\newtcolorbox{beispiel}[1][]{enhanced,breakable,colback=white,colframe=midgray,
+  boxrule=0.7pt,arc=1.5mm,left=3mm,right=3mm,top=2mm,bottom=2mm,
+  fonttitle=\bfseries,title=Beispiel,#1}
+
+\newcommand{\fach}[1]{\textbf{\color{navy}#1}}
+\newcommand{\sectionline}[1]{%
+  \vspace{1mm}{\Large\bfseries\color{navy}#1}\par\vspace{1mm}%
+  {\color{blue}\rule{\linewidth}{0.8pt}}\vspace{1mm}}
+\newcommand{\sheettitle}[2]{%
+  \begin{tcolorbox}[colback=navy,colframe=navy,arc=2mm,boxrule=0pt,left=5mm,right=5mm,top=2.5mm,bottom=2.5mm]
+    {\color{white}\fontsize{20}{24}\selectfont\bfseries #1}\par
+    \vspace{0.5mm}{\color{white}\large #2}
+  \end{tcolorbox}}
+
+% Farben wie im Lernmodul (perzeptron/task5.css)
+\definecolor{safe}{HTML}{287B61}
+\definecolor{safebg}{HTML}{E7F6EF}
+\definecolor{danger}{HTML}{AF3F47}
+\definecolor{dangerbg}{HTML}{FFF1F1}
+\definecolor{hare}{HTML}{BD8900}
+\definecolor{harebg}{HTML}{FFF3CF}
+
+\tikzset{
+  safept/.style={circle,draw=safe,fill=safebg,line width=1.1pt,minimum size=2.6mm,inner sep=0pt},
+  dangerpt/.style={regular polygon,regular polygon sides=3,draw=danger,fill=dangerbg,line width=1.1pt,minimum size=3.4mm,inner sep=0pt},
+  animalpt/.style={circle,draw=hare,fill=harebg,line width=1.1pt,minimum size=2.6mm,inner sep=0pt},
+  ptlabel/.style={font=\scriptsize,inner sep=1.5pt}}
+
+\begin{document}
+
+\sheettitle{Das Perzeptron}{Künstliche Intelligenz · Sicherungsblatt zu Aufgabe 5 · Informatik 11}
+
+\sectionline{1. Vom Tier zur Entscheidung}
+
+\begin{minipage}[c]{0.5\linewidth}
+\centering
+\begin{tikzpicture}[x=0.8cm,y=0.8cm,>=Latex]
+  \fill[safebg] (0,0.25) -- (6.333,5) -- (0,5) -- cycle;
+  \fill[dangerbg] (0,0) -- (7,0) -- (7,5) -- (6.333,5) -- (0,0.25) -- cycle;
+  \draw[black!12] (0,0) grid (7,5);
+  \draw[->,navy,thick] (0,0) -- (7.4,0) node[below left,font=\scriptsize,text=navy,yshift=-3mm] {$x_1$: Zahnlänge};
+  \draw[->,navy,thick] (0,0) -- (0,5.4) node[above right,font=\scriptsize,text=navy] {$x_2$: Augengröße};
+  \foreach \x in {0,...,7} \node[font=\tiny,below] at (\x,0) {\x};
+  \foreach \y in {1,...,5} \node[font=\tiny,left,xshift=-1.2mm] at (0,\y) {\y};
+  \draw[navy,line width=1.2pt,dashed] (0,0.25) -- (6.333,5);
+  \node[font=\scriptsize\bfseries,text=safe] at (1.5,4.62) {ungefährlich (1)};
+  \node[font=\scriptsize\bfseries,text=danger] at (5.6,0.5) {gefährlich (0)};
+  \node[safept,label={[font=\scriptsize,inner sep=1pt]right:U1}] at (0,4) {};
+  \node[safept,label={[font=\scriptsize,inner sep=1pt]above left:U2}] at (2,2) {};
+  \node[dangerpt,label={[font=\scriptsize,inner sep=1pt]above:G1}] at (4,1) {};
+  \node[dangerpt,label={[font=\scriptsize,inner sep=1pt]above:G2}] at (6,2) {};
+  \node[animalpt,label={[font=\scriptsize,inner sep=1pt]right:\textbf{Hase} (2|4)}] at (2,4) {};
+  \node[animalpt,label={[font=\scriptsize,inner sep=1pt]right:\textbf{Fuchs} (5|3)}] at (5,3) {};
+  % Gewichtsvektor (w1|w2) = (-3|4) steht senkrecht auf der Geraden
+  \draw[->,orange,line width=1.1pt] (5,4) -- ++(-0.72,0.96) node[above right,font=\scriptsize,text=orange,inner sep=1pt] {$(w_1|w_2)$};
+\end{tikzpicture}
+\end{minipage}\hfill
+\begin{minipage}[c]{0.47\linewidth}
+\small
+Jedes Tier wird durch seine Merkmale zu einem \fach{Punkt} $(x_1|x_2)$.
+
+Die \fach{Trenngerade}
+\[
+  w_1x_1+w_2x_2=\theta \qquad\text{hier: } -3x_1+4x_2=1
+\]
+trennt die Trainingspunkte in zwei Klassen.
+
+\smallskip
+\textbf{Hase} (2|4) $\Rightarrow$ {\color{safe}\textbf{ungefährlich}}\\
+\textbf{Fuchs} (5|3) $\Rightarrow$ {\color{danger}\textbf{gefährlich}}
+
+\smallskip
+{\color{orange}\rule[0.5mm]{4mm}{1.1pt}}\ Der \fach{Gewichtsvektor} $(w_1|w_2)$ steht senkrecht auf der Geraden und zeigt zur Ausgabe~1.
+\end{minipage}
+
+\sectionline{2. So rechnet das Perzeptron}
+
+\begin{center}
+\begin{tikzpicture}[>=Latex,font=\small,
+  input/.style={circle,draw=navy,fill=lightblue,line width=0.8pt,minimum size=15mm,align=center,inner sep=1pt},
+  wlabel/.style={font=\footnotesize,fill=white,inner sep=1pt,align=center}]
+  \node[input] (x1) at (0,1.15) {$x_1=2$\\[-1pt]{\tiny Zahnlänge}};
+  \node[input] (x2) at (0,-1.15) {$x_2=4$\\[-1pt]{\tiny Augengröße}};
+  % Kern: Summe und Treppenfunktion
+  \draw[navy,line width=1pt,fill=lightgray] (6,0) circle (1.45);
+  \draw[navy] (6,1.45) -- (6,-1.45);
+  \node[align=center] at (5.28,0) {$\Sigma$\\[1pt]$a=6$};
+  \node[align=center,font=\footnotesize] at (6.72,0.1) {Treppen-\\funktion\\[1pt]$6\ge 3$};
+  \draw[->,line width=0.8pt] (x1) -- (4.72,0.62) node[wlabel,pos=0.45,above=1mm] {$w_1=-1$\\[-1pt]{\scriptsize$(-1)\cdot 2=-2$}};
+  \draw[->,line width=0.8pt] (x2) -- (4.72,-0.62) node[wlabel,pos=0.45,below=1mm] {{\scriptsize$2\cdot 4=8$}\\[-1pt]$w_2=2$};
+  \draw[->,line width=0.8pt] (6,-2.25) node[below,font=\footnotesize] {Schwellenwert $\theta=3$} -- (6,-1.45);
+  \node[draw=safe,fill=safebg,rounded corners=4mm,line width=0.9pt,minimum width=25mm,minimum height=13mm,align=center] (out) at (10.4,0) {Ausgabe \textbf{1}\\{\footnotesize ungefährlich}};
+  \draw[->,line width=0.8pt] (7.45,0) -- (out.west);
+\end{tikzpicture}
+
+{\scriptsize\color{midgray}Beispiel mit anderen Gewichten als die Trenngerade in 1: gleicher Rechenweg, andere Gerade.}
+\end{center}
+
+\begin{minipage}[c]{0.6\linewidth}
+\begin{definition}[title=Rechenweg]
+\begin{align*}
+  \text{gewichtete Summe:}\quad & a=w_1\cdot x_1+w_2\cdot x_2\\
+  \text{Treppenfunktion:}\quad & f(a)=\begin{cases}1 & \text{falls } a\ge\theta\\ 0 & \text{sonst}\end{cases}
+\end{align*}
+{\small\textbf{Hai} (4|1): $a=(-1)\cdot 4+2\cdot 1=-2<3 \;\Rightarrow\; f(a)=0$, also gefährlich\par}
+\end{definition}
+\end{minipage}\hfill
+\begin{minipage}[c]{0.36\linewidth}
+\centering
+\begin{tikzpicture}[x=0.55cm,y=1.3cm,>=Latex,font=\scriptsize]
+  \draw[->] (-0.3,0) -- (6.4,0) node[below left] {$a$};
+  \draw[->] (0,-0.1) -- (0,1.45) node[left] {$f(a)$};
+  \node[left] at (0,1) {1};
+  \node[left] at (0,0.02) {0};
+  \draw[danger,line width=1.4pt] (0,0) -- (3,0);
+  \draw[safe,line width=1.4pt] (3,1) -- (6,1);
+  \draw[black!40,dashed] (3,0) -- (3,1);
+  \fill[white,draw=danger,line width=0.9pt] (3,0) circle (0.06);
+  \fill[safe] (3,1) circle (0.06);
+  \node[below] at (3,0) {$\theta$};
+\end{tikzpicture}
+\end{minipage}
+
+\newpage
+\sectionline{3. Lernen aus Fehlern}
+
+\begin{minipage}[c]{0.4\linewidth}
+\begin{definition}[title=Lernregel]
+\begin{align*}
+  \delta&=t-f(a)\\
+  w_i^{\text{neu}}&=w_i^{\text{alt}}+\delta\cdot\alpha\cdot x_i\\
+  \theta^{\text{neu}}&=\theta^{\text{alt}}-\delta\cdot\alpha
+\end{align*}
+{\footnotesize $t$: Zielwert (Label), $\alpha$: Lernrate\\ Bei $\delta=0$ bleibt alles gleich.\par}
+\end{definition}
+\end{minipage}\hfill
+\begin{minipage}[c]{0.57\linewidth}
+\centering
+{\small\textbf{Erste Epoche} \quad Start: $w_1=w_2=\theta=1$, $\alpha=1$}\par\smallskip
+\renewcommand{\arraystretch}{1.12}\setlength{\tabcolsep}{2.6pt}
+\footnotesize
+\begin{tabular}{@{}c|ccc|ccc|>{\columncolor{lightblue}}c>{\columncolor{lightblue}}c>{\columncolor{lightblue}}c|ccc@{}}
+\toprule
+ & \multicolumn{3}{c|}{\scriptsize\color{midgray}Daten} & \multicolumn{3}{c|}{\scriptsize\color{midgray}vorher}
+ & \multicolumn{3}{c|}{\scriptsize\color{midgray}Berechnung} & \multicolumn{3}{c}{\scriptsize\color{midgray}nachher}\\
+ & $x_1$ & $x_2$ & $t$ & $w_1$ & $w_2$ & $\theta$ & $a$ & $f(a)$ & $\delta$ & $w_1$ & $w_2$ & $\theta$\\
+\midrule
+1 & 2 & 2 & 1 & 1 & 1 & 1 & 4 & 1 & 0 & 1 & 1 & 1\\
+2 & 4 & 1 & 0 & 1 & 1 & 1 & 5 & 1 & \textbf{\color{danger}$-1$} & \textbf{\color{danger}$-3$} & \textbf{\color{danger}0} & \textbf{\color{danger}2}\\
+3 & 6 & 2 & 0 & $-3$ & 0 & 2 & $-18$ & 0 & 0 & $-3$ & 0 & 2\\
+4 & 0 & 4 & 1 & $-3$ & 0 & 2 & 0 & 0 & \textbf{\color{safe}1} & $-3$ & \textbf{\color{safe}4} & \textbf{\color{safe}1}\\
+\bottomrule
+\end{tabular}\par
+\smallskip
+{\small Ergebnis: $-3x_1+4x_2=1$ \,--\, die Trenngerade aus 1.}
+\end{minipage}
+
+\sectionline{4. Grenzen}
+
+\begin{minipage}[c]{0.22\linewidth}
+\centering
+\begin{tikzpicture}[x=1.5cm,y=1.5cm,font=\scriptsize]
+  \draw[black!25] (0,0) rectangle (1,1);
+  \node[safept,label={[font=\scriptsize,inner sep=1pt]below left:(0|0)}] at (0,0) {};
+  \node[safept,label={[font=\scriptsize,inner sep=1pt]above right:(1|1)}] at (1,1) {};
+  \node[dangerpt,label={[font=\scriptsize,inner sep=1pt]below right:(1|0)}] at (1,0) {};
+  \node[dangerpt,label={[font=\scriptsize,inner sep=1pt]above left:(0|1)}] at (0,1) {};
+\end{tikzpicture}
+\end{minipage}\hfill
+\begin{minipage}[c]{0.76\linewidth}
+\small
+\fach{XOR-Verteilung:} {\color{safe}$\circ$}~Label~1, {\color{danger}$\triangle$}~Label~0. Keine einzelne Gerade trennt beide Klassen.
+Ein einzelnes Perzeptron kann diese Daten nicht vollständig richtig klassifizieren -- auch nicht mit größerer Lernrate.
+\end{minipage}
+
+\begin{merke}
+Ein Perzeptron ist ein \fach{linearer Klassifikator}: Es trennt nur linear separierbare Daten vollständig.\par
+Gelernt wird, indem Gewichte und Schwellenwert nach einer festen Regel angepasst werden, dafür braucht es kein Verständnis.\par
+100\,\% richtig auf Trainingsdaten sagen noch nichts über unbekannte Daten.
+\end{merke}
+
+\end{document}
