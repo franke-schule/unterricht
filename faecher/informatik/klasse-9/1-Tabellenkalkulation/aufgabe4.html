@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Aufgabe 4 – Einführung in die WENN-Funktion</title>
     <link rel="stylesheet" href="../../../../styles.css?v=20260821">
-    <link rel="stylesheet" href="tabellenkalkulation.css?v=20260925-hinweis">
+    <link rel="stylesheet" href="tabellenkalkulation.css?v=20260926-hinweis">
   </head>
   <body>
     <div class="site-backdrop" aria-hidden="true"></div>
@@ -75,6 +75,7 @@
             <span>Formeln beginnen mit <strong>=</strong></span>
           </div>
         </div>
+        <p class="dfd-note"><strong>Hinweis:</strong> Zeichenfolgen wie <code>5€</code> musst du in Anführungszeichen notieren: <code>"5€"</code>. Zahlen wie <code>5</code> stehen ohne Anführungszeichen.</p>
       </section>
 
       <section class="check-panel" aria-labelledby="check-title">
@@ -102,10 +103,10 @@
           startCell: "D5",
           initialCells: {
             B4: "Note", D4: "Notengeld",
-            A5: "Informatik", B5: 2,
+            A5: "Informatik", B5: 1,
             A6: "Deutsch", B6: 3,
-            A7: "Mathe", B7: 4,
-            A8: "Englisch", B8: 5,
+            A7: "Mathe", B7: 1,
+            A8: "Englisch", B8: 2,
             A11: "Note besser als 2: 5 €; sonst: 0 €."
           },
           currencyCells: ["D5", "D6", "D7", "D8"],
@@ -123,7 +124,13 @@
             requiredRefs: ["B5"],
             allowedNumbers: [0, 2, 5],
             functionRules: [{ names: ["WENN", "IF"], message: "Verwende die Funktion WENN." }],
-            expected: ({ note }) => note < 2 ? 5 : 0,
+            // € außerhalb von Anführungszeichen: die Tabellenkalkulation kann 5€ weder als Zahl noch als Text lesen.
+            formulaHints: [{
+              test: (formula) => formula.replace(/"[^"]*"/g, "").includes("€"),
+              message: "5€ und 0€ sind Zeichenfolgen: Setze sie in Anführungszeichen (\"5€\", \"0€\") oder lass das €-Zeichen weg."
+            }],
+            // Beträge als Zahl oder als Zeichenfolge mit €-Zeichen sind gleichwertig.
+            expected: ({ note }) => note < 2 ? [5, "5€", "5 €"] : [0, "0€", "0 €"],
             errorMessage: "Prüfe die Bedingung ‚besser als 2‘ und die beiden möglichen Geldbeträge."
           }],
           fillGroups: [{
@@ -135,6 +142,6 @@
         };
       })();
     </script>
-    <script src="tabellenkalkulation.js?v=20260924-speichern"></script>
+    <script src="tabellenkalkulation.js?v=20260926-wenn-text"></script>
   </body>
 </html>

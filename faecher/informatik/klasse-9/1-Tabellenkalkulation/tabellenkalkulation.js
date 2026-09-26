@@ -170,6 +170,11 @@
     return String(actual).trim().toLocaleLowerCase("de-DE") === String(expected).trim().toLocaleLowerCase("de-DE");
   }
 
+  // expected darf eine Liste gleichwertiger Ergebnisse liefern, z. B. [5, "5€"].
+  function matchesExpected(actual, expected) {
+    return Array.isArray(expected) ? expected.some((value) => valuesEqual(actual, value)) : valuesEqual(actual, expected);
+  }
+
   function translateFormula(formula, rowOffset, columnOffset) {
     return String(formula || "").replace(
       /(?<![A-Za-zÄÖÜäöü])(\$?)([A-Za-z]{1,3})(\$?)(\d+)(?![A-Za-z0-9_])/g,
@@ -798,7 +803,11 @@
       message = "Beginne die Formel selbst mit =.";
     } else {
       const analysis = analyzeFormula(formula, definition);
-      if (analysis.missingRefs.length > 0) {
+      const formulaHint = (definition.formulaHints || []).find((hint) => hint.test(formula));
+      if (formulaHint) {
+        correct = false;
+        message = formulaHint.message;
+      } else if (analysis.missingRefs.length > 0) {
         correct = false;
         message = `Verwende Zellbezüge: ${analysis.missingRefs.join(", ")}.`;
       } else if (analysis.missingReferenceRules.length > 0) {
@@ -818,7 +827,7 @@
         for (const testCase of config.testCases || []) {
           applyTestCase(testCase);
           definition.prepare?.({ cells: rawCells, testCase });
-          if (!valuesEqual(evaluateCell(cellName), definition.expected(testCase))) {
+          if (!matchesExpected(evaluateCell(cellName), definition.expected(testCase))) {
             correct = false;
             message = definition.errorMessage || "Das Ergebnis passt noch nicht. Prüfe Rechenzeichen und Zellbezüge.";
             break;

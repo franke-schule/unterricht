@@ -7,11 +7,13 @@ const TOTAL_STEPS = STEP_TITLES.length;
 const TAB_ITEMS = [...STEP_TITLES.map((label, index) => ({ id: index + 1, label })), { id: "summary", label: "Übersicht" }];
 
 // Datentypentscheidung: Die Präsentation verwendet varchar(255), int und date.
-// users.csv/photos.csv enthalten für created_at und updated_at Zeitstempel. Da in
-// dieser Unterrichtssequenz kein datetime-Typ eingeführt wird, werden sie hier
-// fachlich vereinfacht als date behandelt. char wird als einzelnes Zeichen geübt.
+// photos.csv enthält für created_at und updated_at Zeitstempel. Da in dieser
+// Unterrichtssequenz kein datetime-Typ eingeführt wird, werden sie hier fachlich
+// vereinfacht als date behandelt. Die Klassenkarte users bleibt bewusst ohne diese
+// beiden Attribute, damit sie nicht mit photos verwechselt werden. char wird als
+// einzelnes Zeichen geübt.
 export const SCHEMAS = {
-  users: { table: "users", attributes: { id: "int", username: "varchar(255)", birthday: "date", created_at: "date", updated_at: "date" } },
+  users: { table: "users", attributes: { id: "int", username: "varchar(255)", birthday: "date" } },
   photos: { table: "photos", attributes: { id: "int", description: "varchar(255)", url: "varchar(255)", created_at: "date", updated_at: "date" } },
 };
 
@@ -30,11 +32,16 @@ export function parseSchemaText(value) {
   const errors = [];
   const rows = [];
   let table = "";
-  const header = lines[0]?.match(/^([a-z_][a-z0-9_]*)\($/i);
+  // Runde und geschweifte Klammern sind gleichwertig; zwischen Tabellenname und Klammer darf ein Leerzeichen stehen.
+  const header = lines[0]?.trim().match(/^([a-z_][a-z0-9_]*)\s*([({])$/i);
+  const closing = header?.[2] === "{" ? "}" : ")";
+  const lastLine = lines.at(-1)?.trim();
+  const hasClosing = lines.length >= 2 && (lastLine === ")" || lastLine === "}");
   if (header) table = normalize(header[1]);
-  else errors.push("Die erste Zeile muss aus Tabellenname und öffnender Klammer bestehen, z. B. tabelle(.");
-  if (lines.length < 2 || lines.at(-1) !== ")") errors.push("Setze die schließende runde Klammer in eine eigene letzte Zeile.");
-  const attributeLines = lines.slice(1, lines.at(-1) === ")" ? -1 : undefined);
+  else errors.push("Die erste Zeile muss aus Tabellenname und öffnender Klammer bestehen, z. B. tabelle( oder tabelle {.");
+  if (!hasClosing) errors.push("Setze die schließende Klammer in eine eigene letzte Zeile.");
+  else if (header && lastLine !== closing) errors.push(`Schließe mit derselben Klammerart, mit der du geöffnet hast: ${header[2]} … ${closing}.`);
+  const attributeLines = lines.slice(1, hasClosing ? -1 : undefined);
   attributeLines.forEach((line, index) => {
     const match = line.match(/^\s*([a-z_][a-z0-9_]*)\s*:\s*(varchar\(255\)|int|char|date)\s*$/i);
     if (!match) errors.push(`Zeile ${index + 2}: Schreibe attribut: datentyp.`);
@@ -111,7 +118,7 @@ function renderChoices() {
   document.querySelectorAll('input[name="final"]').forEach((input) => input.addEventListener("change", () => { state.final = input.value; clearFeedback(7); saveState(); }));
   document.querySelectorAll('input[name="final-relation"]').forEach((input) => input.addEventListener("change", () => { state.finalRelation = input.value; clearFeedback(7); saveState(); }));
 }
-function schemaEditorMarkup(key) { return `<label class="schema-text-label" for="${key}-schema-text">Tabellenschema eingeben</label><textarea id="${key}-schema-text" class="schema-textarea" data-schema-text="${key}" rows="8" autocomplete="off" autocapitalize="off" spellcheck="false" placeholder="tabellenname(\n  attribut: datentyp\n)">${esc(state.schemaTexts[key])}</textarea><p class="schema-format-hint">Schreibe jede Spalte in eine eigene Zeile. Die Zeilen dürfen unterschiedlich weit oder gar nicht eingerückt sein.</p>`; }
+function schemaEditorMarkup(key) { return `<label class="schema-text-label" for="${key}-schema-text">Tabellenschema eingeben</label><textarea id="${key}-schema-text" class="schema-textarea" data-schema-text="${key}" rows="8" autocomplete="off" autocapitalize="off" spellcheck="false" placeholder="tabellenname(\n  attribut: datentyp\n)">${esc(state.schemaTexts[key])}</textarea><p class="schema-format-hint">Schreibe jede Spalte in eine eigene Zeile. Runde <code>( )</code> und geschweifte Klammern <code>{ }</code> sind beide erlaubt. Die Zeilen dürfen unterschiedlich weit oder gar nicht eingerückt sein.</p>`; }
 function renderSchemaEditor(key) { document.getElementById(`${key}-editor`).innerHTML = schemaEditorMarkup(key); }
 function classEditorMarkup() { const answer = state.classCard; return `<article class="class-card editable-class-card"><h3><label class="visually-hidden" for="class-name">Klassenname</label><input id="class-name" type="text" autocomplete="off" spellcheck="false" value="${esc(answer.name)}" placeholder="Klassenname"></h3><ul id="class-rows">${answer.attributes.map((name, index) => `<li><input data-class-name="${index}" type="text" autocomplete="off" spellcheck="false" value="${esc(name)}" placeholder="Attribut ${index + 1}" aria-label="Attribut ${index + 1} der Klassenkarte"><button class="remove-row" type="button" data-remove-class="${index}" aria-label="Attributzeile ${index + 1} der Klassenkarte löschen">×</button></li>`).join("")}</ul></article><button class="secondary-button add-row" id="add-class-row" type="button">+ Attribut hinzufügen</button>`; }
 function renderEditors() { renderSchemaEditor("users"); renderSchemaEditor("photos"); document.getElementById("class-editor").innerHTML = classEditorMarkup(); bindEditorEvents(); }
@@ -180,7 +187,7 @@ function checkStep7(event) { event.preventDefault(); const correct = Number(stat
 function renderTabs() { const tabs = document.getElementById("step-tabs"); tabs.innerHTML = STEP_TITLES.map((title, index) => { const step = index + 1; return `<button id="tab-${step}" class="step-tab ${state.completed.includes(step) ? "is-complete" : ""}" type="button" role="tab" aria-controls="step-${step}" aria-selected="${state.currentStep === step}" data-step="${step}"><span>${step}</span><small>${title}</small></button>`; }).join("") + `<button id="tab-summary" class="step-tab" type="button" role="tab" aria-controls="step-summary" aria-selected="${state.currentStep === "summary"}" data-step="summary" ${state.summaryUnlocked ? "" : "hidden"}><span>✓</span><small>Übersicht</small></button>`; tabs.querySelectorAll("button").forEach((button) => button.addEventListener("click", () => navigateTo(button.dataset.step === "summary" ? "summary" : Number(button.dataset.step)))); enableTabKeyboardNavigation(tabs); syncTabSemantics(tabs, state.currentStep); }
 function navigateTo(step, { focusContent = false } = {}) { if (step === "summary" && !state.summaryUnlocked) return; document.querySelectorAll(".step-panel").forEach((panel) => { panel.hidden = panel.id !== `step-${step}`; }); state.currentStep = step; saveState(); renderTabs(); updateNavigation(); document.getElementById("relationship-result").hidden = !state.completed.includes(5); if (step === "summary") renderSummary(); const panel = document.getElementById(`step-${step}`); syncTabSemantics(document.getElementById("step-tabs"), state.currentStep); if (focusContent) focusTabPanelStart(panel); else window.scrollTo({ top: 0, behavior: "smooth" }); }
 function updateNavigation() { const complete = state.completed.filter((step) => step >= 1 && step <= TOTAL_STEPS).length; const percent = Math.round(complete / TOTAL_STEPS * 100); document.getElementById("progress-bar").style.width = `${percent}%`; document.getElementById("progress-percent").textContent = `${percent} % bearbeitet`; document.getElementById("progress-label").textContent = state.currentStep === "summary" ? "Abschlussübersicht" : `Schritt ${state.currentStep} von ${TOTAL_STEPS}`; const panel = document.getElementById(`step-${state.currentStep}`); renderTabFlowNavigation(panel, { items: TAB_ITEMS, currentId: state.currentStep, onNavigate: navigateTo, isEnabled: (id) => id === "summary" ? state.summaryUnlocked : true }); }
-function renderSummary() { const entries = [["1. Datentypen", "varchar(255) für Text, int für ganze Zahlen, char für ein Zeichen und date für ein Datum."], ["2. Syntax", "tabellenname( – attribut: datentyp – ). Einrückungen sind freiwillig."], ["3. users", "users mit id, username, birthday, created_at und updated_at."], ["4. photos", "photos mit id, description, url, created_at und updated_at."], ["5. Beziehung", "photos.user_id[users] verweist als Fremdschlüssel auf users. Im Klassendiagramm wird daraus die 1:n-Beziehung."], ["6. Gegenrichtung", "Eigene Spalten werden Attribute; der Fremdschlüssel wird als Beziehung dargestellt."], ["7. Merkhilfe", "Klammern und Doppelpunkte gehören zur Schema-Syntax; die Einrückung ist freiwillig."]]; document.getElementById("answer-summary").innerHTML = entries.map(([title, result]) => `<section class="summary-section"><h3>${title}</h3><dl class="summary-grid"><dt>Richtiges Ergebnis</dt><dd>${result}</dd></dl></section>`).join(""); }
+function renderSummary() { const entries = [["1. Datentypen", "varchar(255) für Text, int für ganze Zahlen, char für ein Zeichen und date für ein Datum."], ["2. Syntax", "tabellenname( – attribut: datentyp – ). Geschweifte Klammern { } sind ebenfalls erlaubt; Einrückungen sind freiwillig."], ["3. users", "users mit id, username und birthday."], ["4. photos", "photos mit id, description, url, created_at und updated_at."], ["5. Beziehung", "photos.user_id[users] verweist als Fremdschlüssel auf users. Im Klassendiagramm wird daraus die 1:n-Beziehung."], ["6. Gegenrichtung", "Eigene Spalten werden Attribute; der Fremdschlüssel wird als Beziehung dargestellt."], ["7. Merkhilfe", "Klammern und Doppelpunkte gehören zur Schema-Syntax; die Einrückung ist freiwillig."]]; document.getElementById("answer-summary").innerHTML = entries.map(([title, result]) => `<section class="summary-section"><h3>${title}</h3><dl class="summary-grid"><dt>Richtiges Ergebnis</dt><dd>${result}</dd></dl></section>`).join(""); }
 function bindEvents() { document.getElementById("check-step1").addEventListener("click", checkStep1); document.getElementById("check-step2").addEventListener("click", checkStep2); document.getElementById("check-step3").addEventListener("click", checkStep3); document.getElementById("check-step4").addEventListener("click", checkStep4); document.getElementById("check-step5-1").addEventListener("click", checkStep5ForeignKey); document.getElementById("check-step5-2").addEventListener("click", checkStep5Mapping); document.getElementById("check-step5-3").addEventListener("click", checkStep5Cardinality); document.getElementById("check-step6").addEventListener("click", checkStep6); document.getElementById("final-quiz").addEventListener("submit", checkStep7); document.getElementById("reset-module").addEventListener("click", () => { if (window.confirm("Möchtest du alle Eingaben und den Fortschritt zurücksetzen?")) { localStorage.removeItem(STORAGE_KEY); window.location.reload(); } }); }
 function init() { renderAssignment(); renderChoices(); renderEditors(); renderTabs(); bindEvents(); if (state.currentStep === "summary" && !state.summaryUnlocked) state.currentStep = 1; navigateTo(state.currentStep); }
 if (typeof document !== "undefined") document.addEventListener("DOMContentLoaded", init);

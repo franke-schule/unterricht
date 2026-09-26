@@ -1137,6 +1137,11 @@ body.is-filling-sheet {
   line-height: 1.5;
 }
 
+/* Hinweis direkt unter der Tabelle: gleicher Randabstand wie der Kartenkopf. */
+.spreadsheet-card > .dfd-note {
+  margin: 0.9rem 1.25rem 1.1rem;
+}
+
 .dfd-scenario {
   font-style: normal;
 }

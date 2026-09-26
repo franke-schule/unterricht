@@ -8,7 +8,7 @@
     <link rel="stylesheet" href="../../../../styles.css?v=20260825">
     <link rel="stylesheet" href="redundanzen.css?v=20260923a">
     <link rel="stylesheet" href="tabellenschema.css?v=20260827">
-    <script type="module" src="tabellenschema.js?v=20260917a"></script>
+    <script type="module" src="tabellenschema.js?v=20260926a"></script>
   </head>
   <body class="redundancy-page schema-page">
     <div class="site-backdrop" aria-hidden="true"></div>
@@ -45,15 +45,15 @@
   titel: varchar(255)
   erscheinungsjahr: int
 )</code></pre></div></div>
-          <div class="mapping-card"><p><strong>Merke die Syntax:</strong></p><ol><li>Der Tabellenname steht vor den runden Klammern.</li><li>In jeder Attributzeile folgt auf den Attributnamen ein Doppelpunkt.</li><li>Hinter dem Doppelpunkt steht der Datentyp. Die Zeilen dürfen eingerückt sein, müssen es aber nicht.</li></ol></div>
+          <div class="mapping-card"><p><strong>Merke die Syntax:</strong></p><ol><li>Der Tabellenname steht vor den runden Klammern. Geschweifte Klammern <code>{ }</code> sind ebenfalls erlaubt, mit oder ohne Leerzeichen davor.</li><li>In jeder Attributzeile folgt auf den Attributnamen ein Doppelpunkt.</li><li>Hinter dem Doppelpunkt steht der Datentyp. Die Zeilen dürfen eingerückt sein, müssen es aber nicht.</li></ol></div>
           <section class="task-card"><h3>Beispiel verstehen</h3><p>Wähle die zutreffende Aussage.</p><div id="example-choice" class="choice-list"></div><div class="action-row"><button id="check-step2" class="primary-button" type="button">Aussage prüfen</button></div><p id="feedback-step2" class="feedback" aria-live="polite"></p></section>
         </section>
 
         <section id="step-3" class="step-panel" role="tabpanel" aria-labelledby="tab-3" hidden>
           <div class="step-heading"><span class="step-number">3</span><div><p class="step-kicker">Anwenden</p><h2>Klassenkarte <code>users</code></h2></div></div>
           <div class="scenario-card"><p>Schreibe das vollständige Tabellenschema. Nutze Klammern und Doppelpunkte; Einrückung und Attributreihenfolge sind frei.</p></div>
-          <div class="conversion-layout"><article class="class-card source-card"><h3>users</h3><ul><li>id</li><li>username</li><li>birthday</li><li>created_at</li><li>updated_at</li></ul></article><section class="schema-editor-card"><h3>Dein Tabellenschema</h3><div id="users-editor"></div></section></div>
-          <div class="help-stack"><details><summary>Hilfe 1</summary><p>Beginne mit dem Tabellennamen und <code>(</code>. Beende das Schema mit <code>)</code>.</p></details><details><summary>Hilfe 2</summary><p>Setze in jeder Attributzeile einen Doppelpunkt vor den Datentyp. Leerzeichen am Zeilenanfang sind freiwillig.</p></details><details><summary>Hilfe 3</summary><p><code>id</code> ist eine ganze Zahl; Namen sind Text und Zeitangaben werden hier als Datum gespeichert.</p></details></div>
+          <div class="conversion-layout"><article class="class-card source-card"><h3>users</h3><ul><li>id</li><li>username</li><li>birthday</li></ul></article><section class="schema-editor-card"><h3>Dein Tabellenschema</h3><div id="users-editor"></div></section></div>
+          <div class="help-stack"><details><summary>Hilfe 1</summary><p>Beginne mit dem Tabellennamen und <code>(</code>. Beende das Schema mit <code>)</code>.</p></details><details><summary>Hilfe 2</summary><p>Setze in jeder Attributzeile einen Doppelpunkt vor den Datentyp. Leerzeichen am Zeilenanfang sind freiwillig.</p></details><details><summary>Hilfe 3</summary><p><code>id</code> ist eine ganze Zahl, ein Benutzername ist Text und ein Geburtstag ist ein Datum.</p></details></div>
           <div class="action-row"><button id="check-step3" class="primary-button" type="button">Tabellenschema prüfen</button></div><p id="feedback-step3" class="feedback" aria-live="polite"></p>
         </section>
 
@@ -73,8 +73,6 @@
   id: int
   username: varchar(255)
   birthday: date
-  created_at: date
-  updated_at: date
 )</code></pre></div>
             <div class="schema-syntax"><pre><code>photos(
   id: int
@@ -100,7 +98,7 @@
             <h3 id="relationship-result-title">Vom Fremdschlüssel zur 1:n-Beziehung</h3>
             <p><code>user_id[users]</code> ist der Fremdschlüssel. Im Klassendiagramm wird er nicht als Attribut übernommen: Die Verbindung erscheint als <strong>1:n-Beziehung</strong>.</p>
             <div class="relationship-diagram" aria-label="Klassendiagramm: Ein Benutzer kann mehrere Fotos hochladen">
-              <article class="class-card"><h3>users</h3><ul><li>id</li><li>username</li><li>birthday</li><li>created_at</li><li>updated_at</li></ul></article>
+              <article class="class-card"><h3>users</h3><ul><li>id</li><li>username</li><li>birthday</li></ul></article>
               <div class="relationship-connector" aria-hidden="true"><span class="cardinality cardinality-users">1</span><span class="relationship-label">← wurde hochgeladen von</span><span class="cardinality cardinality-photos">n</span></div>
               <article class="class-card"><h3>photos</h3><ul><li>id</li><li>description</li><li>url</li><li>created_at</li><li>updated_at</li></ul></article>
             </div>

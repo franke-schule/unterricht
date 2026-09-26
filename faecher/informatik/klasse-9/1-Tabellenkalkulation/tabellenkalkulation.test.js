@@ -75,9 +75,12 @@ function verifyDefinitions(api, formulas) {
     api.formulaDefinitions.forEach((definition) => {
       definition.prepare?.({ cells: api.rawCells, testCase });
       const actual = api.evaluateCell(definition.cell);
-      const expected = definition.expected(testCase);
-      if (typeof expected === "number") closeTo(actual, expected);
-      else assert.equal(String(actual).toLowerCase(), String(expected).toLowerCase());
+      const expected = [].concat(definition.expected(testCase));
+      assert.ok(expected.some((value) => (
+        typeof value === "number"
+          ? Math.abs(actual - value) < 1e-8
+          : String(actual).toLowerCase() === String(value).toLowerCase()
+      )), `${definition.cell}: ${actual} entspricht keinem erwarteten Wert (${expected.join(", ")}).`);
     });
     api.rawCells.clear();
     savedCells.forEach((value, key) => api.rawCells.set(key, value));
@@ -200,11 +203,23 @@ function verifyDefinitions(api, formulas) {
   const formulas = { D5: "=WENN(B5<2;5;0)" };
   api.fillSelection(api.parseRange("D5"), api.parseRange("D5:D8"));
   assert.equal(api.rawCells.get("D8"), "=WENN(B8<2;5;0)");
-  assert.equal(api.evaluateCell("D5"), 0);
-  api.rawCells.set("B5", 1);
-  assert.equal(api.evaluateCell("D5"), 5);
+  assert.equal(api.evaluateCell("D5"), 5, "Informatik hat die Note 1.");
+  assert.equal(api.evaluateCell("D7"), 5, "Mathe hat die Note 1.");
+  assert.equal(api.evaluateCell("D8"), 0, "Englisch hat die Note 2.");
   assert.equal(api.fillGroupIsComplete(api.fillGroups[0]), true);
   verifyDefinitions(api, formulas);
+
+  const textFormulas = { D5: '=WENN(B5<2;"5€";"0€")' };
+  api.rawCells.set("D5", textFormulas.D5);
+  assert.equal(api.evaluateCell("D5"), "5€");
+  verifyDefinitions(api, textFormulas);
+  verifyDefinitions(api, { D5: '=WENN(B5<2;"5 €";"0 €")' });
+
+  const definition = api.formulaDefinitions[0];
+  const unquotedHint = definition.formulaHints.find((hint) => hint.test("=WENN(B5<2;5€;0€)"));
+  assert.ok(unquotedHint, "Fehlende Anführungszeichen um 5€ werden erkannt.");
+  assert.match(unquotedHint.message, /Anführungszeichen/);
+  assert.equal(definition.formulaHints.some((hint) => hint.test(textFormulas.D5)), false, "Mit Anführungszeichen erscheint kein Hinweis.");
 }
 
 {
