@@ -3,7 +3,7 @@
 ## Verbindliche Grundlage
 
 Das Sicherungsblatt sichert ausschließlich die fachlichen Ergebnisse aus
-**Aufgabe 3 – Beziehungen und Fremdschlüssel**. Es ist keine neue Übung und
+**Aufgabe 3 – 1:n-Beziehung und Fremdschlüssel**. Es ist keine neue Übung und
 enthält daher keine Eingabefelder, Arbeitsaufträge oder zusätzlichen Inhalte.
 
 ### 1. Fachliche Inhalte

@@ -1,0 +1,203 @@
+/* Aufgabe 8 – additive Ergänzungen zu redundanzen.css, tabellenschema.css und
+   beziehungen.css. Keine Änderung an gemeinsamem CSS; alles hier ist scoped
+   auf .relation-types-page bzw. auf neue, additive Klassen. */
+
+.relation-types-page .step-tabs { grid-template-columns: repeat(9, minmax(88px, 1fr)); }
+.relation-types-page .table-excerpts.three-up,
+.relation-types-page .r4-tables,
+#r4-tables,
+#r6-tables { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+.schema-comparison.three-up { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+.schema-title { margin: 0 0 8px; color: #1b426f; font-weight: 800; font-family: "SFMono-Regular", Consolas, monospace; }
+.table-legend { margin: 0 0 14px; color: #38566f; font-size: 0.86rem; font-style: italic; }
+.unknown-value { color: #b45309; font-weight: 800; }
+
+/* -------------------------------------------------------------------------
+   Drag-and-Drop (nur R1)
+   ------------------------------------------------------------------------- */
+.dragdrop-assignment { display: grid; gap: 18px; margin-bottom: 22px; }
+.token-bank { display: flex; flex-wrap: wrap; gap: 10px; min-height: 56px; padding: 12px; border: 2px dashed #bdcad9; border-radius: 14px; background: #f9fbfd; }
+.drag-token { min-width: 96px; min-height: 48px; padding: 10px 16px; border: 1px solid #aec1d8; border-radius: 10px; background: white; color: #274966; font-family: "SFMono-Regular", Consolas, monospace; font-weight: 800; font-size: 1rem; cursor: grab; touch-action: none; box-shadow: 0 3px 8px rgba(37, 62, 91, 0.08); }
+.drag-token:active { cursor: grabbing; }
+.drag-token[aria-pressed="true"] { border-color: #1663d5; background: #eef6ff; color: #0d3f86; }
+.drag-token.drag-ghost { position: fixed; z-index: 999; transform: translate(-50%, -50%); pointer-events: none; opacity: 0.92; }
+.drop-rows { display: grid; gap: 10px; }
+.drag-row { display: grid; grid-template-columns: minmax(140px, 1fr) minmax(96px, 200px); align-items: center; gap: 14px; }
+.drag-row > span { color: #38566f; font-weight: 700; }
+.drop-slot { min-width: 96px; min-height: 48px; padding: 10px 14px; border: 2px solid #b8c7d9; border-radius: 10px; background: white; color: #172033; font-family: "SFMono-Regular", Consolas, monospace; font-weight: 800; cursor: pointer; touch-action: none; }
+.drop-slot:hover, .drop-slot:focus-visible { border-color: #1663d5; }
+.drop-slot[aria-pressed="true"] { background: #eef6ff; border-color: #1663d5; }
+.drop-slot.is-drop-target { border-color: #0891b2; background: #effcff; }
+
+/* -------------------------------------------------------------------------
+   Diagramm-Erweiterungen von .association-connector (4.4)
+   ------------------------------------------------------------------------- */
+/* Das Label steht mittig ÜBER seiner eigenen Linie. Die Linie
+   (.association-connector i) liegt immer exakt auf 50% der Connector-Höhe
+   (inset: 50% … translateY(-50%)) - auch wenn der Connector durch
+   align-items: stretch größer gezogen wird. Deshalb wird das Label relativ
+   zur Connector-Unterkante (bottom: 50% + Abstand) verankert, nicht relativ
+   zur - variablen - Connector-Oberkante. */
+.association-label { position: absolute; top: auto; bottom: calc(50% + 6px); left: 50%; z-index: 3; display: flex; align-items: center; gap: 3px; padding: 0 4px; transform: translateX(-50%); background: #fff; color: #1f4e7e; font-family: "SFMono-Regular", Consolas, monospace; font-size: 0.78rem; font-weight: 800; white-space: nowrap; }
+.reading-arrow { font-style: normal; }
+.reading-arrow[data-dir="forward"]::before { content: "▸"; }
+.reading-arrow[data-dir="backward"]::before { content: "◂"; }
+@media (max-width: 760px) {
+  .cardinality-demo .association-label { top: 50%; bottom: auto; left: 100%; margin-left: 8px; transform: translateY(-50%); }
+  .cardinality-demo .reading-arrow[data-dir="forward"]::before { content: "▾"; }
+  .cardinality-demo .reading-arrow[data-dir="backward"]::before { content: "▴"; }
+}
+
+/* Mehrfachverbindung users – photos (R5). padding-top reserviert oben Platz
+   für die Schleife samt Beschriftung, damit users, Stack, photos und tags
+   alle an derselben Oberkante beginnen (sonst hängt „kann hochladen“ in der
+   Luft statt an der users-Karte zu enden). */
+.instahub-diagram { display: flex; align-items: stretch; justify-content: center; gap: 0; margin: 32px 0 24px; padding-top: 80px; }
+.instahub-diagram .class-card.diagram-class-card { display: flex; flex-direction: column; }
+.instahub-diagram .empty-class-body { flex: 1 1 auto; min-height: 118px; }
+.association-stack { display: flex; flex-direction: column; justify-content: space-between; gap: 0; width: min(24vw, 190px); margin: 0 -1px; }
+.association-stack .association-connector { width: 100%; flex: 1 1 0; margin: 0; }
+.association-stack .association-connector + .association-connector { margin-top: 2px; }
+
+/* Reflexive Schleife „kann folgen“ (R5): ein U auf dem Kopf über der Karte.
+   Die Schenkel reichen genau bis zur Kartenoberkante, die beiden Lücken
+   stehen außen neben den Schenkeln, unterhalb der waagerechten Oberkante der
+   Schleife - sie dürfen die Oberkante nicht überdecken. Das Label sitzt
+   direkt auf der Oberkante der Schleife (nicht am oberen Rand des
+   reservierten Freiraums). */
+.class-node { position: relative; width: min(100%, 245px); margin-top: 0; }
+.class-node .diagram-class-card { overflow: hidden; }
+.association-loop { position: absolute; left: 20%; right: 20%; top: -52px; height: 52px; border: 2px solid #526a84; border-bottom: none; z-index: 1; }
+.loop-label { position: absolute; top: -22px; bottom: auto; left: 50%; transform: translateX(-50%); }
+.loop-gap { position: absolute; top: 6px; z-index: 2; }
+.loop-gap-left { right: 100%; margin-right: 6px; }
+.loop-gap-right { left: 100%; margin-left: 6px; }
+
+/* Tabellenkette mit Schema-Knoten (R4-Merke, R6) */
+.table-chain-caption { margin: 0 0 10px; color: #38566f; font-weight: 800; font-size: 0.86rem; text-transform: uppercase; letter-spacing: 0.04em; }
+.table-chain { display: flex; align-items: stretch; justify-content: center; gap: 0; margin: 18px 0; }
+.schema-node { min-width: 0; padding: 12px 16px; border: 1px solid #8aa6c4; border-left: 4px solid #8aa6c4; border-radius: 0; background: #f8fbff; color: #173f65; }
+.schema-node pre { margin: 0; overflow-x: auto; font: 800 0.82rem/1.55 "SFMono-Regular", Consolas, monospace; white-space: pre; }
+.chain-cardinality, .table-chain .association-connector { position: relative; display: flex; align-items: center; justify-content: space-between; width: min(14vw, 90px); margin: 0 -1px; color: #1f4e7e; font-family: "SFMono-Regular", Consolas, monospace; font-weight: 900; }
+.chain-cardinality span { z-index: 2; margin: 0 6px; padding: 2px 4px; background: #fff; }
+.chain-cardinality i { position: absolute; inset: 50% 0 auto; height: 2px; background: #526a84; transform: translateY(-50%); }
+.table-chain .association-connector { width: min(14vw, 90px); }
+
+/* -------------------------------------------------------------------------
+   Schema-Auswahl mit zwei Codezeilen (R2, Schlüssel/Schloss)
+   ------------------------------------------------------------------------- */
+.schema-choice-list .choice-option span { display: block; }
+.schema-choice-list code { display: block; margin-top: 3px; }
+.schema-choice-list code:first-child { margin-top: 0; }
+
+/* -------------------------------------------------------------------------
+   Responsive: InstaHub-Diagramm und Tabellenketten ab ≤900px senkrecht
+   ------------------------------------------------------------------------- */
+@media (max-width: 900px) {
+  /* Eigene, feste Breite für die beiden Diagramm-Container: Sonst lösen
+     Kinder mit width: min(100%, 320px) den Prozentwert gegen einen
+     Container mit width: auto (Spaltenmodus) uneinheitlich auf - Karten,
+     Stack und Connectoren würden dann unterschiedlich breit werden und
+     nicht mehr bündig übereinander liegen. */
+  .instahub-diagram, .table-chain {
+    flex-direction: column;
+    align-items: center;
+    width: min(100%, 320px);
+    margin-inline: auto;
+  }
+  .instahub-diagram .class-card.diagram-class-card,
+  .table-chain .schema-node {
+    width: min(100%, 320px);
+  }
+  /* Klassenkarten behalten ihren normalen Aufbau (Kopf über Körper). */
+  .instahub-diagram .empty-class-body { min-height: 48px; flex: 0 0 auto; }
+  .class-node { width: min(100%, 320px); margin-top: 0; }
+
+  /* Stack: drei senkrechte Linien innerhalb der Kartenbreite, Lücke oben
+     (users-Ende) und unten (photos-Ende); die Linien berühren dadurch oben
+     wie unten die Karten. */
+  .association-stack { flex-direction: row; width: min(100%, 320px); justify-content: space-between; margin: -1px 0; }
+  .association-stack .association-connector { flex-direction: column; width: min(30%, 100px); height: 120px; margin: 0; }
+  .association-stack .association-connector + .association-connector { margin-top: 0; }
+  .association-stack .association-connector i { inset: 0 auto 0 50%; width: 2px; height: auto; transform: translateX(-50%); }
+  .association-stack .association-connector label,
+  .association-stack .association-connector span { margin: 6px 0; }
+  /* Das Label bleibt hier absolut positioniert (nicht static): sonst wird es
+     als drittes Flex-Kind zwischen den beiden Lücken einsortiert und
+     verschiebt die untere Lücke aus dem Connector hinaus (Überlapp mit der
+     Kartenüberschrift darunter). Mittig mit weißem Hintergrund, Zeilenumbruch
+     erlaubt. */
+  .association-stack .association-label {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    bottom: auto;
+    transform: translate(-50%, -50%);
+    width: max-content;
+    max-width: 90%;
+    white-space: normal;
+    text-align: center;
+  }
+  .instahub-diagram .reading-arrow[data-dir="forward"]::before { content: "▾"; }
+  /* Die Schleife „kann folgen“ bleibt bei users, ihr Pfeil zeigt weiter ▸. */
+  .instahub-diagram .loop-label .reading-arrow[data-dir="forward"]::before { content: "▸"; }
+
+  /* Der einzelne „hat“-Connector zwischen photos und tags (kein Stack) wird
+     wie im senkrechten Muster aus beziehungen.css (≤760px) gedreht. */
+  .instahub-diagram > .association-connector {
+    flex-direction: column;
+    width: min(100%, 320px);
+    height: 94px;
+    margin: -1px 0;
+  }
+  .instahub-diagram > .association-connector i {
+    inset: 0 auto 0 50%;
+    width: 2px;
+    height: auto;
+    transform: translateX(-50%);
+  }
+  .instahub-diagram > .association-connector label,
+  .instahub-diagram > .association-connector span { margin: 7px 0; }
+  /* Mittig auf der Linie verankert (nicht links: 100% + margin), damit das
+     Label bei sehr schmalen Ansichten (390px) nicht über den Kartenrand
+     hinaus in den Viewport hineinragt und horizontales Scrollen erzeugt -
+     dasselbe Muster wie beim Stack-Label. */
+  .instahub-diagram > .association-connector .association-label {
+    top: 50%;
+    bottom: auto;
+    left: 50%;
+    right: auto;
+    margin-left: 0;
+    transform: translate(-50%, -50%);
+  }
+
+  /* Tabellenketten (R4-Merke, R6): Connectoren ebenfalls senkrecht, damit die
+     obere Lücke/Zahl am oberen Knoten und die untere am unteren Knoten
+     sitzt. row-gap: 0, sonst berührt keine Linie die Schema-Knoten. */
+  .table-chain { row-gap: 0; }
+  .table-chain .association-connector,
+  .chain-cardinality {
+    flex-direction: column;
+    width: min(100%, 320px);
+    height: 120px;
+    margin: -1px 0;
+  }
+  .table-chain .association-connector i,
+  .chain-cardinality i {
+    inset: 0 auto 0 50%;
+    width: 2px;
+    height: auto;
+    transform: translateX(-50%);
+  }
+  .table-chain .association-connector label,
+  .table-chain .association-connector span,
+  .chain-cardinality span { margin: 7px 0; }
+  .table-chain .reading-arrow[data-dir="forward"]::before { content: "▾"; }
+}
+
+@media (max-width: 650px) {
+  .schema-comparison.three-up,
+  #r4-tables,
+  #r6-tables { grid-template-columns: 1fr; }
+  .drag-row { grid-template-columns: 1fr; }
+}

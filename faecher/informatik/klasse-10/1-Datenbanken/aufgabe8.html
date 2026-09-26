@@ -1,0 +1,403 @@
+<!doctype html>
+<html lang="de">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="robots" content="noindex, nofollow">
+    <title>Aufgabe 8 – 1:1- und n:m-Beziehungen | Informatik 10</title>
+    <link rel="stylesheet" href="../../../../styles.css?v=20260825">
+    <link rel="stylesheet" href="redundanzen.css?v=20260923a">
+    <link rel="stylesheet" href="tabellenschema.css?v=20260827">
+    <link rel="stylesheet" href="beziehungen.css?v=20260826b">
+    <link rel="stylesheet" href="beziehungsarten.css?v=20260926a">
+    <script type="module" src="beziehungsarten.js?v=20260926a"></script>
+  </head>
+  <body class="redundancy-page relation-page relation-types-page">
+    <div class="site-backdrop" aria-hidden="true"></div>
+    <main class="learning-shell">
+      <nav class="module-topbar" aria-label="Seitennavigation">
+        <a class="back-link" href="../index.html">Zur Aufgabenübersicht</a>
+        <a class="back-link" href="../../../../index.html">Startseite</a>
+      </nav>
+
+      <header class="module-header">
+        <div class="eyebrow"><span aria-hidden="true">◎</span> InstaHub-Datenbanklabor</div>
+        <h1>1:1- und n:m-Beziehungen</h1>
+        <p>Lerne die beiden noch fehlenden Beziehungsarten kennen und finde heraus, wie sie in Tabellen umgesetzt werden.</p>
+      </header>
+
+      <section id="data-status" class="data-status" role="status" aria-live="polite" hidden></section>
+
+      <section id="learning-module">
+        <div class="progress-card" aria-label="Bearbeitungsfortschritt">
+          <div class="progress-copy"><span id="progress-label">Schritt 1 von 8</span><strong id="progress-percent">0 % bearbeitet</strong></div>
+          <div class="progress-track" aria-hidden="true"><span id="progress-bar"></span></div>
+        </div>
+        <nav id="step-tabs" class="step-tabs" aria-label="Lernschritte" role="tablist"></nav>
+
+        <!-- Schritt 1: 1:1 entdecken -->
+        <section id="step-1" class="step-panel" role="tabpanel" aria-labelledby="tab-1">
+          <div class="step-heading"><span class="step-number">1</span><div><p class="step-kicker">Entdecken</p><h2>Welcher Klassenleiter gehört zu welcher Klasse?</h2></div></div>
+          <div class="scenario-card"><p>Eine Schule speichert ihre Klassen und Klassenleiter in zwei Tabellen. Klasse meint hier die Schulklasse, z. B. 10a.</p></div>
+          <div id="r1-tables" class="table-excerpts" aria-label="Tabellenauszüge klasse und klassenleiter"></div>
+          <h3 class="assignment-heading"><strong>Ziehe</strong> jedes Kürzel in das Feld seiner Klasse. Nutze dafür die Spalte klasse_id.</h3>
+          <div id="r1-dragdrop" class="dragdrop-assignment"></div>
+          <div class="action-row"><button id="check-r1-drag" class="primary-button" type="button">Zuordnung prüfen</button></div>
+          <p id="feedback-r1-drag" class="feedback" aria-live="polite"></p>
+
+          <div class="task-card">
+            <h3>Deine Beobachtung</h3>
+            <p><strong>Wähle</strong> für beide Aussagen die passende Ergänzung.</p>
+            <p>Eine Klasse hat …</p>
+            <div id="r1-f1a-choices" class="choice-list"></div>
+            <div class="action-row"><button id="check-r1-f1a" class="primary-button" type="button">Antwort 1 prüfen</button></div>
+            <p id="feedback-r1-f1a" class="feedback" aria-live="polite"></p>
+            <p>Ein Klassenleiter leitet …</p>
+            <div id="r1-f1b-choices" class="choice-list"></div>
+            <div class="action-row"><button id="check-r1-f1b" class="primary-button" type="button">Antwort 2 prüfen</button></div>
+            <p id="feedback-r1-f1b" class="feedback" aria-live="polite"></p>
+          </div>
+
+          <div class="cardinality-demo" role="group" aria-label="Klassendiagramm: Klasse und Klassenleiter mit Lücken für die Kardinalität">
+            <article class="class-card diagram-class-card"><h3>Klasse</h3><div class="empty-class-body" aria-hidden="true"></div></article>
+            <div class="association-connector">
+              <label class="cardinality-gap"><span class="sr-only">Kardinalität bei Klasse, Beziehung leitet</span><input id="r1-klasse-cardinality" type="text" maxlength="1" inputmode="text" autocomplete="off" aria-label="Kardinalität bei Klasse, Beziehung leitet" placeholder="?"></label>
+              <i aria-hidden="true"></i>
+              <small class="association-label">leitet<b class="reading-arrow" data-dir="backward" aria-hidden="true"></b></small>
+              <label class="cardinality-gap"><span class="sr-only">Kardinalität bei Klassenleiter, Beziehung leitet</span><input id="r1-klassenleiter-cardinality" type="text" maxlength="1" inputmode="text" autocomplete="off" aria-label="Kardinalität bei Klassenleiter, Beziehung leitet" placeholder="?"></label>
+            </div>
+            <article class="class-card diagram-class-card"><h3>Klassenleiter</h3><div class="empty-class-body" aria-hidden="true"></div></article>
+          </div>
+          <h3 class="assignment-heading"><strong>Trage</strong> in beide Lücken die passende Kardinalität ein (1, n oder m).</h3>
+          <div class="action-row"><button id="check-r1-cardinality" class="primary-button" type="button">Kardinalitäten prüfen</button></div>
+          <p id="feedback-r1-cardinality" class="feedback" aria-live="polite"></p>
+
+          <div class="help-stack">
+            <details><summary>Hilfe 1</summary><p>Die Zahl direkt an einer Klassenkarte gibt an, wie viele Objekte dieser Klasse zu einem Objekt der anderen Klasse gehören.</p></details>
+            <details><summary>Hilfe 2</summary><p>Frage für die Lücke bei Klassenleiter: Wie viele Klassenleiter hat eine Klasse? Frage für die Lücke bei Klasse: Wie viele Klassen leitet ein Klassenleiter?</p></details>
+            <details><summary>Hilfe 3</summary><p>Deine Beobachtung: Jede Klasse hat genau einen Klassenleiter. Also steht bei Klassenleiter eine 1. Überlege für die andere Lücke genauso.</p></details>
+          </div>
+          <div id="r1-reveal" class="foreign-key-reveal" hidden>
+            <strong>1:1-Beziehung</strong>
+            <p>Stehen an beiden Enden einer Beziehung eine 1, spricht man von einer 1:1-Beziehung.</p>
+            <p>Hier: <code>Klasse&nbsp; 1 ───── 1&nbsp; Klassenleiter</code></p>
+          </div>
+        </section>
+
+        <!-- Schritt 2: 1:1 umsetzen -->
+        <section id="step-2" class="step-panel" role="tabpanel" aria-labelledby="tab-2" hidden>
+          <div class="step-heading"><span class="step-number">2</span><div><p class="step-kicker">Verstehen</p><h2>Wohin kommt der Fremdschlüssel?</h2></div></div>
+          <div class="scenario-card"><p>Bei einer 1:n-Beziehung steht der Fremdschlüssel auf der n-Seite. Bei Klasse 1 ───── 1 Klassenleiter gibt es aber keine n-Seite.</p></div>
+          <div id="r2-schemas" class="schema-comparison three-up" aria-label="Schema A, B und C für Klasse und Klassenleiter"></div>
+          <h3 class="assignment-heading"><strong>Wähle</strong> alle Schemata aus, die die 1:1-Beziehung richtig umsetzen.</h3>
+          <div id="r2-schema-choices" class="choice-list"></div>
+          <div class="action-row"><button id="check-r2-schema" class="primary-button" type="button">Auswahl prüfen</button></div>
+          <p id="feedback-r2-schema" class="feedback" aria-live="polite"></p>
+          <div class="help-stack">
+            <details><summary>Hilfe 1</summary><p>Vergleiche, in welcher Tabelle jeweils ein Attribut mit eckigen Klammern steht.</p></details>
+            <details><summary>Hilfe 2</summary><p>Bei 1:n muss der Fremdschlüssel auf die n-Seite, weil dort jeder Datensatz genau einen Verweis braucht. Bei 1:1 haben beide Seiten nur genau einen Partner.</p></details>
+            <details><summary>Hilfe 3</summary><p>Schema A speichert die Verbindung genau einmal und ist richtig. Prüfe, ob das für Schema B genauso gilt und was in Schema C anders ist.</p></details>
+          </div>
+          <div id="r2-merke" class="foreign-key-reveal" hidden>
+            <strong>Merke: 1:1-Beziehung umsetzen</strong>
+            <p>1:1-Beziehungen sind ein Sonderfall der 1:n-Beziehung. Der Fremdschlüssel kann in einer der beiden beteiligten Klassen (bzw. Tabellen) hinzugefügt werden.</p>
+            <p>Er steht aber nur in einer Tabelle – sonst wäre die Verbindung doppelt gespeichert.</p>
+          </div>
+
+          <div class="task-card">
+            <h3>Übertragen: Schlüssel und Schloss</h3>
+            <p>In einer Schließanlage öffnet jeder Schlüssel genau ein Schloss. Zu jedem Schloss gehört genau ein Schlüssel.</p>
+            <div class="cardinality-demo" role="group" aria-label="Klassendiagramm: Schlüssel und Schloss mit Lücken für die Kardinalität">
+              <article class="class-card diagram-class-card"><h3>Schlüssel</h3><div class="empty-class-body" aria-hidden="true"></div></article>
+              <div class="association-connector">
+                <label class="cardinality-gap"><span class="sr-only">Kardinalität bei Schlüssel, Beziehung öffnet</span><input id="r2-schluessel-cardinality" type="text" maxlength="1" inputmode="text" autocomplete="off" aria-label="Kardinalität bei Schlüssel, Beziehung öffnet" placeholder="?"></label>
+                <i aria-hidden="true"></i>
+                <small class="association-label">öffnet<b class="reading-arrow" data-dir="forward" aria-hidden="true"></b></small>
+                <label class="cardinality-gap"><span class="sr-only">Kardinalität bei Schloss, Beziehung öffnet</span><input id="r2-schloss-cardinality" type="text" maxlength="1" inputmode="text" autocomplete="off" aria-label="Kardinalität bei Schloss, Beziehung öffnet" placeholder="?"></label>
+              </div>
+              <article class="class-card diagram-class-card"><h3>Schloss</h3><div class="empty-class-body" aria-hidden="true"></div></article>
+            </div>
+            <h3 class="assignment-heading"><strong>Ergänze</strong> die Kardinalitäten.</h3>
+            <div class="action-row"><button id="check-r2-cardinality" class="primary-button" type="button">Kardinalitäten prüfen</button></div>
+            <p id="feedback-r2-cardinality" class="feedback" aria-live="polite"></p>
+
+            <p>Schlüssel haben eine nummer und einen besitzer, Schlösser einen ort.</p>
+            <h3 class="assignment-heading"><strong>Wähle</strong> alle Tabellenschemata aus, die zur Beziehung passen.</h3>
+            <div id="r2-schluessel-schema-choices" class="choice-list schema-choice-list"></div>
+            <div class="action-row"><button id="check-r2-schluessel-schema" class="primary-button" type="button">Auswahl prüfen</button></div>
+            <p id="feedback-r2-schluessel-schema" class="feedback" aria-live="polite"></p>
+          </div>
+        </section>
+
+        <!-- Schritt 3: n:m entdecken -->
+        <section id="step-3" class="step-panel" role="tabpanel" aria-labelledby="tab-3" hidden>
+          <div class="step-heading"><span class="step-number">3</span><div><p class="step-kicker">Entdecken</p><h2>Lina besucht zwei AGs</h2></div></div>
+          <div class="scenario-card"><p>Anmeldungen für die AGs: Robotik – Lina, Ben · Theater – Lina, Mia · Chor – Mia</p></div>
+          <div class="schema-syntax"><pre><code>schueler(
+  id: int
+  name: varchar(255)
+  ag_id[ag]: int
+)</code></pre></div>
+          <div id="r3-tables" class="table-excerpts" aria-label="Tabellenauszüge ag und schueler (Versuch)"></div>
+          <h3 class="assignment-heading"><strong>Entscheide</strong>: Was trägst du bei Lina in ag_id ein?</h3>
+          <div id="r3-f3a-choices" class="choice-list"></div>
+          <div class="action-row"><button id="check-r3-f3a" class="primary-button" type="button">Antwort 1 prüfen</button></div>
+          <p id="feedback-r3-f3a" class="feedback" aria-live="polite"></p>
+
+          <h3 class="assignment-heading">Hilft es, den Fremdschlüssel stattdessen in ag zu speichern (schueler_id[schueler])?</h3>
+          <div id="r3-f3b-choices" class="choice-list"></div>
+          <div class="action-row"><button id="check-r3-f3b" class="primary-button" type="button">Antwort 2 prüfen</button></div>
+          <p id="feedback-r3-f3b" class="feedback" aria-live="polite"></p>
+
+          <div class="cardinality-demo" role="group" aria-label="Klassendiagramm: Schüler und AG mit Lücken für die Kardinalität">
+            <article class="class-card diagram-class-card"><h3>Schüler</h3><div class="empty-class-body" aria-hidden="true"></div></article>
+            <div class="association-connector">
+              <label class="cardinality-gap"><span class="sr-only">Kardinalität bei Schüler, Beziehung besucht</span><input id="r3-schueler-cardinality" type="text" maxlength="1" inputmode="text" autocomplete="off" aria-label="Kardinalität bei Schüler, Beziehung besucht" placeholder="?"></label>
+              <i aria-hidden="true"></i>
+              <small class="association-label">besucht<b class="reading-arrow" data-dir="forward" aria-hidden="true"></b></small>
+              <label class="cardinality-gap"><span class="sr-only">Kardinalität bei AG, Beziehung besucht</span><input id="r3-ag-cardinality" type="text" maxlength="1" inputmode="text" autocomplete="off" aria-label="Kardinalität bei AG, Beziehung besucht" placeholder="?"></label>
+            </div>
+            <article class="class-card diagram-class-card"><h3>AG</h3><div class="empty-class-body" aria-hidden="true"></div></article>
+          </div>
+          <h3 class="assignment-heading"><strong>Trage</strong> die Kardinalitäten ein. Verwende 1, n oder m.</h3>
+          <div class="action-row"><button id="check-r3-cardinality" class="primary-button" type="button">Kardinalitäten prüfen</button></div>
+          <p id="feedback-r3-cardinality" class="feedback" aria-live="polite"></p>
+
+          <div class="help-stack">
+            <details><summary>Hilfe 1</summary><p>Sieh in die Anmeldeliste: Wie viele AGs hat Lina? Wie viele Schüler hat die Robotik-AG?</p></details>
+            <details><summary>Hilfe 2</summary><p>In eine Zelle passt genau ein Wert, und ein Fremdschlüssel verweist auf genau einen Datensatz.</p></details>
+            <details><summary>Hilfe 3</summary><p>Ein Schüler kann mehrere AGs besuchen und eine AG mehrere Schüler haben. Auf beiden Seiten stehen also »viele« – dafür verwendest du n und m.</p></details>
+          </div>
+          <div id="r3-reveal" class="foreign-key-reveal" hidden>
+            <strong>n:m-Beziehung</strong>
+            <p>Können auf beiden Seiten viele Objekte beteiligt sein, spricht man von einer n:m-Beziehung.</p>
+            <p>Hier: <code>Schüler&nbsp; n ───── m&nbsp; AG</code>. Man verwendet zwei verschiedene Buchstaben, weil die beiden Anzahlen unabhängig voneinander sind.</p>
+            <p>Mit nur einem Fremdschlüssel lässt sich eine n:m-Beziehung nicht umsetzen.</p>
+          </div>
+        </section>
+
+        <!-- Schritt 4: Anmeldungen -->
+        <section id="step-4" class="step-panel" role="tabpanel" aria-labelledby="tab-4" hidden>
+          <div class="step-heading"><span class="step-number">4</span><div><p class="step-kicker">Verstehen</p><h2>Eine Tabelle für die Anmeldungen</h2></div></div>
+          <div class="scenario-card"><p>Die Schule speichert die Anmeldungen in einer eigenen Tabelle teilnahme. Jede Zeile ist eine Anmeldung.</p></div>
+          <div id="r4-tables" class="table-excerpts three-up" aria-label="Tabellenauszüge schueler, teilnahme und ag"></div>
+
+          <h3 class="assignment-heading"><strong>Kreuze an</strong>: Welche AGs besucht Lina?</h3>
+          <div id="r4-f4a-choices" class="choice-list"></div>
+          <div class="action-row"><button id="check-r4-f4a" class="primary-button" type="button">Antwort 1 prüfen</button></div>
+          <p id="feedback-r4-f4a" class="feedback" aria-live="polite"></p>
+
+          <h3 class="assignment-heading">Wer besucht die Theater-AG?</h3>
+          <div id="r4-f4b-choices" class="choice-list"></div>
+          <div class="action-row"><button id="check-r4-f4b" class="primary-button" type="button">Antwort 2 prüfen</button></div>
+          <p id="feedback-r4-f4b" class="feedback" aria-live="polite"></p>
+
+          <h3 class="assignment-heading">Ben meldet sich zusätzlich für den Chor an. <strong>Entscheide</strong>, was sich ändern muss.</h3>
+          <div id="r4-f4c-choices" class="choice-list"></div>
+          <div class="action-row"><button id="check-r4-f4c" class="primary-button" type="button">Antwort 3 prüfen</button></div>
+          <p id="feedback-r4-f4c" class="feedback" aria-live="polite"></p>
+
+          <div class="help-stack">
+            <details><summary>Hilfe 1</summary><p>Suche zuerst Linas id in schueler.</p></details>
+            <details><summary>Hilfe 2</summary><p>Suche in teilnahme alle Zeilen mit dieser schueler_id. Die ag_id verrät dir, welche AG gemeint ist.</p></details>
+            <details><summary>Hilfe 3</summary><p>Lina hat die id 1. In teilnahme gibt es zwei Zeilen mit schueler_id 1. Für die Theater-AG gehst du umgekehrt vor: Suche ihre id in ag und dann alle Zeilen mit dieser ag_id.</p></details>
+          </div>
+          <div id="r4-merke" class="foreign-key-reveal" hidden>
+            <strong>Merke: Hilfstabelle</strong>
+            <p>Bei der Umsetzung von n:m-Beziehungen entsteht eine neue (Hilfs-)Tabelle. Diese enthält die Primärschlüssel beider Klassen als Fremdschlüssel.</p>
+            <p class="table-chain-caption">Umsetzung in der Datenbank (Tabellen)</p>
+            <div class="table-chain" aria-label="Tabellenkette schueler, teilnahme und ag">
+              <div class="schema-node"><pre><code>schueler(
+  id: int
+  name: varchar(255)
+)</code></pre></div>
+              <div class="chain-cardinality"><span>1</span><i aria-hidden="true"></i><span>n</span></div>
+              <div class="schema-node"><pre><code>teilnahme(
+  schueler_id[schueler]: int
+  ag_id[ag]: int
+)</code></pre></div>
+              <div class="chain-cardinality"><span>n</span><i aria-hidden="true"></i><span>1</span></div>
+              <div class="schema-node"><pre><code>ag(
+  id: int
+  name: varchar(255)
+)</code></pre></div>
+            </div>
+            <p>Aus der n:m-Beziehung werden so zwei 1:n-Beziehungen. Die Fremdschlüssel stehen wie gewohnt auf der n-Seite – in der Hilfstabelle.</p>
+            <p>Du kennst so eine Tabelle schon: Song_in_Playlist aus Aufgabe 7.</p>
+          </div>
+        </section>
+
+        <!-- Schritt 5: InstaHub -->
+        <section id="step-5" class="step-panel" role="tabpanel" aria-labelledby="tab-5" hidden>
+          <div class="step-heading"><span class="step-number">5</span><div><p class="step-kicker">Anwenden</p><h2>Likes, Kommentare und Follower</h2></div></div>
+          <div class="scenario-card"><p>InstaHub soll um Likes, Kommentare und Follower erweitert werden. Die bekannten 1:n-Beziehungen sind schon eingetragen.</p></div>
+
+          <div id="r5-diagram" class="instahub-diagram" role="group" aria-label="Klassendiagramm: users, photos und tags mit Lücken für Kardinalitäten">
+            <div class="class-node">
+              <div class="association-loop" aria-hidden="false">
+                <small class="association-label loop-label">kann folgen<b class="reading-arrow" data-dir="forward" aria-hidden="true"></b></small>
+                <label class="cardinality-gap loop-gap loop-gap-left"><span class="sr-only">Kardinalität bei users, Beziehung kann folgen, linkes Ende</span><input id="r5-folgen-a" type="text" maxlength="1" inputmode="text" autocomplete="off" aria-label="Kardinalität bei users, Beziehung kann folgen, linkes Ende" placeholder="?"></label>
+                <label class="cardinality-gap loop-gap loop-gap-right"><span class="sr-only">Kardinalität bei users, Beziehung kann folgen, rechtes Ende</span><input id="r5-folgen-b" type="text" maxlength="1" inputmode="text" autocomplete="off" aria-label="Kardinalität bei users, Beziehung kann folgen, rechtes Ende" placeholder="?"></label>
+              </div>
+              <article class="class-card diagram-class-card"><h3>users</h3><div class="empty-class-body" aria-hidden="true"></div></article>
+            </div>
+            <div class="association-stack">
+              <div class="association-connector fixed-cardinalities"><span>1</span><i aria-hidden="true"></i><span>n</span><small class="association-label">kann hochladen<b class="reading-arrow" data-dir="forward" aria-hidden="true"></b></small></div>
+              <div class="association-connector">
+                <label class="cardinality-gap"><span class="sr-only">Kardinalität bei users, Beziehung kann kommentieren</span><input id="r5-kommentieren-a" type="text" maxlength="1" inputmode="text" autocomplete="off" aria-label="Kardinalität bei users, Beziehung kann kommentieren" placeholder="?"></label>
+                <i aria-hidden="true"></i>
+                <small class="association-label">kann kommentieren<b class="reading-arrow" data-dir="forward" aria-hidden="true"></b></small>
+                <label class="cardinality-gap"><span class="sr-only">Kardinalität bei photos, Beziehung kann kommentieren</span><input id="r5-kommentieren-b" type="text" maxlength="1" inputmode="text" autocomplete="off" aria-label="Kardinalität bei photos, Beziehung kann kommentieren" placeholder="?"></label>
+              </div>
+              <div class="association-connector">
+                <label class="cardinality-gap"><span class="sr-only">Kardinalität bei users, Beziehung kann liken</span><input id="r5-liken-a" type="text" maxlength="1" inputmode="text" autocomplete="off" aria-label="Kardinalität bei users, Beziehung kann liken" placeholder="?"></label>
+                <i aria-hidden="true"></i>
+                <small class="association-label">kann liken<b class="reading-arrow" data-dir="forward" aria-hidden="true"></b></small>
+                <label class="cardinality-gap"><span class="sr-only">Kardinalität bei photos, Beziehung kann liken</span><input id="r5-liken-b" type="text" maxlength="1" inputmode="text" autocomplete="off" aria-label="Kardinalität bei photos, Beziehung kann liken" placeholder="?"></label>
+              </div>
+            </div>
+            <article class="class-card diagram-class-card"><h3>photos</h3><div class="empty-class-body" aria-hidden="true"></div></article>
+            <div class="association-connector fixed-cardinalities"><span>1</span><i aria-hidden="true"></i><span>n</span><small class="association-label">hat<b class="reading-arrow" data-dir="forward" aria-hidden="true"></b></small></div>
+            <article class="class-card diagram-class-card"><h3>tags</h3><div class="empty-class-body" aria-hidden="true"></div></article>
+          </div>
+          <h3 class="assignment-heading"><strong>Ergänze</strong> die Kardinalitäten bei »kann liken«, »kann kommentieren« und »kann folgen«.</h3>
+          <div class="action-row"><button id="check-r5-cardinality" class="primary-button" type="button">Kardinalitäten prüfen</button></div>
+          <p id="feedback-r5-cardinality" class="feedback" aria-live="polite"></p>
+
+          <div class="help-stack">
+            <details><summary>Hilfe 1</summary><p>Lies jede Beziehung in beide Richtungen, z. B.: Wie viele Fotos kann ein Benutzer liken? Von wie vielen Benutzern kann ein Foto geliked werden?</p></details>
+            <details><summary>Hilfe 2</summary><p>Stehen in beiden Richtungen »viele«, ist es eine n:m-Beziehung. Verwende dann zwei verschiedene Buchstaben.</p></details>
+            <details><summary>Hilfe 3</summary><p>»kann liken« ist eine n:m-Beziehung. Prüfe »kann kommentieren« und »kann folgen« genauso. Bei »kann folgen« sind beide Enden an users: Ein Benutzer kann vielen folgen und viele Follower haben.</p></details>
+          </div>
+          <div id="r5-summary" class="short-summary" hidden><strong>Richtig:</strong> <code>users n ───── m photos</code> (kann liken, kann kommentieren) und <code>users n ───── m users</code> (kann folgen). Im Klassendiagramm bleibt jede n:m-Beziehung eine einzige Linie.</div>
+        </section>
+
+        <!-- Schritt 6: likes -->
+        <section id="step-6" class="step-panel" role="tabpanel" aria-labelledby="tab-6" hidden>
+          <div class="step-heading"><span class="step-number">6</span><div><p class="step-kicker">Anwenden</p><h2>Die Hilfstabelle likes</h2></div></div>
+          <div class="scenario-card"><p>Für die Likes bekommt InstaHub die Hilfstabelle likes.</p></div>
+          <div class="schema-syntax"><pre><code>likes(
+  id: int
+  photo_id[photos]: int
+  user_id[users]: int
+  created_at: date
+  updated_at: date
+)</code></pre></div>
+          <div id="r6-tables" class="table-excerpts three-up" aria-label="Tabellenauszüge users, photos und likes"></div>
+
+          <h3 class="assignment-heading"><strong>Kreuze an</strong>: Welche Fotos hat reisewut_emil geliked?</h3>
+          <div id="r6-f6a-choices" class="choice-list"></div>
+          <div class="action-row"><button id="check-r6-f6a" class="primary-button" type="button">Antwort 1 prüfen</button></div>
+          <p id="feedback-r6-f6a" class="feedback" aria-live="polite"></p>
+
+          <h3 class="assignment-heading">Wer hat Foto 14 geliked?</h3>
+          <div id="r6-f6b-choices" class="choice-list"></div>
+          <div class="action-row"><button id="check-r6-f6b" class="primary-button" type="button">Antwort 2 prüfen</button></div>
+          <p id="feedback-r6-f6b" class="feedback" aria-live="polite"></p>
+
+          <p class="table-chain-caption">Umsetzung in der Datenbank (Tabellen)</p>
+          <div class="table-chain" aria-label="Tabellenkette users, likes und photos mit Lücken für die Kardinalität">
+            <div class="schema-node"><pre><code>users(
+  id: int
+  username: varchar(255)
+  …
+)</code></pre></div>
+            <div class="association-connector">
+              <label class="cardinality-gap"><span class="sr-only">Kardinalität bei users</span><input id="r6-users-cardinality" type="text" maxlength="1" inputmode="text" autocomplete="off" aria-label="Kardinalität bei users" placeholder="?"></label>
+              <i aria-hidden="true"></i>
+              <label class="cardinality-gap"><span class="sr-only">Kardinalität bei likes, Seite users</span><input id="r6-likes-a-cardinality" type="text" maxlength="1" inputmode="text" autocomplete="off" aria-label="Kardinalität bei likes, Seite users" placeholder="?"></label>
+            </div>
+            <div class="schema-node"><pre><code>likes(
+  id: int
+  photo_id[photos]: int
+  user_id[users]: int
+  created_at: date
+  updated_at: date
+)</code></pre></div>
+            <div class="association-connector">
+              <label class="cardinality-gap"><span class="sr-only">Kardinalität bei likes, Seite photos</span><input id="r6-likes-b-cardinality" type="text" maxlength="1" inputmode="text" autocomplete="off" aria-label="Kardinalität bei likes, Seite photos" placeholder="?"></label>
+              <i aria-hidden="true"></i>
+              <label class="cardinality-gap"><span class="sr-only">Kardinalität bei photos</span><input id="r6-photos-cardinality" type="text" maxlength="1" inputmode="text" autocomplete="off" aria-label="Kardinalität bei photos" placeholder="?"></label>
+            </div>
+            <div class="schema-node"><pre><code>photos(
+  id: int
+  description: varchar(255)
+  …
+)</code></pre></div>
+          </div>
+          <h3 class="assignment-heading"><strong>Ergänze</strong> die Kardinalitäten. So wird users n ───── m photos mit Tabellen umgesetzt.</h3>
+          <div class="action-row"><button id="check-r6-cardinality" class="primary-button" type="button">Kardinalitäten prüfen</button></div>
+          <p id="feedback-r6-cardinality" class="feedback" aria-live="polite"></p>
+
+          <div class="help-stack">
+            <details><summary>Hilfe 1</summary><p>Die Spalte user_id in likes verweist auf users, die Spalte photo_id auf photos.</p></details>
+            <details><summary>Hilfe 2</summary><p>Achtung: photos.user_id gibt an, wer ein Foto hochgeladen hat. Wer ein Foto geliked hat, steht nur in likes.</p></details>
+            <details><summary>Hilfe 3</summary><p>Für die Kardinalitäten: Jede Zeile in likes enthält genau eine user_id und genau eine photo_id. Der Fremdschlüssel steht immer auf der n-Seite.</p></details>
+          </div>
+          <div id="r6-summary" class="short-summary" hidden><strong>Richtig:</strong> <code>users 1 ───── n likes n ───── 1 photos</code>. Ein Benutzer kann viele Likes vergeben, ein Foto viele Likes bekommen. Jede Zeile in likes gehört zu genau einem Benutzer und genau einem Foto.</div>
+        </section>
+
+        <!-- Schritt 7: follows -->
+        <section id="step-7" class="step-panel" role="tabpanel" aria-labelledby="tab-7" hidden>
+          <div class="step-heading"><span class="step-number">7</span><div><p class="step-kicker">Übertragen</p><h2>Die Hilfstabelle follows</h2></div></div>
+          <div class="scenario-card"><p>Auch Follower speichert InstaHub in einer Hilfstabelle. follower_id: wer folgt · following_id: wem gefolgt wird.</p></div>
+          <div class="schema-syntax"><pre><code>follows(
+  id: int
+  following_id[users]: int
+  follower_id[users]: int
+  created_at: date
+  updated_at: date
+)</code></pre></div>
+          <p class="table-legend">follower_id: wer folgt · following_id: wem gefolgt wird</p>
+          <div id="r7-tables" class="table-excerpts" aria-label="Tabellenauszüge users und follows"></div>
+
+          <h3 class="assignment-heading"><strong>Entscheide</strong>: Was bedeutet die Zeile mit id 947?</h3>
+          <div id="r7-f7a-choices" class="choice-list"></div>
+          <div class="action-row"><button id="check-r7-f7a" class="primary-button" type="button">Antwort 1 prüfen</button></div>
+          <p id="feedback-r7-f7a" class="feedback" aria-live="polite"></p>
+
+          <h3 class="assignment-heading">zornigerfotograf und reisejoule folgen sich gegenseitig. <strong>Kreuze an</strong>, was stimmt.</h3>
+          <div id="r7-f7b-choices" class="choice-list"></div>
+          <div class="action-row"><button id="check-r7-f7b" class="primary-button" type="button">Antwort 2 prüfen</button></div>
+          <p id="feedback-r7-f7b" class="feedback" aria-live="polite"></p>
+
+          <div class="help-stack">
+            <details><summary>Hilfe 1</summary><p>Beachte die Erklärung über der Tabelle: follower_id ist der, der folgt. following_id ist der, dem gefolgt wird.</p></details>
+            <details><summary>Hilfe 2</summary><p>Übersetze jede id mithilfe von users in einen Benutzernamen und lies die Zeile dann als Satz: »follower folgt following«.</p></details>
+            <details><summary>Hilfe 3</summary><p>Zeile 1 heißt: reisejoule folgt zornigerfotograf. Vergleiche damit Zeile 2.</p></details>
+          </div>
+          <div id="r7-summary" class="short-summary" hidden><strong>Richtig:</strong> follows ist die Hilfstabelle zu <code>users n ───── m users</code>. Beide Fremdschlüssel verweisen auf users, und jede Zeile beschreibt eine Richtung. In InstaHub sind likes, comments und follows solche Hilfstabellen.</div>
+        </section>
+
+        <!-- Schritt 8: Abschlussquiz -->
+        <section id="step-8" class="step-panel" role="tabpanel" aria-labelledby="tab-8" hidden>
+          <div class="step-heading"><span class="step-number">8</span><div><p class="step-kicker">Sichern</p><h2>Abschlussquiz</h2></div></div>
+          <div class="scenario-card"><p>Kreuze alle richtigen Antworten an. Bei manchen Fragen sind mehrere Antworten richtig.</p></div>
+          <form id="final-quiz" class="final-quiz" novalidate>
+            <fieldset><legend><span>1</span> Klasse 1 ───── 1 Klassenleiter: Wo darf der Fremdschlüssel stehen?</legend><div id="quiz-q1" class="choice-list"></div></fieldset>
+            <fieldset><legend><span>2</span> Was gilt für die Hilfstabelle einer n:m-Beziehung?</legend><div id="quiz-q2" class="choice-list"></div></fieldset>
+            <fieldset><legend><span>3</span> users n ───── m photos (kann liken): Was bedeutet das?</legend><div id="quiz-q3" class="choice-list"></div></fieldset>
+            <fieldset><legend><span>4</span> In likes steht die Zeile user_id 18, photo_id 14. Was bedeutet sie?</legend><div id="quiz-q4" class="choice-list"></div></fieldset>
+            <fieldset><legend><span>5</span> Was gilt für die Tabelle follows?</legend><div id="quiz-q5" class="choice-list"></div></fieldset>
+            <div class="action-row"><button class="primary-button" type="submit">Quiz auswerten</button></div>
+            <p id="feedback-step8" class="feedback" aria-live="polite"></p>
+          </form>
+        </section>
+
+        <!-- Übersicht -->
+        <section id="step-summary" class="step-panel summary-panel" role="tabpanel" aria-labelledby="tab-summary" hidden>
+          <div class="step-heading"><span class="step-number complete">✓</span><div><p class="step-kicker">Abschlussübersicht</p><h2>Beziehungsarten auf einen Blick</h2></div></div>
+          <div class="summary-key-points">
+            <article><h3>1:1-Beziehung</h3><code>Klasse 1 ───── 1 Klassenleiter</code><p>Zu einem Objekt gehört genau ein Objekt der anderen Klasse – in beide Richtungen. Der Fremdschlüssel steht in einer der beiden Tabellen.</p></article>
+            <article><h3>n:m-Beziehung</h3><code>users n ───── m photos</code><p>Auf beiden Seiten können viele Objekte beteiligt sein. Zwei verschiedene Buchstaben, weil die beiden Anzahlen unabhängig voneinander sind.</p></article>
+            <article><h3>Hilfstabelle</h3><code>users 1 ── n likes n ── 1 photos</code><p>Bei der Umsetzung von n:m-Beziehungen entsteht eine neue (Hilfs-)Tabelle. Diese enthält die Primärschlüssel beider Klassen als Fremdschlüssel.</p></article>
+          </div>
+          <div id="answer-summary" class="answer-summary"></div>
+
+          <div class="summary-actions"><button id="reset-module" class="secondary-button" type="button">Modul neu beginnen</button><a class="secondary-button" href="../index.html">Zur Aufgabenübersicht</a></div>
+        </section>
+
+      </section>
+    </main>
+  </body>
+</html>
