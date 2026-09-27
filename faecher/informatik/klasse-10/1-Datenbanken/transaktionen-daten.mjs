@@ -10,9 +10,9 @@
  * beziehungsarten-daten.mjs), nicht neu erfunden.
  */
 
-import { SCHUELER, AG, TEILNAHME } from "./beziehungsarten-daten.mjs";
+import { SCHUELER, AG, TEILNAHME, truncateDescription, evaluateQuizQuestion, correctQuizOptionIds } from "./beziehungsarten-daten.mjs";
 
-export { SCHUELER, AG, TEILNAHME };
+export { SCHUELER, AG, TEILNAHME, truncateDescription, evaluateQuizQuestion, correctQuizOptionIds };
 
 // ---------------------------------------------------------------------------
 // users_photos: gemeinsame Übungstabelle für R2–R4 (Redundanz aus Aufgabe 2).
@@ -50,14 +50,6 @@ export const USERS_PHOTOS_START = Object.freeze([
     photoId: 653,
   }),
 ]);
-
-// Anzeige: gekürzt auf höchstens `max` Zeichen, mit " …" versehen (identisch
-// zur Kürzung aus Aufgabe 8, siehe beziehungsarten-daten.mjs).
-export function truncateDescription(text, max = 60) {
-  const characters = [...String(text ?? "")];
-  if (characters.length <= max) return String(text ?? "");
-  return `${characters.slice(0, max).join("").trimEnd()} …`;
-}
 
 // ---------------------------------------------------------------------------
 // LIKE-Vergleich: ohne Beachtung von Groß-/Kleinschreibung, % = beliebig
@@ -292,13 +284,3 @@ export const TRANSAKTIONEN_QUIZ = Object.freeze([
     hint: "Integrität heißt Unversehrtheit der Daten. Wer zugreifen darf, ist eine andere Frage – das ist Datenschutz.",
   }),
 ]);
-
-export function correctQuizOptionIds(question) {
-  return question.options.filter((option) => option.correct).map((option) => option.id);
-}
-
-export function evaluateQuizQuestion(question, selected) {
-  if (!Array.isArray(selected) || !selected.length) return false;
-  const correct = correctQuizOptionIds(question);
-  return correct.length === selected.length && correct.every((id) => selected.includes(id));
-}

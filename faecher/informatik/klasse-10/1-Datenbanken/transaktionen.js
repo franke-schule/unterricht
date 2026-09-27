@@ -10,7 +10,7 @@ import {
 
 const STORAGE_KEY = "informatik10-datenbanken-aufgabe9-v1";
 const STEP_TITLES = ["Datenpflege", "Namen ändern", "Fotos löschen", "Foto einfügen", "Regeln", "Schule", "Abschlussquiz"];
-const TAB_ITEMS = [...STEP_TITLES.map((label, index) => ({ id: index + 1, label })), { id: "summary", label: "Übersicht" }];
+const TAB_ITEMS = [...STEP_TITLES.map((label, index) => ({ id: index + 1, label })), { id: "summary", label: "Auswertung" }];
 
 const STEP_SUBTASKS = {
   1: ["s1-drag", "s1-f1b"],
@@ -536,12 +536,19 @@ function checkS1Drag() {
   if (dragState[1] === "UPDATE" && dragState[3] === "INSERT") { setFeedback("s1-drag", k > 0 ? "partial" : "hint", `${prefix} Beim Hochladen entsteht ein neuer Datensatz (insert = einfügen). Beim Ändern der Beschreibung bleibt das Foto erhalten, nur ein Wert wird ersetzt (update = aktualisieren).`); return; }
   setFeedback("s1-drag", k > 0 ? "partial" : "hint", `${prefix} Übersetze die Befehle ins Deutsche: insert, update, delete.`);
 }
+function s1F1bIncomplete(selected, correctIds) {
+  const missing = correctIds.filter((id) => !selected.includes(id));
+  if (missing.length === 1) {
+    return "Teilweise korrekt: Deine Auswahl stimmt, es fehlt aber noch ein Befehl. Überlege bei jeder Situation: Ist danach etwas gespeichert, ersetzt oder gelöscht?";
+  }
+  return "Teilweise korrekt: Deine Auswahl stimmt, es fehlen aber noch zwei Befehle. Überlege bei jeder Situation: Ist danach etwas gespeichert, ersetzt oder gelöscht?";
+}
 function checkS1F1b() {
   checkChecklist({
     name: "s1-f1b", assign: (v) => { state.s1.f1b = v; }, options: S1_F1B_OPTIONS,
     emptyMessage: "Noch nicht korrekt: Kreuze mindestens einen Befehl an.",
     successMessage: "Richtig: INSERT, UPDATE und DELETE verändern den Datenbestand. SELECT liest nur – danach sind die Daten genau wie vorher.",
-    incompleteMessage: "Teilweise korrekt: Deine Auswahl stimmt, es fehlt aber noch ein Befehl. Überlege bei jeder Situation: Ist danach etwas gespeichert, ersetzt oder gelöscht?",
+    incompleteMessage: s1F1bIncomplete,
     feedbackId: "s1-f1b", subtaskId: "s1-f1b", onSolved: maybeRevealS1Merke,
   });
 }
@@ -752,7 +759,7 @@ function renderTabs() {
   tabs.innerHTML = STEP_TITLES.map((title, index) => {
     const step = index + 1;
     return `<button id="tab-${step}" class="step-tab ${state.completed.includes(step) ? "is-complete" : ""}" type="button" role="tab" aria-controls="step-${step}" aria-selected="${state.currentStep === step}" data-step="${step}"><span>${step}</span><small>${title}</small></button>`;
-  }).join("") + `<button id="tab-summary" class="step-tab" type="button" role="tab" aria-controls="step-summary" aria-selected="${state.currentStep === "summary"}" data-step="summary" ${state.summaryUnlocked ? "" : "hidden"}><span>✓</span><small>Übersicht</small></button>`;
+  }).join("") + `<button id="tab-summary" class="step-tab" type="button" role="tab" aria-controls="step-summary" aria-selected="${state.currentStep === "summary"}" data-step="summary" ${state.summaryUnlocked ? "" : "hidden"}><span>✓</span><small>Auswertung</small></button>`;
   tabs.querySelectorAll("button").forEach((button) => button.addEventListener("click", () => navigateTo(button.dataset.step === "summary" ? "summary" : Number(button.dataset.step))));
   enableTabKeyboardNavigation(tabs);
   syncTabSemantics(tabs, state.currentStep);
