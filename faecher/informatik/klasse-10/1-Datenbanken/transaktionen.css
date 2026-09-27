@@ -1,0 +1,48 @@
+/* Aufgabe 9 – additive Ergänzungen zu redundanzen.css, tabellenschema.css,
+   beziehungen.css und beziehungsarten.css. Keine Änderung an gemeinsamem
+   CSS; alles hier ist scoped auf .transactions-page bzw. auf neue, additive
+   Klassen. Absichtlich KEIN Import von relation-types-page-Regeln (9-Spalten-
+   Tab-Grid) – die Seite bleibt bei den 8 Spalten aus redundanzen.css. */
+
+/* identisch zu sql-lab.css (Zeile 18); Präzedenz: grundlagen.css lädt sql-lab.css
+   auf dieser Seite nicht, daher hier erneut definiert. */
+.given-sql { overflow-x: auto; margin: 14px 0 0; padding: 12px; border: 1px solid #d7e4f3; border-radius: 10px; background: #f4f8fc; color: #163e6b; white-space: pre-wrap; font: 0.9rem/1.45 "SFMono-Regular", Consolas, monospace; }
+
+/* -------------------------------------------------------------------------
+   Tabellen: schmalere Mindestbreite als redundanzen.css (kompakter, damit
+   Anweisung, Umschalter und Tabelle auf dem Desktop ohne Scrollen sichtbar
+   sind) und feste Spaltenbreiten.
+   ------------------------------------------------------------------------- */
+.transactions-page .data-table { min-width: 640px; }
+.transactions-page .data-table th:nth-child(1), .transactions-page .data-table td:nth-child(1) { width: 16%; }
+.transactions-page .data-table th:nth-child(2), .transactions-page .data-table td:nth-child(2) { width: 16%; }
+.transactions-page .data-table th:nth-child(3), .transactions-page .data-table td:nth-child(3) { width: 22%; }
+.transactions-page .data-table th:nth-child(4), .transactions-page .data-table td:nth-child(4) { width: 34%; }
+.transactions-page .data-table th:nth-child(5), .transactions-page .data-table td:nth-child(5) { width: 12%; }
+.transactions-page .table-scroll:focus-visible { outline: 3px solid rgba(23, 99, 213, 0.35); outline-offset: 2px; }
+
+/* Zellen und Zeilen */
+.cell-changed { background: #fff2c8; font-weight: 700; }
+.row-deleted td { color: #8a97a7; text-decoration: line-through; }
+.row-status.deleted { background: #fde3e3; color: #9d2632; }
+.execution-status { margin: 10px 0 18px; color: var(--db-muted); font-size: 0.86rem; }
+
+/* Text-Karten für R5/R6: Gründe bzw. Integritätsbedingungen als Fließtext
+   statt Monospace-Befehl. */
+.drag-token.text-token, .drop-slot.text-slot { font-family: inherit; white-space: normal; text-align: left; }
+.drag-token.text-token { min-width: 160px; }
+.drop-slot.text-slot { min-width: 160px; }
+
+.transactions-page .drag-row { grid-template-columns: minmax(180px, 1fr) minmax(200px, 320px); align-items: start; }
+.transactions-page .drag-row pre.given-sql { margin: 6px 0 0; }
+
+/* Drei Tabellenauszüge nebeneinander (R6: schueler, ag, teilnahme). */
+.transactions-page .table-excerpts.three-up { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+
+@media (max-width: 760px) {
+  .transactions-page .table-excerpts.three-up { grid-template-columns: 1fr; }
+}
+
+@media (max-width: 650px) {
+  .transactions-page .drag-row { grid-template-columns: 1fr; }
+}
