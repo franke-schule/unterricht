@@ -287,7 +287,10 @@ assert.equal(
   'sql-b3-1',
   'inf10-db-a1-primaerschluessel',
   'inf10-db-a2-aufteilung',
-  'ph11-wdh2-quiz-crashtest-beschreibung'
+  'ph11-wdh2-quiz-crashtest-beschreibung',
+  'ph11-a3-quiz-karussell-beschreibung',
+  'ph11-a3-quiz-ursache-beschreibung',
+  'ph11-a3-quiz-schnur-beschreibung'
 ].forEach(
   function(taskId) {
     const sqlDescriptionGet =
