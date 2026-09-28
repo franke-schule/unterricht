@@ -56,10 +56,32 @@
     \vspace{0.5mm}{\color{white}\large #2}
   \end{tcolorbox}}
 \newcommand{\subline}[1]{\vspace{1mm}{\large\bfseries\color{navy}#1}\par}
+\newcommand{\vergleichsbaum}[4]{%
+\begin{tikzpicture}[font=\small,every node/.style={align=center},
+  decision/.style={draw=navy,fill=lightblue,rounded corners=1mm,minimum width=29mm,minimum height=8mm},
+  leaf/.style={draw=midgray,fill=lightgray,rounded corners=1mm,minimum width=25mm,minimum height=8mm}]
+  \node[decision] (root) at (0,0) {#1};
+  \node[leaf] (firstyes) at (-5.3,-1.1) {#2};
+  \node[decision] (second) at (3.3,-1.1) {#3};
+  \node[leaf] (secondyes) at (0.1,-2.2) {#4};
+  \node[decision] (tongue) at (5.4,-2.2) {Zunge raus?};
+  \node[leaf] (tongueyes) at (2.5,-3.3) {beißt nicht};
+  \node[decision] (smile) at (7.5,-3.3) {Lächelt der Mund?};
+  \node[leaf] (smileyes) at (5.5,-4.4) {beißt};
+  \node[leaf] (smileno) at (9.5,-4.4) {beißt nicht};
+  \draw (root) -- node[above left,font=\footnotesize]{Ja} (firstyes);
+  \draw (root) -- node[above right,font=\footnotesize]{Nein} (second);
+  \draw (second) -- node[above left,font=\footnotesize]{Ja} (secondyes);
+  \draw (second) -- node[above right,font=\footnotesize]{Nein} (tongue);
+  \draw (tongue) -- node[above left,font=\footnotesize]{Ja} (tongueyes);
+  \draw (tongue) -- node[above right,font=\footnotesize]{Nein} (smile);
+  \draw (smile) -- node[above left,font=\footnotesize]{Ja} (smileyes);
+  \draw (smile) -- node[above right,font=\footnotesize]{Nein} (smileno);
+\end{tikzpicture}}
 
 \begin{document}
 
-\sheettitle{Zwei Bäume im Vergleich}{Entscheidungsbäume · Sicherungsblatt zu Aufgabe 2 · Informatik 11}
+\sheettitle{Trainings- und Testdaten}{Entscheidungsbäume · Sicherungsblatt zu Aufgabe 2.1 · Informatik 11}
 
 \sectionline{1. Trainings- und Testdaten}
 
@@ -83,10 +105,49 @@ Beispielen kann ein Entscheidungsbaum Regeln für die Klassifikation neuer Äffc
 
 \begin{merke}
 Die Trennung verhindert, dass ein Modell nur an bereits bekannten Daten gut wirkt. Erst neue Testdaten zeigen,
-wie zuverlässig seine \fach{Vorhersagen} sind. \\
-Zwei Entscheidungsbäume können dieselben Trainingsdaten vollständig richtig klassifizieren und bei unbekannten
-Testdaten trotzdem unterschiedlich gut funktionieren. \\ Die Trainingsdaten müssen nicht jede mögliche
-Merkmalskombination enthalten.
+wie zuverlässig seine \fach{Vorhersagen} sind.
+\end{merke}
+
+\newpage
+\sheettitle{Zwei Bäume im Vergleich}{Entscheidungsbäume · Sicherungsblatt zu Aufgabe 2.2 · Informatik 11}
+
+\sectionline{2. Gleiche Trainingsdaten, verschiedene Vorhersagen}
+
+Beide Bäume ordnen alle 12 Trainingsäffchen richtig ein. Sie prüfen dieselben Merkmale, aber in anderer
+Reihenfolge. Die Kanten sind mit der Antwort auf die jeweilige Frage beschriftet.
+
+\subline{Baum A: zuerst X-Augen}
+{\centering
+  \vergleichsbaum{X-Augen?}{beißt}{Zähne sichtbar?}{beißt nicht}
+\par}
+
+\subline{Baum B: zuerst sichtbare Zähne}
+{\centering
+  \vergleichsbaum{Zähne sichtbar?}{beißt nicht}{X-Augen?}{beißt}
+\par}
+
+\begin{beispiel}[title=Beispiel: Äffchen 03]
+Äffchen 03 hat \fach{X-Augen und sichtbare Zähne}. Diese Kombination kam in den Trainingsdaten nicht vor.
+Baum A erreicht über \emph{X-Augen: Ja} das Blatt \emph{beißt}. Baum B erreicht über
+\emph{Zähne sichtbar: Ja} das Blatt \emph{beißt nicht}. Das richtige Label ist \emph{beißt}.
+Sobald ein Blatt erreicht ist, wird das andere Merkmal nicht mehr geprüft.
+\end{beispiel}
+
+\begin{center}
+\begin{tabular}{lcc}
+\toprule
+ & \textbf{Baum A} & \textbf{Baum B}\\
+\midrule
+Trainingsdaten & 12 von 12 richtig & 12 von 12 richtig\\
+Testdaten & 8 von 8 richtig & 7 von 8 richtig\\
+\bottomrule
+\end{tabular}
+\end{center}
+
+\begin{merke}
+Zwei Entscheidungsbäume können dieselben Trainingsdaten vollständig richtig klassifizieren und bei
+unbekannten Testdaten trotzdem unterschiedlich gut funktionieren.\\
+Die Trainingsdaten müssen nicht jede mögliche Merkmalskombination enthalten.
 \end{merke}
 
 \end{document}

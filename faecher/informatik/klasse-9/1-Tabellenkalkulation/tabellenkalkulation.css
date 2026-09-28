@@ -899,13 +899,6 @@ body.is-filling-sheet {
   background: #f9fafb;
 }
 
-.tool-embed iframe {
-  display: block;
-  width: 100%;
-  min-height: 680px;
-  border: 0;
-}
-
 .tool-placeholder {
   margin: 0;
   padding: 1rem;

@@ -5,7 +5,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Aufgabe 5b – WENN-Funktion als Datenflussdiagramm</title>
     <link rel="stylesheet" href="../../../../styles.css?v=20260821">
-    <link rel="stylesheet" href="tabellenkalkulation.css?v=20260924">
+    <link rel="stylesheet" href="tabellenkalkulation.css?v=20260928-dfd-cleanup">
+    <link rel="stylesheet" href="dfd-editor.css?v=20260928-tool">
   </head>
   <body>
     <div class="site-backdrop" aria-hidden="true"></div>
@@ -312,8 +313,11 @@
 
           <h3>Korrigiertes Diagramm zeichnen</h3>
           <div class="work-order"><strong>Arbeitsauftrag 5:</strong> Zeichne das korrigierte Datenflussdiagramm in dein Heft.</div>
+          <p>Übertrage deine Zeichnung anschließend in das Werkzeug und nutze „Diagramm prüfen“.</p>
           <div class="tool-embed">
-            <p class="tool-placeholder">Hier erscheint bald ein Werkzeug zum Zeichnen von Datenflussdiagrammen.</p>
+            <div id="dfd-editor-gewinnspiel"></div>
+            <button id="dfd-check-gewinnspiel" class="primary-action" type="button">Diagramm prüfen</button>
+            <section id="dfd-feedback-gewinnspiel" class="result" aria-live="polite" role="status" hidden></section>
           </div>
           <details class="dfd-selfcheck">
             <summary>Selbstkontrolle anzeigen</summary>
@@ -1098,6 +1102,23 @@
           const summary = document.getElementById("quiz-summary");
           if (summary) summary.hidden = false;
         }
+      })();
+    </script>
+    <script src="dfd-functions.js?v=20260928-review1"></script>
+    <script src="dfd-editor.js?v=20260928-review1"></script>
+    <script src="dfd-task-checks.js?v=20260928-tool"></script>
+    <script>
+      (() => {
+        const editorRoot = document.getElementById("dfd-editor-gewinnspiel");
+        const editor = window.DfdEditor.mount(editorRoot, { storageKey: "dfd-aufgabe5b-gewinnspiel-v1" });
+        const feedback = document.getElementById("dfd-feedback-gewinnspiel");
+        editorRoot.addEventListener("dfd:change", () => { feedback.hidden = true; });
+        document.getElementById("dfd-check-gewinnspiel").addEventListener("click", () => {
+          const result = window.DfdTaskChecks.check("gewinnspiel", editor.getDiagram());
+          feedback.className = `result ${result.level}`;
+          feedback.textContent = result.message;
+          feedback.hidden = false;
+        });
       })();
     </script>
   </body>
