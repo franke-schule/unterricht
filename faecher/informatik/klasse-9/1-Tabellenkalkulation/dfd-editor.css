@@ -38,6 +38,23 @@
 }
 
 .dfd-editor-toolbar { border-bottom: 1px solid #d7dee8; }
+.dfd-editor-toolbar button { display: inline-flex; align-items: center; gap: .35rem; }
+.dfd-editor-toolbar button[data-tool="input"],
+.dfd-editor-toolbar button[data-tool="constant"],
+.dfd-editor-toolbar button[data-tool="function"],
+.dfd-editor-toolbar button[data-tool="splitter"],
+.dfd-editor-toolbar button[data-tool="output"] { touch-action: none; cursor: grab; }
+.dfd-editor-toolbar button.is-dragging { cursor: grabbing; }
+.dfd-editor-tool-icon { width: 34px; height: 25px; flex: none; }
+.dfd-editor-tool-icon rect, .dfd-editor-tool-icon circle { stroke-width: 2; }
+.dfd-editor-tool-icon text { fill: #172033; font: 700 13px Arial, sans-serif; }
+.dfd-editor-tool-input rect, .dfd-editor-tool-output rect { fill: #e8f7ee; stroke: #15803d; }
+.dfd-editor-tool-constant rect { fill: #f1f5f9; stroke: #64748b; }
+.dfd-editor-tool-function rect { fill: #eff6ff; stroke: var(--dfd-blue, #1d4ed8); }
+.dfd-editor-tool-splitter circle { fill: #facc15; stroke: #92400e; }
+.dfd-editor-tool-connect path, .dfd-editor-tool-delete path { fill: none; stroke: var(--dfd-blue, #1d4ed8); stroke-width: 2.5; stroke-linecap: round; stroke-linejoin: round; }
+.dfd-editor-tool-delete path { stroke: #b45309; }
+.dfd-editor-drag-preview { position: fixed; z-index: 1000; display: flex; align-items: center; gap: .35rem; padding: .35rem .55rem; border: 2px solid var(--sheet-accent-dark, #1d4ed8); border-radius: 6px; background: #fff; box-shadow: 0 4px 14px #17203333; pointer-events: none; transform: translate(12px, 12px); }
 .dfd-editor-actions { border-top: 1px solid #d7dee8; }
 .dfd-editor-actions [data-dfd-action="calculate"] { color: #fff; background: var(--dfd-blue); }
 .dfd-editor-actions [data-dfd-action="calculate"]:hover { background: #1e40af; }
@@ -58,6 +75,7 @@
   touch-action: pan-x pan-y;
 }
 .dfd-editor-viewport.is-placing { cursor: crosshair; }
+.dfd-editor-viewport.is-drop-target { outline: 3px dashed var(--dfd-blue); outline-offset: -5px; background: #eff6ff; }
 .dfd-editor-svg { display: block; width: 100%; min-width: 670px; height: auto; }
 .dfd-editor-background { fill: #fff; }
 
@@ -88,6 +106,10 @@
 .dfd-editor-edge { fill: none; stroke: var(--dfd-blue); stroke-width: 2.5; pointer-events: none; }
 .dfd-editor-edge.is-selected { stroke: #b45309; stroke-width: 4; }
 .dfd-editor-edge-hit { fill: none; stroke: transparent; stroke-width: 18; cursor: pointer; }
+.dfd-editor-connection-preview { fill: none; stroke: var(--dfd-blue); stroke-width: 3; stroke-dasharray: 7 5; pointer-events: none; }
+.dfd-editor-connector { fill: #fff; stroke: var(--dfd-blue); stroke-width: 2.5; cursor: crosshair; touch-action: none; }
+.dfd-editor-connector:hover, .dfd-editor-connector.is-active { fill: #bfdbfe; stroke-width: 3; }
+.dfd-editor-connector:focus-visible { outline: none; stroke: #b45309; stroke-width: 4; }
 .dfd-editor-node { cursor: grab; touch-action: none; }
 .dfd-editor-node:active { cursor: grabbing; }
 .dfd-editor-node rect,

@@ -17,6 +17,26 @@
     Object.entries(attrs).forEach(([key, value]) => element.setAttribute(key, String(value)));
     return element;
   };
+  function toolIcon(key) {
+    const icon = svgElement("svg", { viewBox: "0 0 40 28", class: `dfd-editor-tool-icon dfd-editor-tool-${key}`, "aria-hidden": "true" });
+    const addText = (value, x = 20) => {
+      const label = svgElement("text", { x, y: 18, "text-anchor": "middle" });
+      label.textContent = value;
+      icon.append(label);
+    };
+    if (["input", "constant", "function", "output"].includes(key)) {
+      icon.append(svgElement("rect", { x: 3, y: 4, width: 34, height: 20, rx: key === "function" ? 8 : 3 }));
+      addText({ input: "E", constant: "1", function: "+", output: "A" }[key]);
+    } else if (key === "splitter") {
+      icon.append(svgElement("circle", { cx: 20, cy: 14, r: 10 }));
+      addText("•");
+    } else if (key === "connect") {
+      icon.append(svgElement("path", { d: "M 4 14 H 32 M 25 7 L 33 14 L 25 21" }));
+    } else if (key === "delete") {
+      icon.append(svgElement("path", { d: "M 11 5 L 29 23 M 29 5 L 11 23" }));
+    }
+    return icon;
+  }
   const option = (value, label) => {
     const element = document.createElement("option");
     element.value = value;
@@ -83,6 +103,7 @@
     let diagram = api.createEmptyDocument();
     let inputValues = {};
     let selectedNode = null, selectedEdge = null, activeTool = null, connectionSource = null, drag = null;
+    let connectionDrag = null, connectionPreview = null;
 
     try {
       const saved = JSON.parse(localStorage.getItem(storageKey));
@@ -99,7 +120,7 @@
     root.classList.add("dfd-editor");
     root.innerHTML = `
       <div class="dfd-editor-toolbar" role="toolbar" aria-label="Datenflussdiagramm-Werkzeuge"></div>
-      <p class="dfd-editor-hint">Wähle einen Baustein und tippe auf die Zeichenfläche. Mit „Datenfluss“ verbindest du zwei Bausteine.</p>
+      <p class="dfd-editor-hint">Ziehe einen Baustein auf die Zeichenfläche oder wähle ihn aus und tippe auf eine Stelle. Für einen Datenfluss ziehe vom unteren Anschluss eines Bausteins zum oberen Anschluss des nächsten. Antippen funktioniert ebenfalls.</p>
       <div class="dfd-editor-layout">
         <div class="dfd-editor-viewport" tabindex="0" role="region" aria-label="Zeichenfläche für Datenflussdiagramm; mit Enter Baustein in der Mitte einfügen">
           <svg class="dfd-editor-svg" viewBox="0 0 960 640" role="group" aria-label="Bearbeitbares Datenflussdiagramm"></svg>
@@ -138,6 +159,11 @@
       return { x: Math.max(30, Math.min(WIDTH - 30, (event.clientX - box.left) * WIDTH / box.width)),
         y: Math.max(30, Math.min(HEIGHT - 30, (event.clientY - box.top) * HEIGHT / box.height)) };
     };
+    const onCanvas = (x, y) => {
+      const visible = viewport.getBoundingClientRect(), box = svg.getBoundingClientRect();
+      return x >= visible.left && x <= visible.right && y >= visible.top && y <= visible.bottom &&
+        x >= box.left && x <= box.right && y >= box.top && y <= box.bottom;
+    };
 
     function add(type, position) {
       try {
@@ -150,15 +176,59 @@
 
     for (const [key, label] of [["input", "Eingabe"], ["constant", "Konstante"], ["function", "Funktion"], ["splitter", "Verteiler"], ["output", "Ausgabe"], ["connect", "Datenfluss"], ["delete", "Löschen"]]) {
       const button = document.createElement("button");
-      button.type = "button"; button.dataset.tool = key; button.textContent = label;
+      button.type = "button"; button.dataset.tool = key;
+      button.append(toolIcon(key), document.createTextNode(label));
       button.addEventListener("click", () => {
+        if (button.dataset.dragged === "true") { delete button.dataset.dragged; return; }
         activeTool = activeTool === key ? null : key;
         connectionSource = null;
         renderToolbar();
-        setStatus(activeTool === "connect" ? "Wähle zuerst den Ausgangsbaustein, dann den Zielbaustein und seinen Eingang." :
+        renderGraph();
+        setStatus(activeTool === "connect" ? "Wähle zuerst einen Ausgang und dann den oberen Anschluss des Ziels." :
           activeTool === "delete" ? "Wähle einen Baustein oder Pfeil zum Löschen." :
-          activeTool ? `Tippe auf die Zeichenfläche, um ${label} einzufügen. Mit Enter fügst du in der Mitte ein.` : "Werkzeug abgewählt.");
+          activeTool ? `Tippe auf die Zeichenfläche, um ${label} einzufügen. Du kannst den Baustein auch hierher ziehen.` : "Werkzeug abgewählt.");
       });
+      if (Object.hasOwn(types, key)) {
+        button.addEventListener("pointerdown", (event) => {
+          if (event.button !== 0) return;
+          const start = { x: event.clientX, y: event.clientY };
+          let ghost = null;
+          button.setPointerCapture(event.pointerId);
+          const move = (current) => {
+            if (!ghost && Math.hypot(current.clientX - start.x, current.clientY - start.y) < 6) return;
+            if (!ghost) {
+              ghost = document.createElement("div");
+              ghost.className = "dfd-editor-drag-preview";
+              ghost.append(toolIcon(key), document.createTextNode(label));
+              document.body.append(ghost);
+              button.classList.add("is-dragging");
+            }
+            ghost.style.left = `${current.clientX}px`;
+            ghost.style.top = `${current.clientY}px`;
+            viewport.classList.toggle("is-drop-target", onCanvas(current.clientX, current.clientY));
+          };
+          const end = (current) => {
+            button.removeEventListener("pointermove", move);
+            button.removeEventListener("pointerup", end);
+            button.removeEventListener("pointercancel", end);
+            if (button.hasPointerCapture(current.pointerId)) button.releasePointerCapture(current.pointerId);
+            viewport.classList.remove("is-drop-target");
+            button.classList.remove("is-dragging");
+            if (!ghost) return;
+            ghost.remove();
+            button.dataset.dragged = "true";
+            window.setTimeout(() => { delete button.dataset.dragged; }, 0);
+            if (current.type === "pointerup" && onCanvas(current.clientX, current.clientY)) {
+              activeTool = null;
+              renderToolbar();
+              add(key, point(current));
+            } else setStatus("Lege den Baustein auf der Zeichenfläche ab.");
+          };
+          button.addEventListener("pointermove", move);
+          button.addEventListener("pointerup", end);
+          button.addEventListener("pointercancel", end);
+        });
+      }
       toolbar.append(button);
     }
 
@@ -179,7 +249,9 @@
       const to = diagram.nodes.find((node) => node.id === edge.to);
       if (!from || !to) return "";
       const a = portPosition(from, 0, true), b = portPosition(to, edge.port);
-      if (b.y <= a.y + 20) {
+      a.y += 9;
+      b.y -= 9;
+      if (b.y <= a.y) {
         const right = b.x >= a.x;
         const channel = right
           ? Math.min(WIDTH - 14, Math.max(a.x + shape(from).w / 2, b.x + shape(to).w / 2) + 38)
@@ -228,6 +300,19 @@
             mark.textContent = node.functionId === "WENN" ? ["B", "Ja", "Nein"][port] : String(port + 1);
             group.append(mark);
           }
+        }
+        if (node.type !== "output") {
+          const p = portPosition(node, 0, true);
+          group.append(svgElement("circle", { cx: p.x, cy: p.y, r: 9, "data-output-node": node.id,
+            tabindex: 0, role: "button", "aria-label": `Datenfluss bei ${displayLabel(node)} beginnen`,
+            class: `dfd-editor-connector dfd-editor-output-port${connectionSource === node.id ? " is-active" : ""}` }));
+        }
+        for (let port = 0; port < countPorts(node); port++) {
+          const p = portPosition(node, port);
+          group.append(svgElement("circle", { cx: p.x, cy: p.y, r: 9, "data-input-node": node.id,
+            "data-port": port, tabindex: 0, role: "button",
+            "aria-label": `Datenfluss bei ${displayLabel(node)} an ${portName(node, port)} anschließen`,
+            class: "dfd-editor-connector dfd-editor-input-port" }));
         }
         svg.append(group);
       }
@@ -345,7 +430,7 @@
       if (!node) return;
       if (activeTool === "delete") { removeNode(id); return; }
       if (activeTool === "connect") {
-        if (!connectionSource) { connectionSource = id; setStatus(`Ausgang ${node.label} gewählt. Wähle jetzt den Zielbaustein.`); return; }
+        if (!connectionSource) { startConnection(id); return; }
         if (connectionSource === id) { setStatus("Wähle einen anderen Zielbaustein."); return; }
         const target = node;
         const ports = countPorts(target);
@@ -374,12 +459,79 @@
       choice.querySelector("select").focus();
     }
 
+    function startConnection(id) {
+      const node = diagram.nodes.find((item) => item.id === id);
+      if (!node || node.type === "output") { setStatus("Eine Ausgabe hat keinen Ausgang."); return; }
+      const keyboardFocus = document.activeElement?.getAttribute("data-output-node") === id;
+      connectionSource = id;
+      activeTool = "connect";
+      renderToolbar(); renderGraph();
+      if (keyboardFocus) svg.querySelector(`[data-output-node="${id}"]`)?.focus();
+      setStatus(`Ausgang von ${displayLabel(node)} gewählt. Tippe auf einen oberen Anschluss oder ziehe den Pfeil dorthin.`);
+    }
+    function connectTo(id, port) {
+      if (!connectionSource) { setStatus("Wähle zuerst einen unteren Ausgang."); return; }
+      try {
+        const source = connectionSource;
+        const result = connect(diagram, source, id, port);
+        diagram = result.document;
+        connectionSource = null; activeTool = null;
+        changed();
+        svg.querySelector(`[data-edge="${result.edge.id}"]`)?.focus();
+        const target = diagram.nodes.find((node) => node.id === id);
+        setStatus(`Datenfluss ${displayLabel(diagram.nodes.find((node) => node.id === source))} → ${displayLabel(target)} (${portName(target, port)}) verbunden.`);
+      } catch (error) { setStatus(error.message); }
+    }
+    function nearestPort(node, x) {
+      let best = 0, distance = Infinity;
+      for (let port = 0; port < countPorts(node); port++) {
+        const gap = Math.abs(portPosition(node, port).x - x);
+        if (gap < distance) { best = port; distance = gap; }
+      }
+      return best;
+    }
+    function connectionTarget(x, y) {
+      const hit = document.elementFromPoint(x, y);
+      const input = hit?.closest("[data-input-node]");
+      if (input && svg.contains(input)) return { id: input.dataset.inputNode, port: Number(input.dataset.port) };
+      const group = hit?.closest("[data-node]");
+      if (!group || !svg.contains(group)) return null;
+      const node = diagram.nodes.find((item) => item.id === group.dataset.node);
+      if (!node || !countPorts(node)) return null;
+      return { id: node.id, port: nearestPort(node, point({ clientX: x, clientY: y }).x) };
+    }
+    function clearConnectionPreview() {
+      connectionPreview?.remove();
+      connectionPreview = null;
+    }
+
     svg.addEventListener("pointerdown", (event) => {
       if (event.button !== 0) return;
+      const outputPort = event.target.closest("[data-output-node]");
+      const inputPort = event.target.closest("[data-input-node]");
+      if (outputPort) {
+        const id = outputPort.dataset.outputNode;
+        startConnection(id);
+        connectionDrag = { id, start: { x: event.clientX, y: event.clientY }, moved: false };
+        svg.setPointerCapture(event.pointerId);
+        event.preventDefault();
+        return;
+      }
+      if (inputPort) {
+        connectTo(inputPort.dataset.inputNode, Number(inputPort.dataset.port));
+        event.preventDefault();
+        return;
+      }
       const nodeGroup = event.target.closest("[data-node]");
       const edgeGroup = event.target.closest("[data-edge]");
       if (nodeGroup) {
         const id = nodeGroup.dataset.node;
+        if (connectionSource && id !== connectionSource && activeTool === "connect") {
+          const target = diagram.nodes.find((node) => node.id === id);
+          if (countPorts(target)) connectTo(id, nearestPort(target, point(event).x));
+          else setStatus("Dieser Baustein hat keinen Eingang.");
+          return;
+        }
         if (activeTool || !diagram.nodes.some((node) => node.id === id)) { chooseNode(id); return; }
         selectedNode = id; selectedEdge = null;
         drag = { id, start: point(event), original: { x: diagram.nodes.find((n) => n.id === id).x, y: diagram.nodes.find((n) => n.id === id).y }, moved: false };
@@ -391,6 +543,19 @@
       } else if (activeTool && !["connect", "delete"].includes(activeTool)) add(activeTool, point(event));
     });
     svg.addEventListener("pointermove", (event) => {
+      if (connectionDrag && svg.hasPointerCapture(event.pointerId)) {
+        if (!connectionDrag.moved && Math.hypot(event.clientX - connectionDrag.start.x, event.clientY - connectionDrag.start.y) < 5) return;
+        connectionDrag.moved = true;
+        if (!connectionPreview) {
+          connectionPreview = svgElement("path", { class: "dfd-editor-connection-preview", "marker-end": `url(#${uid}-arrow)` });
+          svg.append(connectionPreview);
+        }
+        const source = diagram.nodes.find((node) => node.id === connectionDrag.id);
+        const a = portPosition(source, 0, true), b = point(event);
+        a.y += 9;
+        connectionPreview.setAttribute("d", `M ${a.x} ${a.y} L ${b.x} ${b.y}`);
+        return;
+      }
       if (!drag || !svg.hasPointerCapture(event.pointerId)) return;
       const p = point(event), dx = p.x - drag.start.x, dy = p.y - drag.start.y;
       if (Math.hypot(dx, dy) < 3 && !drag.moved) return;
@@ -402,6 +567,18 @@
       renderGraph();
     });
     const endDrag = (event) => {
+      if (connectionDrag) {
+        const moved = connectionDrag.moved;
+        connectionDrag = null;
+        clearConnectionPreview();
+        if (svg.hasPointerCapture(event.pointerId)) svg.releasePointerCapture(event.pointerId);
+        if (moved && event.type === "pointerup") {
+          const target = connectionTarget(event.clientX, event.clientY);
+          if (target) connectTo(target.id, target.port);
+          else setStatus("Ziehe den Pfeil zu einem oberen Anschluss eines anderen Bausteins.");
+        }
+        return;
+      }
       if (!drag) return;
       if (svg.hasPointerCapture(event.pointerId)) svg.releasePointerCapture(event.pointerId);
       const moved = drag.moved; drag = null;
@@ -410,9 +587,17 @@
     svg.addEventListener("pointerup", endDrag);
     svg.addEventListener("pointercancel", endDrag);
     svg.addEventListener("keydown", (event) => {
+      const outputPort = event.target.closest("[data-output-node]");
+      const inputPort = event.target.closest("[data-input-node]");
+      if ((event.key === "Enter" || event.key === " ") && (outputPort || inputPort)) {
+        event.preventDefault();
+        if (outputPort) startConnection(outputPort.dataset.outputNode);
+        else connectTo(inputPort.dataset.inputNode, Number(inputPort.dataset.port));
+        return;
+      }
       const nodeGroup = event.target.closest("[data-node]");
       const edgeGroup = event.target.closest("[data-edge]");
-      if (event.key === "Escape") { activeTool = null; connectionSource = null; renderToolbar(); setStatus("Werkzeug abgewählt."); return; }
+      if (event.key === "Escape") { activeTool = null; connectionSource = null; clearConnectionPreview(); renderToolbar(); renderGraph(); setStatus("Werkzeug abgewählt."); return; }
       if ((event.key === "Enter" || event.key === " ") && nodeGroup) { event.preventDefault(); chooseNode(nodeGroup.dataset.node); return; }
       if ((event.key === "Delete" || event.key === "Backspace") && (nodeGroup || edgeGroup)) {
         event.preventDefault(); if (nodeGroup) removeNode(nodeGroup.dataset.node); else removeEdge(edgeGroup.dataset.edge); return;
