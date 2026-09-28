@@ -7,8 +7,8 @@
     <title>Aufgabe 3 – Entscheidungsbaum erstellen | Informatik 11</title>
     <link rel="stylesheet" href="../../../../styles.css?v=20260707">
     <link rel="stylesheet" href="entscheidungbaeume/styles.css?v=20260820g">
-    <link rel="stylesheet" href="entscheidungbaeume/task3.css?v=20260928a">
-    <script type="module" src="entscheidungbaeume/ui/task3.mjs?v=20260928a"></script>
+    <link rel="stylesheet" href="entscheidungbaeume/task3.css?v=20260928b">
+    <script type="module" src="entscheidungbaeume/ui/task3.mjs?v=20260928b"></script>
   </head>
   <body class="decision-tree-page dt-fish-page tabs-ready">
     <div class="site-backdrop" aria-hidden="true"></div>
@@ -42,10 +42,11 @@
 
       <section id="split-intro" class="fish-step fish-tab-panel fish-intro" role="tabpanel" tabindex="0" aria-labelledby="tab-intro split-intro-title" data-step-panel="intro" hidden>
         <div class="fish-intro-heading">
-          <div>
-            <p class="fish-kicker">Vorbereitung auf Schritt 1</p>
-            <h2 id="split-intro-title">Wie entsteht die Fehlerzahl?</h2>
-            <p id="intro-explanation" aria-live="polite">Zuerst betrachtet der Baum alle Trainingsfische als eine einzige Gruppe.</p>
+          <h2 id="split-intro-title">Wie entsteht die Fehlerzahl?</h2>
+          <div class="fish-intro-progress" aria-label="Ablauf der Erklärung">
+            <span data-intro-progress="unsplit">1 · Ohne Split</span>
+            <span data-intro-progress="split">2 · Schuppenfarbe</span>
+            <span data-intro-progress="table">3 · Tabelle ausfüllen</span>
           </div>
           <div class="intro-stepper" role="group" aria-label="Erklärung durchklicken">
             <button id="intro-prev" class="dt-secondary-button" type="button">Zurück</button>
@@ -53,22 +54,19 @@
             <button id="intro-next" class="dt-primary-button" type="button">Weiter</button>
           </div>
         </div>
-
-        <div class="fish-intro-progress" aria-label="Ablauf der Erklärung">
-          <span data-intro-progress="unsplit">1 · Ohne Split</span>
-          <span data-intro-progress="split">2 · Schuppenfarbe</span>
-          <span data-intro-progress="table">3 · Tabelle ausfüllen</span>
-        </div>
+        <p class="intro-hint"><strong>Hinweis:</strong> <strong>Klicke</strong> dich zunächst durch die Animation, <strong>bearbeite</strong> anschließend die Aufgaben.</p>
 
         <div class="fish-intro-workspace">
           <div class="fish-intro-visual">
-            <div id="intro-tree" class="intro-tree" aria-label="Entscheidungsbaum während der Erklärung"></div>
+            <div class="intro-visual-top">
+              <div id="intro-tree" class="intro-tree" aria-label="Entscheidungsbaum während der Erklärung"></div>
+              <p id="intro-explanation" class="intro-explanation" aria-live="polite">Zuerst betrachtet der Baum alle Trainingsfische als eine einzige Gruppe.</p>
+            </div>
             <div id="intro-fish-stage" class="intro-fish-stage" aria-label="Trainingsfische während der Erklärung"></div>
           </div>
 
           <div class="intro-table-card">
-            <p class="fish-kicker">Beispieltabelle</p>
-            <h3>Schuppenfarbe</h3>
+            <h3><span class="fish-kicker">Beispieltabelle</span> Schuppenfarbe</h3>
             <div class="fish-table-scroll">
               <table class="fish-table intro-table">
                 <thead><tr><th>Attributwert / Label</th><th>Friedlich</th><th>Feindselig</th><th>Fehler</th></tr></thead>
@@ -77,14 +75,13 @@
                   <tr><th>Blau</th><td id="intro-blue-peaceful" data-intro-cell>–</td><td id="intro-blue-hostile" data-intro-cell>–</td><td id="intro-blue-errors" data-intro-cell>–</td></tr>
                   <tr><th>Orange</th><td id="intro-orange-peaceful" data-intro-cell>–</td><td id="intro-orange-hostile" data-intro-cell>–</td><td id="intro-orange-errors" data-intro-cell>–</td></tr>
                   <tr><th colspan="3">Gesamtfehler nach dem Aufteilen</th><td id="intro-after" data-intro-cell>–</td></tr>
+                  <tr class="intro-gain-row"><th colspan="3">Informationsgewinn</th><td id="intro-gain" data-intro-cell>–</td></tr>
                 </tbody>
               </table>
             </div>
-            <div class="intro-gain">Informationsgewinn: <strong id="intro-gain" data-intro-cell>–</strong></div>
             <p id="intro-table-note" class="intro-table-note">Die Tabelle wird Schritt für Schritt ausgefüllt.</p>
           </div>
         </div>
-        <div class="flow-navigation" data-flow="intro"></div>
       </section>
 
       <section id="erster-split" class="fish-step fish-tab-panel" role="tabpanel" tabindex="0" aria-labelledby="tab-tables first-title" data-step-panel="tables" hidden>
