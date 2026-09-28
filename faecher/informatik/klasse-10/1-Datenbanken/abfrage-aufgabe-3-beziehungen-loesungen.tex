@@ -1,0 +1,95 @@
+\documentclass[10pt,a4paper]{article}
+
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage[ngerman]{babel}
+\usepackage[a4paper,margin=14mm]{geometry}
+\usepackage{lmodern}
+\usepackage[table]{xcolor}
+\usepackage{tabularx}
+\usepackage{microtype}
+\usepackage{tikz}
+
+% Die Lösungsfassung unterscheidet sich nur durch \solutiontrue.
+\newif\ifsolution
+\solutiontrue
+
+\pagestyle{empty}
+\setlength{\parindent}{0pt}
+\setlength{\parskip}{0pt}
+\renewcommand{\familydefault}{\sfdefault}
+
+\definecolor{Navy}{HTML}{17324D}
+\definecolor{Blue}{HTML}{3B6EA5}
+\definecolor{Gold}{HTML}{F3B33D}
+\definecolor{Ink}{HTML}{1E2935}
+\definecolor{Muted}{HTML}{617080}
+\definecolor{Line}{HTML}{D8E1E8}
+\color{Ink}
+
+\newcommand{\kopf}[1]{%
+  \colorbox{Navy}{\parbox{\dimexpr\linewidth-2\fboxsep\relax}{%
+    \vspace{1.3mm}\color{white}
+    \begin{tabularx}{\linewidth}{@{}Xr@{}}
+      {\small\bfseries INFORMATIK · KLASSE 10} &
+      \colorbox{Gold}{\color{Navy}\small\bfseries\strut\ifsolution LÖSUNGEN\else ABFRAGE\fi}
+    \end{tabularx}
+    \vspace{0.9mm}
+    {\fontsize{16}{19}\selectfont\bfseries Aufgabe 3 -- 1:n-Beziehung und Fremdschlüssel}\par
+    \vspace{0.3mm}{\small #1}\vspace{1.1mm}
+  }}\par\vspace{2mm}}
+\newcommand{\frage}[2]{%
+  \vspace{2.2mm}{\color{Blue}\bfseries\large #1 · #2}\par
+  \vspace{0.4mm}{\color{Blue}\rule{\linewidth}{0.65pt}}\par\vspace{1.4mm}}
+\newcommand{\antwortfeld}[2]{%
+  \vspace{2mm}%
+  \begin{tikzpicture}[x=1mm,y=1mm]
+    \path[use as bounding box] (0,0) rectangle (181.5,-9*#1);
+    \ifsolution
+      \node[anchor=north west,text width=179mm,inner sep=0pt,align=left,
+        font=\small,text=Blue] at (0,-1) {#2};
+    \else
+      \foreach \i in {1,...,#1}{\draw[Line,line width=.55pt] (0,-9*\i) -- (181.5,-9*\i);}
+    \fi
+  \end{tikzpicture}\par}
+\newcommand{\fuss}[1]{%
+  \vfill{\color{Line}\rule{\linewidth}{0.5pt}}\par\vspace{1mm}
+  \begin{tabularx}{\linewidth}{@{}Xr@{}}
+    {\small\color{Muted}Klasse 10 · Informatik · Datenbanken} &
+    {\small\color{Muted}\ifsolution Lösungen\else Abfrage\fi{} · Seite #1 von 2}
+  \end{tabularx}}
+
+\begin{document}
+\kopf{InstaHub · Benutzer und Fotos zuordnen}
+
+\frage{1}{Zusammengehörige Datensätze finden}
+In \texttt{users} hat der Benutzer \emph{bergcoder} die \texttt{id} 3. Die Fotos 11, 12 und 13 haben in \texttt{photos} jeweils die \texttt{user\_id} 3. \textbf{Beschreibe}, wie du erkennst, wem diese Fotos gehören.\par
+\antwortfeld{5}{Die \texttt{user\_id} jedes Fotos wird mit \texttt{users.id} verglichen. Bei den Fotos 11, 12 und 13 steht jeweils die 3. In \texttt{users} gehört die \texttt{id} 3 zu \emph{bergcoder}; deshalb gehören alle drei Fotos zu diesem Benutzer.}
+
+\frage{2}{Die 1:n-Beziehung beschreiben}
+Zwischen \texttt{users} und \texttt{photos} besteht eine 1:n-Beziehung. \textbf{Beschreibe} diese Beziehung in beide Richtungen: Wie viele Fotos kann ein Benutzer besitzen und wie viele Benutzer gehören zu einem einzelnen Foto?\par
+\antwortfeld{5}{Ein Benutzer kann mehrere Fotos besitzen. Jedes einzelne Foto gehört genau einem Benutzer. Im Klassendiagramm steht deshalb die 1 bei \texttt{users} und das n bei \texttt{photos}.}
+
+\frage{3}{Primär- und Fremdschlüssel unterscheiden}
+\textbf{Beschreibe} die Aufgaben von \texttt{users.id} und \texttt{photos.user\_id} bei der Zuordnung eines Fotos. Benenne dabei Primärschlüssel und Fremdschlüssel.\par
+\antwortfeld{5}{\texttt{users.id} ist der \textbf{Primärschlüssel}: Er identifiziert einen Benutzer eindeutig. \texttt{photos.user\_id} ist der \textbf{Fremdschlüssel}: Er enthält die ID des zugehörigen Benutzers und verweist damit auf \texttt{users.id}.}
+
+\fuss{1}
+\newpage
+
+\kopf{Fremdschlüssel anwenden · Kardinalitäten deuten}
+
+\frage{4}{Ein neues Foto zuordnen}
+Ein neues Foto mit der \texttt{id} 4 soll zum Benutzer mit der \texttt{id} 7 gehören. \textbf{Beschreibe}, welcher Wert in \texttt{photos.user\_id} stehen muss und warum die Foto-ID dafür nicht verwendet wird.\par
+\antwortfeld{5}{In \texttt{photos.user\_id} muss die 7 stehen, weil der zugehörige Benutzer die \texttt{users.id} 7 hat. Die 4 ist die ID des neuen Fotos; sie identifiziert das Foto und bestimmt nicht dessen Besitzer.}
+
+\frage{5}{Kardinalitäten auf ein neues Beispiel übertragen}
+Eine Schulklasse hat viele Schülerinnen und Schüler; jede Schülerin und jeder Schüler gehört genau einer Schulklasse. \textbf{Beschreibe}, wo in einem Klassendiagramm die Kardinalitäten \texttt{1} und \texttt{n} stehen und was sie bedeuten.\par
+\antwortfeld{5}{Die 1 steht am Ende \emph{Schulklasse}, das n am Ende \emph{Schüler}. Einer Schülerin oder einem Schüler ist genau eine Schulklasse zugeordnet; zu einer Schulklasse können viele Schülerinnen und Schüler gehören.}
+
+\frage{6}{Wiederholte Benutzer-IDs erklären}
+Die Fotos 11 und 12 haben unterschiedliche Werte in \texttt{photos.id}, aber beide den Wert 3 in \texttt{photos.user\_id}. \textbf{Beschreibe}, warum das möglich ist und welche Information jede der beiden Spalten liefert.\par
+\antwortfeld{5}{\texttt{photos.id} identifiziert jedes Foto eindeutig, hier mit 11 beziehungsweise 12. \texttt{photos.user\_id} nennt den zugehörigen Benutzer. Dieser Wert darf sich wiederholen: Beide Fotos verweisen mit der 3 auf denselben Benutzer.}
+
+\fuss{2}
+\end{document}

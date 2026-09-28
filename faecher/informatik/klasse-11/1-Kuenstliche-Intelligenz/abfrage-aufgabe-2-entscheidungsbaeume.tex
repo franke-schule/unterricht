@@ -1,0 +1,95 @@
+\documentclass[10pt,a4paper]{article}
+
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage[ngerman]{babel}
+\usepackage[a4paper,margin=14mm]{geometry}
+\usepackage{lmodern}
+\usepackage[table]{xcolor}
+\usepackage{tabularx}
+\usepackage{microtype}
+\usepackage{tikz}
+
+% Die Lösungsfassung unterscheidet sich nur durch \solutiontrue.
+\newif\ifsolution
+\solutionfalse
+
+\pagestyle{empty}
+\setlength{\parindent}{0pt}
+\setlength{\parskip}{0pt}
+\renewcommand{\familydefault}{\sfdefault}
+
+\definecolor{Navy}{HTML}{17324D}
+\definecolor{Blue}{HTML}{3B6EA5}
+\definecolor{Gold}{HTML}{F3B33D}
+\definecolor{Ink}{HTML}{1E2935}
+\definecolor{Muted}{HTML}{617080}
+\definecolor{Line}{HTML}{D8E1E8}
+\color{Ink}
+
+\newcommand{\kopf}[1]{%
+  \colorbox{Navy}{\parbox{\dimexpr\linewidth-2\fboxsep\relax}{%
+    \vspace{1.3mm}\color{white}
+    \begin{tabularx}{\linewidth}{@{}Xr@{}}
+      {\small\bfseries INFORMATIK · KLASSE 11} &
+      \colorbox{Gold}{\color{Navy}\small\bfseries\strut\ifsolution LÖSUNGEN\else ABFRAGE\fi}
+    \end{tabularx}
+    \vspace{0.9mm}
+    {\fontsize{16}{19}\selectfont\bfseries Aufgabe 2 -- Entscheidungsbäume testen}\par
+    \vspace{0.3mm}{\small #1}\vspace{1.1mm}
+  }}\par\vspace{2mm}}
+\newcommand{\frage}[2]{%
+  \vspace{2.2mm}{\color{Blue}\bfseries\large #1 · #2}\par
+  \vspace{0.4mm}{\color{Blue}\rule{\linewidth}{0.65pt}}\par\vspace{1.4mm}}
+\newcommand{\antwortfeld}[2]{%
+  \vspace{2mm}%
+  \begin{tikzpicture}[x=1mm,y=1mm]
+    \path[use as bounding box] (0,0) rectangle (181.5,-9*#1);
+    \ifsolution
+      \node[anchor=north west,text width=179mm,inner sep=0pt,align=left,
+        font=\small,text=Blue] at (0,-1) {#2};
+    \else
+      \foreach \i in {1,...,#1}{\draw[Line,line width=.55pt] (0,-9*\i) -- (181.5,-9*\i);}
+    \fi
+  \end{tikzpicture}\par}
+\newcommand{\fuss}[1]{%
+  \vfill{\color{Line}\rule{\linewidth}{0.5pt}}\par\vspace{1mm}
+  \begin{tabularx}{\linewidth}{@{}Xr@{}}
+    {\small\color{Muted}Klasse 11 · Informatik · Künstliche Intelligenz} &
+    {\small\color{Muted}\ifsolution Lösungen\else Abfrage\fi{} · Seite #1 von 2}
+  \end{tabularx}}
+
+\begin{document}
+\kopf{Aufgabe 2.1 · Trainingsdaten und unbekannte Testdaten}
+
+\frage{1}{Trainings- und Testdaten unterscheiden}
+\textbf{Beschreibe}, wofür gelabelte Trainingsdaten und gelabelte Testdaten bei einem Entscheidungsbaum verwendet werden. Warum sollen die Testdaten beim Erstellen des Baums unbekannt bleiben?\par
+\antwortfeld{5}{Mit den \textbf{gelabelten Trainingsdaten} wird der Entscheidungsbaum erstellt. Die ebenfalls gelabelten \textbf{Testdaten} bleiben dabei unbekannt und werden erst danach zum Prüfen seiner Vorhersagen verwendet. Sonst würde der Test mit bereits bekannten Beispielen die Qualität des Baums bei neuen Daten nicht zuverlässig zeigen.}
+
+\frage{2}{Ein Äffchen testen}
+\textbf{Beschreibe} den Ablauf eines Testdurchlaufs: Was geschieht mit einem unbekannten Äffchen von der Vorhersage des fertigen Baums bis zum Aufdecken des tatsächlichen Labels? Gehe auch darauf ein, warum der Baum während des Tests gesperrt ist.\par
+\antwortfeld{5}{Das unbekannte Äffchen durchläuft den fertigen Baum bis zu einem Blatt; dort entsteht die Vorhersage „Beißt“ oder „Beißt nicht“. Danach wird das tatsächliche Label aufgedeckt und mit der Vorhersage verglichen. Der Baum bleibt gesperrt, damit er nicht anhand der Testdaten verändert wird.}
+
+\frage{3}{Eine Fehlklassifikation einordnen}
+Ein Baum sagt für ein Testäffchen „Beißt“ voraus; das tatsächliche Label lautet „Beißt nicht“. \textbf{Beschreibe}, was hier schiefgegangen ist und in welches Feld der Konfusionsmatrix dieser Fall gehört.\par
+\antwortfeld{4}{Der Baum sagt „Beißt“, obwohl das Äffchen tatsächlich nicht beißt. Das ist ein \textbf{falsch positives Ergebnis (FP)}: In der Konfusionsmatrix gehört es in die Zeile „Vorhersage: Beißt“ und die Spalte „Tatsächlich: Beißt nicht“.}
+
+\fuss{1}
+\newpage
+
+\kopf{Aufgabe 2.2 · Zwei Entscheidungsbäume im Vergleich}
+
+\frage{4}{Trainingsergebnis und Testergebnis deuten}
+Ein Entscheidungsbaum ordnet alle Trainingsäffchen richtig ein, macht bei unbekannten Testäffchen aber Fehler. \textbf{Beschreibe}, was die beiden Ergebnisse jeweils über den Baum aussagen.\par
+\antwortfeld{5}{Das Trainingsergebnis zeigt, dass der Baum die bekannten Beispiele vollständig richtig einordnet. Es beweist nicht, dass seine Regeln auch bei unbekannten Äffchen passen. Die Fehler bei Testdaten zeigen, dass seine Vorhersagen für neue Daten weniger zuverlässig sind.}
+
+\frage{5}{Zwei Bäume fair vergleichen}
+Baum A und Baum B ordnen dieselben Trainingsäffchen vollständig richtig ein. Bei denselben acht Testäffchen liegt A achtmal und B siebenmal richtig. \textbf{Beschreibe}, was der Vergleich über die Vorhersagen der beiden Bäume zeigt.\par
+\antwortfeld{5}{Beide Bäume erreichen bei den Trainingsdaten 100\,\%. Bei denselben unbekannten Testdaten ordnet Baum A 8 von 8 und Baum B 7 von 8 Äffchen richtig ein. Baum A sagt für diese Testgruppe zuverlässiger voraus; gleiche Trainingsergebnisse garantieren also keine gleichen Testergebnisse.}
+
+\frage{6}{Äffchen 03 durch zwei Bäume verfolgen}
+Äffchen 03 hat X-Augen und sichtbare Zähne. Baum A fragt zuerst nach X-Augen und führt bei „Ja“ zum Blatt „Beißt“; Baum B fragt zuerst nach sichtbaren Zähnen und führt bei „Ja“ zum Blatt „Beißt nicht“. \textbf{Beschreibe}, weshalb beide Bäume für dasselbe Äffchen verschiedene Vorhersagen treffen und was nach dem Erreichen eines Blatts geschieht.\par
+\antwortfeld{5}{Bei Äffchen 03 beantwortet Baum A „X-Augen?“ mit Ja und erreicht sofort das Blatt „Beißt“. Baum B beantwortet zuerst „Zähne sichtbar?“ mit Ja und erreicht das Blatt „Beißt nicht“. Nach einem Blatt wird kein weiteres Merkmal geprüft. Weil die Merkmale in anderer Reihenfolge geprüft werden, entstehen unterschiedliche Vorhersagen.}
+
+\fuss{2}
+\end{document}
