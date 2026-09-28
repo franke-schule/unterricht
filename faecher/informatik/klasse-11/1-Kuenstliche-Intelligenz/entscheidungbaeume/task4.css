@@ -14,8 +14,34 @@
 .task4-card > .fish-step-heading { margin-bottom: 18px; }
 .task4-data-boundary { margin: 0 0 18px; padding: 11px 13px; border-left: 4px solid #7998d6; color: #405471; background: #f4f7fd; line-height: 1.45; }
 .task4-work-order { margin: 0 0 18px; color: var(--dt-ink); font-size: 1.04rem; line-height: 1.55; }
-.task4-instructions { padding-left: 1.4rem; }
-.task4-instructions li + li { margin-top: 8px; }
+/* Arbeitsschritte als nummerierte Karten: Nummer und Text stehen linksbündig nebeneinander. */
+.task4-instructions { display: grid; gap: 10px; padding: 0; list-style: none; text-align: left; counter-reset: task4-step; }
+.task4-instructions li {
+  display: grid;
+  grid-template-columns: 34px minmax(0, 1fr);
+  align-items: start;
+  gap: 12px;
+  padding: 12px 14px;
+  border: 1px solid #d6dfeb;
+  border-left: 4px solid var(--dt-blue);
+  border-radius: 12px;
+  background: #f7f9fe;
+  counter-increment: task4-step;
+}
+.task4-instructions li::before {
+  content: counter(task4-step);
+  display: grid;
+  width: 34px;
+  height: 34px;
+  place-items: center;
+  border-radius: 50%;
+  color: #fff;
+  background: linear-gradient(135deg, var(--dt-blue), var(--dt-violet));
+  font-size: 0.95rem;
+  font-weight: 900;
+  line-height: 1;
+}
+.task4-instructions li > span { align-self: center; }
 .task4-hyperparameter, .task4-table-note { margin: 18px 0; padding: 14px 16px; border: 2px solid #d2aa43; border-radius: 12px; color: #4d3c0f; background: #fff8d9; line-height: 1.5; }
 .task4-table-note { border-color: #7998d6; color: #304a72; background: #eef4ff; }
 .task4-answer { width: 100%; min-height: 150px; resize: vertical; padding: 15px; border: 2px solid #cbd5e1; border-radius: 13px; color: var(--dt-ink); background: #fff; font: inherit; line-height: 1.6; }

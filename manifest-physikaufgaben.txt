@@ -23,6 +23,14 @@ zu verwenden; lokale Sonderlösungen sollen vermieden werden.
   - Zugängliche Beschriftungen benennen einen Index verständlich, zum Beispiel
     „Bahngeschwindigkeit v mit Index B“.
 
+Winkelangaben und Winkelgeschwindigkeit:
+
+  - In Aufgabenstellungen wird bei Drehwinkeln die Einheit rad niemals
+    angegeben. Die Einheit wird weggelassen, zum Beispiel Δφ = π.
+  - Die Winkelgeschwindigkeit erhält als Einheit 1/s statt rad/s. In Formeln,
+    Rechenwegen und Lösungen wird 1 über s mit waagerechtem Bruchstrich
+    gesetzt (siehe Abschnitt 4).
+
 
 2. Koordinatensysteme
 ---------------------
@@ -110,6 +118,7 @@ Verbindliche Muster für Rückmeldungen:
 --------------------------------------
 
   [ ] Formelzeichen und Indizes sind in allen Darstellungen konsistent.
+  [ ] Drehwinkel stehen ohne rad; Winkelgeschwindigkeiten tragen 1/s.
   [ ] Größen, Einheiten und Wertebereiche sind fachlich sinnvoll.
   [ ] Koordinatensysteme erfüllen die Regeln aus Abschnitt 2.
   [ ] Rechenergebnisse und Feedback berücksichtigen gültige Ziffern.

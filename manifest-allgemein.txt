@@ -7,6 +7,7 @@ Dieses Manifest enthaelt Regeln, die fuer alle Aufgabenseiten im Repo
 "unterricht" gelten. Aufgaben- und fachspezifische Ergaenzungen stehen in:
 
   manifest-quizaufgaben.txt
+  manifest-wiederholungs-quiz.txt
   manifest-online-ide-programmieraufgaben.txt
   manifest-tabellenkalkulation.txt
   manifest-physikaufgaben.txt

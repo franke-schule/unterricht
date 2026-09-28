@@ -8,22 +8,17 @@
 .dt-fish-hero { margin-bottom: 20px; }
 .dt-fish-hero h1 { font-size: clamp(2.1rem, 5.4vw, 4.7rem); }
 
-.is-intro-active .fish-progress,
-.is-intro-active .fish-save-status,
-.is-intro-active #entropie { display: none; }
-
 .fish-intro {
-  width: min(1220px, 100%);
-  margin: 0 auto 32px;
-  padding: clamp(20px, 3vw, 32px);
-  border: 1px solid #cad6e8;
-  border-radius: 22px;
+  border-color: #cad6e8;
   background: linear-gradient(145deg, rgba(247, 250, 255, 0.98), rgba(251, 247, 255, 0.98));
-  box-shadow: 0 22px 54px rgba(30, 41, 59, 0.11);
 }
 
 .fish-intro[hidden] { display: none; }
 .fish-intro-heading { display: flex; align-items: flex-start; justify-content: space-between; gap: 20px; }
+.intro-stepper { display: flex; flex: 0 0 auto; align-items: center; gap: 10px; }
+.intro-stepper .dt-primary-button, .intro-stepper .dt-secondary-button { width: auto; min-height: 44px; }
+.intro-stepper .dt-secondary-button:disabled { opacity: 0.45; cursor: not-allowed; }
+#intro-frame-count { min-width: 4.5em; color: var(--dt-muted); font-size: 0.85rem; font-weight: 900; text-align: center; }
 .fish-intro-heading h2 { margin: 0; font-size: clamp(1.7rem, 3.4vw, 2.6rem); letter-spacing: -0.03em; }
 .fish-intro-heading p:not(.fish-kicker) { max-width: 760px; margin: 8px 0 0; color: var(--dt-muted); font-size: 1.02rem; line-height: 1.55; }
 .fish-intro-progress { display: grid; grid-template-columns: repeat(3, 1fr); gap: 7px; margin: 22px 0 18px; }
@@ -59,8 +54,8 @@
 
 .intro-table-card h3 { margin: 0 0 12px; }
 .intro-table td[data-intro-cell], .intro-gain strong { min-width: 48px; color: #8a94a3; background: #f1f3f6; font-size: 1rem; font-weight: 950; }
-.intro-table td[data-intro-cell].is-filled, .intro-gain strong.is-filled { color: #174e9a; background: #e5efff; animation: intro-cell-pop 500ms cubic-bezier(.2,.8,.25,1.2) both; }
-.intro-table td[data-intro-cell].is-current, .intro-gain strong.is-current { outline: 3px solid #e1ad32; outline-offset: -3px; background: #fff6d9; }
+.intro-table td[data-intro-cell].is-filled, .intro-gain strong.is-filled { color: #174e9a; background: #e5efff; }
+.intro-table td[data-intro-cell].is-current, .intro-gain strong.is-current { outline: 3px solid #e1ad32; outline-offset: -3px; background: #fff6d9; animation: intro-cell-pop 500ms cubic-bezier(.2,.8,.25,1.2) both; }
 .intro-gain { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-top: 12px; font-weight: 900; }
 .intro-gain strong { display: inline-grid; min-width: 70px; min-height: 38px; place-items: center; border-radius: 8px; }
 .intro-table-note { min-height: 2.7rem; margin: 12px 0 0; color: var(--dt-muted); font-size: 0.8rem; line-height: 1.45; }
@@ -471,7 +466,7 @@
 
 @media (max-width: 760px) {
   .fish-intro-heading { display: grid; }
-  .fish-intro-heading .dt-secondary-button { justify-self: start; }
+  .intro-stepper { justify-self: start; }
   .fish-intro-progress { grid-template-columns: 1fr; }
   .intro-fish-group { grid-template-columns: repeat(3, minmax(64px, 1fr)); }
   .intro-fish-groups { grid-template-columns: 1fr; }

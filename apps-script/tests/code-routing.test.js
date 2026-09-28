@@ -290,7 +290,10 @@ assert.equal(
   'ph11-wdh2-quiz-crashtest-beschreibung',
   'ph11-a3-quiz-karussell-beschreibung',
   'ph11-a3-quiz-ursache-beschreibung',
-  'ph11-a3-quiz-schnur-beschreibung'
+  'ph11-a3-quiz-schnur-beschreibung',
+  'inf11-a3a-quiz-informationsgewinn-beschreibung',
+  'inf11-a3a-quiz-attributwahl-beschreibung',
+  'inf11-a3a-quiz-vorgehen-beschreibung'
 ].forEach(
   function(taskId) {
     const sqlDescriptionGet =

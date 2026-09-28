@@ -1,8 +1,8 @@
-Befristete Tests – Skriptserver-Aufgaben und Rückbau
-====================================================
+Nicht verlinkte Tests – Skriptserver-Aufgaben und Löschanleitung
+================================================================
 
-Diese Notiz gilt für alle befristeten, nicht verlinkten Tests. Sie liegt aus
-historischen Gründen im Ordner 1-Datenbanken und deckt auch die Physiktests mit
+Diese Notiz gilt für die drei älteren, nicht verlinkten Tests. Sie liegt aus
+historischen Gründen im Ordner 1-Datenbanken und deckt auch den Physiktest mit
 ab.
 
   Test A  faecher/informatik/klasse-10/1-Datenbanken/aufgabe1-quiz.html
@@ -11,19 +11,19 @@ ab.
           Test zu Aufgabe 2 (Redundanzen in Datenbanken)
   Test C  faecher/physik/klasse-11/1-Kreisbewegungen/wdh2-quiz.html
           Test zu Wiederholung 2 (Kräfte und Bewegung)
-  Test D  faecher/physik/klasse-11/1-Kreisbewegungen/aufgabe3-quiz.html
-          Test zu Aufgabe 3 (Winkelgeschwindigkeit und Ursache der
-          Kreisbewegung)
 
-Test A und B wurden am 21.09.2026 angelegt, Test C am 23.09.2026, Test D am
-27.09.2026. Alle vier sind befristet und sollen vollständig und ohne Reste
-wieder gelöscht werden; für Test A ist das etwa eine Woche nach dem Anlegen
-geplant (ca. 28.09.2026), für Test C entsprechend ca. 30.09.2026 und für
-Test D ca. 04.10.2026.
+Test A und B wurden am 21.09.2026 angelegt, Test C am 23.09.2026. Gelöscht
+wird ein Test erst, wenn die verantwortliche Lehrkraft das ausdrücklich
+bekannt gibt; dann vollständig und ohne Reste nach Abschnitt 3.
+
+Neuere Wiederholungs-Quizze stehen nicht in dieser Notiz. Sie folgen
+manifest-wiederholungs-quiz.txt und haben je eine eigene Löschanleitung
+neben der Quizseite, z. B.
+faecher/physik/klasse-11/1-Kreisbewegungen/aufgabe3-quiz-loeschen.txt.
 
 Die Tests sind voneinander unabhängig: Keiner bindet eine Datei eines anderen
 Tests ein. Sie lassen sich getrennt und in beliebiger Reihenfolge löschen.
-Diese Notiz wird erst gelöscht, wenn alle vier Tests entfernt sind.
+Diese Notiz wird erst gelöscht, wenn alle drei Tests entfernt sind.
 
 
 1. Dem Skriptserver hinzugefügte Aufgaben
@@ -47,8 +47,8 @@ Test B:
 
 Test C:
   Aufgaben-ID (taskId):  ph11-wdh2-quiz-crashtest-beschreibung
-  Datei:                 apps-script/Tasks.gs (Eintrag direkt vor den drei
-                         Einträgen von Test D)
+  Datei:                 apps-script/Tasks.gs (Eintrag direkt vor den Blöcken
+                         'ph11-a3-quiz-…', die zu aufgabe3-quiz gehören)
   Aufgabe:               "Beschreibe die Kräfte und deren Richtung, die bei
                          einem Crashtest im Moment des Aufpralls wirken.
                          Erkläre den Unterschied im Vergleich zur Situation
@@ -57,29 +57,9 @@ Test C:
                          4 Aspekte)
   Verwendet von:         wdh2-quiz.mjs (Konstante DESCRIBE_TASK_ID)
 
-Test D (drei Aufgaben, alle mit dem Präfix 'ph11-a3-quiz-'):
-  Datei:                 apps-script/Tasks.gs (drei aufeinanderfolgende
-                         Einträge direkt nach Test C und direkt vor
-                         'ph11-kreisbewegungen-zentripetalkraft-beschreibung')
-  Aufgaben-ID (taskId):  ph11-a3-quiz-karussell-beschreibung
-  Aufgabe:               "Zwei Kinder sitzen auf einem Karussell ...
-                         Beschreibe, wie sich ihre Winkelgeschwindigkeiten und
-                         ihre Bahngeschwindigkeiten unterscheiden, und
-                         begründe deine Antwort." (Aufgabe 4 des Tests,
-                         4 Aspekte)
-  Aufgaben-ID (taskId):  ph11-a3-quiz-ursache-beschreibung
-  Aufgabe:               "Beschreibe, warum trotzdem eine Kraft auf ihn wirken
-                         muss und in welche Richtung sie zeigt." (Aufgabe 5
-                         des Tests, 3 Aspekte)
-  Aufgaben-ID (taskId):  ph11-a3-quiz-schnur-beschreibung
-  Aufgabe:               "Eine Kugel wird auf einem glatten Tisch an einer
-                         Schnur im Kreis herumgeführt ... Beschreibe, wie sich
-                         die Kugel danach bewegt, und begründe deine Antwort."
-                         (Aufgabe 6 des Tests, 3 Aspekte)
-  Verwendet von:         aufgabe3-quiz.mjs (Konstante DESCRIBE_TASKS,
-                         Feld taskId)
-
-Weitere Aufgaben wurden dem Skriptserver nicht hinzugefügt.
+Weitere Aufgaben wurden für diese drei Tests dem Skriptserver nicht
+hinzugefügt. Die Aufgaben 'ph11-a3-quiz-…' gehören zu aufgabe3-quiz und sind
+in aufgabe3-quiz-loeschen.txt beschrieben.
 
 
 2. Alle Änderungen, die zu den Tests gehören
@@ -93,22 +73,19 @@ Neue Dateien:
     aufgabe2-quiz.html, aufgabe2-quiz.js, aufgabe2-quiz.css
   Test C (in faecher/physik/klasse-11/1-Kreisbewegungen/):
     wdh2-quiz.html, wdh2-quiz.mjs, wdh2-quiz.css
-  Test D (in faecher/physik/klasse-11/1-Kreisbewegungen/):
-    aufgabe3-quiz.html, aufgabe3-quiz.mjs, aufgabe3-quiz.css
   Für alle: aufgabe1-quiz-skriptserver.txt (diese Notiz)
 
-Geänderte Dateien in apps-script/ (je Test ein Eintrag, bei Test D drei):
+Geänderte Dateien in apps-script/ (je Test ein Eintrag):
 
   Tasks.gs                   je ein Aufgabenblock mit der oben genannten
-                             Aufgaben-ID (Test D: drei Blöcke)
+                             Aufgaben-ID
   Config.gs                  je eine Kommentarzeile im Kopf:
                              " * - inf10/1-Datenbanken/aufgabe1-quiz.html (...)"
                              " * - inf10/1-Datenbanken/aufgabe2-quiz.html (...)"
                              " * - phy11/1-Kreisbewegungen/wdh2-quiz.html (...)"
-                             " * - phy11/1-Kreisbewegungen/aufgabe3-quiz.html (...)"
-  tests/code-routing.test.js alle Aufgaben-IDs in der Liste der geprüften
+  tests/code-routing.test.js alle drei Aufgaben-IDs in der Liste der geprüften
                              Beschreibe-Aufgaben ergänzt (hinter 'sql-b2-3'
-                             und 'sql-b3-1'; Test D: drei Zeilen am Listenende)
+                             und 'sql-b3-1')
 
 Nicht geändert: Menüs und Übersichtsseiten. Die Tests sind nirgends verlinkt,
 beim Löschen muss deshalb kein Link entfernt werden. Gemeinsam genutzte
@@ -116,13 +93,11 @@ Dateien wurden nur eingebunden, nicht verändert – sie bleiben unangetastet.
 Das betrifft in Informatik redundanzen.css, grundlagen.css, sql-lab-core.mjs
 und styles.css, in Physik bewegung-koerpern.css, kraefte-bewegung.css,
 components/token-drag.mjs, components/physics-notation.mjs bzw. .css sowie
-perzeptron/ui/semantic-answer.mjs. aufgabe3-quiz.css ist eine eigene Kopie von
-wdh2-quiz.css, damit Test C und D unabhängig voneinander gelöscht werden
-können.
+perzeptron/ui/semantic-answer.mjs.
 
 
-3. Rückbau-Checkliste
----------------------
+3. Checkliste zum Löschen
+-------------------------
 
 Für jeden Test getrennt abarbeiten. Platzhalter:
 
@@ -132,34 +107,30 @@ Für jeden Test getrennt abarbeiten. Platzhalter:
   <ENDUNG>        .html .js .css                   .html .js .css
   <ID>            inf10-db-a1-primaerschluessel    inf10-db-a2-aufteilung
 
-                  Test C                                  Test D
+                  Test C
   <ORDNER>        faecher/physik/klasse-11/1-Kreisbewegungen
-  <DATEI>         wdh2-quiz                               aufgabe3-quiz
-  <ENDUNG>        .html .mjs .css                         .html .mjs .css
-  <ID>            ph11-wdh2-quiz-crashtest-beschreibung   ph11-a3-quiz-
-                                                          (Präfix, gilt für
-                                                          alle drei IDs)
+  <DATEI>         wdh2-quiz
+  <ENDUNG>        .html .mjs .css
+  <ID>            ph11-wdh2-quiz-crashtest-beschreibung
 
   [ ] Die drei Dateien <DATEI> mit den Endungen <ENDUNG> in <ORDNER> löschen
       (git rm).
   [ ] apps-script/Tasks.gs: den kompletten Block '<ID>': { ... }, entfernen.
-      Bei Test D alle drei Blöcke, deren ID mit 'ph11-a3-quiz-' beginnt.
   [ ] apps-script/Config.gs: die Kommentarzeile zu <DATEI>.html entfernen.
   [ ] apps-script/tests/code-routing.test.js: die Zeile '<ID>' aus der Liste
-      entfernen (bei Test D alle drei Zeilen). Danach darf nur hinter dem
-      letzten Listeneintrag kein Komma stehen.
+      entfernen. Danach darf nur hinter dem letzten Listeneintrag kein Komma
+      stehen.
   [ ] Kontrolle, dass keine Reste bleiben:
         git grep -n "<DATEI>"
         git grep -n "<ID>"
       Solange noch ein anderer Test besteht, darf es nur noch Treffer in
       dieser Notiz geben. Nach dem Löschen aller Tests: gar keine Treffer.
-      Achtung bei Test D: "aufgabe3-quiz" nur als ganzes Wort suchen, damit
-      keine anderen Dateien auffallen:
-        git grep -nw "aufgabe3-quiz"
+      Hinweis: git grep -n "aufgabe1-quiz" trifft auch den Namen dieser
+      Notiz; das ist bis zu ihrer Löschung erwartet.
   [ ] Tests ausführen:
         node apps-script/tests/code-routing.test.js
         node apps-script/tests/sql-description-tasks.test.js
-      Bei Test C und D zusätzlich die Modultests:
+      Bei Test C zusätzlich die Modultests:
         Get-ChildItem faecher/physik/klasse-11/1-Kreisbewegungen/tests/*.mjs |
           % { node $_.FullName }
   [ ] Skriptserver: Falls die Aufgaben in Google Apps Script bereitgestellt
@@ -178,6 +149,5 @@ localStorage-Einträge zurück:
   "informatik10-datenbanken-aufgabe1-test-v1"
   "informatik10-datenbanken-aufgabe2-test-v1"
   "physik11-kreisbewegungen-wdh2-test-v1"
-  "physik11-kreisbewegungen-aufgabe3-test-v1"
 Sie enthalten nur deren Testeingaben, werden von keiner anderen Seite gelesen
 und müssen nicht entfernt werden.

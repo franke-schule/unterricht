@@ -1,141 +1,141 @@
-import { enableTokenDrag, wasDragged } from "./components/token-drag.mjs";
-import { appendPhysicsText, physicsTextSpan } from "./components/physics-notation.mjs?v=20260911a";
-import { evaluateSemanticAnswer } from "../../../informatik/klasse-11/1-Kuenstliche-Intelligenz/perzeptron/ui/semantic-answer.mjs";
+import { enableTokenDrag, wasDragged } from "../../../physik/klasse-11/1-Kreisbewegungen/components/token-drag.mjs";
+import { evaluateSemanticAnswer } from "./perzeptron/ui/semantic-answer.mjs";
 
-// Wiederholungs-Quiz zu Aufgabe 3: nicht verlinkte Seite, Auswertung erst nach der Abgabe.
-// Eigenständig aufgebaut (Vorlage: wdh2-quiz.mjs), damit der Test ohne Reste wieder
-// entfernt werden kann. Löschanleitung: aufgabe3-quiz-loeschen.txt.
-const STORAGE_KEY = "physik11-kreisbewegungen-aufgabe3-test-v1";
+// Wiederholungs-Quiz zu Aufgabe 3a: nicht verlinkte Seite, Auswertung erst nach der Abgabe.
+// Eigenständig aufgebaut (Vorlage: Physik 11, aufgabe3-quiz.mjs), damit der Test ohne Reste
+// wieder entfernt werden kann. Löschanleitung: aufgabe3a-quiz-loeschen.txt.
+const STORAGE_KEY = "informatik11-kuenstliche-intelligenz-aufgabe3a-test-v1";
 const SCRIPT_SERVER_URL = "https://script.google.com/macros/s/AKfycby8RWL6uYrKZyoJ6m2GRpWyRmXjwsdskyCiqzKpRhIK5-wrDl-9lWWk8CiAGaVMoy0x/exec";
 const DESCRIBE_MIN_LENGTH = 30;
 
 // Aufgaben 4 bis 6: Beschreibe-Aufgaben, bewertet über den Skriptserver.
 const DESCRIBE_TASKS = [
   {
-    id: "karussell",
+    id: "aepfel",
     number: 4,
-    title: "Karussell beschreiben",
-    taskId: "ph11-a3-quiz-karussell-beschreibung",
+    title: "Informationsgewinn bestimmen",
+    taskId: "inf11-a3a-quiz-informationsgewinn-beschreibung",
     maxPoints: 4,
-    prompt: "Vergleiche Winkel- und Bahngeschwindigkeit von zwei Kindern auf einem Karussell.",
-    shortHint: "Beide Kinder drehen sich in derselben Zeit um denselben Winkel und haben deshalb dieselbe Winkelgeschwindigkeit ω. Wegen {{v_B}} = ω · r hat Kind B am Rand mit dem größeren Radius die größere Bahngeschwindigkeit.",
+    prompt: "Bestimme den Informationsgewinn, wenn 10 Trainingsäpfel (6 reif, 4 unreif) nach der Farbe aufgeteilt werden: rot – 5 reif, 1 unreif; grün – 1 reif, 3 unreif.",
+    shortHint: "Vor dem Aufteilen sagt der Baum „reif“ voraus, die 4 unreifen Äpfel sind Fehler. Rot: Mehrheit reif, 1 Fehler; grün: Mehrheit unreif, 1 Fehler; zusammen 2 Fehler. Informationsgewinn = 4 − 2 = 2.",
   },
   {
-    id: "ursache",
+    id: "attributwahl",
     number: 5,
-    title: "Ursache der Kreisbewegung beschreiben",
-    taskId: "ph11-a3-quiz-ursache-beschreibung",
+    title: "Das beste Attribut auswählen",
+    taskId: "inf11-a3a-quiz-attributwahl-beschreibung",
     maxPoints: 3,
-    prompt: "Warum muss bei einer Kreisbewegung eine Kraft wirken, und wohin zeigt sie?",
-    shortHint: "Bei einer Kreisbewegung ändert sich ständig die Richtung der Geschwindigkeit. Dafür ist eine Kraft nötig, sonst würde der Körper wegen seiner Trägheit geradlinig weiterfliegen. Die Zentripetalkraft beginnt am Körper und zeigt nach innen zum Kreismittelpunkt.",
+    prompt: "Erkläre, warum „eine Teilmenge mit möglichst vielen feindseligen Fischen“ kein passendes Auswahlkriterium ist, und beschreibe, wie das Attribut stattdessen ausgewählt wird.",
+    shortHint: "Eine einzelne Teilmenge zeigt nicht, wie gut das Attribut die Daten insgesamt trennt. Für jedes Attribut werden die Fehler aller Teilmengen addiert und der Informationsgewinn = Fehler vorher − Fehler nachher bestimmt. Gewählt wird das Attribut mit dem größten Informationsgewinn.",
   },
   {
-    id: "schnur",
+    id: "vorgehen",
     number: 6,
-    title: "Die Schnur reißt",
-    taskId: "ph11-a3-quiz-schnur-beschreibung",
-    maxPoints: 3,
-    prompt: "Wie bewegt sich die Kugel, nachdem die Schnur gerissen ist?",
-    shortHint: "Nach dem Reißen wirkt keine Kraft mehr zum Kreismittelpunkt. Wegen ihrer Trägheit bewegt sich die Kugel geradlinig weiter, und zwar tangential in die Richtung, die ihre Geschwindigkeit im Moment des Reißens hatte.",
+    title: "Nach dem ersten Knoten",
+    taskId: "inf11-a3a-quiz-vorgehen-beschreibung",
+    maxPoints: 4,
+    prompt: "Beschreibe, wie du nach dem ersten Knoten weiter vorgehst, bis der Entscheidungsbaum fertig ist.",
+    shortHint: "Die Daten werden nach den Attributwerten in Teilmengen aufgeteilt. Ist eine Teilmenge rein, entsteht ein Blatt mit ihrem Label. Sonst werden für sie die Informationsgewinne neu bestimmt, das beste Attribut wird der nächste Knoten, und das Verfahren wiederholt sich, bis alle Äste in Blättern enden.",
   },
 ];
 const DESCRIBE_MAX_POINTS = DESCRIBE_TASKS.reduce((sum, task) => sum + task.maxPoints, 0);
 
 // Aufgabe 1: Lückentext mit Wortkarten, Bedienung über die vorhandene Komponente token-drag.mjs.
-// label: Anzeige mit Formelnotation, spoken: Text für Screenreader.
+// Reihenfolge der Karten bewusst gemischt, damit sie nicht die Lösungsreihenfolge verrät.
 const CLOZE_TERMS = [
-  { key: "Drehwinkel", reason: "ω gibt an, um welchen Drehwinkel Δφ sich die Verbindungslinie im Zeitintervall Δt weiterdreht: ω = {{Δφ|Δt}}." },
-  { key: "rad-s", label: "{{rad/s}}", spoken: "Radiant pro Sekunde", reason: "Der Drehwinkel wird im Bogenmaß (rad) angegeben, die Zeit in Sekunden. Daraus ergibt sich die Einheit {{rad/s}}." },
-  { key: "Hertz", reason: "Hertz ist die Einheit der Frequenz f, also der Anzahl der Umläufe pro Sekunde, nicht der Winkelgeschwindigkeit." },
-  { key: "Radius", reason: "Es gilt {{v_B}} = ω · r: Bei gleichem ω ist der Körper auf einem größeren Kreis schneller." },
-  { key: "tangential", reason: "Der Geschwindigkeitsvektor berührt die Kreisbahn am Körper, er liegt auf der Tangente." },
-  { key: "radial", reason: "Radial, also entlang des Radius, verläuft die Zentripetalkraft, nicht der Geschwindigkeitsvektor." },
-  { key: "Kehrwert", reason: "Es gilt f = {{1|T}}: Je kürzer ein Umlauf dauert, desto mehr Umläufe schafft der Körper pro Sekunde." },
-  { key: "Kreismittelpunkt", reason: "Die Zentripetalkraft zeigt nach innen zum Kreismittelpunkt und ändert so ständig die Richtung der Geschwindigkeit." },
+  { key: "Blatt", reason: "Eine reine Teilmenge braucht keinen weiteren Split. Dort steht ein Blatt mit dem gemeinsamen Label." },
+  { key: "wiederholt", reason: "Für jede noch gemischte Teilmenge werden die Informationsgewinne neu bestimmt und wieder das beste Attribut gewählt." },
+  { key: "Fehlklassifikationen", reason: "Daten, deren Label nicht zur Vorhersage ihrer Teilmenge passt, werden falsch eingeordnet. Sie sind Fehlklassifikationen." },
+  { key: "kleinsten", reason: "Ein kleiner Informationsgewinn bedeutet, dass das Attribut die Fehler kaum verringert. Gesucht ist deshalb der größte Informationsgewinn." },
+  { key: "Attributwerten", reason: "Jeder Attributwert, etwa Blau oder Orange, bildet einen Ast. Die Daten mit diesem Wert bilden die zugehörige Teilmenge." },
+  { key: "häufigere", reason: "Der Knoten sagt das Label voraus, das in seiner Teilmenge am häufigsten vorkommt. So entstehen möglichst wenige Fehler." },
+  { key: "Entscheidungsknoten", reason: "Ein Entscheidungsknoten prüft ein Attribut und teilt die Daten weiter auf. Bei einer reinen Teilmenge ist das nicht mehr nötig." },
+  { key: "größten", reason: "Der Informationsgewinn gibt an, um wie viel ein Split die Fehler verringert. Je größer er ist, desto besser trennt das Attribut die Daten." },
 ];
-const CLOZE_SOLUTION = ["Drehwinkel", "rad-s", "Radius", "tangential", "Kehrwert", "Kreismittelpunkt"];
+const CLOZE_SOLUTION = ["häufigere", "Fehlklassifikationen", "größten", "Attributwerten", "Blatt", "wiederholt"];
 const CLOZE_PARTS = [
-  "Die Winkelgeschwindigkeit ω gibt an, um welchen ",
-  " sich die Verbindungslinie zwischen Zentrum und Körper pro Zeit weiterdreht. Eine Einheit von ω ist ",
-  ". Die Bahngeschwindigkeit {{v_B}} ist das Produkt aus ω und dem ",
-  ". Ihr Vektor beginnt am Körper und verläuft ",
-  " zur Kreisbahn. Die Frequenz f ist der ",
-  " der Umlaufdauer T. Die Zentripetalkraft beginnt am Körper und zeigt zum ",
+  "Ein Knoten sagt für seine Teilmenge das ",
+  " Label voraus. Alle Daten mit dem anderen Label sind ",
+  ". Als Knoten wird das Attribut mit dem ",
+  " Informationsgewinn gewählt. Nach seinen ",
+  " werden die Daten in Teilmengen aufgeteilt. Haben alle Daten einer Teilmenge dasselbe Label, entsteht dort ein ",
+  ". Sonst wird das Verfahren für diese Teilmenge ",
   ".",
 ];
 const CLOZE_SLOTS = CLOZE_SOLUTION.map((_, index) => `gap-${index}`);
 
-// Aufgabe 2: Größen einer Kreisbewegung mit konstanter Winkelgeschwindigkeit einordnen.
+// Aufgabe 2: Teilmengen eines Fisch-Entscheidungsbaums einordnen.
 const SORT_ZONES = [
-  { id: "changes", label: "ändert sich ständig" },
-  { id: "constant", label: "bleibt gleich" },
+  { id: "leaf-peaceful", label: "Blatt: friedlich" },
+  { id: "leaf-hostile", label: "Blatt: feindselig" },
+  { id: "split", label: "weiter aufteilen" },
 ];
 const SORT_VALUES = [
-  { key: "direction", label: "Richtung der Geschwindigkeit", zone: "changes", reason: "Der Geschwindigkeitsvektor liegt immer tangential an der Kreisbahn und zeigt deshalb an jeder Stelle in eine andere Richtung." },
-  { key: "speed", label: "Betrag der Bahngeschwindigkeit {{v_B}}", zone: "constant", reason: "Bei konstantem ω und gleichem Radius bleibt {{v_B}} = ω · r gleich. Nur die Richtung der Geschwindigkeit ändert sich." },
-  { key: "position", label: "Ort des Körpers", zone: "changes", reason: "Der Körper läuft auf der Kreisbahn um, sein Ort ändert sich ständig." },
-  { key: "omega", label: "Winkelgeschwindigkeit ω", zone: "constant", reason: "Das ist vorgegeben: In gleichen Zeitintervallen wird immer derselbe Drehwinkel überstrichen." },
-  { key: "period", label: "Umlaufdauer T", zone: "constant", reason: "Weil sich ω nicht ändert, dauert jeder Umlauf gleich lang." },
-  { key: "angle", label: "Drehwinkel Δφ seit dem Start", zone: "changes", reason: "Mit jeder Weiterdrehung der Verbindungslinie wird der überstrichene Drehwinkel größer." },
-  { key: "radius", label: "Radius r der Kreisbahn", zone: "constant", reason: "Der Körper bleibt auf derselben Kreisbahn, sein Abstand zum Zentrum ändert sich nicht." },
-  { key: "frequency", label: "Frequenz f", zone: "constant", reason: "Die Frequenz ist der Kehrwert der Umlaufdauer. Bleibt T gleich, bleibt auch f gleich." },
+  { key: "pure-peaceful", label: "3 friedlich, 0 feindselig", zone: "leaf-peaceful", reason: "Alle drei Fische sind friedlich. Die Teilmenge ist rein, also entsteht ein Blatt mit dem Label friedlich." },
+  { key: "mixed-split-2", label: "3 friedlich, 2 feindselig – ein unbenutztes Attribut trennt sie fehlerfrei", zone: "split", reason: "Mit dem Mehrheitslabel friedlich blieben 2 Fehler. Das unbenutzte Attribut senkt sie auf 0 (Informationsgewinn 2), deshalb wird weiter aufgeteilt." },
+  { key: "pure-hostile", label: "0 friedlich, 4 feindselig", zone: "leaf-hostile", reason: "Alle vier Fische sind feindselig. Die Teilmenge ist rein, also entsteht ein Blatt mit dem Label feindselig." },
+  { key: "used-hostile", label: "1 friedlich, 3 feindselig – alle Attribute sind schon verwendet", zone: "leaf-hostile", reason: "Es ist keine Aufteilung mehr möglich. Dann entsteht ein Blatt mit dem häufigeren Label feindselig; ein Fehler bleibt bestehen." },
+  { key: "mixed-split-1", label: "1 friedlich, 2 feindselig – ein unbenutztes Attribut hat Informationsgewinn 1", zone: "split", reason: "Die Teilmenge ist gemischt, und das Attribut senkt die Fehler von 1 auf 0. Ein Blatt würde einen vermeidbaren Fehler behalten." },
+  { key: "pure-unused", label: "0 friedlich, 2 feindselig – es gibt noch unbenutzte Attribute", zone: "leaf-hostile", reason: "Die Teilmenge ist schon rein. Ein weiterer Split kann keinen Fehler mehr beseitigen, auch wenn noch Attribute übrig sind." },
+  { key: "used-peaceful", label: "4 friedlich, 1 feindselig – alle Attribute sind schon verwendet", zone: "leaf-peaceful", reason: "Es ist keine Aufteilung mehr möglich. Dann entsteht ein Blatt mit dem häufigeren Label friedlich; ein Fehler bleibt bestehen." },
+  { key: "mixed-tie", label: "2 friedlich, 2 feindselig – ein unbenutztes Attribut hat Informationsgewinn 2", zone: "split", reason: "Vorher gibt es 2 Fehler, nach dem Split keine mehr. Die Teilmenge wird also weiter aufgeteilt." },
 ];
 
-// Aufgabe 3: Multiple Choice nach dem Muster der vorhandenen Quizfragen in wdh2-quiz.mjs.
+// Aufgabe 3: Multiple Choice mit Auswahlkästchen; Frage 2 bis 4 beziehen sich auf die E-Mail-Tabelle.
 const MC_QUESTIONS = [
   {
     id: "q1",
-    text: "Die Verbindungslinie zwischen Zentrum und Körper überstreicht in 2 s den Drehwinkel π. Welche Aussagen sind richtig?",
-    why: "Es gilt ω = {{Δφ|Δt}}. ω hängt nur vom Drehwinkel und vom Zeitintervall ab, nicht vom Radius.",
+    text: "Ein Attribut teilt 8 Fische (4 friedlich, 4 feindselig) in zwei Teilmengen: A mit 3 friedlichen und 1 feindseligen Fisch, B mit 1 friedlichen und 3 feindseligen Fischen. Welche Aussagen sind richtig?",
+    why: "In jeder Teilmenge zählt die kleinere Gruppe als Fehler: A 1, B 1, zusammen 2. Vorher waren es 4 Fehler, also beträgt der Informationsgewinn 4 − 2 = 2.",
     options: [
-      { id: "value", text: "Die Winkelgeschwindigkeit beträgt ω = {{π|2}} {{rad/s}} ≈ 1,57 {{rad/s}}.", correct: true },
-      { id: "faster", text: "Wird derselbe Drehwinkel in 1 s überstrichen, verdoppelt sich ω.", correct: true },
-      { id: "radius", text: "Bei einem größeren Radius wäre ω größer, auch wenn Drehwinkel und Zeit gleich bleiben.", reason: "Der Radius kommt in ω = {{Δφ|Δt}} nicht vor. Er beeinflusst die Bahngeschwindigkeit, nicht die Winkelgeschwindigkeit." },
-      { id: "unit", text: "Die Winkelgeschwindigkeit wird in {{m/s}} angegeben.", reason: "{{m/s}} ist eine Einheit der Bahngeschwindigkeit. ω wird zum Beispiel in {{rad/s}} angegeben." },
+      { id: "label", text: "Teilmenge A bekommt das Label friedlich.", correct: true },
+      { id: "after", text: "Nach dem Aufteilen gibt es insgesamt 2 Fehlklassifikationen.", correct: true },
+      { id: "majority", text: "Nach dem Aufteilen gibt es insgesamt 6 Fehlklassifikationen.", reason: "3 + 3 zählt die Mehrheit in jeder Teilmenge. Diese Fische werden aber richtig eingeordnet; Fehler ist nur die kleinere Gruppe." },
+      { id: "gain", text: "Der Informationsgewinn beträgt 4.", reason: "4 ist die Fehlerzahl vor dem Aufteilen. Der Informationsgewinn ist die Differenz aus Fehlern vorher und nachher: 4 − 2 = 2." },
     ],
   },
   {
     id: "q2",
-    text: "Welche Änderungen vergrößern die Bahngeschwindigkeit {{v_B}}?",
-    why: "Es gilt {{v_B}} = ω · r. {{v_B}} wird größer, wenn ω oder r größer wird und die andere Größe gleich bleibt.",
+    text: "Betrachte die E-Mail-Daten in der Tabelle. Welche Aussagen sind richtig?",
+    why: "Ohne Split sagt der Baum „kein Spam“ voraus, die 4 Spam-Mails sind Fehler. Betreff: 1 + 1 = 2 Fehler, Informationsgewinn 4 − 2 = 2. Link: 3 + 1 = 4 Fehler, Informationsgewinn 0.",
     options: [
-      { id: "omega", text: "ω verdoppeln, r bleibt gleich.", correct: true },
-      { id: "radius", text: "r vergrößern, ω bleibt gleich.", correct: true },
-      { id: "half-radius", text: "r halbieren, ω bleibt gleich.", reason: "Ein kleinerer Radius bei gleichem ω verkleinert {{v_B}}." },
-      { id: "both", text: "ω halbieren und gleichzeitig r verdoppeln.", reason: "Die beiden Änderungen heben sich auf: Halb so groß mal doppelt so groß ergibt wieder denselben Wert, {{v_B}} bleibt gleich." },
+      { id: "before", text: "Vor dem Aufteilen gibt es 4 Fehlklassifikationen.", correct: true },
+      { id: "before-majority", text: "Vor dem Aufteilen gibt es 6 Fehlklassifikationen.", reason: "Die 6 Mails ohne Spam sind die Mehrheit und werden richtig eingeordnet. Fehler sind nur die 4 Spam-Mails." },
+      { id: "subject", text: "Beim Attribut „Betreff in Großbuchstaben“ beträgt der Informationsgewinn 2.", correct: true },
+      { id: "link", text: "Das Attribut „enthält Link“ verringert die Zahl der Fehler nicht.", correct: true },
     ],
   },
   {
     id: "q3",
-    text: "Ein Karussell braucht für einen Umlauf die Zeit T = 4 s. Welche Aussagen sind richtig?",
-    why: "Es gilt f = {{1|T}} = {{1|4 s}} = 0,25 Hz. Das Karussell schafft also einen Viertelumlauf pro Sekunde.",
+    text: "Welches Attribut wird für die Wurzel des E-Mail-Baums gewählt? Welche Aussagen sind richtig?",
+    why: "„Absender bekannt“ führt zu 0 + 1 = 1 Fehler, also zum Informationsgewinn 4 − 1 = 3. Das ist mehr als bei „Betreff in Großbuchstaben“ (2) und „enthält Link“ (0).",
     options: [
-      { id: "value", text: "Die Frequenz beträgt f = 0,25 Hz.", correct: true },
-      { id: "quarter", text: "In einer Sekunde schafft das Karussell einen Viertelumlauf.", correct: true },
-      { id: "swap", text: "Die Frequenz beträgt f = 4 Hz.", reason: "Hier wurden Umlaufdauer und Frequenz verwechselt. Die Frequenz ist der Kehrwert der Umlaufdauer." },
-      { id: "longer", text: "Dreht sich das Karussell schneller, wird die Umlaufdauer T größer.", reason: "Bei schnellerer Drehung dauert ein Umlauf kürzer, T wird also kleiner und f größer." },
+      { id: "gain", text: "„Absender bekannt“, weil es mit 3 den größten Informationsgewinn hat.", correct: true },
+      { id: "errors", text: "„Absender bekannt“, weil danach nur noch 1 Fehler übrig bleibt.", correct: true },
+      { id: "majority", text: "„Betreff in Großbuchstaben“, weil bei „ja“ die Spam-Mails in der Mehrheit sind.", reason: "Dass eine Teilmenge mehrheitlich Spam ist, reicht nicht. Entscheidend sind die Fehler in allen Teilmengen zusammen: „Betreff“ hat den Informationsgewinn 2, „Absender bekannt“ 3." },
+      { id: "guess", text: "„enthält Link“, weil Links typisch für Spam sind.", reason: "Gewählt wird nicht nach Vermutungen, sondern nach den Trainingsdaten. „enthält Link“ senkt dort die Fehler gar nicht (Informationsgewinn 0)." },
     ],
   },
   {
     id: "q4",
-    text: "Welche Aussagen zur Zentripetalkraft {{F_Z}} sind richtig?",
-    why: "Der Kraftpfeil der Zentripetalkraft beginnt am Körper und zeigt zum Kreismittelpunkt. Die Kraft ändert ständig die Richtung der Geschwindigkeit.",
+    text: "Die Wurzel des E-Mail-Baums ist „Absender bekannt“. Welche Aussagen zum weiteren Aufbau sind richtig?",
+    why: "Bei „ja“ sind alle 5 Mails kein Spam: Dort entsteht ein Blatt. Die Teilmenge „nein“ ist gemischt (4 Spam, 1 kein Spam). Für diese 5 Mails werden die Informationsgewinne der übrigen Attribute neu bestimmt.",
     options: [
-      { id: "origin", text: "Der Kraftpfeil beginnt am Körper.", correct: true },
-      { id: "outward", text: "Sie zeigt vom Kreismittelpunkt nach außen.", reason: "Die Zentripetalkraft zeigt nach innen. Eine Kraft nach außen würde den Körper von der Kreisbahn wegziehen." },
-      { id: "inward", text: "Sie zeigt nach innen zum Kreismittelpunkt.", correct: true },
-      { id: "direction", text: "Sie sorgt dafür, dass sich die Richtung der Geschwindigkeit ständig ändert.", correct: true },
+      { id: "leaf", text: "Der Ast „ja“ endet in einem Blatt mit dem Label kein Spam.", correct: true },
+      { id: "recompute", text: "Für die Teilmenge „nein“ werden die Informationsgewinne der übrigen Attribute neu bestimmt.", correct: true },
+      { id: "reuse", text: "Für die Teilmenge „nein“ gelten die Informationsgewinne aus der Tabelle weiter, deshalb wird dort „Betreff in Großbuchstaben“ gewählt.", reason: "Die Tabelle beschreibt alle 10 Mails. In der Teilmenge „nein“ liegen nur 5 davon; für sie müssen die Informationsgewinne neu berechnet werden." },
+      { id: "split-pure", text: "Auch der Ast „ja“ muss noch nach einem weiteren Attribut aufgeteilt werden.", reason: "Die Teilmenge „ja“ ist rein. Ein weiterer Split kann dort keinen Fehler mehr beseitigen, deshalb entsteht ein Blatt." },
     ],
   },
   {
     id: "q5",
-    text: "Welche Aussagen zum Geschwindigkeitsvektor bei einer Kreisbewegung sind richtig?",
-    why: "Der Geschwindigkeitsvektor beginnt am Körper und liegt auf der Tangente. Die Tangente steht am Berührpunkt senkrecht auf dem Radius.",
+    text: "In einer Teilmenge erreichen zwei Attribute denselben, größten Informationsgewinn. Welche Aussagen sind richtig?",
+    why: "Bei einem Gleichstand ist nach diesem Kriterium keines der beiden Attribute besser. Man wählt eines davon; beide Bäume sind fachlich korrekt.",
     options: [
-      { id: "center", text: "Er beginnt im Zentrum und zeigt zum Körper.", reason: "Vom Zentrum zum Körper verläuft die Verbindungslinie, also der Radius, nicht der Geschwindigkeitsvektor." },
-      { id: "tangent", text: "Er beginnt am Körper und verläuft tangential zur Kreisbahn.", correct: true },
-      { id: "perpendicular", text: "Er steht am Körper senkrecht auf der Verbindungslinie zum Zentrum.", correct: true },
-      { id: "parallel", text: "Er zeigt in dieselbe Richtung wie die Zentripetalkraft.", reason: "Die Zentripetalkraft zeigt zum Mittelpunkt, die Geschwindigkeit tangential. Die beiden Vektoren stehen senkrecht aufeinander." },
+      { id: "equal", text: "Beide Attribute sind nach diesem Kriterium gleich gut geeignet.", correct: true },
+      { id: "either", text: "Es darf eines der beiden gewählt werden; beide Bäume sind fachlich korrekt.", correct: true },
+      { id: "leaf", text: "Bei einem Gleichstand wird sofort ein Blatt eingesetzt.", reason: "Ein Blatt entsteht nur, wenn die Teilmenge rein ist oder keine sinnvolle Aufteilung mehr möglich ist. Ein Gleichstand ändert daran nichts." },
+      { id: "zero", text: "Bei einem Gleichstand beträgt der Informationsgewinn beider Attribute 0.", reason: "Gleichstand heißt nur, dass beide Werte gleich groß sind. Bei den blauen Fischen hatten Muster und Bauchfarbe beide den Informationsgewinn 1." },
     ],
   },
 ];
@@ -240,21 +240,18 @@ function setupBoard({ root, rootSelector, items, assignment, capacity, layout })
   // Karte als Schaltfläche; nach der Abgabe nur noch als Text mit Markierung.
   function card(key, className, mark) {
     if (state.submitted) {
-      const node = element("span", `${className} is-locked${mark ? ` is-${mark}` : ""}`);
-      appendPhysicsText(node, labelOf(key));
+      const node = element("span", `${className} is-locked${mark ? ` is-${mark}` : ""}`, labelOf(key));
       if (mark) node.append(resultMark(mark === "correct"));
       return node;
     }
-    const node = element("button", className);
+    const node = element("button", className, labelOf(key));
     node.type = "button";
     node.dataset.key = key;
-    appendPhysicsText(node, labelOf(key));
     const isPicked = picked === key;
     node.classList.toggle("is-picked", isPicked);
     node.setAttribute("aria-pressed", String(isPicked));
     enableTokenDrag(node, {
       getLabel: () => labelOf(key),
-      renderGhost: (ghost) => { ghost.replaceChildren(); appendPhysicsText(ghost, labelOf(key)); },
       dropSelector: `${rootSelector} [data-slot]`,
       bankSelector: `${rootSelector} .cloze-term-bank`,
       onDrop: (slot, onBank) => {
@@ -309,16 +306,13 @@ function setupBoard({ root, rootSelector, items, assignment, capacity, layout })
   return { render };
 }
 
-function termOf(key) { return CLOZE_TERMS.find((term) => term.key === key); }
-function termLabel(key) { return termOf(key)?.label || key; }
-function termSpoken(key) { return termOf(key)?.spoken || key; }
-function termReason(key) { return termOf(key)?.reason || ""; }
+function termReason(key) { return CLOZE_TERMS.find((term) => term.key === key)?.reason || ""; }
 
 function clozeLayout({ bank, card, target, assignment, picked }) {
   const sentence = element("p", "cloze-sentence");
   const byGap = Object.fromEntries(Object.entries(assignment).map(([key, slot]) => [slot, key]));
   CLOZE_PARTS.forEach((part, index) => {
-    appendPhysicsText(sentence, part);
+    sentence.append(part);
     if (index >= CLOZE_SLOTS.length) return;
     const slot = CLOZE_SLOTS[index];
     const key = byGap[slot];
@@ -326,7 +320,7 @@ function clozeLayout({ bank, card, target, assignment, picked }) {
     if (key) {
       const mark = state.submitted ? (key === CLOZE_SOLUTION[index] ? "correct" : "wrong") : "";
       const gap = target(card(key, `cloze-gap is-filled${attached ? " is-attached" : ""}`, mark), slot);
-      gap.setAttribute("aria-label", `Lücke ${index + 1}: ${termSpoken(key)}${mark ? (mark === "correct" ? ", richtig" : ", falsch") : ""}`);
+      gap.setAttribute("aria-label", `Lücke ${index + 1}: ${key}${mark ? (mark === "correct" ? ", richtig" : ", falsch") : ""}`);
       sentence.append(gap);
       return;
     }
@@ -343,12 +337,12 @@ function clozeLayout({ bank, card, target, assignment, picked }) {
 }
 
 function sortLayout({ bank, card, target, assignment, picked }) {
-  const grid = element("div", "situation-zones");
+  const grid = element("div", "subset-zones");
   SORT_ZONES.forEach((zone) => {
-    const box = target(element("div", "situation-zone"), zone.id);
+    const box = target(element("div", `subset-zone is-${zone.id}`), zone.id);
     box.setAttribute("role", "group");
     box.setAttribute("aria-label", zone.label);
-    const label = element(state.submitted ? "span" : "button", "situation-zone-label");
+    const label = element(state.submitted ? "span" : "button", "subset-zone-label");
     label.append(element("strong", "", zone.label));
     if (!state.submitted) {
       label.type = "button";
@@ -356,10 +350,10 @@ function sortLayout({ bank, card, target, assignment, picked }) {
       label.setAttribute("aria-label", `${zone.label}${picked ? ": ausgewählte Karte hier ablegen" : ""}`);
     }
     box.append(label);
-    const list = element("div", "situation-zone-items");
+    const list = element("div", "subset-zone-items");
     SORT_VALUES.filter((value) => assignment[value.key] === zone.id).forEach((value) => {
       const mark = state.submitted ? (value.zone === zone.id ? "correct" : "wrong") : "";
-      list.append(card(value.key, "cloze-token situation-card", mark));
+      list.append(card(value.key, "cloze-token subset-card", mark));
     });
     box.append(list);
     grid.append(box);
@@ -371,9 +365,8 @@ function renderMcQuestions() {
   const container = document.getElementById("mc-questions");
   container.replaceChildren();
   MC_QUESTIONS.forEach((question, index) => {
-    const fieldset = element("fieldset", "physics-quiz-question quiz-question");
-    const legend = document.createElement("legend");
-    appendPhysicsText(legend, `Frage ${index + 1} · ${question.text}`);
+    const fieldset = element("fieldset", "quiz-question");
+    const legend = element("legend", "", `Frage ${index + 1} · ${question.text}`);
     const options = element("div", "quiz-options");
     question.options.forEach((option) => {
       const label = element("label", "quiz-option");
@@ -388,7 +381,7 @@ function renderMcQuestions() {
         saveState();
         updateProgress();
       });
-      label.append(input, physicsTextSpan(option.text, "quiz-option-text"));
+      label.append(input, element("span", "quiz-option-text", option.text));
       options.append(label);
     });
     fieldset.append(legend, options);
@@ -453,13 +446,8 @@ function resultList(rows) {
   const list = element("ul", "evaluation-list");
   rows.forEach(({ ok, text, why }) => {
     const item = element("li", ok ? "is-correct" : "is-wrong");
-    item.append(element("strong", "", ok ? "✓ richtig: " : "✗ falsch: "));
-    appendPhysicsText(item, text);
-    if (why) {
-      const note = element("span", "evaluation-why");
-      appendPhysicsText(note, why);
-      item.append(note);
-    }
+    item.append(element("strong", "", ok ? "✓ richtig: " : "✗ falsch: "), text);
+    if (why) item.append(element("span", "evaluation-why", why));
     list.append(item);
   });
   return list;
@@ -469,9 +457,7 @@ function evaluationSection(title, badgeText, complete, prompt, content) {
   const section = element("section", "evaluation-section");
   const heading = element("h3", "", `${title} `);
   heading.append(element("span", `evaluation-score ${complete ? "is-complete" : "is-open"}`, badgeText));
-  const promptLine = element("p", "evaluation-prompt");
-  appendPhysicsText(promptLine, prompt);
-  section.append(heading, promptLine, ...[].concat(content));
+  section.append(heading, element("p", "evaluation-prompt", prompt), ...[].concat(content));
   return section;
 }
 
@@ -492,17 +478,17 @@ function renderEvaluation() {
   const mcPoints = mc.filter((row) => row.correct).length;
 
   document.getElementById("evaluation-details").replaceChildren(
-    evaluationSection("Aufgabe 1 · Größen der Kreisbewegung", `${clozePoints} von ${MAX_POINTS.cloze} Punkten`, clozePoints === MAX_POINTS.cloze,
-      "Lückentext zu Winkelgeschwindigkeit, Bahngeschwindigkeit, Frequenz und Zentripetalkraft.",
+    evaluationSection("Aufgabe 1 · Vom Datensatz zum Baum", `${clozePoints} von ${MAX_POINTS.cloze} Punkten`, clozePoints === MAX_POINTS.cloze,
+      "Lückentext zu Mehrheitslabel, Fehlklassifikation, Informationsgewinn, Blatt und Wiederholung des Verfahrens.",
       resultList(cloze.map((row) => ({
         ok: row.correct,
         text: row.correct
-          ? `Lücke ${row.index + 1}: ${termLabel(row.chosen)}`
-          : `Lücke ${row.index + 1}: deine Antwort „${row.chosen ? termLabel(row.chosen) : "leer"}“, richtig ist „${termLabel(CLOZE_SOLUTION[row.index])}“.`,
+          ? `Lücke ${row.index + 1}: ${row.chosen}`
+          : `Lücke ${row.index + 1}: deine Antwort „${row.chosen || "leer"}“, richtig ist „${CLOZE_SOLUTION[row.index]}“.`,
         why: row.correct ? "" : [row.chosen && !CLOZE_SOLUTION.includes(row.chosen) ? termReason(row.chosen) : "", termReason(CLOZE_SOLUTION[row.index])].filter(Boolean).join(" "),
       })))),
-    evaluationSection("Aufgabe 2 · Was ändert sich?", `${sortPoints} von ${MAX_POINTS.sort} Punkten`, sortPoints === MAX_POINTS.sort,
-      "Kreisbewegung mit konstanter Winkelgeschwindigkeit: Was ändert sich ständig, was bleibt gleich?",
+    evaluationSection("Aufgabe 2 · Blatt oder weiter aufteilen?", `${sortPoints} von ${MAX_POINTS.sort} Punkten`, sortPoints === MAX_POINTS.sort,
+      "Entsteht bei der Teilmenge ein Blatt, und mit welchem Label, oder wird weiter aufgeteilt?",
       resultList(sort.map((row) => ({
         ok: row.correct,
         text: row.correct
@@ -532,15 +518,13 @@ function renderEvaluation() {
 }
 
 function describeEvaluation(task) {
-  const box = element("div", "physics-semantic-feedback describe-evaluation");
+  const box = element("div", "fish-semantic-feedback describe-evaluation");
   const answer = answerOf(task);
   const ai = state.ai[task.id];
   box.dataset.status = ai?.status || "";
   box.append(element("p", "describe-answer", answer ? `Deine Antwort: ${answer}` : "Deine Antwort: (leer)"));
   if (answer.length < DESCRIBE_MIN_LENGTH) {
-    const hint = element("p", "", "Keine ausreichende Antwort – 0 Aspekte. ");
-    appendPhysicsText(hint, task.shortHint);
-    box.append(hint);
+    box.append(element("p", "", `Keine ausreichende Antwort – 0 Aspekte. ${task.shortHint}`));
     return box;
   }
   if (!ai || ai.level === "loading") {
@@ -642,14 +626,14 @@ function init() {
     setupBoard({
       root: document.getElementById("term-cloze"),
       rootSelector: "#term-cloze",
-      items: CLOZE_TERMS.map((term) => ({ key: term.key, label: term.label || term.key })),
+      items: CLOZE_TERMS.map((term) => ({ key: term.key, label: term.key })),
       assignment: state.cloze,
       capacity: () => 1,
       layout: clozeLayout,
     }),
     setupBoard({
-      root: document.getElementById("situation-sort"),
-      rootSelector: "#situation-sort",
+      root: document.getElementById("subset-sort"),
+      rootSelector: "#subset-sort",
       items: SORT_VALUES.map((value) => ({ key: value.key, label: value.label })),
       assignment: state.sort,
       capacity: () => Infinity,

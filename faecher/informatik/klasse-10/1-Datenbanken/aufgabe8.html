@@ -9,8 +9,8 @@
     <link rel="stylesheet" href="redundanzen.css?v=20260923a">
     <link rel="stylesheet" href="tabellenschema.css?v=20260827">
     <link rel="stylesheet" href="beziehungen.css?v=20260826b">
-    <link rel="stylesheet" href="beziehungsarten.css?v=20260926a">
-    <script type="module" src="beziehungsarten.js?v=20260926a"></script>
+    <link rel="stylesheet" href="beziehungsarten.css?v=20260928a">
+    <script type="module" src="beziehungsarten.js?v=20260928a"></script>
   </head>
   <body class="redundancy-page relation-page relation-types-page">
     <div class="site-backdrop" aria-hidden="true"></div>
@@ -87,7 +87,7 @@
         <!-- Schritt 2: 1:1 umsetzen -->
         <section id="step-2" class="step-panel" role="tabpanel" aria-labelledby="tab-2" hidden>
           <div class="step-heading"><span class="step-number">2</span><div><p class="step-kicker">Verstehen</p><h2>Wohin kommt der Fremdschlüssel?</h2></div></div>
-          <div class="scenario-card"><p>Bei einer 1:n-Beziehung steht der Fremdschlüssel auf der n-Seite. Bei Klasse 1 ───── 1 Klassenleiter gibt es aber keine n-Seite.</p></div>
+          <div class="scenario-card"><p>Bei einer 1:n-Beziehung steht der Fremdschlüssel auf der n-Seite. Bei Klasse 1 ───── 1 Klassenleiter gibt es aber keine n-Seite.</p><p><strong>Der jeweilige Fremdschlüssel kann in die eine oder die andere Klasse eingefügt werden, aber nicht in beide Klassen.</strong></p></div>
           <div id="r2-schemas" class="schema-comparison three-up" aria-label="Schema A, B und C für Klasse und Klassenleiter"></div>
           <h3 class="assignment-heading"><strong>Wähle</strong> alle Schemata aus, die die 1:1-Beziehung richtig umsetzen.</h3>
           <div id="r2-schema-choices" class="choice-list"></div>
@@ -108,23 +108,37 @@
             <h3>Übertragen: Schlüssel und Schloss</h3>
             <p>In einer Schließanlage öffnet jeder Schlüssel genau ein Schloss. Zu jedem Schloss gehört genau ein Schlüssel.</p>
             <div class="cardinality-demo" role="group" aria-label="Klassendiagramm: Schlüssel und Schloss mit Lücken für die Kardinalität">
-              <article class="class-card diagram-class-card"><h3>Schlüssel</h3><div class="empty-class-body" aria-hidden="true"></div></article>
+              <article class="class-card diagram-class-card"><h3>Schlüssel</h3><ul><li>id</li><li>nummer</li><li>besitzer</li></ul></article>
               <div class="association-connector">
                 <label class="cardinality-gap"><span class="sr-only">Kardinalität bei Schlüssel, Beziehung öffnet</span><input id="r2-schluessel-cardinality" type="text" maxlength="1" inputmode="text" autocomplete="off" aria-label="Kardinalität bei Schlüssel, Beziehung öffnet" placeholder="?"></label>
                 <i aria-hidden="true"></i>
                 <small class="association-label">öffnet<b class="reading-arrow" data-dir="forward" aria-hidden="true"></b></small>
                 <label class="cardinality-gap"><span class="sr-only">Kardinalität bei Schloss, Beziehung öffnet</span><input id="r2-schloss-cardinality" type="text" maxlength="1" inputmode="text" autocomplete="off" aria-label="Kardinalität bei Schloss, Beziehung öffnet" placeholder="?"></label>
               </div>
-              <article class="class-card diagram-class-card"><h3>Schloss</h3><div class="empty-class-body" aria-hidden="true"></div></article>
+              <article class="class-card diagram-class-card"><h3>Schloss</h3><ul><li>id</li><li>ort</li></ul></article>
             </div>
             <h3 class="assignment-heading"><strong>Ergänze</strong> die Kardinalitäten.</h3>
             <div class="action-row"><button id="check-r2-cardinality" class="primary-button" type="button">Kardinalitäten prüfen</button></div>
             <p id="feedback-r2-cardinality" class="feedback" aria-live="polite"></p>
 
-            <p>Schlüssel haben eine nummer und einen besitzer, Schlösser einen ort.</p>
-            <h3 class="assignment-heading"><strong>Wähle</strong> alle Tabellenschemata aus, die zur Beziehung passen.</h3>
-            <div id="r2-schluessel-schema-choices" class="choice-list schema-choice-list"></div>
-            <div class="action-row"><button id="check-r2-schluessel-schema" class="primary-button" type="button">Auswahl prüfen</button></div>
+            <p class="schema-pair-instruction"><strong>Notiere beide möglichen Tabellenschemata</strong>, um die 1:1-Beziehung umzusetzen.</p>
+            <div class="schema-comparison schema-answer-pair">
+              <section class="schema-editor-card">
+                <label class="schema-text-label" for="r2-schema-text-a">Möglichkeit 1</label>
+                <textarea id="r2-schema-text-a" class="schema-textarea" rows="12" autocomplete="off" autocapitalize="off" spellcheck="false" aria-describedby="r2-schema-format-hint" placeholder="tabelle1(&#10;  attribut: datentyp&#10;)&#10;tabelle2(&#10;  attribut: datentyp&#10;)"></textarea>
+              </section>
+              <section class="schema-editor-card">
+                <label class="schema-text-label" for="r2-schema-text-b">Möglichkeit 2</label>
+                <textarea id="r2-schema-text-b" class="schema-textarea" rows="12" autocomplete="off" autocapitalize="off" spellcheck="false" aria-describedby="r2-schema-format-hint" placeholder="tabelle1(&#10;  attribut: datentyp&#10;)&#10;tabelle2(&#10;  attribut: datentyp&#10;)"></textarea>
+              </section>
+            </div>
+            <p id="r2-schema-format-hint" class="schema-format-hint">Schreibe in jedes Feld beide Tabellen untereinander und jede Spalte in eine eigene Zeile. Die Reihenfolge der Tabellen und Attribute ist egal.</p>
+            <div class="help-stack">
+              <details><summary>Hilfe 1</summary><p>Jede Möglichkeit besteht aus beiden Tabellen. Übertrage zuerst die Attribute der Klassenkarten mit ihren Datentypen.</p></details>
+              <details><summary>Hilfe 2</summary><p>Die Beziehung öffnet wird durch einen Fremdschlüssel umgesetzt. Du schreibst ihn wie <code>user_id[users]: int</code>: in den eckigen Klammern steht die Tabelle, auf die er verweist.</p></details>
+              <details><summary>Hilfe 3</summary><p>In einer Möglichkeit bekommt schluessel die Zeile <code>schloss_id[schloss]: int</code>. In der anderen steht der Fremdschlüssel stattdessen in schloss.</p></details>
+            </div>
+            <div class="action-row"><button id="check-r2-schluessel-schema" class="primary-button" type="button">Tabellenschemata prüfen</button></div>
             <p id="feedback-r2-schluessel-schema" class="feedback" aria-live="polite"></p>
           </div>
         </section>
@@ -180,27 +194,37 @@
         <section id="step-4" class="step-panel" role="tabpanel" aria-labelledby="tab-4" hidden>
           <div class="step-heading"><span class="step-number">4</span><div><p class="step-kicker">Verstehen</p><h2>Eine Tabelle für die Anmeldungen</h2></div></div>
           <div class="scenario-card"><p>Die Schule speichert die Anmeldungen in einer eigenen Tabelle teilnahme. Jede Zeile ist eine Anmeldung.</p></div>
-          <div id="r4-tables" class="table-excerpts three-up" aria-label="Tabellenauszüge schueler, teilnahme und ag"></div>
+          <div class="r4-workspace">
+            <div id="r4-tables" class="table-excerpts three-up" aria-label="Tabellenauszüge schueler, teilnahme und ag"></div>
 
-          <h3 class="assignment-heading"><strong>Kreuze an</strong>: Welche AGs besucht Lina?</h3>
-          <div id="r4-f4a-choices" class="choice-list"></div>
-          <div class="action-row"><button id="check-r4-f4a" class="primary-button" type="button">Antwort 1 prüfen</button></div>
-          <p id="feedback-r4-f4a" class="feedback" aria-live="polite"></p>
+            <div class="r4-cloze-panel" role="region" aria-label="Lückentexte zu den Anmeldungen" tabindex="0">
+              <div class="r4-cloze-task">
+                <h3 class="assignment-heading"><strong>Ergänze</strong>: Welche AGs besucht Lina?</h3>
+                <p class="r4-cloze">Lina hat in schueler die id <input id="r4-f4a-id" class="cloze-input" type="text" autocomplete="off" autocapitalize="off" spellcheck="false" aria-label="Lückentext 1, Lücke 1: Linas id">. In teilnahme steht diese schueler_id zusammen mit den ag_id-Werten <input id="r4-f4a-agId1" class="cloze-input" type="text" autocomplete="off" autocapitalize="off" spellcheck="false" aria-label="Lückentext 1, Lücke 2: erste ag_id"> und <input id="r4-f4a-agId2" class="cloze-input" type="text" autocomplete="off" autocapitalize="off" spellcheck="false" aria-label="Lückentext 1, Lücke 3: zweite ag_id">. Lina besucht also die AGs <input id="r4-f4a-ag1" class="cloze-input is-word" type="text" autocomplete="off" autocapitalize="off" spellcheck="false" aria-label="Lückentext 1, Lücke 4: erste AG"> und <input id="r4-f4a-ag2" class="cloze-input is-word" type="text" autocomplete="off" autocapitalize="off" spellcheck="false" aria-label="Lückentext 1, Lücke 5: zweite AG">.</p>
+                <div class="action-row"><button id="check-r4-f4a" class="primary-button" type="button">Lückentext 1 prüfen</button></div>
+                <p id="feedback-r4-f4a" class="feedback" aria-live="polite"></p>
+              </div>
 
-          <h3 class="assignment-heading">Wer besucht die Theater-AG?</h3>
-          <div id="r4-f4b-choices" class="choice-list"></div>
-          <div class="action-row"><button id="check-r4-f4b" class="primary-button" type="button">Antwort 2 prüfen</button></div>
-          <p id="feedback-r4-f4b" class="feedback" aria-live="polite"></p>
+              <div class="r4-cloze-task">
+                <h3 class="assignment-heading"><strong>Ergänze</strong>: Wer besucht die Theater-AG?</h3>
+                <p class="r4-cloze">Die Theater-AG hat in ag die id <input id="r4-f4b-id" class="cloze-input" type="text" autocomplete="off" autocapitalize="off" spellcheck="false" aria-label="Lückentext 2, Lücke 1: id der Theater-AG">. In teilnahme steht diese ag_id bei den schueler_id-Werten <input id="r4-f4b-schuelerId1" class="cloze-input" type="text" autocomplete="off" autocapitalize="off" spellcheck="false" aria-label="Lückentext 2, Lücke 2: erste schueler_id"> und <input id="r4-f4b-schuelerId2" class="cloze-input" type="text" autocomplete="off" autocapitalize="off" spellcheck="false" aria-label="Lückentext 2, Lücke 3: zweite schueler_id">. Die Theater-AG besuchen also <input id="r4-f4b-name1" class="cloze-input is-word" type="text" autocomplete="off" autocapitalize="off" spellcheck="false" aria-label="Lückentext 2, Lücke 4: erster Name"> und <input id="r4-f4b-name2" class="cloze-input is-word" type="text" autocomplete="off" autocapitalize="off" spellcheck="false" aria-label="Lückentext 2, Lücke 5: zweiter Name">.</p>
+                <div class="action-row"><button id="check-r4-f4b" class="primary-button" type="button">Lückentext 2 prüfen</button></div>
+                <p id="feedback-r4-f4b" class="feedback" aria-live="polite"></p>
+              </div>
 
-          <h3 class="assignment-heading">Ben meldet sich zusätzlich für den Chor an. <strong>Entscheide</strong>, was sich ändern muss.</h3>
-          <div id="r4-f4c-choices" class="choice-list"></div>
-          <div class="action-row"><button id="check-r4-f4c" class="primary-button" type="button">Antwort 3 prüfen</button></div>
-          <p id="feedback-r4-f4c" class="feedback" aria-live="polite"></p>
+              <div class="r4-cloze-task">
+                <h3 class="assignment-heading">Ben meldet sich zusätzlich für den Chor an. <strong>Ergänze</strong>, was sich ändert.</h3>
+                <p class="r4-cloze">Die Tabelle <input id="r4-f4c-table" class="cloze-input is-word" type="text" autocomplete="off" autocapitalize="off" spellcheck="false" aria-label="Lückentext 3, Lücke 1: Tabelle"> bekommt eine neue <input id="r4-f4c-row" class="cloze-input is-word" type="text" autocomplete="off" autocapitalize="off" spellcheck="false" aria-label="Lückentext 3, Lücke 2: was neu hinzukommt">. Darin steht bei schueler_id der Wert <input id="r4-f4c-schuelerId" class="cloze-input" type="text" autocomplete="off" autocapitalize="off" spellcheck="false" aria-label="Lückentext 3, Lücke 3: Wert bei schueler_id"> und bei ag_id der Wert <input id="r4-f4c-agId" class="cloze-input" type="text" autocomplete="off" autocapitalize="off" spellcheck="false" aria-label="Lückentext 3, Lücke 4: Wert bei ag_id">.</p>
+                <div class="action-row"><button id="check-r4-f4c" class="primary-button" type="button">Lückentext 3 prüfen</button></div>
+                <p id="feedback-r4-f4c" class="feedback" aria-live="polite"></p>
+              </div>
 
-          <div class="help-stack">
-            <details><summary>Hilfe 1</summary><p>Suche zuerst Linas id in schueler.</p></details>
-            <details><summary>Hilfe 2</summary><p>Suche in teilnahme alle Zeilen mit dieser schueler_id. Die ag_id verrät dir, welche AG gemeint ist.</p></details>
-            <details><summary>Hilfe 3</summary><p>Lina hat die id 1. In teilnahme gibt es zwei Zeilen mit schueler_id 1. Für die Theater-AG gehst du umgekehrt vor: Suche ihre id in ag und dann alle Zeilen mit dieser ag_id.</p></details>
+              <div class="help-stack">
+                <details><summary>Hilfe 1</summary><p>Suche zuerst Linas id in schueler.</p></details>
+                <details><summary>Hilfe 2</summary><p>Suche in teilnahme alle Zeilen mit dieser schueler_id. Die ag_id verrät dir, welche AG gemeint ist.</p></details>
+                <details><summary>Hilfe 3</summary><p>Lina hat die id 1. In teilnahme gibt es zwei Zeilen mit schueler_id 1. Für die Theater-AG gehst du umgekehrt vor: Suche ihre id in ag und dann alle Zeilen mit dieser ag_id.</p></details>
+              </div>
+            </div>
           </div>
           <div id="r4-merke" class="foreign-key-reveal" hidden>
             <strong>Merke: Hilfstabelle</strong>

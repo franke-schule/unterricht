@@ -1,0 +1,143 @@
+Wiederholungs-Quiz zu Aufgabe 3a – Anleitung zur vollständigen Löschung
+=======================================================================
+
+Quiz:           Test zu Aufgabe 3a – Einen Entscheidungsbaum erstellen
+                (Informatik 11, Einheit 1-Kuenstliche-Intelligenz)
+Modul:          aufgabe3.html, Pflichtteil Aufgabe 3a (ohne 3b Entropie)
+Seite:          faecher/informatik/klasse-11/1-Kuenstliche-Intelligenz/
+                aufgabe3a-quiz.html
+Online:         https://www.florian-franke.org/faecher/informatik/klasse-11/
+                1-Kuenstliche-Intelligenz/aufgabe3a-quiz.html
+Angelegt:       28.09.2026
+Löschen:        nur auf ausdrückliche Anweisung der Lehrkraft
+Regeln:         manifest-wiederholungs-quiz.txt
+
+Das Quiz ist eigenständig: Es bindet keine Datei eines anderen Tests ein, und
+keine andere Seite bindet seine Dateien ein. Gemeinsam genutzte Dateien
+(styles.css, entscheidungbaeume/styles.css, entscheidungbaeume/task3.css,
+faecher/physik/klasse-11/1-Kreisbewegungen/components/token-drag.mjs,
+perzeptron/ui/semantic-answer.mjs) wurden nur eingebunden, nicht verändert,
+und bleiben beim Löschen unangetastet.
+
+
+1. Neue Dateien
+---------------
+
+In faecher/informatik/klasse-11/1-Kuenstliche-Intelligenz/:
+  aufgabe3a-quiz.html
+  aufgabe3a-quiz.mjs
+  aufgabe3a-quiz.css
+  aufgabe3a-quiz-loeschen.txt   (diese Anleitung)
+
+
+2. Geänderte Dateien in diesem Repository
+-----------------------------------------
+
+apps-script/Tasks.gs
+  Drei aufeinanderfolgende Blöcke direkt nach '11-3a-f' und direkt vor
+  '11-4-1':
+    'inf11-a3a-quiz-informationsgewinn-beschreibung': { ... },
+    'inf11-a3a-quiz-attributwahl-beschreibung': { ... },
+    'inf11-a3a-quiz-vorgehen-beschreibung': { ... },
+
+apps-script/Config.gs
+  Kommentarzeile im Kopf:
+    " * - inf11/1-Kuenstliche-Intelligenz/aufgabe3a-quiz.html (drei
+      Beschreibe-Aufgaben, nicht verlinkter Test)"
+
+apps-script/tests/code-routing.test.js
+  Drei Zeilen am Ende der Liste der geprüften Beschreibe-Aufgaben:
+    'inf11-a3a-quiz-informationsgewinn-beschreibung',
+    'inf11-a3a-quiz-attributwahl-beschreibung',
+    'inf11-a3a-quiz-vorgehen-beschreibung'
+
+Nicht geändert: Menüs und Übersichtsseiten. Das Quiz ist dort nirgends
+verlinkt; es muss kein Menüeintrag entfernt werden.
+
+
+3. Änderungen außerhalb dieses Repositorys
+------------------------------------------
+
+Präsentation ../informatik-material/inf11/inf11-ki.html (nicht versioniert):
+  - eigene Folie 4 („Quiz zu Aufgabe 3a: Entscheidungsbaum mit Fischdaten“,
+    id folie-4) direkt hinter Folie 3, mit Link und QR-Code zur Quizseite
+    (eingefügt am 28.09.2026). Hinter Folie 3 gab es keine weiteren Folien;
+    es wurde nichts umnummeriert.
+QR-Code als Datei: ../informatik-material/inf11/inf11-aufgabe3a-quiz.svg
+Kurzlink: noch keiner. Wird einer angelegt und in der Folie eingetragen, hier
+  nachtragen (Kurzlink, neuer Dateiname der QR-SVG).
+
+
+4. Aufgaben auf dem Skriptserver
+--------------------------------
+
+  inf11-a3a-quiz-informationsgewinn-beschreibung   Aufgabe 4 des Quiz, 4 Aspekte
+    „Ein Entscheidungsbaum soll Äpfel als „reif“ oder „unreif“ einordnen. Von
+    10 Trainingsäpfeln sind 6 reif und 4 unreif. Das Attribut Farbe teilt sie
+    auf: rot – 5 reif, 1 unreif; grün – 1 reif, 3 unreif. Beschreibe, wie du
+    den Informationsgewinn dieses Splits bestimmst, und gib das Ergebnis an.“
+  inf11-a3a-quiz-attributwahl-beschreibung         Aufgabe 5 des Quiz, 3 Aspekte
+    „Jemand aus deiner Klasse sagt: „Für den ersten Knoten nehme ich das
+    Attribut, bei dem eine Teilmenge die meisten feindseligen Fische
+    enthält.“ Erkläre, warum dieses Vorgehen nicht passt, und beschreibe,
+    wie das Attribut stattdessen ausgewählt wird.“
+  inf11-a3a-quiz-vorgehen-beschreibung             Aufgabe 6 des Quiz, 4 Aspekte
+    „Du hast für gelabelte Trainingsdaten das Attribut für den ersten Knoten
+    bestimmt. Beschreibe, wie du weiter vorgehst, bis der Entscheidungsbaum
+    fertig ist.“
+
+Verwendet von aufgabe3a-quiz.mjs (Konstante DESCRIBE_TASKS, Feld taskId).
+Gemeinsames Präfix aller drei IDs: inf11-a3a-quiz-
+
+
+5. Checkliste zum Löschen
+-------------------------
+
+  [ ] Quizdateien löschen:
+        git rm faecher/informatik/klasse-11/1-Kuenstliche-Intelligenz/aufgabe3a-quiz.html
+        git rm faecher/informatik/klasse-11/1-Kuenstliche-Intelligenz/aufgabe3a-quiz.mjs
+        git rm faecher/informatik/klasse-11/1-Kuenstliche-Intelligenz/aufgabe3a-quiz.css
+  [ ] apps-script/Tasks.gs: die drei Blöcke 'inf11-a3a-quiz-…': { ... },
+      vollständig entfernen (je bis einschließlich der schließenden
+      Klammer mit Komma und der folgenden Leerzeile).
+  [ ] apps-script/Config.gs: die Kommentarzeile zu aufgabe3a-quiz.html
+      entfernen.
+  [ ] apps-script/tests/code-routing.test.js: die drei Zeilen
+      'inf11-a3a-quiz-…' entfernen. Danach darf hinter dem letzten
+      Listeneintrag kein Komma stehen.
+  [ ] Präsentation (../informatik-material/inf11/inf11-ki.html): die
+      komplette <section … id="folie-4" aria-label="Folie 4: Quiz zu
+      Aufgabe 3a …"> … </section> entfernen. Stehen dahinter inzwischen
+      weitere Folien, diese wieder um eins zurückzählen (id="folie-n" und
+      „Folie n:“ im aria-label). Im Browser prüfen: Der Zähler zeigt eine
+      Folie weniger, und auf Folie 3 folgt keine Quiz-Folie mehr.
+  [ ] inf11-aufgabe3a-quiz.svg (bzw. die nach dem Kurzlink benannte
+      QR-SVG) in ../informatik-material/inf11/ löschen.
+  [ ] Kurzlink deaktivieren, falls einer angelegt wurde.
+  [ ] Kontrolle, dass keine Reste bleiben (in beiden Repositorys bzw.
+      Ordnern):
+        git grep -nw "aufgabe3a-quiz"
+        git grep -n "inf11-a3a-quiz-"
+      In ../informatik-material ist inf11-ki.html nicht versioniert; dort
+      zusätzlich suchen:
+        Select-String -Path ../informatik-material/inf11/*.html -Pattern "aufgabe3a-quiz"
+      Erlaubt sind nur noch Treffer in dieser Anleitung.
+  [ ] Tests ausführen:
+        node apps-script/tests/code-routing.test.js
+        Get-ChildItem apps-script/tests/*.test.js | % { node $_.FullName }
+        Get-ChildItem faecher/informatik/klasse-11/1-Kuenstliche-Intelligenz/entscheidungbaeume/tests/*.test.mjs |
+          % { node $_.FullName }
+  [ ] Skriptserver: Tasks.gs und Config.gs aus dem Repository in das
+      Google-Apps-Script-Projekt übernehmen und die Bereitstellung auf eine
+      neue Version setzen (Bereitstellen > Bereitstellungen verwalten >
+      Bearbeiten > Version: Neue Version). Die /exec-URL bleibt gleich.
+      Ohne diesen Schritt kennt der Online-Server die drei Aufgaben weiter.
+  [ ] Website neu hochladen, damit aufgabe3a-quiz.html auch online entfernt
+      ist.
+  [ ] Zuletzt diese Anleitung löschen:
+        git rm faecher/informatik/klasse-11/1-Kuenstliche-Intelligenz/aufgabe3a-quiz-loeschen.txt
+
+Hinweis: In den Browsern der Schülerinnen und Schüler bleibt ggf. der
+localStorage-Eintrag "informatik11-kuenstliche-intelligenz-aufgabe3a-test-v1"
+zurück. Er enthält nur die Quizeingaben, wird von keiner anderen Seite gelesen
+und muss nicht entfernt werden.

@@ -1,0 +1,114 @@
+<!doctype html>
+<html lang="de">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="robots" content="noindex, nofollow">
+    <title>Test zu Aufgabe 3a – Einen Entscheidungsbaum erstellen | Informatik 11</title>
+    <link rel="stylesheet" href="../../../../styles.css?v=20260707">
+    <link rel="stylesheet" href="entscheidungbaeume/styles.css?v=20260820g">
+    <link rel="stylesheet" href="entscheidungbaeume/task3.css?v=20260917c">
+    <link rel="stylesheet" href="aufgabe3a-quiz.css?v=20260928a">
+    <script type="module" src="aufgabe3a-quiz.mjs?v=20260928a"></script>
+  </head>
+  <body class="decision-tree-page dt-fish-page quiz-test-page">
+    <div class="site-backdrop" aria-hidden="true"></div>
+    <main class="page-shell decision-tree-shell">
+      <nav class="topbar" aria-label="Navigation">
+        <a class="back-link" href="../index.html">Zur Aufgabenübersicht</a>
+        <a class="back-link" href="../../../../">Startseite</a>
+      </nav>
+
+      <header class="dt-hero dt-fish-hero">
+        <p class="dt-eyebrow">Entscheidungsbäume · Test zu Aufgabe 3a</p>
+        <h1>Einen Entscheidungsbaum erstellen</h1>
+        <p>Bearbeite alle sechs Aufgaben. Die Auswertung erhältst du erst, wenn du den Test abgibst.</p>
+      </header>
+
+      <div class="test-progress" aria-label="Bearbeitungsstand">
+        <span id="progress-label">0 von 6 Aufgaben bearbeitet</span>
+        <strong id="progress-points">30 Punkte erreichbar</strong>
+      </div>
+
+      <form id="quiz-test" class="fish-step quiz-test-form" novalidate>
+        <article class="quiz-task-card" aria-labelledby="task1-title">
+          <h2 id="task1-title">Aufgabe 1 · Vom Datensatz zum Baum <span class="task-points">6 Punkte</span></h2>
+          <p id="task1-instruction"><strong>Ziehe</strong> die passenden Begriffe aus dem Wortspeicher in die Lücken. Zwei Begriffe bleiben übrig.</p>
+          <p class="drag-help">Ohne Ziehen: Begriff antippen, dann Lücke antippen. Eine belegte Lücke zweimal antippen, um den Begriff zurückzulegen.</p>
+          <div id="term-cloze" class="quiz-cloze" aria-describedby="task1-instruction"></div>
+        </article>
+
+        <article class="quiz-task-card" aria-labelledby="task2-title">
+          <h2 id="task2-title">Aufgabe 2 · Blatt oder weiter aufteilen? <span class="task-points">8 Punkte</span></h2>
+          <p id="task2-instruction">Beim Aufbau eines Fisch-Entscheidungsbaums sind diese Teilmengen entstanden. <strong>Ordne</strong> jede Teilmenge zu: Entsteht dort ein Blatt, und mit welchem Label, oder wird weiter aufgeteilt?</p>
+          <p class="drag-help">Ohne Ziehen: Karte antippen, dann Spalte antippen. Eine zugeordnete Karte zweimal antippen, um sie zurückzulegen.</p>
+          <div id="subset-sort" class="subset-sort" aria-describedby="task2-instruction"></div>
+        </article>
+
+        <article class="quiz-task-card" aria-labelledby="task3-title">
+          <h2 id="task3-title">Aufgabe 3 · Multiple Choice <span class="task-points">5 Punkte</span></h2>
+          <p><strong>Wähle</strong> bei jeder Frage alle richtigen Aussagen aus. Bei manchen Fragen sind mehrere Aussagen richtig. Eine Frage zählt nur, wenn sie vollständig richtig ist.</p>
+          <figure class="quiz-data-table">
+            <figcaption>Daten für Frage 2 bis 4: 10 gelabelte E-Mails, davon 4 Spam und 6 kein Spam</figcaption>
+            <div class="fish-table-scroll">
+              <table class="fish-table">
+                <thead><tr><th scope="col">Attribut</th><th scope="col">Attributwert</th><th scope="col">Spam</th><th scope="col">kein Spam</th></tr></thead>
+                <tbody>
+                  <tr><th scope="rowgroup" rowspan="2">Absender bekannt</th><td>ja</td><td>0</td><td>5</td></tr>
+                  <tr><td>nein</td><td>4</td><td>1</td></tr>
+                  <tr><th scope="rowgroup" rowspan="2">enthält Link</th><td>ja</td><td>3</td><td>3</td></tr>
+                  <tr><td>nein</td><td>1</td><td>3</td></tr>
+                  <tr><th scope="rowgroup" rowspan="2">Betreff in Großbuchstaben</th><td>ja</td><td>3</td><td>1</td></tr>
+                  <tr><td>nein</td><td>1</td><td>5</td></tr>
+                </tbody>
+              </table>
+            </div>
+          </figure>
+          <div id="mc-questions" class="quiz-multiple-choice" aria-label="Multiple-Choice-Aufgaben des Tests"></div>
+        </article>
+
+        <article class="quiz-task-card" aria-labelledby="task4-title">
+          <h2 id="task4-title">Aufgabe 4 · Informationsgewinn bestimmen <span class="task-points">4 Aspekte</span></h2>
+          <section class="quiz-semantic-task" aria-labelledby="task4-title">
+            <label class="fish-text-label" for="describe-aepfel">Ein Entscheidungsbaum soll Äpfel als „reif“ oder „unreif“ einordnen. Von 10 Trainingsäpfeln sind 6 reif und 4 unreif. Das Attribut Farbe teilt sie auf: rot – 5 reif, 1 unreif; grün – 1 reif, 3 unreif. <strong>Beschreibe</strong>, wie du den Informationsgewinn dieses Splits bestimmst, und <strong>gib</strong> das Ergebnis <strong>an</strong>.</label>
+            <textarea id="describe-aepfel" maxlength="3000" rows="6" placeholder="Vor dem Aufteilen …"></textarea>
+            <div class="fish-text-meta"><span id="describe-aepfel-count">0 von 3000 Zeichen</span></div>
+            <p class="privacy-note"><strong>Hinweis:</strong> Gib keine personenbezogenen Informationen ein. Deine Antworten in den Aufgaben 4 bis 6 werden zur automatischen Auswertung an den Skriptserver und dort an ein KI-System übertragen.</p>
+          </section>
+        </article>
+
+        <article class="quiz-task-card" aria-labelledby="task5-title">
+          <h2 id="task5-title">Aufgabe 5 · Das beste Attribut auswählen <span class="task-points">3 Aspekte</span></h2>
+          <section class="quiz-semantic-task" aria-labelledby="task5-title">
+            <label class="fish-text-label" for="describe-attributwahl">Jemand aus deiner Klasse sagt: „Für den ersten Knoten nehme ich das Attribut, bei dem eine Teilmenge die meisten feindseligen Fische enthält.“ <strong>Erkläre</strong>, warum dieses Vorgehen nicht passt, und <strong>beschreibe</strong>, wie das Attribut stattdessen ausgewählt wird.</label>
+            <textarea id="describe-attributwahl" maxlength="3000" rows="6" placeholder="Entscheidend ist …"></textarea>
+            <div class="fish-text-meta"><span id="describe-attributwahl-count">0 von 3000 Zeichen</span></div>
+          </section>
+        </article>
+
+        <article class="quiz-task-card" aria-labelledby="task6-title">
+          <h2 id="task6-title">Aufgabe 6 · Nach dem ersten Knoten <span class="task-points">4 Aspekte</span></h2>
+          <section class="quiz-semantic-task" aria-labelledby="task6-title">
+            <label class="fish-text-label" for="describe-vorgehen">Du hast für gelabelte Trainingsdaten das Attribut für den ersten Knoten bestimmt. <strong>Beschreibe</strong>, wie du weiter vorgehst, bis der Entscheidungsbaum fertig ist.</label>
+            <textarea id="describe-vorgehen" maxlength="3000" rows="6" placeholder="Zuerst werden die Daten …"></textarea>
+            <div class="fish-text-meta"><span id="describe-vorgehen-count">0 von 3000 Zeichen</span></div>
+          </section>
+        </article>
+
+        <div class="test-submit-row">
+          <button id="submit-test" class="dt-primary-button" type="submit">Test abgeben und auswerten</button>
+        </div>
+      </form>
+
+      <section id="evaluation" class="fish-step test-evaluation" aria-labelledby="evaluation-title" hidden>
+        <div class="evaluation-heading"><p class="fish-kicker">Auswertung</p><h2 id="evaluation-title">Dein Testergebnis</h2></div>
+        <p id="evaluation-total" class="evaluation-total" role="status" aria-live="polite"></p>
+        <div id="evaluation-details" class="evaluation-details"></div>
+        <div class="test-actions">
+          <button class="dt-secondary-button" id="print-evaluation" type="button">Auswertung drucken</button>
+          <button class="dt-secondary-button" id="reset-test" type="button">Test neu starten</button>
+        </div>
+      </section>
+    </main>
+  </body>
+</html>

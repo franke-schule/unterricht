@@ -1,0 +1,341 @@
+Manifest: Wiederholungs-Quiz
+============================
+
+Ziel und Geltungsbereich
+------------------------
+Ein Wiederholungs-Quiz ist eine eigenständige Zusatzseite zu einem bestehenden
+Lernmodul. Es ist ein reines Quiz: keine Simulation, keine neue Erarbeitung,
+sondern die Wiederholung dessen, was im zugehörigen Modul bereits erarbeitet
+wurde. Es wird über eine eigene Folie in der Präsentation der Einheit
+angeboten.
+
+Dieses Manifest gilt für jedes neue oder überarbeitete Wiederholungs-Quiz. Es
+ergänzt:
+
+  manifest-allgemein.txt      Navigation, Barrierearmut, Zwischenstände
+  manifest-quizaufgaben.txt   Rückmeldungen und Abschlussübersicht
+  das passende Fachmanifest    z. B. manifest-physikaufgaben.txt
+                              (Indizes, Bruchstriche) oder
+                              manifest-datenbankaufgaben.txt
+
+Referenzimplementierung (verbindliche technische Vorlage):
+
+  faecher/physik/klasse-11/1-Kreisbewegungen/aufgabe3-quiz.html, .mjs, .css
+  faecher/physik/klasse-11/1-Kreisbewegungen/aufgabe3-quiz-loeschen.txt
+  ../informatik-material/phy11/1-Kreisbewegungen/phy11-kreisbewegungen.html
+    (Folie 4 „Quiz zu Aufgabe 3“ direkt hinter der Modulfolie 3)
+
+Ältere Tests (Informatik 10 aufgabe1-quiz und aufgabe2-quiz, Physik 11
+wdh2-quiz) sind vor diesem Manifest entstanden. Sie teilen sich noch die
+gemeinsame Löschanleitung
+faecher/informatik/klasse-10/1-Datenbanken/aufgabe1-quiz-skriptserver.txt.
+Neue Quizze bekommen stattdessen eine eigene Löschanleitung (Abschnitt 5).
+
+
+0. Automatischer Ablauf
+-----------------------
+
+Ein Auftrag wie „Erstelle ein Wiederholungs-Quiz zu Aufgabe N“ umfasst ohne
+weitere Anweisung alle folgenden Schritte. Nichts davon muss im Auftrag
+eigens genannt werden; fehlt ein Schritt, ist das Quiz nicht fertig.
+
+  1. Modul N vollständig lesen und den Lernkern festhalten (Abschnitt 1).
+  2. Quizseite bauen: aufgabeN-quiz.html, .mjs/.js und .css nach der
+     Referenzimplementierung (Abschnitte 2 und 4). Nicht im Menü verlinken.
+  3. Zwei bis drei Beschreibe-Aufgaben samt Einträgen in apps-script/
+     Tasks.gs, Config.gs und tests/code-routing.test.js anlegen
+     (Abschnitt 3).
+  4. Die Löschanleitung aufgabeN-quiz-loeschen.txt schreiben (Abschnitt 5).
+  5. Präsentation der Einheit erweitern: eigene Quiz-Folie direkt hinter der
+     Modulfolie, mit Link und QR-Code (Abschnitt 6). Kurzlink und
+     QR-Code-Datei nur verwenden, wenn sie im Auftrag angegeben bzw.
+     beigefügt sind; sonst vollständiger Link und selbst erzeugter QR-Code.
+  6. Prüfen: node --check, Tests, git diff --check, Quiz und Präsentation im
+     Browser (Abschnitt 7).
+  7. Übergabe an die verantwortliche Person mit den Schritten, die nur sie
+     erledigen kann:
+       - Tasks.gs und Config.gs in Google Apps Script übernehmen und eine
+         neue Version bereitstellen (vorher werden die Beschreibe-Aufgaben
+         online nicht bewertet),
+       - Website hochladen,
+       - Änderungen committen (in unterricht und ggf. informatik-material),
+       - gewünschten Kurzlink anlegen, falls noch keiner angegeben war.
+
+Das Quiz wird direkt nach Vorlage gebaut, nicht über /lernmodul-loop: Es ist
+kein neues Lernmodul, sondern eine Serie nach fester Vorlage.
+
+Wann ein Quiz gelöscht wird, gibt ausschließlich die verantwortliche
+Lehrkraft bekannt. Es werden keine Löschdaten festgelegt, vorgeschlagen oder
+notiert. Erst auf diese Anweisung hin wird die Checkliste aus
+aufgabeN-quiz-loeschen.txt vollständig abgearbeitet, einschließlich
+Präsentation und Skriptserver.
+
+
+1. Inhalt und Didaktik
+----------------------
+
+  - Das Quiz wiederholt ausschließlich Inhalte des zugehörigen Moduls
+    (Aufgabe N). Es prüft keine neuen fachlichen Inhalte ab: keine neuen
+    Begriffe, Formeln oder Zusammenhänge und nichts aus späteren Modulen.
+  - Neue Kontexte sind erlaubt und erwünscht (z. B. Karussell statt der
+    Simulation im Modul), solange zur Lösung nur Erarbeitetes nötig ist.
+  - Vor dem Entwurf das Modul vollständig lesen: HTML und Skript, Merksätze,
+    Formeln, Lückentexte, Hilfen, Beschreibe-Aufgaben und Abschlussquiz. Den
+    Lernkern daraus knapp festhalten und jede Quizaufgabe einem Punkt dieses
+    Lernkerns zuordnen.
+  - Fragen des Moduls nicht wörtlich wiederholen. Derselbe Inhalt wird in
+    neuer Formulierung oder neuer Situation abgefragt.
+  - Typische Fehlvorstellungen als wählbare Falschantworten anbieten (z. B.
+    Kraft nach außen, Einheiten verwechselt, Kehrwert vergessen) und in der
+    Auswertung fachlich begründen.
+  - Aufgabenstellungen kurz und handlungsorientiert, Operatoren fett
+    (Ordne, Ziehe, Wähle, Beschreibe, Begründe, Erkläre).
+  - Das Fachmanifest gilt auch hier, z. B. in Physik tiefgestellte Indizes
+    ({{v_B}}) und Bruchstriche ({{rad/s}}, {{Δφ|Δt}}) über
+    components/physics-notation.mjs.
+
+
+2. Aufbau des Quiz
+------------------
+
+Alle Aufgaben stehen auf einer Seite und sind durchnummeriert. Übliche
+Zusammensetzung (Vorlage: aufgabe3-quiz):
+
+  1. Lückentext mit Wortkarten (Drag-and-Drop, antippen als Alternative),
+     zwei Karten bleiben übrig.
+  2. Zuordnung in zwei oder mehr Spalten (Drag-and-Drop).
+  3. Multiple Choice mit Auswahlkästchen, keine Einfachauswahl. Mindestens
+     zwei Fragen haben mehrere richtige Antworten. Eine Frage zählt nur, wenn
+     sie vollständig richtig ist.
+  4. bis 6. Zwei bis drei Beschreibe-Aufgaben (Abschnitt 3).
+
+Weitere Regeln:
+
+  - Oben eine Fortschrittsanzeige („x von n Aufgaben bearbeitet“, erreichbare
+    Punktzahl), unten der Button „Test abgeben und auswerten“. Bei
+    unvollständiger Bearbeitung vor der Abgabe nachfragen.
+  - Rückmeldung erst nach der Abgabe. Danach sind alle Eingaben gesperrt, und
+    eine Auswertung zeigt für jede Aufgabe Fragestellung, eigene Antwort,
+    richtige Lösung und bei Fehlern das fachliche Warum
+    (manifest-quizaufgaben.txt, Abschlussübersicht).
+  - Richtig und falsch nie nur über Farbe: Symbol plus Text (✓/✗, „richtig“/
+    „falsch“ für Screenreader).
+  - Buttons „Auswertung drucken“ und „Test neu starten“ (löscht auch den
+    gespeicherten Stand).
+  - Zwischenstände im localStorage sichern (manifest-allgemein.txt
+    Abschnitt 2), Schlüssel:
+      <fach><klasse>-<einheit>-aufgabeN-test-v1
+      z. B. physik11-kreisbewegungen-aufgabe3-test-v1
+    Gespeicherte Einträge vor dem Wiederherstellen prüfen.
+  - Kein Sicherungsblatt, kein Lehrercode und kein zusätzliches
+    Abschlussquiz: Das Wiederholungs-Quiz ist selbst die Abfrage.
+
+
+3. Beschreibe-Aufgaben
+----------------------
+
+  - Zwei bis drei Beschreibe-Aufgaben pro Quiz, jede zu einem anderen
+    Lernziel des Moduls und mit möglichst wenig Überschneidung.
+  - Jede Aufgabe nennt eine konkrete Situation und verlangt drei bis vier
+    fachliche Aspekte. Die Aspektzahl steht in der Aufgabenüberschrift.
+  - Bewertet wird über den vorhandenen Skriptserver (apps-script/) und die
+    vorhandene Client-Anbindung evaluateSemanticAnswer aus
+    faecher/informatik/klasse-11/1-Kuenstliche-Intelligenz/perzeptron/ui/
+    semantic-answer.mjs. Keine eigene KI-Pipeline.
+  - Die Antworten werden erst nach der Abgabe übertragen, und zwar
+    nacheinander, nicht gleichzeitig, damit eine ganze Klasse den Server
+    nicht mit gebündelten Anfragen belastet.
+  - Unter der ersten Beschreibe-Aufgabe steht der Datenschutzhinweis
+    (keine personenbezogenen Daten, Übertragung an Skriptserver und
+    KI-System) und nennt alle betroffenen Aufgaben.
+  - Mindestlänge (Vorlage: 30 Zeichen). Kürzere Antworten werden nicht
+    übertragen, sondern mit 0 Aspekten und einem Kurzhinweis zur Lösung
+    ausgewertet.
+  - Ist der Server nicht erreichbar, zeigt die Auswertung „Bewertung durch
+    Lehrkraft“, und die Gesamtpunktzahl nennt die fehlenden Aufgaben
+    („… Punkte (ohne Aufgabe 6)“).
+
+Einträge auf dem Skriptserver, je Beschreibe-Aufgabe:
+
+  apps-script/Tasks.gs
+    Aufgaben-ID nach dem Schema
+      <fachkürzel><klasse>-a<N>-quiz-<stichwort>-beschreibung
+      z. B. ph11-a3-quiz-karussell-beschreibung
+    Alle IDs eines Quiz teilen sich das Präfix <fachkürzel><klasse>-a<N>-quiz-
+    und stehen als zusammenhängender Block in Tasks.gs.
+    Felder wie in der Vorlage: title, grade, maxPoints, systemInstruction,
+    instruction („Die Antwort stammt aus einem Test …“, keine vollständige
+    Musterlösung ausgeben), context (Unterrichtsinhalte aus dem Modul und
+    der Aufgabentext wörtlich), expectedAspects (Anzahl = maxPoints), rubric
+    (gleichwertige Formulierungen und ausdrücklich nicht zu wertende
+    Fehlvorstellungen), feedbackHints, statusLabels.
+  apps-script/Config.gs
+    eine Kommentarzeile im Kopf:
+      " * - <fach><klasse>/<einheit>/aufgabeN-quiz.html (n Beschreibe-Aufgaben,
+        nicht verlinkter Test)"
+  apps-script/tests/code-routing.test.js
+    jede Aufgaben-ID in die Liste der geprüften Beschreibe-Aufgaben.
+
+Nach dem Anlegen und nach dem Löschen: Tasks.gs und Config.gs in das
+Google-Apps-Script-Projekt übernehmen und die Bereitstellung auf eine neue
+Version setzen (Bereitstellen > Bereitstellungen verwalten > Bearbeiten >
+Version: Neue Version). Die /exec-URL bleibt gleich. Solange das nicht
+geschehen ist, kennt der Online-Server die Aufgaben nicht beziehungsweise
+weiterhin.
+
+
+4. Dateien und Einbindung
+-------------------------
+
+Im Ordner der Einheit, neben dem Modul:
+
+  aufgabeN-quiz.html
+  aufgabeN-quiz.mjs          (Endung wie die Skripte des Moduls, sonst .js)
+  aufgabeN-quiz.css
+  aufgabeN-quiz-loeschen.txt (Löschanleitung, Abschnitt 5)
+
+Regeln:
+
+  - Das Quiz ist nicht im Menü und auf keiner Übersichtsseite verlinkt, auch
+    nicht als Kachel. Erreichbar ist es nur über den Link bzw. QR-Code der
+    Präsentation (Abschnitt 6).
+  - <meta name="robots" content="noindex, nofollow"> setzen.
+  - Rückweg zur Aufgabenübersicht und Link zur Startseite wie auf jeder
+    Aufgabenseite.
+  - Das Quiz ist eigenständig: Gemeinsame Dateien (styles.css, Fach-CSS,
+    Komponenten wie token-drag.mjs, physics-notation.mjs,
+    semantic-answer.mjs) werden nur eingebunden, nie verändert. Braucht das
+    Quiz eigene Regeln, kommen sie in aufgabeN-quiz.css, auch wenn sie einer
+    anderen Quiz-CSS gleichen. Kein Quiz bindet Dateien eines anderen Quiz
+    ein. So lässt sich jedes Quiz einzeln und ohne Reste löschen.
+  - Das Skript beginnt mit einem Kommentar, der auf aufgabeN-quiz-loeschen.txt
+    verweist.
+  - Vor der Übergabe: node --check für das Skript, die Tests in apps-script/
+    tests und die Modultests der Einheit ausführen, git diff --check, und die
+    Seite im Browser bearbeiten, abgeben und die Auswertung prüfen (Desktop
+    und Smartphone).
+
+
+5. Löschanleitung pro Quiz (aufgabeN-quiz-loeschen.txt)
+-------------------------------------------------------
+
+Jedes Wiederholungs-Quiz bekommt eine eigene Textdatei neben der Quizseite.
+Sie muss ohne weiteres Wissen eine vollständige Löschung ermöglichen und
+enthält:
+
+  - Titel des Quiz, zugehöriges Modul und Anlagedatum. Kein Löschdatum:
+    Gelöscht wird nur auf Anweisung der Lehrkraft.
+  - Alle neuen Dateien mit Pfad (einschließlich der Löschanleitung selbst).
+  - Alle geänderten Dateien mit der genauen Stelle, auch außerhalb dieses
+    Repositorys (Präsentation in ../informatik-material).
+  - Alle Aufgaben-IDs auf dem Skriptserver mit Aufgabentext und Punktzahl.
+  - Eine abhakbare Checkliste:
+      [ ] Quizdateien löschen (git rm).
+      [ ] Tasks.gs: alle Blöcke mit dem Präfix des Quiz entfernen.
+      [ ] Config.gs: die Kommentarzeile entfernen.
+      [ ] code-routing.test.js: die IDs entfernen, Kommas prüfen.
+      [ ] Präsentation: die Quiz-Folie entfernen, die folgenden Folien
+          wieder um eins zurückzählen (id und aria-label) und die
+          abgelegte QR-SVG-Datei löschen.
+      [ ] Kurzlink deaktivieren, falls einer angelegt wurde.
+      [ ] Restekontrolle mit git grep -nw "aufgabeN-quiz" und git grep -n
+          "<ID-Präfix>" (in beiden Repositorys).
+      [ ] Tests ausführen.
+      [ ] Skriptserver: Tasks.gs und Config.gs in Google Apps Script
+          übernehmen und eine neue Version bereitstellen.
+      [ ] Website neu hochladen.
+      [ ] Zuletzt die Löschanleitung selbst löschen.
+  - Den localStorage-Schlüssel mit dem Hinweis, dass er in den Browsern
+    zurückbleiben darf.
+
+
+6. Präsentation mit Link und QR-Code
+------------------------------------
+
+Automatisches Vorgehen: Dieser Schritt gehört zu jedem neuen
+Wiederholungs-Quiz dazu und wird ohne eigenen Auftrag erledigt. Das Quiz
+bekommt in der Präsentation der Einheit eine eigene Folie direkt hinter der
+Folie des zugehörigen Moduls. Referenz:
+../informatik-material/phy11/1-Kreisbewegungen/phy11-kreisbewegungen.html,
+Folie 4 („Quiz zu Aufgabe 3: Winkelgeschwindigkeit“) hinter Folie 3.
+
+Schreibzugriff: ../informatik-material liegt außerhalb dieses Repositorys.
+Fehlt in der Sitzung der Zugriff, ihn vor dem Bearbeiten anfordern (im
+Desktop-Client: Ordnerfreigabe). Die Präsentationsordner sind teilweise nicht
+versioniert; vor dem Ändern eine Sicherungskopie außerhalb des Repositorys
+anlegen.
+
+  - Ablage: ../informatik-material/<fachkürzel><klasse>/<einheit>/
+    <fachkürzel><klasse>-<einheit>.html. Existiert sie nicht, wird sie nach
+    dem Schema der Referenz neu angelegt (Aufbau, CSS, Navigation,
+    Referentenansicht und Skript unverändert übernehmen, eine Folie je
+    Modul) und danach die Quiz-Folie ergänzt.
+  - Die Quiz-Folie folgt genau dem Schema der Modulfolien, ohne neue
+    CSS-Klassen:
+      <section class="slide module-slide" id="folie-<n>"
+        aria-label="Folie <n>: Quiz zu Aufgabe N: <Modultitel>"
+        aria-hidden="true">
+        <header>Quiz zu Aufgabe N: <Modultitel></header>
+        <div class="resource single" style="--link-size:61px">
+          <a class="resource-link" href="URL" target="_blank"
+            rel="noopener noreferrer">Linktext</a>
+          <a class="qr-link" href="URL" target="_blank"
+            rel="noopener noreferrer" aria-label="QR-Code: URL">
+            <img src="data:image/svg+xml;base64,…" alt="QR-Code für URL">
+          </a>
+        </div><p class="module-instruction">Bearbeite das Quiz zu
+          Aufgabe N.</p>
+      </section>
+    <Modultitel> wie im header der Modulfolie davor. Kein Lehrercode, weil
+    das Quiz kein Sicherungsblatt hat.
+  - Alle folgenden Folien um eins weiterzählen: id="folie-<n>" und die
+    Nummer in aria-label „Folie <n>: …“. Die Navigation ermittelt die
+    Folienzahl selbst; Inhalte der übrigen Folien bleiben unverändert.
+  - Die Modulfolie selbst bleibt unverändert, insbesondere ohne
+    „Für die Schnellen“-Block (frühere Variante, nicht mehr verwenden).
+  - Link: Standard ist die vollständige Adresse der Quizseite,
+      https://www.florian-franke.org/faecher/<fach>/klasse-<k>/<einheit>/
+      aufgabeN-quiz.html
+    Ein Kurzlink (z. B. bycs.link/Phy11-Quiz3) wird nur verwendet, wenn er im
+    Auftrag ausdrücklich angegeben ist. Kurzlinks werden nicht selbst
+    ausgedacht oder angelegt.
+  - Linktext ohne „https://“. Ist er lang, --link-size so weit verkleinern,
+    dass er vollständig in das Linkfeld passt (kein Überlauf, auf dem Beamer
+    noch lesbar); notfalls den Linktext umbrechen lassen, die URL im href
+    bleibt vollständig.
+  - QR-Code: kodiert genau die URL aus dem href, als SVG, eingebettet als
+    base64-Data-URI wie bei den übrigen Folien. Liegt dem Auftrag ein
+    QR-Code bei (z. B. die SVG aus der Kurzlinkverwaltung), wird genau diese
+    Datei verwendet. Sonst wird er erzeugt, zum Beispiel mit dem npm-Paket
+    qrcode außerhalb des Repositorys oder unter tmp/ (nichts davon
+    einchecken), und nach dem Erzeugen mit einem Decoder oder einer
+    Handykamera geprüft. Die SVG zusätzlich neben der Präsentation ablegen,
+    benannt wie der Kurzlink bzw. das Quiz (z. B. Phy11-Quiz3.svg); sie
+    steht in der Löschanleitung.
+  - Die Präsentation im Browser öffnen und prüfen: Quiz-Folie folgt direkt
+    auf die Modulfolie, Zähler stimmt („n / Gesamtzahl“), QR-Bild lädt,
+    Linktext passt ins Linkfeld, Link öffnet die Quizseite.
+  - In der Löschanleitung festhalten: Quiz-Folie entfernen und die
+    folgenden Folien wieder um eins zurückzählen.
+
+
+7. Abschlussprüfung
+-------------------
+
+  [ ] Alle Aufgaben wiederholen nur Inhalte des zugehörigen Moduls.
+  [ ] Multiple Choice mit Auswahlkästchen, mindestens zwei Fragen mit
+      mehreren richtigen Antworten.
+  [ ] Zwei bis drei Beschreibe-Aufgaben, jeweils mit Tasks.gs-Eintrag,
+      Config.gs-Zeile und Eintrag in code-routing.test.js.
+  [ ] Auswertung erst nach Abgabe, mit richtiger Lösung und Begründung.
+  [ ] Zwischenstände bleiben erhalten; Neustart löscht sie.
+  [ ] Quiz ist nirgends verlinkt, robots noindex gesetzt.
+  [ ] aufgabeN-quiz-loeschen.txt ist vollständig und nennt auch die
+      Präsentation und den Skriptserver.
+  [ ] Präsentation hat direkt hinter der Modulfolie eine eigene Quiz-Folie
+      mit Link und passendem QR-Code; folgende Folien sind umnummeriert;
+      Kurzlink nur, wenn beauftragt.
+  [ ] Übergabe nach Abschnitt 0, Schritt 7: Apps-Script-Bereitstellung,
+      Website-Upload, Commit, ggf. Kurzlink.
+  [ ] Tests, node --check und git diff --check ohne Fehler; im Browser
+      interaktiv getestet.

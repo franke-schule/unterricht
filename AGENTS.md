@@ -187,6 +187,19 @@ bleibt `solution-code`, weil `unlockSolution` es darüber ausliest. Referenz:
 Informatik Klasse 10, Einheit Datenbanken, Aufgaben 1 bis 4.
 
 
+## Wiederholungs-Quiz
+
+Zusätzlich zu einem Modul kann es ein Wiederholungs-Quiz als eigene,
+unverlinkte Seite geben (`aufgabeN-quiz.html`). Es wiederholt nur Inhalte des
+Moduls, enthält zwei bis drei Beschreibe-Aufgaben über den Skriptserver, eine
+eigene Löschanleitung (`aufgabeN-quiz-loeschen.txt`) und bekommt in der
+Präsentation der Einheit eine eigene Folie mit Link und QR-Code direkt hinter
+der Modulfolie. Alle diese Schritte gehören ohne eigene Anweisung zum Auftrag
+(Ablauf in Abschnitt 0 des Manifests). `manifest-wiederholungs-quiz.txt` gilt
+verbindlich. Referenz: Physik
+Klasse 11, `1-Kreisbewegungen/aufgabe3-quiz.*`.
+
+
 # 5. Didaktische Anforderungen
 
 Die Website ist kein gewöhnliches Übungsportal, sondern Unterrichtsmaterial.

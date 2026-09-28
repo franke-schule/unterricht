@@ -20,6 +20,7 @@ billiger und verlässlicher werden die folgenden Stufen.
 2. Lies `AGENTS.md` und `manifest-allgemein.txt` vollständig, dazu das passende
    Fachmanifest (`manifest-datenbankaufgaben.txt`,
    `manifest-physikaufgaben.txt`, `manifest-quizaufgaben.txt`,
+   `manifest-wiederholungs-quiz.txt`,
    `manifest-online-ide-programmieraufgaben.txt`,
    `manifest-tabellenkalkulation.txt`, `manifest-debug.txt`).
 3. Untersuche den betroffenen Fach-/Klassenordner

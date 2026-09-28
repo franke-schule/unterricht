@@ -1,0 +1,154 @@
+\documentclass[10pt,a4paper]{article}
+
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage[ngerman]{babel}
+\usepackage[a4paper,margin=14mm]{geometry}
+\usepackage{lmodern}
+\usepackage[table]{xcolor}
+\usepackage{tabularx}
+\usepackage{amsmath}
+\usepackage{microtype}
+\usepackage{tikz}
+\usetikzlibrary{arrows.meta,calc}
+
+% Die Lösungsfassung unterscheidet sich nur durch \solutiontrue.
+\newif\ifsolution
+\solutiontrue
+
+\pagestyle{empty}
+\setlength{\parindent}{0pt}
+\setlength{\parskip}{0pt}
+\renewcommand{\familydefault}{\sfdefault}
+
+\definecolor{Navy}{HTML}{17324D}
+\definecolor{Blue}{HTML}{3B6EA5}
+\definecolor{Sky}{HTML}{EAF3FA}
+\definecolor{Gold}{HTML}{F3B33D}
+\definecolor{Ink}{HTML}{1E2935}
+\definecolor{Muted}{HTML}{617080}
+\definecolor{Line}{HTML}{D8E1E8}
+\color{Ink}
+
+\newcommand{\vB}{v_{\mathrm B}}
+\newcommand{\FZ}{F_{\mathrm Z}}
+\newcommand{\FG}{F_{\mathrm G}}
+\newcommand{\FN}{F_{\mathrm N}}
+\newcommand{\kopf}[1]{%
+  \colorbox{Navy}{\parbox{\dimexpr\linewidth-2\fboxsep\relax}{%
+    \vspace{1.3mm}\color{white}
+    \begin{tabularx}{\linewidth}{@{}Xr@{}}
+      {\small\bfseries PHYSIK · KLASSE 11} &
+      \colorbox{Gold}{\color{Navy}\small\bfseries\strut\ifsolution LÖSUNGEN\else ABFRAGE\fi}
+    \end{tabularx}
+    \vspace{0.9mm}
+    {\fontsize{16}{19}\selectfont\bfseries Aufgabe 3 -- Kreisbewegung und Kräfte}\par
+    \vspace{0.3mm}{\small #1}\vspace{1.1mm}
+  }}\par\vspace{2mm}}
+\newcommand{\frage}[2]{%
+  \vspace{2.2mm}{\color{Blue}\bfseries\large #1 · #2}\par
+  \vspace{0.4mm}{\color{Blue}\rule{\linewidth}{0.65pt}}\par\vspace{1.4mm}}
+\newcommand{\antwortfeld}[2]{%
+  \vspace{2mm}%
+  \begin{tikzpicture}[x=1mm,y=1mm]
+    \path[use as bounding box] (0,0) rectangle (181.5,-9*#1);
+    \ifsolution
+      \node[anchor=north west,text width=179mm,inner sep=0pt,align=left,
+        font=\small,text=Blue] at (0,-1) {#2};
+    \else
+      \foreach \i in {1,...,#1}{\draw[Line,line width=.55pt] (0,-9*\i) -- (181.5,-9*\i);}
+    \fi
+  \end{tikzpicture}\par}
+\newcommand{\fuss}[1]{%
+  \vfill{\color{Line}\rule{\linewidth}{0.5pt}}\par\vspace{1mm}
+  \begin{tabularx}{\linewidth}{@{}Xr@{}}
+    {\small\color{Muted}Klasse 11 · Physik · Kreisbewegungen} &
+    {\small\color{Muted}\ifsolution Lösungen\else Abfrage\fi{} · Seite #1 von 2}
+  \end{tabularx}}
+
+\begin{document}
+\kopf{Winkelgeschwindigkeit · Bahngeschwindigkeit · Zentripetalkraft}
+
+\frage{1}{Kräfte bei der Kreisbewegung skizzieren und beschreiben}
+\begin{center}
+\begin{tikzpicture}[x=1mm,y=1mm]
+  \draw[step=5mm,Line!78,line width=.25pt] (0,0) grid (180,75);
+  \draw[Muted,line width=.55pt] (0,0) rectangle (180,75);
+  \coordinate (M) at (90,37.5);
+  \coordinate (K) at (120,37.5);
+  \draw[Muted,line width=.8pt] (M) circle (30);
+  \fill[Navy] (M) circle (1.1);
+  \fill[Navy] (K) circle (2.4);
+  \node[fill=white,inner sep=1pt,font=\scriptsize,anchor=north] at (90,34) {Mittelpunkt};
+  \node[fill=white,inner sep=1pt,font=\scriptsize,anchor=south] at (120,41) {Körper};
+  \ifsolution
+    \draw[-{Latex[length=2.4mm]},red!80!black,line width=1pt] (K) -- (94,37.5);
+    \draw[-{Latex[length=2.4mm]},Blue,line width=1pt] (K) -- (120,64);
+    \node[fill=white,inner sep=1pt,text=red!80!black,font=\small] at (105,42) {$\FZ$};
+    \node[fill=white,inner sep=1pt,text=Blue,font=\small] at (127,54) {$\vB$};
+  \fi
+\end{tikzpicture}
+\end{center}
+\textbf{Skizziere} am markierten Körper den Vektor der Zentripetalkraft $\FZ$ und den Vektor der Bahngeschwindigkeit $\vB$ für eine Bewegung gegen den Uhrzeigersinn. Beschrifte beide Pfeile.\par
+\textbf{Beschreibe}, in welche Richtungen $\vB$ und $\FZ$ am markierten Körper zeigen. \textbf{Erkläre}, wie sich der Körper unmittelbar weiterbewegt, wenn $\FZ$ wegfällt.\par
+\antwortfeld{3}{$\vB$ zeigt tangential zur Kreisbahn nach oben. $\FZ$ zeigt radial nach innen zum Kreismittelpunkt, hier nach links. Fällt $\FZ$ weg, bewegt sich der Körper unmittelbar tangential geradlinig nach oben weiter.}
+
+\frage{2}{Winkel- und Bahngeschwindigkeit berechnen}
+Ein Körper dreht sich in $\Delta t=2{,}0\,\mathrm{s}$ um $\Delta\varphi=\pi$. Der Kreisradius beträgt $r=1{,}5\,\mathrm{m}$.\par
+\textbf{Berechne} die Winkelgeschwindigkeit $\omega$ und die Bahngeschwindigkeit $\vB$. Berücksichtige gültige Ziffern und Einheiten.\par
+\antwortfeld{5}{$\displaystyle\omega=\frac{\Delta\varphi}{\Delta t}=\frac{\pi}{2{,}0\,\mathrm{s}}\approx1{,}6\,\frac{1}{\mathrm{s}}$.\\[2mm]
+$\displaystyle\vB=\omega r=\frac{\pi}{2{,}0\,\mathrm{s}}\cdot1{,}5\,\mathrm{m}\approx2{,}4\,\frac{\mathrm{m}}{\mathrm{s}}$. Die Messwerte haben zwei gültige Ziffern; $\pi$ ist exakt.}
+
+\fuss{1}
+\newpage
+
+\kopf{Frequenz · Kräftegleichgewicht · Wechselwirkung}
+
+\frage{3}{Frequenz und Umlaufdauer bestimmen}
+Ein Körper legt in $10{,}0\,\mathrm{s}$ genau fünf vollständige Umläufe zurück.\par
+\textbf{Bestimme} die Frequenz $f$ und die Umlaufdauer $T$ mit Rechenweg und Einheiten.\par
+\antwortfeld{4}{$\displaystyle f=\frac{5}{10{,}0\,\mathrm{s}}=0{,}500\,\mathrm{Hz}$.\\[2mm]
+$\displaystyle T=\frac{1}{f}=\frac{1}{0{,}500\,\mathrm{Hz}}=2{,}00\,\mathrm{s}$. Die Anzahl der Umläufe ist exakt; die Zeit hat drei gültige Ziffern.}
+
+\frage{4}{Kräftegleichgewicht und Wechselwirkung unterscheiden}
+Ein Buch ruht auf einer Tischplatte. Ergänze in beiden Rastern die Kraftpfeile und ihre Bezeichnungen.\par\vspace{1mm}
+\begin{minipage}[t]{0.48\linewidth}
+  \textbf{A · Kräfte auf das Buch}\par\vspace{0.8mm}
+  \begin{tikzpicture}[x=1mm,y=1mm]
+    \draw[step=5mm,Line!78,line width=.25pt] (0,0) grid (85,55);
+    \draw[Muted,line width=.55pt] (0,0) rectangle (85,55);
+    \draw[Navy,line width=.8pt] (8,15) -- (77,15);
+    \draw[Navy,line width=.8pt,fill=Sky] (34,15) rectangle (51,25);
+    \node[font=\scriptsize] at (42.5,20) {Buch};
+    \node[fill=white,inner sep=.5pt,font=\scriptsize,anchor=north] at (66,14) {Tisch};
+    \ifsolution
+      \draw[-{Latex[length=2mm]},red!80!black,line width=.9pt] (39,20) -- (39,5);
+      \draw[-{Latex[length=2mm]},Blue,line width=.9pt] (47,15) -- (47,30);
+      \node[fill=white,inner sep=.5pt,text=red!80!black,font=\scriptsize] at (30,7) {$\FG$};
+      \node[fill=white,inner sep=.5pt,text=Blue,font=\scriptsize] at (55,32) {$\FN$};
+    \fi
+  \end{tikzpicture}
+\end{minipage}\hfill
+\begin{minipage}[t]{0.48\linewidth}
+  \textbf{B · Kräfte zwischen Buch und Tisch}\par\vspace{0.8mm}
+  \begin{tikzpicture}[x=1mm,y=1mm]
+    \draw[step=5mm,Line!78,line width=.25pt] (0,0) grid (85,55);
+    \draw[Muted,line width=.55pt] (0,0) rectangle (85,55);
+    \draw[Navy,line width=.8pt,fill=Sky] (34,15) rectangle (51,25);
+    \draw[Navy,line width=.8pt,fill=white] (8,8) rectangle (77,15);
+    \node[font=\scriptsize] at (42.5,20) {Buch};
+    \node[font=\scriptsize] at (42.5,11.5) {Tisch};
+    \ifsolution
+      \draw[-{Latex[length=2mm]},Blue,line width=.9pt] (39,15) -- (39,30);
+      \draw[-{Latex[length=2mm]},red!80!black,line width=.9pt] (47,15) -- (47,0);
+      \node[fill=white,inner sep=.5pt,text=Blue,font=\scriptsize] at (23,35) {Tisch auf Buch};
+      \node[fill=white,inner sep=.5pt,text=red!80!black,font=\scriptsize] at (65,4) {Buch auf Tisch};
+    \fi
+  \end{tikzpicture}
+\end{minipage}\par\vspace{1.3mm}
+\textbf{Skizziere} in A die Gewichtskraft $\FG$ und die Kraft der Tischplatte $\FN$ auf das Buch. Skizziere in B die Kraft des Buchs auf den Tisch und die Kraft des Tischs auf das Buch.\par\vspace{1mm}
+\textbf{Unterscheide} anhand der Körper, an denen die Pfeile angreifen, das Kräftegleichgewicht in A von der Wechselwirkung in B. Begründe, warum sich nur die Kräfte in A für das Buch aufheben.\par
+\antwortfeld{5}{In A wirken $\FG$ und $\FN$ beide auf das Buch. Da das Buch ruht, sind sie gleich groß und entgegengesetzt gerichtet; ihre resultierende Kraft ist null. In B wirken die beiden Kontaktkräfte auf verschiedene Körper: Die Tischplatte drückt das Buch nach oben, das Buch drückt die Tischplatte nach unten. Dieses Wechselwirkungspaar kann sich am Buch nicht gegenseitig aufheben.}
+
+\fuss{2}
+\end{document}

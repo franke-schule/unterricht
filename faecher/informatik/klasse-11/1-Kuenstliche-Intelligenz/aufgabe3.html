@@ -7,10 +7,10 @@
     <title>Aufgabe 3 – Entscheidungsbaum erstellen | Informatik 11</title>
     <link rel="stylesheet" href="../../../../styles.css?v=20260707">
     <link rel="stylesheet" href="entscheidungbaeume/styles.css?v=20260820g">
-    <link rel="stylesheet" href="entscheidungbaeume/task3.css?v=20260917c">
-    <script type="module" src="entscheidungbaeume/ui/task3.mjs?v=20260917d"></script>
+    <link rel="stylesheet" href="entscheidungbaeume/task3.css?v=20260928a">
+    <script type="module" src="entscheidungbaeume/ui/task3.mjs?v=20260928a"></script>
   </head>
-  <body class="decision-tree-page dt-fish-page is-intro-active">
+  <body class="decision-tree-page dt-fish-page tabs-ready">
     <div class="site-backdrop" aria-hidden="true"></div>
     <main class="page-shell decision-tree-shell">
       <nav class="topbar" aria-label="Navigation">
@@ -27,14 +27,31 @@
         <p>Zähle Fehlklassifikationen, vergleiche den Informationsgewinn und baue daraus dein Modell.</p>
       </header>
 
-      <section id="split-intro" class="fish-intro" aria-labelledby="split-intro-title">
+      <nav class="fish-progress" role="tablist" aria-label="Arbeitsschritte Aufgabe 3">
+        <button id="tab-intro" type="button" role="tab" data-step-tab="intro" aria-controls="split-intro"><span>0</span>Einführung</button>
+        <button id="tab-tables" type="button" role="tab" data-step-tab="tables" aria-controls="erster-split"><span>1</span>Erster Split</button>
+        <button id="tab-blue" type="button" role="tab" data-step-tab="blue" aria-controls="teilmenge-blau"><span>2a</span>Blau</button>
+        <button id="tab-orange" type="button" role="tab" data-step-tab="orange" aria-controls="teilmenge-orange"><span>2b</span>Orange</button>
+        <button id="tab-deep" type="button" role="tab" data-step-tab="deep" aria-controls="letzter-split"><span>2c</span>Letzter Split</button>
+        <button id="tab-tree" type="button" role="tab" data-step-tab="tree" aria-controls="baum-bauen"><span>3</span>Baum</button>
+        <button id="tab-algorithm" type="button" role="tab" data-step-tab="algorithm" aria-controls="algorithmus"><span>4</span>Algorithmus</button>
+        <button id="tab-quiz" type="button" role="tab" data-step-tab="quiz" aria-controls="abschlussquiz"><span>5</span>Abschlussquiz</button>
+        <button id="tab-entropy" type="button" role="tab" data-step-tab="entropy" aria-controls="entropie"><span>3b</span>Entropie</button>
+      </nav>
+      <p id="save-status" class="fish-save-status" role="status" aria-live="polite">Dein Bearbeitungsstand wird in diesem Browser gespeichert.</p>
+
+      <section id="split-intro" class="fish-step fish-tab-panel fish-intro" role="tabpanel" tabindex="0" aria-labelledby="tab-intro split-intro-title" data-step-panel="intro" hidden>
         <div class="fish-intro-heading">
           <div>
             <p class="fish-kicker">Vorbereitung auf Schritt 1</p>
             <h2 id="split-intro-title">Wie entsteht die Fehlerzahl?</h2>
             <p id="intro-explanation" aria-live="polite">Zuerst betrachtet der Baum alle Trainingsfische als eine einzige Gruppe.</p>
           </div>
-          <button id="skip-intro" class="dt-secondary-button" type="button">Animation überspringen</button>
+          <div class="intro-stepper" role="group" aria-label="Erklärung durchklicken">
+            <button id="intro-prev" class="dt-secondary-button" type="button">Zurück</button>
+            <span id="intro-frame-count" aria-live="polite">1 von 6</span>
+            <button id="intro-next" class="dt-primary-button" type="button">Weiter</button>
+          </div>
         </div>
 
         <div class="fish-intro-progress" aria-label="Ablauf der Erklärung">
@@ -64,28 +81,17 @@
               </table>
             </div>
             <div class="intro-gain">Informationsgewinn: <strong id="intro-gain" data-intro-cell>–</strong></div>
-            <p id="intro-table-note" class="intro-table-note">Die Tabelle wird passend zur Animation ausgefüllt.</p>
+            <p id="intro-table-note" class="intro-table-note">Die Tabelle wird Schritt für Schritt ausgefüllt.</p>
           </div>
         </div>
+        <div class="flow-navigation" data-flow="intro"></div>
       </section>
-
-      <nav class="fish-progress" role="tablist" aria-label="Arbeitsschritte Aufgabe 3">
-        <button id="tab-tables" type="button" role="tab" data-step-tab="tables" aria-controls="erster-split"><span>1</span>Erster Split</button>
-        <button id="tab-blue" type="button" role="tab" data-step-tab="blue" aria-controls="teilmenge-blau"><span>2a</span>Blau</button>
-        <button id="tab-orange" type="button" role="tab" data-step-tab="orange" aria-controls="teilmenge-orange"><span>2b</span>Orange</button>
-        <button id="tab-deep" type="button" role="tab" data-step-tab="deep" aria-controls="letzter-split"><span>2c</span>Letzter Split</button>
-        <button id="tab-tree" type="button" role="tab" data-step-tab="tree" aria-controls="baum-bauen"><span>3</span>Baum</button>
-        <button id="tab-algorithm" type="button" role="tab" data-step-tab="algorithm" aria-controls="algorithmus"><span>4</span>Algorithmus</button>
-        <button id="tab-quiz" type="button" role="tab" data-step-tab="quiz" aria-controls="abschlussquiz"><span>5</span>Abschlussquiz</button>
-        <button id="tab-entropy" type="button" role="tab" data-step-tab="entropy" aria-controls="entropie"><span>3b</span>Entropie</button>
-      </nav>
-      <p id="save-status" class="fish-save-status" role="status" aria-live="polite">Dein Bearbeitungsstand wird in diesem Browser gespeichert.</p>
 
       <section id="erster-split" class="fish-step fish-tab-panel" role="tabpanel" tabindex="0" aria-labelledby="tab-tables first-title" data-step-panel="tables" hidden>
         <div class="fish-step-heading">
           <div class="fish-step-labels">
             <span class="fish-step-number">Schritt 1</span>
-            <button id="replay-intro" class="fish-replay-button" type="button">Erklärung wiederholen</button>
+            <button class="fish-replay-button" type="button" data-open-step="intro">Erklärung ansehen</button>
           </div>
           <div>
             <h2 id="first-title">Welches Attribut trennt die Daten am besten?</h2>

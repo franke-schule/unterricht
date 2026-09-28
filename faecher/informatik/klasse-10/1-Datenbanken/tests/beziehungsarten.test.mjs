@@ -6,6 +6,7 @@ import {
   KLASSE, KLASSENLEITER, KLASSE_LEITER_LOESUNG,
   INSTAHUB_USERS, INSTAHUB_PHOTOS, INSTAHUB_FOLLOWS,
   evaluateCardinalityPair, BEZIEHUNGSARTEN_QUIZ, evaluateQuizQuestion, correctQuizOptionIds,
+  parseMultiSchemaText, evaluateSchluesselSchlossAnswer, evaluateCloze,
 } from '../beziehungsarten-daten.mjs';
 
 const here = dirname(fileURLToPath(import.meta.url));
@@ -91,6 +92,65 @@ assert.equal(evaluateCardinalityPair('1', 'n', '1:n').status, 'correct');
 assert.equal(evaluateCardinalityPair('1', '1', '1:1').status, 'correct');
 assert.equal(evaluateCardinalityPair('1', 'n', '1:1').status, 'partial');
 assert.equal(evaluateCardinalityPair('n', 'm', '1:1').status, 'wrong');
+
+// ---------------------------------------------------------------------------
+// R2: Tabellenschemata Schlüssel/Schloss (Akzeptanz wie Aufgabe 4)
+// ---------------------------------------------------------------------------
+const fkInSchluessel = `schluessel(
+  id: int
+  nummer: int
+  besitzer: varchar(255)
+  schloss_id[schloss]: int
+)
+schloss(
+  id: int
+  ort: varchar(255)
+)`;
+const fkInSchloss = `schloss {
+ort: varchar(255)
+schluessel_id[schluessel]: int
+id: int
+}
+
+Schluessel(
+    besitzer: VARCHAR(255)
+    id: int
+    nummer: int
+)`;
+assert.equal(parseMultiSchemaText(fkInSchluessel).tables.length, 2, 'Zwei Tabellen in einem Feld werden erkannt.');
+assert.deepEqual(parseMultiSchemaText(fkInSchluessel).errors, []);
+assert.equal(evaluateSchluesselSchlossAnswer(fkInSchluessel, fkInSchloss).status, 'success', 'Beide Möglichkeiten in beliebiger Reihenfolge, Einrückung und Klammerart sind richtig.');
+assert.equal(evaluateSchluesselSchlossAnswer(fkInSchloss, fkInSchluessel).status, 'success', 'Links darf auch die Möglichkeit mit dem Fremdschlüssel in schloss stehen.');
+const sameVariant = evaluateSchluesselSchlossAnswer(fkInSchluessel, fkInSchluessel);
+assert.equal(sameVariant.status, 'partial', 'Zweimal dieselbe Möglichkeit ist nur teilweise richtig.');
+assert.match(sameVariant.message, /dieselbe Möglichkeit/);
+const bothKeys = fkInSchluessel.replace('ort: varchar(255)', 'ort: varchar(255)\n  schluessel_id[schluessel]: int');
+assert.match(evaluateSchluesselSchlossAnswer(bothKeys, fkInSchloss).message, /doppelt/, 'Fremdschlüssel in beiden Tabellen wird als doppelte Verbindung erklärt.');
+const noKey = fkInSchluessel.replace('  schloss_id[schloss]: int\n', '');
+assert.match(evaluateSchluesselSchlossAnswer(noKey, fkInSchloss).message, /fehlt ein Fremdschlüssel/);
+const noBrackets = fkInSchluessel.replace('schloss_id[schloss]: int', 'schloss_id: int');
+assert.match(evaluateSchluesselSchlossAnswer(noBrackets, fkInSchloss).message, /eckigen Klammern/);
+const onlyOneTable = 'schluessel(\n  id: int\n  nummer: int\n  besitzer: varchar(255)\n  schloss_id[schloss]: int\n)';
+assert.match(evaluateSchluesselSchlossAnswer(onlyOneTable, fkInSchloss).message, /Es fehlt die Tabelle schloss/);
+const wrongType = fkInSchluessel.replace('nummer: int', 'nummer: varchar(255)');
+assert.match(evaluateSchluesselSchlossAnswer(wrongType, fkInSchloss).message, /Datentyp bei nummer/);
+assert.match(evaluateSchluesselSchlossAnswer(fkInSchluessel.replace('schluessel(', 'schlüssel('), fkInSchloss).message, /Umlaute/);
+assert.match(evaluateSchluesselSchlossAnswer('schluessel(id: int, nummer: int)', fkInSchloss).message, /eigenen Zeile/);
+assert.equal(evaluateSchluesselSchlossAnswer('', '').status, 'hint');
+assert.match(evaluateSchluesselSchlossAnswer(fkInSchluessel, '').message, /Möglichkeit 1 stimmt\. Möglichkeit 2 ist noch leer\./);
+
+// ---------------------------------------------------------------------------
+// R4: Lückentexte
+// ---------------------------------------------------------------------------
+const clozeA = evaluateCloze('f4a', { id: '1', agId1: '2', agId2: '1', ag1: 'Theater-AG', ag2: ' robotik ' });
+assert.equal(clozeA.correctCount, clozeA.total, 'Lückentext 1: Reihenfolge der AGs egal, Groß-/Kleinschreibung und Zusatz AG egal.');
+const clozeADouble = evaluateCloze('f4a', { id: '1', agId1: '1', agId2: '1', ag1: 'Robotik', ag2: 'Robotik' });
+assert.equal(clozeADouble.correctCount, 3, 'Derselbe Wert zählt in einer ungeordneten Gruppe nur einmal.');
+assert.equal(evaluateCloze('f4b', { id: '2', schuelerId1: '3', schuelerId2: '1', name1: 'Mia', name2: 'Lina' }).correctCount, 5);
+assert.equal(evaluateCloze('f4c', { table: 'teilnahme', row: 'Datensatz', schuelerId: '2', agId: '3' }).correctCount, 4, 'Zeile und Datensatz sind gleichwertig.');
+const clozeCWrong = evaluateCloze('f4c', { table: 'schueler', row: '', schuelerId: '2', agId: '1, 3' });
+assert.equal(clozeCWrong.correctCount, 1);
+assert.equal(clozeCWrong.emptyCount, 1);
 
 // ---------------------------------------------------------------------------
 // Abschlussquiz

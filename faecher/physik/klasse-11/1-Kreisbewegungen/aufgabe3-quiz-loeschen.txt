@@ -1,0 +1,145 @@
+Wiederholungs-Quiz zu Aufgabe 3 – Anleitung zur vollständigen Löschung
+======================================================================
+
+Quiz:           Test zu Aufgabe 3 – Winkelgeschwindigkeit und Ursache der
+                Kreisbewegung (Physik 11, Einheit 1-Kreisbewegungen)
+Seite:          faecher/physik/klasse-11/1-Kreisbewegungen/aufgabe3-quiz.html
+Online:         https://www.florian-franke.org/faecher/physik/klasse-11/
+                1-Kreisbewegungen/aufgabe3-quiz.html
+Angelegt:       27.09.2026
+Löschen:        nur auf ausdrückliche Anweisung der Lehrkraft
+Regeln:         manifest-wiederholungs-quiz.txt
+
+Das Quiz ist eigenständig: Es bindet keine Datei eines anderen Tests ein, und
+keine andere Seite bindet seine Dateien ein. Gemeinsam genutzte Dateien
+(styles.css, bewegung-koerpern.css, kraefte-bewegung.css,
+components/token-drag.mjs, components/physics-notation.mjs bzw. .css,
+perzeptron/ui/semantic-answer.mjs) wurden nur eingebunden, nicht verändert,
+und bleiben beim Löschen unangetastet. aufgabe3-quiz.css ist eine eigene Kopie
+von wdh2-quiz.css.
+
+
+1. Neue Dateien
+---------------
+
+In faecher/physik/klasse-11/1-Kreisbewegungen/:
+  aufgabe3-quiz.html
+  aufgabe3-quiz.mjs
+  aufgabe3-quiz.css
+  aufgabe3-quiz-loeschen.txt   (diese Anleitung)
+
+
+2. Geänderte Dateien in diesem Repository
+-----------------------------------------
+
+apps-script/Tasks.gs
+  Drei aufeinanderfolgende Blöcke direkt nach
+  'ph11-wdh2-quiz-crashtest-beschreibung' und direkt vor
+  'ph11-kreisbewegungen-zentripetalkraft-beschreibung':
+    'ph11-a3-quiz-karussell-beschreibung': { ... },
+    'ph11-a3-quiz-ursache-beschreibung': { ... },
+    'ph11-a3-quiz-schnur-beschreibung': { ... },
+
+apps-script/Config.gs
+  Kommentarzeile im Kopf:
+    " * - phy11/1-Kreisbewegungen/aufgabe3-quiz.html (drei Beschreibe-Aufgaben,
+      nicht verlinkter Test)"
+
+apps-script/tests/code-routing.test.js
+  Drei Zeilen am Ende der Liste der geprüften Beschreibe-Aufgaben:
+    'ph11-a3-quiz-karussell-beschreibung',
+    'ph11-a3-quiz-ursache-beschreibung',
+    'ph11-a3-quiz-schnur-beschreibung'
+
+Nicht geändert: Menüs und Übersichtsseiten. Das Quiz ist dort nirgends
+verlinkt; es muss kein Menüeintrag entfernt werden.
+
+
+3. Änderungen außerhalb dieses Repositorys
+------------------------------------------
+
+Präsentation ../informatik-material/phy11/1-Kreisbewegungen/
+phy11-kreisbewegungen.html:
+  - eigene Folie 4 („Quiz zu Aufgabe 3: Winkelgeschwindigkeit“, id
+    folie-4) direkt hinter Folie 3, mit Link und QR-Code zu
+    https://bycs.link/Phy11-Quiz3 (eingefügt am 28.09.2026),
+  - die bisherigen Folien 4 bis 7 (Aufgabe 4 bis 7) wurden dafür zu
+    Folien 5 bis 8 umnummeriert (id="folie-n" und aria-label „Folie n: …“).
+QR-Code als Datei: ../informatik-material/phy11/1-Kreisbewegungen/
+  Phy11-Quiz3.svg
+Kurzlink: bycs.link/Phy11-Quiz3 (verweist auf die Quizseite).
+
+
+4. Aufgaben auf dem Skriptserver
+--------------------------------
+
+  ph11-a3-quiz-karussell-beschreibung   Aufgabe 4 des Quiz, 4 Aspekte
+    „Zwei Kinder sitzen auf einem Karussell … Beschreibe, wie sich ihre
+    Winkelgeschwindigkeiten und ihre Bahngeschwindigkeiten unterscheiden,
+    und begründe deine Antwort.“
+  ph11-a3-quiz-ursache-beschreibung     Aufgabe 5 des Quiz, 3 Aspekte
+    „Ein Körper bewegt sich mit gleichbleibendem Betrag der Geschwindigkeit
+    auf einer Kreisbahn. Beschreibe, warum trotzdem eine Kraft auf ihn
+    wirken muss und in welche Richtung sie zeigt.“
+  ph11-a3-quiz-schnur-beschreibung      Aufgabe 6 des Quiz, 3 Aspekte
+    „Eine Kugel wird auf einem glatten Tisch an einer Schnur im Kreis
+    herumgeführt. Plötzlich reißt die Schnur. Beschreibe, wie sich die
+    Kugel danach bewegt, und begründe deine Antwort.“
+
+Verwendet von aufgabe3-quiz.mjs (Konstante DESCRIBE_TASKS, Feld taskId).
+Gemeinsames Präfix aller drei IDs: ph11-a3-quiz-
+
+
+5. Checkliste zum Löschen
+-------------------------
+
+  [ ] Quizdateien löschen:
+        git rm faecher/physik/klasse-11/1-Kreisbewegungen/aufgabe3-quiz.html
+        git rm faecher/physik/klasse-11/1-Kreisbewegungen/aufgabe3-quiz.mjs
+        git rm faecher/physik/klasse-11/1-Kreisbewegungen/aufgabe3-quiz.css
+  [ ] apps-script/Tasks.gs: die drei Blöcke 'ph11-a3-quiz-…': { ... },
+      vollständig entfernen (je bis einschließlich der schließenden
+      Klammer mit Komma und der folgenden Leerzeile).
+  [ ] apps-script/Config.gs: die Kommentarzeile zu aufgabe3-quiz.html
+      entfernen.
+  [ ] apps-script/tests/code-routing.test.js: die drei Zeilen
+      'ph11-a3-quiz-…' entfernen. Danach darf hinter dem letzten
+      Listeneintrag kein Komma stehen.
+  [ ] Präsentation (../informatik-material/phy11/1-Kreisbewegungen/
+      phy11-kreisbewegungen.html): die komplette
+      <section … id="folie-4" aria-label="Folie 4: Quiz zu Aufgabe 3 …">
+      … </section> entfernen. Danach die Folien 5 bis 8 wieder zu 4 bis 7
+      zurückzählen (id="folie-n" und „Folie n:“ im aria-label). Im Browser
+      prüfen: Auf Folie 3 folgt Aufgabe 4, der Zähler zeigt „/ 7“.
+  [ ] Phy11-Quiz3.svg in ../informatik-material/phy11/1-Kreisbewegungen/
+      löschen.
+  [ ] Kurzlink bycs.link/Phy11-Quiz3 in der ByCS-Kurzlinkverwaltung löschen
+      oder deaktivieren.
+  [ ] Kontrolle, dass keine Reste bleiben (in beiden Repositorys):
+        git grep -nw "aufgabe3-quiz"
+        git grep -n "ph11-a3-quiz-"
+        git grep -n "Phy11-Quiz3"
+      Erlaubt sind nur noch Treffer in dieser Anleitung und in
+      manifest-wiederholungs-quiz.txt (dort als Referenzbeispiel; beim
+      Löschen die Referenz im Manifest auf ein anderes bestehendes Quiz
+      umstellen oder als entfernt kennzeichnen).
+  [ ] Tests ausführen:
+        node apps-script/tests/code-routing.test.js
+        node apps-script/tests/sql-description-tasks.test.js
+        node apps-script/tests/physik11-kreisbewegung-task.test.js
+        Get-ChildItem faecher/physik/klasse-11/1-Kreisbewegungen/tests/*.mjs |
+          % { node $_.FullName }
+  [ ] Skriptserver: Tasks.gs und Config.gs aus dem Repository in das
+      Google-Apps-Script-Projekt übernehmen und die Bereitstellung auf eine
+      neue Version setzen (Bereitstellen > Bereitstellungen verwalten >
+      Bearbeiten > Version: Neue Version). Die /exec-URL bleibt gleich.
+      Ohne diesen Schritt kennt der Online-Server die drei Aufgaben weiter.
+  [ ] Website neu hochladen, damit aufgabe3-quiz.html auch online entfernt
+      ist.
+  [ ] Zuletzt diese Anleitung löschen:
+        git rm faecher/physik/klasse-11/1-Kreisbewegungen/aufgabe3-quiz-loeschen.txt
+
+Hinweis: In den Browsern der Schülerinnen und Schüler bleibt ggf. der
+localStorage-Eintrag "physik11-kreisbewegungen-aufgabe3-test-v1" zurück. Er
+enthält nur die Quizeingaben, wird von keiner anderen Seite gelesen und muss
+nicht entfernt werden.

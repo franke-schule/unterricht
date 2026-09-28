@@ -179,8 +179,12 @@ test("Aufgabenseite besitzt eindeutige IDs, gültige lokale Links und responsive
   ["1050px", "760px", "430px"].forEach((breakpoint) => assert.match(css, new RegExp(breakpoint)));
   assert.match(page, /id="split-intro"/);
   assert.match(page, /class="fish-progress" role="tablist"/);
-  assert.equal([...page.matchAll(/data-step-tab="[^"]+"/g)].length, 8);
-  assert.equal([...page.matchAll(/data-step-panel="[^"]+"/g)].length, 8);
+  assert.equal([...page.matchAll(/data-step-tab="[^"]+"/g)].length, 9);
+  assert.equal([...page.matchAll(/data-step-panel="[^"]+"/g)].length, 9);
+  assert.match(page, /id="tab-intro"[^>]*data-step-tab="intro"/);
+  assert.match(page, /id="split-intro"[^>]*data-step-panel="intro"/);
+  assert.match(page, /id="intro-next"/);
+  assert.match(page, /id="intro-prev"/);
   assert.match(page, /id="erster-split"[^>]*hidden/);
   assert.match(page, /id="intro-before"/);
   assert.match(page, /id="intro-blue-errors"/);
@@ -195,5 +199,6 @@ test("Aufgabenseite besitzt eindeutige IDs, gültige lokale Links und responsive
   assert.match(script, /renderIntroUnsplit\(true\)/);
   assert.match(script, /renderIntroSplit\("blue"\)/);
   assert.match(script, /renderIntroSplit\("orange"\)/);
-  assert.match(script, /queueIntro\(13700, finishIntro\)/);
+  assert.match(script, /function changeIntroFrame\(delta\)/);
+  assert.doesNotMatch(script, /setTimeout/);
 });

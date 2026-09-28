@@ -40,6 +40,7 @@ const tableGroups = Object.freeze({
 });
 
 const STEP_DEFINITIONS = Object.freeze([
+  { id: "intro", panelId: "split-intro" },
   { id: "tables", panelId: "erster-split" },
   { id: "blue", panelId: "teilmenge-blau" },
   { id: "orange", panelId: "teilmenge-orange" },
@@ -51,8 +52,8 @@ const STEP_DEFINITIONS = Object.freeze([
 ]);
 
 const blankState = () => ({
-  introComplete: false,
-  activeStep: "tables",
+  introFrame: 0,
+  activeStep: "intro",
   answers: {},
   hints: {},
   completedTables: {},
@@ -70,7 +71,11 @@ const blankState = () => ({
 function loadState() {
   try {
     const parsed = JSON.parse(localStorage.getItem(STORAGE_KEY));
-    return parsed && typeof parsed === "object" ? { ...blankState(), ...parsed } : blankState();
+    if (!parsed || typeof parsed !== "object") return blankState();
+    // Älterer Stand aus der Zeit der automatisch ablaufenden Einführung.
+    if (parsed.introComplete === false) parsed.activeStep = "intro";
+    delete parsed.introComplete;
+    return { ...blankState(), ...parsed };
   } catch {
     return blankState();
   }
@@ -78,7 +83,6 @@ function loadState() {
 
 const state = loadState();
 const treeInteraction = { selectedTool: null, pendingTargetPath: null, movingSourcePath: null };
-let introTimers = [];
 
 function saveState(message = "Bearbeitungsstand gespeichert.") {
   try {
@@ -142,7 +146,7 @@ function resetIntroTable() {
     cell.textContent = "–";
     cell.classList.remove("is-filled", "is-current");
   });
-  document.querySelector("#intro-table-note").textContent = "Die Tabelle wird passend zur Animation ausgefüllt.";
+  document.querySelector("#intro-table-note").textContent = "Die Tabelle wird Schritt für Schritt ausgefüllt.";
 }
 
 function fillIntroCells(values, note) {
@@ -194,70 +198,78 @@ function renderIntroSplit(focus = "") {
   document.querySelector("#intro-fish-stage").replaceChildren(groups);
 }
 
-function clearIntroTimers() {
-  introTimers.forEach((timer) => clearTimeout(timer));
-  introTimers = [];
-}
+// Die Einfuehrung wird nicht automatisch abgespielt, sondern Bild fuer Bild durchgeklickt.
+// Jedes Bild traegt seine Tabellenwerte; beim Anzeigen werden alle vorherigen Werte mitgefuellt.
+const INTRO_FRAMES = Object.freeze([
+  {
+    progress: "unsplit",
+    render: () => renderIntroUnsplit(),
+    explanation: "Ohne Split gehören alle neun Fische zu einer Gruppe. Die Mehrheit ist feindselig: 5 zu 4.",
+    cells: {},
+    note: "Die Tabelle wird Schritt für Schritt ausgefüllt.",
+  },
+  {
+    progress: "unsplit",
+    render: () => renderIntroUnsplit(true),
+    explanation: "Der Baum würde ohne Aufteilung immer „feindselig“ vorhersagen. Die vier friedlichen Fische sind dadurch Fehlklassifikationen.",
+    cells: { "intro-before": 4 },
+    note: "Die vier friedlichen Fische wären mit dem Mehrheitslabel falsch eingeordnet. Deshalb tragen wir oben 4 Fehler ein.",
+  },
+  {
+    progress: "split",
+    render: () => renderIntroSplit(),
+    explanation: "Nun teilt der Knoten Schuppenfarbe die Fische in eine blaue und eine orange Teilmenge.",
+    cells: {},
+    note: "Die Fehler vor dem Split bleiben 4. Jetzt zählen wir die beiden neuen Gruppen getrennt.",
+  },
+  {
+    progress: "table",
+    render: () => renderIntroSplit("blue"),
+    explanation: "Bei den blauen Fischen ist friedlich das Mehrheitslabel. Zwei feindselige Fische würden falsch eingeordnet.",
+    cells: { "intro-blue-peaceful": 3, "intro-blue-hostile": 2, "intro-blue-errors": 2 },
+    note: "Blau: 3 friedlich, 2 feindselig. Die kleinere Gruppe liefert 2 Fehler.",
+  },
+  {
+    progress: "table",
+    render: () => renderIntroSplit("orange"),
+    explanation: "Bei den orangen Fischen ist feindselig das Mehrheitslabel. Hier entsteht nur ein Fehler.",
+    cells: { "intro-orange-peaceful": 1, "intro-orange-hostile": 3, "intro-orange-errors": 1 },
+    note: "Orange: 1 friedlich, 3 feindselig. Die kleinere Gruppe liefert 1 Fehler.",
+  },
+  {
+    progress: "table",
+    render: () => renderIntroSplit(),
+    explanation: "Der Split senkt die Fehlerzahl von 4 auf 3. Genau diese Verringerung ist hier der Informationsgewinn.",
+    cells: { "intro-after": 3, "intro-gain": 1 },
+    note: "Nach dem Split entstehen 2 + 1 = 3 Fehler. Der Informationsgewinn beträgt 4 − 3 = 1.",
+  },
+]);
 
-function queueIntro(delay, action) {
-  const reducedMotion = matchMedia("(prefers-reduced-motion: reduce)").matches;
-  introTimers.push(setTimeout(action, delay * (reducedMotion ? 0.35 : 1)));
-}
-
-function finishIntro() {
-  clearIntroTimers();
-  state.introComplete = true;
-  state.activeStep = "tables";
-  saveState("Einführung abgeschlossen. Dein Bearbeitungsstand wird gespeichert.");
-  document.body.classList.remove("is-intro-active");
-  document.body.classList.add("tabs-ready");
-  document.querySelector("#split-intro").hidden = true;
-  updateUnlocks();
-  const behavior = matchMedia("(prefers-reduced-motion: reduce)").matches ? "auto" : "smooth";
-  requestAnimationFrame(() => document.querySelector(".fish-progress").scrollIntoView({ behavior, block: "start" }));
-}
-
-function startIntro() {
-  clearIntroTimers();
-  state.introComplete = false;
-  saveState("Einführung wird gezeigt.");
-  document.body.classList.add("is-intro-active");
-  document.body.classList.remove("tabs-ready");
-  document.querySelector("#split-intro").hidden = false;
-  document.querySelectorAll("[data-step-panel]").forEach((panel) => { panel.hidden = true; });
+function renderIntroFrame() {
+  const index = Math.min(Math.max(Number(state.introFrame) || 0, 0), INTRO_FRAMES.length - 1);
+  state.introFrame = index;
+  const frame = INTRO_FRAMES[index];
   resetIntroTable();
-  setIntroProgress("unsplit");
-  renderIntroUnsplit();
-  document.querySelector("#intro-explanation").textContent = "Ohne Split gehören alle neun Fische zu einer Gruppe. Die Mehrheit ist feindselig: 5 zu 4.";
+  INTRO_FRAMES.slice(0, index + 1).forEach((entry) => fillIntroCells(entry.cells, entry.note));
+  setIntroProgress(frame.progress);
+  frame.render();
+  document.querySelector("#intro-explanation").textContent = frame.explanation;
+  document.querySelector("#intro-frame-count").textContent = `${index + 1} von ${INTRO_FRAMES.length}`;
+  document.querySelector("#intro-prev").disabled = index === 0;
+  const last = index === INTRO_FRAMES.length - 1;
+  document.querySelector("#intro-next").textContent = last ? "Weiter: Erster Split" : "Weiter";
+}
 
-  queueIntro(1800, () => {
-    renderIntroUnsplit(true);
-    fillIntroCells({ "intro-before": 4 }, "Die vier friedlichen Fische wären mit dem Mehrheitslabel falsch eingeordnet. Deshalb tragen wir oben 4 Fehler ein.");
-    document.querySelector("#intro-explanation").textContent = "Der Baum würde ohne Aufteilung immer „feindselig“ vorhersagen. Die vier friedlichen Fische sind dadurch Fehlklassifikationen.";
-  });
-  queueIntro(4800, () => {
-    setIntroProgress("split");
-    renderIntroSplit();
-    document.querySelector("#intro-explanation").textContent = "Nun teilt der Knoten Schuppenfarbe die Fische in eine blaue und eine orange Teilmenge.";
-    document.querySelector("#intro-table-note").textContent = "Die Fehler vor dem Split bleiben 4. Jetzt zählen wir die beiden neuen Gruppen getrennt.";
-  });
-  queueIntro(6900, () => {
-    setIntroProgress("table");
-    renderIntroSplit("blue");
-    fillIntroCells({ "intro-blue-peaceful": 3, "intro-blue-hostile": 2, "intro-blue-errors": 2 }, "Blau: 3 friedlich, 2 feindselig. Die kleinere Gruppe liefert 2 Fehler.");
-    document.querySelector("#intro-explanation").textContent = "Bei den blauen Fischen ist friedlich das Mehrheitslabel. Zwei feindselige Fische würden falsch eingeordnet.";
-  });
-  queueIntro(9000, () => {
-    renderIntroSplit("orange");
-    fillIntroCells({ "intro-orange-peaceful": 1, "intro-orange-hostile": 3, "intro-orange-errors": 1 }, "Orange: 1 friedlich, 3 feindselig. Die kleinere Gruppe liefert 1 Fehler.");
-    document.querySelector("#intro-explanation").textContent = "Bei den orangen Fischen ist feindselig das Mehrheitslabel. Hier entsteht nur ein Fehler.";
-  });
-  queueIntro(11100, () => {
-    renderIntroSplit();
-    fillIntroCells({ "intro-after": 3, "intro-gain": 1 }, "Nach dem Split entstehen 2 + 1 = 3 Fehler. Der Informationsgewinn beträgt 4 − 3 = 1.");
-    document.querySelector("#intro-explanation").textContent = "Der Split senkt die Fehlerzahl von 4 auf 3. Genau diese Verringerung ist hier der Informationsgewinn.";
-  });
-  queueIntro(13700, finishIntro);
+function changeIntroFrame(delta) {
+  const next = state.introFrame + delta;
+  if (next >= INTRO_FRAMES.length) {
+    showStep("tables");
+    document.querySelector("#tab-tables")?.focus({ preventScroll: true });
+    return;
+  }
+  state.introFrame = Math.max(next, 0);
+  saveState("Einführung weitergeklickt.");
+  renderIntroFrame();
 }
 
 const fields = [
@@ -491,17 +503,16 @@ function latestAvailableRegularStep() {
 
 function renderStepTabs() {
   if (!stepIsAvailable(state.activeStep)) state.activeStep = latestAvailableRegularStep();
-  const introActive = document.body.classList.contains("is-intro-active");
   document.querySelectorAll("[data-step-tab]").forEach((tab) => {
     const stepId = tab.dataset.stepTab;
-    const active = !introActive && stepId === state.activeStep;
+    const active = stepId === state.activeStep;
     tab.disabled = !stepIsAvailable(stepId);
     tab.setAttribute("aria-selected", String(active));
     tab.tabIndex = active ? 0 : -1;
     tab.classList.toggle("is-complete", stepIsComplete(stepId));
   });
   document.querySelectorAll("[data-step-panel]").forEach((panel) => {
-    panel.hidden = introActive || panel.dataset.stepPanel !== state.activeStep;
+    panel.hidden = panel.dataset.stepPanel !== state.activeStep;
   });
 }
 
@@ -1014,25 +1025,15 @@ document.querySelectorAll("[data-step-tab]").forEach((tab) => {
 document.querySelectorAll("[data-open-step]").forEach((button) => {
   button.addEventListener("click", () => showStep(button.dataset.openStep));
 });
-document.querySelector("#skip-intro").addEventListener("click", finishIntro);
-document.querySelector("#replay-intro").addEventListener("click", () => {
-  startIntro();
-  document.querySelector("#split-intro").scrollIntoView({ behavior: "smooth", block: "start" });
-});
-window.addEventListener("pagehide", clearIntroTimers);
+document.querySelector("#intro-prev").addEventListener("click", () => changeIntroFrame(-1));
+document.querySelector("#intro-next").addEventListener("click", () => changeIntroFrame(1));
+renderIntroFrame();
 renderFishTree();
 renderTreeQuiz();
 renderQuiz();
 renderFlowNavigation();
 updateUnlocks();
-if (!state.introComplete && location.hash !== "#entropie") {
-  startIntro();
-} else {
-  document.body.classList.remove("is-intro-active");
-  document.body.classList.add("tabs-ready");
-  document.querySelector("#split-intro").hidden = true;
-  const requestedStep = STEP_DEFINITIONS.find((step) => `#${step.panelId}` === location.hash)?.id;
-  if (requestedStep && stepIsAvailable(requestedStep)) state.activeStep = requestedStep;
-  if (!stepIsAvailable(state.activeStep)) state.activeStep = latestAvailableRegularStep();
-  renderStepTabs();
-}
+const requestedStep = STEP_DEFINITIONS.find((step) => `#${step.panelId}` === location.hash)?.id;
+if (requestedStep && stepIsAvailable(requestedStep)) state.activeStep = requestedStep;
+if (!stepIsAvailable(state.activeStep)) state.activeStep = latestAvailableRegularStep();
+renderStepTabs();

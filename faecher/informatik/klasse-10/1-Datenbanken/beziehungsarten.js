@@ -6,7 +6,8 @@ import {
   usernameById, likedPhotoIdsByUser, likingUserIdsForPhoto,
   normalizeCardinality, evaluateCardinalityPair,
   BEZIEHUNGSARTEN_QUIZ, evaluateQuizQuestion,
-} from './beziehungsarten-daten.mjs?v=20260926a';
+  evaluateSchluesselSchlossAnswer, R4_CLOZES, r4ClozeGapIds, evaluateCloze, normalizeClozeAnswer,
+} from './beziehungsarten-daten.mjs?v=20260928a';
 
 const STORAGE_KEY = "informatik10-datenbanken-aufgabe8-v1";
 const STEP_TITLES = ["1:1 entdecken", "1:1 umsetzen", "n:m entdecken", "Anmeldungen", "InstaHub", "likes", "follows", "Abschlussquiz"];
@@ -38,12 +39,7 @@ const R2_SCHEMA_OPTIONS = [
   { id: "B", label: "Schema B" },
   { id: "C", label: "Schema C" },
 ];
-const R2_SCHLUESSEL_SCHEMA_OPTIONS = [
-  { id: "K1", lines: ["schluessel(id: int, nummer: int, besitzer: varchar(255), schloss_id[schloss]: int)", "schloss(id: int, ort: varchar(255))"] },
-  { id: "K2", lines: ["schluessel(id: int, nummer: int, besitzer: varchar(255))", "schloss(id: int, ort: varchar(255), schluessel_id[schluessel]: int)"] },
-  { id: "K3", lines: ["schluessel(id: int, nummer: int, besitzer: varchar(255), schloss_id[schloss]: int)", "schloss(id: int, ort: varchar(255), schluessel_id[schluessel]: int)"] },
-  { id: "K4", lines: ["schluessel(id: int, nummer: int, besitzer: varchar(255))", "schloss(id: int, ort: varchar(255))"] },
-];
+const R4_CLOZE_IDS = Object.keys(R4_CLOZES);
 const R3_F3A_OPTIONS = [
   { id: "multi", label: "1, 2" },
   { id: "twoRows", label: "Lina bekommt zwei Zeilen: eine mit ag_id 1 und eine mit ag_id 2." },
@@ -53,21 +49,6 @@ const R3_F3A_OPTIONS = [
 const R3_F3B_OPTIONS = [
   { id: "yes", label: "Ja, dann steht bei jeder AG die id eines Schülers, und alles passt." },
   { id: "no", label: "Nein, denn auch eine AG hat mehrere Schüler. Das Problem taucht nur auf der anderen Seite auf.", correct: true },
-];
-const R4_F4A_OPTIONS = [
-  { id: "robotik", label: "Robotik", correct: true },
-  { id: "theater", label: "Theater", correct: true },
-  { id: "chor", label: "Chor", correct: false },
-];
-const R4_F4B_OPTIONS = [
-  { id: "lina", label: "Lina", correct: true },
-  { id: "ben", label: "Ben", correct: false },
-  { id: "mia", label: "Mia", correct: true },
-];
-const R4_F4C_OPTIONS = [
-  { id: "newRow", label: "In teilnahme kommt eine neue Zeile mit schueler_id 2 und ag_id 3.", correct: true },
-  { id: "secondSchuelerRow", label: "Ben bekommt in schueler eine zweite Zeile." },
-  { id: "combinedCell", label: "In teilnahme wird in Bens Zeile bei ag_id »1, 3« eingetragen." },
 ];
 const R6_F6A_OPTIONS = [
   { id: "photo12", label: "Foto 12", correct: true },
@@ -99,9 +80,9 @@ function emptyDefaultState() {
     summaryUnlocked: false,
     solved: [],
     r1: { drag: { 1: "", 2: "", 3: "" }, f1a: "", f1b: "", klasse: "", klassenleiter: "" },
-    r2: { schema: [], schluesselA: "", schluesselB: "", schluesselSchema: [] },
+    r2: { schema: [], schluesselA: "", schluesselB: "", schemaTextA: "", schemaTextB: "" },
     r3: { f3a: "", f3b: "", schueler: "", ag: "" },
-    r4: { f4a: [], f4b: [], f4c: "" },
+    r4: Object.fromEntries(R4_CLOZE_IDS.map((clozeId) => [clozeId, emptyCloze(clozeId)])),
     r5: { folgenA: "", folgenB: "", kommentierenA: "", kommentierenB: "", likenA: "", likenB: "" },
     r6: { f6a: [], f6b: [], users: "", likesA: "", likesB: "", photos: "" },
     r7: { f7a: "", f7b: [] },
@@ -122,10 +103,40 @@ function sanitizeArray(value, allowedIds) {
 function sanitizeCardinalityInput(value) {
   return typeof value === "string" ? value.slice(0, 1) : "";
 }
+function sanitizeText(value, maxLength) {
+  return typeof value === "string" ? value.slice(0, maxLength) : "";
+}
+function emptyCloze(clozeId) {
+  return Object.fromEntries(r4ClozeGapIds(clozeId).map((gapId) => [gapId, ""]));
+}
+function sanitizeCloze(clozeId, saved) {
+  return Object.fromEntries(r4ClozeGapIds(clozeId).map((gapId) => [gapId, sanitizeText(saved?.[gapId], 40)]));
+}
+
+// Teilaufgaben, deren gespeicherter Status nur gilt, wenn auch die gespeicherte
+// Eingabe richtig ist. So zählt ein mit einer früheren Fassung (Multiple Choice)
+// gelöster Status nicht für die neuen Eingabefelder.
+const REVALIDATED_SUBTASKS = {
+  "r2-schluessel-schema": (s) => evaluateSchluesselSchlossAnswer(s.r2.schemaTextA, s.r2.schemaTextB).status === "success",
+  "r4-f4a": (s) => isClozeSolved("f4a", s.r4.f4a),
+  "r4-f4b": (s) => isClozeSolved("f4b", s.r4.f4b),
+  "r4-f4c": (s) => isClozeSolved("f4c", s.r4.f4c),
+};
+function isClozeSolved(clozeId, values) {
+  const result = evaluateCloze(clozeId, values);
+  return result.correctCount === result.total;
+}
 
 function sanitizeState(saved) {
   const fresh = emptyDefaultState();
   if (!saved || typeof saved !== "object") return fresh;
+  const sanitized = sanitizeStateFields(saved);
+  sanitized.solved = sanitized.solved.filter((id) => !REVALIDATED_SUBTASKS[id] || REVALIDATED_SUBTASKS[id](sanitized));
+  sanitized.completed = sanitized.completed.filter((step) => STEP_SUBTASKS[step].every((id) => sanitized.solved.includes(id)));
+  return sanitized;
+}
+
+function sanitizeStateFields(saved) {
   const solved = Array.isArray(saved.solved) ? saved.solved.filter((id) => ALL_SUBTASK_IDS.includes(id)) : [];
   const summaryUnlocked = saved.summaryUnlocked === true;
   const completed = Array.isArray(saved.completed) ? saved.completed.filter((step) => Number.isInteger(step) && step >= 1 && step <= 8) : [];
@@ -151,7 +162,8 @@ function sanitizeState(saved) {
       schema: sanitizeArray(saved.r2?.schema, R2_SCHEMA_OPTIONS.map((o) => o.id)),
       schluesselA: sanitizeCardinalityInput(saved.r2?.schluesselA),
       schluesselB: sanitizeCardinalityInput(saved.r2?.schluesselB),
-      schluesselSchema: sanitizeArray(saved.r2?.schluesselSchema, R2_SCHLUESSEL_SCHEMA_OPTIONS.map((o) => o.id)),
+      schemaTextA: sanitizeText(saved.r2?.schemaTextA, 2000),
+      schemaTextB: sanitizeText(saved.r2?.schemaTextB, 2000),
     },
     r3: {
       f3a: sanitizeChoice(saved.r3?.f3a, R3_F3A_OPTIONS.map((o) => o.id)),
@@ -159,11 +171,7 @@ function sanitizeState(saved) {
       schueler: sanitizeCardinalityInput(saved.r3?.schueler),
       ag: sanitizeCardinalityInput(saved.r3?.ag),
     },
-    r4: {
-      f4a: sanitizeArray(saved.r4?.f4a, R4_F4A_OPTIONS.map((o) => o.id)),
-      f4b: sanitizeArray(saved.r4?.f4b, R4_F4B_OPTIONS.map((o) => o.id)),
-      f4c: sanitizeChoice(saved.r4?.f4c, R4_F4C_OPTIONS.map((o) => o.id)),
-    },
+    r4: Object.fromEntries(R4_CLOZE_IDS.map((clozeId) => [clozeId, sanitizeCloze(clozeId, saved.r4?.[clozeId])])),
     r5: {
       folgenA: sanitizeCardinalityInput(saved.r5?.folgenA), folgenB: sanitizeCardinalityInput(saved.r5?.folgenB),
       kommentierenA: sanitizeCardinalityInput(saved.r5?.kommentierenA), kommentierenB: sanitizeCardinalityInput(saved.r5?.kommentierenB),
@@ -236,11 +244,6 @@ function renderRadioList(containerId, name, options, selected) {
 function renderCheckboxList(containerId, name, options, selected) {
   document.getElementById(containerId).innerHTML = options.map((option) =>
     `<label class="choice-option"><input type="checkbox" name="${name}" value="${escapeHtml(option.id)}" ${selected.includes(option.id) ? "checked" : ""}><span>${escapeHtml(option.label)}</span></label>`
-  ).join("");
-}
-function renderSchemaChoiceList(containerId, name, options, selected) {
-  document.getElementById(containerId).innerHTML = options.map((option) =>
-    `<label class="choice-option"><input type="checkbox" name="${name}" value="${escapeHtml(option.id)}" ${selected.includes(option.id) ? "checked" : ""}><span>${option.lines.map((line) => `<code>${escapeHtml(line)}</code>`).join("<br>")}</span></label>`
   ).join("");
 }
 
@@ -460,16 +463,12 @@ function checkR2Cardinality() {
   setFeedback("r2-cardinality", "hint", "Noch nicht korrekt: Lies die Beschreibung in beide Richtungen. Wie viele Schlösser öffnet ein Schlüssel, und wie viele Schlüssel gehören zu einem Schloss?");
 }
 function checkR2SchluesselSchema() {
-  state.r2.schluesselSchema = selectedValues("r2-schluessel-schema");
+  state.r2.schemaTextA = document.getElementById("r2-schema-text-a").value;
+  state.r2.schemaTextB = document.getElementById("r2-schema-text-b").value;
   saveState();
-  const selected = state.r2.schluesselSchema;
-  const correctSelected = selected.filter((id) => id === "K1" || id === "K2");
-  const prefix = correctSelected.length > 0 ? "Teilweise korrekt:" : "Noch nicht korrekt:";
-  if (selected.includes("K3")) { setFeedback("r2-schluessel-schema", correctSelected.length ? "partial" : "hint", `${prefix} In der dritten Möglichkeit steht die Verbindung doppelt. Beide Verweise müssten immer zueinander passen – sonst widersprechen sie sich, wie bei den Redundanzen aus Aufgabe 2.`); return; }
-  if (selected.includes("K4")) { setFeedback("r2-schluessel-schema", correctSelected.length ? "partial" : "hint", `${prefix} In der vierten Möglichkeit fehlt ein Fremdschlüssel. Dann weiß die Datenbank nicht, welcher Schlüssel welches Schloss öffnet.`); return; }
-  if (correctSelected.length === 2) { setFeedback("r2-schluessel-schema", "success", "Richtig: Bei einer 1:1-Beziehung darf der Fremdschlüssel in einer der beiden Tabellen stehen – aber nur in einer."); markSolved("r2-schluessel-schema"); return; }
-  if (correctSelected.length === 1) { setFeedback("r2-schluessel-schema", "partial", "Teilweise korrekt: Deine Auswahl stimmt. Es gibt aber noch eine zweite richtige Möglichkeit – denke an die Schemata A und B für Klasse und Klassenleiter."); return; }
-  setFeedback("r2-schluessel-schema", "hint", "Noch nicht korrekt: Wähle mindestens ein Schema aus.");
+  const result = evaluateSchluesselSchlossAnswer(state.r2.schemaTextA, state.r2.schemaTextB);
+  setFeedback("r2-schluessel-schema", result.status, result.message);
+  if (result.status === "success") markSolved("r2-schluessel-schema");
 }
 
 // ---------------------------------------------------------------------------
@@ -529,35 +528,86 @@ function renderR4Tables() {
 function maybeRevealR4Merke() {
   if (["r4-f4a", "r4-f4b", "r4-f4c"].every(isSolved)) document.getElementById("r4-merke").hidden = false;
 }
-function checkR4F4a() {
-  state.r4.f4a = selectedValues("r4-f4a");
-  saveState();
-  const selected = state.r4.f4a;
-  const correctSet = ["robotik", "theater"];
-  if (!selected.length) { setFeedback("r4-f4a", "hint", "Noch nicht korrekt: Kreuze mindestens eine AG an."); return; }
-  if (sameSet(selected, correctSet)) { setFeedback("r4-f4a", "success", "Richtig: In teilnahme stehen zwei Zeilen mit schueler_id 1 – eine mit ag_id 1 (Robotik) und eine mit ag_id 2 (Theater)."); markSolved("r4-f4a"); maybeRevealR4Merke(); return; }
-  if (selected.includes("chor")) { const anyCorrect = selected.some((id) => correctSet.includes(id)); setFeedback("r4-f4a", anyCorrect ? "partial" : "hint", `${anyCorrect ? "Teilweise korrekt:" : "Noch nicht korrekt:"} Chor hat die ag_id 3. In teilnahme gibt es keine Zeile, in der schueler_id 1 und ag_id 3 zusammen stehen.`); return; }
-  if (selected.some((id) => correctSet.includes(id))) { setFeedback("r4-f4a", "partial", "Teilweise korrekt: Diese AG stimmt. Suche in teilnahme alle Zeilen mit Linas id – es ist mehr als eine."); return; }
-  setFeedback("r4-f4a", "hint", "Noch nicht korrekt: Suche in teilnahme alle Zeilen mit schueler_id 1.");
+function clozeInput(clozeId, gapId) {
+  return document.getElementById(`r4-${clozeId}-${gapId}`);
 }
-function checkR4F4b() {
-  state.r4.f4b = selectedValues("r4-f4b");
+function readCloze(clozeId) {
+  r4ClozeGapIds(clozeId).forEach((gapId) => { state.r4[clozeId][gapId] = clozeInput(clozeId, gapId).value; });
   saveState();
-  const selected = state.r4.f4b;
-  const correctSet = ["lina", "mia"];
-  if (!selected.length) { setFeedback("r4-f4b", "hint", "Noch nicht korrekt: Kreuze mindestens eine Person an."); return; }
-  if (sameSet(selected, correctSet)) { setFeedback("r4-f4b", "success", "Richtig: Theater hat die ag_id 2. In teilnahme steht sie bei schueler_id 1 (Lina) und schueler_id 3 (Mia)."); markSolved("r4-f4b"); maybeRevealR4Merke(); return; }
-  if (selected.includes("ben")) { const anyCorrect = selected.some((id) => correctSet.includes(id)); setFeedback("r4-f4b", anyCorrect ? "partial" : "hint", `${anyCorrect ? "Teilweise korrekt:" : "Noch nicht korrekt:"} Ben (id 2) steht in teilnahme nur mit ag_id 1, also nur bei Robotik.`); return; }
-  if (selected.some((id) => correctSet.includes(id))) { setFeedback("r4-f4b", "partial", "Teilweise korrekt: Diese Person stimmt. Suche in teilnahme alle Zeilen mit ag_id 2."); return; }
-  setFeedback("r4-f4b", "hint", "Noch nicht korrekt: Suche in teilnahme alle Zeilen mit ag_id 2.");
 }
-function checkR4F4c() {
-  state.r4.f4c = document.querySelector('input[name="r4-f4c"]:checked')?.value ?? "";
-  saveState();
-  if (!state.r4.f4c) { setFeedback("r4-f4c", "hint", "Noch nicht korrekt: Wähle eine Antwort aus."); return; }
-  if (state.r4.f4c === "newRow") { setFeedback("r4-f4c", "success", "Richtig: Jede Anmeldung ist eine eigene Zeile. Bens id und die id des Chors stehen zusammen in einer neuen Zeile."); markSolved("r4-f4c"); maybeRevealR4Merke(); return; }
-  if (state.r4.f4c === "secondSchuelerRow") { setFeedback("r4-f4c", "hint", "Noch nicht korrekt: Dann stünde Ben doppelt in schueler – mit zwei ids. Das wäre Redundanz wie in Aufgabe 2. Seine Daten bleiben einmal gespeichert."); return; }
-  setFeedback("r4-f4c", "hint", "Noch nicht korrekt: Auch in dieser Tabelle steht in jeder Zelle genau ein Wert. Für jede weitere Anmeldung gibt es deshalb eine weitere Zeile.");
+function markClozeGaps(clozeId, result) {
+  r4ClozeGapIds(clozeId).forEach((gapId) => {
+    const input = clozeInput(clozeId, gapId);
+    const filled = Boolean(normalizeClozeAnswer(input.value));
+    input.classList.toggle("is-correct", result.gaps[gapId]);
+    input.classList.toggle("is-wrong", filled && !result.gaps[gapId]);
+    if (filled && !result.gaps[gapId]) input.setAttribute("aria-invalid", "true");
+    else input.removeAttribute("aria-invalid");
+  });
+}
+function clearClozeMark(input) {
+  input.classList.remove("is-correct", "is-wrong");
+  input.removeAttribute("aria-invalid");
+}
+
+// Fachliche Hinweise je Lückentext: die erste zutreffende Regel liefert die
+// Begründung. Typische Fehlvorstellungen (Chor bei Lina, Ben bei Theater, neue
+// Zeile in schueler, neue Spalte, »1, 3« in einer Zelle) bekommen eigene Hinweise.
+const R4_CLOZE_FEEDBACK = {
+  f4a: {
+    success: "Richtig: In teilnahme stehen zwei Zeilen mit schueler_id 1 – eine mit ag_id 1 (Robotik) und eine mit ag_id 2 (Theater).",
+    empty: "Noch nicht korrekt: Fülle die Lücken aus. Beginne mit Linas id in schueler.",
+    hints: [
+      [(v, r) => !r.gaps.id, "Linas id steht in schueler in derselben Zeile wie ihr Name."],
+      [(v) => [v.agId1, v.agId2].map(normalizeClozeAnswer).includes("3") || [v.ag1, v.ag2].some((name) => normalizeClozeAnswer(name).startsWith("chor")), "Der Chor hat die ag_id 3. In teilnahme gibt es aber keine Zeile, in der Linas schueler_id zusammen mit ag_id 3 steht."],
+      [(v, r) => !r.gaps.agId1 || !r.gaps.agId2, "Suche in teilnahme alle Zeilen mit Linas schueler_id und lies dort die ag_id ab."],
+      [(v, r) => !r.gaps.ag1 || !r.gaps.ag2, "Die ag_id-Werte sind nur Verweise. Welche Namen gehören in der Tabelle ag zu diesen ids?"],
+    ],
+  },
+  f4b: {
+    success: "Richtig: Theater hat die ag_id 2. In teilnahme steht sie bei schueler_id 1 (Lina) und schueler_id 3 (Mia).",
+    empty: "Noch nicht korrekt: Fülle die Lücken aus. Beginne mit der id der Theater-AG in ag.",
+    hints: [
+      [(v, r) => !r.gaps.id, "Die id der Theater-AG steht in ag in derselben Zeile wie ihr Name."],
+      [(v) => [v.schuelerId1, v.schuelerId2].map(normalizeClozeAnswer).includes("2") || [v.name1, v.name2].map(normalizeClozeAnswer).includes("ben"), "Ben hat die id 2. In teilnahme steht schueler_id 2 nur zusammen mit ag_id 1 – Ben ist also nur bei Robotik angemeldet."],
+      [(v, r) => !r.gaps.schuelerId1 || !r.gaps.schuelerId2, "Suche in teilnahme alle Zeilen mit der ag_id der Theater-AG und lies dort die schueler_id ab."],
+      [(v, r) => !r.gaps.name1 || !r.gaps.name2, "Die schueler_id-Werte sind nur Verweise. Welche Namen gehören in der Tabelle schueler zu diesen ids?"],
+    ],
+  },
+  f4c: {
+    success: "Richtig: Jede Anmeldung ist eine eigene Zeile in teilnahme. Bens id 2 und die id 3 des Chors stehen zusammen in einer neuen Zeile – schueler und ag bleiben unverändert.",
+    empty: "Noch nicht korrekt: Fülle die Lücken aus. Überlege zuerst, in welcher Tabelle die Anmeldungen stehen.",
+    hints: [
+      [(v) => normalizeClozeAnswer(v.table) === "schueler", "Dann stünde Ben doppelt in schueler – mit zwei verschiedenen ids. Das wäre Redundanz wie in Aufgabe 2. Bens Daten bleiben einmal gespeichert; neu ist nur seine Anmeldung."],
+      [(v) => normalizeClozeAnswer(v.table) === "ag", "Der Chor steht schon in ag und bleibt unverändert. Neu ist nur Bens Anmeldung – in welcher Tabelle stehen die Anmeldungen?"],
+      [(v, r) => !r.gaps.table, "Überlege, in welcher Tabelle die Anmeldungen gespeichert sind."],
+      [(v) => normalizeClozeAnswer(v.row).startsWith("spalte"), "Eine neue Spalte würde die Tabelle für alle Anmeldungen umbauen. Sieh dir teilnahme an: Wie ist dort jede einzelne Anmeldung gespeichert?"],
+      [(v, r) => !r.gaps.row, "Sieh dir teilnahme an: Wie ist dort jede einzelne Anmeldung gespeichert?"],
+      [(v, r) => !r.gaps.schuelerId, "Bens id steht in schueler in derselben Zeile wie sein Name."],
+      [(v) => /[,;\s]/.test(normalizeClozeAnswer(v.agId)), "In einer Zelle steht genau ein Wert. Bens Anmeldung für Robotik bleibt in ihrer eigenen Zeile; die neue Anmeldung bekommt eine eigene."],
+      [(v) => normalizeClozeAnswer(v.agId) === "1", "ag_id 1 ist Robotik – dafür ist Ben schon angemeldet. Welche id hat der Chor in ag?"],
+      [(v, r) => !r.gaps.agId, "Die id des Chors steht in ag in derselben Zeile wie sein Name."],
+    ],
+  },
+};
+
+function checkR4Cloze(clozeId) {
+  readCloze(clozeId);
+  const values = state.r4[clozeId];
+  const result = evaluateCloze(clozeId, values);
+  const feedbackId = `r4-${clozeId}`;
+  const texts = R4_CLOZE_FEEDBACK[clozeId];
+  markClozeGaps(clozeId, result);
+  if (result.correctCount === result.total) {
+    setFeedback(feedbackId, "success", texts.success);
+    markSolved(feedbackId);
+    maybeRevealR4Merke();
+    return;
+  }
+  if (result.emptyCount === result.total) { setFeedback(feedbackId, "hint", texts.empty); return; }
+  const prefix = result.correctCount > 0 ? `Teilweise korrekt: ${result.correctCount} von ${result.total} Lücken stimmen.` : "Noch nicht korrekt:";
+  const hint = texts.hints.find(([applies]) => applies(values, result))?.[1] ?? "Fülle noch die leeren Lücken aus.";
+  setFeedback(feedbackId, result.correctCount > 0 ? "partial" : "hint", `${prefix} ${hint}`);
 }
 
 // ---------------------------------------------------------------------------
@@ -755,9 +805,9 @@ function updateNavigation() {
 function renderSummary() {
   const entries = [
     ["1. 1:1 entdecken", "Ordne die Klassenleiter ihren Klassen zu und ergänze die Kardinalitäten.", "10a – KOH, 10b – SEI, 10c – BRA. Klasse 1 ───── 1 Klassenleiter."],
-    ["2. 1:1 umsetzen", "Welche Schemata setzen die 1:1-Beziehung richtig um? Übertrage auf Schlüssel und Schloss.", "Schema A und B: Der Fremdschlüssel steht in genau einer Tabelle. Schlüssel 1 ───── 1 Schloss mit schloss_id[schloss] in schluessel oder schluessel_id[schluessel] in schloss."],
+    ["2. 1:1 umsetzen", "Welche Schemata setzen die 1:1-Beziehung richtig um? Notiere beide Tabellenschemata für Schlüssel und Schloss.", "Schema A und B: Der Fremdschlüssel steht in genau einer Tabelle. Schlüssel 1 ───── 1 Schloss: entweder schloss_id[schloss]: int in schluessel oder schluessel_id[schluessel]: int in schloss."],
     ["3. n:m entdecken", "Lässt sich Lina mit einem Fremdschlüssel zwei AGs zuordnen? Ergänze die Kardinalitäten.", "Nein: Eine Zelle enthält genau einen Wert, und auch eine AG hat mehrere Schüler. Schüler n ───── m AG."],
-    ["4. Anmeldungen", "Lies aus teilnahme ab, wer welche AG besucht.", "Lina: Robotik und Theater. Theater: Lina und Mia. Eine neue Anmeldung ist eine neue Zeile, z. B. (2, 3)."],
+    ["4. Anmeldungen", "Ergänze die Lückentexte mithilfe der Tabellen schueler, teilnahme und ag.", "Lina (id 1): ag_id 1 und 2, also Robotik und Theater. Theater (id 2): schueler_id 1 und 3, also Lina und Mia. Bens Chor-Anmeldung ist eine neue Zeile in teilnahme mit schueler_id 2 und ag_id 3."],
     ["5. InstaHub-Klassendiagramm", "Ergänze die Kardinalitäten bei kann liken, kann kommentieren und kann folgen.", "Alle drei sind n:m-Beziehungen: users n ───── m photos (liken, kommentieren), users n ───── m users (folgen)."],
     ["6. likes", "Wer hat was geliked? Ergänze die Umsetzung mit Tabellen.", "reisewut_emil hat die Fotos 12 und 14 geliked; Foto 14 gefällt reisewut_emil und gamewut_jonas. users 1 ───── n likes n ───── 1 photos."],
     ["7. follows", "Deute die Zeilen der Hilfstabelle follows.", "Zeile 947: wanderriese_taro folgt oekosmasher. Gegenseitiges Folgen braucht zwei Zeilen; beide Fremdschlüssel verweisen auf users."],
@@ -771,6 +821,9 @@ function restoreInputs() {
   document.getElementById("r1-klassenleiter-cardinality").value = state.r1.klassenleiter;
   document.getElementById("r2-schluessel-cardinality").value = state.r2.schluesselA;
   document.getElementById("r2-schloss-cardinality").value = state.r2.schluesselB;
+  document.getElementById("r2-schema-text-a").value = state.r2.schemaTextA;
+  document.getElementById("r2-schema-text-b").value = state.r2.schemaTextB;
+  R4_CLOZE_IDS.forEach((clozeId) => r4ClozeGapIds(clozeId).forEach((gapId) => { clozeInput(clozeId, gapId).value = state.r4[clozeId][gapId]; }));
   document.getElementById("r3-schueler-cardinality").value = state.r3.schueler;
   document.getElementById("r3-ag-cardinality").value = state.r3.ag;
   document.getElementById("r5-folgen-a").value = state.r5.folgenA;
@@ -787,12 +840,8 @@ function restoreInputs() {
   renderRadioList("r1-f1a-choices", "r1-f1a", R1_F1A_OPTIONS, state.r1.f1a);
   renderRadioList("r1-f1b-choices", "r1-f1b", R1_F1B_OPTIONS, state.r1.f1b);
   renderCheckboxList("r2-schema-choices", "r2-schema", R2_SCHEMA_OPTIONS, state.r2.schema);
-  renderSchemaChoiceList("r2-schluessel-schema-choices", "r2-schluessel-schema", R2_SCHLUESSEL_SCHEMA_OPTIONS, state.r2.schluesselSchema);
   renderRadioList("r3-f3a-choices", "r3-f3a", R3_F3A_OPTIONS, state.r3.f3a);
   renderRadioList("r3-f3b-choices", "r3-f3b", R3_F3B_OPTIONS, state.r3.f3b);
-  renderCheckboxList("r4-f4a-choices", "r4-f4a", R4_F4A_OPTIONS, state.r4.f4a);
-  renderCheckboxList("r4-f4b-choices", "r4-f4b", R4_F4B_OPTIONS, state.r4.f4b);
-  renderRadioList("r4-f4c-choices", "r4-f4c", R4_F4C_OPTIONS, state.r4.f4c);
   renderCheckboxList("r6-f6a-choices", "r6-f6a", R6_F6A_OPTIONS, state.r6.f6a);
   renderCheckboxList("r6-f6b-choices", "r6-f6b", R6_F6B_OPTIONS, state.r6.f6b);
   renderRadioList("r7-f7a-choices", "r7-f7a", R7_F7A_OPTIONS, state.r7.f7a);
@@ -819,9 +868,7 @@ function bindEvents() {
   document.getElementById("check-r3-f3a").addEventListener("click", checkR3F3a);
   document.getElementById("check-r3-f3b").addEventListener("click", checkR3F3b);
   document.getElementById("check-r3-cardinality").addEventListener("click", checkR3Cardinality);
-  document.getElementById("check-r4-f4a").addEventListener("click", checkR4F4a);
-  document.getElementById("check-r4-f4b").addEventListener("click", checkR4F4b);
-  document.getElementById("check-r4-f4c").addEventListener("click", checkR4F4c);
+  R4_CLOZE_IDS.forEach((clozeId) => document.getElementById(`check-r4-${clozeId}`).addEventListener("click", () => checkR4Cloze(clozeId)));
   document.getElementById("check-r5-cardinality").addEventListener("click", checkR5Cardinality);
   document.getElementById("check-r6-f6a").addEventListener("click", checkR6F6a);
   document.getElementById("check-r6-f6b").addEventListener("click", checkR6F6b);
@@ -861,12 +908,20 @@ function bindEvents() {
   bindRadioGroup("r1-f1a", (value) => { state.r1.f1a = value; }, "r1-f1a");
   bindRadioGroup("r1-f1b", (value) => { state.r1.f1b = value; }, "r1-f1b");
   bindCheckboxGroup("r2-schema", (value) => { state.r2.schema = value; }, "r2-schema");
-  bindCheckboxGroup("r2-schluessel-schema", (value) => { state.r2.schluesselSchema = value; }, "r2-schluessel-schema");
   bindRadioGroup("r3-f3a", (value) => { state.r3.f3a = value; }, "r3-f3a");
   bindRadioGroup("r3-f3b", (value) => { state.r3.f3b = value; }, "r3-f3b");
-  bindCheckboxGroup("r4-f4a", (value) => { state.r4.f4a = value; }, "r4-f4a");
-  bindCheckboxGroup("r4-f4b", (value) => { state.r4.f4b = value; }, "r4-f4b");
-  bindRadioGroup("r4-f4c", (value) => { state.r4.f4c = value; }, "r4-f4c");
+  bindCardinalityInput("r2-schema-text-a", (value) => { state.r2.schemaTextA = value; }, "r2-schluessel-schema");
+  bindCardinalityInput("r2-schema-text-b", (value) => { state.r2.schemaTextB = value; }, "r2-schluessel-schema");
+  R4_CLOZE_IDS.forEach((clozeId) => r4ClozeGapIds(clozeId).forEach((gapId) => {
+    const input = clozeInput(clozeId, gapId);
+    input.addEventListener("input", () => {
+      state.r4[clozeId][gapId] = input.value;
+      saveState();
+      clearFeedback(`r4-${clozeId}`);
+      clearClozeMark(input);
+    });
+    input.addEventListener("keydown", (event) => { if (event.key === "Enter") { event.preventDefault(); checkR4Cloze(clozeId); } });
+  }));
   bindCheckboxGroup("r6-f6a", (value) => { state.r6.f6a = value; }, "r6-f6a");
   bindCheckboxGroup("r6-f6b", (value) => { state.r6.f6b = value; }, "r6-f6b");
   bindRadioGroup("r7-f7a", (value) => { state.r7.f7a = value; }, "r7-f7a");

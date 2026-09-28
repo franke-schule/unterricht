@@ -20,6 +20,7 @@ passende Fachmanifest.
 | `manifest-datenbankaufgaben.txt` | jede neue oder überarbeitete Datenbankaufgabe (verbindlich) |
 | `manifest-physikaufgaben.txt` | jede neue oder überarbeitete Physikaufgabe (verbindlich) |
 | `manifest-quizaufgaben.txt` | Quiz- und Abfrageaufgaben |
+| `manifest-wiederholungs-quiz.txt` | jedes Wiederholungs-Quiz zu einem Modul (verbindlich, inkl. Löschanleitung und Präsentation) |
 | `manifest-online-ide-programmieraufgaben.txt` | Aufgaben mit der Online-IDE |
 | `manifest-tabellenkalkulation.txt` | Tabellenkalkulationsaufgaben |
 | `manifest-debug.txt` | Debug-Aufgaben |
