@@ -287,6 +287,8 @@ assert.equal(
   'sql-b3-1',
   'inf10-db-a1-primaerschluessel',
   'inf10-db-a2-aufteilung',
+  'inf10-a3-quiz-foto-beschreibung',
+  'inf10-a3-quiz-regal-beschreibung',
   'ph11-wdh2-quiz-crashtest-beschreibung',
   'ph11-a3-quiz-karussell-beschreibung',
   'ph11-a3-quiz-ursache-beschreibung',

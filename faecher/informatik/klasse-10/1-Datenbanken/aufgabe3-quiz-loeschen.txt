@@ -1,0 +1,62 @@
+Löschanleitung: Wiederholungs-Quiz zu Informatik 10, Datenbanken, Aufgabe 3
+=======================================================================
+
+Zugehöriges Modul: faecher/informatik/klasse-10/1-Datenbanken/aufgabe3.html
+Anlagedatum: 2026-09-28
+Löschung nur auf Anweisung der verantwortlichen Lehrkraft.
+
+Neue Dateien
+------------
+faecher/informatik/klasse-10/1-Datenbanken/aufgabe3-quiz.html
+faecher/informatik/klasse-10/1-Datenbanken/aufgabe3-quiz.js
+faecher/informatik/klasse-10/1-Datenbanken/aufgabe3-quiz.css
+faecher/informatik/klasse-10/1-Datenbanken/aufgabe3-quiz-loeschen.txt
+../informatik-material/inf10/1-Datenbanken/Inf-10-A3-quiz.svg
+
+Geänderte Dateien und genaue Stellen
+-----------------------------------
+apps-script/Tasks.gs: zusammenhängender Block mit den beiden IDs unten.
+apps-script/Config.gs: Kommentarzeile zum nicht verlinkten aufgabe3-quiz.html.
+apps-script/tests/code-routing.test.js: beide IDs in der Liste der Beschreibe-Aufgaben.
+../informatik-material/inf10/1-Datenbanken/inf10-datenbanken.html:
+  Folie 4 „Quiz zu Aufgabe 3: Beziehungen und Fremdschlüssel“ direkt hinter
+  der Modulfolie 3; die ursprünglichen Folien 4 bis 7 wurden zu 5 bis 8
+  umnummeriert (id und aria-label).
+
+Skriptserver-Aufgaben
+---------------------
+inf10-a3-quiz-foto-beschreibung (3 Punkte)
+  „In users hat Samira die id 7. Ein neues Foto hat photos.id = 42 und soll
+  ihr gehören. Beschreibe, welchen Wert photos.user_id erhält, worauf dieser
+  Wert verweist und warum die Foto-ID dafür nicht genügt.“
+
+inf10-a3-quiz-regal-beschreibung (3 Punkte)
+  „In einer Bibliothek stehen in einem Regal mehrere Bücher. Jedes Buch steht
+  in genau einem Regal. Beschreibe die Beziehung in beiden Richtungen und gib
+  an, wo im Klassendiagramm 1 und n stehen.“
+
+Checkliste für die vollständige Löschung
+----------------------------------------
+[ ] Die drei Quizdateien mit git rm löschen.
+[ ] In apps-script/Tasks.gs beide Blöcke mit dem Präfix
+    inf10-a3-quiz- entfernen.
+[ ] In apps-script/Config.gs die Kommentarzeile zu aufgabe3-quiz.html entfernen.
+[ ] In apps-script/tests/code-routing.test.js beide IDs entfernen und Kommas prüfen.
+[ ] In ../informatik-material/inf10/1-Datenbanken/inf10-datenbanken.html
+    die Quiz-Folie 4 entfernen. Die folgenden Folien wieder um eins
+    zurückzählen: id="folie-N" und „Folie N:“ im aria-label.
+[ ] ../informatik-material/inf10/1-Datenbanken/Inf-10-A3-quiz.svg löschen.
+[ ] Den Kurzlink https://bycs.link/Inf-10-A3-quiz deaktivieren.
+[ ] Restekontrolle: git grep -nw "aufgabe3-quiz" und
+    git grep -n "inf10-a3-quiz-" im Repository unterricht ausführen.
+    In informatik-material ebenfalls nach aufgabe3-quiz und
+    Inf-10-A3-quiz suchen.
+[ ] node --check, Apps-Script-Tests, Modultests und git diff --check ausführen.
+[ ] Tasks.gs und Config.gs im Google-Apps-Script-Projekt übernehmen und unter
+    Bereitstellen > Bereitstellungen verwalten > Bearbeiten eine neue Version
+    bereitstellen. Die /exec-URL bleibt gleich.
+[ ] Website neu hochladen.
+[ ] Zuletzt diese Löschanleitung mit git rm löschen.
+
+Der localStorage-Schlüssel
+informatik10-datenbanken-aufgabe3-test-v1 darf in Schülerbrowsern zurückbleiben.

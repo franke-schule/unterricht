@@ -7,6 +7,7 @@
  * - inf10/1-Datenbanken/aufgabe5.html (zwei Beschreibe-Aufgaben)
  * - inf10/1-Datenbanken/aufgabe1-quiz.html (eine Beschreibe-Aufgabe, nicht verlinkter Test)
  * - inf10/1-Datenbanken/aufgabe2-quiz.html (eine Beschreibe-Aufgabe, nicht verlinkter Test)
+ * - inf10/1-Datenbanken/aufgabe3-quiz.html (zwei Beschreibe-Aufgaben, nicht verlinkter Test)
  * - phy11/1-Kreisbewegungen/wdh2-quiz.html (eine Beschreibe-Aufgabe, nicht verlinkter Test)
  * - phy11/1-Kreisbewegungen/aufgabe3-quiz.html (drei Beschreibe-Aufgaben, nicht verlinkter Test)
  * - inf11/1-Kuenstliche-Intelligenz/aufgabe3a-quiz.html (drei Beschreibe-Aufgaben, nicht verlinkter Test)
