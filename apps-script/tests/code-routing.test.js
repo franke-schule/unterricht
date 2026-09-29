@@ -115,12 +115,14 @@ vm.createContext(
 
 
 const evaluatedTypes = [];
+const evaluatedTitles = [];
 
 context.evaluateWithGemini_ =
   function(task) {
     evaluatedTypes.push(
       task.responseType || 'text'
     );
+    evaluatedTitles.push(task.title);
 
     return {
       ok:
@@ -159,6 +161,48 @@ assert.match(
   codePrompt,
   /statische Codeanalyse/
 );
+
+assert.match(codePrompt, /Robot-Befehle/);
+assert.match(codePrompt, /Wandkollisionen/);
+
+[
+  ['11-6-klassifizieren', 'text'],
+  ['11-6-einfach-summe', 'code'],
+  ['11-6-einfach-ausgabe', 'code'],
+  ['11-6-einfach-anpassung', 'code'],
+  ['11-6-schwer-trainieren', 'code']
+].forEach(function(entry) {
+  const task = vm.runInContext("TASKS['" + entry[0] + "']", context);
+  assert.equal(task.responseType || 'text', entry[1]);
+  assert.equal(task.maxPoints, task.expectedAspects.length);
+  assert.equal(task.statusLabels.correct, 'korrekt');
+  assert.equal(task.statusLabels.partial, 'teilweise korrekt');
+  assert.equal(task.statusLabels.incorrect, 'noch nicht korrekt');
+  for (const [points,expected] of [[0,'noch nicht korrekt'],[1,'teilweise korrekt'],[task.maxPoints,'korrekt']]) {
+    assert.equal(context.normalizeEvaluation_({points,strengths:[],missing:[],feedback:''},task).status,expected);
+  }
+  if (entry[1] === 'code') {
+    assert.ok(task.codeAnalysisContext);
+    assert.ok(Array.isArray(task.codeAnalysisRules));
+    const prompt = context.buildPrompt_(task, 'public void trainieren(Datenpunkt punkt) {}');
+    assert.match(prompt, /Datenpunkt/);
+    assert.doesNotMatch(prompt, /Robot|Wandkollision|Ziegel|Drehrichtungen/);
+  }
+});
+
+const otherContextPrompt = context.buildPrompt_({
+  grade: 12,
+  responseType: 'code',
+  maxPoints: 1,
+  title: 'Sortieren',
+  instruction: 'Prüfe eine Sortiermethode.',
+  codeAnalysisContext: 'Python mit Listen und sort()',
+  codeAnalysisRules: ['Prüfe die aufsteigende Reihenfolge.'],
+  expectedAspects: ['Die Liste ist am Ende aufsteigend sortiert.']
+}, 'werte.sort()');
+assert.match(otherContextPrompt, /Python mit Listen/);
+assert.match(otherContextPrompt, /aufsteigende Reihenfolge/);
+assert.doesNotMatch(otherContextPrompt, /Robot|Perzeptron/);
 
 const textPrompt =
   context.buildPrompt_(
@@ -255,6 +299,20 @@ assert.equal(
   evaluatedTypes.at(-1),
   'text'
 );
+
+const perceptronTextTask = vm.runInContext("TASKS['11-6-klassifizieren']",context);
+const perceptronTextGet = context.doGet({
+  parameter: {
+    callback: 'perceptronTextCallback',
+    requestId: 'perceptron-description-123',
+    taskId: '11-6-klassifizieren',
+    answer: 'Die Methode multipliziert beide Eingaben mit den Gewichten, addiert die Produkte und vergleicht mit theta.'
+  }
+});
+assert.match(perceptronTextGet.text,/^perceptronTextCallback\(/);
+assert.match(perceptronTextGet.text,/GEMINI_EVALUATION_RESULT/);
+assert.equal(evaluatedTypes.at(-1),'text');
+assert.equal(evaluatedTitles.at(-1),perceptronTextTask.title);
 
 
 const textPost =
@@ -404,6 +462,37 @@ assert.match(
   codeResult.text,
   /"feedback":"Testfeedback"/
 );
+
+[
+  '11-6-einfach-summe',
+  '11-6-einfach-ausgabe',
+  '11-6-einfach-anpassung',
+  '11-6-schwer-trainieren'
+].forEach(function(taskId) {
+  const task = vm.runInContext("TASKS['" + taskId + "']",context);
+  const requestId = 'perceptron-code-' + taskId;
+  const post = context.doPost({
+    parameter: {
+      requestType: 'code',
+      requestId,
+      taskId,
+      code: 'public class Perzeptron { public void trainieren(Datenpunkt punkt) { int delta = punkt.gibLabel(); } }'
+    }
+  });
+  assert.equal(JSON.parse(post.text).accepted,true,taskId + ': POST-Annahme');
+  assert.equal(evaluatedTypes.at(-1),'code',taskId + ': Code-Routing');
+  assert.equal(evaluatedTitles.at(-1),task.title,taskId + ': falscher Task');
+  const result = context.doGet({
+    parameter: {
+      callback: 'perceptronCodeCallback',
+      requestType: 'code-result',
+      requestId
+    }
+  });
+  assert.match(result.text,/^perceptronCodeCallback\(/,taskId + ': JSONP');
+  assert.match(result.text,/"pending":false/,taskId + ': Ergebnis bereit');
+  assert.match(result.text,/"feedback":"Testfeedback"/,taskId + ': Feedback');
+});
 
 
 const pendingResult =

@@ -1,0 +1,210 @@
+<!doctype html>
+<html lang="de">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="robots" content="noindex, nofollow">
+  <title>Aufgabe 6 – Perzeptron implementieren | Informatik 11</title>
+  <link rel="stylesheet" href="../../../../styles.css?v=20260707">
+  <link rel="stylesheet" href="perzeptron/task5.css?v=20260926a">
+  <link rel="stylesheet" href="perzeptron/task6.css?v=20260928a">
+  <script type="module" src="perzeptron/ui/task6.mjs?v=20260928a"></script>
+</head>
+<body class="perceptron-page task6-page">
+<div class="site-backdrop" aria-hidden="true"></div>
+<main class="page-shell">
+  <nav class="topbar" aria-label="Navigation"><a class="back-link" href="../index.html">Zur Aufgabenübersicht</a><a class="back-link" href="../../../../">Startseite</a></nav>
+  <header class="perceptron-hero"><p class="perceptron-eyebrow">Künstliche Intelligenz · Klassifikation</p><h1>Aufgabe 6 – Perzeptron implementieren</h1><p>Untersuche zuerst, wie das vorhandene Perzeptron Punkte klassifiziert. Implementiere danach das Training in der einfachen oder schweren Variante und prüfe deinen Code mit Beispielpunkten.</p></header>
+  <section class="card variant-choice" id="variant-choice" aria-labelledby="variant-title"><h2 id="variant-title">Wähle deinen Weg. Beide Varianten führen zum selben Ziel; dein Code bleibt beim Wechsel getrennt gespeichert.</h2><div class="variant-buttons"><button type="button" class="primary-button" data-choose="einfach">Einfach – mit Hilfen</button><button type="button" class="secondary-button" data-choose="schwer">Schwer – selbstständig</button></div></section>
+  <p id="save-status" role="status" aria-live="polite">Deine Eingaben und beide Code-Stände werden in diesem Browser gespeichert.</p>
+  <div id="work-area" hidden>
+    <button id="change-variant" class="secondary-button" type="button">Variante wechseln</button>
+    <div class="task6-layout">
+      <section class="task6-ide" aria-label="Online-IDE">
+        <div id="ide-einfach" class="ide-container" hidden>
+          <iframe id="frame-einfach" title="Online-IDE: einfache Variante" srcdoc="<script>window.jo_doc = window.frameElement.textContent;</script><script src='../../../../include/js/includeide/includeIDE.js'></script>">
+            {'id':'Java11Aufgabe6Einfach','speed':10,'withBottomPanel':true,'withPCode':true,'withConsole':true,'withFileList':true,'withErrorList':true,'enableFileAccess':true}
+            <script type="text/plain" title="Anleitung" data-type="hint">
+1. Starte `Hauptprogramm.java` und beobachte die Ausgabe.
+2. Beschreibe, wie `punktKlassifizieren` aus zwei Eingaben 0 oder 1 bestimmt.
+3. Ergänze `trainieren`, starte das Programm erneut und prüfe die Veränderung.
+            </script>
+            <script type="plain/text" title="Hauptprogramm.java">
+Perzeptron netz = new Perzeptron(1, 1, 1, 1);
+Datenpunkt[] punkte = {
+    new Datenpunkt(2, 2, 1),
+    new Datenpunkt(4, 1, 0),
+    new Datenpunkt(6, 2, 0),
+    new Datenpunkt(0, 4, 1)
+};
+System.out.println("Vorher: (4|1) ergibt " + netz.punktKlassifizieren(4, 1));
+netz.trenngeradeAusgeben();
+for (Datenpunkt punkt : punkte) {
+    netz.trainieren(punkt);
+}
+System.out.println("Nachher: (4|1) ergibt " + netz.punktKlassifizieren(4, 1));
+netz.trenngeradeAusgeben();
+            </script>
+            <script type="plain/text" title="Perzeptron.java">
+public class Perzeptron {
+    private double w_1;
+    private double w_2;
+    private double theta;
+    private double lernrate;
+
+    public Perzeptron(double wert_w_1, double wert_w_2, double wert_theta, double wert_lernrate) {
+        w_1 = wert_w_1;
+        w_2 = wert_w_2;
+        theta = wert_theta;
+        lernrate = wert_lernrate;
+    }
+
+    public int punktKlassifizieren(double x_1, double x_2) {
+        double gewichtete_Summe = w_1 * x_1 + w_2 * x_2;
+        int berechnete_ausgabe = 0;
+        if (gewichtete_Summe >= theta) {
+            berechnete_ausgabe = 1;
+        } else {
+            berechnete_ausgabe = 0;
+        }
+        return berechnete_ausgabe;
+    }
+
+    public void trainieren(Datenpunkt punkt) {
+        // Schritt 2: gewichtete Summe
+        double gewichtete_Summe = 0;
+
+        // Schritt 3: Ausgabe
+        int berechnete_ausgabe = 0;
+        if (gewichtete_Summe >= theta) {
+            // Ergänze die Ausgabe.
+        } else {
+            // Ergänze die Ausgabe.
+        }
+
+        int delta = punkt.gibLabel() - berechnete_ausgabe;
+        // Schritt 4: Parameter anpassen
+        if (delta == 1) {
+            // Ergänze die Anpassung.
+        } else if (delta == -1) {
+            // Ergänze die Anpassung.
+        }
+        System.out.println("Parameterwerte: w_1 = " + w_1 + "; w_2 = " + w_2 + "; theta = " + theta);
+    }
+
+    public void trenngeradeAusgeben() {
+        System.out.println("Die Gleichung der Trenngerade lautet aktuell:");
+        System.out.println(w_1 + "*x_1 + " + w_2 + "*x_2 = " + theta);
+    }
+}
+            </script>
+            <script type="plain/text" title="Datenpunkt.java">
+public class Datenpunkt {
+    private double x_1;
+    private double x_2;
+    private int label;
+    public Datenpunkt(double wert_x_1, double wert_x_2, int wert_label) {
+        x_1 = wert_x_1;
+        x_2 = wert_x_2;
+        label = wert_label;
+    }
+    public double gibEingabewertX1() { return x_1; }
+    public double gibEingabewertX2() { return x_2; }
+    public int gibLabel() { return label; }
+}
+            </script>
+          </iframe>
+        </div>
+        <div id="ide-schwer" class="ide-container" hidden>
+          <iframe id="frame-schwer" title="Online-IDE: schwere Variante" srcdoc="<script>window.jo_doc = window.frameElement.textContent;</script><script src='../../../../include/js/includeide/includeIDE.js'></script>">
+            {'id':'Java11Aufgabe6Schwer','speed':10,'withBottomPanel':true,'withPCode':true,'withConsole':true,'withFileList':true,'withErrorList':true,'enableFileAccess':true}
+            <script type="text/plain" title="Anleitung" data-type="hint">
+1. Starte `Hauptprogramm.java` und beobachte die Ausgabe.
+2. Beschreibe, wie `punktKlassifizieren` aus zwei Eingaben 0 oder 1 bestimmt.
+3. Ergänze `trainieren`, starte das Programm erneut und prüfe die Veränderung.
+            </script>
+            <script type="plain/text" title="Hauptprogramm.java">
+Perzeptron netz = new Perzeptron(1, 1, 1, 1);
+Datenpunkt[] punkte = {
+    new Datenpunkt(2, 2, 1),
+    new Datenpunkt(4, 1, 0),
+    new Datenpunkt(6, 2, 0),
+    new Datenpunkt(0, 4, 1)
+};
+System.out.println("Vorher: (4|1) ergibt " + netz.punktKlassifizieren(4, 1));
+netz.trenngeradeAusgeben();
+for (Datenpunkt punkt : punkte) {
+    netz.trainieren(punkt);
+}
+System.out.println("Nachher: (4|1) ergibt " + netz.punktKlassifizieren(4, 1));
+netz.trenngeradeAusgeben();
+            </script>
+            <script type="plain/text" title="Perzeptron.java">
+public class Perzeptron {
+    private double w_1;
+    private double w_2;
+    private double theta;
+    private double lernrate;
+
+    public Perzeptron(double wert_w_1, double wert_w_2, double wert_theta, double wert_lernrate) {
+        w_1 = wert_w_1;
+        w_2 = wert_w_2;
+        theta = wert_theta;
+        lernrate = wert_lernrate;
+    }
+
+    public int punktKlassifizieren(double x_1, double x_2) {
+        double gewichtete_Summe = w_1 * x_1 + w_2 * x_2;
+        int berechnete_ausgabe = 0;
+        if (gewichtete_Summe >= theta) {
+            berechnete_ausgabe = 1;
+        } else {
+            berechnete_ausgabe = 0;
+        }
+        return berechnete_ausgabe;
+    }
+
+    public void trainieren(Datenpunkt punkt) {
+    }
+
+    public void trenngeradeAusgeben() {
+        System.out.println("Die Gleichung der Trenngerade lautet aktuell:");
+        System.out.println(w_1 + "*x_1 + " + w_2 + "*x_2 = " + theta);
+    }
+}
+            </script>
+            <script type="plain/text" title="Datenpunkt.java">
+public class Datenpunkt {
+    private double x_1;
+    private double x_2;
+    private int label;
+    public Datenpunkt(double wert_x_1, double wert_x_2, int wert_label) {
+        x_1 = wert_x_1;
+        x_2 = wert_x_2;
+        label = wert_label;
+    }
+    public double gibEingabewertX1() { return x_1; }
+    public double gibEingabewertX2() { return x_2; }
+    public int gibLabel() { return label; }
+}
+            </script>
+          </iframe>
+        </div>
+      </section>
+      <aside class="task6-tasks" aria-label="Aufgaben und Hilfen">
+        <section class="card" aria-labelledby="describe-title"><h2 id="describe-title">1. Vorhandenen Code erklären</h2><p><strong>Beschreibe</strong> in eigenen Worten, wie <code>punktKlassifizieren</code> aus <code>x_1</code> und <code>x_2</code> eine Ausgabe berechnet. Erkläre auch, wann die Methode 1 statt 0 zurückgibt und ob sie die Gewichte verändert.</p><label for="description">Deine Beschreibung</label><textarea id="description" maxlength="600" rows="5"></textarea><p class="privacy">Gib keine Namen oder anderen personenbezogenen Daten ein. Deine Beschreibung und der aktuelle Inhalt von <code>Perzeptron.java</code> werden zur automatischen Auswertung an den Skriptserver und ein KI-System übertragen.</p><button type="button" class="primary-button" id="check-description">Beschreibung überprüfen</button><div id="result-description" class="feedback" aria-live="polite" hidden></div></section>
+        <div id="tasks-einfach" hidden>
+          <section class="card" aria-labelledby="sum-title"><h2 id="sum-title">2. Gewichtete Summe</h2><p><strong>Ersetze</strong> den Platzhalter für <code>gewichtete_Summe</code> durch die gewichtete Summe der beiden Eingabewerte von <code>punkt</code>.</p><button type="button" class="primary-button" data-code-task="11-6-einfach-summe">Code zu Schritt 2 prüfen</button><div id="result-11-6-einfach-summe" class="feedback" aria-live="polite" hidden></div><details><summary>Hilfe 1</summary><p>Beide Eingaben tragen zur Summe bei.</p></details><details><summary>Hilfe 2</summary><p>Multipliziere jeden Eingabewert mit seinem passenden Gewicht und addiere die Produkte.</p></details><details><summary>Hilfe 3</summary><p>Lies <code>x_1</code> und <code>x_2</code> über die Getter von <code>punkt</code>; speichere das Ergebnis als <code>double</code>.</p></details></section>
+          <section class="card" aria-labelledby="output-title"><h2 id="output-title">3. Ausgabe bestimmen</h2><p><strong>Ergänze</strong> beide Zweige der Treppenfunktion, damit <code>berechnete_ausgabe</code> bei Erreichen des Schwellenwerts 1 und sonst 0 enthält.</p><button type="button" class="primary-button" data-code-task="11-6-einfach-ausgabe">Code zu Schritt 3 prüfen</button><div id="result-11-6-einfach-ausgabe" class="feedback" aria-live="polite" hidden></div><details><summary>Hilfe 1</summary><p>Überlege, in welchem Zweig die Ausgabe 1 sein muss.</p></details><details><summary>Hilfe 2</summary><p>Bei Gleichheit mit <code>theta</code> gehört der Punkt bereits zur Ausgabe 1.</p></details><details><summary>Hilfe 3</summary><p>Setze <code>berechnete_ausgabe</code> im <code>&gt;=</code>-Zweig auf 1 und im anderen Zweig auf 0.</p></details></section>
+          <section class="card" aria-labelledby="adjust-title"><h2 id="adjust-title">4. Parameter anpassen</h2><p><strong>Ergänze</strong> die Anpassung von <code>w_1</code>, <code>w_2</code> und <code>theta</code> für <code>delta = 1</code> und <code>delta = -1</code>. Bei <code>delta = 0</code> bleiben alle drei Werte unverändert.</p><button type="button" class="primary-button" data-code-task="11-6-einfach-anpassung">Code zu Schritt 4 prüfen</button><div id="result-11-6-einfach-anpassung" class="feedback" aria-live="polite" hidden></div><details><summary>Hilfe 1</summary><p>Nur ein Fehler verändert die Parameter.</p></details><details><summary>Hilfe 2</summary><p>Bei <code>delta = 1</code> wachsen die Gewichte entsprechend den Eingaben und <code>theta</code> sinkt; bei <code>delta = -1</code> kehren sich die Vorzeichen um.</p></details><details><summary>Hilfe 3</summary><p>Verwende bei jeder Änderung <code>lernrate</code> und die Getter von <code>punkt</code>. Prüfe besonders das Vorzeichen der Änderung von <code>theta</code>.</p></details></section>
+          <details class="card"><summary>Code-Schnipsel zum Sortieren</summary><p>Diese Anweisungen gehören in <code>trainieren</code>, stehen aber nicht in der richtigen Reihenfolge. Kopiere nur die Zeilen, die du brauchst, und ordne sie an den passenden Stellen ein.</p><ul class="code-snippets"><li><code>w_2 = w_2 - lernrate*punkt.gibEingabewertX2();</code></li><li><code>berechnete_ausgabe = 1;</code></li><li><code>theta = theta - lernrate*1;</code></li><li><code>double gewichtete_Summe = w_1*punkt.gibEingabewertX1() + w_2*punkt.gibEingabewertX2();</code></li><li><code>w_1 = w_1 + lernrate*punkt.gibEingabewertX1();</code></li><li><code>berechnete_ausgabe = 0;</code></li><li><code>theta = theta + lernrate*1;</code></li><li><code>w_2 = w_2 + lernrate*punkt.gibEingabewertX2();</code></li><li><code>w_1 = w_1 - lernrate*punkt.gibEingabewertX1();</code></li></ul></details>
+        </div>
+        <section id="tasks-schwer" class="card" aria-labelledby="hard-title" hidden><h2 id="hard-title">2. Training selbst implementieren</h2><p><strong>Implementiere</strong> <code>trainieren(Datenpunkt punkt)</code> vollständig. Berechne zuerst die gewichtete Summe und daraus die Ausgabe 0 oder 1. Bestimme dann <code>delta</code> aus Label minus Ausgabe. Passe Gewichte und Schwellenwert mit der Lernrate an; bei <code>delta = 0</code> bleibt alles unverändert.</p><button type="button" class="primary-button" data-code-task="11-6-schwer-trainieren">Meine Trainingsmethode prüfen</button><div id="result-11-6-schwer-trainieren" class="feedback" aria-live="polite" hidden></div><details><summary>Formelsammlung anzeigen</summary><ul><li>Gewichtete Summe: a = w₁ · x₁ + w₂ · x₂</li><li>Ausgabe: f(a) = 1 für a ≥ θ, sonst 0</li><li>Fehler: δ = t − f(a)</li><li>Gewichte: wᵢ neu = wᵢ alt + δ · α · xᵢ</li><li>Schwellenwert: θ neu = θ alt − δ · α</li></ul><p>Dabei ist t das Label des Datenpunkts und α die Lernrate.</p></details></section>
+      </aside>
+    </div>
+  </div>
+  <section class="remember task6-summary" aria-labelledby="summary-title"><h2 id="summary-title">Das Wichtigste im Code</h2><p><code>punktKlassifizieren</code> berechnet eine gewichtete Summe, vergleicht sie mit <code>theta</code> und gibt 0 oder 1 zurück.</p><p><code>trainieren</code> vergleicht diese Ausgabe mit dem Label. Der Unterschied <code>delta</code> steuert die Parameteränderung.</p><p>Bei <code>delta = 0</code> bleiben die Parameter unverändert. Sonst bestimmen Eingabewerte und Lernrate die Gewichtsänderung; der Schwellenwert wird mit umgekehrtem Vorzeichen angepasst.</p><p>Eingaben, Gewichte, Lernrate und gewichtete Summe sind <code>double</code>; Label, Ausgabe und <code>delta</code> sind ganzzahlig.</p></section>
+  <section id="final-quiz" class="step-panel" aria-labelledby="quiz-title"><h2 id="quiz-title">Abschlussquiz</h2><p>Kreuze alle richtigen Aussagen an. Bei manchen Fragen sind mehrere Antworten richtig.</p><p id="quiz-progress" aria-live="polite">0 von 4 Fragen vollständig richtig</p><form id="quiz-form"><div id="quiz-questions"></div><button class="primary-button" type="submit">Quiz auswerten</button></form><div id="quiz-feedback" class="feedback" aria-live="polite" hidden></div><div id="quiz-summary" class="remember" hidden></div></section>
+</main>
+</body>
+</html>
