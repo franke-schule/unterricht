@@ -4,7 +4,7 @@ import { readFile } from 'node:fs/promises';
 import { dirname, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { MENU_TABLES, MENU_TABLE_NAMES, MENU_TABLE_SCHEMAS, buildMenuCombinations, menuRelation } from '../menue-kreuzprodukt-daten.mjs';
-import { compareRelations, normalizeRelation, validateSelectStatement } from '../sql-lab-core.mjs';
+import { analyzeMultiTableSelect, compareRelations, normalizeRelation, validateSelectStatement } from '../sql-lab-core.mjs';
 
 const combinations = buildMenuCombinations();
 assert.deepEqual(MENU_TABLES, {
@@ -44,15 +44,38 @@ for (const tableName of MENU_TABLE_NAMES) {
   for (const row of MENU_TABLES[tableName]) db.run(`INSERT INTO "${tableName}" VALUES ('${row.name.replaceAll("'", "''")}', ${row.preis})`);
 }
 const relation = (statement) => normalizeRelation(db.exec(statement));
+globalThis.window = {};
+globalThis.document = { addEventListener() {} };
+const { assessMultiTableSql } = await import('../sql-lab.js');
+const assess = (statement, reference = 'SELECT * FROM Vorspeise, Hauptspeise, Nachspeise') => assessMultiTableSql(statement, reference, MENU_TABLE_SCHEMAS, 'menu', async (query) => relation(query));
+assert.equal((await assess('SELECT v.name AS Vorspeise, h.name AS Hauptspeise, n.name AS Nachspeise FROM Vorspeise v, Hauptspeise h, Nachspeise n ORDER BY Vorspeise')).level, 'success', 'Alias-Sortierung bleibt in der tatsächlichen Menübwertung gültig.');
 const allMenus = relation('SELECT * FROM Vorspeise, Hauptspeise, Nachspeise');
 assert.equal(allMenus.values.length, 12);
 assert.deepEqual(menuRelation().columns, ['Vorspeise.name', 'Vorspeise.preis', 'Hauptspeise.name', 'Hauptspeise.preis', 'Nachspeise.name', 'Nachspeise.preis'], 'Die sichtbaren Spaltenbezeichnungen weisen ihre Herkunft aus.');
 assert.equal(compareRelations(allMenus, relation('select *\nfrom Vorspeise, Hauptspeise, Nachspeise;')).correct, true, 'Formatvarianten bleiben korrekt.');
 assert.equal(compareRelations(allMenus, relation('  SeLeCt   *\nFROM Vorspeise,   Hauptspeise, Nachspeise ;')).correct, true, 'Großschreibung, zusätzliche Leerzeichen, Zeilenumbrüche und Semikolon werden akzeptiert.');
+const menuNames = relation('SELECT Vorspeise.name, Hauptspeise.name, Nachspeise.name FROM Vorspeise, Hauptspeise, Nachspeise');
+const menuNamesReordered = relation('SELECT h.name, v.name, n.name FROM Hauptspeise h, Vorspeise v, Nachspeise n');
+assert.equal(compareRelations(menuNamesReordered, relation('SELECT Hauptspeise.name, Vorspeise.name, Nachspeise.name FROM Vorspeise, Hauptspeise, Nachspeise')).correct, true, 'Drei Menünamen in anderer Tabellen- und Spaltenreihenfolge liefern dieselben vollständigen Kombinationen.');
+assert.equal(menuNames.values.length, 12);
+const menuNamesWithPrice = relation('SELECT v.name, h.preis AS Preis, h.name, n.name FROM Vorspeise v, Hauptspeise h, Nachspeise n');
+assert.equal(compareRelations(menuNamesWithPrice, relation('SELECT Vorspeise.name, Hauptspeise.preis, Hauptspeise.name, Nachspeise.name FROM Vorspeise, Hauptspeise, Nachspeise')).correct, true, 'Zusätzlicher Preis und Alias ändern die vollständige Menüdarstellung nicht.');
+assert.deepEqual(menuNamesWithPrice.columns, ['name', 'Preis', 'name', 'name'], 'Die SQL-Engine liefert die tatsächlichen frei gewählten Spaltenüberschriften.');
+const missingDessert = 'SELECT Vorspeise.name, Hauptspeise.name FROM Vorspeise, Hauptspeise, Nachspeise';
+assert.equal(relation(missingDessert).values.length, 12, 'Auch unvollständige Projektionen können zufällig 12 Zeilen liefern.');
+assert.equal(analyzeMultiTableSelect(missingDessert, MENU_TABLE_SCHEMAS).projection.some(({ table }) => table === 'Nachspeise'), false, 'Fehlender Nachspeisenname wird an der Spaltenherkunft erkannt.');
+const missingDessertTable = 'SELECT Vorspeise.name, Hauptspeise.name FROM Vorspeise, Hauptspeise';
+assert.equal(relation(missingDessertTable).values.length, 12, 'Die konstante Nachspeise kann auch bei fehlender Tabelle zufällig dieselbe Zeilenzahl ergeben.');
+assert.deepEqual(analyzeMultiTableSelect(missingDessertTable, MENU_TABLE_SCHEMAS).tables, ['Vorspeise', 'Hauptspeise'], 'Die FROM-Prüfung erkennt die fehlende Nachspeise trotz 12 Zeilen.');
+assert.match((await assess(missingDessertTable)).text, /^FROM:/, 'Die tatsächliche Bewertung meldet die fehlende Nachspeise als Tabellenfehler.');
 const saladMenus = relation("SELECT * FROM Vorspeise, Hauptspeise, Nachspeise WHERE Vorspeise.name = 'Salat'");
 const pizzaMenus = relation("SELECT * FROM Vorspeise, Hauptspeise, Nachspeise WHERE Hauptspeise.name = 'Pizza'");
 assert.equal(saladMenus.values.length, 3);
 assert.equal(pizzaMenus.values.length, 4);
+const wrongFourPizzas = relation("SELECT Vorspeise.name, Hauptspeise.name, Nachspeise.name FROM Vorspeise, Hauptspeise, Nachspeise WHERE Hauptspeise.name = 'Pizza' OR Vorspeise.name = 'Salat' LIMIT 4");
+const expectedFourPizzas = relation("SELECT Vorspeise.name, Hauptspeise.name, Nachspeise.name FROM Vorspeise, Hauptspeise, Nachspeise WHERE Hauptspeise.name = 'Pizza'");
+assert.equal(wrongFourPizzas.values.length, 4, 'Eine fachlich falsche Pizza-Auswahl kann ebenfalls vier Zeilen haben.');
+assert.equal(compareRelations(wrongFourPizzas, expectedFourPizzas).correct, false, 'Vier Zeilen allein belegen die korrekte WHERE-Bedingung nicht.');
 assert.equal(compareRelations(pizzaMenus, relation("SELECT * FROM Vorspeise AS v, Hauptspeise AS h, Nachspeise AS n WHERE h.name = 'Pizza';")).correct, true, 'Eine gleichwertige Aliasabfrage wird akzeptiert.');
 assert.equal(compareRelations(allMenus, pizzaMenus).correct, false, 'Das ungefilterte Kreuzprodukt gilt nicht als Pizza-Lösung.');
 assert.equal(compareRelations(relation("SELECT * FROM Vorspeise, Hauptspeise, Nachspeise WHERE Vorspeise.name = 'Pizza'"), pizzaMenus).correct, false, 'Eine falsche Filterspalte gilt nicht als Pizza-Lösung.');

@@ -60,7 +60,7 @@ export const SONG_VERBUND_VISIBLE_TEXT = Object.freeze({
     'Beide Teilbedingungen müssen gleichzeitig gelten: Verbinde sie mit AND.'
   ]),
   sqlHints: Object.freeze([
-    'Beginne mit SELECT * und nenne Song, Song_in_Playlist und Playlist nach FROM.',
+    'Wähle mit SELECT die benötigten Spalten; mit * erhältst du alle. Nenne Song, Song_in_Playlist und Playlist nach FROM.',
     'Füge nach WHERE zuerst die Verbindung zwischen Song.id und Song_in_Playlist.song_id ein. Danach fehlt noch die Playlist-Verbindung.',
     'Die vollständige Bedingung lautet: Song.id = Song_in_Playlist.song_id AND Playlist.id = Song_in_Playlist.playlist_id.'
   ]),

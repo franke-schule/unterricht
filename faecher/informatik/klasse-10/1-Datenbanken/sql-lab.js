@@ -1,6 +1,6 @@
-import { classifyDescriptionResult, compareRelations, explainSqlError, isValidScriptServerUrl, normalizeRelation, parseDelimited, validateSelectStatement } from './sql-lab-core.mjs?v=20260906b';
-import { MENU_TABLES, MENU_TABLE_NAMES, MENU_TABLE_SCHEMAS, buildMenuCombinations, menuRelation } from './menue-kreuzprodukt-daten.mjs?v=20260906c';
-import { SONG_PLAYLIST_PAIRS, SONG_VERBUND_COLUMN_GROUPS, SONG_VERBUND_COLUMNS, SONG_VERBUND_QUIZ, SONG_VERBUND_SQL, SONG_VERBUND_TABLE_NAMES, SONG_VERBUND_TABLE_SCHEMAS, SONG_VERBUND_TABLES, SONG_VERBUND_VISIBLE_TEXT, evaluateFirstConnection, evaluateQuizQuestion, evaluateSecondConnection } from './song-verbund-daten.mjs?v=20260907a';
+import { analyzeMultiTableSelect, classifyDescriptionResult, compareRelations, diagnoseMultiTableError, diagnoseSqlError, diagnoseSqlTask, explainSqlError, flexibleReferenceSql, isValidScriptServerUrl, normalizeRelation, parseDelimited, validateSelectStatement } from './sql-lab-core.mjs?v=20260929b';
+import { MENU_QUIZ, MENU_TABLES, MENU_TABLE_NAMES, MENU_TABLE_SCHEMAS, buildMenuCombinations, menuRelation } from './menue-kreuzprodukt-daten.mjs?v=20260929a';
+import { SONG_PLAYLIST_PAIRS, SONG_VERBUND_COLUMN_GROUPS, SONG_VERBUND_COLUMNS, SONG_VERBUND_QUIZ, SONG_VERBUND_SQL, SONG_VERBUND_TABLE_NAMES, SONG_VERBUND_TABLE_SCHEMAS, SONG_VERBUND_TABLES, SONG_VERBUND_VISIBLE_TEXT, evaluateFirstConnection, evaluateQuizQuestion, evaluateSecondConnection } from './song-verbund-daten.mjs?v=20260929a';
 import { appendSolutionDownloadFromTemplate, focusTabPanelStart, renderTabFlowNavigation, syncTabSemantics } from './tab-navigation.mjs?v=20260906a';
 
 const STORAGE_KEY = 'inf10-sql-grundlagen-v1';
@@ -15,8 +15,16 @@ const USERS_TABLE_SCHEMAS = Object.freeze([
     ['created_at', 'date'], ['updated_at', 'date']
   ]) })
 ]);
-const state = { tab: 'conditions', answers: {}, feedback: {}, results: {}, server: {} };
-const SQL_TABS = [['conditions', 'Bedingungen'], ['fastConditions', 'Für die Schnellen: Bedingungen'], ['aggregates', 'Aggregatfunktionen'], ['fastAggregates', 'Für die Schnellen: Aggregatfunktionen']];
+const state = { tab: 'intro', introStep: 1, answers: {}, feedback: {}, results: {}, server: {}, quiz: {}, quizPassed: false, quizFeedback: null };
+const SQL_TABS = [['intro', 'SQL Schritt für Schritt'], ['conditions', 'Bedingungen'], ['fastConditions', 'Für die Schnellen: Bedingungen'], ['aggregates', 'Aggregatfunktionen'], ['fastAggregates', 'Für die Schnellen: Aggregatfunktionen'], ['quiz', 'Abschlussquiz']];
+const FLEXIBLE_TASK_IDS = new Set(['b2-2', 'b2-4', 'b2-6', 'b2-8', 'b2-10', 'b2-11', 'b2-12', 'b2-14', 'b2-16']);
+const FINAL_QUIZ = [
+  { id: 'clauses', prompt: 'Welche Aussagen zu SELECT, FROM und WHERE stimmen?', hint: 'Unterscheide Tabelle, Zeilen und Spalten.', options: [['from', 'FROM bestimmt die Tabelle.', true], ['where', 'WHERE filtert die Zeilen.', true], ['select', 'SELECT wählt die ausgegebenen Spalten.', true], ['selectRows', 'SELECT legt fest, welche Zeilen die Bedingung erfüllen.', false]] },
+  { id: 'values', prompt: 'Welche Aussagen zu SQL-Werten stimmen?', hint: 'Unterscheide Attributnamen und Werte.', options: [['text', "Ein Textwert kann als 'Leipzig' geschrieben werden.", true], ['number', 'Die ganze Zahl 180 braucht keine Anführungszeichen.', true], ['same', 'name und username enthalten grundsätzlich dieselben Werte.', false], ['table', "Der Tabellenname users muss als 'users' geschrieben werden.", false]] },
+  { id: 'condition', prompt: 'Welche Bedingung wählt Mitglieder aus, die nicht in Leipzig wohnen?', hint: 'Achte auf die Bedeutung des Vergleichsoperators.', options: [['different', "city != 'Leipzig'", true], ['equal', "city = 'Leipzig'", false], ['like', "city LIKE 'Leipzig'", false]] },
+  { id: 'aggregate', prompt: 'Welche Aussagen zu Aggregatfunktionen stimmen?', hint: 'Unterscheide Anzahl, größten Wert und Mittelwert.', options: [['count', 'COUNT(*) zählt die ausgewählten Zeilen.', true], ['max', 'MAX(centimeters) liefert den größten ausgewählten Größenwert.', true], ['avg', 'AVG(centimeters) zählt die Mitglieder.', false]] }
+];
+let introRows = [];
 
 function unlockSolution(event, expectedCode, downloadLinkId, messageId) {
   event.preventDefault();
@@ -46,7 +54,7 @@ const tasks = {
     sql('b2-2', '2', 'Gib alle Mitglieder aus Deutschland an.', "SELECT *\nFROM users\nWHERE country = 'Deutschland'"),
     describe('b2-3', '3', 'Beschreibe den Zweck dieser Anweisung in eigenen Worten.', "SELECT username, birthday\nFROM users\nWHERE city != 'Berlin';", 'sql-b2-3'),
     sql('b2-4', '4', 'Gib alle Mitglieder aus, die kleiner als 1,80 m sind.', 'SELECT *\nFROM users\nWHERE centimeters < 180'),
-    sql('b2-5', '5', 'Korrigiere die Anweisung, damit Namen von Mitgliedern ausgegeben werden, die nicht in Leipzig wohnen.', "SELECT name\nFROM users\nWHERE city != 'Leipzig'", { initialSql: "SELECT namen\nFROM users\nWHERE city = 'Leipzig'", detectMissingNotEqual: true }),
+    sql('b2-5', '5', 'Korrigiere die Anweisung, damit die Namen aus der Spalte name von Mitgliedern ausgegeben werden, die nicht in Leipzig wohnen.', "SELECT name\nFROM users\nWHERE city != 'Leipzig'", { initialSql: "SELECT namen\nFROM users\nWHERE city = 'Leipzig'", detectMissingNotEqual: true }),
     sql('b2-6', '6', 'Liste alle Frauen aus Leipzig auf.', "SELECT *\nFROM users\nWHERE gender = 'female'\n  AND city = 'Leipzig'", { hints: ['Du brauchst zwei Bedingungen.', 'Verbinde beide Bedingungen mit AND.', 'Vergleiche gender mit female und city mit Leipzig.'] }),
     sql('b2-7', '7', 'Gib die Namen aller Männer über 165 cm und aller Frauen über 160 cm aus.', "SELECT name\nFROM users\nWHERE (gender = 'male' AND centimeters > 165)\n   OR (gender = 'female' AND centimeters > 160)", { hints: ['Es gibt zwei Personengruppen.', 'Verbinde die Gruppen mit OR.', 'Setze die zusammengehörigen Bedingungen jeweils in Klammern.'] }),
     sql('b2-8', '8', 'Finde die Mitglieder, deren Vorname mit B beginnt.', "SELECT *\nFROM users\nWHERE name LIKE 'B%'", { hints: ['Suche nach einem Muster statt nach einem exakten Namen.', 'LIKE vergleicht mit einem Muster.', 'B% bedeutet: beginnt mit B; % steht für beliebig viele weitere Zeichen.'] }),
@@ -77,7 +85,7 @@ const tasks = {
   ]
 };
 
-function sql(id, number, prompt, referenceSql, options = {}) { return { type: 'sql', id, number, prompt, referenceSql, initialSql: options.initialSql || '', detectMissingNotEqual: options.detectMissingNotEqual === true, birthdayProbe: options.birthdayProbe === true, compare: { columnOrder: true, columnLabels: false, rowOrder: false, ...options.compare }, hints: options.hints || [] }; }
+function sql(id, number, prompt, referenceSql, options = {}) { return { type: 'sql', id, number, prompt, referenceSql, initialSql: options.initialSql || '', detectMissingNotEqual: options.detectMissingNotEqual === true, birthdayProbe: options.birthdayProbe === true, flexible: FLEXIBLE_TASK_IDS.has(id), compare: { columnOrder: true, columnLabels: false, rowOrder: false, ...options.compare }, hints: options.hints || [] }; }
 function describe(id, number, prompt, statement, serverTaskId, options = {}) { return { type: 'describe', id, number, prompt, statement, serverTaskId, info: options.info || [] }; }
 function selfCheck(id, number, prompt, statement, answer, options = {}) { return { type: 'self', id, number, prompt, statement, answer, info: options.info || [] }; }
 function info() { return { type: 'info', id: 'aggregate-info' }; }
@@ -139,8 +147,8 @@ function sqlValue(value, header) { if (value === 'NULL' || value === undefined |
 
 let database;
 let databaseReady = false;
-function save() { localStorage.setItem(STORAGE_KEY, JSON.stringify(state)); }
-function restore() { try { Object.assign(state, JSON.parse(localStorage.getItem(STORAGE_KEY) || '{}')); } catch { /* Speicherstand ist optional. */ } }
+function save() { try { localStorage.setItem(STORAGE_KEY, JSON.stringify(state)); } catch { /* Ohne Speicher bleibt das Modul bedienbar. */ } }
+function restore() { try { const saved = JSON.parse(localStorage.getItem(STORAGE_KEY) || '{}'); if (!saved || typeof saved !== 'object') return; if (SQL_TABS.some(([id]) => id === saved.tab)) state.tab = saved.tab; if ([1, 2, 3].includes(saved.introStep)) state.introStep = saved.introStep; const taskIds = new Set(Object.values(tasks).flat().map(({ id }) => id)); if (saved.answers && typeof saved.answers === 'object' && !Array.isArray(saved.answers)) for (const [id, answer] of Object.entries(saved.answers)) if (taskIds.has(id) && typeof answer === 'string') state.answers[id] = answer; if (saved.quiz && typeof saved.quiz === 'object' && !Array.isArray(saved.quiz)) FINAL_QUIZ.forEach((question) => { if (Array.isArray(saved.quiz[question.id])) state.quiz[question.id] = saved.quiz[question.id].filter((value) => question.options.some(([id]) => id === value)); }); state.quizPassed = saved.quizPassed === true; } catch { /* Speicherstand ist optional. */ } }
 function element(tag, className, text) { const node = document.createElement(tag); if (className) node.className = className; if (text !== undefined) node.textContent = text; return node; }
 
 function activateSqlTab(id, { focusContent = false } = {}) { state.tab = id; save(); render({ focusContent }); }
@@ -150,9 +158,11 @@ function render({ focusContent = false } = {}) {
   const panel = document.getElementById('sql-panel'); panel.replaceChildren();
   panel.setAttribute('aria-labelledby', `tab-${state.tab}`);
   panel.append(schemaCard(USERS_TABLE_SCHEMAS));
-  const heading = element('div', 'step-heading'); heading.append(element('span', 'step-number', '5')); const title = element('div'); title.append(element('p', 'step-kicker', state.tab.startsWith('fast') ? 'Vertiefen' : 'Wiederholen'), element('h2', '', SQL_TABS.find(([id]) => id === state.tab)[1])); heading.append(title); panel.append(heading);
-  tasks[state.tab].forEach((task) => panel.append(renderTask(task)));
-  if (state.tab === 'fastAggregates') appendSolutionDownloadFromTemplate(panel);
+  const heading = element('div', 'step-heading'); heading.append(element('span', 'step-number', '5')); const title = element('div'); title.append(element('p', 'step-kicker', state.tab.startsWith('fast') ? 'Vertiefen' : state.tab === 'intro' ? 'Entdecken' : state.tab === 'quiz' ? 'Sichern' : 'Wiederholen'), element('h2', '', state.tab === 'intro' ? 'Wie entsteht eine Ergebnisrelation?' : SQL_TABS.find(([id]) => id === state.tab)[1])); heading.append(title); panel.append(heading);
+  if (state.tab === 'intro') renderIntro(panel);
+  else if (state.tab === 'quiz') renderFinalQuiz(panel);
+  else tasks[state.tab].forEach((task) => panel.append(renderTask(task)));
+  if (state.tab === 'quiz') appendSolutionDownloadFromTemplate(panel);
   renderTabFlowNavigation(panel, { items: SQL_TABS.map(([id, label]) => ({ id, label })), currentId: state.tab, onNavigate: activateSqlTab });
   syncTabSemantics(tabs, state.tab);
   if (focusContent) focusTabPanelStart(panel);
@@ -177,6 +187,51 @@ function schemaCard(schemas) {
   schemas.forEach(({ table, columns }) => { const code = element('code', 'schema-code', `${table} (${columns.map(([name, type]) => `${name}: ${type}`).join(', ')})`); scroll.append(code); });
   card.append(scroll); return card;
 }
+function renderIntro(panel) {
+  const card = element('section', 'task-card sql-task sql-intro');
+  const instruction = element('p'); instruction.append(element('strong', '', 'Verfolge'), document.createTextNode(' die Abfrage Schritt für Schritt. '), element('strong', '', 'Beobachte'), document.createTextNode(', wie zuerst die Tabelle, dann die Zeilen und zuletzt die Spalten ausgewählt werden.')); card.append(instruction);
+  const statement = element('pre', 'given-sql intro-sql'); const code = document.createElement('code');
+  [['SELECT', 'SELECT name, city'], ['FROM', 'FROM users'], ['WHERE', "WHERE country = 'Deutschland';"]].forEach(([clause, line], index) => { if (index) code.append(document.createTextNode('\n')); const span = element('span', state.introStep === ({ FROM: 1, WHERE: 2, SELECT: 3 })[clause] ? 'intro-active-clause' : '', line); code.append(span); }); statement.append(code); card.append(statement);
+  card.append(element('p', 'intro-caption', 'Ausschnitt aus users: Zur Übersicht sind vier Datensätze und vier Spalten dargestellt.'));
+  const visual = element('div', 'intro-visual');
+  if (!introRows.length) visual.append(element('p', 'feedback hint', 'Der Datenausschnitt wird geladen …'));
+  else {
+    const columns = ['name', 'username', 'city', 'country'];
+    if (state.introStep === 1) visual.append(renderRelation({ columns, values: introRows.map((row) => columns.map((column) => row[column])) }, { title: 'Ausgangstabelle: users' }));
+    if (state.introStep === 2) {
+      visual.append(renderRelation({ columns: [...columns, 'Auswahl'], values: introRows.map((row) => [...columns.map((column) => row[column]), row.country === 'Deutschland' ? 'bleibt' : 'entfällt']) }, { title: 'WHERE prüft jede Zeile' }));
+      visual.append(renderRelation({ columns, values: introRows.filter((row) => row.country === 'Deutschland').map((row) => columns.map((column) => row[column])) }, { title: 'Zwischenrelation: gefilterte Zeilen' }));
+    }
+    if (state.introStep === 3) visual.append(renderRelation({ columns: ['name', 'city'], values: introRows.filter((row) => row.country === 'Deutschland').map(({ name, city }) => [name, city]) }, { title: 'Ergebnisrelation: ausgewählte Spalten' }));
+  }
+  const explanations = ['FROM users legt fest, aus welcher Tabelle die Daten stammen.', "WHERE country = 'Deutschland' behält die Zeilen, deren Wert in country Deutschland ist.", 'SELECT name, city zeigt von diesen Zeilen nur die Spalten name und city.'];
+  const stepNames = ['1 · FROM: Tabelle wählen', '2 · WHERE: Zeilen filtern', '3 · SELECT: Spalten auswählen'];
+  const stepButtons = element('div', 'intro-step-buttons'); stepNames.forEach((name, index) => { const button = element('button', 'secondary-button', name); button.type = 'button'; button.id = `intro-step-${index + 1}`; if (state.introStep === index + 1) button.setAttribute('aria-current', 'step'); button.addEventListener('click', () => { state.introStep = index + 1; save(); render(); document.getElementById(button.id)?.focus(); }); stepButtons.append(button); }); card.append(stepButtons);
+  card.append(element('h3', '', stepNames[state.introStep - 1]), element('p', '', explanations[state.introStep - 1]), visual);
+  const controls = element('div', 'action-row intro-controls'); const back = element('button', 'secondary-button', 'Zurück'); back.id = 'intro-back'; back.type = 'button'; back.disabled = state.introStep === 1; back.addEventListener('click', () => changeIntroStep(-1, 'intro-back')); const next = element('button', 'primary-button', 'Weiter'); next.id = 'intro-next'; next.type = 'button'; next.disabled = state.introStep === 3; next.addEventListener('click', () => changeIntroStep(1, 'intro-next')); controls.append(back, element('strong', 'intro-progress', `Schritt ${state.introStep} von 3`), next); card.append(controls);
+  if (state.introStep === 3) { const memory = element('section', 'short-summary sql-intro-memory'); memory.append(element('h3', '', 'Merke'), element('p', '', 'FROM bestimmt die Tabelle, WHERE filtert die Zeilen und SELECT wählt die Spalten.'), element('p', '', 'Geschrieben wird SELECT – FROM – WHERE. Zum Verstehen der Abfrage verfolgen wir FROM – WHERE – SELECT.'), element('p', '', 'SELECT * zeigt alle Spalten. Ohne WHERE bleiben alle Zeilen erhalten.'), element('p', '', "Textwerte stehen in Anführungszeichen, zum Beispiel 'Deutschland'. Ganze Zahlen wie 180 werden ohne Anführungszeichen geschrieben. Datumswerte verwenden wir hier im Format '2008-01-01'.")); card.append(memory); } panel.append(card);
+}
+function changeIntroStep(direction, focusId) { state.introStep = Math.max(1, Math.min(3, state.introStep + direction)); save(); render(); document.getElementById(focusId)?.focus(); }
+function renderFinalQuiz(panel) {
+  const card = element('section', 'task-card sql-task'); card.append(element('h3', '', 'Vier Fragen zur SQL-Wiederholung'), element('p', '', 'Kreuze alle richtigen Antworten an. Bei manchen Fragen sind mehrere Antworten richtig.'));
+  const form = element('form', 'final-quiz'); form.id = 'final-quiz'; form.noValidate = true;
+  FINAL_QUIZ.forEach((question, index) => { const field = document.createElement('fieldset'); const legend = document.createElement('legend'); legend.append(element('span', '', String(index + 1)), document.createTextNode(question.prompt)); field.append(legend); const choices = element('div', 'choice-list'); question.options.forEach(([id, labelText]) => { const label = element('label', 'choice-option'); const input = document.createElement('input'); input.type = 'checkbox'; input.name = `sql-final-${question.id}`; input.value = id; input.checked = Array.isArray(state.quiz[question.id]) && state.quiz[question.id].includes(id); input.addEventListener('change', () => { const selected = Array.isArray(state.quiz[question.id]) ? state.quiz[question.id].filter((value) => question.options.some(([option]) => option === value)) : []; state.quiz[question.id] = input.checked ? [...new Set([...selected, id])] : selected.filter((value) => value !== id); state.quizFeedback = null; save(); card.querySelector('.sql-quiz-feedback')?.remove(); }); label.append(input, element('span', '', labelText)); choices.append(label); }); field.append(choices); form.append(field); });
+  const actions = element('div', 'action-row'); const submit = element('button', 'primary-button', 'Quiz prüfen'); submit.type = 'submit'; actions.append(submit); form.append(actions); form.addEventListener('submit', (event) => { event.preventDefault(); checkFinalQuiz(); }); card.append(form);
+  if (state.quizFeedback) { const feedback = element('p', `feedback ${state.quizFeedback.level} sql-quiz-feedback`, state.quizFeedback.text); feedback.setAttribute('aria-live', 'polite'); card.append(feedback); }
+  if (state.quizPassed) { const overview = element('section', 'short-summary sql-quiz-overview'); overview.append(element('h3', '', 'Abschlussquiz: Fragen und richtige Antworten')); const list = document.createElement('ol'); FINAL_QUIZ.forEach((question) => { const item = document.createElement('li'); item.append(element('strong', '', question.prompt)); const answers = document.createElement('ul'); question.options.filter(([, , correct]) => correct).forEach(([, answer]) => answers.append(element('li', '', answer))); item.append(answers); list.append(item); }); overview.append(list); card.append(overview); }
+  panel.append(card);
+}
+function checkFinalQuiz() {
+  const open = FINAL_QUIZ.map((question, index) => !Array.isArray(state.quiz[question.id]) || !state.quiz[question.id].length ? index + 1 : null).filter(Boolean);
+  if (open.length) state.quizFeedback = { level: 'hint', text: `Beantworte zuerst alle Fragen. Noch ohne Kreuz: Frage ${open.join(', ')}.` };
+  else {
+    const correct = FINAL_QUIZ.map((question) => { const chosen = new Set(state.quiz[question.id]); return question.options.every(([id, , right]) => chosen.has(id) === right); });
+    const amount = correct.filter(Boolean).length;
+    if (amount === FINAL_QUIZ.length) { state.quizPassed = true; state.quizFeedback = { level: 'success', text: 'Korrekt: Alle vier Fragen stimmen.' }; }
+    else { const wrong = FINAL_QUIZ.map((question, index) => correct[index] ? null : index + 1).filter(Boolean); const hints = FINAL_QUIZ.filter((question, index) => !correct[index]).map((question) => question.hint).join(' '); state.quizFeedback = { level: amount ? 'partial' : 'hint', text: amount ? `Teilweise korrekt: ${amount} von 4 Fragen stimmen. Prüfe Frage ${wrong.join(', ')} noch einmal. ${hints}` : `Noch nicht korrekt. Prüfe Frage ${wrong.join(', ')} noch einmal. ${hints}` }; }
+  }
+  save(); render(); document.querySelector('#final-quiz .primary-button')?.focus();
+}
 function renderTask(task) {
   if (task.type === 'info') return aggregateInfo();
   const card = element('section', 'task-card sql-task'); card.id = `task-${task.id}`; card.append(element('h3', '', `Aufgabe ${task.number}`), element('p', '', task.prompt));
@@ -197,12 +252,12 @@ function renderSqlTask(card, task) {
 function appendHints(card, hints) { if (!hints.length) return; const box = element('div', 'help-stack'); hints.forEach((hint, index) => { const details = element('details'); details.append(element('summary', '', `Hilfe ${index + 1}`), element('p', '', hint)); box.append(details); }); card.append(box); }
 async function runTask(task, card, input = card.querySelector('.sql-input'), button = card.querySelector('.primary-button')) {
   const sqlText = state.answers[task.id] || ''; const check = validateSelectStatement(sqlText);
-  if (!check.ok) { state.feedback[task.id] = { level: 'hint', text: check.message }; save(); renderTaskFeedback(task, card); return; }
-  if (task.detectMissingNotEqual && /\bwhere\s+city\s*=\s*'Leipzig'/i.test(sqlText)) { state.feedback[task.id] = { level: 'hint', text: "Noch nicht korrekt: Für ‚nicht in Leipzig‘ fehlt im Vergleichsoperator das Ausrufezeichen: !=." }; save(); renderTaskFeedback(task, card); return; }
+  if (!check.ok) { state.feedback[task.id] = { level: 'hint', text: /Anführungszeichen/.test(check.message) ? 'Anführungszeichen: Prüfe, ob jeder Textwert vollständig eingeschlossen ist.' : check.message }; save(); renderTaskFeedback(task, card); return; }
   if (!databaseReady) { state.feedback[task.id] = { level: 'hint', text: 'Warte bitte, bis die Tabelle users vollständig geladen ist.' }; renderTaskFeedback(task, card); return; }
   input.disabled = true; button.disabled = true; delete state.results[task.id]; state.feedback[task.id] = { level: 'hint', text: 'Die Anfrage wird ausgeführt …' }; renderTaskFeedback(task, card);
   try {
-    const referenceSql = typeof task.referenceSql === 'function' ? task.referenceSql() : task.referenceSql;
+    const originalReferenceSql = typeof task.referenceSql === 'function' ? task.referenceSql() : task.referenceSql;
+    const referenceSql = task.flexible ? flexibleReferenceSql(originalReferenceSql, check.sql) || originalReferenceSql : originalReferenceSql;
     const actual = await database.exec(check.sql); const reference = await database.exec(referenceSql); let comparison = compareRelations(actual, reference, task.compare);
     if (comparison.correct && task.birthdayProbe) {
       const monthDay = todayMonthDay();
@@ -211,9 +266,12 @@ async function runTask(task, card, input = card.querySelector('.sql-input'), but
       comparison = compareRelations(probeActual, probeReference, task.compare);
       if (!comparison.correct) comparison = { correct: false, level: 'partial', reason: 'Berücksichtige beim heutigen Geburtstag Monat und Tag sowie die Jahrgänge 2005 bis 2010.' };
     }
-    if (comparison.correct) { state.feedback[task.id] = { level: 'success', text: actual.values.length ? 'Korrekt: Deine Abfrage liefert die erwartete Ergebnisrelation.' : 'Korrekt: Für heute gibt es keine passenden Datensätze.' }; state.results[task.id] = actual; }
-    else { state.feedback[task.id] = { level: comparison.level, text: `${comparison.level === 'partial' ? 'Teilweise korrekt' : 'Noch nicht korrekt'}: ${comparison.reason}` }; delete state.results[task.id]; }
-  } catch (error) { state.feedback[task.id] = { level: 'error', text: `SQL-Fehler: ${explainSqlError(error)}` }; delete state.results[task.id]; }
+    const diagnostic = diagnoseSqlTask(check.sql, { id: task.id, flexible: task.flexible, referenceSql: originalReferenceSql, rowOrder: task.compare.rowOrder, columnOrder: task.compare.columnOrder }, actual, reference, comparison);
+    const wrongOperator = task.detectMissingNotEqual && !comparison.correct && /\bwhere\s+city\s*=\s*['"]Leipzig['"]/i.test(check.sql) && !diagnostic?.startsWith('SELECT:');
+    if (wrongOperator) { state.feedback[task.id] = { level: 'hint', text: 'WHERE: Die Aufgabe sucht Mitglieder, die nicht in Leipzig wohnen. Prüfe den Vergleichsoperator.' }; delete state.results[task.id]; }
+    else if (comparison.correct && !diagnostic) { state.feedback[task.id] = { level: 'success', text: actual.values.length ? 'Korrekt: Deine Abfrage liefert die gesuchten Daten.' : 'Korrekt: Für heute gibt es keine passenden Datensätze.' }; state.results[task.id] = actual; }
+    else { state.feedback[task.id] = { level: diagnostic?.startsWith('Teilweise') ? 'partial' : 'hint', text: diagnostic || 'Noch nicht korrekt: Prüfe die ausgegebenen Spalten und die Bedingungen.' }; delete state.results[task.id]; }
+  } catch (error) { state.feedback[task.id] = { level: 'error', text: diagnoseSqlError(error, check.sql) }; delete state.results[task.id]; }
   input.disabled = false; button.disabled = false; save(); renderTaskFeedback(task, card);
 }
 function renderDescribeTask(card, task) {
@@ -249,12 +307,55 @@ function renderServerFeedback(task, card) {
 
 // Aufgabe 6 verwendet dieselbe Worker-Ausführung und Validierung wie Aufgabe 5.
 const MENU_STORAGE_KEY = 'inf10-kreuzprodukt-mensa-v1';
-const MENU_TABS = [['menus', 'Menüs kombinieren'], ['sql', 'Kreuzprodukt mit SQL'], ['filter', 'Mit Bedingung einschränken'], ['summary', 'Zusammenfassung']];
-const menuState = { tab: 'menus', prediction: '', menusVisible: false, answers: {}, feedback: {}, results: {}, selfCheck: {} };
+const MENU_TABS = [['menus', 'Menüs kombinieren'], ['sql', 'Kreuzprodukt mit SQL'], ['filter', 'Mit Bedingung einschränken'], ['summary', 'Zusammenfassung'], ['quiz', 'Abschlussquiz']];
+const menuState = { tab: 'menus', prediction: '', menusVisible: false, answers: {}, feedback: {}, results: {}, selfCheck: {}, quiz: {} };
 const menuReferenceSql = 'SELECT *\nFROM Vorspeise, Hauptspeise, Nachspeise';
 const formatEuro = (value, index) => index % 2 === 1 && typeof value === 'number' ? `${value.toLocaleString('de-DE', { minimumFractionDigits: 2, maximumFractionDigits: 2 })} €` : String(value);
-function saveMenuState() { localStorage.setItem(MENU_STORAGE_KEY, JSON.stringify(menuState)); }
+function saveMenuState() { try { localStorage.setItem(MENU_STORAGE_KEY, JSON.stringify(menuState)); } catch { /* Ohne Speicher bleibt das Modul bedienbar. */ } }
 function restoreMenuState() { try { Object.assign(menuState, JSON.parse(localStorage.getItem(MENU_STORAGE_KEY) || '{}')); } catch { /* Speicherstand ist optional. */ } }
+const MENU_FROM_FEEDBACK = 'FROM: Verwende die drei Tabellen Vorspeise, Hauptspeise und Nachspeise. Prüfe ihre Namen und ob eine Tabelle fehlt.';
+const SONG_FROM_FEEDBACK = 'FROM: Verwende die drei Tabellen Song, Song_in_Playlist und Playlist. Prüfe ihre Namen und ob eine Tabelle fehlt.';
+const MENU_SELECT_FEEDBACK = 'SELECT: Gib mindestens die Namen von Vorspeise, Hauptspeise und Nachspeise aus. Preise darfst du ergänzen.';
+const SONG_SELECT_FEEDBACK = 'SELECT: Gib für jede Zuordnung den Song und die Playlist aus, jeweils mit id oder titel. Weitere Spalten darfst du ergänzen.';
+function multiTableProjection(sql, analysis, referenceSql, schemas, kind) {
+  if (!analysis) return null;
+  const requested = analysis.projection;
+  if (!requested) return null;
+  if (requested.length === 1 && requested[0].star) {
+    const columns = analysis.tables.flatMap((name) => schemas.find((item) => item.table.toLowerCase() === name.toLowerCase())?.columns.map(([column]) => `${name}.${column}`) || []);
+    if (columns.length !== schemas.reduce((sum, item) => sum + item.columns.length, 0)) return null;
+    return columns;
+  }
+  if (requested.some((item) => item.star)) return null;
+  const has = (table, names) => requested.some((item) => item.table === table && names.includes(item.name));
+  const valid = kind === 'menu'
+    ? ['Vorspeise', 'Hauptspeise', 'Nachspeise'].every((table) => has(table, ['name']))
+    : has('Song', ['id', 'titel']) && has('Playlist', ['id', 'titel']);
+  return valid ? requested.map((item) => `${item.table}.${item.name}`) : null;
+}
+export async function assessMultiTableSql(sql, referenceSql, schemas, kind, execute = (statement) => database.exec(statement)) {
+  const names = schemas.map((item) => item.table);
+  const analysis = analyzeMultiTableSelect(sql, schemas);
+  if (analysis && (analysis.tables.length !== names.length || names.some((name) => analysis.tables.filter((item) => item.toLowerCase() === name.toLowerCase()).length !== 1))) return { level: 'hint', text: kind === 'menu' ? MENU_FROM_FEEDBACK : SONG_FROM_FEEDBACK };
+  const actual = await execute(sql);
+  const projection = multiTableProjection(sql, analysis, referenceSql, schemas, kind);
+  if (!projection) return { level: 'hint', text: analysis ? (kind === 'menu' ? MENU_SELECT_FEEDBACK : SONG_SELECT_FEEDBACK) : 'SQL-Syntax: Prüfe den Aufbau deiner Abfrage und die Schreibweise der Tabellen und Spalten.' };
+  const reference = analyzeMultiTableSelect(referenceSql, schemas);
+  const expectedSql = `${referenceSql.slice(0, reference.selectStart)} ${projection.join(', ')}\n${referenceSql.slice(reference.fromStart)}`;
+  const expected = await execute(expectedSql);
+  const relationMatches = compareRelations(actual, expected, { columnOrder: true, columnLabels: false, rowOrder: false }).correct;
+  const identity = kind === 'menu' ? ['Vorspeise.name', 'Hauptspeise.name', 'Nachspeise.name'] : ['Song.id', 'Song_in_Playlist.song_id', 'Song_in_Playlist.playlist_id', 'Playlist.id'];
+  const ownIdentity = identity.map((item) => { const [table, column] = item.split('.'); return `${analysis.tableAliases.get(table)}.${column}`; });
+  // Die ursprüngliche Projektion bleibt vorne stehen: ORDER BY auf Alias oder
+  // Spaltenposition bezieht sich dadurch weiter auf dieselben Ausdrücke.
+  const identitySql = `${sql.slice(0, analysis.fromStart)}\n, ${ownIdentity.join(', ')}\n${sql.slice(analysis.fromStart)}`;
+  const expectedIdentitySql = `${referenceSql.slice(0, reference.selectStart)} ${identity.join(', ')}\n${referenceSql.slice(reference.fromStart)}`;
+  const identityResult = await execute(identitySql);
+  const identityRelation = { columns: identity, values: identityResult.values.map((row) => row.slice(-identity.length)) };
+  const identityMatches = compareRelations(identityRelation, await execute(expectedIdentitySql)).correct;
+  if (relationMatches && identityMatches) return { level: 'success', actual };
+  return { level: 'partial', text: kind === 'song' ? 'Teilweise korrekt: Prüfe WHERE beziehungsweise die JOIN-Bedingungen. Jede Zuordnung muss sowohl zum Song als auch zur Playlist passen.' : referenceSql.includes('Pizza') ? 'Teilweise korrekt: Prüfe WHERE. Die Bedingung soll nur Menüs mit Pizza als Hauptspeise auswählen.' : 'Teilweise korrekt: Prüfe WHERE. Für alle Menükombinationen darf keine Kombination ausgeschlossen werden.' };
+}
 function menuFeedback(id, level, text) { menuState.feedback[id] = { level, text }; saveMenuState(); }
 function activateMenuTab(id, { focusContent = false } = {}) { menuState.tab = id; saveMenuState(); renderMenuModule({ focusContent }); }
 function renderMenuModule({ focusContent = false } = {}) {
@@ -266,7 +367,8 @@ function renderMenuModule({ focusContent = false } = {}) {
   if (menuState.tab === 'sql') renderMenuSql(panel);
   if (menuState.tab === 'filter') renderMenuFilter(panel);
   if (menuState.tab === 'summary') renderMenuSummary(panel);
-  if (menuState.tab === 'summary') appendSolutionDownloadFromTemplate(panel);
+  if (menuState.tab === 'quiz') renderMenuQuiz(panel);
+  if (menuState.tab === 'summary' || menuState.tab === 'quiz') appendSolutionDownloadFromTemplate(panel);
   renderTabFlowNavigation(panel, { items: MENU_TABS.map(([id, label]) => ({ id, label })), currentId: menuState.tab, onNavigate: activateMenuTab });
   syncTabSemantics(tabs, menuState.tab);
   if (focusContent) focusTabPanelStart(panel);
@@ -279,7 +381,7 @@ function renderMenuDiscovery(panel) {
   const generate = element('section', 'task-card'); generate.append(element('h3', '', 'Alle Kombinationen sichtbar machen'), element('p', '', 'Erzeuge die Ergebnisrelation. Jede Zeile enthält genau eine Auswahl aus jeder der drei Tabellen.')); const action = element('button', 'primary-button', menuState.menusVisible ? 'Ergebnisrelation anzeigen' : 'Alle Menüs erzeugen'); action.type = 'button'; action.addEventListener('click', () => { menuState.menusVisible = true; saveMenuState(); renderMenuModule(); }); generate.append(action); if (menuState.menusVisible) generate.append(renderMenuResult(menuRelation(buildMenuCombinations()), 'Ergebnisrelation: alle Menüs')); panel.append(generate);
 }
 function renderMenuSourceTables() { const wrapper = element('div', 'menu-source-tables'); MENU_TABLE_NAMES.forEach((tableName) => { const relation = MENU_TABLES[tableName]; const section = element('section', 'table-shell menu-source-table'); const table = document.createElement('table'); const caption = element('caption', '', tableName); table.append(caption); const head = document.createElement('thead'); const tr = document.createElement('tr'); ['name', 'preis'].forEach((name) => { const th = element('th', '', name); th.scope = 'col'; tr.append(th); }); head.append(tr); const body = document.createElement('tbody'); relation.forEach((row) => { const line = document.createElement('tr'); line.append(element('td', '', row.name), element('td', '', `${row.preis.toLocaleString('de-DE', { minimumFractionDigits: 2, maximumFractionDigits: 2 })} €`)); body.append(line); }); table.append(head, body); section.append(table); wrapper.append(section); }); return wrapper; }
-function renderMenuResult(relation, title) { const shell = renderRelation(relation, { title, caption: title, columns: menuRelation().columns, columnGroups: MENU_TABLE_SCHEMAS.map(({ table, columns }) => ({ table, columns: columns.map(([name]) => name) })), formatValue: formatEuro }); shell.classList.add('menu-result'); return shell; }
+function renderMenuResult(relation, title, sql = null) { const projection = sql && multiTableProjection(sql, analyzeMultiTableSelect(sql, MENU_TABLE_SCHEMAS), menuReferenceSql, MENU_TABLE_SCHEMAS, 'menu'); const shell = renderRelation(relation, { title, caption: title, ...(sql ? {} : { columns: menuRelation().columns, columnGroups: MENU_TABLE_SCHEMAS.map(({ table, columns }) => ({ table, columns: columns.map(([name]) => name) })) }), formatValue: (value, index) => projection ? projection[index]?.endsWith('.preis') && typeof value === 'number' ? `${value.toLocaleString('de-DE', { minimumFractionDigits: 2, maximumFractionDigits: 2 })} €` : String(value) : formatEuro(value, index) }); shell.classList.add('menu-result'); return shell; }
 function renderMenuSql(panel) {
   panel.append(menuHeading(2, 'Verstehen und anwenden', 'Das Kreuzprodukt mit SQL'));
   const intro = element('section', 'scenario-card accent'); intro.append(element('p', '', 'Die SQL-Anweisung verbindet jeden Datensatz einer Tabelle mit jedem Datensatz aller weiteren Tabellen.'), codeBlock('SELECT *\nFROM Vorspeise, Hauptspeise, Nachspeise;')); const list = element('ul'); ['SELECT * wählt alle Spalten aus.', 'In FROM stehen hier drei Tabellen, durch Kommata getrennt.', 'Dadurch entstehen alle möglichen Kombinationen.'].forEach((line) => list.append(element('li', '', line))); intro.append(list); panel.append(intro);
@@ -288,9 +390,20 @@ function renderMenuSql(panel) {
 }
 function codeBlock(text) { const pre = element('pre', 'given-sql'); pre.textContent = text; return pre; }
 function renderMenuSqlInput(card, id, referenceSql, options = {}) { const label = element('label', 'sql-label', 'Deine vollständige SQL-Anweisung'); label.htmlFor = `menu-input-${id}`; const input = document.createElement('textarea'); input.id = label.htmlFor; input.className = 'sql-input'; input.spellcheck = false; input.placeholder = NEUTRAL_SQL_PLACEHOLDER; input.value = menuState.answers[id] || ''; input.addEventListener('input', () => { menuState.answers[id] = input.value; delete menuState.feedback[id]; delete menuState.results[id]; saveMenuState(); renderMenuFeedback(card, id); }); input.addEventListener('keydown', (event) => { if ((event.ctrlKey || event.metaKey) && event.key === 'Enter') { event.preventDefault(); runMenuSql(id, referenceSql, card, options); } }); card.append(label, input); if (options.hints) appendHints(card, options.hints); const actions = element('div', 'action-row'); const button = element('button', 'primary-button', 'Anfrage ausführen'); button.type = 'button'; button.disabled = !databaseReady; button.addEventListener('click', () => runMenuSql(id, referenceSql, card, options)); actions.append(button, element('span', 'shortcut-hint', 'Strg/Cmd + Enter')); card.append(actions); renderMenuFeedback(card, id); }
-async function runMenuSql(id, referenceSql, card, options = {}) { const sqlText = menuState.answers[id] || ''; const check = validateSelectStatement(sqlText); if (!check.ok) { menuFeedback(id, 'hint', check.message); renderMenuFeedback(card, id); return; } if (!databaseReady) { menuFeedback(id, 'hint', 'Warte bitte, bis die Mensa-Tabellen geladen sind.'); renderMenuFeedback(card, id); return; } const input = card.querySelector('.sql-input'); const button = card.querySelector('.primary-button'); input.disabled = true; button.disabled = true; try { const actual = await database.exec(check.sql); const expected = await database.exec(referenceSql); const comparison = compareRelations(actual, expected, { columnOrder: true, columnLabels: false, rowOrder: false }); if (comparison.correct) { menuState.results[id] = actual; menuFeedback(id, 'success', options.success || 'Korrekt: Deine Abfrage liefert die erwartete Ergebnisrelation.'); } else { delete menuState.results[id]; const reason = actual.values.length === 0 ? 'Die Anfrage liefert keine Zeilen. Prüfe besonders den Tabellennamen, die Spalte und den Textwert in deiner WHERE-Bedingung.' : comparison.reason; menuFeedback(id, comparison.level === 'partial' ? 'partial' : 'hint', `${comparison.level === 'partial' ? 'Teilweise korrekt' : 'Noch nicht korrekt'}: ${reason}`); } } catch (error) { delete menuState.results[id]; menuFeedback(id, 'error', `SQL-Fehler: ${explainMenuSqlError(error)}`); } input.disabled = false; button.disabled = false; saveMenuState(); renderMenuFeedback(card, id); }
-function explainMenuSqlError(error) { const message = String(error?.message || error || ''); if (/no such table/i.test(message)) return 'Prüfe den Tabellennamen. Hier heißen die Tabellen Vorspeise, Hauptspeise und Nachspeise.'; return explainSqlError(error); }
-function renderMenuFeedback(card, id) { card.querySelectorAll('.menu-feedback, .menu-sql-result').forEach((node) => node.remove()); const feedback = menuState.feedback[id]; if (feedback) { const box = element('p', `feedback ${feedback.level} menu-feedback`, feedback.text); box.setAttribute('aria-live', 'polite'); card.append(box); } if (menuState.results[id]) { const result = renderMenuResult(menuState.results[id], 'Ergebnisrelation deiner Anfrage'); result.classList.add('menu-sql-result'); card.append(result); } }
+async function runMenuSql(id, referenceSql, card, options = {}) {
+  const check = validateSelectStatement(menuState.answers[id] || '');
+  delete menuState.results[id];
+  if (!check.ok) { menuFeedback(id, 'hint', check.message); renderMenuFeedback(card, id); return; }
+  if (!databaseReady) { menuFeedback(id, 'hint', 'Warte bitte, bis die Mensa-Tabellen geladen sind.'); renderMenuFeedback(card, id); return; }
+  const input = card.querySelector('.sql-input'); const button = card.querySelector('.primary-button'); input.disabled = true; button.disabled = true;
+  try {
+    const result = await assessMultiTableSql(check.sql, referenceSql, MENU_TABLE_SCHEMAS, 'menu');
+    if (result.actual) menuState.results[id] = result.actual;
+    menuFeedback(id, result.level, result.text || options.success);
+  } catch (error) { menuFeedback(id, 'error', diagnoseMultiTableError(error, check.sql, MENU_TABLE_NAMES, MENU_TABLE_SCHEMAS)); }
+  input.disabled = false; button.disabled = false; saveMenuState(); renderMenuFeedback(card, id);
+}
+function renderMenuFeedback(card, id) { card.querySelectorAll('.menu-feedback, .menu-sql-result').forEach((node) => node.remove()); const feedback = menuState.feedback[id]; if (feedback) { const box = element('p', `feedback ${feedback.level} menu-feedback`, feedback.text); box.setAttribute('aria-live', 'polite'); card.append(box); } if (menuState.results[id] && feedback?.level === 'success') { const result = renderMenuResult(menuState.results[id], 'Ergebnisrelation deiner Anfrage', menuState.answers[id]); result.classList.add('menu-sql-result'); card.append(result); } }
 async function renderMenuFilter(panel) {
   panel.append(menuHeading(3, 'Anwenden', 'Mit einer Bedingung einschränken'));
   const example = element('section', 'scenario-card accent'); example.append(element('h3', '', 'Nur Menüs mit Salat'), element('p', '', 'Zuerst entsteht das Kreuzprodukt. Die WHERE-Bedingung wählt danach nur die Zeilen mit Salat aus.'), codeBlock("SELECT *\nFROM Vorspeise, Hauptspeise, Nachspeise\nWHERE Vorspeise.name = 'Salat';")); const sampleSlot = element('div', 'sample-menu-result'); sampleSlot.setAttribute('aria-live', 'polite'); example.append(sampleSlot); panel.append(example);
@@ -301,16 +414,32 @@ async function renderMenuFilter(panel) {
 function renderMenuSummary(panel) {
   panel.append(menuHeading(4, 'Sichern und übertragen', 'Zusammenfassung'));
   const summary = element('section', 'short-summary'); summary.append(element('h2', '', 'Das Wichtigste'), listFrom(['Mehrere Tabellen in FROM → Kreuzprodukt.', 'Jeder Datensatz wird mit jedem Datensatz der weiteren Tabellen kombiniert.', 'Anzahl der Ergebniszeilen = Produkt der Anzahlen der Ausgangszeilen.', 'WHERE schränkt die Ergebnisrelation ein.', 'Der Vergleich von Fremd- und Primärschlüssel kann aus dem Kreuzprodukt einen sinnvollen Verbund machen.'])); const results = element('p', 'summary-results', 'Ergebnisse: 4 · 3 · 1 = 12 Menüs; Salat filtert 3 Zeilen; Pizza filtert 4 Zeilen.'); summary.append(results); panel.append(summary);
-  const check = element('section', 'task-card'); check.append(element('h3', '', 'Selbstkontrolle'), element('p', '', 'Kreuze alle richtigen Aussagen an.')); const choices = element('div', 'choice-list'); const statements = [['amount', 'Bei 4 Vorspeisen, 3 Hauptspeisen und 1 Nachspeise entstehen 12 Menüs.'], ['from', 'Mehrere Tabellen in FROM ergeben alle möglichen Kombinationen ihrer Datensätze.'], ['where', 'Eine WHERE-Bedingung fügt automatisch neue Menükombinationen hinzu.']]; statements.forEach(([id, text]) => { const label = element('label', 'choice-option'); const input = document.createElement('input'); input.type = 'checkbox'; input.checked = Boolean(menuState.selfCheck[id]); input.addEventListener('change', () => { menuState.selfCheck[id] = input.checked; delete menuState.feedback.selfCheck; saveMenuState(); renderMenuFeedback(check, 'selfCheck'); }); label.append(input, element('span', '', text)); choices.append(label); }); check.append(choices); const button = element('button', 'primary-button', 'Selbstkontrolle prüfen'); button.type = 'button'; button.addEventListener('click', () => { const correct = menuState.selfCheck.amount && menuState.selfCheck.from && !menuState.selfCheck.where; const selectedCorrect = Number(Boolean(menuState.selfCheck.amount)) + Number(Boolean(menuState.selfCheck.from)); if (correct) menuFeedback('selfCheck', 'success', 'Korrekt: Du hast Anzahl, FROM und WHERE richtig eingeordnet.'); else if (selectedCorrect) menuFeedback('selfCheck', 'partial', 'Teilweise korrekt: Prüfe besonders, ob WHERE Zeilen auswählt oder neue Kombinationen erzeugt.'); else menuFeedback('selfCheck', 'hint', 'Noch nicht korrekt. Denke an die Anzahl der Kombinationen und daran, was WHERE mit einer Ergebnisrelation macht.'); renderMenuFeedback(check, 'selfCheck'); }); check.append(button); renderMenuFeedback(check, 'selfCheck'); panel.append(check);
+}
+function menuQuizSelection(id) { return Array.isArray(menuState.quiz?.[id]) ? menuState.quiz[id] : []; }
+function renderMenuQuiz(panel) {
+  panel.append(menuHeading(5, 'Sichern', 'Abschlussquiz'));
+  const card = element('section', 'task-card');
+  card.append(element('h3', '', 'Abschlussquiz'), element('p', '', 'Kreuze alle richtigen Antworten an. Bei jeder Frage sind mehrere Antworten richtig.'));
+  const form = element('form', 'final-quiz'); form.id = 'final-quiz'; form.noValidate = true;
+  MENU_QUIZ.forEach((question, index) => {
+    const group = document.createElement('fieldset'); const legend = document.createElement('legend');
+    legend.append(element('span', '', String(index + 1)), document.createTextNode(question.prompt)); group.append(legend);
+    const choices = element('div', 'choice-list');
+    question.options.forEach((option) => { const label = element('label', 'choice-option'); const input = document.createElement('input'); input.type = 'checkbox'; input.name = `menu-quiz-${question.id}`; input.value = option.id; input.checked = menuQuizSelection(question.id).includes(option.id); input.addEventListener('change', () => { const current = menuQuizSelection(question.id); menuState.quiz[question.id] = input.checked ? [...new Set([...current, option.id])] : current.filter((id) => id !== option.id); delete menuState.feedback.quiz; card.querySelector('.menu-feedback')?.remove(); saveMenuState(); }); label.append(input, element('span', '', option.text)); choices.append(label); });
+    group.append(choices); form.append(group);
+  });
+  const actions = element('div', 'action-row'); const button = element('button', 'primary-button', 'Quiz prüfen'); button.type = 'submit'; actions.append(button); form.append(actions);
+  form.addEventListener('submit', (event) => { event.preventDefault(); const unanswered = MENU_QUIZ.flatMap((question, index) => menuQuizSelection(question.id).length ? [] : [index + 1]); if (unanswered.length) menuFeedback('quiz', 'hint', `Beantworte zuerst alle Fragen. Noch ohne Kreuz: Frage ${unanswered.join(', ')}.`); else { const results = MENU_QUIZ.map((question) => evaluateQuizQuestion(question, menuQuizSelection(question.id))); const count = results.filter(Boolean).length; if (count === 3) menuFeedback('quiz', 'success', 'Korrekt: Alle drei Fragen stimmen.'); else { const wrong = MENU_QUIZ.flatMap((question, index) => results[index] ? [] : [index + 1]); const hints = MENU_QUIZ.filter((question, index) => !results[index]).map((question) => question.hint).join(' '); menuFeedback('quiz', count ? 'partial' : 'hint', `${count ? `Teilweise korrekt: ${count} von 3 Fragen stimmen.` : 'Noch nicht korrekt.'} Prüfe Frage ${wrong.join(', ')} noch einmal. ${hints}`); } } renderMenuModule(); });
+  card.append(form); renderMenuFeedback(card, 'quiz'); panel.append(card);
 }
 function listFrom(lines) { const list = document.createElement('ul'); lines.forEach((line) => list.append(element('li', '', line))); return list; }
-async function initMenuCrossProduct() { restoreMenuState(); renderMenuModule(); const status = document.getElementById('data-status'); try { database = new SqlWorker(); await database.init({ mode: 'menu-cross-product' }); databaseReady = true; status.textContent = 'Die drei Mensa-Tabellen sind geladen. Du kannst SQL-Anfragen ausführen.'; status.className = 'feedback success'; status.setAttribute('aria-busy', 'false'); renderMenuModule(); } catch (error) { status.textContent = 'Die Mensa-Tabellen konnten nicht geladen werden. Bitte lade die Seite neu.'; status.className = 'feedback error'; status.setAttribute('aria-busy', 'false'); console.error(error); } document.getElementById('reset-module').addEventListener('click', () => { if (window.confirm('Möchtest du alle Eingaben und den Fortschritt dieser Aufgabe zurücksetzen?')) { localStorage.removeItem(MENU_STORAGE_KEY); location.reload(); } }); window.addEventListener('beforeunload', () => database?.close()); }
+async function initMenuCrossProduct() { restoreMenuState(); renderMenuModule(); const status = document.getElementById('data-status'); try { database = new SqlWorker(); await database.init({ mode: 'menu-cross-product' }); databaseReady = true; status.textContent = 'Die drei Mensa-Tabellen sind geladen. Du kannst SQL-Anfragen ausführen.'; status.className = 'feedback success'; status.setAttribute('aria-busy', 'false'); renderMenuModule(); } catch (error) { status.textContent = 'Die Mensa-Tabellen konnten nicht geladen werden. Bitte lade die Seite neu.'; status.className = 'feedback error'; status.setAttribute('aria-busy', 'false'); console.error(error); } document.getElementById('reset-module').addEventListener('click', () => { if (window.confirm('Möchtest du alle Eingaben und den Fortschritt dieser Aufgabe zurücksetzen?')) { try { localStorage.removeItem(MENU_STORAGE_KEY); } catch { /* Ohne Speicher weiter nutzbar. */ } location.reload(); } }); window.addEventListener('beforeunload', () => database?.close()); }
 
 // Aufgabe 7 baut den Verbund in zwei prüfbaren Schritten aus derselben SQL-Datenbank auf.
 const VERBUND_STORAGE_KEY = 'inf10-song-verbund-v1';
 const VERBUND_TABS = [['source', 'Ausgangstabellen'], ['cross', 'Wie viele Kombinationen sind möglich?'], ['first', 'Erste Verbindung'], ['second', 'Zweite Verbindung'], ['sql', 'SQL-Anfrage'], ['check', 'Abschlussquiz']];
 const verbundState = { tab: 'source', mapping: '', prediction: '', crossExecuted: false, crossClass: {}, firstColumns: [], secondColumns: [], operator: '', answers: {}, results: {}, feedback: {}, check: {}, completed: {}, summaryUnlocked: false };
-function saveVerbundState() { localStorage.setItem(VERBUND_STORAGE_KEY, JSON.stringify(verbundState)); }
+function saveVerbundState() { try { localStorage.setItem(VERBUND_STORAGE_KEY, JSON.stringify(verbundState)); } catch { /* Ohne Speicher bleibt das Modul bedienbar. */ } }
 function restoreVerbundState() { try { Object.assign(verbundState, JSON.parse(localStorage.getItem(VERBUND_STORAGE_KEY) || '{}')); } catch { /* Speicherstand ist optional. */ } dropLegacyQuizAnswers(); }
 // Vor dem Abschlussquiz speicherte check je Frage eine einzelne Antwort als Text.
 // Solche Altstände werden verworfen, der übrige Fortschritt bleibt erhalten.
@@ -351,7 +480,7 @@ function renderVerbundCross(panel) {
   if (verbundState.crossExecuted) { const classify = element('section', 'task-card'); classify.append(element('h3', '', 'Drei Kombinationen beurteilen'), element('p', '', 'Passt der Song in die jeweilige Playlist?')); const examples = [['good', 'Gaslighter (Song.id = 1 / Song_in_Playlist.song_id = 1) / Good Oldies (Playlist.id = 1 / Song_in_Playlist.playlist_id = 1)', 'passend'], ['song', 'Gaslighter (Song.id = 1 / Song_in_Playlist.song_id = 2) / Fussballhits (Playlist.id = 2 / Song_in_Playlist.playlist_id = 2)', 'unpassend'], ['playlist', 'Try (Song.id = 3 / Song_in_Playlist.song_id = 3) / Fussballhits (Playlist.id = 2 / Song_in_Playlist.playlist_id = 1)', 'unpassend']]; examples.forEach(([id, text]) => { const group = element('fieldset', 'verbund-classify'); group.append(element('legend', '', text)); ['passend', 'unpassend'].forEach((value) => { const label = element('label', 'choice-option'); const radio = document.createElement('input'); radio.type = 'radio'; radio.name = `cross-${id}`; radio.value = value; radio.checked = verbundState.crossClass[id] === value; radio.addEventListener('change', () => { verbundState.crossClass[id] = value; delete verbundState.feedback.classify; classify.querySelector('.feedback')?.remove(); saveVerbundState(); }); label.append(radio, element('span', '', value)); group.append(label); }); classify.append(group); }); const check = element('button', 'primary-button', 'Beurteilungen prüfen'); check.type = 'button'; check.addEventListener('click', () => { if (crossDone()) { completeVerbund('cross'); verbundFeedback('classify', 'success', 'Korrekt: Bei Gaslighter passt Song.id 1 nicht zu Song_in_Playlist.song_id 2. Bei Try passt Song_in_Playlist.playlist_id 1 nicht zu Playlist.id 2.'); } else verbundFeedback('classify', 'hint', 'Noch nicht korrekt. Gaslighter gehört zur Zuordnungszeile mit song_id 1 und playlist_id 1; Try gehört nicht zu Fussballhits.'); renderVerbundModule(); }); classify.append(check); appendVerbundFeedback(classify, 'classify'); panel.append(classify); }
 }
 function toggleVerbundColumn(property, column) { const selected = verbundState[property]; verbundState[property] = selected.includes(column) ? selected.filter((item) => item !== column) : selected.length < 2 ? [...selected, column] : [selected[1], column]; delete verbundState.feedback[property]; saveVerbundState(); renderVerbundModule(); }
-function renderSongRelation(relation, title) { const output = renderRelation(relation, { title, caption: title, columns: SONG_VERBUND_COLUMNS, columnGroups: SONG_VERBUND_COLUMN_GROUPS }); output.classList.add('verbund-result'); return output; }
+function renderSongRelation(relation, title, free = false) { const output = renderRelation(relation, { title, caption: title, ...(free ? {} : { columns: SONG_VERBUND_COLUMNS, columnGroups: SONG_VERBUND_COLUMN_GROUPS }) }); output.classList.add('verbund-result'); return output; }
 function renderVerbundFirst(panel) {
   panel.append(verbundHeading(3, 'Verstehen', 'Erste Verbindung')); const card = element('section', 'task-card'); card.append(element('h3', '', 'Passende Song-Nummern verbinden'), element('p', '', 'Wähle genau die zwei Spalten, deren Werte dieselbe Song-Nummer meinen. Klicke zum Auswählen einer Spalte auf den Namen einer Spalte.')); card.append(renderSongSourceTables({ selectable: true, selected: verbundState.firstColumns, onSelect: (column) => toggleVerbundColumn('firstColumns', column) })); card.append(element('p', 'selected-columns', verbundState.firstColumns.length ? `Gewählt: ${verbundState.firstColumns.join(' = ')}` : 'Noch keine zwei Spalten gewählt.')); appendHints(card, SONG_VERBUND_VISIBLE_TEXT.firstHints); const button = element('button', 'primary-button', 'Verbindung prüfen'); button.type = 'button'; button.addEventListener('click', async () => { if (!evaluateFirstConnection(verbundState.firstColumns)) { verbundFeedback('firstColumns', 'hint', 'Noch nicht korrekt. Ein Primärschlüssel aus Song muss zu dem Fremdschlüssel passen, der auf ihn zeigt.'); renderVerbundModule(); return; } try { verbundState.results.first = await database.exec(SONG_VERBUND_SQL.firstConnection); completeVerbund('first'); verbundFeedback('firstColumns', 'success', 'Korrekt: Die erste Bedingung lässt 8 Zeilen übrig. Jede passende Song-Zuordnung wird aber noch mit beiden Playlists kombiniert. Die entsprechende Bedingung lautet WHERE Song.id = Song_in_Playlist.song_id.'); saveVerbundState(); renderVerbundModule(); } catch (error) { verbundFeedback('firstColumns', 'error', `SQL-Fehler: ${explainSqlError(error)}`); renderVerbundModule(); } }); card.append(button); appendVerbundFeedback(card, 'firstColumns'); if (verbundState.results.first) card.append(renderSongRelation(verbundState.results.first, 'Ergebnisrelation: erste Verbindung (8 Zeilen)')); panel.append(card);
 }
@@ -360,10 +489,20 @@ function renderVerbundSecond(panel) {
 }
 function renderPairList() { const section = element('section', 'short-summary'); section.append(element('h3', '', 'Die vier passenden Paare')); const list = document.createElement('ul'); SONG_PLAYLIST_PAIRS.forEach(({ song, playlist }) => list.append(element('li', '', `${song} → ${playlist}`))); section.append(list); return section; }
 function renderVerbundSql(panel) {
-  panel.append(verbundHeading(5, 'Übertragen', 'SQL-Anfrage')); const card = element('section', 'task-card sql-task'); card.append(element('h3', '', 'Vollständigen Verbund selbst formulieren'), element('p', '', 'Schreibe eine SELECT-Anfrage, die genau die vier passenden Song-Playlist-Zuordnungen ausgibt.')); const label = element('label', 'sql-label', 'Deine vollständige SQL-Anweisung'); label.htmlFor = 'verbund-sql-input'; const input = document.createElement('textarea'); input.id = label.htmlFor; input.className = 'sql-input'; input.spellcheck = false; input.placeholder = NEUTRAL_SQL_PLACEHOLDER; input.value = verbundState.answers.sql || ''; input.addEventListener('input', () => { verbundState.answers.sql = input.value; delete verbundState.feedback.sql; delete verbundState.results.sql; card.querySelector('.feedback')?.remove(); card.querySelector('.verbund-result')?.remove(); saveVerbundState(); }); input.addEventListener('keydown', (event) => { if ((event.ctrlKey || event.metaKey) && event.key === 'Enter') { event.preventDefault(); runVerbundSql(); } }); card.append(label, input); appendHints(card, SONG_VERBUND_VISIBLE_TEXT.sqlHints); const run = element('button', 'primary-button', 'SQL-Anfrage prüfen'); run.type = 'button'; run.disabled = !databaseReady; run.addEventListener('click', runVerbundSql); card.append(run, element('span', 'shortcut-hint', 'Strg/Cmd + Enter')); appendVerbundFeedback(card, 'sql'); if (verbundState.results.sql) card.append(renderSongRelation(verbundState.results.sql, 'Ergebnisrelation deiner Anfrage (4 Zeilen)')); panel.append(card);
+  panel.append(verbundHeading(5, 'Übertragen', 'SQL-Anfrage')); const card = element('section', 'task-card sql-task'); card.append(element('h3', '', 'Vollständigen Verbund selbst formulieren'), element('p', '', 'Schreibe eine SELECT-Anfrage, die genau die vier passenden Song-Playlist-Zuordnungen ausgibt.')); const label = element('label', 'sql-label', 'Deine vollständige SQL-Anweisung'); label.htmlFor = 'verbund-sql-input'; const input = document.createElement('textarea'); input.id = label.htmlFor; input.className = 'sql-input'; input.spellcheck = false; input.placeholder = NEUTRAL_SQL_PLACEHOLDER; input.value = verbundState.answers.sql || ''; input.addEventListener('input', () => { verbundState.answers.sql = input.value; delete verbundState.feedback.sql; delete verbundState.results.sql; card.querySelector('.feedback')?.remove(); card.querySelector('.verbund-result')?.remove(); saveVerbundState(); }); input.addEventListener('keydown', (event) => { if ((event.ctrlKey || event.metaKey) && event.key === 'Enter') { event.preventDefault(); runVerbundSql(); } }); card.append(label, input); appendHints(card, SONG_VERBUND_VISIBLE_TEXT.sqlHints); const run = element('button', 'primary-button', 'SQL-Anfrage prüfen'); run.type = 'button'; run.disabled = !databaseReady; run.addEventListener('click', runVerbundSql); card.append(run, element('span', 'shortcut-hint', 'Strg/Cmd + Enter')); appendVerbundFeedback(card, 'sql'); if (verbundState.results.sql && verbundState.feedback.sql?.level === 'success') card.append(renderSongRelation(verbundState.results.sql, 'Ergebnisrelation deiner Anfrage (4 Zeilen)', true)); panel.append(card);
 }
-async function runVerbundSql() { const checked = validateSelectStatement(verbundState.answers.sql || ''); if (!checked.ok) { verbundFeedback('sql', 'hint', checked.message); renderVerbundModule(); return; } try { const actual = await database.exec(checked.sql); const expected = await database.exec(SONG_VERBUND_SQL.fullConnection); const comparison = compareRelations(actual, expected, { columnOrder: true, columnLabels: false, rowOrder: false }); if (comparison.correct) { verbundState.results.sql = actual; completeVerbund('sql'); verbundFeedback('sql', 'success', 'Korrekt: Deine Anfrage liefert genau die vier passenden Zuordnungen.'); } else { delete verbundState.results.sql; const amount = actual.values.length; const text = amount === 8 ? 'Teilweise korrekt: Die Verbindung zur Playlist fehlt noch; deshalb bleiben 8 Zeilen.' : amount === 16 ? 'Teilweise korrekt: Die Verbindung zum Song fehlt noch; deshalb bleiben 16 Zeilen.' : amount === 20 ? 'Noch nicht korrekt: OR lässt Zeilen zu, bei denen nur eine Bedingung stimmt. Verwende AND.' : amount === 32 ? 'Noch nicht korrekt: Die WHERE-Bedingungen fehlen noch; das ist das Kreuzprodukt.' : amount === 0 ? 'Noch nicht korrekt: Die Bedingungen liefern keine Zeilen. Prüfe die beiden Schlüsselpaare.' : `Noch nicht korrekt: ${comparison.reason}`; verbundFeedback('sql', amount === 8 || amount === 16 ? 'partial' : 'hint', text); } saveVerbundState(); renderVerbundModule(); } catch (error) { verbundFeedback('sql', 'error', `SQL-Fehler: ${explainSongSqlError(error)}`); renderVerbundModule(); } }
-function explainSongSqlError(error) { const message = String(error?.message || error || ''); if (/no such table/i.test(message)) return 'Prüfe den Tabellennamen. Hier heißen die Tabellen Song, Song_in_Playlist und Playlist.'; return explainSqlError(error); }
+async function runVerbundSql() {
+  const checked = validateSelectStatement(verbundState.answers.sql || '');
+  delete verbundState.results.sql;
+  delete verbundState.completed.sql;
+  if (!checked.ok) { verbundFeedback('sql', 'hint', checked.message); renderVerbundModule(); return; }
+  try {
+    const result = await assessMultiTableSql(checked.sql, SONG_VERBUND_SQL.fullConnection, SONG_VERBUND_TABLE_SCHEMAS, 'song');
+    if (result.actual) { verbundState.results.sql = result.actual; completeVerbund('sql'); }
+    verbundFeedback('sql', result.level, result.text || 'Korrekt: Deine Anfrage liefert genau die vier passenden Zuordnungen.');
+  } catch (error) { verbundFeedback('sql', 'error', diagnoseMultiTableError(error, checked.sql, SONG_VERBUND_TABLE_NAMES, SONG_VERBUND_TABLE_SCHEMAS)); }
+  saveVerbundState(); renderVerbundModule();
+}
 function quizSelection(questionId) { const stored = verbundState.check[questionId]; return Array.isArray(stored) ? stored : []; }
 function toggleQuizOption(questionId, optionId, checked) { const current = quizSelection(questionId); verbundState.check[questionId] = checked ? [...current, optionId] : current.filter((item) => item !== optionId); delete verbundState.feedback.check; saveVerbundState(); }
 function quizNumbers(predicate) { return SONG_VERBUND_QUIZ.map((question, index) => predicate(question, index) ? index + 1 : null).filter(Boolean).join(', '); }
@@ -378,7 +517,7 @@ function checkVerbundQuiz() {
 }
 function renderVerbundCheck(panel) {
   panel.append(verbundHeading(6, 'Sichern', 'Abschlussquiz')); const card = element('section', 'task-card'); card.append(element('h3', '', `${SONG_VERBUND_QUIZ.length} Fragen zum Verbund`), element('p', '', 'Kreuze alle richtigen Antworten an. Bei manchen Fragen sind mehrere Antworten richtig.'));
-  const form = element('form', 'final-quiz'); form.noValidate = true;
+  const form = element('form', 'final-quiz'); form.id = 'final-quiz'; form.noValidate = true;
   SONG_VERBUND_QUIZ.forEach((question, index) => { const group = document.createElement('fieldset'); const legend = document.createElement('legend'); legend.append(element('span', '', String(index + 1)), document.createTextNode(question.prompt)); group.append(legend); const choices = element('div', 'choice-list'); question.options.forEach((option) => { const label = element('label', 'choice-option'); const input = document.createElement('input'); input.type = 'checkbox'; input.name = `verbund-quiz-${question.id}`; input.value = option.id; input.checked = quizSelection(question.id).includes(option.id); input.addEventListener('change', () => { toggleQuizOption(question.id, option.id, input.checked); card.querySelector('.feedback')?.remove(); }); label.append(input, element('span', '', option.text)); choices.append(label); }); group.append(choices); form.append(group); });
   const actions = element('div', 'action-row'); const button = element('button', 'primary-button', 'Quiz prüfen'); button.type = 'submit'; actions.append(button); form.append(actions);
   form.addEventListener('submit', (event) => { event.preventDefault(); checkVerbundQuiz(); });
@@ -392,7 +531,7 @@ function renderQuizSolutions() {
   SONG_VERBUND_QUIZ.forEach((question) => { const item = document.createElement('li'); item.append(element('strong', '', question.prompt)); const answers = document.createElement('ul'); question.options.filter((option) => option.correct).forEach((option) => answers.append(element('li', '', option.text))); item.append(answers); list.append(item); });
   section.append(list); return section;
 }
-async function initSongVerbund() { restoreVerbundState(); renderVerbundModule(); const status = document.getElementById('data-status'); try { database = new SqlWorker(); await database.init({ mode: 'song-verbund' }); databaseReady = true; status.textContent = 'Die drei Song-Tabellen sind geladen. Du kannst SQL-Anfragen ausführen.'; status.className = 'feedback success'; status.setAttribute('aria-busy', 'false'); renderVerbundModule(); } catch (error) { status.textContent = 'Die Song-Tabellen konnten nicht geladen werden. Bitte lade die Seite neu.'; status.className = 'feedback error'; status.setAttribute('aria-busy', 'false'); console.error(error); } document.getElementById('reset-module').addEventListener('click', () => { if (window.confirm('Möchtest du alle Eingaben und den Fortschritt dieser Aufgabe zurücksetzen?')) { localStorage.removeItem(VERBUND_STORAGE_KEY); location.reload(); } }); window.addEventListener('beforeunload', () => database?.close()); }
+async function initSongVerbund() { restoreVerbundState(); renderVerbundModule(); const status = document.getElementById('data-status'); try { database = new SqlWorker(); await database.init({ mode: 'song-verbund' }); databaseReady = true; status.textContent = 'Die drei Song-Tabellen sind geladen. Du kannst SQL-Anfragen ausführen.'; status.className = 'feedback success'; status.setAttribute('aria-busy', 'false'); renderVerbundModule(); } catch (error) { status.textContent = 'Die Song-Tabellen konnten nicht geladen werden. Bitte lade die Seite neu.'; status.className = 'feedback error'; status.setAttribute('aria-busy', 'false'); console.error(error); } document.getElementById('reset-module').addEventListener('click', () => { if (window.confirm('Möchtest du alle Eingaben und den Fortschritt dieser Aufgabe zurücksetzen?')) { try { localStorage.removeItem(VERBUND_STORAGE_KEY); } catch { /* Ohne Speicher weiter nutzbar. */ } location.reload(); } }); window.addEventListener('beforeunload', () => database?.close()); }
 
-async function init() { restore(); render(); const status = document.getElementById('data-status'); try { database = new SqlWorker(); await database.init(); databaseReady = true; status.textContent = 'Die Tabelle users ist geladen. Du kannst SQL-Anfragen ausführen.'; status.className = 'feedback success'; status.setAttribute('aria-busy', 'false'); render(); } catch (error) { status.textContent = 'Die Übungsdaten konnten nicht geladen werden. Bitte lade die Seite neu.'; status.className = 'feedback error'; status.setAttribute('aria-busy', 'false'); console.error(error); document.querySelectorAll('.sql-input, .sql-task button').forEach((node) => { node.disabled = true; }); } document.getElementById('reset-module').addEventListener('click', () => { if (window.confirm('Möchtest du alle SQL-Eingaben und den Fortschritt dieser Aufgabe zurücksetzen?')) { localStorage.removeItem(STORAGE_KEY); location.reload(); } }); window.addEventListener('beforeunload', () => database?.close()); }
+async function init() { restore(); render(); const status = document.getElementById('data-status'); try { database = new SqlWorker(); await database.init(); const response = await fetch('users.csv'); if (!response.ok) throw new Error('users.csv konnte nicht geladen werden.'); const [headers, ...rows] = parseDelimited(await response.text()); introRows = rows.slice(0, 4).map((row) => Object.fromEntries(headers.map((header, index) => [header, row[index]]))); databaseReady = true; status.textContent = 'Die Tabelle users ist geladen. Du kannst SQL-Anfragen ausführen.'; status.className = 'feedback success'; status.setAttribute('aria-busy', 'false'); render(); } catch (error) { status.textContent = 'Die Übungsdaten konnten nicht geladen werden. Bitte lade die Seite neu.'; status.className = 'feedback error'; status.setAttribute('aria-busy', 'false'); console.error(error); document.querySelectorAll('.sql-input, .sql-task button').forEach((node) => { if (node.classList.contains('primary-button') && !node.closest('.sql-intro')) node.disabled = true; }); } document.getElementById('reset-module').addEventListener('click', () => { if (window.confirm('Möchtest du alle SQL-Eingaben und den Fortschritt dieser Aufgabe zurücksetzen?')) { try { localStorage.removeItem(STORAGE_KEY); } catch { /* Ohne Speicher weiter nutzbar. */ } location.reload(); } }); window.addEventListener('beforeunload', () => database?.close()); }
 document.addEventListener('DOMContentLoaded', () => document.body.dataset.sqlModule === 'menu-cross-product' ? initMenuCrossProduct() : document.body.dataset.sqlModule === 'song-verbund' ? initSongVerbund() : init());

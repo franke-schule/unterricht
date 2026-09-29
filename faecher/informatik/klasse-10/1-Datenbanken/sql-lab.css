@@ -76,7 +76,22 @@
 .verbund-classify legend { padding-inline: 5px; color: #244d78; font-weight: 800; }
 .selected-columns { padding: 9px 11px; border-radius: 8px; background: #f4f8fc; color: #244d78; font-family: "SFMono-Regular", Consolas, monospace; }
 .verbund-memory { margin-top: 16px; border-left: 5px solid #087d9c; white-space: pre-line; }
+.sql-page:not(.menu-cross-product-page):not(.song-verbund-page) .step-tabs { grid-template-columns: repeat(6, minmax(150px, 1fr)); }
+.sql-intro { max-width: 100%; }
+.sql-intro .intro-sql code { display: block; font: inherit; }
+.sql-intro .intro-sql code span { display: block; padding: 2px 6px; border-radius: 6px; }
+.sql-intro .intro-active-clause { background: #dcecf7; color: #123c6b; font-weight: 800; }
+.sql-intro .intro-caption { margin: 12px 0 0; color: #52647b; font-size: .9rem; }
+.sql-intro .intro-step-buttons { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 17px; }
+.sql-intro .intro-step-buttons button[aria-current="step"] { border-color: #1455b1; background: #dcecf7; color: #123c6b; font-weight: 800; }
+.sql-intro .intro-controls { align-items: center; justify-content: space-between; }
+.sql-intro .intro-progress { color: #244d78; }
+.sql-intro-memory { margin-top: 18px; }
+.sql-intro-memory p { margin: 9px 0; }
+.sql-quiz-overview { margin-top: 20px; }
+.sql-quiz-overview li { margin-bottom: 8px; }
 @media (max-width: 760px) { .menu-source-tables { grid-template-columns: 1fr; } }
 @media (max-width: 760px) { .song-source-tables { grid-template-columns: 1fr; } }
 @media (max-width: 860px) { .sql-page .step-tabs { grid-template-columns: repeat(4, 210px); } .song-verbund-page .step-tabs { grid-template-columns: repeat(6, 190px); } }
+@media (max-width: 860px) { .sql-page:not(.menu-cross-product-page):not(.song-verbund-page) .step-tabs { grid-template-columns: repeat(6, 190px); } }
 @media (max-width: 650px) { .sql-page .step-panel { padding: 20px 15px; border-radius: 18px; } .sql-schema-card { top: 6px; } .schema-code { font-size: .76rem; } .result-relation .table-scroll { max-height: 58vh; } .aggregate-list { grid-template-columns: 1fr; } .shortcut-hint { width: 100%; } }

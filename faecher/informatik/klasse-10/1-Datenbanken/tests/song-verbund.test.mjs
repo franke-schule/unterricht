@@ -4,7 +4,7 @@ import { readFile } from 'node:fs/promises';
 import { dirname, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { SONG_PLAYLIST_PAIRS, SONG_VERBUND_COLUMN_GROUPS, SONG_VERBUND_COLUMNS, SONG_VERBUND_SQL, SONG_VERBUND_TABLE_NAMES, SONG_VERBUND_TABLE_SCHEMAS, SONG_VERBUND_TABLES, SONG_VERBUND_QUIZ, SONG_VERBUND_VISIBLE_TEXT, buildFirstConnection, correctQuizOptions, evaluateQuizQuestion, buildFullConnection, buildPlaylistConnection, buildSongCombinations, evaluateFirstConnection, evaluateSecondConnection, expectedSongRelation } from '../song-verbund-daten.mjs';
-import { compareRelations, normalizeRelation, validateSelectStatement } from '../sql-lab-core.mjs';
+import { analyzeMultiTableSelect, compareRelations, normalizeRelation, validateSelectStatement } from '../sql-lab-core.mjs';
 
 assert.deepEqual(SONG_VERBUND_TABLE_NAMES, ['Song', 'Song_in_Playlist', 'Playlist']);
 assert.deepEqual(SONG_VERBUND_TABLE_SCHEMAS.map(({ table, columns }) => [table, columns]), [
@@ -59,6 +59,12 @@ for (const song of SONG_VERBUND_TABLES.Song) db.run(`INSERT INTO Song VALUES (${
 for (const mapping of SONG_VERBUND_TABLES.Song_in_Playlist) db.run(`INSERT INTO Song_in_Playlist VALUES (${mapping.song_id}, ${mapping.playlist_id})`);
 for (const playlist of SONG_VERBUND_TABLES.Playlist) db.run(`INSERT INTO Playlist VALUES (${playlist.id}, '${playlist.titel}')`);
 const relation = (statement) => normalizeRelation(db.exec(statement));
+globalThis.window = {};
+globalThis.document = { addEventListener() {} };
+const { assessMultiTableSql } = await import('../sql-lab.js');
+const assess = (statement) => assessMultiTableSql(statement, SONG_VERBUND_SQL.fullConnection, SONG_VERBUND_TABLE_SCHEMAS, 'song', async (query) => relation(query));
+assert.equal((await assess('SELECT s.titel AS song, p.titel AS playlist FROM Song s, Song_in_Playlist x, Playlist p WHERE s.id = x.song_id AND p.id = x.playlist_id ORDER BY song')).level, 'success', 'ORDER BY auf einem SELECT-Alias bleibt bei der internen Identitätsprüfung gültig.');
+assert.equal((await assess('SELECT * FROM Song, Song_in_Playlist, Playlist WHERE Song.id = Song_in_Playlist.song_id AND Playlist.id = Song_in_Playlist.playlist_id ORDER BY 8')).level, 'success', 'ORDER BY auf der ursprünglichen achten SELECT-Spalte bleibt gültig.');
 const cross = relation(SONG_VERBUND_SQL.crossProduct);
 const first = relation(SONG_VERBUND_SQL.firstConnection);
 const playlistOnly = relation(SONG_VERBUND_SQL.playlistConnection);
@@ -67,6 +73,17 @@ assert.equal(cross.values.length, 32);
 assert.equal(first.values.length, 8);
 assert.equal(playlistOnly.values.length, 16);
 assert.equal(full.values.length, 4);
+const titlePairs = relation('SELECT Song.titel, Playlist.titel FROM Song, Song_in_Playlist, Playlist WHERE Song.id = Song_in_Playlist.song_id AND Playlist.id = Song_in_Playlist.playlist_id');
+const aliasedTitlePairs = relation('SELECT p.titel AS Playlist, s.titel AS Song FROM Playlist p, Song_in_Playlist x, Song s WHERE x.playlist_id = p.id AND x.song_id = s.id');
+assert.equal(compareRelations(aliasedTitlePairs, relation('SELECT Playlist.titel, Song.titel FROM Song, Song_in_Playlist, Playlist WHERE Song.id = Song_in_Playlist.song_id AND Playlist.id = Song_in_Playlist.playlist_id')).correct, true, 'Song- und Playlisttitel mit Aliasen und umgestellter Tabellenreihenfolge sind zulässig.');
+assert.deepEqual(aliasedTitlePairs.columns, ['Playlist', 'Song']);
+const mixedIdentification = relation('SELECT Song.id, Playlist.titel, Song.genre FROM Song, Song_in_Playlist, Playlist WHERE Song.id = Song_in_Playlist.song_id AND Playlist.id = Song_in_Playlist.playlist_id');
+assert.equal(mixedIdentification.values.length, 4, 'Gemischte ID-/Titelprojektion mit zusätzlichem Attribut bleibt vollständig.');
+assert.deepEqual(analyzeMultiTableSelect('SELECT Song.id, Playlist.titel, Song.genre FROM Song, Song_in_Playlist, Playlist', SONG_VERBUND_TABLE_SCHEMAS).columns.map(({ table, name }) => `${table}.${name}`), ['Song.id', 'Playlist.titel', 'Song.genre']);
+const wrongFourPairs = relation('SELECT Song.titel, Playlist.titel FROM Song, Song_in_Playlist, Playlist WHERE Song.id = Song_in_Playlist.song_id AND Playlist.id = CASE WHEN Song_in_Playlist.playlist_id = 1 THEN 2 ELSE 1 END');
+assert.equal(wrongFourPairs.values.length, 4, 'Ein falscher Verbund kann ebenfalls vier Zeilen liefern.');
+assert.equal(compareRelations(wrongFourPairs, titlePairs).correct, false, 'Eine falsche Zuordnung wird trotz gleicher Zeilenzahl erkannt.');
+assert.equal((await assess('SELECT Song.titel, Playlist.titel FROM Song, Song_in_Playlist, Playlist WHERE Song.id = Song_in_Playlist.song_id AND Playlist.id = CASE WHEN Song_in_Playlist.playlist_id = 1 THEN 2 ELSE 1 END')).level, 'partial', 'Die tatsächliche Bewertung verwirft den falschen Vier-Zeilen-Verbund.');
 assert.deepEqual(full.values.map((row) => ({ song: row[1], playlist: row[7] })).sort((a, b) => a.song.localeCompare(b.song)), [...SONG_PLAYLIST_PAIRS].sort((a, b) => a.song.localeCompare(b.song)), 'Der vollständige Verbund enthält genau die vier fachlich richtigen Paare.');
 assert.equal(compareRelations(full, relation('select * from Song, Song_in_Playlist, Playlist where Song_in_Playlist.song_id = Song.id and Song_in_Playlist.playlist_id = Playlist.id;')).correct, true, 'Vertauschte Gleichungsseiten und Formatierung sind gleichwertig.');
 assert.equal(compareRelations(full, relation(`SeLeCt *

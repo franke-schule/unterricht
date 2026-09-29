@@ -3,7 +3,7 @@ import { createRequire } from 'node:module';
 import { readFile } from 'node:fs/promises';
 import { dirname, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { compareRelations, normalizeRelation, parseDelimited } from '../sql-lab-core.mjs';
+import { compareRelations, flexibleReferenceSql, normalizeRelation, parseDelimited } from '../sql-lab-core.mjs';
 
 const require = createRequire(import.meta.url);
 const initSqlJs = require('../../../../../include/lib/sql.js/sql-wasm.js');
@@ -37,6 +37,21 @@ assert.equal(compareRelations(relation(references[15]), relation("SELECT * FROM 
 assert.equal(compareRelations(relation(references[13]), relation("SELECT username, birthday FROM users WHERE centimeters < 160 AND gender = 'female'"), { columnOrder: false }).correct, true, 'A15 akzeptiert beide sinnvollen Projektionsreihenfolgen');
 assert.equal(compareRelations(relation(references[18]), relation("SELECT MAX(centimeters) AS groesste_nutzerin FROM users WHERE gender='female'")).correct, true, 'optionaler Alias');
 assert.equal(compareRelations(relation(references[16]), relation('SELECT MAX(birthday) AS falsch FROM users'), { columnLabels: true }).correct, false, 'A3.2 verlangt den Alias');
+assert.equal(compareRelations(relation(references[3]), relation('SELECT name FROM users WHERE city != "Leipzig"')).correct, true, 'Doppelte Quotes für Leipzig funktionieren in SQLite');
+assert.equal(compareRelations(relation(references[3]), relation("SELECT name FROM users WHERE city = 'Leipzig' IS FALSE")).correct, true, 'Gleichwertige Negation mit IS FALSE bleibt gültig');
+assert.throws(() => db.exec('SELECT username FROM user WHERE city != "Leipzig"'), /no such table/i, 'user statt users ist ein Tabellenfehler');
+for (const index of [1, 2, 4, 6, 8, 9, 10, 12, 14]) {
+  const reference = references[index];
+  for (const projection of ['*', 'name', 'username', 'name, username', 'username, name']) {
+    const variant = flexibleReferenceSql(reference, `SELECT ${projection} FROM users`);
+    const expected = relation(variant);
+    assert.equal(compareRelations(relation(variant), expected, { rowOrder: index === 12 }).correct, true, `A${index}: ${projection}`);
+    if (expected.values.length) {
+      const wrong = variant.replace(/\bWHERE\b[\s\S]*/i, "WHERE id = -1");
+      assert.equal(compareRelations(relation(wrong), expected, { rowOrder: index === 12 }).correct, false, `Falsche Zeilen A${index}: ${projection}`);
+    }
+  }
+}
 
 const probe = (statement) => relation([
   'SAVEPOINT birthday_probe',

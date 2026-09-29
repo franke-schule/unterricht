@@ -1,5 +1,7 @@
 import assert from 'node:assert/strict';
-import { classifyDescriptionResult, compareRelations, isValidScriptServerUrl, parseDelimited, validateSelectStatement } from '../sql-lab-core.mjs';
+import { analyzeMultiTableSelect, classifyDescriptionResult, compareRelations, diagnoseMultiTableError, diagnoseSqlError, diagnoseSqlTask, flexibleReferenceSql, isValidScriptServerUrl, missingTextQuote, parseDelimited, selectProjection, validateSelectStatement } from '../sql-lab-core.mjs';
+import { MENU_TABLE_SCHEMAS, MENU_QUIZ } from '../menue-kreuzprodukt-daten.mjs';
+import { SONG_VERBUND_TABLE_SCHEMAS, evaluateQuizQuestion } from '../song-verbund-daten.mjs';
 
 assert.equal(validateSelectStatement("select * from users where name = 'A; B';").ok, true);
 assert.equal(validateSelectStatement('SELECT * FROM users; SELECT * FROM users').ok, false);
@@ -12,6 +14,26 @@ assert.equal(compareRelations({ columns: ['x'], values: [['Naomi'], ['Bea'], ['N
 assert.equal(compareRelations({ columns: ['x'], values: [['Naomi'], ['Bea']] }, relation).correct, false);
 assert.equal(compareRelations({ columns: ['x'], values: [['Naomi'], ['Bea'], ['Naomi']] }, relation, { rowOrder: true }).correct, false);
 assert.equal(compareRelations({ columns: ['b', 'a'], values: [['B', 'A']] }, { columns: ['a', 'b'], values: [['A', 'B']] }, { columnOrder: false }).correct, true);
+const referenceSql = "SELECT *\nFROM users\nWHERE city = 'Berlin'";
+for (const projection of ['*', 'name', 'username', 'name, username', 'username, name']) {
+  const userSql = `/* SELECT hidden FROM hidden */ SELECT ${projection}\nFROM users\nWHERE city = 'Berlin'`;
+  assert.equal(selectProjection(userSql).key, projection.replace(/\s/g, ''));
+  assert.equal(selectProjection(flexibleReferenceSql(referenceSql, userSql)).key, projection.replace(/\s/g, ''));
+}
+assert.equal(selectProjection('SELECT users.name, users.username FROM users').key, 'name,username');
+assert.equal(flexibleReferenceSql(referenceSql, 'SELECT city FROM users'), null);
+const oneName = { columns: ['name'], values: [['Bea']] };
+const oneUsername = { columns: ['username'], values: [['bealovescode']] };
+assert.equal(diagnoseSqlTask("SELECT username FROM users WHERE city != 'Leipzig'", { id: 'b2-5', referenceSql: "SELECT name FROM users WHERE city != 'Leipzig'" }, oneUsername, oneName, compareRelations(oneUsername, oneName)), 'SELECT: Gefragt ist name. username enthält den Benutzernamen.');
+assert.equal(diagnoseSqlTask('SELECT name FROM users WHERE city = \'Berlin\'', { id: 'b2-2', flexible: true, referenceSql }, oneName, { columns: ['name'], values: [['Lina']] }, { correct: false }), 'Teilweise korrekt: Prüfe die Bedingung in WHERE.');
+assert.equal(diagnoseSqlTask("SELECT name FROM users WHERE country = 'Atlantis'", { id: 'b2-2', flexible: true, referenceSql }, { columns: [], values: [] }, oneName, { correct: false }), 'Teilweise korrekt: Prüfe die Bedingung in WHERE.');
+assert.equal(diagnoseSqlTask("SELECT city FROM users WHERE country = 'Atlantis'", { id: 'b2-2', flexible: true, referenceSql }, { columns: [], values: [] }, oneName, { correct: false }), 'SELECT: Gib alle Spalten, name, username oder beide Namensspalten aus.');
+assert.equal(diagnoseSqlError('no such table: user', 'SELECT name FROM user'), 'FROM: Die Tabelle heißt users. Prüfe den Tabellennamen.');
+assert.equal(diagnoseSqlError('no such column: namen', 'SELECT namen FROM users'), 'SELECT: Prüfe den Spaltennamen namen.');
+assert.equal(diagnoseSqlError('no such column: residence', 'SELECT name FROM users WHERE residence = 1'), 'WHERE: Prüfe den Attributnamen residence.');
+assert.equal(diagnoseSqlError('no such column: Leipzig', 'SELECT name FROM users WHERE city = Leipzig'), "WHERE: Setze den Textwert Leipzig in Anführungszeichen, zum Beispiel 'Leipzig'.");
+assert.equal(diagnoseSqlError('no such column: Leipzig', 'SELECT name FROM users WHERE city <> Leipzig'), "WHERE: Setze den Textwert Leipzig in Anführungszeichen, zum Beispiel 'Leipzig'.");
+for (const sql of ["SELECT name FROM users WHERE city = 'Leipzig'", 'SELECT name FROM users WHERE city = "Leipzig"', 'SELECT name FROM users WHERE centimeters > 180', "SELECT name FROM users WHERE birthday = '2008-01-01'", 'SELECT name FROM users WHERE city = country', 'SELECT name FROM users WHERE city IS NULL', "SELECT name FROM users WHERE city = LOWER('LEIPZIG')", "SELECT name FROM users WHERE city = 'SELECT FROM WHERE'", '-- city = Leipzig\nSELECT name FROM users WHERE city = country']) assert.equal(missingTextQuote(sql, 'Leipzig'), null, sql);
 assert.equal(isValidScriptServerUrl('https://script.google.com/macros/s/test/exec'), true);
 assert.equal(isValidScriptServerUrl('http://script.google.com/macros/s/test/exec'), false);
 assert.equal(isValidScriptServerUrl('https://example.test/exec'), false);
@@ -19,4 +41,24 @@ assert.deepEqual(classifyDescriptionResult({ ok: true, points: 3, maxPoints: 3, 
 assert.deepEqual(classifyDescriptionResult({ ok: true, points: 2, maxPoints: 3, status: 'teilweise korrekt', strengths: [], missing: ['Bedingung fehlt.'], feedback: 'Ergänze etwas.' }), { level: 'medium', points: 2, maxPoints: 3, status: 'teilweise korrekt', strengths: [], missing: ['Bedingung fehlt.'], text: 'Ergänze etwas.' });
 assert.deepEqual(classifyDescriptionResult({ ok: true, points: 0, maxPoints: 3, status: 'noch nicht korrekt', strengths: [], missing: [], feedback: 'Prüfe die Bedingung.' }), { level: 'low', points: 0, maxPoints: 3, status: 'noch nicht korrekt', strengths: [], missing: [], text: 'Prüfe die Bedingung.' });
 assert.deepEqual(classifyDescriptionResult({ ok: false, message: 'Netzwerkfehler.' }), { level: 'error', text: 'Netzwerkfehler.' });
+const menuAlias = analyzeMultiTableSelect('SELECT h.name AS haupt, n.name, v.name FROM Hauptspeise h, Nachspeise n, Vorspeise v', MENU_TABLE_SCHEMAS);
+assert.deepEqual(menuAlias.columns, [{ table: 'Hauptspeise', name: 'name' }, { table: 'Nachspeise', name: 'name' }, { table: 'Vorspeise', name: 'name' }]);
+assert.deepEqual(menuAlias.tables, ['Hauptspeise', 'Nachspeise', 'Vorspeise']);
+assert.equal(menuAlias.tableAliases.get('Vorspeise'), 'v');
+assert.equal(analyzeMultiTableSelect('SELECT name FROM Vorspeise, Hauptspeise, Nachspeise', MENU_TABLE_SCHEMAS).projection, null);
+const songAlias = analyzeMultiTableSelect('SELECT s.titel, p.id FROM Song s JOIN Song_in_Playlist x ON s.id = x.song_id JOIN Playlist p ON p.id = x.playlist_id', SONG_VERBUND_TABLE_SCHEMAS);
+assert.deepEqual(songAlias.tables, ['Song', 'Song_in_Playlist', 'Playlist']);
+assert.deepEqual(songAlias.columns, [{ table: 'Song', name: 'titel' }, { table: 'Playlist', name: 'id' }]);
+assert.equal(diagnoseMultiTableError('no such column: Pizza', "SELECT * FROM Vorspeise, Hauptspeise, Nachspeise WHERE Hauptspeise.name = Pizza", ['Vorspeise', 'Hauptspeise', 'Nachspeise'], MENU_TABLE_SCHEMAS), "WHERE: Setze den Textwert Pizza in Anführungszeichen, zum Beispiel 'Pizza'.");
+assert.equal(diagnoseMultiTableError('no such column: Hauptspeise.Pizza', "SELECT * FROM Vorspeise, Hauptspeise, Nachspeise WHERE Hauptspeise.Pizza = 'Pizza'", ['Vorspeise', 'Hauptspeise', 'Nachspeise'], MENU_TABLE_SCHEMAS), 'WHERE: Prüfe den Attributnamen Pizza.', 'Ein qualifizierter Attributfehler darf keinen Textwert-Hinweis auslösen.');
+assert.match(diagnoseMultiTableError('ambiguous column name: titel', 'SELECT titel FROM Song, Song_in_Playlist, Playlist', ['Song', 'Song_in_Playlist', 'Playlist'], SONG_VERBUND_TABLE_SCHEMAS), /^SELECT: Gib vor titel/);
+assert.match(diagnoseMultiTableError('no such column: geheim', 'SELECT * FROM Song, Song_in_Playlist, Playlist ORDER BY geheim', ['Song', 'Song_in_Playlist', 'Playlist'], SONG_VERBUND_TABLE_SCHEMAS), /^SQL-Syntax:/);
+assert.equal(MENU_QUIZ.length, 3);
+assert.ok(MENU_QUIZ.every((question) => question.options.filter((option) => option.correct).length >= 2));
+for (const question of MENU_QUIZ) {
+  const right = question.options.filter((option) => option.correct).map((option) => option.id);
+  assert.equal(evaluateQuizQuestion(question, right), true);
+  assert.equal(evaluateQuizQuestion(question, right.slice(1)), false);
+  assert.equal(evaluateQuizQuestion(question, []), false);
+}
 console.log('sql-lab-core tests passed');
