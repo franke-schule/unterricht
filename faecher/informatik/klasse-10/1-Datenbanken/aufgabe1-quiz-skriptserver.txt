@@ -34,7 +34,7 @@ Test A:
   Datei:                 apps-script/Tasks.gs (Eintrag direkt nach 'sql-b3-1')
   Aufgabe:               "Beschreibe, warum ein Primärschlüssel in Datenbanken
                          benötigt wird." (Aufgabe 4 des Tests, 3 Punkte)
-  Verwendet von:         aufgabe1-quiz.js (Konstante DESCRIBE_TASK_ID)
+  Verwendet von:         aufgabe1-quiz.js (DESCRIBE_TASKS, Eintrag taskId)
 
 Test B:
   Aufgaben-ID (taskId):  inf10-db-a2-aufteilung
@@ -43,7 +43,7 @@ Test B:
   Aufgabe:               "Beschreibe, warum InstaHub die Daten auf die
                          Tabellen users und photos aufteilt." (Aufgabe 4 des
                          Tests, 3 Punkte)
-  Verwendet von:         aufgabe2-quiz.js (Konstante DESCRIBE_TASK_ID)
+  Verwendet von:         aufgabe2-quiz.js (DESCRIBE_TASKS, Eintrag taskId)
 
 Test C:
   Aufgaben-ID (taskId):  ph11-wdh2-quiz-crashtest-beschreibung
@@ -55,7 +55,7 @@ Test C:
                          bei einem Fallschirmspringer und gehe auf den Begriff
                          Kräftegleichgewicht ein." (Aufgabe 4 des Tests,
                          4 Aspekte)
-  Verwendet von:         wdh2-quiz.mjs (Konstante DESCRIBE_TASK_ID)
+  Verwendet von:         wdh2-quiz.mjs (DESCRIBE_TASKS, Eintrag taskId)
 
 Weitere Aufgaben wurden für diese drei Tests dem Skriptserver nicht
 hinzugefügt. Die Aufgaben 'ph11-a3-quiz-…' gehören zu aufgabe3-quiz und sind

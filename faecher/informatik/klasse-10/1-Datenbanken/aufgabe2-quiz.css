@@ -1,11 +1,30 @@
 /* Test zu Aufgabe 2. Eigenständige Kopie der Gestaltung des Tests zu Aufgabe 1, damit beide Tests getrennt gelöscht werden können.
+   Enthält auch die Rückmeldungen je Aufgabe und die Ergebnisübersicht.
    Wortkarten und Lücken nach was-ist-ki/task0.css (Informatik 11). */
 .quiz-test-page .quiz-test { min-height: 0; }
-.quiz-test-page .evaluation-panel { margin-top: 22px; }
+.quiz-test-page .evaluation-panel { min-height: 0; margin-top: 22px; }
 .quiz-test-page .task-card h3 { display: flex; flex-wrap: wrap; align-items: baseline; justify-content: space-between; gap: 6px 12px; }
 .quiz-test-page .task-points { color: var(--db-muted); font-size: 0.82rem; font-weight: 700; }
 .quiz-test-page .drag-help { color: var(--db-muted); font-size: 0.88rem; }
-.quiz-test-page .drag-help[hidden], .quiz-test-page .submit-row[hidden] { display: none; }
+.quiz-test-page .drag-help[hidden], .quiz-test-page button[hidden] { display: none; }
+.quiz-test-page .task-card .action-row { margin-top: 14px; }
+
+/* Rückmeldung je Aufgabe in drei Stufen: korrekt (success), teilweise korrekt (partial), noch nicht korrekt (error).
+   Farbe nur zusätzlich, die Stufe steht immer auch im Text. */
+.quiz-test-page .quiz-feedback { margin-top: 14px; padding: 12px 14px; border: 1px solid var(--db-line); border-left: 5px solid var(--db-muted); border-radius: 10px; background: var(--db-soft); color: var(--db-ink); line-height: 1.5; }
+.quiz-test-page .quiz-feedback[hidden] { display: none; }
+.quiz-test-page .quiz-feedback p { margin: 0 0 6px; }
+.quiz-test-page .quiz-feedback p:last-child { margin-bottom: 0; }
+.quiz-test-page .quiz-feedback:focus { outline: 3px solid rgba(23, 99, 213, 0.35); outline-offset: 3px; }
+.quiz-test-page .quiz-feedback.success { border-left-color: var(--db-green); background: color-mix(in srgb, var(--db-green) 8%, white); }
+.quiz-test-page .quiz-feedback.partial { border-left-color: var(--db-amber); background: color-mix(in srgb, var(--db-amber) 8%, white); }
+.quiz-test-page .quiz-feedback.error { border-left-color: var(--db-red); background: color-mix(in srgb, var(--db-red) 7%, white); }
+.quiz-test-page .quiz-feedback.success > p:first-child { color: #0c7455; font-weight: 800; }
+.quiz-test-page .quiz-feedback.partial > p:first-child { color: #9a5b0d; font-weight: 800; }
+.quiz-test-page .quiz-feedback.error > p:first-child { color: #ad2936; font-weight: 800; }
+.quiz-test-page .quiz-feedback h4 { margin: 10px 0 4px; color: #1c4c7e; }
+.quiz-test-page .feedback-reasons { margin: 0 0 8px; padding-left: 20px; }
+.quiz-test-page .feedback-reasons li + li { margin-top: 4px; }
 
 .quiz-test-page .quiz-cloze, .quiz-test-page .quiz-sort { display: grid; gap: 14px; margin-top: 14px; }
 .quiz-test-page .cloze-term-bank { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; min-height: 60px; padding: 8px; border: 2px dashed #bdcad9; border-radius: 12px; background: #f9fbfd; }
@@ -37,8 +56,8 @@
 .quiz-test-page .sort-zone-items { display: grid; gap: 8px; }
 .quiz-test-page .sort-zone-items .cloze-token { width: 100%; }
 
-.quiz-test-page .is-correct.is-locked { border-color: var(--db-green); background: color-mix(in srgb, var(--db-green) 10%, white); }
-.quiz-test-page .is-wrong.is-locked { border-color: var(--db-red); background: color-mix(in srgb, var(--db-red) 8%, white); }
+.quiz-test-page .cloze-token.is-correct, .quiz-test-page .cloze-gap.is-correct { border-color: var(--db-green); background: color-mix(in srgb, var(--db-green) 10%, white); }
+.quiz-test-page .cloze-token.is-wrong, .quiz-test-page .cloze-gap.is-wrong { border-color: var(--db-red); background: color-mix(in srgb, var(--db-red) 8%, white); }
 .quiz-test-page .result-mark { font-weight: 900; }
 .quiz-test-page .is-correct .result-mark { color: var(--db-green); }
 .quiz-test-page .is-wrong .result-mark { color: var(--db-red); }
@@ -48,18 +67,16 @@
 .quiz-test-page .describe-input { width: 100%; min-height: 140px; padding: 11px 12px; border: 1px solid #b8c7d9; border-radius: 10px; background: white; color: var(--db-ink); font: inherit; line-height: 1.5; resize: vertical; }
 .quiz-test-page .describe-input:focus-visible { outline: 3px solid rgba(23, 99, 213, 0.35); outline-offset: 2px; }
 .quiz-test-page .describe-input[readonly] { background: var(--db-soft); }
+.quiz-test-page .describe-actions { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 8px 12px; margin-top: 8px; color: var(--db-muted); font-size: 0.85rem; }
+.quiz-test-page .privacy-note { margin: 12px 0 0; color: var(--db-muted); font-size: 0.88rem; }
 
 .quiz-test-page .evaluation-total { margin: 0; color: #15375f; font-size: 1.2rem; font-weight: 900; }
 .quiz-test-page .evaluation-list { display: grid; gap: 8px; margin: 0; padding: 0; list-style: none; }
 .quiz-test-page .evaluation-list li { padding: 9px 12px; border-left: 4px solid var(--db-line); border-radius: 6px; background: white; line-height: 1.45; }
 .quiz-test-page .evaluation-list li.is-correct { border-left-color: var(--db-green); }
 .quiz-test-page .evaluation-list li.is-correct > strong { color: #0c7455; }
-.quiz-test-page .evaluation-list li.is-wrong { border-left-color: var(--db-red); }
-.quiz-test-page .evaluation-list li.is-wrong > strong { color: #ad2936; }
-.quiz-test-page .evaluation-why { display: block; margin-top: 4px; color: var(--db-muted); }
-.quiz-test-page .describe-answer { margin: 0 0 8px; overflow-wrap: anywhere; white-space: pre-wrap; }
-.quiz-test-page .describe-evaluation h4 { margin: 12px 0 4px; color: #1c4c7e; }
-.quiz-test-page .describe-evaluation ul { margin: 0; padding-left: 20px; }
+.quiz-test-page .evaluation-list li.is-open { border-left-color: var(--db-amber); }
+.quiz-test-page .evaluation-list li.is-open > strong { color: #9a5b0d; }
 
 @media (max-width: 860px) {
   .quiz-test-page .sort-zones { grid-template-columns: repeat(2, minmax(0, 1fr)); }
@@ -85,4 +102,6 @@
 }
 @media print {
   .quiz-test-page .quiz-test, .quiz-test-page .progress-card, .quiz-test-page .module-topbar, .quiz-test-page .summary-actions { display: none; }
+  /* redundanzen.css blendet im Druck alle .step-panel aus; die Ergebnisübersicht soll gedruckt werden. */
+  .quiz-test-page .evaluation-panel { display: block !important; }
 }

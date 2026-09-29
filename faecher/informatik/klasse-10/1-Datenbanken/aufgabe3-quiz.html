@@ -8,8 +8,8 @@
     <link rel="stylesheet" href="../../../../styles.css?v=20260825">
     <link rel="stylesheet" href="redundanzen.css?v=20260923a">
     <link rel="stylesheet" href="grundlagen.css?v=20260911">
-    <link rel="stylesheet" href="aufgabe3-quiz.css?v=20260928a">
-    <script type="module" src="aufgabe3-quiz.js?v=20260928a"></script>
+    <link rel="stylesheet" href="aufgabe3-quiz.css?v=20260929a">
+    <script type="module" src="aufgabe3-quiz.js?v=20260929a"></script>
   </head>
   <body class="redundancy-page grundlagen-page quiz-test-page">
     <div class="site-backdrop" aria-hidden="true"></div>
@@ -22,67 +22,70 @@
       <header class="module-header">
         <div class="eyebrow"><span aria-hidden="true">◎</span> Test · Beziehungen und Fremdschlüssel</div>
         <h1>Test zu Aufgabe 3</h1>
-        <p>Bearbeite alle fünf Aufgaben. Die Auswertung erhältst du erst, wenn du den Test abgibst.</p>
+        <p>Bearbeite alle fünf Aufgaben und prüfe jede Aufgabe direkt mit ihrem Prüfen-Button. Gewertet wird jeweils dein erster Prüfversuch.</p>
       </header>
 
       <div class="progress-card" aria-label="Bearbeitungsstand">
         <div class="progress-copy">
-          <span id="progress-label">0 von 5 Aufgaben bearbeitet</span>
-          <strong id="progress-points">25 Punkte erreichbar</strong>
+          <span id="progress-label">0 von 5 Aufgaben geprüft</span>
+          <strong id="progress-points">Wertung: 0 von 25 Punkten</strong>
         </div>
       </div>
 
-      <form id="quiz-test" class="step-panel quiz-test" novalidate>
+      <div class="step-panel quiz-test">
         <section class="task-card" aria-labelledby="task1-title">
-          <h3 id="task1-title">Aufgabe 1 – Schlüssel und Tabellen <span class="task-points">6 Punkte</span></h3>
+          <h3 id="task1-title">Aufgabe 1 – Schlüssel und Tabellen <span class="task-points" id="task1-points">6 Punkte</span></h3>
           <p id="task1-instruction"><strong>Ziehe</strong> die passenden Begriffe in die Lücken. Zwei Begriffe bleiben übrig.</p>
-          <p class="drag-help">Ohne Ziehen: Begriff antippen, dann Lücke antippen. Eine belegte Lücke zweimal antippen, um den Begriff zurückzulegen.</p>
+          <p class="drag-help" data-help="term-cloze">Ohne Ziehen: Begriff antippen, dann Lücke antippen. Eine belegte Lücke zweimal antippen, um den Begriff zurückzulegen.</p>
           <div id="term-cloze" class="quiz-cloze" aria-describedby="task1-instruction"></div>
+          <div class="action-row"><button class="primary-button" id="check-term-cloze" type="button">Lückentext prüfen</button></div>
+          <div id="term-cloze-feedback" class="feedback quiz-feedback" role="status" aria-live="polite" hidden></div>
         </section>
 
         <section class="task-card" aria-labelledby="task2-title">
-          <h3 id="task2-title">Aufgabe 2 – Spalten vergleichen <span class="task-points">8 Punkte</span></h3>
+          <h3 id="task2-title">Aufgabe 2 – Spalten vergleichen <span class="task-points" id="task2-points">8 Punkte</span></h3>
           <p id="task2-instruction"><strong>Ordne</strong> jede Aussage <code>users.id</code> oder <code>photos.user_id</code> zu.</p>
-          <p class="drag-help">Ohne Ziehen: Karte antippen, dann Spalte antippen. Eine zugeordnete Karte zweimal antippen, um sie zurückzulegen.</p>
+          <p class="drag-help" data-help="subset-sort">Ohne Ziehen: Karte antippen, dann Spalte antippen. Eine zugeordnete Karte zweimal antippen, um sie zurückzulegen.</p>
           <div id="subset-sort" class="quiz-sort" aria-describedby="task2-instruction"></div>
+          <div class="action-row"><button class="primary-button" id="check-subset-sort" type="button">Zuordnung prüfen</button></div>
+          <div id="subset-sort-feedback" class="feedback quiz-feedback" role="status" aria-live="polite" hidden></div>
         </section>
 
         <section class="task-card" aria-labelledby="task3-title">
-          <h3 id="task3-title">Aufgabe 3 – Multiple Choice <span class="task-points">5 Punkte</span></h3>
-          <p><strong>Kreuze</strong> bei jeder Frage alle richtigen Aussagen an. Eine Frage zählt nur, wenn sie vollständig richtig ist.</p>
+          <h3 id="task3-title">Aufgabe 3 – Multiple Choice <span class="task-points" id="task3-points">5 Punkte</span></h3>
+          <p><strong>Kreuze</strong> bei jeder Frage alle richtigen Aussagen an und prüfe die Frage. Eine Frage zählt nur, wenn sie beim ersten Prüfen vollständig richtig ist.</p>
           <div id="mc-questions" class="final-quiz" aria-label="Multiple-Choice-Fragen des Tests"></div>
         </section>
 
         <section class="task-card" aria-labelledby="task4-title">
-          <h3 id="task4-title">Aufgabe 4 – Neues Foto zuordnen <span class="task-points">3 Aspekte</span></h3>
+          <h3 id="task4-title">Aufgabe 4 – Neues Foto zuordnen <span class="task-points" id="task4-points">3 Aspekte</span></h3>
           <label class="describe-label" for="describe-foto">In <code>users</code> hat Samira die <code>id</code> 7. Ein neues Foto hat <code>photos.id = 42</code> und soll ihr gehören. <strong>Beschreibe</strong>, welchen Wert <code>photos.user_id</code> erhält, worauf dieser Wert verweist und warum die Foto-ID dafür nicht genügt.</label>
           <textarea id="describe-foto" class="describe-input" maxlength="3000" rows="6" placeholder="photos.user_id erhält …"></textarea>
-          <p class="describe-counter"><span id="describe-foto-count">0 von 3000 Zeichen</span></p>
-          <p class="privacy-note"><strong>Hinweis:</strong> Gib keine personenbezogenen Daten ein. Deine Antworten in den Aufgaben 4 und 5 werden nach der Abgabe zur automatischen Auswertung an den Skriptserver und dort an ein KI-System übertragen.</p>
+          <div class="describe-counter"><span id="describe-foto-count">0 von 3000 Zeichen</span><button class="primary-button" id="check-foto" type="button">Antwort prüfen</button></div>
+          <p class="privacy-note"><strong>Hinweis:</strong> Gib keine personenbezogenen Daten ein. Deine Antworten in den Aufgaben 4 und 5 werden beim Prüfen zur automatischen Auswertung an den Skriptserver und dort an ein KI-System übertragen.</p>
+          <div id="describe-foto-feedback" class="feedback quiz-feedback" role="status" aria-live="polite" hidden></div>
         </section>
 
         <section class="task-card" aria-labelledby="task5-title">
-          <h3 id="task5-title">Aufgabe 5 – 1:n-Beziehung übertragen <span class="task-points">3 Aspekte</span></h3>
+          <h3 id="task5-title">Aufgabe 5 – 1:n-Beziehung übertragen <span class="task-points" id="task5-points">3 Aspekte</span></h3>
           <label class="describe-label" for="describe-regal">In einer Bibliothek stehen in einem Regal mehrere Bücher. Jedes Buch steht in genau einem Regal. <strong>Beschreibe</strong> die Beziehung in beiden Richtungen und gib an, wo im Klassendiagramm <code>1</code> und <code>n</code> stehen.</label>
           <textarea id="describe-regal" class="describe-input" maxlength="3000" rows="6" placeholder="Ein Regal kann …"></textarea>
-          <p class="describe-counter"><span id="describe-regal-count">0 von 3000 Zeichen</span></p>
+          <div class="describe-counter"><span id="describe-regal-count">0 von 3000 Zeichen</span><button class="primary-button" id="check-regal" type="button">Antwort prüfen</button></div>
+          <div id="describe-regal-feedback" class="feedback quiz-feedback" role="status" aria-live="polite" hidden></div>
         </section>
 
-        <div class="action-row test-submit-row">
-          <button id="submit-test" class="primary-button" type="submit">Test abgeben und auswerten</button>
-        </div>
-      </form>
+      </div>
 
-      <section id="evaluation" class="step-panel summary-panel evaluation-panel" aria-labelledby="evaluation-title" hidden>
+      <section id="evaluation" class="step-panel summary-panel evaluation-panel" aria-labelledby="evaluation-title">
         <div class="step-heading">
           <span class="step-number complete">✓</span>
-          <div><p class="step-kicker">Auswertung</p><h2 id="evaluation-title">Dein Testergebnis</h2></div>
+          <div><p class="step-kicker">Übersicht</p><h2 id="evaluation-title">Dein Ergebnis</h2><p>Gewertet wird jeweils dein erster Prüfversuch. Danach kannst du weiter verbessern, bis alles stimmt.</p></div>
         </div>
         <p id="evaluation-total" class="evaluation-total" role="status" aria-live="polite"></p>
         <div id="evaluation-details" class="evaluation-details"></div>
         <div class="summary-actions test-actions">
-          <button class="secondary-button" id="print-evaluation" type="button">Auswertung drucken</button>
-          <button class="danger-button" id="reset-test" type="button">Test neu starten</button>
+          <button class="secondary-button" id="print-evaluation" type="button">Ergebnis drucken</button>
+          <button class="danger-button" id="reset-test" type="button">Quiz neu starten</button>
         </div>
       </section>
     </main>

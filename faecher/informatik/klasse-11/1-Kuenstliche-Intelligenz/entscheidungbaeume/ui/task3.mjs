@@ -774,7 +774,7 @@ function renderSemanticResult(result) {
   const box = document.querySelector("#algorithm-feedback");
   box.replaceChildren();
   box.hidden = false;
-  const complete = Number(result.points) >= 7;
+  const complete = Number(result.points) >= 4;
   box.className = `fish-semantic-feedback${complete ? " success" : ""}`;
   const heading = document.createElement("h3");
   heading.textContent = `${result.points} von ${result.maxPoints} Punkten – ${result.status}`;

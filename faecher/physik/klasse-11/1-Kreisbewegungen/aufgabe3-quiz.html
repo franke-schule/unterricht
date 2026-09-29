@@ -9,8 +9,8 @@
     <link rel="stylesheet" href="bewegung-koerpern.css?v=20260910a">
     <link rel="stylesheet" href="kraefte-bewegung.css?v=20260923a">
     <link rel="stylesheet" href="components/physics-notation.css?v=20260911a">
-    <link rel="stylesheet" href="aufgabe3-quiz.css?v=20260927a">
-    <script type="module" src="aufgabe3-quiz.mjs?v=20260927a"></script>
+    <link rel="stylesheet" href="aufgabe3-quiz.css?v=20260929b">
+    <script type="module" src="aufgabe3-quiz.mjs?v=20260929a"></script>
   </head>
   <body class="physics-revision-page force-revision-page physics-test-page">
     <div class="site-backdrop" aria-hidden="true"></div>
@@ -23,75 +23,79 @@
       <header class="physics-revision-hero">
         <p class="eyebrow">Kreisbewegungen · Test zu Aufgabe 3</p>
         <h1>Winkelgeschwindigkeit und Ursache der Kreisbewegung</h1>
-        <p>Bearbeite alle sechs Aufgaben. Die Auswertung erhältst du erst, wenn du den Test abgibst.</p>
+        <p>Bearbeite alle sechs Aufgaben und prüfe jede Aufgabe direkt mit ihrem Prüfen-Button. Gewertet wird jeweils dein erster Prüfversuch.</p>
       </header>
 
       <div class="test-progress" aria-label="Bearbeitungsstand">
-        <span id="progress-label">0 von 6 Aufgaben bearbeitet</span>
-        <strong id="progress-points">29 Punkte erreichbar</strong>
+        <span id="progress-label">0 von 6 Aufgaben geprüft</span>
+        <strong id="progress-points">Wertung: 0 von 29 Punkten</strong>
       </div>
 
-      <form id="quiz-test" class="physics-revision-panel physics-test-form" novalidate>
+      <div class="physics-revision-panel physics-test-form">
         <article class="physics-task-card" aria-labelledby="task1-title">
-          <h3 id="task1-title">Aufgabe 1 · Größen der Kreisbewegung <span class="task-points">6 Punkte</span></h3>
+          <h3 id="task1-title">Aufgabe 1 · Größen der Kreisbewegung <span class="task-points" id="task1-points">6 Punkte</span></h3>
           <p id="task1-instruction"><strong>Ziehe</strong> die passenden Begriffe aus dem Wortspeicher in die Lücken. Zwei Begriffe bleiben übrig.</p>
-          <p class="drag-help">Ohne Ziehen: Begriff antippen, dann Lücke antippen. Eine belegte Lücke zweimal antippen, um den Begriff zurückzulegen.</p>
+          <p class="drag-help" data-help="term-cloze">Ohne Ziehen: Begriff antippen, dann Lücke antippen. Eine belegte Lücke zweimal antippen, um den Begriff zurückzulegen.</p>
           <div id="term-cloze" class="physics-cloze" aria-describedby="task1-instruction"></div>
+          <div class="cloze-actions"><button class="physics-primary-button" id="check-term-cloze" type="button">Lückentext prüfen</button></div>
+          <div id="term-cloze-feedback" class="physics-feedback" role="status" aria-live="polite" hidden></div>
         </article>
 
         <article class="physics-task-card" aria-labelledby="task2-title">
-          <h3 id="task2-title">Aufgabe 2 · Was ändert sich? <span class="task-points">8 Punkte</span></h3>
+          <h3 id="task2-title">Aufgabe 2 · Was ändert sich? <span class="task-points" id="task2-points">8 Punkte</span></h3>
           <p id="task2-instruction">Ein Körper bewegt sich mit konstanter Winkelgeschwindigkeit auf einer Kreisbahn. <strong>Ordne</strong> jede Karte der passenden Spalte zu.</p>
-          <p class="drag-help">Ohne Ziehen: Karte antippen, dann Spalte antippen. Eine zugeordnete Karte zweimal antippen, um sie zurückzulegen.</p>
+          <p class="drag-help" data-help="situation-sort">Ohne Ziehen: Karte antippen, dann Spalte antippen. Eine zugeordnete Karte zweimal antippen, um sie zurückzulegen.</p>
           <div id="situation-sort" class="situation-sort" aria-describedby="task2-instruction"></div>
+          <div class="cloze-actions"><button class="physics-primary-button" id="check-situation-sort" type="button">Zuordnung prüfen</button></div>
+          <div id="situation-sort-feedback" class="physics-feedback" role="status" aria-live="polite" hidden></div>
         </article>
 
         <article class="physics-task-card" aria-labelledby="task3-title">
-          <h3 id="task3-title">Aufgabe 3 · Multiple Choice <span class="task-points">5 Punkte</span></h3>
-          <p><strong>Wähle</strong> bei jeder Frage alle richtigen Aussagen aus. Bei manchen Fragen sind mehrere Aussagen richtig. Eine Frage zählt nur, wenn sie vollständig richtig ist.</p>
+          <h3 id="task3-title">Aufgabe 3 · Multiple Choice <span class="task-points" id="task3-points">5 Punkte</span></h3>
+          <p><strong>Wähle</strong> bei jeder Frage alle richtigen Aussagen aus und prüfe die Frage. Bei manchen Fragen sind mehrere Aussagen richtig. Eine Frage zählt nur, wenn sie beim ersten Prüfen vollständig richtig ist.</p>
           <div id="mc-questions" class="physics-multiple-choice" aria-label="Multiple-Choice-Aufgaben des Tests"></div>
         </article>
 
         <article class="physics-task-card" aria-labelledby="task4-title">
-          <h3 id="task4-title">Aufgabe 4 · Karussell beschreiben <span class="task-points">4 Aspekte</span></h3>
+          <h3 id="task4-title">Aufgabe 4 · Karussell beschreiben <span class="task-points" id="task4-points">4 Aspekte</span></h3>
           <section class="physics-semantic-task" aria-labelledby="task4-title">
             <label for="describe-karussell">Zwei Kinder sitzen auf einem Karussell, das sich gleichmäßig dreht. Kind A sitzt nahe der Mitte, Kind B am äußeren Rand. <strong>Beschreibe</strong>, wie sich ihre Winkelgeschwindigkeiten und ihre Bahngeschwindigkeiten unterscheiden, und <strong>begründe</strong> deine Antwort.</label>
             <textarea id="describe-karussell" maxlength="3000" rows="6" placeholder="Die Winkelgeschwindigkeit …"></textarea>
-            <div class="physics-semantic-task__actions"><span id="describe-karussell-count">0 von 3000 Zeichen</span></div>
-            <p class="privacy-note"><strong>Hinweis:</strong> Gib keine personenbezogenen Informationen ein. Deine Antworten in den Aufgaben 4 bis 6 werden zur automatischen Auswertung an den Skriptserver und dort an ein KI-System übertragen.</p>
+            <div class="physics-semantic-task__actions"><span id="describe-karussell-count">0 von 3000 Zeichen</span><button id="check-karussell" type="button">Antwort prüfen</button></div>
+            <p class="privacy-note"><strong>Hinweis:</strong> Gib keine personenbezogenen Informationen ein. Deine Antworten in den Aufgaben 4 bis 6 werden beim Prüfen zur automatischen Auswertung an den Skriptserver und dort an ein KI-System übertragen.</p>
+            <div id="describe-karussell-feedback" class="physics-semantic-feedback" role="status" aria-live="polite" hidden></div>
           </section>
         </article>
 
         <article class="physics-task-card" aria-labelledby="task5-title">
-          <h3 id="task5-title">Aufgabe 5 · Ursache der Kreisbewegung beschreiben <span class="task-points">3 Aspekte</span></h3>
+          <h3 id="task5-title">Aufgabe 5 · Ursache der Kreisbewegung beschreiben <span class="task-points" id="task5-points">3 Aspekte</span></h3>
           <section class="physics-semantic-task" aria-labelledby="task5-title">
             <label for="describe-ursache">Ein Körper bewegt sich mit gleichbleibendem Betrag der Geschwindigkeit auf einer Kreisbahn. <strong>Beschreibe</strong>, warum trotzdem eine Kraft auf ihn wirken muss und in welche Richtung sie zeigt.</label>
             <textarea id="describe-ursache" maxlength="3000" rows="6" placeholder="Bei einer Kreisbewegung …"></textarea>
-            <div class="physics-semantic-task__actions"><span id="describe-ursache-count">0 von 3000 Zeichen</span></div>
+            <div class="physics-semantic-task__actions"><span id="describe-ursache-count">0 von 3000 Zeichen</span><button id="check-ursache" type="button">Antwort prüfen</button></div>
+            <div id="describe-ursache-feedback" class="physics-semantic-feedback" role="status" aria-live="polite" hidden></div>
           </section>
         </article>
 
         <article class="physics-task-card" aria-labelledby="task6-title">
-          <h3 id="task6-title">Aufgabe 6 · Die Schnur reißt <span class="task-points">3 Aspekte</span></h3>
+          <h3 id="task6-title">Aufgabe 6 · Die Schnur reißt <span class="task-points" id="task6-points">3 Aspekte</span></h3>
           <section class="physics-semantic-task" aria-labelledby="task6-title">
             <label for="describe-schnur">Eine Kugel wird auf einem glatten Tisch an einer Schnur im Kreis herumgeführt. Plötzlich reißt die Schnur. <strong>Beschreibe</strong>, wie sich die Kugel danach bewegt, und <strong>begründe</strong> deine Antwort.</label>
             <textarea id="describe-schnur" maxlength="3000" rows="6" placeholder="Nach dem Reißen …"></textarea>
-            <div class="physics-semantic-task__actions"><span id="describe-schnur-count">0 von 3000 Zeichen</span></div>
+            <div class="physics-semantic-task__actions"><span id="describe-schnur-count">0 von 3000 Zeichen</span><button id="check-schnur" type="button">Antwort prüfen</button></div>
+            <div id="describe-schnur-feedback" class="physics-semantic-feedback" role="status" aria-live="polite" hidden></div>
           </section>
         </article>
 
-        <div class="test-submit-row">
-          <button id="submit-test" class="physics-primary-button" type="submit">Test abgeben und auswerten</button>
-        </div>
-      </form>
+      </div>
 
-      <section id="evaluation" class="physics-revision-panel test-evaluation" aria-labelledby="evaluation-title" hidden>
-        <div class="physics-card-heading"><p class="eyebrow">Auswertung</p><h2 id="evaluation-title">Dein Testergebnis</h2></div>
+      <section id="evaluation" class="physics-revision-panel test-evaluation" aria-labelledby="evaluation-title">
+        <div class="physics-card-heading"><p class="eyebrow">Übersicht</p><h2 id="evaluation-title">Dein Ergebnis</h2><p>Gewertet wird jeweils dein erster Prüfversuch. Danach kannst du weiter verbessern, bis alles stimmt.</p></div>
         <p id="evaluation-total" class="evaluation-total" role="status" aria-live="polite"></p>
         <div id="evaluation-details" class="evaluation-details"></div>
         <div class="test-actions">
-          <button class="physics-primary-button secondary-button" id="print-evaluation" type="button">Auswertung drucken</button>
-          <button class="physics-primary-button secondary-button" id="reset-test" type="button">Test neu starten</button>
+          <button class="physics-primary-button secondary-button" id="print-evaluation" type="button">Ergebnis drucken</button>
+          <button class="physics-primary-button secondary-button" id="reset-test" type="button">Quiz neu starten</button>
         </div>
       </section>
     </main>

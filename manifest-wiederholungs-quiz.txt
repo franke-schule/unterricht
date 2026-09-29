@@ -109,24 +109,50 @@ Zusammensetzung (Vorlage: aufgabe3-quiz):
      sie vollständig richtig ist.
   4. bis 6. Zwei bis drei Beschreibe-Aufgaben (Abschnitt 3).
 
-Weitere Regeln:
+Prüfen und Rückmeldung je Aufgabe (kein Abgabe-Button am Ende):
 
-  - Oben eine Fortschrittsanzeige („x von n Aufgaben bearbeitet“, erreichbare
-    Punktzahl), unten der Button „Test abgeben und auswerten“. Bei
-    unvollständiger Bearbeitung vor der Abgabe nachfragen.
-  - Rückmeldung erst nach der Abgabe. Danach sind alle Eingaben gesperrt, und
-    eine Auswertung zeigt für jede Aufgabe Fragestellung, eigene Antwort,
-    richtige Lösung und bei Fehlern das fachliche Warum
-    (manifest-quizaufgaben.txt, Abschlussübersicht).
+  - Jede Aufgabe hat wie in den übrigen Lernmodulen einen eigenen
+    Prüfen-Button direkt darunter („Lückentext prüfen“, „Zuordnung prüfen“,
+    „Antwort prüfen“). Im Multiple Choice bekommt jede Frage einen eigenen
+    Button „Antwort prüfen“. Die Rückmeldung erscheint sofort unter der
+    Aufgabe (Klassen physics-feedback bzw. physics-semantic-feedback oder die
+    Entsprechung des Fachs, role="status", aria-live="polite").
+  - Geprüft wird erst, wenn die Aufgabe vollständig bearbeitet ist (alle
+    Lücken belegt, alle Karten zugeordnet, mindestens ein Kästchen, Text ab
+    Mindestlänge). Sonst erscheint ein neutraler Hinweis, und der Versuch
+    zählt nicht.
+  - Rückmeldung in drei Stufen: korrekt, teilweise korrekt, noch nicht
+    korrekt. Falsch gesetzte Karten werden mit ✗ markiert, richtige mit ✓.
+    Zu jeder falschen Karte bzw. falsch gewählten Aussage steht das fachliche
+    Warum (reason). Die richtige Lösung wird nicht vorgesagt; bei fehlenden
+    richtigen Aussagen heißt es „Es fehlt noch mindestens eine richtige
+    Aussage.“ Die Erklärung why einer MC-Frage erscheint bei korrekter
+    Antwort.
+  - Nach einer Rückmeldung darf verbessert und erneut geprüft werden. Sobald
+    die Eingabe geändert wird, verschwinden die ✓/✗-Markierungen dieser
+    Aufgabe. Ist eine Aufgabe vollständig richtig, wird sie gesperrt und ihr
+    Prüfen-Button ausgeblendet; der Fokus geht auf die Rückmeldung.
+  - Bepunktung: Gewertet wird der erste gültige Prüfversuch jeder Aufgabe
+    (bei Beschreibe-Aufgaben die erste erfolgreiche Serverbewertung). Das
+    steht in der Kopfzeile der Seite. Die Punktzahl einer geprüften Aufgabe
+    erscheint in ihrer Überschrift („Wertung: 4 von 6 Punkten“).
+  - Oben eine Fortschrittsanzeige („x von n Aufgaben geprüft“, „Wertung: y
+    von z Punkten“), unten eine Übersicht „Dein Ergebnis“ mit der Wertung je
+    Aufgabe („noch nicht geprüft“ für offene Aufgaben).
   - Richtig und falsch nie nur über Farbe: Symbol plus Text (✓/✗, „richtig“/
     „falsch“ für Screenreader).
-  - Buttons „Auswertung drucken“ und „Test neu starten“ (löscht auch den
-    gespeicherten Stand).
+  - Buttons „Ergebnis drucken“ und „Quiz neu starten“ (löscht auch den
+    gespeicherten Stand und die Wertung).
   - Zwischenstände im localStorage sichern (manifest-allgemein.txt
     Abschnitt 2), Schlüssel:
       <fach><klasse>-<einheit>-aufgabeN-test-v1
       z. B. physik11-kreisbewegungen-aufgabe3-test-v1
-    Gespeicherte Einträge vor dem Wiederherstellen prüfen.
+    Gespeicherte Einträge vor dem Wiederherstellen prüfen. Gespeichert werden
+    auch die Prüfstände (checked), die Wertung des ersten Versuchs (first)
+    und die letzte Serverbewertung samt zugehörigem Text (ai, aiText); nach
+    dem Neuladen erscheinen die Rückmeldungen wieder. Der Stand trägt
+    version: 2; ältere Stände aus der Zeit mit Abgabe-Button liefern nur
+    ihre Eingaben.
   - Kein Sicherungsblatt, kein Lehrercode und kein zusätzliches
     Abschlussquiz: Das Wiederholungs-Quiz ist selbst die Abfrage.
 
@@ -142,18 +168,20 @@ Weitere Regeln:
     vorhandene Client-Anbindung evaluateSemanticAnswer aus
     faecher/informatik/klasse-11/1-Kuenstliche-Intelligenz/perzeptron/ui/
     semantic-answer.mjs. Keine eigene KI-Pipeline.
-  - Die Antworten werden erst nach der Abgabe übertragen, und zwar
-    nacheinander, nicht gleichzeitig, damit eine ganze Klasse den Server
-    nicht mit gebündelten Anfragen belastet.
+  - Die Antwort wird erst beim Drücken von „Antwort prüfen“ übertragen.
+    Mehrere Prüfanfragen laufen über eine Warteschlange nacheinander, nicht
+    gleichzeitig, damit eine ganze Klasse den Server nicht mit gebündelten
+    Anfragen belastet. Eine unveränderte, bereits bewertete Antwort wird
+    nicht erneut gesendet; das Feld ist während der Prüfung schreibgeschützt.
   - Unter der ersten Beschreibe-Aufgabe steht der Datenschutzhinweis
     (keine personenbezogenen Daten, Übertragung an Skriptserver und
     KI-System) und nennt alle betroffenen Aufgaben.
   - Mindestlänge (Vorlage: 30 Zeichen). Kürzere Antworten werden nicht
-    übertragen, sondern mit 0 Aspekten und einem Kurzhinweis zur Lösung
-    ausgewertet.
-  - Ist der Server nicht erreichbar, zeigt die Auswertung „Bewertung durch
-    Lehrkraft“, und die Gesamtpunktzahl nennt die fehlenden Aufgaben
-    („… Punkte (ohne Aufgabe 6)“).
+    übertragen; es erscheint der Hinweis, mindestens 30 Zeichen zu schreiben
+    und auf alle Aspekte einzugehen. Der Versuch zählt nicht.
+  - Ist der Server nicht erreichbar, nennt die Rückmeldung den Fehler und
+    bittet, es gleich noch einmal zu versuchen. Der Versuch zählt nicht, die
+    Aufgabe bleibt „noch nicht geprüft“.
 
 Einträge auf dem Skriptserver, je Beschreibe-Aufgabe:
 
@@ -212,7 +240,7 @@ Regeln:
     verweist.
   - Vor der Übergabe: node --check für das Skript, die Tests in apps-script/
     tests und die Modultests der Einheit ausführen, git diff --check, und die
-    Seite im Browser bearbeiten, abgeben und die Auswertung prüfen (Desktop
+    Seite im Browser bearbeiten, jede Aufgabe prüfen und die Rückmeldungen kontrollieren (Desktop
     und Smartphone).
 
 
@@ -327,7 +355,10 @@ anlegen.
       mehreren richtigen Antworten.
   [ ] Zwei bis drei Beschreibe-Aufgaben, jeweils mit Tasks.gs-Eintrag,
       Config.gs-Zeile und Eintrag in code-routing.test.js.
-  [ ] Auswertung erst nach Abgabe, mit richtiger Lösung und Begründung.
+  [ ] Jede Aufgabe (jede MC-Frage) hat einen eigenen Prüfen-Button, kein
+      Abgabe-Button; Rückmeldung dreistufig mit fachlichem Warum, ohne die
+      Lösung vorzusagen; gelöste Aufgaben sind gesperrt; gewertet wird der
+      erste Prüfversuch.
   [ ] Zwischenstände bleiben erhalten; Neustart löscht sie.
   [ ] Quiz ist nirgends verlinkt, robots noindex gesetzt.
   [ ] aufgabeN-quiz-loeschen.txt ist vollständig und nennt auch die
