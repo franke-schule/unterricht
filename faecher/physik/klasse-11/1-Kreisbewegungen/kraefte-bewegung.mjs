@@ -1,10 +1,12 @@
-import { createForceArrowGrid } from "./components/point-vector-grid.mjs";
+import { createForceArrowGrid } from "./components/point-vector-grid.mjs?v=20260930a";
 import { setupPhysicsSemanticTask } from "./components/physics-semantic-task.mjs";
 import { setupPhysicsStepTabs } from "./components/physics-step-tabs.mjs";
 import { enableTokenDrag, wasDragged } from "./components/token-drag.mjs";
 import { appendPhysicsText, physicsTextSpan } from "./components/physics-notation.mjs?v=20260911a";
+import { createPhysicsTaskProgress } from "./components/physics-task-progress.mjs?v=20260930a";
 
 const SCRIPT_SERVER_URL = "https://script.google.com/macros/s/AKfycby8RWL6uYrKZyoJ6m2GRpWyRmXjwsdskyCiqzKpRhIK5-wrDl-9lWWk8CiAGaVMoy0x/exec";
+const taskProgress = createPhysicsTaskProgress("aufgabe2");
 export { createForceArrowGrid, setupPhysicsSemanticTask, setupPhysicsStepTabs };
 
 function unlockSolution(event, expectedCode, downloadLinkId, messageId) {
@@ -120,9 +122,10 @@ function drawCrash(layer, { toSvgPoint, svgElement }) {
 }
 
 function setupForceDrawingTasks() {
-  const gridConfig = { xRange: { min: -3, max: 3 }, yRange: { min: -3, max: 3 }, isSelectablePoint: isForceArrowPoint };
+  const gridConfig = { xRange: { min: -3, max: 3 }, yRange: { min: -3, max: 3 }, isSelectablePoint: isForceArrowPoint, onChange: () => taskProgress.save() };
   const parachute = createForceArrowGrid(document.getElementById("parachute-force-grid"), { ...gridConfig, origin: { x: 0, y: 0 }, renderIllustration: drawParachutist, directionKey: directionFromOrigin, label: "Fallschirmspringer: Kraftpfeile vom Bezugspunkt an der Person" });
   const crash = createForceArrowGrid(document.getElementById("crash-force-grid"), { ...gridConfig, origin: { x: 0, y: 0 }, renderIllustration: drawCrash, directionKey: directionFromOrigin, label: "Crashtest: Kraftpfeile am Kontaktpunkt zwischen Auto und Wand" });
+  [parachute, crash].forEach((grid, index) => taskProgress.registerPart(`force-grid-${index}`, () => grid.getSelections(), (saved) => grid.setSelections(saved)));
   document.getElementById("check-parachute-forces").addEventListener("click", () => {
     const selections = parachute.getSelections();
     const up = selections.find((selection) => selection.direction === "up");
@@ -200,7 +203,21 @@ function setupLawTermMatching() {
     picked = null;
     [from, toSymbol].filter(Boolean).forEach(hideFeedback);
     render();
+    taskProgress.save();
   }
+
+  taskProgress.registerPart("law-term-matching", () => [...assignment.entries()], (saved) => {
+    if (!Array.isArray(saved) || saved.length !== terms.length) return;
+    const symbols = new Set(terms.map((term) => term.symbol));
+    const allowed = new Set(quantities);
+    const entries = saved.filter((entry) => Array.isArray(entry) && entry.length === 2);
+    if (entries.length !== terms.length || entries.some(([symbol, value]) => !symbols.has(symbol) || (value && !allowed.has(value)))) return;
+    const values = entries.map(([, value]) => value).filter(Boolean);
+    if (new Set(values).size !== values.length) return;
+    assignment.clear(); entries.forEach(([symbol, value]) => assignment.set(symbol, value));
+    picked = null;
+    render();
+  });
 
   function render() {
     const used = [...assignment.values()];
@@ -339,7 +356,17 @@ function setupLawCloze() {
     picked = null;
     feedback.hidden = true;
     render();
+    taskProgress.save();
   }
+
+  taskProgress.registerPart("law-cloze", () => [...choices], (saved) => {
+    if (!Array.isArray(saved) || saved.length !== choices.length || saved.some((value) => value !== "" && !terms.includes(value))) return;
+    const values = saved.filter(Boolean);
+    if (new Set(values).size !== values.length) return;
+    choices.splice(0, choices.length, ...saved);
+    picked = null;
+    render();
+  });
 
   function render() {
     bank.replaceChildren(...bankOrder.filter((term) => !choices.includes(term)).map((term) => {
@@ -422,7 +449,13 @@ function setupSortableSteps() {
   const steps = [{ id: "mass", text: "Masse umrechnen: 100 g = 0,100 kg" }, { id: "formula", text: "Formel nach a umstellen: a = {{F|m}}" }, { id: "insert", text: "Werte einsetzen: a = {{1,2 N|0,100 kg}}" }, { id: "calculate", text: "Berechnen und gültige Ziffern beachten: a = 12 {{m/s²}}" }];
   const target = document.getElementById("acceleration-steps");
   const order = ["insert", "mass", "calculate", "formula"];
-  const render = () => { target.replaceChildren(...order.map((id) => { const definition = steps.find((step) => step.id === id); const item = document.createElement("div"); item.className = "sortable-step"; item.draggable = true; item.dataset.stepId = id; const text = document.createElement("span"); appendPhysicsText(text, definition.text); const controls = document.createElement("span"); controls.className = "sortable-step-controls"; [["↑", -1, "Nach oben"], ["↓", 1, "Nach unten"]].forEach(([label, offset, name]) => { const button = document.createElement("button"); button.type = "button"; button.className = "sort-step-button"; button.textContent = label; button.setAttribute("aria-label", `${name}: ${definition.text}`); button.addEventListener("click", () => { const index = order.indexOf(id); const next = index + offset; if (next < 0 || next >= order.length) return; [order[index], order[next]] = [order[next], order[index]]; render(); }); controls.append(button); }); item.append(text, controls); item.addEventListener("dragstart", (event) => { event.dataTransfer.effectAllowed = "move"; event.dataTransfer.setData("text/plain", id); }); item.addEventListener("dragover", (event) => { event.preventDefault(); item.classList.add("is-drop-target"); }); item.addEventListener("dragleave", () => item.classList.remove("is-drop-target")); item.addEventListener("drop", (event) => { event.preventDefault(); item.classList.remove("is-drop-target"); const dragged = event.dataTransfer.getData("text/plain"); const from = order.indexOf(dragged); const to = order.indexOf(id); if (from < 0 || to < 0 || from === to) return; order.splice(to, 0, order.splice(from, 1)[0]); render(); }); return item; })); };
+  const render = () => { target.replaceChildren(...order.map((id) => { const definition = steps.find((step) => step.id === id); const item = document.createElement("div"); item.className = "sortable-step"; item.draggable = true; item.dataset.stepId = id; const text = document.createElement("span"); appendPhysicsText(text, definition.text); const controls = document.createElement("span"); controls.className = "sortable-step-controls"; [["↑", -1, "Nach oben"], ["↓", 1, "Nach unten"]].forEach(([label, offset, name]) => { const button = document.createElement("button"); button.type = "button"; button.className = "sort-step-button"; button.textContent = label; button.setAttribute("aria-label", `${name}: ${definition.text}`); button.addEventListener("click", () => { const index = order.indexOf(id); const next = index + offset; if (next < 0 || next >= order.length) return; [order[index], order[next]] = [order[next], order[index]]; render(); }); controls.append(button); }); item.append(text, controls); item.addEventListener("dragstart", (event) => { event.dataTransfer.effectAllowed = "move"; event.dataTransfer.setData("text/plain", id); }); item.addEventListener("dragover", (event) => { event.preventDefault(); item.classList.add("is-drop-target"); }); item.addEventListener("dragleave", () => item.classList.remove("is-drop-target")); item.addEventListener("drop", (event) => { event.preventDefault(); item.classList.remove("is-drop-target"); const dragged = event.dataTransfer.getData("text/plain"); const from = order.indexOf(dragged); const to = order.indexOf(id); if (from < 0 || to < 0 || from === to) return; order.splice(to, 0, order.splice(from, 1)[0]); render(); taskProgress.save(); }); return item; })); };
+  taskProgress.registerPart("acceleration-step-order", () => [...order], (saved) => {
+    const ids = new Set(steps.map((step) => step.id));
+    if (!Array.isArray(saved) || saved.length !== steps.length || saved.some((id) => !ids.has(id)) || new Set(saved).size !== ids.size) return;
+    order.splice(0, order.length, ...saved);
+    render();
+  });
   render();
   document.getElementById("check-acceleration-steps").addEventListener("click", () => { if (order.every((id, index) => id === steps[index].id)) setFeedback("acceleration-steps-feedback", "success", "Korrekt: Umrechnung, Umstellung, Einsetzen und Berechnung sind richtig geordnet."); else setFeedback("acceleration-steps-feedback", "error", "Noch nicht korrekt. Beginne mit der Umrechnung der Masse und setze danach die Formel um."); });
 }
@@ -502,3 +535,4 @@ function forceBalanceFeedback(result) {
 }
 
 setupPhysicsSemanticTask({ answerId: "force-balance-answer", buttonId: "check-force-balance", feedbackId: "force-balance-feedback", countId: "force-balance-count", taskId: "ph11-kreisbewegungen-kraeftegleichgewicht-beschreibung", serverUrl: SCRIPT_SERVER_URL, feedbackBuilder: forceBalanceFeedback, shortAnswerHint: "Formuliere eine etwas ausführlichere Begründung zu beiden Abbildungen." });
+taskProgress.restore();

@@ -135,6 +135,7 @@ export function createPointVectorGrid(container, config) {
     yRange = { min: -4, max: 4 },
     label = "Koordinatensystem zur Vektoraddition",
     onSelect = () => {},
+    onChange = () => {},
   } = config;
 
   if (!container || !pointInRange(origin, xRange, yRange)) {
@@ -284,6 +285,7 @@ export function createPointVectorGrid(container, config) {
     selection = { x: point.x, y: point.y };
     renderResult();
     onSelect({ ...selection });
+    onChange(selection ? { ...selection } : null);
   }
 
   function focusGridPoint(point) {
@@ -337,6 +339,7 @@ export function createPointVectorGrid(container, config) {
   clearButton.addEventListener("click", () => {
     selection = null;
     renderResult();
+    onChange(null);
   });
 
   wrapper.append(svg, status, actions);
@@ -350,6 +353,12 @@ export function createPointVectorGrid(container, config) {
     },
     getSelection() {
       return selection ? { ...selection } : null;
+    },
+    setSelection(point) {
+      selection = point && pointInRange(point, xRange, yRange) && gridPointKey(point) !== gridPointKey(origin)
+        ? { x: point.x, y: point.y }
+        : null;
+      renderResult();
     },
   };
 }
@@ -389,6 +398,7 @@ export function createForceArrowGrid(container, config) {
     label = "Abbildung zum Einzeichnen von Kräften",
     arrowKinds,
     kindLegend,
+    onChange = () => {},
   } = config;
 
   if (!container || !pointInRange(origin, xRange, yRange)) {
@@ -466,6 +476,7 @@ export function createForceArrowGrid(container, config) {
         activeKindId = kind.id;
         rebuildPointLayer();
         renderKinds();
+        onChange({ activeKindId, selections: [...selections.entries()].map(([kind, point]) => ({ kind, ...point })) });
       });
       const text = document.createElement("span");
       text.append(document.createTextNode(`${kind.name} ${kind.symbol}`));
@@ -563,6 +574,7 @@ export function createForceArrowGrid(container, config) {
         selections.set(activeKindId, { x: point.x, y: point.y });
       }
       renderKinds();
+      onChange({ activeKindId, selections: [...selections.entries()].map(([kind, selected]) => ({ kind, ...selected })) });
     }
 
     function focusGridPoint(point) {
@@ -626,6 +638,7 @@ export function createForceArrowGrid(container, config) {
     clearButton.addEventListener("click", () => {
       selections.clear();
       renderKinds();
+      onChange({ activeKindId, selections: [] });
     });
 
     wrapper.append(picker, svg, status, actions);
@@ -653,6 +666,22 @@ export function createForceArrowGrid(container, config) {
               dy: selection.y - kindOrigin.y,
             };
           });
+      },
+      getActiveKind() { return activeKindId; },
+      setSelections(savedSelections, savedActiveKindId = arrowKinds[0].id) {
+        selections.clear();
+        if (Array.isArray(savedSelections)) savedSelections.forEach((selection) => {
+          const kind = findKind(selection?.kind);
+          if (kind && pointInRange(selection, xRange, yRange)
+            && gridPointKey(selection) !== gridPointKey(kind.origin ?? origin)
+            && isSelectablePoint(selection, kind.origin ?? origin, kind.id)) {
+            selections.set(kind.id, { x: selection.x, y: selection.y });
+          }
+        });
+        activeKindId = findKind(savedActiveKindId)?.id || arrowKinds[0].id;
+        picker.querySelectorAll("input[type=radio]").forEach((input) => { input.checked = input.value === activeKindId; });
+        rebuildPointLayer();
+        renderKinds();
       },
     };
   }
@@ -709,6 +738,7 @@ export function createForceArrowGrid(container, config) {
     }
     selections.set(direction, { x: point.x, y: point.y });
     render();
+    onChange(values());
   }
 
   function focusGridPoint(point) {
@@ -769,6 +799,7 @@ export function createForceArrowGrid(container, config) {
   clearButton.addEventListener("click", () => {
     selections.clear();
     render();
+    onChange([]);
   });
 
   wrapper.append(svg, status, actions);
@@ -782,6 +813,16 @@ export function createForceArrowGrid(container, config) {
     },
     getSelections() {
       return values();
+    },
+    setSelections(savedSelections) {
+      selections.clear();
+      if (Array.isArray(savedSelections)) savedSelections.forEach((selection) => {
+        if (!selection || !pointInRange(selection, xRange, yRange)
+          || gridPointKey(selection) === gridPointKey(origin) || !isSelectablePoint(selection)) return;
+        const direction = String(directionKey(selection));
+        if (selections.size < 2 || selections.has(direction)) selections.set(direction, { x: selection.x, y: selection.y });
+      });
+      render();
     },
   };
 }

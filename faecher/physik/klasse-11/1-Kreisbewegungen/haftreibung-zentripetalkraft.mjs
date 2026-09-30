@@ -1,6 +1,7 @@
 import { setupPhysicsStepTabs } from "./components/physics-step-tabs.mjs";
 import { addSquareRootSigns, appendPhysicsText, createIndexedSymbol, createQuotient, createSquareRoot, createUnitFraction } from "./components/physics-notation.mjs?v=20260922b";
 import { enableTokenDrag, wasDragged } from "./components/token-drag.mjs";
+import { createPhysicsTaskProgress } from "./components/physics-task-progress.mjs";
 
 function unlockSolution(event, expectedCode, downloadLinkId, messageId) {
   event.preventDefault();
@@ -123,7 +124,7 @@ const derivationDescriptionCards = [
   { id: "divide", text: "Durch r teilen", spoken: "Durch r teilen" },
 ];
 
-function setupDerivationSort() {
+function setupDerivationSort(progress) {
   const target = document.getElementById("derivation-sort");
   const feedback = document.getElementById("derivation-feedback");
   const remember = document.getElementById("derivation-remember");
@@ -154,6 +155,7 @@ function setupDerivationSort() {
     picked = null;
     feedback.hidden = true;
     render();
+    progress.save();
   }
 
   function renderCard(element, groupName, id) {
@@ -220,7 +222,7 @@ function setupDerivationSort() {
         const value = group.values[index];
         if (picked?.group === groupName && picked.from !== index) { place(groupName, picked.value, picked.from, index); slot.focus(); return; }
         if (picked?.group === groupName && picked.from === index) { place(groupName, value, index, -1); return; }
-        if (value) { picked = { group: groupName, value, from: index }; render(); slot.focus(); }
+        if (value) { picked = { group: groupName, value, from: index }; render(); progress.save(); slot.focus(); }
       });
       group.slots.push(slot);
       cell.append(slot);
@@ -249,6 +251,7 @@ function setupDerivationSort() {
           if (wasDragged(token)) return;
           picked = isPicked ? null : { group: groupName, value: card.id, from: -1 };
           render();
+          progress.save();
           if (picked) (group.slots.find((slot) => !slot.classList.contains("is-filled")) || group.slots[0])?.focus();
         });
         return token;
@@ -295,6 +298,40 @@ function setupDerivationSort() {
     picked = null;
     feedback.hidden = true;
     remember.hidden = true;
+    render();
+    progress.save();
+  });
+
+  progress.registerPart("derivation", () => ({
+    formula: [...groups.formula.values],
+    description: [...groups.description.values],
+    picked: picked ? { ...picked } : null,
+    remember: !remember.hidden,
+  }), (value) => {
+    if (!value || typeof value !== "object") return;
+    const restoreGroup = (name, values) => {
+      const allowed = new Set(groups[name].cards.map((card) => card.id));
+      if (!Array.isArray(values) || values.length !== derivationSteps.length) return;
+      const used = new Set();
+      const valid = values.map((id) => {
+        if (id === "") return "";
+        if (typeof id !== "string" || !allowed.has(id) || used.has(id)) return "";
+        used.add(id);
+        return id;
+      });
+      groups[name].values.splice(0, valid.length, ...valid);
+    };
+    restoreGroup("formula", value.formula);
+    restoreGroup("description", value.description);
+    const selected = value.picked;
+    if (selected && (selected.group === "formula" || selected.group === "description") && typeof selected.value === "string") {
+      const group = groups[selected.group];
+      const from = selected.from;
+      if (Number.isInteger(from) && from >= -1 && from < group.values.length && group.cards.some((card) => card.id === selected.value)) {
+        if ((from === -1 && !group.values.includes(selected.value)) || (from >= 0 && group.values[from] === selected.value)) picked = { group: selected.group, value: selected.value, from };
+      }
+    }
+    if (typeof value.remember === "boolean") remember.hidden = !value.remember;
     render();
   });
 
@@ -401,11 +438,13 @@ function setupFinalQuiz() {
 
 addSquareRootSigns();
 const stepTabs = setupPhysicsStepTabs();
+const progress = createPhysicsTaskProgress("aufgabe5");
 setupNextTabButtons(stepTabs);
 setupRealForces();
 setupCurveStatement();
 setupGripStatements();
-setupDerivationSort();
+setupDerivationSort(progress);
 setupSpeedTask(speedTasks.wet);
 setupSpeedTask(speedTasks.ice);
 setupFinalQuiz();
+progress.restore();

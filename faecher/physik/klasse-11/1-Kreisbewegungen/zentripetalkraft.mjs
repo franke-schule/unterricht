@@ -4,6 +4,92 @@ import { centripetalForce, circleVectors, clamp, shuffleIncorrect, tangentialSpe
 import { setupPhysicsSemanticTask } from "./components/physics-semantic-task.mjs";
 import { enableTokenDrag, wasDragged } from "./components/token-drag.mjs";
 
+const STORAGE_KEY = "physik11-kreisbewegungen-aufgabe4-v1";
+const persistentParts = new Map();
+const REMINDER_IDS = [
+  "proportion-remember", "formula-speed-remember", "formula-omega-remember",
+  "formula-omega-notebook-reminder", "definition-notebook-reminder", "summary-notebook-reminder",
+];
+
+function isRecord(value) {
+  return value !== null && typeof value === "object" && !Array.isArray(value);
+}
+
+function fieldKey(element) {
+  if (element.id) return element.id;
+  if (element.name && (element.type === "radio" || element.type === "checkbox")) return `${element.name}=${element.value}`;
+  const simulation = element.closest("[data-centripetal-simulation]");
+  if (simulation && element.dataset.cfInput) return `simulation:${simulation.dataset.centripetalSimulation}:${element.dataset.cfInput}`;
+  if (element.dataset.labelRow) return `label:${element.dataset.labelRow}`;
+  const quiz = element.closest(".physics-multiple-choice");
+  if (quiz && element.type === "checkbox") {
+    const question = element.closest("fieldset");
+    return `quiz:${quiz.id}:${[...quiz.querySelectorAll("fieldset")].indexOf(question)}:${element.value}`;
+  }
+  return "";
+}
+
+function taskFields() {
+  return [...document.querySelectorAll("input, textarea, select")]
+    .filter((element) => element.id !== "solution-code" && fieldKey(element));
+}
+
+function saveProgress() {
+  const fields = {};
+  taskFields().forEach((element) => {
+    fields[fieldKey(element)] = element.type === "checkbox" || element.type === "radio" ? element.checked : element.value;
+  });
+  const parts = {};
+  persistentParts.forEach(({ read }, id) => { parts[id] = read(); });
+  const tab = document.querySelector('[data-physics-tab][aria-selected="true"]')?.dataset.physicsTab;
+  const reminders = REMINDER_IDS.filter((id) => !document.getElementById(id).hidden);
+  try {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify({ fields, parts, tab, reminders }));
+  } catch {
+    // Die Aufgabe bleibt auch ohne verfügbaren Browserspeicher bedienbar.
+  }
+}
+
+function registerPersistentPart(id, read, restore) {
+  persistentParts.set(id, { read, restore });
+}
+
+function restoreProgress(stepTabs) {
+  let saved;
+  try { saved = JSON.parse(localStorage.getItem(STORAGE_KEY)); } catch { return; }
+  if (!isRecord(saved)) return;
+  if (isRecord(saved.parts)) persistentParts.forEach(({ restore }, id) => restore(saved.parts[id]));
+  if (isRecord(saved.fields)) {
+    // Erst die Auswahl wiederherstellen: ihr change-Handler setzt Simulationsregler zurück.
+    const fields = taskFields().sort((a, b) => Number(b.type === "radio") - Number(a.type === "radio"));
+    fields.forEach((element) => {
+      const value = saved.fields[fieldKey(element)];
+      if (element.type === "radio" || element.type === "checkbox") {
+        if (typeof value !== "boolean") return;
+        if (element.type === "radio" && !value) return;
+        element.checked = value;
+      } else if (element.tagName === "SELECT") {
+        if (typeof value !== "string" || ![...element.options].some((option) => option.value === value)) return;
+        element.value = value;
+      } else {
+        if (typeof value !== "string" || (element.maxLength >= 0 && value.length > element.maxLength)) return;
+        if (element.type === "range") {
+          const number = Number(value);
+          if (!Number.isFinite(number) || number < Number(element.min) || number > Number(element.max)) return;
+        }
+        element.value = value;
+      }
+      element.dispatchEvent(new Event(element.type === "radio" || element.type === "checkbox" || element.tagName === "SELECT" ? "change" : "input", { bubbles: true }));
+    });
+  }
+  if (Array.isArray(saved.reminders)) REMINDER_IDS.forEach((id) => {
+    if (saved.reminders.includes(id)) document.getElementById(id).hidden = false;
+  });
+  if (typeof saved.tab === "string" && [...document.querySelectorAll("[data-physics-tab]")].some((tab) => tab.dataset.physicsTab === saved.tab)) {
+    stepTabs.goToTab(saved.tab, false);
+  }
+}
+
 // ---- Unverändert aus kraefte-bewegung.mjs / winkelgeschwindigkeit-kreisbewegung.mjs übernommen ----
 
 function unlockSolution(event, expectedCode, downloadLinkId, messageId) {
@@ -540,6 +626,7 @@ function setupCloze({ targetId, sentenceParts, terms, distractors, feedbackId, c
     document.getElementById(feedbackId).hidden = true;
     hideRemember();
     render();
+    saveProgress();
   }
 
   function render() {
@@ -601,6 +688,14 @@ function setupCloze({ targetId, sentenceParts, terms, distractors, feedbackId, c
 
   target.append(bank, sentence);
   render();
+  registerPersistentPart(targetId, () => [...choices], (saved) => {
+    if (!Array.isArray(saved) || saved.length !== choices.length) return;
+    const allowed = new Set(allTerms.map((term) => term.key));
+    if (saved.some((value) => typeof value !== "string" || (value && !allowed.has(value)))) return;
+    if (new Set(saved.filter(Boolean)).size !== saved.filter(Boolean).length) return;
+    saved.forEach((value, index) => { choices[index] = value; });
+    render();
+  });
 
   document.getElementById(checkButtonId).addEventListener("click", () => {
     const correct = choices.filter((choice, index) => choice === terms[index].key).length;
@@ -621,6 +716,7 @@ function setupCloze({ targetId, sentenceParts, terms, distractors, feedbackId, c
     document.getElementById(feedbackId).hidden = true;
     hideRemember();
     render();
+    saveProgress();
     sentence.querySelector(".cloze-gap")?.focus();
   });
 }
@@ -882,6 +978,7 @@ function setupFormulaBuilder({ id, expected, alternativeExpected = [], distracto
         else if (slots[index].value) slots[index].value = "";
         hideRemember();
         render();
+        saveProgress();
       });
       button.addEventListener("dragover", (event) => event.preventDefault());
       button.addEventListener("drop", (event) => {
@@ -889,6 +986,7 @@ function setupFormulaBuilder({ id, expected, alternativeExpected = [], distracto
         slots[index].value = event.dataTransfer.getData("text/plain");
         hideRemember();
         render();
+        saveProgress();
       });
       return button;
     }
@@ -959,6 +1057,7 @@ function setupFormulaBuilder({ id, expected, alternativeExpected = [], distracto
       values = shuffleIncorrect(bankSource, bankSource);
       hideRemember();
       render();
+      saveProgress();
     });
 
     actions.append(check, reset);
@@ -966,6 +1065,13 @@ function setupFormulaBuilder({ id, expected, alternativeExpected = [], distracto
   }
 
   render();
+  registerPersistentPart(id, () => slots.map((slot) => slot.value), (saved) => {
+    if (!Array.isArray(saved) || saved.length !== slots.length) return;
+    if (saved.some((value) => typeof value !== "string" || (value && !bankSource.includes(value)))) return;
+    if (new Set(saved.filter(Boolean)).size !== saved.filter(Boolean).length) return;
+    saved.forEach((value, index) => { slots[index].value = value; });
+    render();
+  });
 }
 
 function setupCentripetalSpeedFormula() {
@@ -1267,3 +1373,10 @@ setupTask12();
 setupTask13();
 setupSummaryCloze();
 setupFinalQuiz();
+restoreProgress(physicsStepTabs);
+document.addEventListener("input", saveProgress);
+document.addEventListener("change", saveProgress);
+document.addEventListener("click", saveProgress);
+document.addEventListener("keydown", (event) => {
+  if (event.target.closest("[data-physics-tab]") && ["ArrowRight", "ArrowLeft", "Home", "End"].includes(event.key)) saveProgress();
+});

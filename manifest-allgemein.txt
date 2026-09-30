@@ -85,6 +85,9 @@ Lernmodule werden so gebaut, dass die Zwischenstaende der Schuelerinnen und
 Schueler beim Aufgabenwechsel erhalten bleiben. Wer zur Aufgabenuebersicht
 oder zu einer anderen Aufgabe wechselt und spaeter zurueckkehrt, findet seine
 Bearbeitung unveraendert vor.
+Jedes interaktive Lernmodul bindet dafuer eine wiederverwendbare
+Speicherkomponente ein. Sie erfasst die Eingaben und den Bearbeitungsstand
+automatisch; aufgabenspezifische Interaktionen werden an sie angebunden.
 
   - Im localStorage des Browsers speichern, mit einem eigenen, versionierten
     Schluessel pro Seite (z. B. informatik9-tabellenkalkulation-aufgabe2a-v1).
@@ -105,7 +108,9 @@ Bearbeitung unveraendert vor.
     tabellenkalkulation.js (Tabellenaufgaben),
     faecher/informatik/klasse-9/eingaben-speichern.js (Formularfelder) sowie
     die Speicherlogik in Informatik Klasse 10, Einheit Datenbanken, und
-    Informatik Klasse 11, Entscheidungsbaeume.
+    Informatik Klasse 11, Entscheidungsbaeume. Fuer Physik Klasse 11 dient
+    faecher/physik/klasse-11/1-Kreisbewegungen/components/physics-task-progress.mjs
+    als Vorlage.
 
 
 3. Sicherungsblaetter und Loesungsblaetter
@@ -417,6 +422,8 @@ Kurz-Checkliste fuer jede neue Aufgabe
   [ ] aufgabeN.html im passenden Themenordner angelegt.
   [ ] Menueeintrag ergaenzt.
   [ ] Allgemeine Navigation und Barrierearmut umgesetzt.
+  [ ] Speicherkomponente eingebunden; Eingaben und Bearbeitungsstand bleiben
+      nach Seitenwechsel erhalten.
   [ ] Fachmanifest angewendet.
   [ ] Sicherungsblatt und Lehrercode umgesetzt, falls ausdruecklich
       beauftragt (Abschnitt 3).

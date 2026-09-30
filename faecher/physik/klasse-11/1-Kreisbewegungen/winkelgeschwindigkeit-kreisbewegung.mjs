@@ -1,4 +1,5 @@
 import { setupPhysicsStepTabs } from "./components/physics-step-tabs.mjs";
+import { createPhysicsTaskProgress } from "./components/physics-task-progress.mjs?v=20260930a";
 import { setupPhysicsSemanticTask } from "./components/physics-semantic-task.mjs";
 import { enableTokenDrag, wasDragged } from "./components/token-drag.mjs";
 import { appendPhysicsText, createIndexedSymbol, physicsTextSpan } from "./components/physics-notation.mjs?v=20260912a";
@@ -27,6 +28,7 @@ function unlockSolution(event, expectedCode, downloadLinkId, messageId) {
 window.unlockSolution = unlockSolution;
 
 const SCRIPT_SERVER_URL ="https://script.google.com/macros/s/AKfycby8RWL6uYrKZyoJ6m2GRpWyRmXjwsdskyCiqzKpRhIK5-wrDl-9lWWk8CiAGaVMoy0x/exec";
+const taskProgress = createPhysicsTaskProgress("aufgabe3");
 
 function setFeedback(target, status, message) {
   const element = typeof target === "string" ? document.getElementById(target) : target;
@@ -192,6 +194,7 @@ function setupFormulaBuilder({ id, expected, equation, rememberId }) {
     selected = "";
     document.getElementById(rememberId).hidden = true;
     render();
+    taskProgress.save();
   };
   const render = () => {
     target.replaceChildren();
@@ -213,6 +216,19 @@ function setupFormulaBuilder({ id, expected, equation, rememberId }) {
     actions.append(check, reset);
     target.append(bank, line, actions, feedback);
   };
+  taskProgress.registerPart(id, () => ({ slots: slots.map((slot) => slot.value), bankOrder: [...values] }), (saved) => {
+    const allowed = new Set(expected);
+    if (!saved || !Array.isArray(saved.slots) || saved.slots.length !== slots.length
+      || saved.slots.some((value) => value !== "" && !allowed.has(value))) return;
+    const filled = saved.slots.filter(Boolean);
+    if (new Set(filled).size !== filled.length || !Array.isArray(saved.bankOrder)
+      || saved.bankOrder.length !== values.length || saved.bankOrder.some((value) => !allowed.has(value))
+      || new Set(saved.bankOrder).size !== values.length) return;
+    saved.slots.forEach((value, index) => { slots[index].value = value; });
+    values = [...saved.bankOrder];
+    selected = "";
+    render();
+  });
   render();
 }
 
@@ -292,7 +308,7 @@ function setupCentripetalCloze() {
   const expected = ["force", "magnitude", "direction", "motion", "inside", "direction"];
   const parts = ["Wirkt eine ", " auf einen Körper, ändert sich ", " und/oder ", ". Bei einer ", " wirkt die Zentripetalkraft nach ", ", denn es ändert sich ständig ", "."];
   const target = document.getElementById("centripetal-cloze"); const choices = new Array(expected.length).fill("");
-  const order = [...terms].sort(() => Math.random() - 0.5);
+  let order = [...terms].sort(() => Math.random() - 0.5);
   const textOf = (key) => terms.find((term) => term.key === key)?.text || "";
   const dragSelectors = { dropSelector: "#centripetal-cloze .cloze-gap", bankSelector: "#centripetal-cloze .cloze-term-bank" };
   let picked = null; // { value, from } mit from = Lückenindex oder -1 (Wortspeicher)
@@ -310,6 +326,7 @@ function setupCentripetalCloze() {
     document.getElementById("centripetal-cloze-feedback").hidden = true;
     document.getElementById("notebook-reminder").hidden = true;
     render();
+    taskProgress.save();
   }
 
   const render = () => {
@@ -367,6 +384,19 @@ function setupCentripetalCloze() {
 
   target.append(bank, sentence);
   render();
+  taskProgress.registerPart("centripetal-cloze", () => ({ choices: [...choices], bankOrder: order.map((term) => term.key) }), (saved) => {
+    const keys = new Set(terms.map((term) => term.key));
+    if (!saved || !Array.isArray(saved.choices) || saved.choices.length !== choices.length
+      || saved.choices.some((key) => key !== "" && !keys.has(key))) return;
+    const used = saved.choices.filter(Boolean);
+    if (new Set(used).size !== used.length || !Array.isArray(saved.bankOrder)
+      || saved.bankOrder.length !== terms.length || saved.bankOrder.some((key) => !keys.has(key))
+      || new Set(saved.bankOrder).size !== terms.length) return;
+    choices.splice(0, choices.length, ...saved.choices);
+    order = saved.bankOrder.map((key) => terms.find((term) => term.key === key));
+    picked = null;
+    render();
+  });
   const category = (key) => key.startsWith("direction") ? "direction" : key;
   document.getElementById("check-centripetal-cloze").addEventListener("click", () => { const correct = choices.filter((choice, index) => category(choice) === expected[index]).length; if (correct === expected.length) { setFeedback("centripetal-cloze-feedback", "success", "Korrekt: Der Merksatz ist vollständig und fachlich richtig."); document.getElementById("notebook-reminder").hidden = false; } else { document.getElementById("notebook-reminder").hidden = true; if (correct) setFeedback("centripetal-cloze-feedback", "partial", `${correct} von ${expected.length} Lücken stimmen. Prüfe besonders, was sich bei einer Kreisbewegung ändert.`); else setFeedback("centripetal-cloze-feedback", "error", "Noch nicht korrekt. Setze zunächst die Karten in die Lücken ein."); } });
   document.getElementById("reset-centripetal-cloze").addEventListener("click", () => { choices.fill(""); picked = null; document.getElementById("centripetal-cloze-feedback").hidden = true; document.getElementById("notebook-reminder").hidden = true; render(); sentence.querySelector(".cloze-gap")?.focus(); });
@@ -418,3 +448,4 @@ setupFrequency();
 setupPhysicsSemanticTask({ answerId: "centripetal-answer", buttonId: "check-centripetal", feedbackId: "centripetal-feedback", countId: "centripetal-count", taskId: "ph11-kreisbewegungen-zentripetalkraft-beschreibung", serverUrl: SCRIPT_SERVER_URL, feedbackBuilder: centripetalFeedback, minimumLength: 8, fallbackMaxPoints: 5 });
 setupCentripetalCloze();
 setupQuiz();
+taskProgress.restore();

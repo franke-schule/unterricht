@@ -1,9 +1,11 @@
-import { createPointVectorGrid } from "./components/point-vector-grid.mjs";
+import { createPointVectorGrid } from "./components/point-vector-grid.mjs?v=20260930a";
 import { setupPhysicsSemanticTask } from "./components/physics-semantic-task.mjs?v=20260910a";
 import { setupPhysicsStepTabs } from "./components/physics-step-tabs.mjs";
 import { appendPhysicsText, physicsTextSpan } from "./components/physics-notation.mjs?v=20260911a";
+import { createPhysicsTaskProgress } from "./components/physics-task-progress.mjs?v=20260930a";
 
 const SCRIPT_SERVER_URL = "https://script.google.com/macros/s/AKfycby8RWL6uYrKZyoJ6m2GRpWyRmXjwsdskyCiqzKpRhIK5-wrDl-9lWWk8CiAGaVMoy0x/exec";
+const taskProgress = createPhysicsTaskProgress("aufgabe1");
 
 export { createPointVectorGrid, setupPhysicsSemanticTask, setupPhysicsStepTabs };
 
@@ -81,7 +83,8 @@ function setupVectorTasks() {
     right: { host: "vector-grid-right", feedback: "vector-feedback-right", origin: { x: 0, y: 0 }, xRange: { min: -3, max: 7 }, yRange: { min: -3, max: 4 }, vectors: [{ x: -2, y: 2, label: "v₁" }, { x: 6, y: 0, label: "v₂" }], expected: { x: 4, y: 2 } },
   };
   Object.entries(configs).forEach(([key, config]) => {
-    const grid = createPointVectorGrid(document.getElementById(config.host), config);
+    const grid = createPointVectorGrid(document.getElementById(config.host), { ...config, onChange: () => taskProgress.save() });
+    taskProgress.registerPart(`vector-${key}`, () => grid.getSelection(), (saved) => grid.setSelection(saved));
     document.querySelector(`[data-vector-check="${key}"]`).addEventListener("click", () => {
       const selection = grid.getSelection();
       if (!selection) {
@@ -310,6 +313,12 @@ function setupOtherMatching() {
   bank.append(speedCard, accelerationCard);
   const list = document.getElementById("other-match-list");
   const verified = new Set();
+  const otherKeys = otherData.positions.flatMap((_, index) => [`speed-${index}`, `acceleration-${index}`]);
+  taskProgress.registerPart("other-matching-verified", () => [...verified], (saved) => {
+    if (!Array.isArray(saved) || saved.some((key) => !otherKeys.includes(key))) return;
+    verified.clear(); saved.forEach((key) => verified.add(key));
+    document.getElementById("other-resolution").hidden = verified.size !== otherKeys.length;
+  });
   otherData.positions.forEach((kind, index) => {
     const row = document.createElement("article");
     row.className = "other-match-row";
@@ -424,6 +433,11 @@ function setupQuiz() {
   ];
   const target = document.getElementById("physics-quiz");
   const verified = new Set();
+  taskProgress.registerPart("quiz-verified", () => [...verified], (saved) => {
+    if (!Array.isArray(saved) || saved.some((index) => !Number.isInteger(index) || index < 0 || index >= quizItems.length)) return;
+    verified.clear(); saved.forEach((index) => verified.add(index));
+    document.getElementById("module-summary").hidden = verified.size !== quizItems.length;
+  });
   const sameValues = (first, second) => first.length === second.length && first.every((value) => second.includes(value));
   quizItems.forEach((item, index) => {
     const fieldset = document.createElement("fieldset");
@@ -500,3 +514,4 @@ setupWayTask();
 setupOtherMatching();
 setupQuiz();
 setupPhysicsSemanticTask({ answerId: "motion-description-answer", buttonId: "check-motion-description", feedbackId: "motion-description-feedback", countId: "motion-description-count", taskId: "ph11-kreisbewegungen-bewegung-diagramm-beschreibung", serverUrl: SCRIPT_SERVER_URL });
+taskProgress.restore();

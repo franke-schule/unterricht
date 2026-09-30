@@ -6,7 +6,7 @@ const source = fs.readFileSync(new URL("../haftreibung-zentripetalkraft.mjs", im
 const css = fs.readFileSync(new URL("../haftreibung-zentripetalkraft.css", import.meta.url), "utf8");
 
 assert.match(html, /Aufgabe 5 – Die Haftreibungskraft als Zentripetalkraft/);
-assert.match(html, /haftreibung-zentripetalkraft\.mjs\?v=20260922c/);
+assert.match(html, /haftreibung-zentripetalkraft\.mjs\?v=20260930b/);
 assert.match(html, /haftreibung-zentripetalkraft\.css\?v=20260922b/);
 assert.equal((html.match(/data-physics-tab=/g) || []).length, 6);
 assert.equal((html.match(/data-physics-panel=/g) || []).length, 6);

@@ -1,7 +1,8 @@
-import { createForceArrowGrid } from "./components/point-vector-grid.mjs?v=20260922a";
+import { createForceArrowGrid } from "./components/point-vector-grid.mjs?v=20260930a";
 import { appendPhysicsText, physicsTextSpan } from "./components/physics-notation.mjs?v=20260922b";
 import { setupPhysicsStepTabs } from "./components/physics-step-tabs.mjs";
 import { setupPhysicsSemanticTask } from "./components/physics-semantic-task.mjs";
+import { createPhysicsTaskProgress } from "./components/physics-task-progress.mjs";
 
 const SCRIPT_SERVER_URL = "https://script.google.com/macros/s/AKfycby8RWL6uYrKZyoJ6m2GRpWyRmXjwsdskyCiqzKpRhIK5-wrDl-9lWWk8CiAGaVMoy0x/exec";
 
@@ -310,7 +311,7 @@ export function evaluateCarouselForces(selections) {
   return { status: "success", text: "Korrekt: {{F_S}} und {{F_G}} ergeben zusammen eine waagerechte Resultierende, die zur Drehachse zeigt. Sie wirkt als Zentripetalkraft {{F_Z}}. Mit {{F_G}} = m · g ≈ 0,74 kN gilt {{F_Z}} = {{F_G}} · tan 56° ≈ 1,1 kN und {{F_S}} = {{F_G|cos 56°}} ≈ 1,3 kN." };
 }
 
-function setupCarouselForcesTask() {
+function setupCarouselForcesTask(progress) {
   const grid = createForceArrowGrid(document.getElementById("carousel-force-grid"), {
     xRange: { min: -3, max: 3 },
     yRange: { min: -3, max: 3 },
@@ -325,6 +326,14 @@ function setupCarouselForcesTask() {
       { id: "rope", symbol: "F", index: "S", name: "Seilkraft", color: "#2563eb" },
       { id: "resultant", symbol: "F", index: "Z", name: "Resultierende", color: "#dc2626" },
     ],
+    onChange: () => progress.save(),
+  });
+  progress.registerPart("carousel-forces", () => ({
+    selections: grid.getSelections(),
+    activeKindId: grid.getActiveKind(),
+  }), (saved) => {
+    if (!saved || !Array.isArray(saved.selections)) return;
+    grid.setSelections(saved.selections, saved.activeKindId);
   });
   document.getElementById("check-carousel-forces").addEventListener("click", () => {
     const { status, text } = evaluateCarouselForces(grid.getSelections());
@@ -384,7 +393,7 @@ function setupOmegaChangeTask() {
   });
 }
 
-function setupRowsTask() {
+function setupRowsTask(progress) {
   setupPhysicsSemanticTask({
     answerId: "rows-answer", buttonId: "check-rows", feedbackId: "rows-feedback", countId: "rows-count",
     taskId: "ph11-kettenkarussell-zwei-sitzreihen", serverUrl: SCRIPT_SERVER_URL, feedbackBuilder: rowsFeedback,
@@ -394,6 +403,7 @@ function setupRowsTask() {
   document.getElementById("check-rows").addEventListener("click", () => {
     document.getElementById("summary-pending").hidden = true;
     document.getElementById("summary-content").hidden = false;
+    progress?.save();
   });
 }
 
@@ -493,6 +503,7 @@ function setupFinalQuiz() {
 
 if (typeof document !== "undefined") {
   const stepTabs = setupPhysicsStepTabs();
+  const progress = createPhysicsTaskProgress("aufgabe6");
   setupNextTabButtons(stepTabs);
   setupDirectionTasks();
   setupCentripetalForceTask();
@@ -530,7 +541,13 @@ if (typeof document !== "undefined") {
     },
   });
   setupOmegaChangeTask();
-  setupRowsTask();
-  setupCarouselForcesTask();
+  setupRowsTask(progress);
+  setupCarouselForcesTask(progress);
   setupFinalQuiz();
+  progress.registerPart("summary-unlock", () => ({ unlocked: !document.getElementById("summary-content").hidden }), (saved) => {
+    if (typeof saved?.unlocked !== "boolean") return;
+    document.getElementById("summary-content").hidden = !saved.unlocked;
+    document.getElementById("summary-pending").hidden = saved.unlocked;
+  });
+  progress.restore();
 }

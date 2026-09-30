@@ -1,6 +1,7 @@
-import { createForceArrowGrid } from "./components/point-vector-grid.mjs?v=20260922a";
+import { createForceArrowGrid } from "./components/point-vector-grid.mjs?v=20260930a";
 import { appendPhysicsText, physicsTextSpan, createIndexedSymbol, createQuotient, createSquareRoot, createUnitFraction, addSquareRootSigns } from "./components/physics-notation.mjs?v=20260922b";
 import { setupPhysicsStepTabs } from "./components/physics-step-tabs.mjs";
+import { createPhysicsTaskProgress } from "./components/physics-task-progress.mjs";
 import { enableTokenDrag, wasDragged } from "./components/token-drag.mjs";
 
 // ---- Unverändert aus kettenkarussell.mjs übernommen ----
@@ -217,7 +218,7 @@ export function evaluateCarouselForces(selections) {
   return { status: "success", text: "Korrekt: {{F_S}} und {{F_G}} ergeben zusammen eine waagerechte Resultierende, die zur Drehachse zeigt. Sie wirkt als Zentripetalkraft {{F_Z}}. Der senkrechte Anteil der Seilkraft gleicht die Gewichtskraft genau aus." };
 }
 
-function setupCarouselForcesTask() {
+function setupCarouselForcesTask(progress) {
   const grid = createForceArrowGrid(document.getElementById("carousel-force-grid"), {
     xRange: { min: -3, max: 3 },
     yRange: { min: -3, max: 3 },
@@ -232,7 +233,17 @@ function setupCarouselForcesTask() {
       { id: "rope", symbol: "F", index: "S", name: "Seilkraft", color: "#2563eb" },
       { id: "resultant", symbol: "F", index: "Z", name: "Resultierende", color: "#dc2626" },
     ],
+    onChange: () => progress?.save(),
   });
+  if (progress) {
+    progress.registerPart("carousel-forces", () => ({
+      selections: grid.getSelections(),
+      activeKindId: grid.getActiveKind(),
+    }), (saved) => {
+      if (!saved || !Array.isArray(saved.selections)) return;
+      grid.setSelections(saved.selections, saved.activeKindId);
+    });
+  }
   document.getElementById("check-carousel-forces").addEventListener("click", () => {
     const { status, text } = evaluateCarouselForces(grid.getSelections());
     setFeedback("carousel-feedback", status, text);
@@ -427,7 +438,7 @@ export function evaluateStepOrder(values, config) {
   return { status: bestHits > 0 ? "partial" : "error", text: `${prefix} ${parts.join(" ")}` };
 }
 
-export function setupStepOrder(config) {
+export function setupStepOrder(config, progress = null) {
   const { containerId, checkButtonId, resetButtonId, feedbackId, cards, order: bankOrder, n } = config;
   const container = document.getElementById(containerId);
   const feedback = document.getElementById(feedbackId);
@@ -453,6 +464,7 @@ export function setupStepOrder(config) {
     picked = null;
     feedback.hidden = true;
     render();
+    progress?.save();
   }
 
   const bank = document.createElement("div");
@@ -491,7 +503,7 @@ export function setupStepOrder(config) {
       const value = values[index];
       if (picked && picked.from !== index) { place(picked.value, picked.from, index); slot.focus(); return; }
       if (picked && picked.from === index) { place(value, index, -1); return; }
-      if (value) { picked = { value, from: index }; render(); slot.focus(); }
+      if (value) { picked = { value, from: index }; render(); progress?.save(); slot.focus(); }
     });
     slots.push(slot);
     row.append(number, slot);
@@ -520,6 +532,7 @@ export function setupStepOrder(config) {
         if (wasDragged(token)) return;
         picked = isPicked ? null : { value: id, from: -1 };
         render();
+        progress?.save();
         if (picked) (slots.find((slot) => !slot.classList.contains("is-filled")) || slots[0])?.focus();
       });
       return token;
@@ -544,6 +557,26 @@ export function setupStepOrder(config) {
     values.fill("");
     picked = null;
     feedback.hidden = true;
+    render();
+    progress?.save();
+  });
+
+  progress?.registerPart(`step-order:${containerId}`, () => ({ values: [...values], picked: picked ? { ...picked } : null }), (saved) => {
+    if (!saved || !Array.isArray(saved.values) || saved.values.length !== n) return;
+    const allowed = new Set(cards.map((card) => card.id));
+    const used = new Set();
+    const restored = saved.values.map((id) => {
+      if (id === "") return "";
+      if (typeof id !== "string" || !allowed.has(id) || used.has(id)) return "";
+      used.add(id);
+      return id;
+    });
+    values.splice(0, n, ...restored);
+    picked = null;
+    const selected = saved.picked;
+    if (selected && typeof selected.value === "string" && allowed.has(selected.value) && Number.isInteger(selected.from) && selected.from >= -1 && selected.from < n) {
+      if ((selected.from === -1 && !values.includes(selected.value)) || (selected.from >= 0 && values[selected.from] === selected.value)) picked = { value: selected.value, from: selected.from };
+    }
     render();
   });
 
@@ -741,12 +774,13 @@ function setupFinalQuiz() {
 if (typeof document !== "undefined") {
   addSquareRootSigns();
   const stepTabs = setupPhysicsStepTabs();
+  const progress = createPhysicsTaskProgress("aufgabe7");
   setupNextTabButtons(stepTabs);
 
   Object.values(NUMBER_TASKS).forEach(setupNumberTask);
-  Object.values(STEP_TASKS).forEach(setupStepOrder);
+  Object.values(STEP_TASKS).forEach((task) => setupStepOrder(task, progress));
 
-  setupCarouselForcesTask();
+  setupCarouselForcesTask(progress);
   setupFinalQuiz();
 
   // Freischaltung der Ergebnisübersicht (Reiter 4): Jeder Klick auf
@@ -754,5 +788,18 @@ if (typeof document !== "undefined") {
   document.getElementById(NUMBER_TASKS.task3b.buttonId).addEventListener("click", () => {
     document.getElementById("summary-pending").hidden = true;
     document.getElementById("summary-content").hidden = false;
+    progress.save();
   });
+
+  progress.registerPart("summary-unlock", () => ({ unlocked: !document.getElementById("summary-content").hidden }), (saved) => {
+    if (typeof saved?.unlocked !== "boolean") return;
+    document.getElementById("summary-content").hidden = !saved.unlocked;
+    document.getElementById("summary-pending").hidden = saved.unlocked;
+  });
+  progress.registerPart("figure-unlock", () => ({ unlocked: !document.getElementById("task3b-figure").hidden }), (saved) => {
+    if (typeof saved?.unlocked !== "boolean") return;
+    document.getElementById("task3b-figure").hidden = !saved.unlocked;
+    document.getElementById("task3b-figure-pending").hidden = saved.unlocked;
+  });
+  progress.restore();
 }
