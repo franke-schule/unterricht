@@ -413,6 +413,15 @@ vorschreibt.
    Gestaltung gegen die Spezifikation und gibt `APPROVED` oder
    `CHANGES_REQUIRED` zurück.
 
+**Modellwahl ausschließlich für Codex:** Nur wenn Codex diesen Loop ausführt,
+gilt als Standard: Planung und Endabnahme mit **GPT-6 Sol** (`high`), Bau mit
+**GPT-6 Luna** (`high`) und regelbasierte Vorprüfung mit **GPT-6 Luna**
+(`medium`). Bei anspruchsvoller neuer Interaktionslogik oder wiederholten
+gleichartigen Umsetzungsfehlern wird nur der Builder auf GPT-6 Sol angehoben.
+Die fachlich-didaktische Endabnahme bleibt bei GPT-6 Sol. Wenn Claude an dem
+Projekt arbeitet, gilt diese Codex-Modellwahl nicht; für Claude bleiben die
+Modellangaben in `.claude/agents/` und der dortige Workflow maßgeblich.
+
 Die Spezifikation aus Stufe 1 ist die Verdichtung dieses Dokuments und der
 Manifeste für die jeweilige Aufgabe. Die späteren Stufen arbeiten mit ihr,
 statt AGENTS.md und alle Manifeste erneut vollständig zu lesen. Das ist

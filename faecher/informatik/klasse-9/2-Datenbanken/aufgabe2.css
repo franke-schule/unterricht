@@ -1,0 +1,111 @@
+/* Aufgabe 2 – Erste SQL-Abfragen (Informatik 9). Alle Regeln unter .sql9-page.
+   Farben: --db-* aus klasse-10/1-Datenbanken/redundanzen.css und die Werte aus sql-lab.css (#dcecf7, #123c6b, #fff8dc, #e1ad32). */
+
+/* Sieben Reiter; spezifischer als die Grundregel in sql-lab.css für .sql-page .step-tabs */
+body.sql9-page.sql-page:not(.menu-cross-product-page) .step-tabs { grid-template-columns: repeat(7, minmax(120px, 1fr)); }
+
+/* Leere Rückmeldungen (aria-live-Bereiche) brauchen keinen Platz */
+.sql9-page .feedback:empty { min-height: 0; margin: 0 !important; }
+.sql9-page .help-stack .given-sql { margin-top: 6px; }
+.sql9-page .sql9-task-output { margin-top: 0; }
+.sql9-page .sql9-youngest { display: grid; gap: 10px; margin-top: 22px; padding-top: 16px; border-top: 1px solid var(--db-line); }
+.sql9-page .sql9-youngest p { margin: 0; }
+.sql9-page .sql9-youngest .action-row { margin-top: 2px; }
+
+/* Einführung
+   nach entscheidungbaeume/task3.css Z. 11-35 (.fish-intro, .intro-stepper, .fish-intro-progress, .intro-hint, .fish-intro-workspace),
+   Variablen durch --db-* ersetzt */
+.sql9-page .sql9-intro { max-width: 100%; padding: 12px 16px; border-color: #cad6e8; background: linear-gradient(145deg, rgba(247, 250, 255, 0.98), rgba(251, 247, 255, 0.98)); }
+.sql9-page .sql9-intro-heading { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 8px 14px; }
+.sql9-page .sql9-intro-progress { display: flex; flex: 1 1 420px; flex-wrap: wrap; gap: 6px; max-width: 700px; }
+.sql9-page .sql9-intro-progress span { flex: 1 1 0; padding: 6px 8px; border-radius: 8px; color: #4d596b; background: #e7ebf2; font-size: 0.72rem; font-weight: 900; text-align: center; white-space: nowrap; }
+.sql9-page .sql9-intro-progress span.is-active { color: #fff; background: linear-gradient(135deg, #087d9c, #2458c7); }
+.sql9-page .sql9-intro-progress span.is-complete { color: #08705a; background: #dff5ed; }
+.sql9-page .intro-stepper { display: flex; flex: 0 0 auto; align-items: center; gap: 8px; }
+.sql9-page .intro-stepper .primary-button, .sql9-page .intro-stepper .secondary-button { width: auto; min-height: 42px; padding-block: 8px; }
+.sql9-page .intro-stepper .secondary-button:disabled { opacity: 0.45; cursor: not-allowed; }
+.sql9-page #intro-frame-count { min-width: 7em; color: #244d78; font-size: 0.82rem; font-weight: 900; text-align: center; }
+.sql9-page .sql9-intro-hint { margin: 6px 0 8px; padding: 5px 10px; border-left: 4px solid #7998d6; border-radius: 6px; color: #304a72; background: #eef4ff; font-size: 0.85rem; line-height: 1.4; text-align: left; }
+.sql9-page .sql9-intro-workspace { display: grid; grid-template-columns: minmax(0, 1.2fr) minmax(0, 0.8fr); gap: 12px; align-items: stretch; }
+.sql9-page .sql9-intro-visual, .sql9-page .sql9-result-card { min-width: 0; padding: 12px; border: 1px solid #d6dfeb; border-radius: 15px; background: rgba(255, 255, 255, 0.94); }
+.sql9-page .sql9-intro-visual { display: grid; grid-template-columns: minmax(0, 1fr); align-content: start; gap: 8px; }
+.sql9-page .intro-explanation { min-height: 5.4em; margin: 0; padding: 8px 12px; border-radius: 10px; color: var(--db-ink); background: #fff8dc; font-size: 0.9rem; font-weight: 700; line-height: 1.45; text-align: left; }
+.sql9-page .sql9-intro-sql { margin: 0; padding: 7px; font-size: 0.86rem; line-height: 1.35; }
+.sql9-page .sql9-intro-sql code { display: block; font: inherit; }
+.sql9-page .sql9-intro-sql span { position: relative; display: block; padding: 3px 6px 3px 1.7em; border-radius: 6px; }
+.sql9-page .sql9-intro-sql .is-active-clause { background: #dcecf7; color: #123c6b; font-weight: 800; }
+.sql9-page .sql9-intro-sql .is-active-clause::before { content: "▶"; position: absolute; left: 0.5em; }
+.sql9-page .sql9-intro-sql.is-empty span { padding-left: 6px; color: var(--db-muted); font-style: italic; }
+.sql9-page .sql9-intro-task { margin: 0; }
+.sql9-page .sql9-intro-schema { display: block; width: max-content; min-width: 100%; margin-bottom: 6px; color: #244d78; white-space: nowrap; }
+.sql9-page .sql9-intro-table { min-width: 0; overflow-x: auto; }
+.sql9-page .sql9-snippet-label { margin: 0 0 4px; color: #315170; font-size: 0.82rem; font-weight: 800; }
+
+/* Ausschnitt aus users und Ergebnisrelation */
+.sql9-page .sql9-snippet { border: 3px solid transparent; border-radius: 12px; overflow: hidden; }
+.sql9-page .sql9-snippet.is-source { border-color: #1455b1; box-shadow: 0 0 0 3px rgba(20, 85, 177, 0.15); }
+.sql9-page .sql9-snippet .table-scroll, .sql9-page .sql9-result-table .table-scroll { border: 1px solid var(--db-line); border-radius: 9px; }
+.sql9-page .sql9-snippet .table-scroll:focus-visible, .sql9-page .sql9-result-table .table-scroll:focus-visible { outline: 3px solid rgba(23, 99, 213, 0.32); outline-offset: 2px; }
+.sql9-page .sql9-snippet-table, .sql9-page .sql9-result-cells, .sql9-page .sql9-mini-table { min-width: 0; table-layout: auto; }
+.sql9-page .sql9-snippet-table th, .sql9-page .sql9-snippet-table td, .sql9-page .sql9-result-cells th, .sql9-page .sql9-result-cells td { padding: 5px 8px; font-size: 0.78rem; line-height: 1.2; overflow-wrap: break-word; }
+.sql9-page .sql9-snippet-table th.is-selected { background: #dcecf7; color: #123c6b; font-weight: 900; box-shadow: inset 0 -3px 0 #1455b1; }
+.sql9-page .sql9-snippet-table td.is-selected { background: #eef6ff; }
+.sql9-page .sql9-snippet-table th.is-dimmed, .sql9-page .sql9-snippet-table td.is-dimmed { opacity: 0.4; }
+.sql9-page .sql9-result-body { min-height: 10.5rem; }
+.sql9-page .sql9-result-card h3 { margin: 0 0 6px; color: #1b426f; font-size: 1rem; }
+.sql9-page .sql9-result-empty { display: grid; place-items: center; min-height: 10rem; border: 2px dashed #bdcad9; border-radius: 12px; color: var(--db-muted); font-size: 1.4rem; font-weight: 900; }
+.sql9-page .sql9-result-cells td { min-width: 4.5rem; color: #5b6678; background: #f1f3f6; font-weight: 900; }
+.sql9-page .sql9-result-cells td.is-filled { color: #174e9a; background: #e5efff; font-weight: 700; }
+.sql9-page .sql9-result-cells td.is-current { outline: 2px solid #e1ad32; outline-offset: -2px; background: #fff6d9; animation: sql9-cell-pop 500ms cubic-bezier(0.2, 0.8, 0.25, 1.2) both; }
+.sql9-page .sql9-result-note { min-height: 2.4em; margin: 6px 0 0; color: #4a5a70; font-size: 0.82rem; line-height: 1.4; text-align: left; }
+.sql9-page .sql9-intro-memo { margin: 10px 0 0; padding: 10px 14px; }
+.sql9-page .sql9-intro-memo h3 { margin: 0 0 6px; }
+.sql9-page .sql9-intro-memo p { margin: 0 0 6px; font-size: 0.88rem; line-height: 1.4; }
+.sql9-page .sql9-intro-memo .given-sql { margin: 0 0 6px; }
+@keyframes sql9-cell-pop { from { opacity: 0.3; transform: scale(0.85); } to { opacity: 1; transform: none; } }
+
+/* Ablauf in Bild 2: Die Pfeile bestehen aus Linie und Spitze und berühren die Kästen an beiden Enden */
+.sql9-page .sql9-flow { display: flex; align-items: center; justify-content: center; gap: 0; margin: 4px 0; }
+.sql9-page .sql9-flow-box { display: grid; flex: 0 1 auto; place-items: center; padding: 12px 14px; border: 2px solid #155f83; border-radius: 10px; color: #12324a; background: #f4fbff; font-size: 0.9rem; font-weight: 800; text-align: center; }
+.sql9-page .sql9-flow-arrow { position: relative; flex: 1 1 24px; align-self: center; min-width: 24px; height: 3px; background: #12324a; }
+.sql9-page .sql9-flow-arrow::after { content: ""; position: absolute; top: 50%; right: -1px; transform: translateY(-50%); border-top: 7px solid transparent; border-bottom: 7px solid transparent; border-left: 10px solid #12324a; }
+
+/* Kurz-erklärt-Karten */
+.sql9-page .sql9-example-row { display: grid; gap: 14px; margin: 14px 0; }
+.sql9-page .sql9-example-row-three { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+.sql9-page .sql9-example-row-two { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+.sql9-page .sql9-example { display: grid; align-content: start; gap: 8px; min-width: 0; }
+.sql9-page .sql9-example .given-sql { margin: 0; }
+.sql9-page .sql9-example-count { margin: 0; color: #315170; font-weight: 800; }
+.sql9-page .sql9-mini-table { width: 100%; border: 1px solid var(--db-line); background: white; }
+.sql9-page .sql9-mini-table caption { padding: 6px 8px; color: #163e6b; font-size: 0.84rem; font-weight: 800; text-align: left; }
+.sql9-page .sql9-mini-table th, .sql9-page .sql9-mini-table td { padding: 6px 8px; font-size: 0.8rem; overflow-wrap: anywhere; }
+.sql9-page .aggregate-intro pre { margin-bottom: 0; }
+
+/* Abschlussquiz: SQL in Antworten, eine Klausel pro Zeile */
+.sql9-page .quiz-sql { display: block; font: 0.9rem/1.45 "SFMono-Regular", Consolas, monospace; white-space: pre-line; }
+.sql9-page .final-quiz .given-sql { margin: 0 0 8px; }
+
+@media (max-width: 900px) {
+  .sql9-page .sql9-intro-workspace { grid-template-columns: minmax(0, 1fr); }
+  .sql9-page .sql9-intro-progress { flex-basis: 100%; max-width: none; }
+  .sql9-page .sql9-intro-progress span { flex-basis: 45%; white-space: normal; }
+  .sql9-page .intro-explanation { min-height: 0; }
+}
+
+@media (max-width: 860px) {
+  body.sql9-page.sql-page:not(.menu-cross-product-page) .step-tabs { grid-template-columns: repeat(7, 170px); }
+}
+
+@media (max-width: 650px) {
+  .sql9-page .sql9-example-row-three, .sql9-page .sql9-example-row-two { grid-template-columns: 1fr; }
+  .sql9-page .sql9-flow { flex-direction: column; align-items: stretch; }
+  .sql9-page .sql9-flow-arrow { flex: 0 0 28px; align-self: center; width: 3px; min-width: 0; height: auto; }
+  .sql9-page .sql9-flow-arrow::after { top: auto; right: auto; bottom: -1px; left: 50%; transform: translateX(-50%); border-top: 10px solid #12324a; border-right: 7px solid transparent; border-bottom: 0; border-left: 7px solid transparent; }
+  .sql9-page .intro-stepper { flex-wrap: wrap; }
+  .sql9-page #intro-frame-count { min-width: 0; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .sql9-page .sql9-result-cells td.is-current { animation: none; }
+}

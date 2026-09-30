@@ -153,17 +153,19 @@ function element(tag, className, text) { const node = document.createElement(tag
 
 function activateSqlTab(id, { focusContent = false } = {}) { state.tab = id; save(); render({ focusContent }); }
 function render({ focusContent = false } = {}) {
+  document.body.classList.toggle('sql-intro-active', state.tab === 'intro');
   const tabs = document.getElementById('sql-tabs'); tabs.replaceChildren();
   SQL_TABS.forEach(([id, label], index) => { const button = element('button', 'step-tab', label); button.type = 'button'; button.id = `tab-${id}`; button.dataset.tab = id; button.role = 'tab'; button.ariaSelected = String(state.tab === id); button.tabIndex = state.tab === id ? 0 : -1; button.setAttribute('aria-controls', 'sql-panel'); button.addEventListener('click', () => activateSqlTab(id)); button.addEventListener('keydown', (event) => moveTabFocus(event, SQL_TABS, index)); tabs.append(button); });
   const panel = document.getElementById('sql-panel'); panel.replaceChildren();
   panel.setAttribute('aria-labelledby', `tab-${state.tab}`);
-  panel.append(schemaCard(USERS_TABLE_SCHEMAS));
+  if (state.tab !== 'intro') panel.append(schemaCard(USERS_TABLE_SCHEMAS));
   const heading = element('div', 'step-heading'); heading.append(element('span', 'step-number', '5')); const title = element('div'); title.append(element('p', 'step-kicker', state.tab.startsWith('fast') ? 'Vertiefen' : state.tab === 'intro' ? 'Entdecken' : state.tab === 'quiz' ? 'Sichern' : 'Wiederholen'), element('h2', '', state.tab === 'intro' ? 'Wie entsteht eine Ergebnisrelation?' : SQL_TABS.find(([id]) => id === state.tab)[1])); heading.append(title); panel.append(heading);
   if (state.tab === 'intro') renderIntro(panel);
   else if (state.tab === 'quiz') renderFinalQuiz(panel);
   else tasks[state.tab].forEach((task) => panel.append(renderTask(task)));
   if (state.tab === 'quiz') appendSolutionDownloadFromTemplate(panel);
   renderTabFlowNavigation(panel, { items: SQL_TABS.map(([id, label]) => ({ id, label })), currentId: state.tab, onNavigate: activateSqlTab });
+  if (state.tab === 'intro') panel.querySelector('.intro-side')?.append(panel.querySelector('.tab-flow-navigation'));
   syncTabSemantics(tabs, state.tab);
   if (focusContent) focusTabPanelStart(panel);
 }
@@ -190,9 +192,12 @@ function schemaCard(schemas) {
 function renderIntro(panel) {
   const card = element('section', 'task-card sql-task sql-intro');
   const instruction = element('p'); instruction.append(element('strong', '', 'Verfolge'), document.createTextNode(' die Abfrage Schritt für Schritt. '), element('strong', '', 'Beobachte'), document.createTextNode(', wie zuerst die Tabelle, dann die Zeilen und zuletzt die Spalten ausgewählt werden.')); card.append(instruction);
+  const workspace = element('div', 'intro-workspace');
+  const stage = element('div', 'intro-stage');
+  const side = element('div', 'intro-side');
   const statement = element('pre', 'given-sql intro-sql'); const code = document.createElement('code');
-  [['SELECT', 'SELECT name, city'], ['FROM', 'FROM users'], ['WHERE', "WHERE country = 'Deutschland';"]].forEach(([clause, line], index) => { if (index) code.append(document.createTextNode('\n')); const span = element('span', state.introStep === ({ FROM: 1, WHERE: 2, SELECT: 3 })[clause] ? 'intro-active-clause' : '', line); code.append(span); }); statement.append(code); card.append(statement);
-  card.append(element('p', 'intro-caption', 'Ausschnitt aus users: Zur Übersicht sind vier Datensätze und vier Spalten dargestellt.'));
+  [['SELECT', 'SELECT name, city'], ['FROM', 'FROM users'], ['WHERE', "WHERE country = 'Deutschland';"]].forEach(([clause, line]) => { const span = element('span', state.introStep === ({ FROM: 1, WHERE: 2, SELECT: 3 })[clause] ? 'intro-active-clause' : '', line); code.append(span); }); statement.append(code); side.append(statement);
+  stage.append(element('p', 'intro-caption', 'Ausschnitt aus users: Zur Übersicht sind vier Datensätze und vier Spalten dargestellt.'));
   const visual = element('div', 'intro-visual');
   if (!introRows.length) visual.append(element('p', 'feedback hint', 'Der Datenausschnitt wird geladen …'));
   else {
@@ -206,10 +211,13 @@ function renderIntro(panel) {
   }
   const explanations = ['FROM users legt fest, aus welcher Tabelle die Daten stammen.', "WHERE country = 'Deutschland' behält die Zeilen, deren Wert in country Deutschland ist.", 'SELECT name, city zeigt von diesen Zeilen nur die Spalten name und city.'];
   const stepNames = ['1 · FROM: Tabelle wählen', '2 · WHERE: Zeilen filtern', '3 · SELECT: Spalten auswählen'];
-  const stepButtons = element('div', 'intro-step-buttons'); stepNames.forEach((name, index) => { const button = element('button', 'secondary-button', name); button.type = 'button'; button.id = `intro-step-${index + 1}`; if (state.introStep === index + 1) button.setAttribute('aria-current', 'step'); button.addEventListener('click', () => { state.introStep = index + 1; save(); render(); document.getElementById(button.id)?.focus(); }); stepButtons.append(button); }); card.append(stepButtons);
-  card.append(element('h3', '', stepNames[state.introStep - 1]), element('p', '', explanations[state.introStep - 1]), visual);
-  const controls = element('div', 'action-row intro-controls'); const back = element('button', 'secondary-button', 'Zurück'); back.id = 'intro-back'; back.type = 'button'; back.disabled = state.introStep === 1; back.addEventListener('click', () => changeIntroStep(-1, 'intro-back')); const next = element('button', 'primary-button', 'Weiter'); next.id = 'intro-next'; next.type = 'button'; next.disabled = state.introStep === 3; next.addEventListener('click', () => changeIntroStep(1, 'intro-next')); controls.append(back, element('strong', 'intro-progress', `Schritt ${state.introStep} von 3`), next); card.append(controls);
-  if (state.introStep === 3) { const memory = element('section', 'short-summary sql-intro-memory'); memory.append(element('h3', '', 'Merke'), element('p', '', 'FROM bestimmt die Tabelle, WHERE filtert die Zeilen und SELECT wählt die Spalten.'), element('p', '', 'Geschrieben wird SELECT – FROM – WHERE. Zum Verstehen der Abfrage verfolgen wir FROM – WHERE – SELECT.'), element('p', '', 'SELECT * zeigt alle Spalten. Ohne WHERE bleiben alle Zeilen erhalten.'), element('p', '', "Textwerte stehen in Anführungszeichen, zum Beispiel 'Deutschland'. Ganze Zahlen wie 180 werden ohne Anführungszeichen geschrieben. Datumswerte verwenden wir hier im Format '2008-01-01'.")); card.append(memory); } panel.append(card);
+  const stepButtons = element('div', 'intro-step-buttons'); stepButtons.setAttribute('role', 'group'); stepButtons.setAttribute('aria-label', 'Schritte der SQL-Erklärung'); stepNames.forEach((name, index) => { const button = element('button', 'secondary-button', name); button.type = 'button'; button.id = `intro-step-${index + 1}`; if (state.introStep === index + 1) button.setAttribute('aria-current', 'step'); button.addEventListener('click', () => { state.introStep = index + 1; save(); render(); document.getElementById(button.id)?.focus(); }); stepButtons.append(button); }); side.append(stepButtons);
+  side.append(element('p', 'intro-explanation', explanations[state.introStep - 1]));
+  stage.append(visual);
+  const controls = element('div', 'action-row intro-controls'); const back = element('button', 'secondary-button', 'Zurück'); back.id = 'intro-back'; back.type = 'button'; back.disabled = state.introStep === 1; back.addEventListener('click', () => changeIntroStep(-1, 'intro-back')); const next = element('button', 'primary-button', 'Weiter'); next.id = 'intro-next'; next.type = 'button'; next.disabled = state.introStep === 3; next.addEventListener('click', () => changeIntroStep(1, 'intro-next')); controls.append(back, element('strong', 'intro-progress', `Schritt ${state.introStep} von 3`), next);
+  side.append(controls);
+  if (state.introStep === 3) { const memory = element('section', 'short-summary sql-intro-memory'); memory.append(element('h3', '', 'Merke'), element('p', '', 'FROM bestimmt die Tabelle, WHERE filtert die Zeilen und SELECT wählt die Spalten.'), element('p', '', 'Geschrieben wird SELECT – FROM – WHERE. Zum Verstehen der Abfrage verfolgen wir FROM – WHERE – SELECT.'), element('p', '', 'SELECT * zeigt alle Spalten. Ohne WHERE bleiben alle Zeilen erhalten.'), element('p', '', "Textwerte stehen in Anführungszeichen, zum Beispiel 'Deutschland'. Ganze Zahlen wie 180 werden ohne Anführungszeichen geschrieben. Datumswerte verwenden wir hier im Format '2008-01-01'.")); stage.append(memory); }
+  workspace.append(stage, side); card.append(workspace); panel.append(card);
 }
 function changeIntroStep(direction, focusId) { state.introStep = Math.max(1, Math.min(3, state.introStep + direction)); save(); render(); document.getElementById(focusId)?.focus(); }
 function renderFinalQuiz(panel) {

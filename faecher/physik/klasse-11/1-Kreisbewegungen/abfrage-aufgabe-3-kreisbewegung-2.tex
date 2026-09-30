@@ -1,0 +1,114 @@
+\documentclass[10pt,a4paper]{article}
+
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage[ngerman]{babel}
+\usepackage[a4paper,margin=14mm]{geometry}
+\usepackage{lmodern}
+\usepackage[table]{xcolor}
+\usepackage{tabularx}
+\usepackage{amsmath}
+\usepackage{microtype}
+\usepackage{tikz}
+
+\newif\ifsolution
+\solutionfalse
+
+\pagestyle{empty}
+\setlength{\parindent}{0pt}
+\setlength{\parskip}{0pt}
+\renewcommand{\familydefault}{\sfdefault}
+
+\definecolor{Navy}{HTML}{17324D}
+\definecolor{Blue}{HTML}{3B6EA5}
+\definecolor{Gold}{HTML}{F3B33D}
+\definecolor{Ink}{HTML}{1E2935}
+\definecolor{Muted}{HTML}{617080}
+\definecolor{Line}{HTML}{D8E1E8}
+\color{Ink}
+
+\newcommand{\vB}{v_{\mathrm B}}
+\newcommand{\kopf}[1]{%
+  \colorbox{Navy}{\parbox{\dimexpr\linewidth-2\fboxsep\relax}{%
+    \vspace{1.3mm}\color{white}
+    \begin{tabularx}{\linewidth}{@{}Xr@{}}
+      {\small\bfseries PHYSIK · KLASSE 11} &
+      \colorbox{Gold}{\color{Navy}\small\bfseries\strut\ifsolution LÖSUNGEN\else ABFRAGE\fi}
+    \end{tabularx}
+    \vspace{0.9mm}
+    {\fontsize{16}{19}\selectfont\bfseries Aufgabe 3 -- Kreisbewegung · Abfrage 2}\par
+    \vspace{0.3mm}{\small #1}\vspace{1.1mm}
+  }}\par\vspace{2mm}}
+\newcommand{\frage}[2]{%
+  \vspace{2.2mm}{\color{Blue}\bfseries\large #1 · #2}\par
+  \vspace{0.4mm}{\color{Blue}\rule{\linewidth}{0.65pt}}\par\vspace{1.4mm}}
+\newcommand{\antwortfeld}[2]{%
+  \vspace{2mm}%
+  \begin{tikzpicture}[x=1mm,y=1mm]
+    \path[use as bounding box] (0,0) rectangle (181.5,-9*#1);
+    \ifsolution
+      \node[anchor=north west,text width=179mm,inner sep=0pt,align=left,
+        font=\small,text=Blue] at (0,-1) {#2};
+    \else
+      \foreach \i in {1,...,#1}{\draw[Line,line width=.55pt] (0,-9*\i) -- (181.5,-9*\i);}
+    \fi
+  \end{tikzpicture}\par}
+\newcommand{\fuss}[1]{%
+  \vfill{\color{Line}\rule{\linewidth}{0.5pt}}\par\vspace{1mm}
+  \begin{tabularx}{\linewidth}{@{}Xr@{}}
+    {\small\color{Muted}Klasse 11 · Physik · Kreisbewegungen} &
+    {\small\color{Muted}\ifsolution Lösungen\else Abfrage\fi{} · Seite #1 von 2}
+  \end{tabularx}}
+\newcommand{\eintrag}[3]{%
+  \parbox[c][14mm][c]{\linewidth}{#1} &
+  \parbox[c][14mm][c]{\linewidth}{\ifsolution\color{Blue}#2\fi} &
+  \parbox[c][14mm][c]{\linewidth}{\ifsolution\color{Blue}\small #3\fi}\\\hline}
+
+\newcommand{\bogen}{%
+\kopf{Größen der Kreisbewegung · Karussell}
+
+\frage{1}{Was bleibt gleich?}
+\textbf{Entscheide} für jede Größe, ob sie bei einer Kreisbewegung mit konstanter Winkelgeschwindigkeit gleich bleibt oder sich ändert. \textbf{Begründe} deine Entscheidung.\par\vspace{2mm}
+\begin{tabularx}{\linewidth}{|p{47mm}|p{26mm}|X|}
+  \hline
+  \rowcolor{Navy}\color{white}\bfseries Größe & \color{white}\bfseries Verhalten & \color{white}\bfseries Begründung\\\hline
+  \eintrag{Richtung der Geschwindigkeit}{ändert sich}{Der Geschwindigkeitsvektor liegt an jedem Ort auf einer anderen Tangente.}
+  \eintrag{Betrag der Bahngeschwindigkeit $\vB$}{bleibt gleich}{Bei festem Radius gilt $\vB=\omega r$; beide Faktoren bleiben gleich.}
+  \eintrag{Ort des Körpers}{ändert sich}{Der Körper läuft auf der Kreisbahn weiter.}
+  \eintrag{Winkelgeschwindigkeit $\omega$}{bleibt gleich}{Das ist in der Aufgabe vorgegeben.}
+  \eintrag{Umlaufdauer $T$}{bleibt gleich}{Jeder Umlauf dauert bei konstantem $\omega$ gleich lang.}
+  \eintrag{Radius $r$ der Kreisbahn}{bleibt gleich}{Der Abstand des Körpers zum Zentrum bleibt gleich.}
+  \eintrag{Frequenz $f$}{bleibt gleich}{Mit $f=\frac{1}{T}$ bleibt auch die Zahl der Umläufe pro Sekunde gleich.}
+\end{tabularx}
+
+\frage{2}{Karussell beschreiben}
+Zwei Kinder sitzen auf einem Karussell, das sich gleichmäßig dreht. Kind A sitzt nahe der Mitte, Kind B am äußeren Rand. \textbf{Beschreibe}, wie sich ihre Winkelgeschwindigkeiten und ihre Bahngeschwindigkeiten unterscheiden, und \textbf{begründe} deine Antwort.\par
+\antwortfeld{5}{Beide Kinder drehen sich gemeinsam mit dem Karussell und legen in derselben Zeit denselben Winkel zurück. Daher haben sie die gleiche Winkelgeschwindigkeit $\omega$. Kind B hat den größeren Radius und legt bei jeder Umdrehung den längeren Weg zurück. Wegen $\vB=\omega r$ ist seine Bahngeschwindigkeit größer als die von Kind A.}
+
+\fuss{1}
+\newpage
+
+\kopf{Winkel- und Bahngeschwindigkeit · Frequenz und Umlaufdauer}
+
+\frage{3}{Winkel- und Bahngeschwindigkeit berechnen}
+Ein Körper dreht sich in $\Delta t=4{,}0\,\mathrm{s}$ um $\Delta\varphi=\frac{\pi}{2}$. Der Kreisradius beträgt $r=2{,}4\,\mathrm{m}$.\par
+\textbf{Berechne} die Winkelgeschwindigkeit $\omega$ und die Bahngeschwindigkeit $\vB$. Gib Rechenweg, Einheiten und Ergebnisse mit passenden gültigen Ziffern an.\par
+\antwortfeld{8}{$\displaystyle\omega=\frac{\Delta\varphi}{\Delta t}=\frac{\pi}{2\cdot4{,}0\,\mathrm{s}}=\frac{\pi}{8{,}0\,\mathrm{s}}\approx0{,}39\,\frac{1}{\mathrm{s}}$.\\[3mm]
+$\displaystyle\vB=\omega r=\frac{\pi}{8{,}0\,\mathrm{s}}\cdot2{,}4\,\mathrm{m}\approx0{,}94\,\frac{\mathrm{m}}{\mathrm{s}}$.\\[3mm]
+Die gegebenen Messwerte haben jeweils zwei gültige Ziffern; $\pi$ ist exakt.}
+
+\frage{4}{Frequenz und Umlaufdauer bestimmen}
+Ein Körper legt in $24{,}0\,\mathrm{s}$ genau acht vollständige Umläufe zurück.\par
+\textbf{Bestimme} die Frequenz $f$ und die Umlaufdauer $T$ mit Rechenweg, Einheiten und passenden gültigen Ziffern.\par
+\antwortfeld{8}{$\displaystyle f=\frac{8}{24{,}0\,\mathrm{s}}\approx0{,}333\,\mathrm{Hz}$.\\[3mm]
+$\displaystyle T=\frac{24{,}0\,\mathrm{s}}{8}=3{,}00\,\mathrm{s}$.\\[3mm]
+Die Anzahl der Umläufe ist exakt; die gemessene Zeit hat drei gültige Ziffern.}
+
+\fuss{2}}
+
+\begin{document}
+\bogen
+\newpage
+\solutiontrue
+\bogen
+\end{document}
