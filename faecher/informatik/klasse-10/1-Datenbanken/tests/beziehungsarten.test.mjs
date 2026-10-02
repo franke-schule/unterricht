@@ -181,8 +181,10 @@ const klasse10Index = await readFile(resolve(databaseFolder, '..', 'index.html')
 assert.match(html, /href="\.\.\/index\.html">Zur Aufgabenübersicht<\/a>/, 'Rücklink zur Aufgabenübersicht fehlt.');
 assert.match(html, /href="\.\.\/\.\.\/\.\.\/\.\.\/index\.html">Startseite<\/a>/, 'Rücklink zur Startseite fehlt.');
 assert.match(html, /id="final-quiz"/, 'Das Abschlussquiz-Formular mit id="final-quiz" fehlt.');
-assert.doesNotMatch(html, /solution-download/, 'Aufgabe 8 hat kein Sicherungsblatt und darf keinen solution-download-Bereich enthalten.');
-assert.doesNotMatch(html, /unlockSolution/, 'Aufgabe 8 darf kein unlockSolution einbinden.');
+assert.equal((html.match(/class="solution-download"/g) || []).length, 2, 'Sicherungsblatt-Download muss im Quiz- und Übersichtsreiter stehen.');
+assert.match(html, /id="solution-download-link"[^>]*href="sicherungsblatt-aufgabe-8-loesungen\.pdf" download hidden/, 'Der Download im Quizreiter muss zunächst verborgen sein.');
+assert.match(html, /id="solution-download-link-summary"[^>]*href="sicherungsblatt-aufgabe-8-loesungen\.pdf" download hidden/, 'Der Download im Übersichtsreiter muss zunächst verborgen sein.');
+assert.equal((html.match(/unlockSolution\(event, 'M2LK-X6H9'/g) || []).length, 2, 'Beide Freigaben müssen denselben Lehrercode verwenden.');
 assert.doesNotMatch(html, /<select/i, 'Aufgabe 8 darf keine <select>-Elemente verwenden.');
 assert.match(html, /<h1>1:1- und n:m-Beziehungen<\/h1>/, 'Die H1 muss exakt "1:1- und n:m-Beziehungen" lauten.');
 assert.match(html, /beziehungsarten\.css\?v=\d+[a-z]?/, 'beziehungsarten.css wird mit Cache-Buster eingebunden.');

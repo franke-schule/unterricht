@@ -1,0 +1,91 @@
+\documentclass[10pt,a4paper]{article}
+
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage[ngerman]{babel}
+\usepackage[a4paper,margin=14mm]{geometry}
+\usepackage{lmodern}
+\usepackage[table]{xcolor}
+\usepackage{tabularx}
+\usepackage{array}
+\usepackage{microtype}
+\usepackage[most]{tcolorbox}
+
+\pagestyle{empty}
+\setlength{\parindent}{0pt}
+\setlength{\parskip}{0pt}
+\renewcommand{\familydefault}{\sfdefault}
+\renewcommand{\arraystretch}{1.17}
+
+\definecolor{Navy}{HTML}{17324D}
+\definecolor{Blue}{HTML}{3B6EA5}
+\definecolor{Sky}{HTML}{EAF3FA}
+\definecolor{Mint}{HTML}{E8F5EF}
+\definecolor{Gold}{HTML}{F3B33D}
+\definecolor{Ink}{HTML}{1E2935}
+\definecolor{Muted}{HTML}{617080}
+\definecolor{Line}{HTML}{D8E1E8}
+\definecolor{CodeBg}{HTML}{F5F7F9}
+
+\color{Ink}
+\newcommand{\sectiontitle}[1]{%
+  \vspace{2.3mm}{\color{Blue}\bfseries\large #1}\par
+  \vspace{0.7mm}{\color{Blue}\rule{\linewidth}{0.7pt}}\par\vspace{1.2mm}}
+\newcommand{\sqlbox}[1]{%
+  \begin{tcolorbox}[colback=CodeBg,colframe=Line,arc=1.3mm,boxrule=.55pt,
+    left=2.5mm,right=2.5mm,top=1.7mm,bottom=1.7mm]
+  {\ttfamily\small #1}
+  \end{tcolorbox}}
+
+\begin{document}
+
+\colorbox{Navy}{\parbox{\dimexpr\linewidth-2\fboxsep\relax}{%
+  \vspace{3mm}\color{white}\begin{tabularx}{\linewidth}{@{}Xr@{}}
+  {\small\bfseries INFORMATIK · KLASSE 10} & \colorbox{Gold}{\color{Navy}\small\bfseries\strut LÖSUNGEN}\end{tabularx}
+  \vspace{2.4mm}{\fontsize{18}{21}\selectfont\bfseries Aufgabe 7 -- Der Verbund}\par
+  \vspace{0.8mm}{\large Sicherungsblatt}\vspace{2.8mm}}}
+
+\vspace{2.5mm}
+\colorbox{Sky}{\parbox{\dimexpr\linewidth-2\fboxsep\relax}{\vspace{1.6mm}
+\textcolor{Blue}{\bfseries Ziel:} Du verbindest Songs und Playlists über die passenden Primär- und Fremdschlüssel.\vspace{1.6mm}}}
+
+\sectiontitle{1 · Die Zuordnungstabelle}
+{\small Jede Zeile in \texttt{Song\_in\_Playlist} ordnet einen Song genau einer Playlist zu. Die beiden Spalten verweisen auf die jeweiligen Primärschlüssel.}\par\vspace{1.3mm}
+{\small\ttfamily
+\begin{tabularx}{\linewidth}{@{}>{\raggedright\arraybackslash}X>{\centering\arraybackslash}p{42mm}>{\raggedright\arraybackslash}X@{}}
+\rowcolor{Sky}\textbf{Song.id / Song.titel} & \textbf{Song\_in\_Playlist} & \textbf{Playlist.id / Playlist.titel}\\
+1 / Gaslighter & 1 / 1 & 1 / Good Oldies\\
+2 / Wavin‘ Flag & 2 / 2 & 2 / Fussballhits\\
+3 / Try & 3 / 1 & 1 / Good Oldies\\
+4 / ’54, ’74, ’90, 2006 & 4 / 2 & 2 / Fussballhits\\
+\end{tabularx}}
+\vspace{0.6mm}\par
+{\footnotesize\color{Muted}Mittlere Spalte: \texttt{song\_id / playlist\_id}. Die Werte werden über gleiche IDs zugeordnet.}\par
+
+\sectiontitle{2 · Vom Kreuzprodukt zum Verbund}
+\begin{tabularx}{\linewidth}{@{}>{\bfseries}p{40mm}X>{\raggedleft\arraybackslash\bfseries}p{18mm}@{}}
+\rowcolor{Sky}Schritt & Bedingung & Zeilen\\
+Kreuzprodukt & 4 Songs · 4 Zuordnungen · 2 Playlists & 32\\
+Erste Verbindung & \texttt{Song.id = Song\_in\_Playlist.song\_id} & 8\\
+Vollständiger Verbund & Zusätzlich \texttt{Playlist.id = Song\_in\_Playlist.playlist\_id} & 4\\
+\end{tabularx}
+\vspace{1.1mm}\par
+{\small\textbf{Warum nach der ersten Verbindung noch acht?} Jede passende Song-Zuordnung wird zunächst mit beiden Playlists kombiniert. Erst die zweite Bedingung wählt die zugehörige Playlist aus.}\par
+
+\sectiontitle{3 · Die vollständige SQL-Anfrage}
+\sqlbox{SELECT *\par
+FROM Song, Song\_in\_Playlist, Playlist\par
+WHERE Song.id = Song\_in\_Playlist.song\_id\par
+\quad AND Playlist.id = Song\_in\_Playlist.playlist\_id;}
+\vspace{-0.8mm}
+{\small\textcolor{Blue}{\bfseries Vier passende Paare:} Gaslighter -- Good Oldies; Try -- Good Oldies; Wavin‘ Flag -- Fussballhits; ’54, ’74, ’90, 2006 -- Fussballhits.}\par
+
+\vspace{2.2mm}
+\begin{tcolorbox}[colback=Mint,colframe=Blue,arc=2mm,boxrule=.8pt,left=3mm,right=3mm,top=2mm,bottom=2mm]
+\textbf{Merksatz}\par\smallskip
+Beim Verbund werden aus dem Kreuzprodukt nur die Datensätze ausgewählt, deren zusammengehörige Primär- und Fremdschlüssel übereinstimmen. Sind mehrere Verknüpfungsbedingungen nötig, werden sie mit \texttt{AND} verbunden.
+\end{tcolorbox}
+
+\vfill{\color{Line}\rule{\linewidth}{.5pt}}\par\vspace{1.5mm}
+\begin{tabularx}{\linewidth}{@{}Xr@{}}{\small\color{Muted}Klasse 10 · Datenbanken} & {\small\color{Muted}Sicherungsblatt · Aufgabe 7}\end{tabularx}
+\end{document}

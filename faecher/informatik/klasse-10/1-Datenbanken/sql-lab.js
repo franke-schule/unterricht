@@ -1,7 +1,7 @@
 import { analyzeMultiTableSelect, classifyDescriptionResult, compareRelations, diagnoseMultiTableError, diagnoseSqlError, diagnoseSqlTask, explainSqlError, flexibleReferenceSql, isValidScriptServerUrl, normalizeRelation, parseDelimited, validateSelectStatement } from './sql-lab-core.mjs?v=20260929b';
 import { MENU_QUIZ, MENU_TABLES, MENU_TABLE_NAMES, MENU_TABLE_SCHEMAS, buildMenuCombinations, menuRelation } from './menue-kreuzprodukt-daten.mjs?v=20260929a';
 import { SONG_PLAYLIST_PAIRS, SONG_VERBUND_COLUMN_GROUPS, SONG_VERBUND_COLUMNS, SONG_VERBUND_QUIZ, SONG_VERBUND_SQL, SONG_VERBUND_TABLE_NAMES, SONG_VERBUND_TABLE_SCHEMAS, SONG_VERBUND_TABLES, SONG_VERBUND_VISIBLE_TEXT, evaluateFirstConnection, evaluateQuizQuestion, evaluateSecondConnection } from './song-verbund-daten.mjs?v=20260929a';
-import { appendSolutionDownloadFromTemplate, focusTabPanelStart, renderTabFlowNavigation, syncTabSemantics } from './tab-navigation.mjs?v=20260906a';
+import { appendSolutionDownloadFromTemplate, focusTabPanelStart, renderTabFlowNavigation, syncTabSemantics } from './tab-navigation.mjs?v=20261001a';
 
 const STORAGE_KEY = 'inf10-sql-grundlagen-v1';
 const SCRIPT_SERVER_URL = 'https://script.google.com/macros/s/AKfycby8RWL6uYrKZyoJ6m2GRpWyRmXjwsdskyCiqzKpRhIK5-wrDl-9lWWk8CiAGaVMoy0x/exec';
@@ -25,28 +25,6 @@ const FINAL_QUIZ = [
   { id: 'aggregate', prompt: 'Welche Aussagen zu Aggregatfunktionen stimmen?', hint: 'Unterscheide Anzahl, größten Wert und Mittelwert.', options: [['count', 'COUNT(*) zählt die ausgewählten Zeilen.', true], ['max', 'MAX(centimeters) liefert den größten ausgewählten Größenwert.', true], ['avg', 'AVG(centimeters) zählt die Mitglieder.', false]] }
 ];
 let introRows = [];
-
-function unlockSolution(event, expectedCode, downloadLinkId, messageId) {
-  event.preventDefault();
-  const form = event.currentTarget;
-  const enteredCode = form.elements['solution-code'].value.toUpperCase().replace(/[^A-Z0-9]/g, '');
-  const normalizedExpectedCode = expectedCode.replace(/[^A-Z0-9]/g, '');
-  const downloadLink = document.getElementById(downloadLinkId);
-  const message = document.getElementById(messageId);
-
-  if (enteredCode === normalizedExpectedCode) {
-    downloadLink.hidden = false;
-    message.className = 'solution-code-message';
-    message.textContent = 'Code korrekt. Das Sicherungsblatt ist freigeschaltet.';
-    return;
-  }
-
-  downloadLink.hidden = true;
-  message.className = 'solution-code-message error';
-  message.textContent = 'Der eingegebene Code ist nicht gültig.';
-}
-
-window.unlockSolution = unlockSolution;
 
 const tasks = {
   conditions: [
@@ -468,6 +446,7 @@ function renderVerbundModule({ focusContent = false } = {}) {
   const panel = document.getElementById('verbund-panel'); panel.replaceChildren(); panel.setAttribute('aria-labelledby', `tab-${verbundState.tab}`);
   panel.append(schemaCard(SONG_VERBUND_TABLE_SCHEMAS));
   if (verbundState.tab === 'source') renderVerbundSource(panel); if (verbundState.tab === 'cross') renderVerbundCross(panel); if (verbundState.tab === 'first') renderVerbundFirst(panel); if (verbundState.tab === 'second') renderVerbundSecond(panel); if (verbundState.tab === 'sql') renderVerbundSql(panel); if (verbundState.tab === 'check') renderVerbundCheck(panel); if (verbundState.tab === 'summary') renderVerbundSummary(panel);
+  if (verbundState.tab === 'check' || verbundState.tab === 'summary') appendSolutionDownloadFromTemplate(panel);
   renderTabFlowNavigation(panel, { items: labels.map(([id, label]) => ({ id, label })), currentId: verbundState.tab, onNavigate: activateVerbundTab, isEnabled: (id) => id === 'summary' ? verbundState.summaryUnlocked : availableVerbundTab(id) });
   syncTabSemantics(tabs, verbundState.tab);
   if (focusContent) focusTabPanelStart(panel);

@@ -1,0 +1,184 @@
+\documentclass[10pt,a4paper]{article}
+
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage[ngerman]{babel}
+\usepackage[a4paper,margin=12mm]{geometry}
+\usepackage{lmodern}
+\usepackage[table]{xcolor}
+\usepackage{tabularx}
+\usepackage{array}
+\usepackage{booktabs}
+\usepackage{amsmath}
+\usepackage{microtype}
+\usepackage[most]{tcolorbox}
+\usepackage{tikz}
+\usetikzlibrary{arrows.meta,calc}
+
+\pagestyle{empty}
+\setlength{\parindent}{0pt}
+\setlength{\parskip}{0pt}
+\renewcommand{\familydefault}{\sfdefault}
+\renewcommand{\arraystretch}{1.08}
+
+\definecolor{Navy}{HTML}{17324D}
+\definecolor{Blue}{HTML}{3B6EA5}
+\definecolor{Sky}{HTML}{EAF3FA}
+\definecolor{Mint}{HTML}{E8F5EF}
+\definecolor{Gold}{HTML}{F3B33D}
+\definecolor{Ink}{HTML}{1E2935}
+\definecolor{Muted}{HTML}{617080}
+\definecolor{Line}{HTML}{D8E1E8}
+
+\color{Ink}
+\newcommand{\sectiontitle}[1]{\vspace{0.4mm}{\color{Blue}\bfseries\large #1}\par\vspace{0.15mm}{\color{Blue}\rule{\linewidth}{0.7pt}}\par\vspace{0.25mm}}
+\newcommand{\unit}[1]{\,\mathrm{#1}}
+\newcommand{\unitfrac}[2]{\,\frac{\mathrm{#1}}{\mathrm{#2}}}
+\newcommand{\pagefooter}[1]{\vfill{\color{Line}\rule{\linewidth}{0.5pt}}\par\vspace{1mm}\begin{tabularx}{\linewidth}{@{}Xc r@{}}{\leavevmode\small\color{Muted}Klasse 11 · Physik · Kreisbewegungen} & {\leavevmode\small\color{Muted}#1} & {\leavevmode\small\color{Muted}Sicherungsblatt · Aufgabe 7}\end{tabularx}}
+\newcommand{\compact}{\small\setlength{\abovedisplayskip}{2.5pt}\setlength{\belowdisplayskip}{2.5pt}\setlength{\abovedisplayshortskip}{1pt}\setlength{\belowdisplayshortskip}{2pt}}
+\tcbset{sheetbox/.style={colframe=Line,arc=1.2mm,boxrule=.6pt,left=2mm,right=2mm,top=.7mm,bottom=.7mm}}
+
+\begin{document}
+\colorbox{Navy}{\parbox{\dimexpr\linewidth-2\fboxsep\relax}{\vspace{1.3mm}\color{white}\small\bfseries PHYSIK · KLASSE 11\hfill\textcolor{Gold}{LÖSUNGEN}\par\vspace{1.1mm}{\large Sicherungsblatt}\vspace{1.1mm}}}
+
+\vspace{1.6mm}
+{\color{Navy}\fontsize{15}{18}\selectfont\bfseries Aufgabe 7 -- Übungen zur Zentripetalkraft\par}
+\vspace{0.9mm}
+\colorbox{Sky}{\parbox{\dimexpr\linewidth-2\fboxsep\relax}{\vspace{0.55mm}\textcolor{Blue}{\bfseries Ziel:} Die Zentripetalkraft beim Hammerwurf, in einer geneigten Kurve und beim Kettenkarussell als Resultierende realer Kräfte deuten und berechnen.\vspace{0.55mm}}}
+
+\sectiontitle{1 · Hammerwurf}
+\begin{minipage}[c]{0.66\linewidth}
+\compact Gegeben: $l_{\mathrm{Seil}}=1{,}22\unit{m}$, $l_{\mathrm{Arm}}=86{,}0\unit{cm}$, $v_{\mathrm B}=25{,}0\unitfrac{m}{s}$, $m=7{,}16\unit{kg}$.
+
+\vspace{0.6mm}
+\textbf{1a Frequenz:} Der Radius reicht von der Drehachse des Werfers bis zur Kugel. Aus \mbox{$v_{\mathrm B}=\omega\cdot r=2\pi\cdot f\cdot r$} folgt:
+\[
+r=l_{\mathrm{Seil}}+l_{\mathrm{Arm}}=1{,}22\unit{m}+0{,}860\unit{m}=2{,}08\unit{m};\qquad
+f=\frac{v_{\mathrm B}}{2\pi\cdot r}=\frac{25{,}0\unitfrac{m}{s}}{2\pi\cdot2{,}08\unit{m}}\approx1{,}91\unit{Hz}
+\]
+\textbf{1b Haltekraft:} Die Kraft zur Drehachse wirkt als Zentripetalkraft.
+\[
+F_{\mathrm Z}=\frac{m\cdot v_{\mathrm B}^{2}}{r}=\frac{7{,}16\unit{kg}\cdot\left(25{,}0\unitfrac{m}{s}\right)^{2}}{2{,}08\unit{m}}\approx2{,}15\cdot10^{3}\unit{N}=2{,}15\unit{kN}
+\]
+\textbf{1c Loslassen:} Beim Loslassen fehlt die Kraft zur Drehachse. Der Hammer bewegt sich geradlinig \textbf{tangential} zur Kreisbahn weiter. Geeignet ist die Stelle, an der die Tangente durch die Öffnung des Netzes ins freie Feld zeigt.
+\end{minipage}\hfill
+\begin{minipage}[c]{0.31\linewidth}\centering
+\begin{tikzpicture}[x=1.0mm,y=1.0mm,>=Latex]
+  \coordinate (W) at (16,16);
+  \draw[Muted,line width=1.6pt] ($(W)+(50:14)$) arc[start angle=50,end angle=310,radius=14];
+  \node[font=\scriptsize,Muted,anchor=south west] at ($(W)+(55:14.5)$) {Schutznetz};
+  \draw[Blue,line width=.7pt] (W) circle (9);
+  \fill[Navy] (W) circle (1.2);
+  \node[font=\scriptsize,below] at ($(W)+(0,-1.4)$) {Werfer};
+  \draw[-{Latex},green!50!black,line width=1.1pt] ($(W)+(0,9)$) -- ($(W)+(31,9)$);
+  \fill[red!80!black] ($(W)+(0,9)$) circle (1.3);
+\end{tikzpicture}
+
+\vspace{0.4mm}
+{\scriptsize\color{Muted}Blick von oben, nicht maßstäblich. Rot: Abwurfposition, grün: Flugrichtung.}
+\end{minipage}
+
+\par\vspace{1mm}\sectiontitle{2 · Optimale Neigung einer Rennbahn}
+\begin{minipage}[c]{0.40\linewidth}\centering
+\begin{tikzpicture}[x=0.9mm,y=0.9mm,>=Latex]
+  \coordinate (C) at (25,11.66);
+  \coordinate (M) at (26.48,14.83);
+  \draw[Muted,line width=.5pt] (-1,0) -- (52,0);
+  \fill[Sky] (0,23.32) -- (50,0) -- (0,0) -- cycle;
+  \draw[Muted,line width=.8pt] (0,23.32) -- (50,0);
+  \draw (40,0) arc[start angle=180,end angle=155,radius=10];
+  \node[font=\scriptsize] at (37.5,2.3) {$\alpha$};
+  \node[draw=Navy,fill=Gold!35,rotate=-25,minimum width=11mm,minimum height=6mm,inner sep=0pt] at (M) {};
+  \draw[-{Latex},color=Gold!85!black,line width=1.1pt] (M) -- ++(0,-13) node[pos=0.8,left,font=\scriptsize]{$F_{\mathrm G}$};
+  \draw[-{Latex},Blue,line width=1.1pt] (C) -- ++(6.07,13.0) node[left,font=\scriptsize]{$F_{\mathrm N}$};
+  \draw[-{Latex},red!80!black,line width=1.1pt] (M) -- ++(6.06,0) node[right,font=\scriptsize]{$F_{\mathrm Z}$};
+  \fill (M) circle (0.8);
+  \fill (C) circle (0.7);
+  \node[font=\scriptsize,anchor=east] at (54,27) {Kurvenmitte $\rightarrow$};
+\end{tikzpicture}
+\hspace{1mm}
+\begin{tikzpicture}[x=0.85mm,y=0.85mm,>=Latex]
+  \coordinate (S) at (0,0);
+  \coordinate (P) at (8.45,18.13);
+  \coordinate (Q) at (8.45,0);
+  \draw[-{Latex},Blue,line width=1.1pt] (S) -- (P) node[midway,left,font=\scriptsize]{$F_{\mathrm N}$};
+  \draw[-{Latex},color=Gold!85!black,line width=1.1pt] (P) -- (Q) node[midway,right,font=\scriptsize]{$F_{\mathrm G}$};
+  \draw[-{Latex},red!80!black,line width=1.1pt] (S) -- (Q) node[midway,below,font=\scriptsize]{$F_{\mathrm Z}$};
+  \draw[line width=.4pt] ($(Q)+(-3,0)$) -- ++(0,3) -- ++(3,0);
+  \draw ($(P)+(270:5)$) arc[start angle=270,end angle=245,radius=5];
+  \node[font=\scriptsize] at ($(P)+(257:7.4)$) {$\alpha$};
+\end{tikzpicture}
+
+\vspace{0.4mm}
+{\scriptsize\color{Muted}Querschnitt und Kräftedreieck, nicht maßstäblich.}
+\end{minipage}\hfill
+\begin{minipage}[c]{0.57\linewidth}
+\compact Ohne seitliche Reibung wirken nur $F_{\mathrm G}$ und $F_{\mathrm N}$. Ihre Resultierende ist $F_{\mathrm Z}$. Im Kräftedreieck ist $F_{\mathrm N}$ die Hypotenuse, $F_{\mathrm G}$ die Ankathete und $F_{\mathrm Z}$ die Gegenkathete von $\alpha$.
+\begin{align*}
+\text{senkrecht:}\quad F_{\mathrm N}\cdot\cos\alpha&=F_{\mathrm G}=m\cdot g\\
+\text{waagerecht:}\quad F_{\mathrm N}\cdot\sin\alpha&=F_{\mathrm Z}=\frac{m\cdot v_{\mathrm B}^{2}}{r}
+\end{align*}
+Teilen ergibt $\dfrac{\sin\alpha}{\cos\alpha}=\tan\alpha=\dfrac{v_{\mathrm B}^{2}}{r\cdot g}$; dabei kürzen sich $F_{\mathrm N}$ und $m$.
+
+\vspace{0.8mm}
+Mit $v_{\mathrm B}=36\unitfrac{km}{h}=10\unitfrac{m}{s}$ und $r=50\unit{m}$:
+\[
+\tan\alpha=\frac{\left(10\unitfrac{m}{s}\right)^{2}}{50\unit{m}\cdot9{,}81\unitfrac{m}{s^{2}}}\approx0{,}204\quad\Rightarrow\quad\alpha\approx12^{\circ}
+\]
+\end{minipage}
+
+\par\vspace{1mm}\sectiontitle{3 · Bahngeschwindigkeit im Kettenkarussell}
+\begin{minipage}[c]{0.36\linewidth}\centering
+\begin{tikzpicture}[x=0.7mm,y=0.7mm,>=Latex]
+  \coordinate (A) at (6,45);
+  \coordinate (P) at (46,18);
+  \coordinate (FG) at (46,-2);
+  \coordinate (FZ) at (16.3,18);
+  \coordinate (FS) at (16.3,38);
+  \draw[Muted,dash dot,line width=.6pt] (6,-4) -- (6,54);
+  \node[font=\scriptsize,anchor=south] at (6,54) {Drehachse};
+  \draw[Muted,line width=.7pt] (A) -- (P) node[pos=0.17,above right,font=\scriptsize,inner sep=1pt]{$l$};
+  \draw[Muted,line width=.4pt,{Latex[length=1.6mm]}-{Latex[length=1.6mm]}] (6,50) -- (46,50) node[midway,above,font=\scriptsize,inner sep=1pt]{$r$};
+  \draw[Muted,densely dotted,line width=.4pt] (46,50) -- (46,21);
+  \draw ($(A)+(-90:8)$) arc[start angle=-90,end angle=-34,radius=8];
+  \node[font=\scriptsize] at (9.5,33.5) {$\alpha$};
+  \draw[Blue!45,densely dashed,line width=.5pt] (FS) -- (FZ);
+  \draw[Blue!45,densely dashed,line width=.5pt] (FG) -- (FZ);
+  \fill (P) circle (0.9);
+  \draw[-{Latex},color=Gold!85!black,line width=1.1pt] (P) -- (FG) node[right,font=\scriptsize]{$F_{\mathrm G}$};
+  \draw[-{Latex},Blue,line width=1.1pt] (P) -- (FS) node[pos=0.55,below left,font=\scriptsize,inner sep=1pt]{$F_{\mathrm S}$};
+  \draw[-{Latex},red!80!black,line width=1.1pt] (P) -- (FZ) node[midway,below,font=\scriptsize]{$F_{\mathrm Z}$};
+\end{tikzpicture}
+
+\vspace{0.4mm}
+{\scriptsize\color{Muted}Kettenkarussell von der Seite, nicht maßstäblich.}
+\end{minipage}\hfill
+\begin{minipage}[c]{0.61\linewidth}
+\compact Gegeben: $l=15\unit{m}$, $\alpha=56^{\circ}$, $m=75\unit{kg}$.
+
+\vspace{0.6mm}
+\textbf{3a Kräfte:} Am Körperschwerpunkt greifen nur $F_{\mathrm G}$ (senkrecht nach unten) und $F_{\mathrm S}$ (entlang der Kette zum Aufhängepunkt) an. Ihre Resultierende zeigt waagerecht zur Drehachse und wirkt als Zentripetalkraft $F_{\mathrm Z}$. Als Hypotenuse ist $F_{\mathrm S}$ größer als $F_{\mathrm G}$.
+
+\vspace{0.6mm}
+\textbf{3b Bahngeschwindigkeit:} $r$ liegt gegenüber von $\alpha$, $l$ ist die Hypotenuse:
+\[
+r=l\cdot\sin\alpha=15\unit{m}\cdot\sin56^{\circ}\approx12{,}44\unit{m}
+\]
+Wie bei der Rennbahn gilt $F_{\mathrm S}\cdot\cos\alpha=m\cdot g$ und $F_{\mathrm S}\cdot\sin\alpha=\dfrac{m\cdot v_{\mathrm B}^{2}}{r}$, also $\tan\alpha=\dfrac{v_{\mathrm B}^{2}}{r\cdot g}$:
+\[
+v_{\mathrm B}=\sqrt{r\cdot g\cdot\tan\alpha}=\sqrt{12{,}44\unit{m}\cdot9{,}81\unitfrac{m}{s^{2}}\cdot\tan56^{\circ}}\approx13\unitfrac{m}{s}\approx48\unitfrac{km}{h}
+\]
+\end{minipage}
+
+\par\vspace{1mm}\sectiontitle{4 · Merke}
+\begin{tcolorbox}[sheetbox,colback=Mint]
+\small Die Zentripetalkraft ist keine zusätzliche Kraft, sondern die Resultierende der realen Kräfte, zum Beispiel von Seilkraft, Normalkraft und Gewichtskraft. Sie zeigt immer zum Mittelpunkt der Kreisbahn: $F_{\mathrm Z}=\dfrac{m\cdot v_{\mathrm B}^{2}}{r}$.
+\end{tcolorbox}
+\vspace{0.8mm}
+\begin{tcolorbox}[sheetbox,colback=Sky]
+\small Eine schräge Kraft wird im rechtwinkligen Kräftedreieck zerlegt: Die Seite am Winkel $\alpha$ (Ankathete) gehört zum Kosinus, die Seite gegenüber von $\alpha$ (Gegenkathete) zum Sinus. Teilt man die beiden Teilgleichungen durcheinander, kürzen sich die schräge Kraft und die Masse: $\tan\alpha=\dfrac{v_{\mathrm B}^{2}}{r\cdot g}$. Der Winkel hängt deshalb nicht von der Masse ab.
+\end{tcolorbox}
+\vspace{0.8mm}
+\colorbox{Gold}{\parbox{\dimexpr\linewidth-2\fboxsep\relax}{\small\centering\bfseries Eine Fliehkraft nach außen gibt es für einen Beobachter am Boden nicht. Wer sich in der Kurve nach außen gedrückt fühlt, spürt seine Trägheit.}}
+\pagefooter{1 / 1}
+\end{document}

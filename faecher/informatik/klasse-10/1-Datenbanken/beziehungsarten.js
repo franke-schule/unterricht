@@ -1,4 +1,4 @@
-import { enableTabKeyboardNavigation, focusTabPanelStart, renderTabFlowNavigation, syncTabSemantics } from './tab-navigation.mjs?v=20260906a';
+import { enableTabKeyboardNavigation, focusTabPanelStart, renderTabFlowNavigation, syncTabSemantics } from './tab-navigation.mjs?v=20261001a';
 import {
   KLASSE, KLASSENLEITER, KLASSE_LEITER_LOESUNG, KLASSE_LEITER_ID_VERWECHSLUNG,
   SCHUELER, AG, TEILNAHME, SCHUELER_VERSUCH, agIdsForSchueler, schuelerIdsForAg,

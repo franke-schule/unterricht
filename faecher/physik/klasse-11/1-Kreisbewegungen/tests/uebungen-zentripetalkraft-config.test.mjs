@@ -140,11 +140,18 @@ feedbackIds.forEach((id) => {
 assert.equal((html.match(/Ordne<\/strong> die Rechenschritte in die richtige Reihenfolge\./g) || []).length, 4);
 assert.equal((html.match(/Bearbeite die Aufgabe auf einem Blatt oder auf dem Tablet\./g) || []).length, 1);
 
-assert.doesNotMatch(html, /unlockSolution/);
-assert.doesNotMatch(html, /solution-download/);
+// Sicherungsblatt: einmal im letzten Reiter (zugleich Auswertung), nur hinter dem Lehrercode
+assert.equal((html.match(/unlockSolution\(event, 'R9TN-DFG2'/g) || []).length, 1);
+assert.equal((html.match(/sicherungsblatt-aufgabe-7-loesungen\.pdf/g) || []).length, 1);
+assert.equal((html.match(/name="solution-code"/g) || []).length, 1);
+assert.match(html, /id="solution-download-link"[^>]*download hidden/);
+const quizPanel = html.slice(html.indexOf('id="panel-quiz"'));
+assert.ok(quizPanel.includes('class="solution-download"'), "Sicherungsblatt gehört in den letzten Reiter");
+const beforeDownload = html.slice(html.indexOf('id="summary-content"'), html.indexOf('class="solution-download"'));
+const openDivs = (beforeDownload.match(/<div\b/g) || []).length + 1;
+assert.ok((beforeDownload.match(/<\/div>/g) || []).length >= openDivs, "Sicherungsblatt darf nicht in der erst später sichtbaren Ergebnisübersicht stehen");
 assert.doesNotMatch(html, /material\//);
 assert.doesNotMatch(html, /\.tex/);
-assert.doesNotMatch(html, /\.pdf/);
 
 ["<strong>Bestimme</strong>", "<strong>Gib</strong>", "<strong>Berechne</strong>", "<strong>Skizziere</strong>", "<strong>zeichne</strong>", "<strong>Zeichne</strong>", "<strong>Wähle</strong>", "<strong>Ordne</strong>"].forEach((needle) => assert.ok(html.includes(needle), `Fehlender Operator: ${needle}`));
 

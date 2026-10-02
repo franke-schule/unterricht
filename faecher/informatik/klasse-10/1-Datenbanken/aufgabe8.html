@@ -10,7 +10,7 @@
     <link rel="stylesheet" href="tabellenschema.css?v=20260827">
     <link rel="stylesheet" href="beziehungen.css?v=20260826b">
     <link rel="stylesheet" href="beziehungsarten.css?v=20260928a">
-    <script type="module" src="beziehungsarten.js?v=20260928a"></script>
+    <script type="module" src="beziehungsarten.js?v=20261001a"></script>
   </head>
   <body class="redundancy-page relation-page relation-types-page">
     <div class="site-backdrop" aria-hidden="true"></div>
@@ -406,6 +406,21 @@
             <div class="action-row"><button class="primary-button" type="submit">Quiz auswerten</button></div>
             <p id="feedback-step8" class="feedback" aria-live="polite"></p>
           </form>
+          <section class="solution-download" aria-labelledby="solution-download-title">
+            <h2 id="solution-download-title">Sicherungsblatt zu Aufgabe 8</h2>
+            <details class="solution-reveal">
+              <summary>Sicherungsblatt anzeigen</summary>
+              <form class="solution-code-form" onsubmit="unlockSolution(event, 'M2LK-X6H9', 'solution-download-link', 'solution-code-message')">
+                <label for="solution-code">Lehrercode eingeben</label>
+                <div class="solution-code-controls">
+                  <input id="solution-code" name="solution-code" type="text" maxlength="9" autocomplete="off" autocapitalize="characters" spellcheck="false" required>
+                  <button type="submit">Code prüfen</button>
+                </div>
+                <p id="solution-code-message" class="solution-code-message" aria-live="polite"></p>
+                <a id="solution-download-link" class="download-button" href="sicherungsblatt-aufgabe-8-loesungen.pdf" download hidden>&#8595; Sicherungsblatt herunterladen</a>
+              </form>
+            </details>
+          </section>
         </section>
 
         <!-- Übersicht -->
@@ -417,6 +432,21 @@
             <article><h3>Hilfstabelle</h3><code>users 1 ── n likes n ── 1 photos</code><p>Bei der Umsetzung von n:m-Beziehungen entsteht eine neue (Hilfs-)Tabelle. Diese enthält die Primärschlüssel beider Klassen als Fremdschlüssel.</p></article>
           </div>
           <div id="answer-summary" class="answer-summary"></div>
+          <section class="solution-download" aria-labelledby="solution-download-title-summary">
+            <h2 id="solution-download-title-summary">Sicherungsblatt zu Aufgabe 8</h2>
+            <details class="solution-reveal">
+              <summary>Sicherungsblatt anzeigen</summary>
+              <form class="solution-code-form" onsubmit="unlockSolution(event, 'M2LK-X6H9', 'solution-download-link-summary', 'solution-code-message-summary')">
+                <label for="solution-code-summary">Lehrercode eingeben</label>
+                <div class="solution-code-controls">
+                  <input id="solution-code-summary" name="solution-code" type="text" maxlength="9" autocomplete="off" autocapitalize="characters" spellcheck="false" required>
+                  <button type="submit">Code prüfen</button>
+                </div>
+                <p id="solution-code-message-summary" class="solution-code-message" aria-live="polite"></p>
+                <a id="solution-download-link-summary" class="download-button" href="sicherungsblatt-aufgabe-8-loesungen.pdf" download hidden>&#8595; Sicherungsblatt herunterladen</a>
+              </form>
+            </details>
+          </section>
 
           <div class="summary-actions"><button id="reset-module" class="secondary-button" type="button">Modul neu beginnen</button><a class="secondary-button" href="../index.html">Zur Aufgabenübersicht</a></div>
         </section>
