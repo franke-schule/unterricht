@@ -32,6 +32,11 @@ references.forEach((statement, index) => {
 
 const relation = (statement) => normalizeRelation(db.exec(statement));
 assert.equal(compareRelations(relation(references[0]), relation("select *\nfrom users where gender='female';")).correct, true, 'Großschreibung, Leerraum und Semikolon');
+for (const projection of ['*', 'username', 'name', 'name, username']) {
+  const answer = `SELECT ${projection}\nFROM users\nWHERE gender = "female"`;
+  const expected = flexibleReferenceSql(references[0], answer);
+  assert.equal(compareRelations(relation(answer), relation(expected)).correct, true, `Aufgabe 1 akzeptiert SELECT ${projection} mit doppelten Anführungszeichen`);
+}
 assert.equal(compareRelations(relation(references[5]), relation("SELECT name FROM users WHERE gender='female' AND centimeters>160 OR gender='male' AND centimeters>165")).correct, true, 'gleichwertige AND-/OR-Klammerung');
 assert.equal(compareRelations(relation(references[15]), relation("SELECT * FROM users WHERE city='Berlin' AND (name LIKE 'Naomi%' OR name LIKE 'Bea%')")).correct, true, 'A17 mit vertauschten OR-Zweigen');
 assert.equal(compareRelations(relation(references[13]), relation("SELECT username, birthday FROM users WHERE centimeters < 160 AND gender = 'female'"), { columnOrder: false }).correct, true, 'A15 akzeptiert beide sinnvollen Projektionsreihenfolgen');
@@ -40,14 +45,16 @@ assert.equal(compareRelations(relation(references[16]), relation('SELECT MAX(bir
 assert.equal(compareRelations(relation(references[3]), relation('SELECT name FROM users WHERE city != "Leipzig"')).correct, true, 'Doppelte Quotes für Leipzig funktionieren in SQLite');
 assert.equal(compareRelations(relation(references[3]), relation("SELECT name FROM users WHERE city = 'Leipzig' IS FALSE")).correct, true, 'Gleichwertige Negation mit IS FALSE bleibt gültig');
 assert.throws(() => db.exec('SELECT username FROM user WHERE city != "Leipzig"'), /no such table/i, 'user statt users ist ein Tabellenfehler');
-for (const index of [1, 2, 4, 6, 8, 9, 10, 12, 14]) {
+for (const index of [0, 1, 2, 4, 6, 8, 9, 10, 12, 14, 17]) {
   const reference = references[index];
   for (const projection of ['*', 'name', 'username', 'name, username', 'username, name']) {
     const variant = flexibleReferenceSql(reference, `SELECT ${projection} FROM users`);
     const expected = relation(variant);
     assert.equal(compareRelations(relation(variant), expected, { rowOrder: index === 12 }).correct, true, `A${index}: ${projection}`);
     if (expected.values.length) {
-      const wrong = variant.replace(/\bWHERE\b[\s\S]*/i, "WHERE id = -1");
+      const wrong = /\bWHERE\b/i.test(variant)
+        ? variant.replace(/\bWHERE\b[\s\S]*/i, 'WHERE id = -1')
+        : variant.replace(/\bFROM users\b/i, 'FROM users WHERE id = -1');
       assert.equal(compareRelations(relation(wrong), expected, { rowOrder: index === 12 }).correct, false, `Falsche Zeilen A${index}: ${projection}`);
     }
   }

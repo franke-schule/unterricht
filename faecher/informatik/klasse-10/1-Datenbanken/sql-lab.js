@@ -17,7 +17,7 @@ const USERS_TABLE_SCHEMAS = Object.freeze([
 ]);
 const state = { tab: 'intro', introStep: 1, answers: {}, feedback: {}, results: {}, server: {}, quiz: {}, quizPassed: false, quizFeedback: null };
 const SQL_TABS = [['intro', 'SQL Schritt für Schritt'], ['conditions', 'Bedingungen'], ['fastConditions', 'Für die Schnellen: Bedingungen'], ['aggregates', 'Aggregatfunktionen'], ['fastAggregates', 'Für die Schnellen: Aggregatfunktionen'], ['quiz', 'Abschlussquiz']];
-const FLEXIBLE_TASK_IDS = new Set(['b2-2', 'b2-4', 'b2-6', 'b2-8', 'b2-10', 'b2-11', 'b2-12', 'b2-14', 'b2-16']);
+const FLEXIBLE_TASK_IDS = new Set(['b2-1', 'b2-2', 'b2-4', 'b2-6', 'b2-8', 'b2-10', 'b2-11', 'b2-12', 'b2-14', 'b2-16', 'b3-4']);
 const FINAL_QUIZ = [
   { id: 'clauses', prompt: 'Welche Aussagen zu SELECT, FROM und WHERE stimmen?', hint: 'Unterscheide Tabelle, Zeilen und Spalten.', options: [['from', 'FROM bestimmt die Tabelle.', true], ['where', 'WHERE filtert die Zeilen.', true], ['select', 'SELECT wählt die ausgegebenen Spalten.', true], ['selectRows', 'SELECT legt fest, welche Zeilen die Bedingung erfüllen.', false]] },
   { id: 'values', prompt: 'Welche Aussagen zu SQL-Werten stimmen?', hint: 'Unterscheide Attributnamen und Werte.', options: [['text', "Ein Textwert kann als 'Leipzig' geschrieben werden.", true], ['number', 'Die ganze Zahl 180 braucht keine Anführungszeichen.', true], ['same', 'name und username enthalten grundsätzlich dieselben Werte.', false], ['table', "Der Tabellenname users muss als 'users' geschrieben werden.", false]] },
