@@ -1145,13 +1145,13 @@ function setupMisconceptionQuiz() {
     question: "Welche Aussagen sind richtig?",
     correct: ["too-small", "tangent"],
     options: [
-      ["centrifugal", "Eine Zentrifugalkraft zieht den Hammer nach außen. Deshalb fliegt er beim Loslassen vom Mittelpunkt weg."],
+      ["forward-force", "Die Zentripetalkraft zeigt in Bewegungsrichtung des Hammers und macht ihn dadurch schneller."],
       ["too-small", "Reicht die Kraft zum Mittelpunkt nicht aus, wird der Bahnradius größer: Das Auto rutscht in der Kurve nach außen."],
       ["stop", "Hört die Kraft zum Mittelpunkt auf zu wirken, bleibt der Körper sofort stehen."],
       ["tangent", "Beim Loslassen fliegt der Hammer tangential weiter, weil keine Kraft mehr zum Mittelpunkt wirkt."],
       ["too-big", "Ist die Kraft zum Mittelpunkt größer als nötig, bewegt sich der Körper auf einem größeren Kreis."],
     ],
-    feedback: "Für einen ruhenden Beobachter gibt es keine Kraft, die nach außen zieht. Fehlt die Kraft zum Mittelpunkt, bewegt sich der Körper tangential geradlinig weiter. Ist sie zu klein, wird der Bahnradius größer.",
+    feedback: "Die Zentripetalkraft zeigt zum Mittelpunkt und ändert die Bewegungsrichtung. Fehlt sie, bewegt sich der Körper tangential geradlinig weiter. Ist sie zu klein, wird der Bahnradius größer.",
     hint: "Prüfe bei jeder Aussage: Welche reale Kraft zeigt nach innen, und was passiert nach dem Trägheitssatz, wenn sie fehlt oder zu klein ist?",
   }, 0);
 }
