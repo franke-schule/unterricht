@@ -1,0 +1,260 @@
+Wechsel auf Scaleways
+====================
+
+Stand: 04.10.2026. Die Umstellung ist PAUSIERT. Schritt 7 und alle folgenden
+Schritte sind noch nicht durchgeführt. Dieses Dokument ist die Arbeitsanleitung
+und zugleich das Änderungsprotokoll. Weder API-Schlüssel noch Schülerantworten
+oder Codeeingaben gehören in diese Datei.
+
+Ziel
+----
+Die Unterrichtswebsite soll KI-Anfragen künftig an eine eigene Scaleway
+Function senden. Diese ruft Scaleway Generative APIs auf und gibt das bisherige
+Feedbackformat an die Website zurück. Die bisherige Apps-Script-Bereitstellung
+bleibt bis zur erfolgreichen Abnahme als Rückweg verfügbar.
+Das Endgerät verbindet sich dabei weiterhin mit der Function; Scaleway kann
+also dessen IP-Adresse beim Eingang der Anfrage sehen. Der anschließende
+Modellaufruf kommt von Scaleway, nicht direkt vom Endgerät. Serverless
+Functions bieten laut Scaleway keine feste dedizierte ausgehende IP-Adresse.
+
+Aktueller Stand und wichtige Abhängigkeiten
+-------------------------------------------
+* Die produktive Serverlogik liegt lokal in apps-script/Config.gs, Code.gs,
+  Gemini.gs, EvaluationSchema.gs, Helpers.gs, Rules.gs und Tasks.gs.
+* Die Website enthält derzeit in 24 produktiven Dateien eine feste
+  script.google.com/macros/s/.../exec-Adresse. Eine zentrale URL-Konfiguration
+  gibt es bislang nicht.
+* Es gibt drei Übertragungswege: Freitext per JSONP-GET (Antwort im URL),
+  einfache Codeanfragen per Formular/iframe und Codeanfragen mit späterem
+  JSONP-Abruf des Ergebnisses. Der letzte Weg nutzt Apps Script CacheService
+  mit einer Laufzeit von 600 Sekunden.
+* Die bestehende Gemini-Integration nutzt GEMINI_API_KEY und GEMINI_MODEL als
+  Script Properties. Google-spezifische Aufrufe in .gs-Dateien sind auf einer
+  Scaleway Function nicht unverändert lauffähig.
+* Das Serverergebnis hat bereits ein von der Website erwartetes Format,
+  insbesondere ok, points, maxPoints, status, strengths, missing, feedback
+  und message. Dieses Format bei der Umstellung erhalten.
+
+Vor Beginn von Schritt 7: Sicherung als Pflichtschritt
+----------------------------------------------------
+Die Sicherung muss vor der ersten Änderung an Serverdateien oder Website-Code
+abgeschlossen und probeweise lesbar sein.
+
+1. Den lokalen Arbeitsstand prüfen: git status --short, git branch --show-current
+   und git rev-parse HEAD. Uncommittete Änderungen zuerst getrennt sichern;
+   keinesfalls als Bestandteil der Migration übergehen. Den vollständigen
+   Ausgangs-Commit und den Branch unten im Änderungsprotokoll eintragen.
+   Bei der Bestandsaufnahme für diese Anleitung war der Arbeitsbaum sauber;
+   HEAD war 385a2f918ae87dfa646f5aea49a65d8a6b42301d. Vor dem tatsächlichen
+   Start erneut prüfen.
+2. Eine vollständige, datierte Kopie des Repositorys außerhalb des
+   Arbeitsverzeichnisses an einem zugriffsgeschützten Ort ablegen. Insbesondere
+   apps-script/, die unten genannten Website-Dateien und die Tests müssen
+   enthalten sein. Alternativ zusätzlich einen sicheren Git-Remote bzw. ein
+   Git-Bundle verwenden. Speicherort und Prüfsumme/Lesetest dokumentieren.
+3. Den tatsächlich bereitgestellten Google-Apps-Script-Stand separat
+   exportieren: alle .gs-Dateien UND appsscript.json. Er kann vom lokalen
+   apps-script/-Ordner abweichen. Script-ID, Deployment-ID, Version, /exec-URL,
+   Ausführungs- und Zugriffseinstellungen sowie Exportdatum notieren. Lokalen
+   und bereitgestellten Stand vergleichen und Abweichungen dokumentieren.
+   Die aktuelle Bereitstellung während der Testphase nicht löschen oder
+   überschreiben.
+4. Die Namen der benötigten Script Properties erfassen. Geheimwerte nur in
+   einem verschlüsselten Passwortmanager bzw. Secret-Backup sichern; keine
+   Schlüssel im Repository, in dieser Datei, in Screenshots oder Logs ablegen.
+   CacheService enthält nur kurzlebige Ergebnisdaten; Schülerantworten dafür
+   nicht eigens in ein dauerhaftes Backup übernehmen.
+5. Rücksicherung überprüfen: Lässt sich der Repository-Stand wieder öffnen?
+   Sind exportierte Apps-Script-Dateien vollständig? Sind die geheimen Werte
+   bei Bedarf aus dem geschützten Speicher verfügbar? Erst dann weitergehen.
+
+Schritt 7: Scaleway-Zugang und isolierten Test vorbereiten
+--------------------------------------------------------
+1. Die in Schritten 1 bis 6 angelegte Application, IAM-Policy und den API-Key
+   kontrollieren. Die Berechtigung GenerativeApisModelAccess muss auf das
+   gewählte Projekt „Unterrichtswebsite“ zielen. Falls Schritt 6 bereits
+   ausgeführt wurde, dessen Ergebnis und das Datum hier vermerken.
+2. In der Scaleway-Konsole das tatsächlich verfügbare Modell und dessen
+   exakte Modell-ID wählen. Zunächst ein für kurze deutschsprachige
+   Korrekturrückmeldungen geeignetes Modell nehmen; Modell-ID, Region,
+   Projekt-ID, Preis und geltende Datenverarbeitungsbedingungen dokumentieren.
+   Die Modell-ID nicht aus einem alten Beispiel ungeprüft übernehmen.
+3. Mit einem künstlichen, personenbezugsfreien Testtext einen direkten Aufruf
+   der Scaleway Generative API testen. Erwartet werden erfolgreiche
+   Authentisierung, nachvollziehbare Kosten und eine auswertbare JSON-Antwort.
+   Den API-Key nur in einem lokalen Secret/Environment speichern; nie in
+   Browser-JavaScript oder HTML.
+4. Eine Scaleway Function in einer geeigneten EU-Region als Testinstanz
+   anlegen. Umgebungsvariablen/Secrets für API-Key, Projekt-ID und Modell-ID
+   setzen (z. B. AI_API_KEY, AI_PROJECT_ID, AI_MODEL). Keine Variablennamen
+   mit reserviertem SCW_-Präfix für eigene Secrets verwenden. HTTPS-Endpunkt
+   zunächst nur mit künstlichen Testdaten verwenden; URL und Version notieren.
+
+Schritt 8: Apps-Script-Logik in die Function übertragen
+-----------------------------------------------------
+1. Die vorhandenen Aufgaben, Bewertungsregeln und das Schema aus Tasks.gs,
+   Rules.gs, EvaluationSchema.gs und Helpers.gs übernehmen. Promptaufbau aus
+   Gemini.gs übernehmen und gegen die Scaleway-Antwort testen. Die Kriterien
+   nicht stillschweigend ändern; Modellunterschiede anhand von Testfällen
+   beurteilen.
+2. Code.gs in einen HTTP-Handler für die Function übertragen. Empfohlenes
+   Ziel: POST mit JSON {requestId, taskId, answer} beziehungsweise
+   {requestId, taskId, code}; Antwort als JSON {requestId, result}.
+   Die bisherigen Feedbackfelder in result erhalten. Fehler liefern klare
+   HTTP-Statuscodes und ein kontrolliertes JSON-Fehlerformat.
+3. In Gemini.gs den providerabhängigen Aufruf ersetzen: Scaleway Generative
+   API unter https://api.scaleway.ai/{project_id}/v1/chat/completions mit
+   Authorization: Bearer <API-Key>, gewähltem Modell und passender
+   Nachrichten-/Antwortstruktur verwenden. Schemaausgabe bzw. robustes
+   Parsen, normalizeEvaluation_ und applyRuleBasedMinimum_ sinngemäß
+   beibehalten. Das Gemini-spezifische store:false nicht ungeprüft übertragen.
+4. Apps-Script-Dienste ersetzen: PropertiesService durch Function-Secrets,
+   UrlFetchApp durch den HTTP-Client der Function, ContentService/HtmlService
+   durch HTTP-JSON-Antworten. Für direkte POST-Antworten werden JSONP,
+   iframe/postMessage und CacheService-Polling nicht mehr benötigt.
+5. taskId, requestId, Antwort-/Codelänge und Gesamtgröße der Anfrage auf
+   dem Server prüfen. Nur die benötigten Website-Origins per CORS erlauben,
+   OPTIONS-Anfragen behandeln und Missbrauchsschutz/Rate-Limits sowie
+   maximale Laufzeit vorsehen. Keine Schülertexte, Codes, Tokens oder
+   vollständigen Requests in Logs schreiben. Wegen öffentlicher Website ist
+   CORS allein kein Schutz vor fremden Serveraufrufen.
+6. Für Datenschutz vor einem Einsatz mit echten Schülerdaten die
+   Auftragsverarbeitung, Region, Protokollierung und Aufbewahrungsfristen bei
+   Scaleway sowie die schulische Freigabe und Datenschutzhinweise prüfen.
+   Scaleway beschreibt Zero Data Retention als Standard für Generative APIs,
+   nennt aber Ausnahmen bei missbräuchlichem oder fehlerauslösendem Traffic.
+   Diese Ausnahmen bei der Bewertung berücksichtigen.
+
+Schritt 9: Website-Code umstellen
+--------------------------------
+Die folgenden 24 Dateien enthalten bei der Bestandsaufnahme eine produktive
+Apps-Script-/exec-Adresse und müssen einzeln überprüft werden. „Offen“ heißt:
+Noch keine Umstellung vorgenommen. Jede Änderung sofort im Protokoll unten
+eintragen. Vor dem Beginn mit rg -n 'script\.google\.com|script\.googleusercontent\.com'
+die Liste erneut abgleichen.
+
+Informatik 9, Tabellenkalkulation (JSONP):
+  [offen] faecher/informatik/klasse-9/1-Tabellenkalkulation/aufgabe5a.html
+  [offen] faecher/informatik/klasse-9/1-Tabellenkalkulation/aufgabe5b.html
+
+Informatik 9, Online-IDE (Formular/iframe bzw. Code-Ergebnis):
+  [offen] faecher/informatik/klasse-9/3-Modellierung-und-Programmierung-Online-IDE/aufgabe1.html
+  [offen] faecher/informatik/klasse-9/3-Modellierung-und-Programmierung-Online-IDE/aufgabe2.html
+
+Informatik 10, Datenbanken (JSONP und Code-Ergebnis):
+  [offen] faecher/informatik/klasse-10/1-Datenbanken/sql-lab.js
+  [offen] faecher/informatik/klasse-10/1-Datenbanken/aufgabe1-quiz.js
+  [offen] faecher/informatik/klasse-10/1-Datenbanken/aufgabe2-quiz.js
+  [offen] faecher/informatik/klasse-10/1-Datenbanken/aufgabe3-quiz.js
+
+Informatik 10, Online-IDE (Formular/iframe bzw. Code-Ergebnis):
+  [offen] faecher/informatik/klasse-10/2-Modellierung-und-Programmierung-Online-IDE/aufgabe1.html
+  [offen] faecher/informatik/klasse-10/2-Modellierung-und-Programmierung-Online-IDE/aufgabe2.html
+
+Informatik 11, Künstliche Intelligenz (JSONP):
+  [offen] faecher/informatik/klasse-11/1-Kuenstliche-Intelligenz/aufgabe3a-quiz.mjs
+  [offen] faecher/informatik/klasse-11/1-Kuenstliche-Intelligenz/entscheidungbaeume/ui/task3.mjs
+  [offen] faecher/informatik/klasse-11/1-Kuenstliche-Intelligenz/entscheidungbaeume/ui/task4.mjs
+  [offen] faecher/informatik/klasse-11/1-Kuenstliche-Intelligenz/knn/ui/task7.mjs
+  [offen] faecher/informatik/klasse-11/1-Kuenstliche-Intelligenz/knn/ui/task8.mjs
+  [offen] faecher/informatik/klasse-11/1-Kuenstliche-Intelligenz/perzeptron/ui/task5.mjs
+  [offen] faecher/informatik/klasse-11/1-Kuenstliche-Intelligenz/perzeptron/ui/task6.mjs
+
+Physik 11, Kreisbewegungen (JSONP):
+  [offen] faecher/physik/klasse-11/1-Kreisbewegungen/aufgabe3-quiz.mjs
+  [offen] faecher/physik/klasse-11/1-Kreisbewegungen/bewegung-koerpern.mjs
+  [offen] faecher/physik/klasse-11/1-Kreisbewegungen/kettenkarussell.mjs
+  [offen] faecher/physik/klasse-11/1-Kreisbewegungen/kraefte-bewegung.mjs
+  [offen] faecher/physik/klasse-11/1-Kreisbewegungen/wdh2-quiz.mjs
+  [offen] faecher/physik/klasse-11/1-Kreisbewegungen/winkelgeschwindigkeit-kreisbewegung.mjs
+  [offen] faecher/physik/klasse-11/1-Kreisbewegungen/components/physics-semantic-task.mjs
+
+Zusätzlich ohne eigene feste URL zu bearbeiten:
+  [offen] faecher/informatik/klasse-11/1-Kuenstliche-Intelligenz/perzeptron/ui/semantic-answer.mjs
+  [offen] faecher/informatik/klasse-11/1-Kuenstliche-Intelligenz/entscheidungbaeume/ui/semantic-answer.mjs
+  [offen] faecher/informatik/klasse-10/1-Datenbanken/sql-lab-core.mjs
+
+Konkrete Anpassung nach Übertragungsweg:
+* JSONP: dynamische <script>-Tags und callback-Parameter durch fetch-POST
+  mit JSON-Body ersetzen. Antworttext darf nicht mehr in der URL stehen.
+  Gemeinsame semantic-answer.mjs-Helfer und ihre Aufrufer zusammen umstellen.
+* iframe: versteckte Formulare/Frames und Prüfung einer Google-Absenderdomain
+  durch fetch-POST und direkte JSON-Auswertung ersetzen. Auch lokale
+  URL-Validatoren in den vier Online-IDE-Seiten und beiden
+  Tabellenkalkulationsseiten prüfen.
+* Code-Polling: requestType=code, requestType=code-result und den JSONP-Abruf
+  durch eine einzige POST-Anfrage mit Antwort ersetzen. Timeout-, Lade- und
+  Fehlermeldungen erhalten.
+* sql-lab-core.mjs akzeptiert derzeit nur die Google-/exec-Adresse;
+  Validierung für die neue HTTPS-Function-URL anpassen.
+* Bestehende taskId-Zuordnung, Ergebnisanzeige und Aufgabenlogik beibehalten.
+  Die Function-URL gehört in den Website-Code, der geheime API-Key niemals.
+  Bei gemeinsam genutzten Helfern keine unnötige neue Parallelstruktur bauen.
+
+Schritt 10: Test, Umstellung und Beobachtung
+------------------------------------------
+1. Servertests für Routing, unbekannte taskId, zu lange Eingaben, Modellfehler,
+   ungültiges JSON, Zeitüberschreitung und Feedbackformat ausführen. Vorhandene
+   apps-script/tests/*.js als fachliche Referenz verwenden bzw. anpassen.
+2. Website-Tests der betroffenen Bereiche aktualisieren, darunter
+   faecher/informatik/klasse-10/1-Datenbanken/tests/sql-lab-core.test.mjs
+   und die semantic-answer-Tests. Je einen echten Browser-Test pro
+   Übertragungsweg mit fiktiven Antworten und Codes durchführen.
+3. Im Browser-Netzwerkprotokoll prüfen: POST an die Function; kein API-Key im
+   Client; keine Antwort im URL; keine produktive Anfrage mehr an Google
+   Apps Script oder Gemini. CORS, Mobilansicht, Fehlermeldungen und erneuten
+   Versuch nach Fehler prüfen.
+4. Repo-weit nach alten produktiven Verweisen suchen, besonders nach
+   script.google.com, script.googleusercontent.com, GEMINI_API_KEY,
+   evaluateWithGemini_, callback= und requestType=code-result. Historische
+   Dokumentation und Rückweg-Einträge dürfen bewusst bestehen bleiben.
+5. git diff --check und die relevanten Tests ausführen. Jede geänderte Datei
+   mit Grund, Commit und Test im Änderungsprotokoll erfassen. Erst danach
+   Website und Function abgestimmt bereitstellen und mit künstlichen Daten
+   erneut prüfen. Die alte Google-Bereitstellung samt Schlüssel während der
+   vereinbarten Rückfallfrist unverändert erhalten.
+6. Nach fachlicher und datenschutzrechtlicher Freigabe den Wechsel abnehmen,
+   Rückfallfrist und verantwortliche Person festhalten. Erst danach den alten
+   Schlüssel widerrufen und die alte Bereitstellung stilllegen.
+
+Rückweg zu Apps Script
+----------------------
+* Bei Problemen zunächst neue produktive Aufrufe stoppen. Die Website auf
+  den protokollierten Ausgangs-Commit bzw. per git revert auf die alte
+  /exec-Adresse und die alte Übertragungslogik zurückführen; keine späteren,
+  unabhängigen Änderungen mit git reset verlieren. Neue Website-Version
+  bereitstellen und eventuelle Browser-Caches beachten.
+* Die alte Apps-Script-Bereitstellung muss dazu noch aktiv sein. Falls deren
+  Quellstand doch verändert wurde, den gesicherten Live-Export und die
+  Deployment-Version wiederherstellen. Secrets ausschließlich aus dem
+  geschützten Speicher zurücksetzen. Mit künstlichen Testeingaben prüfen.
+* Rückwechsel, Uhrzeit, betroffene Commits, Ursache und Testbefund unten
+  eintragen. Erst danach über einen neuen Migrationsversuch entscheiden.
+
+Änderungsprotokoll (bei jedem Umsetzungsschritt fortschreiben)
+------------------------------------------------------------
+Ausgangs-Commit: vor der Umsetzung erneut eintragen.
+Ausgangs-Branch: vor der Umsetzung eintragen.
+Repo-Backup: Datum, geschützter Speicherort, Prüfsumme/Lesetest eintragen.
+Apps-Script-Live-Export: Datum, gesicherte Version/Deployment-ID und
+geschützter Speicherort eintragen (keine Secrets oder Schülerdaten).
+Secret-Backup: nur Verweis auf Passwortmanager-Eintrag eintragen.
+Scaleway-Projekt/Region/Modell/Function-Version: bei Schritt 7 eintragen.
+
+Für JEDE Server- und Website-Datei einen Eintrag nach diesem Muster ergänzen:
+  Datum | Datei | vorheriger Übertragungsweg/URL | neue Function-URL bzw.
+  Änderung | Grund | Commit | Test/Ergebnis | Rückweg/alter Commit
+
+Noch keine Migrationsänderungen durchgeführt. Die Liste in Schritt 9 ist die
+Bestandsaufnahme, keine Behauptung bereits vorgenommener Änderungen.
+
+Dokumentation zum Nachprüfen beim späteren Start
+------------------------------------------------
+Scaleway Serverless Functions: https://www.scaleway.com/en/docs/serverless-functions/
+Scaleway Generative APIs: https://www.scaleway.com/en/docs/generative-apis/
+Projektbezogene API-URL: https://www.scaleway.com/en/docs/generative-apis/api-cli/using-generative-apis/
+Function-Secrets: https://www.scaleway.com/en/docs/serverless-functions/how-to/secure-a-function/
+Reservierte Variablen und IP: https://www.scaleway.com/en/docs/serverless-functions/reference-content/functions-limitations/
+Datenschutz: https://www.scaleway.com/en/docs/generative-apis/reference-content/data-privacy/
+Aktuelle Modellliste, Authentisierung, Preise und Datenschutzangaben vor
+Schritt 7 erneut direkt in der Scaleway-Dokumentation prüfen.
