@@ -2,6 +2,7 @@ import { evaluateSemanticAnswer } from './semantic-answer.mjs';
 
 const SERVER_URL = 'https://script.google.com/macros/s/AKfycby8RWL6uYrKZyoJ6m2GRpWyRmXjwsdskyCiqzKpRhIK5-wrDl-9lWWk8CiAGaVMoy0x/exec';
 const STORAGE_KEY = 'informatik11-ki-aufgabe6-v1';
+const SOLUTION_CODE = 'M6QS-D4B7';
 const IDE_IDS = { einfach: 'Java11Aufgabe6Einfach', schwer: 'Java11Aufgabe6Schwer' };
 const FALLBACK = {
   description: ['Du hast Rechnung, Vergleich und Rückgabewert passend erklärt.', 'Die Grundidee stimmt. Ergänze den Vergleich mit `theta` oder erkläre den Rückgabewert genauer.', 'Beschreibe zuerst die gewichtete Summe und anschließend die Entscheidung zwischen 0 und 1.'],
@@ -209,6 +210,20 @@ function checkQuiz(event) {
   progress(count); state.quizSummary = count === 4 || state.quizSummary; showQuizSummary(); save();
   showMessage(document.querySelector('#quiz-feedback'),count === 4 ? 'Alle vier Fragen sind vollständig richtig beantwortet.' : `${count} von 4 Fragen sind vollständig richtig. Verbessere die markierten Fragen und prüfe erneut.`,count === 4 ? 'success' : 'partial');
 }
+function normalizeSolutionCode(value) {
+  return value.toUpperCase().replace(/[^A-Z0-9]/g, '');
+}
+function unlockSolution(event) {
+  event.preventDefault();
+  const enteredCode = normalizeSolutionCode(event.currentTarget.elements['solution-code'].value);
+  const isCorrect = enteredCode === normalizeSolutionCode(SOLUTION_CODE);
+  const message = document.querySelector('#solution-code-message');
+  document.querySelector('#solution-download-link').hidden = !isCorrect;
+  message.className = 'solution-code-message' + (isCorrect ? '' : ' error');
+  message.textContent = isCorrect
+    ? 'Code korrekt. Das Sicherungsblatt ist freigeschaltet.'
+    : 'Der eingegebene Code ist nicht gültig.';
+}
 buildQuiz();
 guardIdeReset('frame-einfach','einfach');
 guardIdeReset('frame-schwer','schwer');
@@ -219,6 +234,7 @@ document.querySelector('#check-description').addEventListener('click',checkDescr
 document.querySelectorAll('[data-code-task]').forEach(button => button.addEventListener('click',() => checkCode(button)));
 document.querySelector('#quiz-form').addEventListener('change',event => { if (event.target.matches('input[type="checkbox"]')) { state.quiz = QUIZ.map((_,i) => selected(i)); save(); } });
 document.querySelector('#quiz-form').addEventListener('submit',checkQuiz);
+document.querySelector('#solution-code-form').addEventListener('submit',unlockSolution);
 restore();
 document.querySelector('#description').value = state.description;
 state.quiz.forEach((values,i) => values.forEach(value => { const input = document.querySelector(`[name="quiz-${i}"][value="${value}"]`); if (input) input.checked = true; }));

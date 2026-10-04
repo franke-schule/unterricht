@@ -1,0 +1,66 @@
+/* Aufgabe 8 "KNN: k wählen, testen und Grenzen erkennen" - nur neue Regeln, Geltungsbereich .knn-page.
+   Layout, Auswahlknöpfe, Tabellen, Karten und Grafiken kommen aus knn/task7.css, Reiter, Feedback und
+   Merke-Kästen aus perzeptron/task5.css. */
+
+/* -- Klassenfarben für die zusätzlichen Klassen (Form unterscheidet die Klassen zusätzlich: blau Kreis, orange Quadrat) -- */
+.knn-page .knn-mark-blau { fill: #126e9c; }
+.knn-page .knn-mark-orange { fill: #c4650a; }
+.knn-page .knn-mark-R { fill: #126e9c; }
+.knn-page .knn-mark-H { fill: #126e9c; }
+
+/* -- Phasenmodell (statisches SVG); die Selektoren enthalten .knn-plot, damit sie die allgemeine Textregel übertreffen -- */
+.knn-page .knn-phase-box { fill: #edf6fb; stroke: #126e9c; stroke-width: 2; }
+.knn-page .knn-plot .knn-phase-title { font-size: 16px; font-weight: 800; }
+.knn-page .knn-plot .knn-phase-sub { font-size: 13px; font-weight: 600; }
+.knn-page .knn-phase-arrow { stroke: #12324a; stroke-width: 2.5; fill: none; }
+.knn-page .knn-plot .knn-phase-note { font-size: 13px; font-style: italic; }
+
+/* -- Kreisdiagramm (statisches SVG) -- */
+.knn-page .knn-pie-train { fill: #287b61; stroke: #fff; stroke-width: 2; }
+.knn-page .knn-pie-valid { fill: #9fd3b8; stroke: #fff; stroke-width: 2; }
+.knn-page .knn-pie-test { fill: #f6d77a; stroke: #fff; stroke-width: 2; }
+.knn-page .knn-pie-leader { stroke: #12324a; stroke-width: 1.5; }
+
+/* -- Phasen-Felder: Die Feldbeschriftung („Vorbereitung 1“) wird nicht abgeschnitten -- */
+.knn-page #phase-cards .knn-slot { grid-template-columns: 8.5rem minmax(0, 1fr); }
+
+/* -- Zellknöpfe der Tabellen: offen (gestrichelt), korrekt ✓ und falsch ✗ (durchgezogen) -- */
+.knn-page .knn-cell-toggle { width: 44px; height: 44px; min-width: 44px; min-height: 44px; padding: 0; border: 2px dashed #126e9c; border-radius: .45rem; background: #fff; color: #12324a; font: inherit; font-size: 1.1rem; font-weight: 800; cursor: pointer; }
+.knn-page .knn-cell-toggle[data-state="korrekt"], .knn-page .knn-cell-toggle[data-state="falsch"] { border-style: solid; }
+.knn-page .knn-cell-toggle[data-state="korrekt"] { background: #e7f6ef; }
+.knn-page .knn-cell-toggle[data-state="falsch"] { background: #fff1f1; }
+.knn-page .knn-given { font-weight: 400; }
+.knn-page .knn-cell-table td, .knn-page .knn-cell-table th { padding: .25rem .2rem; }
+/* Maße und Größe bleiben in einer Zeile (kein Umbruch an „|“); die Zellknöpfe behalten ihre 44 px */
+.knn-page #validation-table td:nth-child(2), .knn-page #validation-table td:nth-child(3) { white-space: nowrap; overflow-wrap: normal; }
+.knn-page .knn-cell-hint { margin: .5rem 0 0; font-size: .9rem; }
+
+/* -- Konfusionsmatrix -- */
+.knn-page .knn-matrix td input { max-width: 4rem; text-align: center; }
+
+/* -- Hinweis „freiwillig“ -- */
+.knn-page .knn-optional-note { border-left: 5px solid #bd8900; background: #fff8e5; padding: .6rem .8rem; }
+
+/* -- Aufzählungen im Kreisdiagramm-Layout und Ausgabe der Hauspreise -- */
+.knn-page .knn-side ul { margin: 0; padding-left: 1.2rem; }
+.knn-page .knn-side ul li { margin: .5rem 0; }
+.knn-page #house-output { margin: .8rem 0 0; font-weight: 700; }
+
+/* Schmalere Bildschirme (Tablet): Die Spalte „Maße“ darf umbrechen, damit die 44-px-Zellknöpfe ohne seitliches Scrollen passen;
+   die fünf Spalten der Testtabelle brauchen engere Kopfzeilen */
+@media (max-width: 1000px) {
+  .knn-page #test-table thead th { font-size: .68rem; padding: .3rem .15rem; }
+  .knn-page #validation-table td:nth-child(2) { white-space: normal; overflow-wrap: anywhere; }
+  .knn-page .knn-cell-table td, .knn-page .knn-cell-table th { padding: .2rem .1rem; }
+}
+
+/* Tablet im Hochformat und Smartphone: kleinere Kopfzeilen, damit lange Spaltentitel ohne seitliches Scrollen passen */
+@media (max-width: 900px) {
+  .knn-page .knn-table thead th { font-size: .7rem; padding: .25rem .1rem; }
+  .knn-page .knn-cell-table td, .knn-page .knn-cell-table th { padding: .2rem .05rem; }
+  .knn-page #test-table thead th { font-size: .6rem; padding: .25rem 0; }
+}
+
+@media (max-width: 700px) {
+  .knn-page #phase-cards .knn-slot { grid-template-columns: 7rem minmax(0, 1fr); }
+}

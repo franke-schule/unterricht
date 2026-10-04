@@ -186,11 +186,13 @@ const klasse10Index = await readFile(resolve(databaseFolder, '..', 'index.html')
 assert.match(html, /href="\.\.\/index\.html">Zur Aufgabenübersicht<\/a>/, 'Rücklink zur Aufgabenübersicht fehlt.');
 assert.match(html, /href="\.\.\/\.\.\/\.\.\/\.\.\/index\.html">Startseite<\/a>/, 'Rücklink zur Startseite fehlt.');
 assert.match(html, /id="final-quiz"/, 'Das Abschlussquiz-Formular mit id="final-quiz" fehlt.');
-assert.doesNotMatch(html, /solution-download/, 'Aufgabe 9 hat kein Sicherungsblatt und darf keinen solution-download-Bereich enthalten.');
-assert.doesNotMatch(html, /unlockSolution/, 'Aufgabe 9 darf kein unlockSolution einbinden.');
+assert.equal((html.match(/class="solution-download"/g) ?? []).length, 2, 'Das Sicherungsblatt muss im Quiz und in der Auswertung erreichbar sein.');
+assert.equal((html.match(/href="sicherungsblatt-aufgabe-9-loesungen\.pdf" download hidden/g) ?? []).length, 2, 'Beide Downloadlinks müssen anfangs verborgen sein.');
+assert.equal((html.match(/M4NP-X3J6/g) ?? []).length, 2, 'Beide Formulare müssen denselben Lehrercode verwenden.');
+assert.match(html, /id="solution-code-summary" name="solution-code"/, 'Die Auswertung benötigt ein eigenes Eingabefeld mit dem gemeinsamen Formularnamen.');
 assert.doesNotMatch(html, /<select/i, 'Aufgabe 9 darf keine <select>-Elemente verwenden.');
 assert.doesNotMatch(js, /<select/i, 'transaktionen.js darf keine <select>-Elemente erzeugen.');
-assert.doesNotMatch(js, /solution-download|unlockSolution/, 'transaktionen.js darf keinen Sicherungsblatt-Code enthalten.');
+assert.match(js, /window\.unlockSolution = unlockSolution;/, 'Die vorhandene Lehrercode-Freigabe muss in Aufgabe 9 verfügbar sein.');
 assert.match(html, /<h1>Transaktionen und Integrität<\/h1>/, 'Die H1 muss exakt "Transaktionen und Integrität" lauten.');
 assert.match(html, /transaktionen\.css\?v=\d+[a-z]?/, 'transaktionen.css wird mit Cache-Buster eingebunden.');
 assert.match(html, /transaktionen\.js\?v=\d+[a-z]?/, 'transaktionen.js wird mit Cache-Buster eingebunden.');

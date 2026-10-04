@@ -12,6 +12,8 @@
  * - phy11/1-Kreisbewegungen/aufgabe3-quiz.html (drei Beschreibe-Aufgaben, nicht verlinkter Test)
  * - inf11/1-Kuenstliche-Intelligenz/aufgabe3a-quiz.html (drei Beschreibe-Aufgaben, nicht verlinkter Test)
  * - inf11/1-Kuenstliche-Intelligenz/aufgabe6.html (Beschreibung und vier Java-Codeauswertungen)
+ * - inf11/1-Kuenstliche-Intelligenz/aufgabe7.html (eine Beschreibe-Aufgabe)
+ * - inf11/1-Kuenstliche-Intelligenz/aufgabe8.html (eine Beschreibe-Aufgabe)
  * - inf9/1-Tabellenkalkulation/aufgabe5a.html und aufgabe5b.html (je eine Beschreibe-Aufgabe)
  *
  * Einrichtung:

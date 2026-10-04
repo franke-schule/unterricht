@@ -1,0 +1,565 @@
+<!doctype html>
+<html lang="de">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="robots" content="noindex, nofollow">
+    <title>Aufgabe 8 – KNN: k wählen, testen und Grenzen erkennen | Informatik 11</title>
+    <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns=%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22 viewBox=%220 0 16 16%22%3E%3Ccircle cx=%228%22 cy=%228%22 r=%227%22 fill=%22%23126e9c%22%2F%3E%3C%2Fsvg%3E">
+    <link rel="stylesheet" href="../../../../styles.css?v=20260707">
+    <link rel="stylesheet" href="perzeptron/task5.css?v=20260926a">
+    <link rel="stylesheet" href="knn/task7.css?v=20261003a">
+    <link rel="stylesheet" href="knn/task8.css?v=20261004a">
+    <script type="module" src="knn/ui/task8.mjs?v=20261004a"></script>
+  </head>
+  <body class="perceptron-page knn-page">
+    <div class="site-backdrop" aria-hidden="true"></div>
+    <main class="page-shell">
+      <nav class="topbar" aria-label="Navigation">
+        <a class="back-link" href="../index.html">Zur Aufgabenübersicht</a>
+        <a class="back-link" href="aufgabe7.html">Zu Aufgabe 7</a>
+        <a class="back-link" href="../../../../">Startseite</a>
+      </nav>
+      <header class="perceptron-hero">
+        <p class="perceptron-eyebrow">Künstliche Intelligenz · Klassifikation</p>
+        <h1>KNN: k wählen, testen und Grenzen erkennen</h1>
+        <p><strong>Aufgabe 8</strong></p>
+        <p>Untersuche, wie die Wahl von k und die Trainingsdaten beeinflussen, wie zuverlässig der KNN-Algorithmus klassifiziert – und wie man ein Modell testet.</p>
+      </header>
+      <p id="save-status" role="status" aria-live="polite">Dein Bearbeitungsstand wird in diesem Browser gespeichert.</p>
+
+      <nav class="tab-list" role="tablist" aria-label="Lernschritte zu k, Test und Grenzen des KNN-Algorithmus">
+        <button id="tab-training" role="tab" type="button" aria-selected="true" aria-controls="training" data-tab="training">1 Was passiert beim Training?</button>
+        <button id="tab-kvalue" role="tab" type="button" aria-selected="false" aria-controls="kvalue" data-tab="kvalue" tabindex="-1">2 Zu klein oder zu groß?</button>
+        <button id="tab-validation" role="tab" type="button" aria-selected="false" aria-controls="validation" data-tab="validation" tabindex="-1">3 k mit Validierungsdaten bestimmen</button>
+        <button id="tab-testing" role="tab" type="button" aria-selected="false" aria-controls="testing" data-tab="testing" tabindex="-1">4 Das Modell testen</button>
+        <button id="tab-data" role="tab" type="button" aria-selected="false" aria-controls="data" data-tab="data" tabindex="-1">5 Daten als Fehlerquelle</button>
+        <button id="tab-regression" role="tab" type="button" aria-selected="false" aria-controls="regression" data-tab="regression" tabindex="-1">6 Für die Schnellen: Regression</button>
+        <button id="tab-finish" role="tab" type="button" aria-selected="false" aria-controls="finish" data-tab="finish" tabindex="-1">7 Abschlussquiz</button>
+      </nav>
+
+      <!-- Reiter 1 -->
+      <section id="training" class="step-panel" role="tabpanel" aria-labelledby="tab-training" data-panel="training">
+        <p class="kicker">Was passiert beim Training?</p><h2>Was passiert beim Training?</h2>
+        <p>In Aufgabe 3a ist beim Training ein Entscheidungsbaum entstanden, in Aufgabe 5 hat das Perzeptron seine Gewichte angepasst. Was passiert beim Training des KNN-Algorithmus?</p>
+        <div class="knn-table-wrap">
+          <table class="knn-table" id="training-table">
+            <caption>Was entsteht beim Training?</caption>
+            <thead><tr><td></td><th scope="col">Entscheidungsbaum (Aufgabe 3a)</th><th scope="col">Perzeptron (Aufgabe 5)</th><th scope="col">KNN-Algorithmus (Aufgabe 7)</th></tr></thead>
+            <tbody>
+              <tr><th scope="row">Ergebnis des Trainings</th><td>ein Baum mit Fragen an den Knoten</td><td>angepasste Gewichte und ein Schwellenwert</td><td id="knn-training-cell">?</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <fieldset id="training-options" data-mc="trainingOptions"><legend>Was passiert beim Training des KNN-Algorithmus? Kreuze alle passenden Aussagen an.</legend></fieldset>
+        <button id="check-training" class="primary-button" type="button">Aussagen prüfen</button>
+        <div id="training-feedback" class="feedback" role="status" aria-live="polite" hidden></div>
+        <details><summary>Hilfe 1: An Aufgabe 7 denken</summary><p>Erinnere dich: Was hat der Algorithmus getan, als eine neue Person klassifiziert werden sollte?</p></details>
+        <details><summary>Hilfe 2: Wann gibt es den neuen Punkt?</summary><p>Die Abstände hängen vom neuen Punkt ab. Kann man sie schon berechnen, bevor es den neuen Punkt gibt?</p></details>
+        <details><summary>Hilfe 3: Teillösung</summary><p>Beim Training passiert nur ein einziger Schritt: Die Trainingsdaten werden gespeichert.</p></details>
+        <article id="training-remember" class="remember" hidden>
+          <p><strong>Merke: Training beim KNN-Algorithmus.</strong> Beim Training speichert der KNN-Algorithmus nur die Trainingsdaten. Er berechnet dabei weder einen Baum noch Gewichte oder eine Trenngerade. Erst wenn ein neuer Punkt klassifiziert werden soll, berechnet er dessen Abstände zu allen gespeicherten Trainingsdaten.</p>
+        </article>
+
+        <h3>Die Phasen des maschinellen Lernens</h3>
+        <p>Ein KI-System, das maschinelles Lernen nutzt, durchläuft mehrere Phasen, bevor es eingesetzt wird.</p>
+        <p class="knn-task"><strong>Ordne</strong> jede Tätigkeit der Phase zu, in der sie stattfindet. <strong>Ziehe</strong> die Karten in die Felder oder tippe erst eine Karte und dann ein Feld an – eine Karte gehört zu keiner Phase.</p>
+        <div class="knn-layout">
+          <figure class="knn-figure">
+            <svg id="phase-plot" class="knn-plot" viewBox="0 0 640 330" role="img" aria-labelledby="phase-plot-title phase-plot-desc">
+              <title id="phase-plot-title">Phasen des maschinellen Lernens</title>
+              <desc id="phase-plot-desc">Vier Kästen: Phase 0 Vorbereitung, Phase 1 Training, Phase 2 Testen und produktiver Betrieb. Pfeile führen von der Vorbereitung zum Training, vom Training zum Testen, vom Testen zurück zum Training (nachbessern), vom Testen zurück zur Vorbereitung (zurück, falls nötig) und vom Testen zum produktiven Betrieb.</desc>
+              <defs>
+                <marker id="phase-arrow" markerUnits="userSpaceOnUse" markerWidth="10" markerHeight="10" refX="10" refY="5" orient="auto"><path d="M0,0 L10,5 L0,10 z"></path></marker>
+              </defs>
+              <rect class="knn-phase-box" x="20" y="20" width="200" height="64" rx="12"></rect>
+              <text class="knn-phase-sub" x="120" y="46" text-anchor="middle">Phase 0</text>
+              <text class="knn-phase-title" x="120" y="70" text-anchor="middle">Vorbereitung</text>
+              <rect class="knn-phase-box" x="40" y="150" width="200" height="64" rx="12"></rect>
+              <text class="knn-phase-sub" x="140" y="176" text-anchor="middle">Phase 1</text>
+              <text class="knn-phase-title" x="140" y="200" text-anchor="middle">Training</text>
+              <rect class="knn-phase-box" x="400" y="150" width="200" height="64" rx="12"></rect>
+              <text class="knn-phase-sub" x="500" y="176" text-anchor="middle">Phase 2</text>
+              <text class="knn-phase-title" x="500" y="200" text-anchor="middle">Testen</text>
+              <rect class="knn-phase-box" x="420" y="256" width="200" height="64" rx="12"></rect>
+              <text class="knn-phase-title" x="520" y="293" text-anchor="middle">Produktiver Betrieb</text>
+              <line class="knn-phase-arrow" x1="130" y1="84" x2="130" y2="150" marker-end="url(#phase-arrow)"></line>
+              <line class="knn-phase-arrow" x1="240" y1="170" x2="400" y2="170" marker-end="url(#phase-arrow)"></line>
+              <line class="knn-phase-arrow" x1="400" y1="194" x2="240" y2="194" marker-end="url(#phase-arrow)"></line>
+              <polyline class="knn-phase-arrow" points="500,150 500,52 220,52" marker-end="url(#phase-arrow)"></polyline>
+              <line class="knn-phase-arrow" x1="520" y1="214" x2="520" y2="256" marker-end="url(#phase-arrow)"></line>
+              <text class="knn-phase-note" x="320" y="216" text-anchor="middle">nachbessern</text>
+              <text class="knn-phase-note" x="360" y="42" text-anchor="middle">zurück, falls nötig</text>
+            </svg>
+          </figure>
+          <div class="knn-side">
+            <div id="phase-cards" class="knn-cards"></div>
+            <div class="knn-actions">
+              <button id="check-phases" class="primary-button" type="button">Zuordnung prüfen</button>
+              <button id="reset-phases" class="secondary-button" type="button">Karten zurücksetzen</button>
+            </div>
+            <div id="phases-feedback" class="feedback" role="status" aria-live="polite" hidden></div>
+          </div>
+        </div>
+        <details><summary>Hilfe 1: Vorher oder nachher?</summary><p>Vor dem Training müssen die Daten bereitliegen. Testen kann man erst, wenn das Modell trainiert ist.</p></details>
+        <details><summary>Hilfe 2: Wofür sind die Testdaten?</summary><p>Beim Testen wird geprüft, wie gut das Modell ist. Erst danach wird es für neue Personen eingesetzt.</p></details>
+        <details><summary>Hilfe 3: Teillösung</summary><p>In die Phase Training gehört „Trainingsdaten speichern“. In den Betrieb gehört „Shirtgröße für eine neue Schülerin vorhersagen“.</p></details>
+        <article id="phases-remember" class="remember" hidden>
+          <p><strong>Merke: Phasen des maschinellen Lernens.</strong> In der <strong>Vorbereitung</strong> werden Daten gesammelt, mit Labeln versehen und aufgeteilt. Im <strong>Training</strong> lernt das Modell aus den Trainingsdaten – beim KNN-Algorithmus heißt das: Es speichert sie. Beim <strong>Testen</strong> prüft man mit den Testdaten, wie gut das Modell ist. Ist es gut genug, geht es in den <strong>produktiven Betrieb</strong> und klassifiziert neue Daten. Ist es nicht gut genug, geht es zurück zur Vorbereitung oder zum Training.</p>
+        </article>
+        <div class="flow-navigation" data-flow="training"></div>
+      </section>
+
+      <!-- Reiter 2 -->
+      <section id="kvalue" class="step-panel" role="tabpanel" aria-labelledby="tab-kvalue" data-panel="kvalue" hidden>
+        <p class="kicker">Zu klein oder zu groß?</p><h2>Zu klein oder zu groß?</h2>
+        <p>In Aufgabe 7 hat sich das Ergebnis mit k geändert. Hier untersuchst du, was passiert, wenn k sehr klein oder sehr groß ist.</p>
+
+        <h3>Situation 1: Eine ungewöhnliche Trainingsperson</h3>
+        <p>Zu den Trainingsdaten kommt eine Person hinzu: 179 cm Körpergröße, 100 cm Brustumfang – und sie trägt Größe S. Für die neue Person N(182|99) würde man nach ihrer Lage die Größe M erwarten.</p>
+        <p class="knn-task"><strong>Stelle</strong> k = 1 und k = 3 ein und <strong>vergleiche</strong>, welche Größe N jeweils bekommt. <strong>Kreuze</strong> dann an, welche Aussagen stimmen.</p>
+        <div class="knn-layout">
+          <figure class="knn-figure">
+            <svg id="outlier-plot" class="knn-plot" viewBox="0 0 495 525" role="img" aria-labelledby="outlier-plot-title outlier-plot-desc">
+              <title id="outlier-plot-title">Trainingsdaten mit einer zusätzlichen S-Person und die neue Person N</title>
+              <desc id="outlier-plot-desc">Die x-Achse zeigt die Körpergröße, die y-Achse den Brustumfang in Zentimetern. S-Personen sind Kreise, M-Personen Dreiecke, L-Personen Quadrate. Eine zusätzliche S-Person liegt bei 179 und 100 zwischen M-Personen. Die neue Person N liegt bei 182 und 99.</desc>
+            </svg>
+            <div id="outlier-legend"></div>
+          </figure>
+          <div class="knn-side">
+            <div class="knn-group">
+              <p id="outlier-k-label" class="knn-group-label">Anzahl k der nächsten Nachbarn</p>
+              <div class="knn-choices" role="group" aria-labelledby="outlier-k-label" data-choice="kA">
+                <button type="button" class="knn-choice" aria-pressed="false" data-value="1">k = 1</button>
+                <button type="button" class="knn-choice" aria-pressed="false" data-value="3">k = 3</button>
+                <button type="button" class="knn-choice" aria-pressed="false" data-value="5">k = 5</button>
+                <button type="button" class="knn-choice" aria-pressed="false" data-value="7">k = 7</button>
+              </div>
+            </div>
+            <p id="outlier-counts" class="knn-counts" aria-live="polite"></p>
+            <ol id="outlier-list" class="knn-neighbour-list"></ol>
+            <fieldset id="outlier-options" data-mc="outlierOptions"><legend>Was zeigt der Vergleich von k = 1 und k = 3? Kreuze alle passenden Aussagen an.</legend></fieldset>
+            <button id="check-outlier" class="primary-button" type="button">Aussagen prüfen</button>
+            <div id="outlier-feedback" class="feedback" role="status" aria-live="polite" hidden></div>
+          </div>
+        </div>
+        <details><summary>Hilfe 1: Eine Linie</summary><p>Stelle k = 1 ein und verfolge die einzige Linie: Zu welchem Punkt führt sie?</p></details>
+        <details><summary>Hilfe 2: Auszählung</summary><p>Lies neben der Grafik ab, welche Größen bei k = 3 dazukommen.</p></details>
+        <details><summary>Hilfe 3: Teillösung</summary><p>Bei k = 1 führt die Linie zur S-Person bei 179|100. Bei k = 3 kommen zwei M-Punkte hinzu.</p></details>
+
+        <h3>Situation 2: Sehr großes k</h3>
+        <p>Hier siehst du wieder die 15 Trainingsdaten aus Aufgabe 7 – ohne die zusätzliche S-Person. Person A ist klein und schmal, Person B ist die Person aus Aufgabe 7 mit 183 cm und 106 cm.</p>
+        <p class="knn-task"><strong>Stelle</strong> k = 15 ein – so viele Nachbarn, wie es Trainingsdaten gibt – und <strong>wechsle</strong> zwischen Person A und Person B. <strong>Kreuze</strong> an, welche Aussagen stimmen.</p>
+        <div class="knn-layout">
+          <figure class="knn-figure">
+            <svg id="largek-plot" class="knn-plot" viewBox="0 0 495 525" role="img" aria-labelledby="largek-plot-title largek-plot-desc">
+              <title id="largek-plot-title">Die 15 Trainingsdaten und eine gewählte Person</title>
+              <desc id="largek-plot-desc">Die x-Achse zeigt die Körpergröße, die y-Achse den Brustumfang in Zentimetern. S-Personen sind Kreise, M-Personen Dreiecke, L-Personen Quadrate.</desc>
+            </svg>
+            <div id="largek-legend"></div>
+          </figure>
+          <div class="knn-side">
+            <div class="knn-group">
+              <p id="largek-person-label" class="knn-group-label">Person</p>
+              <div class="knn-choices" role="group" aria-labelledby="largek-person-label" data-choice="person">
+                <button type="button" class="knn-choice" aria-pressed="false" data-value="A">Person A (164|90)</button>
+                <button type="button" class="knn-choice" aria-pressed="false" data-value="B">Person B (183|106)</button>
+              </div>
+            </div>
+            <div class="knn-group">
+              <p id="largek-k-label" class="knn-group-label">Anzahl k der nächsten Nachbarn</p>
+              <div class="knn-choices" role="group" aria-labelledby="largek-k-label" data-choice="kB">
+                <button type="button" class="knn-choice" aria-pressed="false" data-value="1">k = 1</button>
+                <button type="button" class="knn-choice" aria-pressed="false" data-value="3">k = 3</button>
+                <button type="button" class="knn-choice" aria-pressed="false" data-value="5">k = 5</button>
+                <button type="button" class="knn-choice" aria-pressed="false" data-value="7">k = 7</button>
+                <button type="button" class="knn-choice" aria-pressed="false" data-value="15">k = 15</button>
+              </div>
+            </div>
+            <p id="largek-counts" class="knn-counts" aria-live="polite"></p>
+            <fieldset id="largek-options" data-mc="largeKOptions"><legend>Was passiert bei k = 15? Kreuze alle passenden Aussagen an.</legend></fieldset>
+            <button id="check-largek" class="primary-button" type="button">Aussagen prüfen</button>
+            <div id="largek-feedback" class="feedback" role="status" aria-live="polite" hidden></div>
+          </div>
+        </div>
+        <details><summary>Hilfe 1: Alle zählen mit</summary><p>Bei k = 15 führen Linien zu allen Trainingsdaten. Schau in der Auszählung, welche Größe vorne liegt.</p></details>
+        <details><summary>Hilfe 2: Person wechseln</summary><p>Wechsle bei k = 15 zwischen Person A und Person B. Ändert sich die Auszählung?</p></details>
+        <details><summary>Hilfe 3: Teillösung</summary><p>Bei k = 15 lautet die Auszählung für beide Personen: ○ S: 5 · △ M: 4 · □ L: 6.</p></details>
+        <article id="k-remember" class="remember" hidden>
+          <p><strong>Merke: k beeinflusst die Zuverlässigkeit.</strong> Ein Datenpunkt, dessen Label nicht zu den Datenpunkten in seiner Umgebung passt, heißt <strong>Ausreißer</strong> – wie die S-Person bei 179|100. Ist k zu klein, kann ein einzelner Ausreißer das Ergebnis bestimmen. Ist k zu groß, zählen auch weit entfernte Trainingsdaten mit; ist k so groß wie die Anzahl aller Trainingsdaten, wird immer die insgesamt häufigste Klasse vorhergesagt. Deshalb muss k systematisch gewählt werden – wie, zeigt Reiter 3.</p>
+        </article>
+        <div class="flow-navigation" data-flow="kvalue"></div>
+      </section>
+
+      <!-- Reiter 3 -->
+      <section id="validation" class="step-panel" role="tabpanel" aria-labelledby="tab-validation" data-panel="validation" hidden>
+        <p class="kicker">k mit Validierungsdaten bestimmen</p><h2>k mit Validierungsdaten bestimmen</h2>
+        <p>Welches k ist das beste? Man probiert es an Datenpunkten aus, deren Label man kennt, die aber nicht zu den Trainingsdaten gehören.</p>
+
+        <h3>Ein Beispiel aus dem Arbeitsheft</h3>
+        <p class="knn-task">Der Punkt P(3,5|2) gehört nicht zu den Trainingsdaten, sein Label blau ist aber bekannt. <strong>Stelle</strong> k = 1, 3 und 5 ein und <strong>entscheide</strong> jeweils, ob das Modell P richtig klassifiziert.</p>
+        <div class="knn-layout">
+          <figure class="knn-figure">
+            <svg id="example-plot" class="knn-plot" viewBox="0 0 510 385" role="img" aria-labelledby="example-plot-title example-plot-desc">
+              <title id="example-plot-title">Heftbeispiel: Trainingsdaten und Validierungspunkt P</title>
+              <desc id="example-plot-desc">Blaue Punkte sind Kreise, orange Punkte Quadrate. Orange: 3 und 2, 5 und 3. Blau: 3,5 und 3, 2 und 2,5, 1,5 und 1. P liegt bei 3,5 und 2.</desc>
+            </svg>
+            <div id="example-legend"></div>
+          </figure>
+          <div class="knn-side">
+            <div class="knn-group">
+              <p id="example-k-label" class="knn-group-label">Anzahl k der nächsten Nachbarn</p>
+              <div class="knn-choices" role="group" aria-labelledby="example-k-label" data-choice="exK">
+                <button type="button" class="knn-choice" aria-pressed="false" data-value="1">k = 1</button>
+                <button type="button" class="knn-choice" aria-pressed="false" data-value="3">k = 3</button>
+                <button type="button" class="knn-choice" aria-pressed="false" data-value="5">k = 5</button>
+              </div>
+            </div>
+            <p id="example-counts" class="knn-counts" aria-live="polite"></p>
+            <div class="knn-table-wrap">
+              <table class="knn-table knn-cell-table" id="example-table">
+                <caption>Wird P richtig klassifiziert?</caption>
+                <thead><tr><th scope="col">k = 1</th><th scope="col">k = 3</th><th scope="col">k = 5</th></tr></thead>
+                <tbody>
+                  <tr>
+                    <td><button type="button" class="knn-cell-toggle" data-cell="ex-1" data-state="offen"></button></td>
+                    <td><button type="button" class="knn-cell-toggle" data-cell="ex-3" data-state="offen"></button></td>
+                    <td><button type="button" class="knn-cell-toggle" data-cell="ex-5" data-state="offen"></button></td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+            <p class="knn-cell-hint">Tippe ein Feld an, um zwischen – (offen), ✓ korrekt und ✗ falsch zu wechseln.</p>
+            <button id="check-example" class="primary-button" type="button">Ergebnisse prüfen</button>
+            <div id="example-feedback" class="feedback" role="status" aria-live="polite" hidden></div>
+          </div>
+        </div>
+        <details><summary>Hilfe 1: k = 1</summary><p>Stelle k = 1 ein: Welches Label hat der Punkt, zu dem die Linie führt?</p></details>
+        <details><summary>Hilfe 2: Vergleichen</summary><p>Vergleiche bei jedem k die Mehrheit unter den Nachbarn mit dem bekannten Label blau.</p></details>
+        <details><summary>Hilfe 3: Teillösung</summary><p>Bei k = 1 ist der nächste Nachbar orange (3|2). Das Modell sagt orange – also falsch.</p></details>
+
+        <h3>Wie teilt man die Daten auf?</h3>
+        <div class="knn-layout">
+          <figure class="knn-figure">
+            <svg id="split-pie" class="knn-plot" viewBox="0 0 500 250" role="img" aria-labelledby="split-pie-title split-pie-desc">
+              <title id="split-pie-title">Aufteilung der gelabelten Daten</title>
+              <desc id="split-pie-desc">Kreisdiagramm: Die Hälfte der Daten sind Trainingsdaten, je ein Viertel Validierungsdaten und Testdaten.</desc>
+              <path class="knn-pie-train" d="M260,125 L260,20 A105,105 0 0 1 260,230 Z"></path>
+              <path class="knn-pie-valid" d="M260,125 L260,230 A105,105 0 0 1 155,125 Z"></path>
+              <path class="knn-pie-test" d="M260,125 L155,125 A105,105 0 0 1 260,20 Z"></path>
+              <line class="knn-pie-leader" x1="150" y1="199.25" x2="185.75" y2="199.25"></line>
+              <line class="knn-pie-leader" x1="150" y1="50.75" x2="185.75" y2="50.75"></line>
+              <text x="375" y="120" text-anchor="start">Trainingsdaten</text>
+              <text x="375" y="140" text-anchor="start">50 %</text>
+              <text x="145" y="204" text-anchor="end">Validierungsdaten</text>
+              <text x="145" y="222" text-anchor="end">25 %</text>
+              <text x="145" y="55" text-anchor="end">Testdaten</text>
+              <text x="145" y="73" text-anchor="end">25 %</text>
+            </svg>
+          </figure>
+          <div class="knn-side">
+            <ul>
+              <li><strong>Trainingsdaten:</strong> Mit ihnen wird das Modell trainiert – beim KNN-Algorithmus werden sie gespeichert.</li>
+              <li><strong>Validierungsdaten:</strong> Mit ihnen wird das Modell abgestimmt, zum Beispiel der Wert für k. Der Punkt P war ein Validierungspunkt.</li>
+              <li><strong>Testdaten:</strong> Mit ihnen wird geprüft, wie gut das fertige Modell ist.</li>
+            </ul>
+          </div>
+        </div>
+
+        <h3>Das beste k für die Schulshirts</h3>
+        <p>Das Schulshirt-Modell nutzt die 16 Trainingsdaten aus Reiter 2 mit der S-Person bei 179|100. Fünf weitere Personen mit bekannter Größe dienen als Validierungsdaten.</p>
+        <p class="knn-task"><strong>Wähle</strong> in der Grafik eine Validierungsperson und ein k. <strong>Trage</strong> in die offenen Felder ein, ob das Modell richtig klassifiziert.</p>
+        <div class="knn-layout">
+          <figure class="knn-figure">
+            <svg id="validation-plot" class="knn-plot" viewBox="0 0 495 525" role="img" aria-labelledby="validation-plot-title validation-plot-desc">
+              <title id="validation-plot-title">Trainingsdaten und eine Validierungsperson</title>
+              <desc id="validation-plot-desc">Die x-Achse zeigt die Körpergröße, die y-Achse den Brustumfang in Zentimetern. S-Personen sind Kreise, M-Personen Dreiecke, L-Personen Quadrate.</desc>
+            </svg>
+            <div id="validation-legend"></div>
+          </figure>
+          <div class="knn-side">
+            <div class="knn-group">
+              <p id="validation-person-label" class="knn-group-label">Validierungsperson</p>
+              <div class="knn-choices" role="group" aria-labelledby="validation-person-label" data-choice="vId">
+                <button type="button" class="knn-choice" aria-pressed="false" data-value="V1">V1</button>
+                <button type="button" class="knn-choice" aria-pressed="false" data-value="V2">V2</button>
+                <button type="button" class="knn-choice" aria-pressed="false" data-value="V3">V3</button>
+                <button type="button" class="knn-choice" aria-pressed="false" data-value="V4">V4</button>
+                <button type="button" class="knn-choice" aria-pressed="false" data-value="V5">V5</button>
+              </div>
+            </div>
+            <div class="knn-group">
+              <p id="validation-k-label" class="knn-group-label">Anzahl k der nächsten Nachbarn</p>
+              <div class="knn-choices" role="group" aria-labelledby="validation-k-label" data-choice="vK">
+                <button type="button" class="knn-choice" aria-pressed="false" data-value="1">k = 1</button>
+                <button type="button" class="knn-choice" aria-pressed="false" data-value="3">k = 3</button>
+                <button type="button" class="knn-choice" aria-pressed="false" data-value="5">k = 5</button>
+                <button type="button" class="knn-choice" aria-pressed="false" data-value="7">k = 7</button>
+              </div>
+            </div>
+            <p id="validation-counts" class="knn-counts" aria-live="polite"></p>
+            <div class="knn-table-wrap">
+              <table class="knn-table knn-cell-table" id="validation-table">
+                <caption>Wird die Validierungsperson richtig klassifiziert?</caption>
+                <thead><tr><th scope="col">Person</th><th scope="col">Maße (cm)</th><th scope="col">Größe</th><th scope="col">k = 1</th><th scope="col">k = 3</th><th scope="col">k = 5</th><th scope="col">k = 7</th></tr></thead>
+                <tbody id="validation-body"></tbody>
+              </table>
+            </div>
+            <p class="knn-cell-hint">Tippe ein Feld an, um zwischen – (offen), ✓ korrekt und ✗ falsch zu wechseln.</p>
+            <button id="check-validation-table" class="primary-button" type="button">Tabelle prüfen</button>
+            <div id="validation-table-feedback" class="feedback" role="status" aria-live="polite" hidden></div>
+          </div>
+        </div>
+        <details><summary>Hilfe 1: Einstellen</summary><p>Wähle in der Grafik die Validierungsperson aus der Zeile und das k aus der Spalte.</p></details>
+        <details><summary>Hilfe 2: Vergleichen</summary><p>Die Auszählung zeigt, welche Größe unter den Nachbarn die Mehrheit hat. Stimmt sie mit der Größe in der Tabelle überein, ist das Ergebnis korrekt.</p></details>
+        <details><summary>Hilfe 3: Teillösung</summary><p>Für V3 bei k = 1 führt die Linie zu einem L-Punkt (186|113), V3 trägt aber M – also falsch.</p></details>
+
+        <div class="knn-group">
+          <p id="best-k-label" class="knn-group-label">Welches k wählst du?</p>
+          <div class="knn-choices" role="group" aria-labelledby="best-k-label" data-choice="bestK">
+            <button type="button" class="knn-choice" aria-pressed="false" data-value="1">k = 1</button>
+            <button type="button" class="knn-choice" aria-pressed="false" data-value="3">k = 3</button>
+            <button type="button" class="knn-choice" aria-pressed="false" data-value="5">k = 5</button>
+            <button type="button" class="knn-choice" aria-pressed="false" data-value="7">k = 7</button>
+          </div>
+        </div>
+        <button id="check-best-k" class="primary-button" type="button">k prüfen</button>
+        <div id="best-k-feedback" class="feedback" role="status" aria-live="polite" hidden></div>
+
+        <article class="card">
+          <h3>Begründen</h3>
+          <p><strong>Begründe</strong> mithilfe der Tabelle, welchen Wert für k du wählst.</p>
+          <label for="validation-answer">Deine Begründung<textarea id="validation-answer" maxlength="600" rows="4" placeholder="Ich wähle k = …, weil …"></textarea></label>
+          <p class="counter" id="validation-counter">0 von 600 Zeichen</p>
+          <p class="privacy"><strong>Hinweis:</strong> Gib keine personenbezogenen Informationen ein. Deine Antwort wird zur automatischen Auswertung an den Skriptserver und dort an ein KI-System übertragen.</p>
+          <button id="check-validation-answer" class="primary-button" type="button">Begründung überprüfen</button>
+          <div id="validation-answer-feedback" class="feedback" role="status" aria-live="polite" hidden></div>
+        </article>
+
+        <fieldset id="validation-options" data-mc="validationOptions"><legend>Wozu dienen die Validierungsdaten? Kreuze alle passenden Aussagen an.</legend></fieldset>
+        <button id="check-validation" class="primary-button" type="button">Aussagen prüfen</button>
+        <div id="validation-feedback" class="feedback" role="status" aria-live="polite" hidden></div>
+        <article id="validation-remember" class="remember" hidden>
+          <p><strong>Merke: Hyperparameter und Validierungsdaten.</strong> k ist ein <strong>Hyperparameter</strong>: Er wird nicht aus den Trainingsdaten gelernt, sondern vorher festgelegt – wie die Baumtiefe in Aufgabe 4. Um k zu wählen, klassifiziert man die Validierungsdaten mit verschiedenen k und nimmt das k mit den meisten richtigen Ergebnissen. Die Validierungsdaten dienen nur der Wahl von k. Die Testdaten bleiben bis zum Schluss unberührt, damit der Test zeigt, wie gut das Modell mit unbekannten Daten zurechtkommt.</p>
+        </article>
+        <div class="flow-navigation" data-flow="validation"></div>
+      </section>
+
+      <!-- Reiter 4 -->
+      <section id="testing" class="step-panel" role="tabpanel" aria-labelledby="tab-testing" data-panel="testing" hidden>
+        <p class="kicker">Das Modell testen</p><h2>Das Modell testen</h2>
+        <p>Das Modell mit den 16 Trainingsdaten und k = 3 aus Reiter 3 ist fertig. Jetzt klassifiziert es acht Testpersonen, deren Shirtgröße bekannt ist.</p>
+        <p class="knn-task"><strong>Trage</strong> die Ergebnisse in die Konfusionsmatrix ein und <strong>berechne</strong> die Genauigkeit.</p>
+        <div class="knn-layout">
+          <div class="knn-table-wrap">
+            <table class="knn-table" id="test-table">
+              <caption>Testpersonen und Ergebnisse des Modells (k = 3)</caption>
+              <thead><tr><th scope="col">Testperson</th><th scope="col">Körpergröße x (cm)</th><th scope="col">Brustumfang y (cm)</th><th scope="col">erwartete Größe</th><th scope="col">berechnete Größe</th></tr></thead>
+              <tbody id="test-body"></tbody>
+            </table>
+          </div>
+          <div class="knn-side">
+            <p class="knn-task">Wie in Aufgabe 3c: Die Zeilen zeigen das erwartete Label, die Spalten das berechnete Label.</p>
+            <div class="knn-table-wrap">
+              <table class="knn-table knn-matrix" id="matrix">
+                <caption>Konfusionsmatrix der acht Testpersonen</caption>
+                <thead><tr><th scope="col">erwartet \ berechnet</th><th scope="col">S</th><th scope="col">M</th><th scope="col">L</th></tr></thead>
+                <tbody id="matrix-body"></tbody>
+              </table>
+            </div>
+            <button id="check-matrix" class="primary-button" type="button">Matrix prüfen</button>
+            <div id="matrix-feedback" class="feedback" role="status" aria-live="polite" hidden></div>
+            <div class="knn-field">
+              <label for="correct-input">Richtig klassifizierte Testpersonen</label>
+              <div class="knn-input-row"><input id="correct-input" inputmode="decimal" autocomplete="off"></div>
+            </div>
+            <div class="knn-field">
+              <label for="total-input">Alle Testpersonen</label>
+              <div class="knn-input-row"><input id="total-input" inputmode="decimal" autocomplete="off"></div>
+            </div>
+            <div class="knn-field">
+              <label for="percent-input">Genauigkeit in %</label>
+              <div class="knn-input-row"><input id="percent-input" inputmode="decimal" autocomplete="off"></div>
+            </div>
+            <button id="check-accuracy" class="primary-button" type="button">Genauigkeit prüfen</button>
+            <div id="accuracy-feedback" class="feedback" role="status" aria-live="polite" hidden></div>
+          </div>
+        </div>
+        <details><summary>Hilfe 1: Ein Feld lesen</summary><p>Lies wie in Aufgabe 3c zuerst die Zeile (erwartet) und dann die Spalte (berechnet).</p></details>
+        <details><summary>Hilfe 2: Strichliste</summary><p>Gehe die Testpersonen einzeln durch und zähle jede in dem Feld „erwartet …, berechnet …“. Am Ende stehen in der Matrix 8 Testpersonen.</p></details>
+        <details><summary>Hilfe 3: Teillösung</summary><p>T4 trägt tatsächlich M, das Modell berechnet S: Sie gehört in Zeile M, Spalte S. Das Feld „erwartet S, berechnet S“ enthält 2.</p></details>
+        <article id="test-remember" class="remember" hidden>
+          <p><strong>Merke: Konfusionsmatrix mit drei Klassen.</strong> Auch bei drei Klassen stehen in den Zeilen das erwartete und in den Spalten das berechnete Label. Die richtig klassifizierten Testdaten liegen auf der Diagonale, alle anderen Felder zeigen Verwechslungen – hier wurde je einmal M als S und L als M klassifiziert. Die Genauigkeit 6 : 8 = 75 % gilt nur für diese acht Testpersonen.</p>
+        </article>
+        <div class="flow-navigation" data-flow="testing"></div>
+      </section>
+
+      <!-- Reiter 5 -->
+      <section id="data" class="step-panel" role="tabpanel" aria-labelledby="tab-data" data-panel="data" hidden>
+        <p class="kicker">Daten als Fehlerquelle</p><h2>Daten als Fehlerquelle</h2>
+        <p>Nicht nur k beeinflusst, wie zuverlässig ein Modell ist, sondern auch die Daten selbst.</p>
+
+        <h3>Fall 1: Ungleich verteilte Daten</h3>
+        <p class="knn-task">Ein Modell wird nur mit diesen sechs Personen trainiert. <strong>Kreuze</strong> an, welche Aussagen stimmen.</p>
+        <div class="knn-layout">
+          <div class="knn-table-wrap">
+            <table class="knn-table" id="uneven-table">
+              <caption>Trainingsdaten mit ungleicher Verteilung</caption>
+              <thead><tr><th scope="col">Nr.</th><th scope="col">Körpergröße (cm)</th><th scope="col">Brustumfang (cm)</th><th scope="col">Größe</th></tr></thead>
+              <tbody id="uneven-body"></tbody>
+            </table>
+          </div>
+          <div class="knn-side">
+            <fieldset id="uneven-options" data-mc="unevenOptions"><legend>Welche Aussagen stimmen?</legend></fieldset>
+            <button id="check-uneven" class="primary-button" type="button">Aussagen prüfen</button>
+            <div id="uneven-feedback" class="feedback" role="status" aria-live="polite" hidden></div>
+          </div>
+        </div>
+        <details><summary>Hilfe 1: Zählen</summary><p>Zähle, wie viele der sechs Trainingspersonen S tragen.</p></details>
+        <details><summary>Hilfe 2: Höchstens wie viele M?</summary><p>Wie viele M-Nachbarn kann es bei k = 3 höchstens geben?</p></details>
+        <details><summary>Hilfe 3: Teillösung</summary><p>Es gibt nur eine M-Person. Bei k = 3 sind also mindestens zwei der drei Nachbarn S.</p></details>
+
+        <h3>Fall 2: Einseitige Daten</h3>
+        <p>Ein KNN-Modell soll Wörter den Klassen Stadt, Land und Tier zuordnen. Die Trainingsdaten für die Klasse Stadt enthalten nur deutsche Städte: Berlin, Hamburg, München, Frankfurt, Dresden, Köln, Bremen, Düsseldorf, Leipzig und Passau. Gibt man „New York“ ein, antwortet das Modell: Land.</p>
+        <fieldset id="bias-options" data-mc="biasOptions"><legend><strong>Kreuze</strong> an, welche Aussagen die Fehlklassifikation erklären.</legend></fieldset>
+        <button id="check-bias" class="primary-button" type="button">Aussagen prüfen</button>
+        <div id="bias-feedback" class="feedback" role="status" aria-live="polite" hidden></div>
+        <details><summary>Hilfe 1: Bekannte Städte</summary><p>Überlege, welche Beispiele für Städte das Modell kennt.</p></details>
+        <details><summary>Hilfe 2: Ähnlichkeit</summary><p>Ähnelt „New York“ einem der Trainingswörter für Stadt?</p></details>
+        <details><summary>Hilfe 3: Teillösung</summary><p>New York ähnelt keiner der deutschen Städte – das Modell hat nie eine internationale Stadt gesehen.</p></details>
+
+        <h3>Fall 3: Merkmale mit unterschiedlichen Wertebereichen</h3>
+        <p>Lebensmittel werden durch zwei Merkmale beschrieben: die Zuckermenge in 100 g (0 bis 100 g) und den Anteil am täglichen Kalorienbedarf (0 bis 1). Welches Lebensmittel ist dem Lebensmittel N am ähnlichsten?</p>
+        <div class="knn-layout">
+          <div class="knn-table-wrap">
+            <table class="knn-table" id="food-table">
+              <caption>Rechenbeispiel ohne Umrechnung</caption>
+              <thead><tr><th scope="col">Lebensmittel</th><th scope="col">Zucker in 100 g</th><th scope="col">Anteil am täglichen Kalorienbedarf</th><th scope="col">Abstand zu N</th></tr></thead>
+              <tbody>
+                <tr><th scope="row">N</th><td>30 g</td><td>0,20</td><td>–</td></tr>
+                <tr><th scope="row">A</th><td>32 g</td><td>0,36</td><td>2,01</td></tr>
+                <tr><th scope="row">B</th><td>24 g</td><td>0,21</td><td>6,00</td></tr>
+              </tbody>
+            </table>
+          </div>
+          <div class="knn-side">
+            <fieldset id="scale-options" data-mc="scaleOptions"><legend>Was zeigt das Rechenbeispiel? Kreuze alle passenden Aussagen an.</legend></fieldset>
+            <button id="check-scale" class="primary-button" type="button">Aussagen prüfen</button>
+            <div id="scale-feedback" class="feedback" role="status" aria-live="polite" hidden></div>
+          </div>
+        </div>
+        <details><summary>Hilfe 1: Unterschiede</summary><p>Vergleiche, wie stark sich A und B in jedem Merkmal von N unterscheiden.</p></details>
+        <details><summary>Hilfe 2: Quadrate</summary><p>Ein Unterschied von 2 g Zucker geht mit 2² = 4 in den Abstand ein, ein Unterschied von 0,16 beim Tagesbedarf nur mit 0,16² ≈ 0,03.</p></details>
+        <details><summary>Hilfe 3: Teillösung</summary><p>Obwohl A beim Tagesbedarf viel weiter von N entfernt ist als B, gilt A als nächster Nachbar.</p></details>
+
+        <h3>Normieren</h3>
+        <p class="knn-task">Man rechnet beide Merkmale auf denselben Bereich von 0 bis 1 um. Die Zuckermenge liegt zwischen 0 g und 100 g. <strong>Berechne</strong>, welchem Wert eine Zuckermenge von 75 g entspricht.</p>
+        <div class="knn-field">
+          <label for="norm-input">75 g entsprechen dem Wert</label>
+          <div class="knn-input-row"><input id="norm-input" inputmode="decimal" autocomplete="off"></div>
+        </div>
+        <button id="check-norm" class="primary-button" type="button">Wert prüfen</button>
+        <div id="norm-feedback" class="feedback" role="status" aria-live="polite" hidden></div>
+        <details><summary>Hilfe 1: Bereich</summary><p>Der kleinste Wert 0 g wird zu 0, der größte Wert 100 g wird zu 1.</p></details>
+        <details><summary>Hilfe 2: Anteil</summary><p>Überlege, welcher Anteil des Bereichs von 0 g bis 100 g bis 75 g reicht.</p></details>
+        <details><summary>Hilfe 3: Teillösung</summary><p>50 g liegen genau in der Mitte des Bereichs und werden zu 0,5.</p></details>
+        <article id="norm-remember" class="remember" hidden>
+          <p><strong>Merke: Normierung.</strong> Liegen Merkmale in unterschiedlichen Wertebereichen, rechnet man sie vor der Abstandsberechnung in denselben Bereich von 0 bis 1 um. Für einen Wert x aus dem Bereich von min bis max gilt:</p>
+          <p class="math">x<sub>norm</sub> = (x − min) / (max − min)</p>
+          <p>Beispiel: (75 − 0) / (100 − 0) = 0,75. Normiert man die Zuckermengen im Rechenbeispiel, liegen N bei 0,30|0,20, A bei 0,32|0,36 und B bei 0,24|0,21. Dann gilt d(N, A) ≈ 0,16 und d(N, B) ≈ 0,06 – jetzt ist B der nächste Nachbar.</p>
+        </article>
+        <div class="flow-navigation" data-flow="data"></div>
+      </section>
+
+      <!-- Reiter 6 -->
+      <section id="regression" class="step-panel" role="tabpanel" aria-labelledby="tab-regression" data-panel="regression" hidden>
+        <p class="kicker">Für die Schnellen (freiwillig)</p><h2>Für die Schnellen: Regression</h2>
+        <p class="knn-optional-note">Dieser Reiter ist freiwillig und kommt im Abschlussquiz nicht vor.</p>
+        <p>Bisher hat der KNN-Algorithmus eine Klasse vorhergesagt. Er kann aber auch eine Zahl vorhersagen: Für einen neuen x-Wert soll der passende y-Wert geschätzt werden. Bei mehreren Nachbarn bildet man dann den Mittelwert ihrer y-Werte.</p>
+        <p>Gesucht ist y für x = 3. Als Abstand zählt nur der Unterschied in x-Richtung. Bei k = 1 ist der nächste Nachbar C(2|2), die Vorhersage ist also y = 2.</p>
+        <p class="knn-task"><strong>Berechne</strong> die Vorhersage für x = 3 mit k = 3.</p>
+        <div class="knn-layout">
+          <figure class="knn-figure">
+            <svg id="regression-plot" class="knn-plot" viewBox="0 0 370 385" role="img" aria-labelledby="regression-plot-title regression-plot-desc">
+              <title id="regression-plot-title">Trainingspunkte A bis D und Vorhersage P</title>
+              <desc id="regression-plot-desc">Vier Trainingspunkte: A bei 0 und 0, B bei 1 und 0,5, C bei 2 und 2, D bei 5 und 6,5. Gesucht ist der y-Wert für x = 3.</desc>
+            </svg>
+            <div id="regression-legend"></div>
+          </figure>
+          <div class="knn-side">
+            <div class="knn-field">
+              <label for="regression-input">Vorhersage für k = 3: y =</label>
+              <div class="knn-input-row"><input id="regression-input" inputmode="decimal" autocomplete="off"></div>
+            </div>
+            <button id="check-regression" class="primary-button" type="button">Vorhersage prüfen</button>
+            <div id="regression-feedback" class="feedback" role="status" aria-live="polite" hidden></div>
+          </div>
+        </div>
+        <details><summary>Hilfe 1: Abstände in x-Richtung</summary><p>Hier zählt nur die x-Koordinate. Bestimme für A, B, C und D, wie weit ihr x-Wert von 3 entfernt ist.</p></details>
+        <details><summary>Hilfe 2: Drei Nachbarn</summary><p>Wähle die drei Punkte mit den kleinsten Abständen aus und notiere ihre y-Werte.</p></details>
+        <details><summary>Hilfe 3: Teillösung</summary><p>Die drei nächsten Nachbarn sind B, C und D mit den y-Werten 0,5, 2 und 6,5.</p></details>
+        <article id="regression-remember" class="remember" hidden>
+          <p><strong>Merke: Regression mit dem KNN-Algorithmus.</strong> Bei einer <strong>Regression</strong> sagt man statt einer Klasse eine Zahl voraus, die Zielgröße. Der KNN-Algorithmus sucht dafür die k nächsten Nachbarn und bildet den Mittelwert ihrer Zielwerte. Beispiel: Für x = 3 und k = 3 ergibt sich y = (0,5 + 2 + 6,5) : 3 = 3.</p>
+        </article>
+
+        <h3>Ausprobieren: Hauspreise schätzen</h3>
+        <p>Mit demselben Verfahren kann man Hauspreise schätzen: Die unabhängige Größe ist die Wohnfläche, die Zielgröße der Preis. Die Daten sind ein ausgedachtes Beispiel.</p>
+        <p class="knn-task"><strong>Wähle</strong> eine Wohnfläche und ein k und <strong>beobachte</strong>, wie sich die Schätzung ändert – besonders bei 170 m² mit k = 5.</p>
+        <div class="knn-layout">
+          <figure class="knn-figure">
+            <svg id="house-plot" class="knn-plot" viewBox="0 0 440 405" role="img" aria-labelledby="house-plot-title house-plot-desc">
+              <title id="house-plot-title">Hauspreise und Schätzung</title>
+              <desc id="house-plot-desc">Acht Häuser mit Wohnfläche und Preis.</desc>
+            </svg>
+            <div id="house-legend"></div>
+          </figure>
+          <div class="knn-side">
+            <div class="knn-group">
+              <p id="house-area-label" class="knn-group-label">Wohnfläche</p>
+              <div class="knn-choices" role="group" aria-labelledby="house-area-label" data-choice="houseArea">
+                <button type="button" class="knn-choice" aria-pressed="false" data-value="100">100 m²</button>
+                <button type="button" class="knn-choice" aria-pressed="false" data-value="125">125 m²</button>
+                <button type="button" class="knn-choice" aria-pressed="false" data-value="170">170 m²</button>
+              </div>
+            </div>
+            <div class="knn-group">
+              <p id="house-k-label" class="knn-group-label">k</p>
+              <div class="knn-choices" role="group" aria-labelledby="house-k-label" data-choice="houseK">
+                <button type="button" class="knn-choice" aria-pressed="false" data-value="1">1</button>
+                <button type="button" class="knn-choice" aria-pressed="false" data-value="3">3</button>
+                <button type="button" class="knn-choice" aria-pressed="false" data-value="5">5</button>
+              </div>
+            </div>
+            <p id="house-output" aria-live="polite"></p>
+          </div>
+        </div>
+        <div class="flow-navigation" data-flow="regression"></div>
+      </section>
+
+      <!-- Reiter 7 -->
+      <section id="finish" class="step-panel" role="tabpanel" aria-labelledby="tab-finish" data-panel="finish" hidden>
+        <p class="kicker">Abschlussquiz</p><h2>Das Wichtigste sichern</h2>
+        <ul>
+          <li>Beim Training speichert der KNN-Algorithmus nur die Trainingsdaten; gerechnet wird erst beim Klassifizieren.</li>
+          <li>Phasen: Vorbereitung (Daten sammeln, mit Labeln versehen, aufteilen) → Training → Testen → produktiver Betrieb.</li>
+          <li>Ist k zu klein, kann ein Ausreißer das Ergebnis bestimmen; ist k zu groß, zählen weit entfernte Trainingsdaten mit.</li>
+          <li>k ist ein Hyperparameter. Man wählt ihn mit den Validierungsdaten; die Testdaten bleiben bis zum Schluss unberührt.</li>
+          <li>Genauigkeit = richtig klassifizierte Testdaten : alle Testdaten. Die richtig klassifizierten stehen in der Konfusionsmatrix auf der Diagonale.</li>
+          <li>Ungleich verteilte oder einseitige Trainingsdaten verzerren die Ergebnisse. Merkmale mit unterschiedlichen Wertebereichen normiert man: x<sub>norm</sub> = (x − min) / (max − min).</li>
+        </ul>
+        <section id="final-quiz" aria-labelledby="quiz-title">
+          <h3 id="quiz-title">Abschlussquiz</h3>
+          <p>Kreuze alle richtigen Aussagen an. Bei manchen Fragen sind mehrere Antworten richtig.</p>
+          <p id="quiz-progress">0 von 6 Fragen vollständig richtig</p>
+          <form id="quiz-form">
+            <div id="quiz-questions"></div>
+            <button class="primary-button" type="submit">Quiz auswerten</button>
+          </form>
+          <div id="quiz-feedback" class="feedback" role="status" aria-live="polite" hidden></div>
+          <div id="quiz-summary" class="remember" hidden></div>
+        </section>
+        <button id="reset-progress" class="secondary-button" type="button">Bearbeitungsstand zurücksetzen</button>
+      </section>
+    </main>
+  </body>
+</html>

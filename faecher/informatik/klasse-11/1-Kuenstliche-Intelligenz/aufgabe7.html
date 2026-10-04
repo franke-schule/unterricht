@@ -1,0 +1,343 @@
+<!doctype html>
+<html lang="de">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="robots" content="noindex, nofollow">
+    <title>Aufgabe 7 – Der k-nächste-Nachbarn-Algorithmus | Informatik 11</title>
+    <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns=%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22 viewBox=%220 0 16 16%22%3E%3Ccircle cx=%228%22 cy=%228%22 r=%227%22 fill=%22%23126e9c%22%2F%3E%3C%2Fsvg%3E">
+    <link rel="stylesheet" href="../../../../styles.css?v=20260707">
+    <link rel="stylesheet" href="perzeptron/task5.css?v=20260926a">
+    <link rel="stylesheet" href="knn/task7.css?v=20261003a">
+    <script type="module" src="knn/ui/task7.mjs?v=20261003a"></script>
+  </head>
+  <body class="perceptron-page knn-page">
+    <div class="site-backdrop" aria-hidden="true"></div>
+    <main class="page-shell">
+      <nav class="topbar" aria-label="Navigation">
+        <a class="back-link" href="../index.html">Zur Aufgabenübersicht</a>
+        <a class="back-link" href="aufgabe6.html">Zu Aufgabe 6</a>
+        <a class="back-link" href="../../../../">Startseite</a>
+      </nav>
+      <header class="perceptron-hero">
+        <p class="perceptron-eyebrow">Künstliche Intelligenz · Klassifikation</p>
+        <h1>Der k-nächste-Nachbarn-Algorithmus: Idee und Abstand</h1>
+        <p><strong>Aufgabe 7</strong></p>
+        <p>Finde heraus, wie man einen neuen Datenpunkt mithilfe ähnlicher Trainingsdaten einer Klasse zuordnet und wie man misst, wie nah sich zwei Punkte sind.</p>
+      </header>
+      <p id="save-status" role="status" aria-live="polite">Dein Bearbeitungsstand wird in diesem Browser gespeichert.</p>
+
+      <nav class="tab-list" role="tablist" aria-label="Lernschritte zum k-nächste-Nachbarn-Algorithmus">
+        <button id="tab-discover" role="tab" type="button" aria-selected="true" aria-controls="discover" data-tab="discover">1 Welche Größe passt?</button>
+        <button id="tab-neighbours" role="tab" type="button" aria-selected="false" aria-controls="neighbours" data-tab="neighbours" tabindex="-1">2 Die k nächsten Nachbarn</button>
+        <button id="tab-euclid" role="tab" type="button" aria-selected="false" aria-controls="euclid" data-tab="euclid" tabindex="-1">3 Euklidischer Abstand</button>
+        <button id="tab-manhattan" role="tab" type="button" aria-selected="false" aria-controls="manhattan" data-tab="manhattan" tabindex="-1">4 Manhattan-Metrik</button>
+        <button id="tab-apply" role="tab" type="button" aria-selected="false" aria-controls="apply" data-tab="apply" tabindex="-1">5 Schulshirts klassifizieren</button>
+        <button id="tab-finish" role="tab" type="button" aria-selected="false" aria-controls="finish" data-tab="finish" tabindex="-1">6 Abschlussquiz</button>
+      </nav>
+
+      <!-- Reiter 1 -->
+      <section id="discover" class="step-panel" role="tabpanel" aria-labelledby="tab-discover" data-panel="discover">
+        <p class="kicker">Welche Größe passt?</p><h2>Welche Größe passt?</h2>
+        <p>Am KI-Gymnasium gibt es Schulshirts in den Größen S, M und L. Für 15 Personen sind Körpergröße, Brustumfang und gekaufte Shirtgröße bekannt – das sind die Trainingsdaten.</p>
+        <div class="knn-layout">
+          <figure class="knn-figure">
+            <svg id="discover-plot" class="knn-plot" viewBox="0 0 495 525" role="img" aria-labelledby="discover-plot-title discover-plot-desc">
+              <title id="discover-plot-title">Trainingsdaten der Schulshirts und eine neue Person</title>
+              <desc id="discover-plot-desc">Die x-Achse zeigt die Körpergröße, die y-Achse den Brustumfang in Zentimetern. S-Personen sind Kreise, M-Personen Dreiecke, L-Personen Quadrate. Die neue Person liegt bei 183 und 106.</desc>
+            </svg>
+            <div id="discover-legend"></div>
+          </figure>
+          <div class="knn-side">
+            <p class="knn-task">Eine neue Person mit 183 cm Körpergröße und 106 cm Brustumfang möchte ein Schulshirt. <strong>Wähle</strong> die passende Größe und <strong>kreuze</strong> alle passenden Begründungen an.</p>
+            <div class="knn-group">
+              <p id="discover-size-label" class="knn-group-label">Welche Shirtgröße passt?</p>
+              <div class="knn-choices" role="group" aria-labelledby="discover-size-label" data-choice="discoverSize">
+                <button type="button" class="knn-choice" aria-pressed="false" data-value="S">S</button>
+                <button type="button" class="knn-choice" aria-pressed="false" data-value="M">M</button>
+                <button type="button" class="knn-choice" aria-pressed="false" data-value="L">L</button>
+              </div>
+            </div>
+            <button id="check-discover-size" class="primary-button" type="button">Größe prüfen</button>
+            <div id="discover-size-feedback" class="feedback" role="status" aria-live="polite" hidden></div>
+            <fieldset id="discover-reasons" data-mc="discoverReasons"><legend>Warum passt diese Größe? Kreuze alle passenden Begründungen an.</legend></fieldset>
+            <button id="check-discover-reasons" class="primary-button" type="button">Begründung prüfen</button>
+            <div id="discover-reasons-feedback" class="feedback" role="status" aria-live="polite" hidden></div>
+          </div>
+        </div>
+        <details><summary>Hilfe 1: Wo liegt die Person?</summary><p>Suche die neue Person im Diagramm: 183 cm nach rechts, 106 cm nach oben.</p></details>
+        <details><summary>Hilfe 2: Umgebung ansehen</summary><p>Schau dir die Punkte an, die direkt um die neue Person herum liegen. Welche Form und Farbe haben sie?</p></details>
+        <details><summary>Hilfe 3: Teillösung</summary><p>Die drei Punkte, die der neuen Person am nächsten liegen, sind Dreiecke – sie gehören zu M.</p></details>
+        <div class="flow-navigation" data-flow="discover"></div>
+      </section>
+
+      <!-- Reiter 2 -->
+      <section id="neighbours" class="step-panel" role="tabpanel" aria-labelledby="tab-neighbours" data-panel="neighbours" hidden>
+        <p class="kicker">Die k nächsten Nachbarn</p><h2>Die k nächsten Nachbarn</h2>
+        <p class="knn-task"><strong>Stelle</strong> k = 1 und k = 5 ein und <strong>bestimme</strong> jeweils die Shirtgröße der neuen Person N(186|110). <strong>Begründe</strong> danach, warum sich das Ergebnis ändert.</p>
+        <div class="knn-layout">
+          <figure class="knn-figure">
+            <svg id="neighbours-plot" class="knn-plot" viewBox="0 0 495 525" role="img" aria-labelledby="neighbours-plot-title neighbours-plot-desc">
+              <title id="neighbours-plot-title">Trainingsdaten der Schulshirts, eine neue Person und die Linien zu ihren nächsten Nachbarn</title>
+              <desc id="neighbours-plot-desc">Die x-Achse zeigt die Körpergröße, die y-Achse den Brustumfang in Zentimetern. S-Personen sind Kreise, M-Personen Dreiecke, L-Personen Quadrate. Die neue Person liegt bei 186 und 110.</desc>
+            </svg>
+            <div id="neighbours-legend"></div>
+          </figure>
+          <div class="knn-side">
+            <div class="knn-group">
+              <p id="k-label" class="knn-group-label">Anzahl k der nächsten Nachbarn</p>
+              <div class="knn-choices" role="group" aria-labelledby="k-label" data-choice="k">
+                <button type="button" class="knn-choice" aria-pressed="false" data-value="1">k = 1</button>
+                <button type="button" class="knn-choice" aria-pressed="false" data-value="3">k = 3</button>
+                <button type="button" class="knn-choice" aria-pressed="false" data-value="5">k = 5</button>
+                <button type="button" class="knn-choice" aria-pressed="false" data-value="7">k = 7</button>
+              </div>
+            </div>
+            <p id="neighbour-counts" class="knn-counts" aria-live="polite"></p>
+            <ol id="neighbour-list" class="knn-neighbour-list"></ol>
+            <div class="knn-group-row">
+              <div class="knn-group">
+                <p id="size-k1-label" class="knn-group-label">bei k = 1:</p>
+                <div class="knn-choices" role="group" aria-labelledby="size-k1-label" data-choice="size1">
+                  <button type="button" class="knn-choice" aria-pressed="false" data-value="S">S</button>
+                  <button type="button" class="knn-choice" aria-pressed="false" data-value="M">M</button>
+                  <button type="button" class="knn-choice" aria-pressed="false" data-value="L">L</button>
+                </div>
+              </div>
+              <div class="knn-group">
+                <p id="size-k5-label" class="knn-group-label">bei k = 5:</p>
+                <div class="knn-choices" role="group" aria-labelledby="size-k5-label" data-choice="size5">
+                  <button type="button" class="knn-choice" aria-pressed="false" data-value="S">S</button>
+                  <button type="button" class="knn-choice" aria-pressed="false" data-value="M">M</button>
+                  <button type="button" class="knn-choice" aria-pressed="false" data-value="L">L</button>
+                </div>
+              </div>
+            </div>
+            <button id="check-sizes" class="primary-button" type="button">Größen prüfen</button>
+            <div id="sizes-feedback" class="feedback" role="status" aria-live="polite" hidden></div>
+          </div>
+        </div>
+        <fieldset id="neighbours-reasons" data-mc="neighboursReasons"><legend>Warum ändert sich das Ergebnis? Kreuze alle passenden Aussagen an.</legend></fieldset>
+        <button id="check-neighbours-reasons" class="primary-button" type="button">Begründung prüfen</button>
+        <div id="neighbours-reasons-feedback" class="feedback" role="status" aria-live="polite" hidden></div>
+        <details><summary>Hilfe 1: Linien zählen</summary><p>Zähle nur die Punkte, zu denen vom neuen Punkt eine Linie führt. Die Auszählung neben der Grafik hilft dir.</p></details>
+        <details><summary>Hilfe 2: Mehrheit</summary><p>Die neue Person bekommt die Größe, die unter den verbundenen Punkten am häufigsten vorkommt.</p></details>
+        <details><summary>Hilfe 3: Teillösung</summary><p>Bei k = 1 führt die einzige Linie zum Punkt 185|109 mit Größe M. Bei k = 5 kommen vier weitere Punkte hinzu.</p></details>
+
+        <h3>Die Schritte des Verfahrens</h3>
+        <p class="knn-task"><strong>Ordne</strong> die Schritte des Verfahrens in die richtige Reihenfolge. <strong>Ziehe</strong> die Karten in die nummerierten Felder oder tippe erst eine Karte und dann ein Feld an – eine Karte gehört nicht dazu.</p>
+        <div id="order-cards" class="knn-cards"></div>
+        <div class="knn-actions">
+          <button id="check-order" class="primary-button" type="button">Reihenfolge prüfen</button>
+          <button id="reset-order" class="secondary-button" type="button">Karten zurücksetzen</button>
+        </div>
+        <div id="order-feedback" class="feedback" role="status" aria-live="polite" hidden></div>
+        <details><summary>Hilfe 1: Wo anfangen?</summary><p>Bevor man die nächsten Punkte auswählen kann, muss man wissen, wie weit jeder Punkt entfernt ist.</p></details>
+        <details><summary>Hilfe 2: Vom Ende her denken</summary><p>Die Zuordnung zu einer Klasse ist das Ergebnis – sie steht am Ende. Davor muss gezählt werden.</p></details>
+        <details><summary>Hilfe 3: Teillösung</summary><p>Schritt 1 ist „Abstände des neuen Punkts zu allen Trainingsdaten berechnen“, Schritt 4 ist „Den neuen Punkt dieser Klasse zuordnen“.</p></details>
+        <article id="knn-remember" class="remember" hidden>
+          <p><strong>Merke: Der k-nächste-Nachbarn-Algorithmus (KNN)</strong> ordnet einen neuen Datenpunkt einer Klasse zu. Er berechnet die Abstände des neuen Punkts zu allen Trainingsdaten und wählt die k Trainingsdaten mit den kleinsten Abständen aus – die k nächsten Nachbarn. Der neue Punkt bekommt die Klasse, die unter diesen Nachbarn am häufigsten vorkommt. Die Anzahl k der Nachbarn wird vorher festgelegt.</p>
+        </article>
+
+        <fieldset id="tie-options" data-mc="tieOptions"><legend>Gleichstand? Stell dir nur zwei Klassen S und L vor. Bei k = 2 gehört ein Nachbar zu S und einer zu L. Welche Aussagen stimmen?</legend></fieldset>
+        <button id="check-tie" class="primary-button" type="button">Aussagen prüfen</button>
+        <div id="tie-feedback" class="feedback" role="status" aria-live="polite" hidden></div>
+        <article id="tie-remember" class="remember" hidden>
+          <p><strong>Regel für Gleichstände:</strong> Wir wählen k immer ungerade (1, 3, 5, 7). Bei zwei Klassen kann es dann keinen Gleichstand geben. Bei drei Klassen wie S, M und L ist trotzdem ein Gleichstand möglich, zum Beispiel bei k = 3 mit je einem Nachbarn pro Klasse. Dann entscheidet der nächstgelegene Nachbar.</p>
+        </article>
+        <div class="flow-navigation" data-flow="neighbours"></div>
+      </section>
+
+      <!-- Reiter 3 -->
+      <section id="euclid" class="step-panel" role="tabpanel" aria-labelledby="tab-euclid" data-panel="euclid" hidden>
+        <p class="kicker">Euklidischer Abstand</p><h2>Wie misst man „nah“? – Euklidischer Abstand</h2>
+        <p>Im Diagramm siehst du, welche Punkte nah beieinanderliegen. Ein Computer muss das ausrechnen. N ist die neue Person aus Reiter 1, A und B sind zwei Trainingspersonen.</p>
+        <p class="knn-task"><strong>Berechne</strong> den Abstand von N zu A und von N zu B, also die Länge der direkten Verbindung. <strong>Runde</strong> auf zwei Nachkommastellen.</p>
+        <div class="knn-layout">
+          <figure class="knn-figure">
+            <svg id="euclid-plot" class="knn-plot" viewBox="0 0 520 560" role="img" aria-labelledby="euclid-plot-title euclid-plot-desc">
+              <title id="euclid-plot-title">Koordinatensystem mit der neuen Person N und den Trainingspersonen A und B</title>
+              <desc id="euclid-plot-desc">Die x-Achse zeigt die Körpergröße von 178 bis 188 Zentimetern, die y-Achse den Brustumfang von 100 bis 112 Zentimetern. N liegt bei 183 und 106, A bei 180 und 102, B bei 185 und 109. Eine Strecke verbindet N mit dem gewählten Punkt.</desc>
+            </svg>
+            <ul class="knn-legend">
+              <li><svg viewBox="-16 -16 32 32" width="26" height="26" aria-hidden="true" focusable="false"><circle class="knn-new-ring" r="14"></circle><path class="knn-new-mark" d="M0,-9 L9,0 L0,9 L-9,0 Z"></path></svg><span>N (neue Person)</span></li>
+              <li><svg viewBox="-12 -12 24 24" width="22" height="22" aria-hidden="true" focusable="false"><circle class="knn-neutral-mark" r="6.5"></circle></svg><span>A und B (Trainingspersonen)</span></li>
+              <li><svg viewBox="0 0 30 12" width="30" height="12" aria-hidden="true" focusable="false"><line class="knn-pair-line" x1="1" y1="6" x2="29" y2="6"></line></svg><span>gewählte Verbindung</span></li>
+            </ul>
+          </figure>
+          <div class="knn-side">
+            <div class="knn-group">
+              <p id="pair-label" class="knn-group-label">Gewähltes Paar</p>
+              <div class="knn-choices" role="group" aria-labelledby="pair-label" data-choice="pair">
+                <button type="button" class="knn-choice" aria-pressed="false" data-value="1">Paar 1: N und A</button>
+                <button type="button" class="knn-choice" aria-pressed="false" data-value="2">Paar 2: N und B</button>
+              </div>
+            </div>
+            <button id="toggle-triangle" class="secondary-button" type="button" aria-pressed="false">Dreieck einblenden</button>
+            <div class="knn-field">
+              <label for="dist-a">Abstand N–A</label>
+              <div class="knn-input-row"><input id="dist-a" data-answer="a" inputmode="decimal" autocomplete="off"><span>cm</span></div>
+            </div>
+            <div class="knn-field">
+              <label for="dist-b">Abstand N–B</label>
+              <div class="knn-input-row"><input id="dist-b" data-answer="b" inputmode="decimal" autocomplete="off"><span>cm</span></div>
+            </div>
+            <button id="check-euclid" class="primary-button" type="button">Abstände prüfen</button>
+            <div id="euclid-feedback" class="feedback" role="status" aria-live="polite" hidden></div>
+          </div>
+        </div>
+        <details><summary>Hilfe 1: Dreieck erkennen</summary><p>Blende das Dreieck ein. Die direkte Verbindung von N zum anderen Punkt ist die längste Seite eines rechtwinkligen Dreiecks.</p></details>
+        <details><summary>Hilfe 2: Seiten bestimmen</summary><p>Die beiden kurzen Seiten verlaufen parallel zu den Achsen. Ihre Längen sind die Unterschiede der x-Werte und der y-Werte der beiden Punkte.</p></details>
+        <details><summary>Hilfe 3: Teillösung</summary><p>Für N und A sind die kurzen Seiten 3 und 4 lang. Nach dem Satz des Pythagoras gilt d² = 3² + 4².</p></details>
+        <article id="euclid-remember" class="remember" hidden>
+          <p><strong>Merke: Euklidischer Abstand.</strong> Der euklidische Abstand d zweier Punkte A(x₁|y₁) und B(x₂|y₂) ist die Länge ihrer direkten Verbindung. Die Differenzen der Koordinaten bilden die Katheten eines rechtwinkligen Dreiecks, die Verbindung ist die Hypotenuse. Nach dem Satz des Pythagoras gilt:</p>
+          <p class="math">d = √((x₂ − x₁)² + (y₂ − y₁)²)</p>
+          <p>Beispiel: N(183|106) und A(180|102) unterscheiden sich um 3 und um 4, also d = √(3² + 4²) = √25 = 5.</p>
+        </article>
+        <div class="flow-navigation" data-flow="euclid"></div>
+      </section>
+
+      <!-- Reiter 4 -->
+      <section id="manhattan" class="step-panel" role="tabpanel" aria-labelledby="tab-manhattan" data-panel="manhattan" hidden>
+        <p class="kicker">Manhattan-Metrik</p><h2>Manhattan-Metrik</h2>
+        <p>In Manhattan verlaufen die Straßen wie ein Gitter. Ein Taxi kann nicht quer durch die Häuserblöcke fahren, sondern nur entlang der Straßen.</p>
+        <p class="knn-task"><strong>Bestimme</strong>, wie viele Blocklängen das Taxi von der Haltestelle H zum Kino K mindestens fahren muss.</p>
+        <div class="knn-layout">
+          <figure class="knn-figure">
+            <svg id="manhattan-plot" class="knn-plot" viewBox="0 0 520 400" role="img" aria-labelledby="manhattan-plot-title manhattan-plot-desc">
+              <title id="manhattan-plot-title">Stadtplan mit Haltestelle H, Kino K und drei Verbindungen</title>
+              <desc id="manhattan-plot-desc">Die Straßen bilden ein Gitter. Die Haltestelle H liegt bei 1 und 1, das Kino K bei 6 und 4. Eine rote und eine blaue Route folgen den Straßen, eine gepunktete Linie verbindet H und K direkt.</desc>
+            </svg>
+            <ul class="knn-legend">
+              <li><svg viewBox="0 0 30 12" width="30" height="12" aria-hidden="true" focusable="false"><line class="knn-route-red" x1="1" y1="6" x2="29" y2="6"></line></svg><span>rote Route (durchgezogen)</span></li>
+              <li><svg viewBox="0 0 30 12" width="30" height="12" aria-hidden="true" focusable="false"><line class="knn-route-blue" x1="1" y1="6" x2="29" y2="6"></line></svg><span>blaue Route (gestrichelt)</span></li>
+              <li><svg viewBox="0 0 30 12" width="30" height="12" aria-hidden="true" focusable="false"><line class="knn-route-direct" x1="1" y1="6" x2="29" y2="6"></line></svg><span>direkte Verbindung (gepunktet)</span></li>
+            </ul>
+          </figure>
+          <div class="knn-side">
+            <div class="knn-field">
+              <label for="manhattan-input">Kürzester Weg von H nach K</label>
+              <div class="knn-input-row"><input id="manhattan-input" inputmode="decimal" autocomplete="off"><span>Blocklängen</span></div>
+            </div>
+            <button id="check-manhattan" class="primary-button" type="button">Weg prüfen</button>
+            <div id="manhattan-feedback" class="feedback" role="status" aria-live="polite" hidden></div>
+          </div>
+        </div>
+        <details><summary>Hilfe 1: Route abzählen</summary><p>Fahre eine der beiden eingezeichneten Routen mit dem Finger ab und zähle jede Blocklänge.</p></details>
+        <details><summary>Hilfe 2: Richtungen trennen</summary><p>Jede Route besteht aus Stücken nach rechts und Stücken nach oben. Zähle beide Richtungen getrennt und addiere.</p></details>
+        <details><summary>Hilfe 3: Teillösung</summary><p>Nach rechts sind es 5 Blocklängen. Zähle noch die Blocklängen nach oben dazu.</p></details>
+        <article id="manhattan-remember" class="remember" hidden>
+          <p><strong>Merke: Manhattan-Metrik.</strong> Beim Manhattan-Abstand bewegt man sich nur parallel zu den Achsen, wie ein Taxi in den rechtwinkligen Straßen von Manhattan. Man addiert die Beträge der Koordinatendifferenzen:</p>
+          <p class="math">d = |x₂ − x₁| + |y₂ − y₁|</p>
+          <p>Für H(1|1) und K(6|4): d = |6 − 1| + |4 − 1| = 5 + 3 = 8.</p>
+        </article>
+
+        <h3>Wer ist der nächste Nachbar?</h3>
+        <p class="knn-task"><strong>Berechne</strong> für P(0|0) die Abstände zu A(3|3) und zu B(5|0) – euklidisch und nach Manhattan. <strong>Runde</strong> auf zwei Nachkommastellen.</p>
+        <div class="knn-layout">
+          <figure class="knn-figure">
+            <svg id="compare-plot" class="knn-plot" viewBox="0 0 400 300" role="img" aria-labelledby="compare-plot-title compare-plot-desc">
+              <title id="compare-plot-title">Koordinatensystem mit den Punkten P, A und B</title>
+              <desc id="compare-plot-desc">P liegt bei 0 und 0, A bei 3 und 3, B bei 5 und 0.</desc>
+            </svg>
+            <ul class="knn-legend">
+              <li><svg viewBox="-12 -12 24 24" width="22" height="22" aria-hidden="true" focusable="false"><circle class="knn-neutral-mark" r="6.5"></circle></svg><span>P, A und B (Punkte)</span></li>
+            </ul>
+          </figure>
+          <div class="knn-side">
+            <div class="knn-table-wrap">
+              <table class="knn-table" id="compare-table">
+                <caption>Abstände von P</caption>
+                <thead><tr><td></td><th scope="col">euklidisch</th><th scope="col">Manhattan</th></tr></thead>
+                <tbody>
+                  <tr><th scope="row">P zu A</th><td><label><span class="sr-only">Abstand P zu A, euklidisch</span><input data-answer="eA" inputmode="decimal" autocomplete="off"></label></td><td><label><span class="sr-only">Abstand P zu A, Manhattan</span><input data-answer="mA" inputmode="decimal" autocomplete="off"></label></td></tr>
+                  <tr><th scope="row">P zu B</th><td><label><span class="sr-only">Abstand P zu B, euklidisch</span><input data-answer="eB" inputmode="decimal" autocomplete="off"></label></td><td><label><span class="sr-only">Abstand P zu B, Manhattan</span><input data-answer="mB" inputmode="decimal" autocomplete="off"></label></td></tr>
+                </tbody>
+              </table>
+            </div>
+            <button id="check-compare" class="primary-button" type="button">Tabelle prüfen</button>
+            <div id="compare-feedback" class="feedback" role="status" aria-live="polite" hidden></div>
+          </div>
+        </div>
+        <fieldset id="metric-options" data-mc="metricOptions"><legend>Welche Aussagen stimmen?</legend></fieldset>
+        <button id="check-metric" class="primary-button" type="button">Aussagen prüfen</button>
+        <div id="metric-feedback" class="feedback" role="status" aria-live="polite" hidden></div>
+        <details><summary>Hilfe 1: Ablesen</summary><p>Lies in der kleinen Grafik ab, wie weit A und B in x- und in y-Richtung von P entfernt sind.</p></details>
+        <details><summary>Hilfe 2: Zwei Rechenwege</summary><p>Euklidisch: direkte Verbindung über ein rechtwinkliges Dreieck wie in Reiter 3. Manhattan: Wege entlang der Achsen addieren.</p></details>
+        <details><summary>Hilfe 3: Teillösung</summary><p>Von P nach A sind es 3 nach rechts und 3 nach oben, von P nach B 5 nach rechts und 0 nach oben.</p></details>
+        <article id="metric-remember" class="remember" hidden>
+          <p><strong>Merke: Abstandsmaße.</strong> Der euklidische Abstand und der Manhattan-Abstand sind zwei verschiedene Abstandsmaße. Der KNN-Algorithmus kann mit jedem Abstandsmaß arbeiten. Welche Trainingsdaten die nächsten Nachbarn sind, kann vom gewählten Abstandsmaß abhängen. Der Manhattan-Abstand ist nie kleiner als der euklidische Abstand.</p>
+        </article>
+        <div class="flow-navigation" data-flow="manhattan"></div>
+      </section>
+
+      <!-- Reiter 5 -->
+      <section id="apply" class="step-panel" role="tabpanel" aria-labelledby="tab-apply" data-panel="apply" hidden>
+        <p class="kicker">Schulshirts klassifizieren</p><h2>Schulshirts klassifizieren</h2>
+        <p class="knn-task"><strong>Berechne</strong> die beiden fehlenden euklidischen Abstände zur neuen Person N(178|98) und runde auf zwei Nachkommastellen. <strong>Markiere</strong> dann durch Antippen der Zeilen die k = 5 nächsten Nachbarn und <strong>bestimme</strong> die Shirtgröße.</p>
+        <div class="knn-layout">
+          <div class="knn-table-wrap">
+            <table class="knn-table knn-data-table" id="apply-table">
+              <caption>Trainingsdaten und Abstände zur neuen Person N(178|98)</caption>
+              <thead><tr><th scope="col">Nachbar</th><th scope="col">Nr.</th><th scope="col">Körpergröße x (cm)</th><th scope="col">Brustumfang y (cm)</th><th scope="col">Größe</th><th scope="col">Abstand d zu N</th></tr></thead>
+              <tbody id="apply-body"></tbody>
+            </table>
+          </div>
+          <div class="knn-side">
+            <button id="check-distances" class="primary-button" type="button">Abstände prüfen</button>
+            <div id="distances-feedback" class="feedback" role="status" aria-live="polite" hidden></div>
+            <button id="check-marked" class="primary-button" type="button">Nachbarn prüfen</button>
+            <div id="marked-feedback" class="feedback" role="status" aria-live="polite" hidden></div>
+            <div class="knn-group">
+              <p id="apply-size-label" class="knn-group-label">Shirtgröße der neuen Person</p>
+              <div class="knn-choices" role="group" aria-labelledby="apply-size-label" data-choice="applySize">
+                <button type="button" class="knn-choice" aria-pressed="false" data-value="S">S</button>
+                <button type="button" class="knn-choice" aria-pressed="false" data-value="M">M</button>
+                <button type="button" class="knn-choice" aria-pressed="false" data-value="L">L</button>
+              </div>
+            </div>
+            <button id="check-apply-size" class="primary-button" type="button">Shirtgröße prüfen</button>
+            <div id="apply-size-feedback" class="feedback" role="status" aria-live="polite" hidden></div>
+          </div>
+        </div>
+        <details><summary>Hilfe 1: Differenzen</summary><p>Bestimme für jede fehlende Zeile, um wie viel sich Körpergröße und Brustumfang von N(178|98) unterscheiden.</p></details>
+        <details><summary>Hilfe 2: Wie in Reiter 3</summary><p>Berechne mit den beiden Differenzen wie in Reiter 3 den euklidischen Abstand. Markiere danach die fünf kleinsten Werte der Abstandsspalte.</p></details>
+        <details><summary>Hilfe 3: Teillösung</summary><p>Für Nr. 3 (180|102) sind die Differenzen 2 und 4, also d = √(2² + 4²) = √20. Der kleinste Abstand der Tabelle gehört zu Nr. 11.</p></details>
+        <article class="card">
+          <h3>Erläutern</h3>
+          <p><strong>Erläutere</strong> an diesem Beispiel, wie der KNN-Algorithmus die Shirtgröße bestimmt.</p>
+          <label for="apply-answer">Deine Erläuterung<textarea id="apply-answer" maxlength="600" rows="5" placeholder="Zuerst …"></textarea></label>
+          <p class="counter" id="apply-counter">0 von 600 Zeichen</p>
+          <p class="privacy"><strong>Hinweis:</strong> Gib keine personenbezogenen Informationen ein. Deine Antwort wird zur automatischen Auswertung an den Skriptserver und dort an ein KI-System übertragen.</p>
+          <button id="check-apply-answer" class="primary-button" type="button">Erläuterung überprüfen</button>
+          <div id="apply-answer-feedback" class="feedback" role="status" aria-live="polite" hidden></div>
+        </article>
+        <div class="flow-navigation" data-flow="apply"></div>
+      </section>
+
+      <!-- Reiter 6 -->
+      <section id="finish" class="step-panel" role="tabpanel" aria-labelledby="tab-finish" data-panel="finish" hidden>
+        <p class="kicker">Abschlussquiz</p><h2>Das Wichtigste sichern</h2>
+        <ul>
+          <li>Der k-nächste-Nachbarn-Algorithmus (KNN) ordnet einen neuen Datenpunkt der Klasse zu, die unter seinen k nächsten Nachbarn in den Trainingsdaten am häufigsten vorkommt.</li>
+          <li>Wir wählen k ungerade. Bleibt bei drei oder mehr Klassen trotzdem ein Gleichstand, entscheidet der nächstgelegene Nachbar.</li>
+          <li>Euklidischer Abstand: d = √((x₂ − x₁)² + (y₂ − y₁)²) – die Länge der direkten Verbindung.</li>
+          <li>Manhattan-Abstand: d = |x₂ − x₁| + |y₂ − y₁| – der Weg entlang der Achsen. Er ist nie kleiner als der euklidische Abstand.</li>
+          <li>Welche Punkte die nächsten Nachbarn sind, kann vom Abstandsmaß abhängen.</li>
+        </ul>
+        <section id="final-quiz" aria-labelledby="quiz-title">
+          <h3 id="quiz-title">Abschlussquiz</h3>
+          <p>Kreuze alle richtigen Aussagen an. Bei manchen Fragen sind mehrere Antworten richtig.</p>
+          <p id="quiz-progress">0 von 6 Fragen vollständig richtig</p>
+          <form id="quiz-form">
+            <div id="quiz-questions"></div>
+            <button class="primary-button" type="submit">Quiz auswerten</button>
+          </form>
+          <div id="quiz-feedback" class="feedback" role="status" aria-live="polite" hidden></div>
+          <div id="quiz-summary" class="remember" hidden></div>
+        </section>
+        <button id="reset-progress" class="secondary-button" type="button">Bearbeitungsstand zurücksetzen</button>
+      </section>
+    </main>
+  </body>
+</html>

@@ -1,0 +1,96 @@
+\documentclass[10pt,a4paper]{article}
+
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage[ngerman]{babel}
+\usepackage[a4paper,margin=14mm]{geometry}
+\usepackage{lmodern}
+\usepackage[table]{xcolor}
+\usepackage{tabularx}
+\usepackage{array}
+\usepackage{microtype}
+\usepackage[most]{tcolorbox}
+
+\pagestyle{empty}
+\setlength{\parindent}{0pt}
+\setlength{\parskip}{0pt}
+\renewcommand{\familydefault}{\sfdefault}
+\renewcommand{\arraystretch}{1.16}
+
+\definecolor{Navy}{HTML}{17324D}
+\definecolor{Blue}{HTML}{3B6EA5}
+\definecolor{Sky}{HTML}{EAF3FA}
+\definecolor{Mint}{HTML}{E8F5EF}
+\definecolor{Gold}{HTML}{F3B33D}
+\definecolor{Ink}{HTML}{1E2935}
+\definecolor{Muted}{HTML}{617080}
+\definecolor{Line}{HTML}{D8E1E8}
+\definecolor{CodeBg}{HTML}{F5F7F9}
+
+\color{Ink}
+\newcommand{\sectiontitle}[1]{%
+  \vspace{2.1mm}{\color{Blue}\bfseries\large #1}\par
+  \vspace{0.7mm}{\color{Blue}\rule{\linewidth}{0.7pt}}\par\vspace{1.1mm}}
+\newcommand{\smallcard}[2]{%
+  \colorbox{#1}{\parbox{\dimexpr\linewidth-2\fboxsep\relax}{\vspace{1mm}\centering\small #2\vspace{1mm}}}}
+\newcommand{\anomaly}[4]{%
+  \begin{tcolorbox}[colback=white,colframe=Line,arc=1.5mm,boxrule=.6pt,
+    left=2mm,right=2mm,top=1.3mm,bottom=1.3mm,before skip=0.6mm,after skip=1mm]
+  \begin{tabularx}{\linewidth}{@{}>{\bfseries\color{Blue}}p{24mm}X>{\centering\arraybackslash}p{11mm}X@{}}
+  #1 & \smallcard{CodeBg}{#2} & {\color{Blue}$\Longrightarrow$} & \smallcard{Sky}{#3}
+  \end{tabularx}\vspace{0.5mm}\par
+  {\small\textbf{Folge:} #4}
+  \end{tcolorbox}}
+
+\begin{document}
+
+\colorbox{Navy}{\parbox{\dimexpr\linewidth-2\fboxsep\relax}{%
+  \vspace{3mm}\color{white}\begin{tabularx}{\linewidth}{@{}Xr@{}}
+  {\small\bfseries INFORMATIK · KLASSE 10} & \colorbox{Gold}{\color{Navy}\small\bfseries\strut LÖSUNGEN}\end{tabularx}
+  \vspace{2.4mm}{\fontsize{18}{21}\selectfont\bfseries Aufgabe 9 -- Transaktionen und Integrität}\par
+  \vspace{0.8mm}{\large Sicherungsblatt}\vspace{2.8mm}}}
+
+\vspace{2.5mm}
+\colorbox{Sky}{\parbox{\dimexpr\linewidth-2\fboxsep\relax}{\vspace{1.6mm}
+\textcolor{Blue}{\bfseries Ziel:} Du erkennst Anomalien bei der Datenpflege und prüfst die drei Integritätsbedingungen.\vspace{1.6mm}}}
+
+\sectiontitle{1 · Datenpflege: Was ändert die Daten?}
+\begin{tabularx}{\linewidth}{@{}X@{\hspace{2mm}}X@{\hspace{2mm}}X@{\hspace{2mm}}X@{}}
+\smallcard{Mint}{\texttt{INSERT}\\einfügen} &
+\smallcard{CodeBg}{\texttt{SELECT}\\nur lesen} &
+\smallcard{Mint}{\texttt{UPDATE}\\ändern} &
+\smallcard{Mint}{\texttt{DELETE}\\löschen}
+\end{tabularx}
+\vspace{1.2mm}\par
+{\small\textbf{CRUD} = Create · Read · Update · Delete. Eine \textbf{Transaktion} führt eine oder mehrere Änderungen aus; danach müssen die Daten stimmig sein.}
+
+\sectiontitle{2 · Drei Anomalien in \texttt{users\_photos}}
+\anomaly{UPDATE}{Neles Name\\\textbf{3-mal gleich}}{1-mal Schweizer\\2-mal Hohenstein}{Ein Benutzer hat zwei Namen: \textbf{inkonsistente Daten}.}
+\anomaly{DELETE}{Jannik\\2 Fotos + Kontodaten}{2 Fotozeilen gelöscht\\0 Kontodaten}{Beim Löschen der Fotos verschwindet auch Janniks Konto.}
+\anomaly{INSERT}{Foto aus Florida\\ohne Benutzerangabe}{Foto gespeichert\\\texttt{name/username = NULL}}{Das Foto hat keinen zugeordneten Benutzer.}
+\vspace{0.2mm}
+\colorbox{Mint}{\parbox{\dimexpr\linewidth-2\fboxsep\relax}{\vspace{1.2mm}\small
+\textbf{Ursache:} Benutzer- und Fotodaten stehen redundant in einer Tabelle. \quad
+\textbf{Lösung:} \texttt{users.id} $\longleftarrow$ \texttt{photos.user\_id[users]} -- zwei Tabellen, verbunden durch einen Fremdschlüssel.\vspace{1.2mm}}}
+
+\sectiontitle{3 · Integrität: Drei Prüfungen vor einer Änderung}
+{\small\begin{tabularx}{\linewidth}{@{}>{\bfseries\color{Blue}}lX>{\raggedright\arraybackslash}p{31mm}@{}}
+\rowcolor{Sky}Regel & Beispiel aus InstaHub & Ergebnis\\
+Entitätsintegrität & \texttt{photos.id = 1001} ist bereits vergeben. & \textbf{abgelehnt}\\
+\rowcolor{CodeBg}Wertebereichsintegrität & \texttt{birthday = 'Sommer 2008'} ist kein Datum. & \textbf{abgelehnt}\\
+Referentielle Integrität & \texttt{photos.user\_id = 999}: kein Benutzer mit \texttt{id = 999}. & \textbf{abgelehnt}
+\end{tabularx}}\par\vspace{1mm}
+{\small\textbf{Schul-Übertragung:} \texttt{ag.id = 3} erneut $\rightarrow$ Entitätsintegrität;
+\texttt{teilnahme(2,3)} $\rightarrow$ ausgeführt;
+\texttt{teilnahme(2,7)} $\rightarrow$ referentielle Integrität;
+\texttt{ag.plaetze = 'viele'} $\rightarrow$ Wertebereichsintegrität.}\par
+
+\vspace{1.6mm}
+\begin{tcolorbox}[colback=Mint,colframe=Blue,arc=2mm,boxrule=.8pt,left=3mm,right=3mm,top=1.6mm,bottom=1.6mm]
+\textbf{Merksatz}\par\smallskip
+{\small\textbf{Primärschlüssel} eindeutig und nie \texttt{NULL} · \textbf{Werte} im festgelegten Bereich · \textbf{Fremdschlüssel} verweist auf einen vorhandenen Datensatz. Verletzte Regeln führen zur Ablehnung der Anweisung.}
+\end{tcolorbox}
+
+\vfill{\color{Line}\rule{\linewidth}{.5pt}}\par\vspace{1.5mm}
+\begin{tabularx}{\linewidth}{@{}Xr@{}}{\small\color{Muted}Klasse 10 · Datenbanken} & {\small\color{Muted}Sicherungsblatt · Aufgabe 9}\end{tabularx}
+\end{document}

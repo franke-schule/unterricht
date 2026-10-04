@@ -31,6 +31,13 @@
                 <li>Berechne danach E13, E15 und E19 mit Zellbezügen und WENN.</li>
                 <li>Der Wert in E19 darf nicht unter 0 ‰ fallen.</li>
               </ul>
+              <p><strong>Rechenhinweise:</strong></p>
+              <ul>
+                <li><strong>D8:</strong> Rechne Liter in Zentiliter um (1 l = 100 cl). <strong>E8:</strong> Multipliziere das Volumen in cl mit dem Alkoholanteil und der Dichte aus H5; halte H5 beim Ausfüllen fest.</li>
+                <li><strong>E13:</strong> Addiere die Alkoholmengen aus E8 bis E11.</li>
+                <li><strong>E15:</strong> Teile E13 durch das Produkt aus Gewicht (H8) und Verteilungsfaktor (I15 bei Männern, I16 bei Frauen). Das Geschlecht steht in G8 (<code>m</code>/<code>w</code>).</li>
+                <li><strong>E19:</strong> Multipliziere die Stunden aus E17 mit der Abbaurate (I20 bei Männern, I19 bei Frauen) und ziehe das Ergebnis von E15 ab. Begrenze den Wert auf mindestens 0 ‰.</li>
+              </ul>
             </div>
           </div>
           <span class="load-status ready" role="status">Bereit</span>

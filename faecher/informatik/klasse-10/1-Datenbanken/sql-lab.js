@@ -6,6 +6,7 @@ import { appendSolutionDownloadFromTemplate, focusTabPanelStart, renderTabFlowNa
 const STORAGE_KEY = 'inf10-sql-grundlagen-v1';
 const SCRIPT_SERVER_URL = 'https://script.google.com/macros/s/AKfycby8RWL6uYrKZyoJ6m2GRpWyRmXjwsdskyCiqzKpRhIK5-wrDl-9lWWk8CiAGaVMoy0x/exec';
 const NEUTRAL_SQL_PLACEHOLDER = 'SELECT ...\nFROM ...';
+const BIRTHDAY_MONTH_DAY = '10-02';
 const USERS_TABLE_SCHEMAS = Object.freeze([
   Object.freeze({ table: 'users', columns: Object.freeze([
     ['id', 'int'], ['name', 'varchar(255)'], ['username', 'varchar(255)'], ['email', 'varchar(255)'],
@@ -16,7 +17,7 @@ const USERS_TABLE_SCHEMAS = Object.freeze([
   ]) })
 ]);
 const state = { tab: 'intro', introStep: 1, answers: {}, feedback: {}, results: {}, server: {}, quiz: {}, quizPassed: false, quizFeedback: null };
-const SQL_TABS = [['intro', 'SQL Schritt für Schritt'], ['conditions', 'Bedingungen'], ['fastConditions', 'Für die Schnellen: Bedingungen'], ['aggregates', 'Aggregatfunktionen'], ['fastAggregates', 'Für die Schnellen: Aggregatfunktionen'], ['quiz', 'Abschlussquiz']];
+const SQL_TABS = [['intro', 'SQL Schritt für Schritt'], ['conditions', 'Bedingungen'], ['aggregates', 'Aggregatfunktionen'], ['quiz', 'Abschlussquiz'], ['fastConditions', 'Für die Schnellen: Bedingungen'], ['fastAggregates', 'Für die Schnellen: Aggregatfunktionen']];
 const FLEXIBLE_TASK_IDS = new Set(['b2-1', 'b2-2', 'b2-4', 'b2-6', 'b2-8', 'b2-10', 'b2-11', 'b2-12', 'b2-14', 'b2-16', 'b3-4']);
 const FINAL_QUIZ = [
   { id: 'clauses', prompt: 'Welche Aussagen zu SELECT, FROM und WHERE stimmen?', hint: 'Unterscheide Tabelle, Zeilen und Spalten.', options: [['from', 'FROM bestimmt die Tabelle.', true], ['where', 'WHERE filtert die Zeilen.', true], ['select', 'SELECT wählt die ausgegebenen Spalten.', true], ['selectRows', 'SELECT legt fest, welche Zeilen die Bedingung erfüllen.', false]] },
@@ -39,14 +40,14 @@ const tasks = {
     sql('b2-9', '9', 'Ermittle, wie viele Mitglieder in München wohnen.', "SELECT COUNT(*) AS anzahl\nFROM users\nWHERE city = 'München'", { hints: ['Wähle zunächst die Mitglieder aus München aus.', 'Zähle die Zeilen der Ergebnisrelation.', 'COUNT(*) fasst die Anzahl der passenden Zeilen zusammen.'] })
   ],
   fastConditions: [
-    sql('b2-10', '10', 'Prüfe, ob Mitglieder der Jahrgänge 2005 bis 2010 heute Geburtstag haben.', () => `SELECT *\nFROM users\nWHERE birthday LIKE '%-${todayMonthDay()}'\n  AND birthday BETWEEN '2005-01-01' AND '2010-12-31'`, { birthdayProbe: true, hints: ['Das Datum steht in users im Format YYYY-MM-DD. Vergleiche deshalb nur Monat und Tag.', 'LIKE und % helfen dir, das wechselnde Geburtsjahr vor dem heutigen Monat und Tag zu berücksichtigen.', 'Grenze zusätzlich auf die Jahrgänge 2005 bis 2010 ein.'] }),
+    sql('b2-10', '10', 'Finde Mitglieder der Jahrgänge 2005 bis 2010, die am 2. Oktober Geburtstag haben.', `SELECT *\nFROM users\nWHERE birthday LIKE '%-${BIRTHDAY_MONTH_DAY}'\n  AND birthday BETWEEN '2005-01-01' AND '2010-12-31'`, { birthdayProbe: true, hints: ['Das Datum steht in users im Format YYYY-MM-DD. Vergleiche deshalb nur Monat und Tag.', 'LIKE und % helfen dir, das Geburtsjahr vor Monat und Tag zu berücksichtigen.', 'Grenze zusätzlich auf die Jahrgänge 2005 bis 2010 ein.'] }),
     sql('b2-11', '11', 'Finde die Mitglieder, die im März Geburtstag haben.', "SELECT name\nFROM users\nWHERE birthday LIKE '%-03-%'"),
-    sql('b2-12', '12', 'Finde alle Berliner, die Marc heißen.', "SELECT *\nFROM users\nWHERE name LIKE 'Marc%'\n  AND city = 'Berlin'"),
+    sql('b2-12', '12', 'Finde alle Berliner, die Lina heißen.', "SELECT *\nFROM users\nWHERE name LIKE 'Lina%'\n  AND city = 'Berlin'"),
     sql('b2-13', '13', 'Ermittle, wie viele Mitglieder Lina oder Lisa heißen.', "SELECT COUNT(*) AS anzahl\nFROM users\nWHERE name LIKE 'Lina%'\n   OR name LIKE 'Lisa%'"),
     sql('b2-14', '14', 'Sortiere alle Männer nach ihrer Körpergröße, die 2008 oder später geboren wurden.', "SELECT *\nFROM users\nWHERE gender = 'male'\n  AND birthday >= '2008-01-01'\nORDER BY centimeters", { compare: { rowOrder: true } }),
     sql('b2-15', '15', 'Gib Geburtsdatum und Benutzernamen aller Frauen aus, die kleiner als 1,60 m sind.', "SELECT birthday, username\nFROM users\nWHERE gender = 'female'\n  AND centimeters < 160", { compare: { columnOrder: false } }),
     sql('b2-16', '16', 'Liste alle Mitglieder auf, die Felix heißen und nicht aus Berlin kommen.', "SELECT *\nFROM users\nWHERE name LIKE 'Felix%'\n  AND city != 'Berlin'"),
-    sql('b2-17', '17', 'Erna sucht eine Bekannte aus Berlin, deren Vorname Bea oder Naomi war. Liste alle Daten der möglichen Mitglieder auf.', "SELECT *\nFROM users\nWHERE (name LIKE 'Bea%' OR name LIKE 'Naomi%')\n  AND city = 'Berlin'")
+    sql('b2-17', '17', 'Erna sucht eine Bekannte aus Berlin, deren Vorname Leni oder Elena war. Liste alle Daten der möglichen Mitglieder auf.', "SELECT *\nFROM users\nWHERE (name LIKE 'Leni%' OR name LIKE 'Elena%')\n  AND city = 'Berlin'")
   ],
   aggregates: [
     info(),
@@ -67,7 +68,6 @@ function sql(id, number, prompt, referenceSql, options = {}) { return { type: 's
 function describe(id, number, prompt, statement, serverTaskId, options = {}) { return { type: 'describe', id, number, prompt, statement, serverTaskId, info: options.info || [] }; }
 function selfCheck(id, number, prompt, statement, answer, options = {}) { return { type: 'self', id, number, prompt, statement, answer, info: options.info || [] }; }
 function info() { return { type: 'info', id: 'aggregate-info' }; }
-function todayMonthDay() { const now = new Date(); const offset = now.getTimezoneOffset() * 60000; return new Date(now - offset).toISOString().slice(5, 10); }
 
 class SqlWorker {
   constructor() { this.nextId = 0; this.pending = new Map(); }
@@ -133,15 +133,15 @@ function activateSqlTab(id, { focusContent = false } = {}) { state.tab = id; sav
 function render({ focusContent = false } = {}) {
   document.body.classList.toggle('sql-intro-active', state.tab === 'intro');
   const tabs = document.getElementById('sql-tabs'); tabs.replaceChildren();
-  SQL_TABS.forEach(([id, label], index) => { const button = element('button', 'step-tab', label); button.type = 'button'; button.id = `tab-${id}`; button.dataset.tab = id; button.role = 'tab'; button.ariaSelected = String(state.tab === id); button.tabIndex = state.tab === id ? 0 : -1; button.setAttribute('aria-controls', 'sql-panel'); button.addEventListener('click', () => activateSqlTab(id)); button.addEventListener('keydown', (event) => moveTabFocus(event, SQL_TABS, index)); tabs.append(button); });
+  SQL_TABS.forEach(([id, label], index) => { const button = element('button', 'step-tab', `${index + 1}. ${label}`); button.type = 'button'; button.id = `tab-${id}`; button.dataset.tab = id; button.role = 'tab'; button.ariaSelected = String(state.tab === id); button.tabIndex = state.tab === id ? 0 : -1; button.setAttribute('aria-controls', 'sql-panel'); button.addEventListener('click', () => activateSqlTab(id)); button.addEventListener('keydown', (event) => moveTabFocus(event, SQL_TABS, index)); tabs.append(button); });
   const panel = document.getElementById('sql-panel'); panel.replaceChildren();
   panel.setAttribute('aria-labelledby', `tab-${state.tab}`);
   if (state.tab !== 'intro') panel.append(schemaCard(USERS_TABLE_SCHEMAS));
-  const heading = element('div', 'step-heading'); heading.append(element('span', 'step-number', '5')); const title = element('div'); title.append(element('p', 'step-kicker', state.tab.startsWith('fast') ? 'Vertiefen' : state.tab === 'intro' ? 'Entdecken' : state.tab === 'quiz' ? 'Sichern' : 'Wiederholen'), element('h2', '', state.tab === 'intro' ? 'Wie entsteht eine Ergebnisrelation?' : SQL_TABS.find(([id]) => id === state.tab)[1])); heading.append(title); panel.append(heading);
+  const heading = element('div', 'step-heading'); heading.append(element('span', 'step-number', String(SQL_TABS.findIndex(([id]) => id === state.tab) + 1))); const title = element('div'); title.append(element('p', 'step-kicker', state.tab.startsWith('fast') ? 'Vertiefen' : state.tab === 'intro' ? 'Entdecken' : state.tab === 'quiz' ? 'Sichern' : 'Wiederholen'), element('h2', '', state.tab === 'intro' ? 'Wie entsteht eine Ergebnisrelation?' : SQL_TABS.find(([id]) => id === state.tab)[1])); heading.append(title); panel.append(heading);
   if (state.tab === 'intro') renderIntro(panel);
   else if (state.tab === 'quiz') renderFinalQuiz(panel);
   else tasks[state.tab].forEach((task) => panel.append(renderTask(task)));
-  if (state.tab === 'quiz') appendSolutionDownloadFromTemplate(panel);
+  if (state.tab === 'quiz' || state.tab.startsWith('fast')) appendSolutionDownloadFromTemplate(panel);
   renderTabFlowNavigation(panel, { items: SQL_TABS.map(([id, label]) => ({ id, label })), currentId: state.tab, onNavigate: activateSqlTab });
   if (state.tab === 'intro') panel.querySelector('.intro-side')?.append(panel.querySelector('.tab-flow-navigation'));
   syncTabSemantics(tabs, state.tab);
@@ -246,16 +246,15 @@ async function runTask(task, card, input = card.querySelector('.sql-input'), but
     const referenceSql = task.flexible ? flexibleReferenceSql(originalReferenceSql, check.sql) || originalReferenceSql : originalReferenceSql;
     const actual = await database.exec(check.sql); const reference = await database.exec(referenceSql); let comparison = compareRelations(actual, reference, task.compare);
     if (comparison.correct && task.birthdayProbe) {
-      const monthDay = todayMonthDay();
-      const probeActual = await database.execBirthdayProbe(check.sql, monthDay);
-      const probeReference = await database.execBirthdayProbe(referenceSql, monthDay);
+      const probeActual = await database.execBirthdayProbe(check.sql, BIRTHDAY_MONTH_DAY);
+      const probeReference = await database.execBirthdayProbe(referenceSql, BIRTHDAY_MONTH_DAY);
       comparison = compareRelations(probeActual, probeReference, task.compare);
-      if (!comparison.correct) comparison = { correct: false, level: 'partial', reason: 'Berücksichtige beim heutigen Geburtstag Monat und Tag sowie die Jahrgänge 2005 bis 2010.' };
+      if (!comparison.correct) comparison = { correct: false, level: 'partial', reason: 'Berücksichtige den 2. Oktober und die Jahrgänge 2005 bis 2010.' };
     }
     const diagnostic = diagnoseSqlTask(check.sql, { id: task.id, flexible: task.flexible, referenceSql: originalReferenceSql, rowOrder: task.compare.rowOrder, columnOrder: task.compare.columnOrder }, actual, reference, comparison);
     const wrongOperator = task.detectMissingNotEqual && !comparison.correct && /\bwhere\s+city\s*=\s*['"]Leipzig['"]/i.test(check.sql) && !diagnostic?.startsWith('SELECT:');
     if (wrongOperator) { state.feedback[task.id] = { level: 'hint', text: 'WHERE: Die Aufgabe sucht Mitglieder, die nicht in Leipzig wohnen. Prüfe den Vergleichsoperator.' }; delete state.results[task.id]; }
-    else if (comparison.correct && !diagnostic) { state.feedback[task.id] = { level: 'success', text: actual.values.length ? 'Korrekt: Deine Abfrage liefert die gesuchten Daten.' : 'Korrekt: Für heute gibt es keine passenden Datensätze.' }; state.results[task.id] = actual; }
+    else if (comparison.correct && !diagnostic) { state.feedback[task.id] = { level: 'success', text: 'Korrekt: Deine Abfrage liefert die gesuchten Daten.' }; state.results[task.id] = actual; }
     else { state.feedback[task.id] = { level: diagnostic?.startsWith('Teilweise') ? 'partial' : 'hint', text: diagnostic || 'Noch nicht korrekt: Prüfe die ausgegebenen Spalten und die Bedingungen.' }; delete state.results[task.id]; }
   } catch (error) { state.feedback[task.id] = { level: 'error', text: diagnoseSqlError(error, check.sql) }; delete state.results[task.id]; }
   input.disabled = false; button.disabled = false; save(); renderTaskFeedback(task, card);
@@ -346,7 +345,7 @@ function menuFeedback(id, level, text) { menuState.feedback[id] = { level, text 
 function activateMenuTab(id, { focusContent = false } = {}) { menuState.tab = id; saveMenuState(); renderMenuModule({ focusContent }); }
 function renderMenuModule({ focusContent = false } = {}) {
   const tabs = document.getElementById('menu-tabs'); tabs.replaceChildren();
-  MENU_TABS.forEach(([id, label], index) => { const button = element('button', 'step-tab', label); button.type = 'button'; button.id = `tab-${id}`; button.dataset.tab = id; button.role = 'tab'; button.ariaSelected = String(menuState.tab === id); button.tabIndex = menuState.tab === id ? 0 : -1; button.setAttribute('aria-controls', 'menu-panel'); button.addEventListener('click', () => activateMenuTab(id)); button.addEventListener('keydown', (event) => moveTabFocus(event, MENU_TABS, index)); tabs.append(button); });
+  MENU_TABS.forEach(([id, label], index) => { const button = element('button', 'step-tab', `${index + 1}. ${label}`); button.type = 'button'; button.id = `tab-${id}`; button.dataset.tab = id; button.role = 'tab'; button.ariaSelected = String(menuState.tab === id); button.tabIndex = menuState.tab === id ? 0 : -1; button.setAttribute('aria-controls', 'menu-panel'); button.addEventListener('click', () => activateMenuTab(id)); button.addEventListener('keydown', (event) => moveTabFocus(event, MENU_TABS, index)); tabs.append(button); });
   const panel = document.getElementById('menu-panel'); panel.replaceChildren(); panel.setAttribute('aria-labelledby', `tab-${menuState.tab}`);
   panel.append(schemaCard(MENU_TABLE_SCHEMAS));
   if (menuState.tab === 'menus') renderMenuDiscovery(panel);

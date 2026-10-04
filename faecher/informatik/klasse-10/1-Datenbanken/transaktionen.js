@@ -12,6 +12,24 @@ const STORAGE_KEY = "informatik10-datenbanken-aufgabe9-v1";
 const STEP_TITLES = ["Datenpflege", "Namen ändern", "Fotos löschen", "Foto einfügen", "Regeln", "Schule", "Abschlussquiz"];
 const TAB_ITEMS = [...STEP_TITLES.map((label, index) => ({ id: index + 1, label })), { id: "summary", label: "Auswertung" }];
 
+function unlockSolution(event, expectedCode, downloadLinkId, messageId) {
+  event.preventDefault();
+  const enteredCode = event.currentTarget.elements["solution-code"].value.toUpperCase().replace(/[^A-Z0-9]/g, "");
+  const normalizedExpectedCode = expectedCode.replace(/[^A-Z0-9]/g, "");
+  const downloadLink = document.getElementById(downloadLinkId);
+  const message = document.getElementById(messageId);
+  if (enteredCode === normalizedExpectedCode) {
+    downloadLink.hidden = false;
+    message.className = "solution-code-message";
+    message.textContent = "Code korrekt. Das Sicherungsblatt ist freigeschaltet.";
+    return;
+  }
+  downloadLink.hidden = true;
+  message.className = "solution-code-message error";
+  message.textContent = "Der eingegebene Code ist nicht gültig.";
+}
+window.unlockSolution = unlockSolution;
+
 const STEP_SUBTASKS = {
   1: ["s1-drag", "s1-f1b"],
   2: ["s2-f2a", "s2-f2b"],

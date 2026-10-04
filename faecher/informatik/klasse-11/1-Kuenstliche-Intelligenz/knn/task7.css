@@ -1,0 +1,137 @@
+/* Aufgabe 7 "k-nächste-Nachbarn" - nur neue Regeln, Geltungsbereich .knn-page.
+   Basis-Layout, Reiter, Buttons, Feedback, Merke-Kästen usw. kommen aus perzeptron/task5.css. */
+
+.knn-page .step-panel { text-align: left; }
+/* Die Überschrift ist länger als in den übrigen Aufgaben und darf deshalb kleiner gesetzt werden. */
+.knn-page .perceptron-hero h1 { font-size: clamp(2rem, 5vw, 3.4rem); }
+
+/* -- Zweispaltiges Layout: Grafik bzw. Tabelle links, Bedienung rechts. Erst unter 700 px einspaltig,
+      damit beides auch auf dem iPad im Hochformat gleichzeitig sichtbar bleibt. -- */
+.knn-page .knn-layout {
+  display: grid;
+  grid-template-columns: minmax(0, 1.25fr) minmax(16rem, 1fr);
+  gap: 1rem;
+  align-items: start;
+  margin: 1rem 0;
+}
+.knn-page .knn-task { margin: .75rem 0; }
+.knn-page .knn-figure { margin: 0; padding: .6rem; border: 1px solid #b9d1df; border-radius: .85rem; background: #f9fcfe; }
+.knn-page .knn-plot { display: block; width: 100%; height: auto; max-height: min(66vh, 560px); font-family: inherit; color: #12324a; }
+
+.knn-page .knn-side { font-size: .96rem; min-width: 0; }
+.knn-page .knn-side > :first-child { margin-top: 0; }
+/* Die Tabelle in Reiter 5 ist lang: Die Bedienung bleibt beim Scrollen sichtbar. */
+.knn-page #apply .knn-side { position: sticky; top: .5rem; }
+.knn-page .knn-side .primary-button, .knn-page .knn-side .secondary-button { margin-top: .6rem; }
+.knn-page .knn-side fieldset { margin: .6rem 0 0; padding: .4rem .7rem .5rem; }
+.knn-page .knn-side fieldset label { margin: .4rem 0; }
+.knn-page .knn-side .feedback { margin-top: .6rem; }
+.knn-page fieldset { border: 1px solid #b9d1df; border-radius: .6rem; }
+.knn-page fieldset > legend { font-weight: 700; padding: 0 .35rem; }
+.knn-page .step-panel > fieldset { margin: 1rem 0 0; }
+
+/* -- Diagramme -- */
+.knn-page .knn-plot text { fill: #12324a; font-size: 13px; font-weight: 600; }
+.knn-page .knn-plot .knn-axis-titles text { font-size: 14px; font-weight: 800; }
+.knn-page .knn-plot .knn-new-label, .knn-page .knn-plot .knn-point-label { font-size: 14px; font-weight: 800; paint-order: stroke; stroke: #fff; stroke-width: 4px; stroke-linejoin: round; }
+.knn-page .knn-grid line { stroke: #c9dae4; stroke-width: 1; }
+.knn-page .knn-axes line { stroke: #12324a; stroke-width: 2.5; }
+.knn-page .knn-plot marker path { fill: #12324a; }
+.knn-page .knn-mark { stroke: #fff; stroke-width: 1.5; }
+.knn-page .knn-mark-S { fill: #287b61; }
+.knn-page .knn-mark-M { fill: #126e9c; }
+.knn-page .knn-mark-L { fill: #af3f47; }
+.knn-page .knn-new-mark { fill: #fff3cf; stroke: #12324a; stroke-width: 2; }
+.knn-page .knn-new-ring { fill: none; stroke: #12324a; stroke-width: 1.5; stroke-dasharray: 4 3; }
+.knn-page .knn-line { stroke: #12324a; stroke-width: 2; }
+.knn-page .knn-halo { fill: none; stroke: #12324a; stroke-width: 2; }
+.knn-page .knn-neutral-mark { fill: #12324a; stroke: #fff; stroke-width: 1.5; }
+.knn-page .knn-pair-line { stroke: #126e9c; stroke-width: 3; }
+.knn-page .knn-leg { stroke: #12324a; stroke-width: 2; stroke-dasharray: 6 4; fill: none; }
+.knn-page .knn-right-angle { fill: none; stroke: #12324a; stroke-width: 1.5; }
+.knn-page .knn-street { stroke: #d8dee4; stroke-width: 14; fill: none; }
+.knn-page .knn-route-red { stroke: #af3f47; stroke-width: 5; fill: none; }
+.knn-page .knn-route-blue { stroke: #126e9c; stroke-width: 5; stroke-dasharray: 10 6; fill: none; }
+.knn-page .knn-route-direct { stroke: #12324a; stroke-width: 2; stroke-dasharray: 3 5; fill: none; }
+
+.knn-page .knn-legend { display: flex; flex-wrap: wrap; gap: .35rem 1rem; margin: .6rem 0 0; padding: 0; list-style: none; font-size: .92rem; font-weight: 700; color: #12324a; }
+.knn-page .knn-legend li { display: inline-flex; align-items: center; gap: .35rem; }
+
+/* -- Auswahlknöpfe statt Radios; gewählt = Rahmen plus Haken, nicht nur Farbe -- */
+.knn-page .knn-group { margin: .6rem 0 0; }
+.knn-page .knn-group-label { margin: 0 0 .3rem; font-weight: 700; }
+.knn-page .knn-group-row { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: .75rem; }
+.knn-page .knn-choices { display: flex; flex-wrap: wrap; gap: .5rem; }
+.knn-page .knn-choice { min-width: 44px; min-height: 44px; padding: .45rem .9rem; border: 2px solid #9db4c2; border-radius: .55rem; background: #fff; color: #12324a; font: inherit; font-weight: 700; cursor: pointer; }
+.knn-page .knn-choice[aria-pressed="true"] { border-color: #126e9c; border-width: 3px; padding: calc(.45rem - 1px) calc(.9rem - 1px); background: #e3f1f9; }
+.knn-page .knn-choice[aria-pressed="true"]::before { content: "✓ "; }
+.knn-page .secondary-button[aria-pressed="true"] { border-width: 3px; background: #e3f1f9; }
+
+.knn-page .knn-counts { margin: .7rem 0 .3rem; font-weight: 700; }
+.knn-page .knn-neighbour-list { columns: 2; column-gap: 1rem; margin: .2rem 0 .6rem; padding-left: 1.5rem; font-size: .85rem; }
+.knn-page .knn-neighbour-list li { break-inside: avoid; }
+
+/* -- Eingaben -- */
+.knn-page .knn-field { margin: .7rem 0 0; }
+.knn-page .knn-field > label { display: block; margin-bottom: .25rem; }
+.knn-page .knn-input-row { display: flex; align-items: center; gap: .5rem; }
+.knn-page .knn-input-row input { flex: 1 1 6rem; max-width: 12rem; min-width: 0; }
+
+/* -- Tabellen: überschreiben min-width:850px aus task5.css, auf dem Smartphone kein Scrollen -- */
+.knn-page .knn-table-wrap { min-width: 0; }
+.knn-page .knn-table { width: 100%; min-width: 0; border-collapse: collapse; background: #fff; }
+.knn-page .knn-table caption { padding: .35rem .2rem; font-weight: 700; text-align: left; }
+.knn-page .knn-table th, .knn-page .knn-table td { padding: .3rem .4rem; border: 1px solid #c9dae4; text-align: center; overflow-wrap: anywhere; hyphens: auto; }
+.knn-page .knn-table thead th { background: #126e9c; color: #fff; border-color: #0c587d; font-size: .86rem; overflow-wrap: normal; hyphens: manual; }
+.knn-page .knn-data-table td:nth-child(5) { white-space: nowrap; }
+.knn-page .knn-table tbody th { text-align: left; background: #edf6fb; }
+.knn-page .knn-table td input, .knn-page .knn-table td select { min-width: 0; width: 100%; min-height: 40px; padding: .25rem .35rem; }
+.knn-page .knn-data-table { font-size: .9rem; }
+.knn-page .knn-data-table tbody tr { cursor: pointer; }
+.knn-page .knn-data-table tbody tr.is-marked { background: #e3f1f9; }
+.knn-page .knn-data-table tbody tr.is-marked td:first-child { box-shadow: inset 4px 0 0 #12324a; }
+.knn-page .knn-data-table td input { max-width: 5.5rem; }
+.knn-page .knn-mark-toggle { width: 2.75rem; height: 2.75rem; min-height: 44px; border: 2px solid #7897a8; border-radius: .45rem; background: #fff; color: #12324a; font: inherit; font-weight: 900; cursor: pointer; }
+.knn-page .knn-mark-toggle[aria-pressed="true"] { border-color: #12324a; background: #126e9c; color: #fff; }
+.knn-page .knn-symbol { font-weight: 800; }
+
+/* -- Karten in Felder ziehen (Portierung der Lückentext-Regeln aus was-ist-ki/task0.css) -- */
+.knn-page .knn-cards { display: grid; gap: .75rem; margin: .75rem 0; }
+.knn-page .knn-bank { display: flex; flex-wrap: wrap; gap: .5rem; min-height: 3.4rem; padding: .6rem; border: 1px dashed #9db4c2; border-radius: .6rem; background: #f9fcfe; }
+.knn-page .knn-card { min-height: 44px; border: 1px solid #b9d1df; border-radius: 9px; padding: 8px 12px; color: #12324a; background: #fff; font: inherit; font-weight: 750; text-align: left; cursor: grab; touch-action: none; user-select: none; }
+.knn-page .knn-card.is-picked, .knn-page .knn-slot.is-picked { outline: 3px solid #126e9c; outline-offset: 2px; }
+.knn-page .knn-card.is-dragging, .knn-page .knn-slot.is-dragging { opacity: .45; }
+.knn-page .knn-slots { display: grid; gap: .5rem; }
+.knn-page .knn-slot { display: grid; grid-template-columns: 5.5rem minmax(0, 1fr); align-items: center; gap: .75rem; box-sizing: border-box; width: 100%; min-width: 76px; min-height: 48px; padding: 6px 12px; border: 2px dashed #126e9c; border-radius: 9px; background: #eef6fb; color: #12324a; font: inherit; text-align: left; cursor: pointer; touch-action: none; }
+.knn-page .knn-slot.is-filled { border-style: solid; background: #fff; cursor: grab; }
+.knn-page .knn-slot.is-drop-target { background: #d7ebf6; border-color: #12324a; }
+.knn-page .knn-slot-label { font-weight: 800; color: #126e9c; }
+.knn-page .knn-slot-text { font-weight: 750; }
+.knn-page .knn-drag-ghost { position: fixed; z-index: 1000; pointer-events: none; transform: translate(-50%, -50%); display: inline-flex; align-items: center; max-width: 90vw; border-color: #126e9c; box-shadow: 0 6px 18px rgba(18, 50, 74, .25); }
+.knn-page .knn-actions { display: flex; flex-wrap: wrap; gap: .75rem; }
+
+.knn-page .remember p:first-child { margin-top: 0; }
+.knn-page .remember p:last-child { margin-bottom: 0; }
+.knn-page .step-panel > .remember, .knn-page .step-panel > .card { margin-top: 1rem; }
+.knn-page #quiz-summary h3:first-child { margin-top: 0; }
+
+@media (max-width: 900px) and (min-width: 701px) {
+  .knn-page .knn-layout { grid-template-columns: minmax(0, 1.05fr) minmax(15rem, 1fr); }
+  .knn-page .knn-choice { padding: .4rem .55rem; }
+  .knn-page .knn-choice[aria-pressed="true"] { padding: calc(.4rem - 1px) calc(.55rem - 1px); }
+}
+
+@media (max-width: 700px) {
+  .knn-page .knn-layout { grid-template-columns: minmax(0, 1fr); }
+  .knn-page #apply .knn-side { position: static; }
+  .knn-page .knn-figure { padding: .35rem; }
+  .knn-page .knn-plot text { font-size: 17px; }
+  .knn-page .knn-plot .knn-axis-titles text, .knn-page .knn-plot .knn-new-label, .knn-page .knn-plot .knn-point-label { font-size: 18px; }
+  .knn-page .knn-plot { max-height: none; }
+  .knn-page .knn-group-row { grid-template-columns: minmax(0, 1fr); }
+  .knn-page .knn-neighbour-list { columns: 1; }
+  .knn-page .knn-table { font-size: .8rem; }
+  .knn-page .knn-table th, .knn-page .knn-table td { padding: .25rem .2rem; }
+  .knn-page .knn-table thead th { font-size: .68rem; padding: .25rem .1rem; }
+  .knn-page .knn-slot { grid-template-columns: 4.6rem minmax(0, 1fr); gap: .5rem; }
+}

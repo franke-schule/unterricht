@@ -8,7 +8,7 @@
   <link rel="stylesheet" href="../../../../styles.css?v=20260707">
   <link rel="stylesheet" href="perzeptron/task5.css?v=20260926a">
   <link rel="stylesheet" href="perzeptron/task6.css?v=20260928a">
-  <script type="module" src="perzeptron/ui/task6.mjs?v=20260928a"></script>
+  <script type="module" src="perzeptron/ui/task6.mjs?v=20261003a"></script>
 </head>
 <body class="perceptron-page task6-page">
 <div class="site-backdrop" aria-hidden="true"></div>
@@ -205,6 +205,24 @@ public class Datenpunkt {
   </div>
   <section class="remember task6-summary" aria-labelledby="summary-title"><h2 id="summary-title">Das Wichtigste im Code</h2><p><code>punktKlassifizieren</code> berechnet eine gewichtete Summe, vergleicht sie mit <code>theta</code> und gibt 0 oder 1 zurück.</p><p><code>trainieren</code> vergleicht diese Ausgabe mit dem Label. Der Unterschied <code>delta</code> steuert die Parameteränderung.</p><p>Bei <code>delta = 0</code> bleiben die Parameter unverändert. Sonst bestimmen Eingabewerte und Lernrate die Gewichtsänderung; der Schwellenwert wird mit umgekehrtem Vorzeichen angepasst.</p><p>Eingaben, Gewichte, Lernrate und gewichtete Summe sind <code>double</code>; Label, Ausgabe und <code>delta</code> sind ganzzahlig.</p></section>
   <section id="final-quiz" class="step-panel" aria-labelledby="quiz-title"><h2 id="quiz-title">Abschlussquiz</h2><p>Kreuze alle richtigen Aussagen an. Bei manchen Fragen sind mehrere Antworten richtig.</p><p id="quiz-progress" aria-live="polite">0 von 4 Fragen vollständig richtig</p><form id="quiz-form"><div id="quiz-questions"></div><button class="primary-button" type="submit">Quiz auswerten</button></form><div id="quiz-feedback" class="feedback" aria-live="polite" hidden></div><div id="quiz-summary" class="remember" hidden></div></section>
+  <section class="solution-download" aria-labelledby="solution-download-title">
+    <h2 id="solution-download-title">Sicherungsblatt zu Aufgabe 6 · einfache Variante</h2>
+    <details class="solution-reveal">
+      <summary>Sicherungsblatt anzeigen</summary>
+      <form id="solution-code-form" class="solution-code-form">
+        <label for="solution-code">Lehrercode eingeben</label>
+        <div class="solution-code-controls">
+          <input id="solution-code" name="solution-code" type="text"
+            maxlength="9" autocomplete="off" autocapitalize="characters"
+            spellcheck="false" required>
+          <button type="submit">Code prüfen</button>
+        </div>
+        <p id="solution-code-message" class="solution-code-message" aria-live="polite"></p>
+        <a id="solution-download-link" class="download-button"
+          href="sicherungsblatt-aufgabe-6-loesungen.pdf" download hidden>&#8595; Sicherungsblatt herunterladen</a>
+      </form>
+    </details>
+  </section>
 </main>
 </body>
 </html>

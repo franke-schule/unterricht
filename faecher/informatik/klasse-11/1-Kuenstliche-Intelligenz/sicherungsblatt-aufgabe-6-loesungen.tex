@@ -1,0 +1,165 @@
+\documentclass[11pt,a4paper]{article}
+
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage[ngerman]{babel}
+\usepackage{lmodern}
+\usepackage{amsmath,amssymb}
+\usepackage{graphicx}
+\usepackage{booktabs,tabularx,array}
+\usepackage[table]{xcolor}
+\usepackage{tikz}
+\usetikzlibrary{arrows.meta,positioning}
+\usepackage[most]{tcolorbox}
+\usepackage{enumitem}
+\usepackage{microtype}
+\usepackage{hyperref}
+\usepackage{listings}
+\usepackage[a4paper,left=18mm,right=18mm,top=15mm,bottom=15mm,headheight=0pt]{geometry}
+
+\definecolor{navy}{HTML}{174A63}
+\definecolor{blue}{HTML}{2E7698}
+\definecolor{lightblue}{HTML}{EAF3F7}
+\definecolor{lightgray}{HTML}{F2F3F4}
+\definecolor{midgray}{HTML}{66727A}
+\definecolor{green}{HTML}{477A63}
+\definecolor{orange}{HTML}{B96A2B}
+\definecolor{safe}{HTML}{287B61}
+\definecolor{safebg}{HTML}{E7F6EF}
+\definecolor{danger}{HTML}{AF3F47}
+\definecolor{dangerbg}{HTML}{FFF1F1}
+
+\hypersetup{colorlinks=true,linkcolor=navy,urlcolor=blue,pdftitle={Sicherungsblatt Aufgabe 6 -- Perzeptron implementieren, einfache Variante}}
+\setlength{\parindent}{0pt}
+\setlength{\parskip}{4pt}
+\setlist[itemize]{leftmargin=5mm,itemsep=1pt,topsep=1pt}
+\renewcommand{\familydefault}{\sfdefault}
+\pagestyle{empty}
+
+\newtcolorbox{definition}[1][]{enhanced,colback=lightblue,colframe=blue,
+  boxrule=0.8pt,arc=1.5mm,left=3mm,right=3mm,top=1.5mm,bottom=1.5mm,
+  fonttitle=\bfseries,title=Definition,#1}
+\newtcolorbox{merke}[1][]{enhanced,colback=lightgray,colframe=navy,
+  boxrule=0.9pt,arc=1.5mm,left=3mm,right=3mm,top=1.5mm,bottom=1.5mm,
+  fonttitle=\bfseries,title=Merke,#1}
+\newtcolorbox{beispiel}[1][]{enhanced,colback=white,colframe=midgray,
+  boxrule=0.7pt,arc=1.5mm,left=3mm,right=3mm,top=1.5mm,bottom=1.5mm,
+  fonttitle=\bfseries,title=Beispiel,#1}
+
+\newcommand{\sectionline}[1]{%
+  \vspace{0.5mm}{\Large\bfseries\color{navy}#1}\par\vspace{0.4mm}%
+  {\color{blue}\rule{\linewidth}{0.8pt}}\vspace{0.7mm}}
+\newcommand{\sheettitle}[2]{%
+  \begin{tcolorbox}[colback=navy,colframe=navy,arc=2mm,boxrule=0pt,left=5mm,right=5mm,top=2.5mm,bottom=2.5mm]
+    {\color{white}\fontsize{19}{22}\selectfont\bfseries #1}\par
+    \vspace{0.5mm}{\color{white}\large #2}
+  \end{tcolorbox}}
+\lstdefinestyle{java-sheet}{
+  basicstyle=\ttfamily\footnotesize,
+  columns=fullflexible,keepspaces=true,
+  showstringspaces=false,aboveskip=0pt,belowskip=0pt
+}
+
+\begin{document}
+
+\sheettitle{Perzeptron implementieren}{Einfache Variante · Sicherungsblatt zu Aufgabe 6 · Informatik 11}
+
+\sectionline{1. Klassifizieren: berechnen und entscheiden}
+\begin{center}
+\begin{tikzpicture}[>=Latex,font=\small,
+  flowbox/.style={draw=blue,fill=lightblue,rounded corners=1.5mm,minimum height=10mm,align=center,inner sep=2mm},
+  result/.style={draw=safe,fill=safebg,rounded corners=1.5mm,minimum height=10mm,align=center,inner sep=2mm}]
+  \node[flowbox,minimum width=27mm] (input) at (0,0) {$x_1,\;x_2$\\Eingaben};
+  \node[flowbox,minimum width=37mm] (sum) at (4.1,0) {$a=w_1x_1+w_2x_2$\\gewichtete Summe};
+  \node[flowbox,minimum width=28mm] (test) at (8.6,0) {$a\ge\theta$\,?\\Vergleich};
+  \node[result,minimum width=29mm] (out) at (12.4,0) {ja: \textbf{1}\\nein: \textbf{0}};
+  \draw[->,thick,navy] (input) -- (sum);
+  \draw[->,thick,navy] (sum) -- (test);
+  \draw[->,thick,navy] (test) -- (out);
+\end{tikzpicture}\par
+{\small\color{midgray}\texttt{punktKlassifizieren} gibt nur 0 oder 1 zurück. Gewichte und \texttt{theta} bleiben dabei gleich.}
+\end{center}
+
+\sectionline{2. Die drei Ergänzungen in \texttt{trainieren}}
+\begin{minipage}[t]{0.49\linewidth}
+\vspace{0pt}
+\begin{definition}[title=Schritt 2 · Summe als \texttt{double}]
+\begin{lstlisting}[style=java-sheet]
+double gewichtete_Summe =
+    w_1 * punkt.gibEingabewertX1()
+  + w_2 * punkt.gibEingabewertX2();
+\end{lstlisting}
+\end{definition}
+\end{minipage}\hfill
+\begin{minipage}[t]{0.49\linewidth}
+\vspace{0pt}
+\begin{definition}[title=Schritt 3 · Ausgabe als \texttt{int}]
+\begin{lstlisting}[style=java-sheet]
+if (gewichtete_Summe >= theta) {
+    berechnete_ausgabe = 1;
+} else {
+    berechnete_ausgabe = 0;
+}
+\end{lstlisting}
+\end{definition}
+\end{minipage}
+
+\vspace{0.5mm}
+\begin{center}
+\colorbox{lightgray}{\parbox{0.94\linewidth}{\centering\small
+\texttt{int delta = punkt.gibLabel() - berechnete\_ausgabe;}
+\quad $\Longrightarrow$ \quad $-1,\;0$ oder $+1$}}
+\end{center}
+
+\begin{minipage}[t]{0.49\linewidth}
+\begin{beispiel}[title=Schritt 4 · \textcolor{safe}{$\delta=+1$}]
+\begin{lstlisting}[style=java-sheet]
+if (delta == 1) {
+    w_1 = w_1 + lernrate *
+        punkt.gibEingabewertX1();
+    w_2 = w_2 + lernrate *
+        punkt.gibEingabewertX2();
+    theta = theta - lernrate;
+}
+\end{lstlisting}
+\end{beispiel}
+\end{minipage}\hfill
+\begin{minipage}[t]{0.49\linewidth}
+\begin{beispiel}[title=Schritt 4 · \textcolor{danger}{$\delta=-1$}]
+\begin{lstlisting}[style=java-sheet]
+else if (delta == -1) {
+    w_1 = w_1 - lernrate *
+        punkt.gibEingabewertX1();
+    w_2 = w_2 - lernrate *
+        punkt.gibEingabewertX2();
+    theta = theta + lernrate;
+}
+\end{lstlisting}
+\end{beispiel}
+\end{minipage}
+\vspace{0.3mm}\par
+{\small\textbf{Bei $\delta=0$:} Keine der beiden Bedingungen trifft zu; \texttt{w\_1}, \texttt{w\_2} und \texttt{theta} bleiben unverändert.}
+
+\sectionline{3. Programmlauf mit den vier Trainingspunkten}
+{\small Start: $\boxed{(w_1,w_2,\theta)=(1,1,1)}$, Lernrate $=1$. Die Punkte werden in dieser Reihenfolge trainiert:}
+\vspace{0.6mm}\par
+\begin{center}
+\renewcommand{\arraystretch}{1.2}
+\begin{tabularx}{0.94\linewidth}{@{}>{\centering\arraybackslash}p{18mm}>{\centering\arraybackslash}p{21mm}>{\centering\arraybackslash}p{15mm}X>{\centering\arraybackslash}p{33mm}@{}}
+\toprule
+Punkt $(x_1|x_2)$ & Label $t$ & $\delta$ & Wirkung & $(w_1,w_2,\theta)$ danach\\
+\midrule
+$(2|2)$ & 1 & 0 & keine Änderung & $(1,1,1)$\\
+\rowcolor{dangerbg}$(4|1)$ & 0 & $-1$ & $w_1,w_2$ sinken; $\theta$ steigt & $(-3,0,2)$\\
+$(6|2)$ & 0 & 0 & keine Änderung & $(-3,0,2)$\\
+\rowcolor{safebg}$(0|4)$ & 1 & $+1$ & $w_2$ steigt; $\theta$ sinkt & $(-3,4,1)$\\
+\bottomrule
+\end{tabularx}
+\end{center}
+\begin{merke}[title=Vorher $\longrightarrow$ nachher]
+{\small $(4|1)$: zu Beginn $1\cdot4+1\cdot1=5\ge1\Rightarrow\boxed{1}$;\quad
+nach dem Training $-3\cdot4+4\cdot1=-8<1\Rightarrow\boxed{0}$.\\
+\texttt{double}: Eingaben, Gewichte, Lernrate, Summe · \texttt{int}: Label, Ausgabe, \texttt{delta}.}
+\end{merke}
+
+\end{document}

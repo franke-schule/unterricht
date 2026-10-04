@@ -8,7 +8,7 @@
     <link rel="stylesheet" href="../../../../styles.css?v=20260825">
     <link rel="stylesheet" href="redundanzen.css?v=20260923a">
   <link rel="stylesheet" href="sql-lab.css?v=20260929b">
-  <script type="module" src="sql-lab.js?v=20261002a"></script>
+  <script type="module" src="sql-lab.js?v=20261002b"></script>
   </head>
   <body class="redundancy-page sql-page">
     <div class="site-backdrop" aria-hidden="true"></div>
@@ -31,6 +31,10 @@
         </div>
         <p id="data-status" class="feedback hint" aria-live="polite" aria-busy="true">Die Tabelle users wird geladen …</p>
       </section>
+
+      <aside class="scenario-card accent" aria-label="Schreibweise der Datenbankwerte">
+        <p><strong>Hinweis zu den Daten:</strong> Geschlechter sind in <code>gender</code> auf Englisch gespeichert (<code>female</code>/<code>male</code>). Länder und Städte stehen auf Deutsch in <code>country</code> und <code>city</code>; schreibe ihre Namen mit großem Anfangsbuchstaben, zum Beispiel <code>Deutschland</code> und <code>Leipzig</code>.</p>
+      </aside>
 
       <nav id="sql-tabs" class="step-tabs" aria-label="Themenbereiche der SQL-Wiederholung" role="tablist"></nav>
       <section id="sql-panel" class="step-panel" role="tabpanel" aria-live="off"></section>
