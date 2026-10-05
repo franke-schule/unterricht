@@ -1,0 +1,82 @@
+\documentclass[10pt,a4paper]{article}
+
+% Die Loesungsfassung unterscheidet sich ausschliesslich durch \solutiontrue.
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage[ngerman]{babel}
+\usepackage[a4paper,margin=14mm]{geometry}
+\usepackage{lmodern}
+\usepackage[table]{xcolor}
+\usepackage{tabularx}
+\usepackage{microtype}
+\usepackage{tikz}
+
+\newif\ifsolution
+\solutiontrue
+
+\pagestyle{empty}
+\setlength{\parindent}{0pt}
+\setlength{\parskip}{0pt}
+\renewcommand{\familydefault}{\sfdefault}
+
+\definecolor{Navy}{HTML}{17324D}
+\definecolor{Blue}{HTML}{3B6EA5}
+\definecolor{Gold}{HTML}{F3B33D}
+\definecolor{Ink}{HTML}{1E2935}
+\definecolor{Muted}{HTML}{617080}
+\definecolor{Line}{HTML}{D8E1E8}
+\color{Ink}
+
+\newcommand{\kopf}{%
+  \colorbox{Navy}{\parbox{\dimexpr\linewidth-2\fboxsep\relax}{%
+    \vspace{1.3mm}\color{white}
+    \begin{tabularx}{\linewidth}{@{}Xr@{}}
+      {\small\bfseries PHYSIK · KLASSE 8} &
+      \colorbox{Gold}{\color{Navy}\small\bfseries\strut\ifsolution LÖSUNGEN\else ABFRAGE\fi}
+    \end{tabularx}
+    \vspace{0.9mm}
+    {\fontsize{16}{19}\selectfont\bfseries Elektrischer Strom · AB 4}\par
+    \vspace{0.3mm}{\small Stromstärke und Ladungstrennung in der Batterie}\vspace{1.1mm}
+  }}\par\vspace{2mm}}
+\newcommand{\frage}[2]{%
+  \vspace{2mm}{\color{Blue}\bfseries\large #1 · #2}\par
+  \vspace{0.4mm}{\color{Blue}\rule{\linewidth}{0.65pt}}\par\vspace{1.2mm}}
+\newcommand{\antwortfeld}[2]{%
+  \vspace{1.5mm}%
+  \begin{tikzpicture}[x=1mm,y=1mm]
+    \path[use as bounding box] (0,0) rectangle (181.5,-8*#1);
+    \ifsolution
+      \node[anchor=north west,text width=179mm,inner sep=0pt,align=left,
+        font=\small,text=Blue] at (0,-1) {#2};
+    \else
+      \foreach \i in {1,...,#1}{\draw[Line,line width=.55pt] (0,-8*\i) -- (181.5,-8*\i);}
+    \fi
+  \end{tikzpicture}\par}
+\newcommand{\fuss}{%
+  \vfill{\color{Line}\rule{\linewidth}{0.5pt}}\par\vspace{1mm}
+  \begin{tabularx}{\linewidth}{@{}Xr@{}}
+    {\small\color{Muted}Klasse 8 · Physik · Elektrischer Strom} &
+    {\small\color{Muted}\ifsolution Lösungen\else Abfrage\fi{} · Seite 1 von 1}
+  \end{tabularx}}
+
+\begin{document}
+\kopf
+
+\frage{1}{Stromkreis als Modell}
+Beschreibe einen Versuch, bei dem Schülerinnen und Schüler einen Stromkreis simulieren. Gehe darauf ein, wie in dieser Situation die Stromstärke bestimmt werden kann. Was passiert, wenn die Stromstärke stetig weiter erhöht wird?\par
+\antwortfeld{6}{Die Schülerinnen und Schüler bilden einen geschlossenen Weg und bewegen sich als Ladungsträger in einer Richtung. Eine markierte Stelle stellt einen Leiterquerschnitt dar. Man zählt, wie viele Personen diese Stelle in einer festgelegten Zeit passieren: Je mehr Personen pro Zeit, desto größer die Stromstärke im Modell. Bei immer größerem Andrang können die Personen nicht beliebig schnell oder dicht weiterlaufen; es kommt zu Gedränge oder einem Stau. In einem echten Leiter führt eine zu große Stromstärke zur Erwärmung und kann ihn beschädigen.}
+
+\frage{2}{Ladungstrennung in der Batterie}
+\textbf{Beschreibe}, was die chemischen Reaktionen in einer Batterie am Minuspol und am Pluspol bewirken. \textbf{Benenne} den Vorgang.\par
+\antwortfeld{4}{Am Minuspol entsteht ein Elektronenüberschuss, am Pluspol ein Elektronenmangel. Die Batterie trennt damit elektrische Ladungen; der Vorgang heißt Ladungstrennung.}
+
+\frage{3}{Bewegung der Elektronen}
+\textbf{Erkläre}, warum sich Elektronen in einem geschlossenen Stromkreis vom Minuspol weg und zum Pluspol hin bewegen.\par
+\antwortfeld{4}{Die Elektronen am Minuspol stoßen sich als gleichnamig geladene Teilchen gegenseitig ab. Der positiv geladene Pluspol mit Elektronenmangel zieht sie an. So bewegen sich die Elektronen gerichtet durch den geschlossenen Stromkreis.}
+
+\frage{4}{Spannung der Quelle}
+\textbf{Nenne}, welche Art von Spannung eine Batterie nach AB 4 im Unterschied zu einem einstellbaren Netzgerät liefert.\par
+\antwortfeld{2}{Eine Batterie liefert eine feste Spannung. Bei einem einstellbaren Netzgerät kann die Spannung verändert werden.}
+
+\fuss
+\end{document}

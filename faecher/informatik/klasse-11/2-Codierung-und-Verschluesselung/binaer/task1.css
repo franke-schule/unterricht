@@ -1,0 +1,124 @@
+/* Aufgabe 1 "Binärzahlen und Zeichencodierung" - nur neue Regeln, Geltungsbereich .binary-page.
+   Basis-Layout, Reiter, Buttons, Feedback, Merke-Kästen, Tabellen und Auswahlknöpfe kommen aus
+   perzeptron/task5.css und knn/task7.css. */
+
+.binary-page .knn-layout.is-single { grid-template-columns: minmax(0, 36rem); }
+.binary-page .step-panel h3 { margin: 1.4rem 0 .4rem; }
+.binary-page .step-panel > details { margin-top: .65rem; }
+.binary-page .char-font { font-family: "Segoe UI Emoji", "Apple Color Emoji", "Noto Color Emoji", "Noto Sans CJK SC", "Microsoft YaHei", sans-serif; }
+
+/* -- Zählwerk (Reiter 1) -- */
+.binary-page .odo-plot { max-height: min(60vh, 440px); }
+.binary-page .odo-plot .odo-title { font-size: 15px; font-weight: 800; }
+.binary-page .odo-box { fill: #fff; stroke: #12324a; stroke-width: 1.5; }
+.binary-page .odo-box.is-empty { fill: none; stroke: #9db4c2; stroke-dasharray: 5 4; }
+.binary-page .odo-box.is-carry { stroke: #bd8900; stroke-width: 3; fill: #fff8e5; }
+.binary-page .odo-plot .odo-digit { font-size: 30px; font-weight: 800; }
+.binary-page .odo-arrow path { fill: none; stroke: #bd8900; stroke-width: 3; }
+.binary-page .odo-arrow polygon { fill: #bd8900; }
+.binary-page .odo-plot .odo-note { font-size: 14px; font-weight: 800; fill: #7a5900; paint-order: stroke; stroke: #fff; stroke-width: 3px; stroke-linejoin: round; }
+.binary-page .knn-side .knn-actions { margin-top: 0; }
+.binary-page .knn-side .knn-actions .primary-button, .binary-page .knn-side .knn-actions .secondary-button { margin-top: 0; }
+.binary-page #counter-play[aria-pressed="true"] { border-width: 3px; background: #e3f1f9; }
+.binary-page #counter-status { min-height: 4.2em; margin: .8rem 0 0; }
+@media (prefers-reduced-motion: no-preference) {
+  .binary-page .odo-arrow { animation: odo-in .2s ease-out; }
+}
+@keyframes odo-in { from { opacity: 0; } to { opacity: 1; } }
+
+/* -- Lampen (Reiter 2 und ASCII-Pipeline) -- */
+.binary-page #place .knn-figure { container-type: inline-size; }
+.binary-page .bit-lamps { display: grid; grid-template-columns: repeat(8, minmax(0, 1fr)); gap: .3rem; }
+.binary-page .bit-lamp-col { display: flex; flex-direction: column; align-items: center; gap: .25rem; min-width: 0; }
+.binary-page .bit-lamp-value { font-weight: 800; font-size: .95rem; }
+.binary-page .bit-lamp { display: flex; flex-direction: column; align-items: center; justify-content: center; box-sizing: border-box; width: 100%; min-width: 44px; min-height: 64px; padding: .2rem; border: 2px solid #9db4c2; border-radius: .6rem; background: #fff; color: #12324a; font: inherit; cursor: pointer; }
+.binary-page .bit-lamp .lamp-digit { font-size: 1.6rem; font-weight: 900; line-height: 1.1; }
+.binary-page .bit-lamp .lamp-state { font-size: .72rem; font-weight: 700; }
+.binary-page .bit-lamp.is-on { border-color: #bd8900; border-width: 3px; background: #fff3cf; }
+.binary-page .bit-lamp.is-static { cursor: default; min-height: 52px; min-width: 0; }
+.binary-page .bit-lamps.is-readonly { gap: .25rem; }
+.binary-page .bit-lamps.is-dimmed { opacity: .45; }
+.binary-page .bit-lamp-col.is-fixed .bit-lamp { border-style: dashed; }
+.binary-page .lamp-note { margin: .3rem 0 0; font-size: .82rem; font-weight: 700; text-align: left; }
+.binary-page .lamp-sum { margin: .8rem 0 .2rem; font-size: 1.15rem; font-weight: 800; }
+.binary-page .lamp-binary { margin: 0; font-weight: 700; font-family: Consolas, "Courier New", monospace; }
+@container (max-width: 440px) {
+  .binary-page .bit-lamps:not(.is-readonly) { grid-template-columns: repeat(4, minmax(0, 1fr)); row-gap: .6rem; }
+}
+@media (max-width: 520px) {
+  .binary-page .bit-lamps:not(.is-readonly) { grid-template-columns: repeat(4, minmax(0, 1fr)); row-gap: .6rem; }
+}
+
+/* -- Umrechnungstabelle (Reiter 3) -- */
+.binary-page .convert-progress { margin: .5rem 0; font-weight: 800; }
+.binary-page .bin-table th, .binary-page .bin-table td { padding: .25rem .2rem; }
+.binary-page .bin-table .bit-static { font-weight: 800; color: #5d7889; }
+.binary-page .bin-table .example-row th, .binary-page .bin-table .example-row td { background: #edf6fb; }
+.binary-page .bit-toggle { display: inline-flex; flex-direction: column; align-items: center; justify-content: center; box-sizing: border-box; min-width: 44px; min-height: 44px; padding: .2rem; border: 2px solid #9db4c2; border-radius: .5rem; background: #fff; color: #12324a; font: inherit; font-weight: 900; font-size: 1.15rem; cursor: pointer; }
+.binary-page .bit-toggle.is-on { border-color: #bd8900; border-width: 3px; background: #fff3cf; }
+.binary-page .bit-place { display: none; font-size: .7rem; font-weight: 700; }
+.binary-page .bin-table .row-check { min-height: 44px; margin-top: 0; padding: .35rem .6rem; font-size: .9rem; }
+.binary-page .bin-table .feedback-row td { padding: 0; border: 0; text-align: left; }
+.binary-page .bin-table .feedback-row .feedback { margin: .3rem 0; }
+.binary-page .bin-table .feedback-row .feedback[hidden] { display: none; }
+@media (max-width: 700px) {
+  .binary-page .bin-table, .binary-page .bin-table tbody { display: block; }
+  .binary-page .bin-table thead { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+  .binary-page .bin-table caption { display: block; }
+  .binary-page .bin-table tr[data-number], .binary-page .bin-table .example-row { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: .35rem; margin: .6rem 0 0; padding: .6rem; border: 1px solid #b9d1df; border-radius: .7rem; background: #f9fcfe; }
+  .binary-page .bin-table tr[data-number] > th, .binary-page .bin-table .example-row > th { grid-column: 1 / -1; border: 0; padding: 0 0 .2rem; background: transparent; font-size: 1.2rem; }
+  .binary-page .bin-table tr[data-number] > td, .binary-page .bin-table .example-row > td { display: flex; flex-direction: column; align-items: center; justify-content: center; border: 0; padding: 0; background: transparent; }
+  .binary-page .bin-table .bit-static { min-height: 44px; border: 1px solid #c9dae4; border-radius: .5rem; background: #fff; }
+  .binary-page .bin-table .example-row > .check-cell { display: none; }
+  .binary-page .bin-table tr[data-number] > .check-cell { grid-column: 1 / -1; }
+  .binary-page .bin-table .row-check { width: 100%; }
+  .binary-page .bit-toggle { width: 100%; min-height: 56px; }
+  .binary-page .bit-place { display: block; }
+  .binary-page .bin-table .feedback-row { display: block; margin: .25rem 0 0; }
+  .binary-page .bin-table .feedback-row td { display: block; }
+}
+
+/* -- Pipelines (Reiter 4) -- */
+.binary-page .pipeline { display: flex; flex-direction: column; align-items: stretch; max-width: 30rem; margin: 0 auto; }
+.binary-page .pipe-box { margin: 0; padding: .5rem .75rem; border: 2px solid #12324a; border-radius: .6rem; background: #fff; text-align: center; }
+.binary-page .pipe-box p { margin: 0; }
+.binary-page .pipe-title { font-size: .85rem; font-weight: 700; color: #5d7889; }
+.binary-page .pipe-big { font-size: 2rem; font-weight: 800; line-height: 1.25; }
+.binary-page .pipe-small { font-size: .95rem; font-weight: 700; }
+.binary-page .pipe-box.is-missing { border-color: #af3f47; border-width: 4px; }
+.binary-page .pipe-box.is-missing .pipe-big { font-size: 1.4rem; color: #8c2b33; }
+.binary-page .pipe-arrow { display: block; align-self: center; margin: 0; height: 36px; line-height: 0; }
+.binary-page .pipe-arrow svg { display: block; fill: #5d7889; }
+.binary-page .pipe-stored { margin: .8rem 0 0; font-weight: 700; font-family: Consolas, "Courier New", monospace; overflow-wrap: anywhere; }
+.binary-page .step-status { min-height: 4.5em; }
+.binary-page .figure-note { margin: .5rem 0 0; }
+.binary-page .byte-row { display: flex; flex-wrap: wrap; justify-content: center; gap: .4rem; min-height: 2.8rem; margin: .25rem 0; }
+.binary-page .byte-cell { display: inline-flex; align-items: center; justify-content: center; min-width: 4.4rem; min-height: 2.6rem; padding: .2rem .5rem; border: 2px solid #126e9c; border-radius: .4rem; background: #e3f1f9; font-weight: 800; font-size: .9rem; }
+.binary-page .ascii-table td, .binary-page .ascii-table th { padding: .25rem .4rem; }
+.binary-page .ascii-table td:first-child { white-space: nowrap; }
+.binary-page .ascii-table td:nth-child(2) { text-align: left; }
+.binary-page .ascii-table td:nth-child(3) { font-family: Consolas, "Courier New", monospace; }
+.binary-page .ascii-table tr.is-current td { background: #fff3cf; font-weight: 800; }
+.binary-page .ascii-table tr.is-current td:first-child { box-shadow: inset 4px 0 0 #bd8900; }
+.binary-page .ascii-table .row-marker { display: inline-block; min-width: 1.1em; }
+.binary-page .ascii-table .gap-row td { padding: 0; font-weight: 800; }
+.binary-page .inspector-table td { font-size: 1rem; }
+.binary-page .inspector-table td:first-child { font-size: 1.2rem; }
+.binary-page .inspector-summary { margin: .6rem 0 0; font-weight: 800; }
+.binary-page .inspector-hint { margin: .3rem 0 0; font-size: .85rem; }
+.binary-page .step-panel > .knn-field { max-width: 26rem; }
+
+/* -- Notizzettel (Reiter 5) -- */
+.binary-page .code-notes { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 1rem; margin: 1rem 0; }
+.binary-page .code-note { padding: .8rem 1rem 1rem; border: 1px solid #c9dae4; border-left-width: 6px; border-radius: .25rem; box-shadow: 0 2px 5px rgba(18, 50, 74, .18); }
+.binary-page .code-note h3 { margin: 0 0 .4rem; }
+.binary-page .code-note ul { margin: 0; padding-left: 1.2rem; line-height: 1.7rem; }
+.binary-page #note-ascii { border-left-color: #287b61; background: repeating-linear-gradient(transparent 0, transparent calc(1.7rem - 1px), rgba(40, 123, 97, .22) calc(1.7rem - 1px), rgba(40, 123, 97, .22) 1.7rem), #e7f6ef; }
+.binary-page #note-unicode { border-left-color: #bd8900; background: repeating-linear-gradient(transparent 0, transparent calc(1.7rem - 1px), rgba(189, 137, 0, .25) calc(1.7rem - 1px), rgba(189, 137, 0, .25) 1.7rem), #fff3cf; }
+
+@media (max-width: 700px) {
+  .binary-page .code-notes { grid-template-columns: minmax(0, 1fr); }
+  .binary-page .pipe-big { font-size: 1.7rem; }
+  .binary-page .bit-lamp { min-height: 56px; }
+  .binary-page .odo-plot .odo-title { font-size: 17px; }
+}

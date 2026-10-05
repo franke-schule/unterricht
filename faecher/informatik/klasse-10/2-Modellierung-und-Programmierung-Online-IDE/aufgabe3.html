@@ -1,0 +1,2509 @@
+<!doctype html>
+<html lang="de">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Aufgabe 3 - Wiederholung Roboter: Quader</title>
+  <style>
+    :root {
+      --bg: #f7f6f2;
+      --surface: #ffffff;
+      --border: #e2ddd6;
+      --accent: #3b6ea5;
+      --accent-dark: #2d5682;
+      --text: #1e1e1e;
+      --muted: #6b6560;
+      --info-bg: #eef3f8;
+      --success-bg: #edf7ee;
+      --success-border: #7aae80;
+      --medium-bg: #fff4df;
+      --medium-border: #d99a3a;
+      --low-bg: #fff0f0;
+      --low-border: #d38181;
+      --error-bg: #fff0f0;
+      --error-border: #d38181;
+      --warning-bg: #fff8df;
+      --warning-border: #dfc979;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      min-height: 100vh;
+      margin: 0;
+      color: var(--text);
+      background: var(--bg);
+      font-family: "Segoe UI", system-ui, sans-serif;
+      line-height: 1.5;
+    }
+
+    button,
+    input,
+    textarea {
+      font: inherit;
+    }
+
+    header a:focus-visible {
+      outline: 3px solid rgb(255 255 255 / 80%);
+      outline-offset: 3px;
+    }
+
+    main :focus-visible {
+      outline: 3px solid var(--accent);
+      outline-offset: 2px;
+    }
+
+    .visually-hidden {
+      position: absolute;
+      width: 1px;
+      height: 1px;
+      margin: -1px;
+      padding: 0;
+      overflow: hidden;
+      clip: rect(0 0 0 0);
+      white-space: nowrap;
+      border: 0;
+    }
+
+    header {
+      padding: 1.5rem max(1rem, calc((100% - 1500px) / 2));
+      color: #ffffff;
+      background: var(--accent);
+    }
+
+    .page-nav {
+      margin-bottom: 0.9rem;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.65rem;
+    }
+
+    .back-link {
+      padding: 0.5rem 0.85rem;
+      display: inline-flex;
+      align-items: center;
+      color: #ffffff;
+      background: rgb(255 255 255 / 12%);
+      border: 1px solid rgb(255 255 255 / 55%);
+      border-radius: 5px;
+      font-weight: 650;
+      text-decoration: none;
+    }
+
+    .back-link:hover {
+      background: rgb(255 255 255 / 22%);
+    }
+
+    h1 {
+      margin: 0;
+      font-size: clamp(1.55rem, 3vw, 2rem);
+    }
+
+    header p {
+      margin: 0.35rem 0 0;
+      opacity: 0.9;
+    }
+
+    main {
+      width: min(calc(100% - 2rem), 1500px);
+      margin: 1.5rem auto 3rem;
+    }
+
+    .intro {
+      margin-bottom: 1.25rem;
+      padding: 1rem 1.15rem;
+      background: var(--info-bg);
+      border-left: 4px solid var(--accent);
+      border-radius: 6px;
+    }
+
+    .intro p {
+      margin: 0;
+    }
+
+    .info-card {
+      margin-bottom: 1rem;
+      padding: 1rem 1.15rem;
+      background: var(--info-bg);
+      border-left: 4px solid var(--accent);
+      border-radius: 6px;
+    }
+
+    .info-card h2 {
+      margin: 0 0 0.5rem;
+      color: var(--accent-dark);
+      font-size: 1.15rem;
+    }
+
+    .info-card > h3 {
+      margin: 0.9rem 0 0.15rem;
+      color: var(--accent-dark);
+      font-size: 1rem;
+    }
+
+    .info-card p {
+      margin: 0.25rem 0;
+    }
+
+    details.info-card > summary {
+      min-height: 44px;
+      display: flex;
+      align-items: center;
+      color: var(--accent-dark);
+      font-size: 1.1rem;
+      font-weight: 700;
+      cursor: pointer;
+    }
+
+    .privacy-note {
+      margin: 0 0 1rem;
+      padding: 0.85rem 1rem;
+      background: var(--warning-bg);
+      border: 1px solid var(--warning-border);
+      border-radius: 6px;
+      font-size: 0.9rem;
+    }
+
+    .exercise-layout {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) minmax(330px, 430px);
+      gap: 1.25rem;
+      align-items: start;
+    }
+
+    .ide-panel {
+      position: sticky;
+      top: 1rem;
+      min-width: 0;
+    }
+
+    .ide-container {
+      overflow: hidden;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      box-shadow: 0 2px 8px rgb(0 0 0 / 8%);
+    }
+
+    .ide-container iframe {
+      width: 100%;
+      min-height: 680px;
+      display: block;
+      border: 0;
+    }
+
+    .note {
+      margin: 0.75rem 0.25rem 0;
+      color: var(--muted);
+      font-size: 0.85rem;
+    }
+
+    .tasks-panel {
+      position: sticky;
+      top: 1rem;
+      max-height: calc(100vh - 2rem);
+      overflow-y: auto;
+      padding: 0 0.35rem 0.5rem 0.05rem;
+      scrollbar-gutter: stable;
+    }
+
+    .task-card {
+      margin-bottom: 1rem;
+      padding: 1.15rem;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      box-shadow: 0 2px 8px rgb(0 0 0 / 5%);
+    }
+
+    .task-card h2 {
+      margin: 0 0 0.5rem;
+      color: var(--accent);
+      font-size: 1.15rem;
+    }
+
+    .task-card p {
+      margin: 0.4rem 0;
+    }
+
+    .task-card ul.task-list {
+      margin: 0.4rem 0;
+      padding-left: 1.25rem;
+    }
+
+    .hint {
+      margin-top: 0.8rem;
+      padding: 0.75rem;
+      color: #493f1b;
+      background: var(--warning-bg);
+      border: 1px solid var(--warning-border);
+      border-radius: 6px;
+      font-size: 0.9rem;
+    }
+
+    .api-card {
+      margin-top: 0.8rem;
+      padding: 0.75rem;
+      background: var(--info-bg);
+      border: 1px solid #b9cde2;
+      border-radius: 6px;
+      font-size: 0.9rem;
+    }
+
+    .api-card h3 {
+      margin: 0 0 0.4rem;
+      color: var(--accent-dark);
+      font-size: 0.95rem;
+    }
+
+    .api-card ul {
+      margin: 0;
+      padding-left: 1.1rem;
+    }
+
+    .api-card li {
+      margin: 0.25rem 0;
+      overflow-wrap: anywhere;
+    }
+
+    code {
+      padding: 0.08rem 0.25rem;
+      background: #f1f3f5;
+      border-radius: 3px;
+      font-family: Consolas, "Courier New", monospace;
+    }
+
+    pre {
+      margin: 0.5rem 0 0;
+      padding: 0.7rem;
+      overflow-x: auto;
+      background: #f1f3f5;
+      border-radius: 6px;
+      font-size: 0.82rem;
+      line-height: 1.4;
+    }
+
+    pre code {
+      padding: 0;
+      background: none;
+    }
+
+    .class-figure {
+      margin: 0;
+    }
+
+    figure.cuboid {
+      margin: 0.8rem 0;
+    }
+
+    figure.cuboid svg {
+      display: block;
+      width: 100%;
+      max-width: 260px;
+      height: auto;
+      margin: 0 auto;
+    }
+
+    figure.cuboid figcaption {
+      margin-top: 0.4rem;
+      color: var(--muted);
+      font-size: 0.88rem;
+    }
+
+    textarea {
+      display: block;
+      width: 100%;
+      min-height: 150px;
+      margin: 1rem 0 0.35rem;
+      padding: 0.8rem;
+      border: 1px solid #aaa;
+      border-radius: 6px;
+      line-height: 1.45;
+      resize: vertical;
+    }
+
+    textarea:focus {
+      border-color: var(--accent);
+    }
+
+    textarea:disabled {
+      background: #f1f1f1;
+    }
+
+    .textarea-info {
+      display: flex;
+      justify-content: space-between;
+      gap: 1rem;
+      margin-bottom: 0.8rem;
+      color: var(--muted);
+      font-size: 0.82rem;
+    }
+
+    .check-row {
+      margin-top: 0.9rem;
+      display: flex;
+      align-items: flex-start;
+      gap: 0.6rem;
+    }
+
+    .check-row input {
+      width: 1.15rem;
+      height: 1.15rem;
+      margin-top: 0.18rem;
+      flex: 0 0 auto;
+      accent-color: var(--accent);
+    }
+
+    .task-card button:not(.knn-card):not(.knn-slot),
+    .quiz-section button[type="submit"] {
+      margin-top: 0.85rem;
+      padding: 0.65rem 0.9rem;
+      color: #ffffff;
+      background: var(--accent);
+      border: 0;
+      border-radius: 5px;
+      font-weight: 700;
+      cursor: pointer;
+    }
+
+    .task-card button:not(.knn-card):not(.knn-slot):hover,
+    .quiz-section button[type="submit"]:hover {
+      background: var(--accent-dark);
+    }
+
+    button:disabled {
+      opacity: 0.62;
+      cursor: wait;
+    }
+
+    .result {
+      margin: 0.75rem 0 0;
+      padding: 0.7rem 0.8rem;
+      background: var(--info-bg);
+      border: 1px solid var(--border);
+      border-radius: 5px;
+    }
+
+    .result.success {
+      background: var(--success-bg);
+      border: 1px solid var(--success-border);
+    }
+
+    .result.pending {
+      background: var(--warning-bg);
+      border: 1px solid var(--warning-border);
+    }
+
+    .result.high {
+      background: var(--success-bg);
+      border-color: var(--success-border);
+    }
+
+    .result.medium {
+      background: var(--medium-bg);
+      border-color: var(--medium-border);
+    }
+
+    .result.low {
+      background: var(--low-bg);
+      border-color: var(--low-border);
+    }
+
+    .result.error {
+      background: var(--error-bg);
+      border-color: var(--error-border);
+    }
+
+    .result h3 {
+      margin: 0 0 0.55rem;
+      font-size: 1.02rem;
+    }
+
+    .result h4 {
+      margin: 0.85rem 0 0.3rem;
+      font-size: 0.94rem;
+    }
+
+    .result p {
+      margin: 0.3rem 0;
+    }
+
+    .result ul {
+      margin: 0.3rem 0;
+      padding-left: 1.3rem;
+    }
+
+    .feedback {
+      margin-top: 0.85rem;
+      padding-top: 0.7rem;
+      border-top: 1px solid rgb(0 0 0 / 12%);
+    }
+
+    .help-stack {
+      display: grid;
+      gap: 8px;
+      margin: 20px 0 0;
+    }
+
+    .help-stack details {
+      padding: 11px 14px;
+      border: 1px solid #ead6a7;
+      border-radius: 11px;
+      background: #fffbef;
+    }
+
+    .help-stack summary {
+      cursor: pointer;
+      min-height: 44px;
+      display: flex;
+      align-items: center;
+      color: #80530d;
+      font-weight: 900;
+    }
+
+    .help-stack p {
+      margin: 9px 0 0;
+      color: #6f5527;
+      line-height: 1.45;
+    }
+
+    .help-stack pre {
+      color: #3f3417;
+      background: #fff3cf;
+    }
+
+    .observe-block {
+      margin-top: 1.1rem;
+      padding-top: 0.9rem;
+      border-top: 1px solid var(--border);
+    }
+
+    .choice-fieldset {
+      min-width: 0;
+      margin: 0.5rem 0 0;
+      padding: 0;
+      border: 0;
+    }
+
+    .choice-fieldset legend {
+      padding: 0;
+      font-weight: 700;
+    }
+
+    .sub-part {
+      margin-top: 1.1rem;
+      padding-top: 0.9rem;
+      border-top: 1px solid var(--border);
+    }
+
+    /* -- Klassenkarten (Optik wie Datenbanken Aufgabe 2, Schritt 5) -- */
+    .class-card {
+      position: relative;
+      z-index: 1;
+      overflow: hidden;
+      background: #ffffff;
+      border: 2px solid #526a84;
+      border-radius: 0;
+    }
+
+    .class-card h3 {
+      margin: 0;
+      padding: 9px 12px;
+      color: var(--text);
+      background: #edf3f9;
+      border-bottom: 2px solid #526a84;
+      font-family: Consolas, "Courier New", monospace;
+      font-size: 1rem;
+      text-align: center;
+    }
+
+    .class-card ul {
+      margin: 0;
+      padding: 0;
+      list-style: none;
+    }
+
+    .class-card ul + ul {
+      border-top: 2px solid #526a84;
+    }
+
+    .class-card li {
+      padding: 7px 11px;
+      border-bottom: 1px solid #dce3eb;
+      font-family: Consolas, "Courier New", monospace;
+      font-size: 0.85rem;
+      overflow-wrap: anywhere;
+    }
+
+    .class-card li:last-child {
+      border-bottom: 0;
+    }
+
+    /* -- Baumkanten (aus entscheidungbaeume/styles.css) -- */
+    .dt-tree-edge-layer {
+      position: absolute;
+      z-index: 0;
+      inset: 0;
+      overflow: visible;
+      pointer-events: none;
+    }
+
+    .dt-tree-edges {
+      display: block;
+      width: 100%;
+      height: 100%;
+      overflow: visible;
+    }
+
+    .dt-tree-edge {
+      fill: none;
+      stroke: #8f9bae;
+      stroke-width: 2;
+      stroke-linecap: square;
+      stroke-linejoin: miter;
+    }
+
+    .inherit-tree {
+      position: relative;
+    }
+
+    .inherit-tree .dt-tree-edge {
+      stroke: #526a84;
+      stroke-width: 2;
+      marker-start: url(#uml-inherit);
+    }
+
+    .mini-tree {
+      display: grid;
+      justify-items: center;
+      row-gap: 2.4rem;
+      margin: 1rem 0 0.4rem;
+    }
+
+    .mini-tree .class-card {
+      width: min(12rem, 100%);
+    }
+
+    .template-tree {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      column-gap: 0.5rem;
+      row-gap: 2.4rem;
+      margin: 0.8rem 0 0.4rem;
+    }
+
+    .template-tree .class-card h3 {
+      padding: 6px 4px;
+      font-size: 0.85rem;
+    }
+
+    .template-tree .class-card li {
+      padding: 5px 6px;
+      font-size: 0.75rem;
+      overflow-wrap: anywhere;
+    }
+
+    .template-tree [data-tree-node-key="tier"] {
+      grid-column: 2;
+      grid-row: 1;
+    }
+
+    .template-tree [data-tree-parent-key="tier"] {
+      grid-row: 2;
+    }
+
+    /* -- Karten in Felder ziehen (aus knn/task7.css, Präfix entfernt) -- */
+    .knn-bank { display: flex; flex-wrap: wrap; gap: .5rem; min-height: 3.4rem; padding: .6rem; border: 1px dashed #9db4c2; border-radius: .6rem; background: #f9fcfe; }
+    .knn-card { min-height: 44px; border: 1px solid #b9d1df; border-radius: 9px; padding: 8px 12px; color: #1e3a5c; background: #fff; font: inherit; font-weight: 750; text-align: left; cursor: grab; touch-action: none; user-select: none; }
+    .knn-card.is-picked, .knn-slot.is-picked { outline: 3px solid var(--accent); outline-offset: 2px; }
+    .knn-card.is-dragging, .knn-slot.is-dragging { opacity: .45; }
+    .knn-slots { display: grid; gap: .5rem; }
+    .knn-slot { display: grid; grid-template-columns: 5.5rem minmax(0, 1fr); align-items: center; gap: .75rem; box-sizing: border-box; width: 100%; min-width: 76px; min-height: 48px; padding: 6px 12px; border: 2px dashed var(--accent); border-radius: 9px; background: #eef6fb; color: #1e3a5c; font: inherit; text-align: left; cursor: pointer; touch-action: none; }
+    .knn-slot.is-filled { border-style: solid; background: #fff; cursor: grab; }
+    .knn-slot.is-drop-target { background: #d7ebf6; border-color: #1e3a5c; }
+    .knn-slot-label { font-weight: 800; color: var(--accent); }
+    .knn-slot-text { font-weight: 750; }
+    .knn-drag-ghost { position: fixed; z-index: 1000; pointer-events: none; transform: translate(-50%, -50%); display: inline-flex; align-items: center; max-width: 90vw; border-color: var(--accent); box-shadow: 0 6px 18px rgba(18, 50, 74, .25); }
+
+    .slot-dnd {
+      display: flex;
+      flex-direction: column;
+      gap: .75rem;
+      margin: .75rem 0;
+    }
+
+    .slot-dnd .knn-slots { order: 1; }
+    .slot-dnd .knn-bank { order: 2; }
+
+    .slot-dnd .knn-slot-label {
+      position: absolute;
+      width: 1px;
+      height: 1px;
+      overflow: hidden;
+      clip: rect(0 0 0 0);
+      white-space: nowrap;
+    }
+
+    .slot-dnd .knn-slot {
+      position: relative;
+      z-index: 1;
+      min-height: 46px;
+      display: flex;
+      align-items: center;
+      overflow-wrap: anywhere;
+      hyphens: auto;
+    }
+
+    .slot-dnd .knn-card {
+      min-height: 46px;
+      overflow-wrap: anywhere;
+    }
+
+    .hierarchy-dnd .knn-slots {
+      position: relative;
+      display: grid;
+      grid-template-columns: repeat(6, minmax(0, 1fr));
+      column-gap: .4rem;
+      row-gap: 2.2rem;
+    }
+
+    .hierarchy-dnd .knn-slot {
+      justify-content: center;
+      padding: 4px 6px;
+      text-align: center;
+      border-radius: 0;
+    }
+
+    .hierarchy-dnd .knn-card {
+      border-radius: 0;
+    }
+
+    .hierarchy-dnd .knn-slot,
+    .hierarchy-dnd .knn-card {
+      font-size: 0.82rem;
+    }
+
+    .hierarchy-dnd .knn-slot[data-index="0"] { grid-column: 3 / 5; grid-row: 1; }
+    .hierarchy-dnd .knn-slot[data-index="1"] { grid-column: 1 / 3; grid-row: 2; }
+    .hierarchy-dnd .knn-slot[data-index="2"] { grid-column: 3 / 5; grid-row: 2; }
+    .hierarchy-dnd .knn-slot[data-index="3"] { grid-column: 5 / 7; grid-row: 2; }
+    .hierarchy-dnd .knn-slot[data-index="4"] { grid-column: 2 / 4; grid-row: 3; }
+    .hierarchy-dnd .knn-slot[data-index="5"] { grid-column: 4 / 6; grid-row: 3; }
+
+    #tree-6a {
+      display: flex;
+      flex-direction: column;
+      gap: 2.2rem;
+      margin: .9rem 0 .4rem;
+    }
+
+    #tree-6a .actor-node {
+      width: 8rem;
+      margin: 0 auto;
+    }
+
+    #tree-6a .actor-node h3 {
+      border-bottom: 0;
+    }
+
+    #tree-6a .slot-dnd {
+      margin: 0;
+    }
+
+    .class-builder .knn-slots {
+      display: flex;
+      flex-direction: column;
+      gap: 0;
+      background: #ffffff;
+      border: 2px solid #526a84;
+      border-radius: 0;
+    }
+
+    .class-builder .class-card-title {
+      margin: 0;
+      padding: 9px 12px;
+      color: var(--text);
+      background: #edf3f9;
+      border-bottom: 2px solid #526a84;
+      font-family: Consolas, "Courier New", monospace;
+      font-size: 1rem;
+      text-align: center;
+    }
+
+    .class-builder .knn-slot {
+      justify-content: flex-start;
+      padding: 6px 11px;
+      background: #f3f7fb;
+      border: 0;
+      border-bottom: 1px solid #dce3eb;
+      border-radius: 0;
+      outline: 2px dashed #9db4c2;
+      outline-offset: -6px;
+      font-family: Consolas, "Courier New", monospace;
+      font-size: 0.85rem;
+      font-weight: 700;
+    }
+
+    .class-builder .knn-slot.is-filled {
+      background: #ffffff;
+      outline: 0;
+    }
+
+    .class-builder .knn-slot.section-start {
+      border-top: 2px solid #526a84;
+    }
+
+    .class-builder .knn-slot:last-child {
+      border-bottom: 0;
+    }
+
+    .class-builder .knn-card {
+      border-radius: 0;
+      font-family: Consolas, "Courier New", monospace;
+      font-size: 0.85rem;
+    }
+
+    [data-card-kind="class"] {
+      border-radius: 0;
+    }
+
+    .slot-dnd .knn-slot.is-drop-target {
+      background: #d7ebf6;
+    }
+
+    .slot-dnd .knn-slot.is-picked,
+    .slot-dnd .knn-slot:focus-visible {
+      outline: 3px solid var(--accent);
+      outline-offset: -3px;
+    }
+
+    /* -- Abschlussquiz und Übersicht (aus tabellenkalkulation.css) -- */
+    .quiz-section,
+    #quiz-summary {
+      margin-top: 1.5rem;
+      padding: 1.15rem;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      box-shadow: 0 2px 8px rgb(0 0 0 / 5%);
+    }
+
+    .quiz-section h2,
+    #quiz-summary h2 {
+      margin: 0 0 0.6rem;
+      color: var(--accent);
+      font-size: 1.2rem;
+    }
+
+    .quiz-section > p,
+    #quiz-summary > p {
+      margin: 0.4rem 0;
+    }
+
+    .final-quiz {
+      display: grid;
+      gap: 1rem;
+      margin-top: 0.75rem;
+    }
+
+    .final-quiz fieldset {
+      min-width: 0;
+      padding: 1rem;
+      border: 1px solid #d7dee8;
+      border-radius: 10px;
+    }
+
+    .final-quiz legend {
+      padding: 0 0.5rem;
+      color: var(--accent-dark);
+      font-weight: 800;
+    }
+
+    .final-quiz legend span {
+      display: inline-grid;
+      place-items: center;
+      width: 27px;
+      height: 27px;
+      margin-right: 6px;
+      border-radius: 50%;
+      background: #eff6ff;
+      color: var(--accent-dark);
+    }
+
+    .choice-list {
+      display: grid;
+      gap: 0.6rem;
+      margin: 0.9rem 0 0;
+    }
+
+    .choice-option {
+      display: flex;
+      align-items: flex-start;
+      gap: 0.7rem;
+      min-height: 44px;
+      padding: 0.7rem 0.9rem;
+      border: 1px solid #d7dee8;
+      border-radius: 10px;
+      background: #fbfcfe;
+      cursor: pointer;
+    }
+
+    .choice-option:hover {
+      border-color: var(--accent);
+      background: #eff6ff;
+    }
+
+    .choice-option:has(input:checked) {
+      border-color: var(--accent);
+      background: #eff6ff;
+    }
+
+    .choice-option input {
+      flex: 0 0 auto;
+      width: 20px;
+      height: 20px;
+      margin-top: 1px;
+      accent-color: var(--accent);
+    }
+
+    .choice-option span {
+      line-height: 1.4;
+      overflow-wrap: anywhere;
+    }
+
+    .summary-section {
+      padding: 1rem 1.1rem;
+      margin-top: 0.9rem;
+      border: 1px solid #d7dee8;
+      border-radius: 10px;
+      background: #fbfcfe;
+    }
+
+    .summary-section h3 {
+      margin: 0 0 0.3rem;
+      color: var(--accent-dark);
+      font-size: 1.05rem;
+    }
+
+    .summary-section .prompt {
+      margin: 0 0 0.7rem;
+      color: var(--muted);
+      font-size: 0.9rem;
+    }
+
+    .summary-grid {
+      display: grid;
+      grid-template-columns: minmax(150px, .4fr) minmax(0, 1fr);
+      gap: .4rem 1rem;
+      margin: 0;
+    }
+
+    .summary-grid dt {
+      color: #52647a;
+      font-weight: 700;
+    }
+
+    .summary-grid dd {
+      min-width: 0;
+      margin: 0;
+      overflow-wrap: anywhere;
+    }
+
+    .summary-grid ul {
+      margin: 0.3rem 0 0;
+      padding-left: 1.2rem;
+    }
+
+    @media (max-width: 1050px) {
+      .exercise-layout {
+        grid-template-columns: 1fr;
+      }
+
+      .ide-panel,
+      .tasks-panel {
+        position: static;
+      }
+
+      .tasks-panel {
+        max-height: none;
+        overflow: visible;
+        padding: 0;
+      }
+    }
+
+    @media (max-width: 760px) {
+      .summary-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .summary-grid dt {
+        margin-top: .4rem;
+      }
+    }
+
+    @media (max-width: 620px) {
+      .ide-container iframe {
+        min-height: 580px;
+      }
+
+      .knn-slot,
+      .knn-card {
+        font-size: 0.78rem;
+        overflow-wrap: anywhere;
+        hyphens: auto;
+      }
+
+      .class-builder .knn-slot,
+      .class-builder .knn-card {
+        font-size: 0.78rem;
+      }
+
+      .hierarchy-dnd .knn-slot,
+      .hierarchy-dnd .knn-card {
+        font-size: 0.72rem;
+      }
+
+      .hierarchy-dnd .knn-slot {
+        padding: 4px 2px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <nav class="page-nav" aria-label="Seitennavigation">
+      <a class="back-link" href="../">&larr; Aufgabenübersicht Klasse 10</a>
+      <a class="back-link" href="../../../../">Startseite</a>
+    </nav>
+    <h1>Aufgabe 3 - Wiederholung Roboter: Quader</h1>
+    <p>Verschachtelte Schleifen und Struktogramme mit dem Roboter üben.</p>
+  </header>
+
+  <main>
+    <section class="intro" aria-label="Arbeitsauftrag">
+      <p>
+        Baue mit dem Roboter dudu einen Quader aus Ziegeln. Teste jeden Teil mit der grünen Playtaste und übertrage Programmcode und Struktogramm aus c) auf dein Arbeitsblatt.
+      </p>
+    </section>
+
+    <div class="exercise-layout">
+      <section class="ide-panel" aria-label="Online-IDE">
+        <div class="ide-container">
+          <iframe
+            id="robot-ide"
+            title="Online-IDE zu Aufgabe 3 - Wiederholung Roboter: Quader"
+            srcdoc="<script>window.jo_doc = window.frameElement.textContent;</script><script src='../../../../include/js/includeide/includeIDE.js'></script>">
+            {
+              'id': 'Java10Aufgabe3Roboter',
+              'speed': 10,
+              'withBottomPanel': true,
+              'withPCode': true,
+              'withConsole': false,
+              'withFileList': true,
+              'withErrorList': true,
+              'enableFileAccess': true
+            }
+
+            <script type="text/plain" title="Anleitung" data-type="hint">
+## AUFGABE 3 - WIEDERHOLUNG ROBOTER: QUADER
+
+a) Erstelle einen Roboter mit dem Objektnamen dudu in einer Welt mit 12 × 12 Feldern.
+
+b) Schreibe ein Programm, sodass dudu einen Quader aus Ziegeln baut: 3 Ziegel lang, 5 Ziegel breit und 4 Ziegel hoch.
+
+c) Notiere den Programmcode aus b) auf deinem Arbeitsblatt und zeichne das passende Struktogramm.
+            </script>
+
+            <script type="plain/text" title="Hauptprogramm.java">
+//Hier kommt deine Lösung rein - Aufgabe 2 kannst du als Hilfe benutzen
+</script>
+          </iframe>
+        </div>
+        <p class="note">
+          Tipp: Speichere nach jedem funktionierenden Teil eine Kopie deines
+          Codes, bevor du ihn für den nächsten Teil erweiterst.
+        </p>
+      </section>
+
+      <aside class="tasks-panel" aria-label="Aufgabenschritte">
+        <div class="privacy-note">
+          <strong>Hinweis:</strong> Der aktuelle Inhalt von <code>Hauptprogramm.java</code> wird zur automatischen Codeanalyse an ein KI-System übertragen. Schreibe keine Namen oder andere personenbezogenen Daten in Kommentare.
+        </div>
+
+        <section class="task-card" aria-labelledby="task-3a-title">
+          <h2 id="task-3a-title">a) Roboter dudu in einer 12 × 12-Welt</h2>
+          <p><strong>Erstelle</strong> einen Roboter mit dem Objektnamen <code>dudu</code> in einer Welt mit 12 × 12 Feldern.</p>
+          <div class="hint">
+            In <a href="aufgabe2.html">Aufgabe 2</a> erzeugt <code>new Robot(1, 1, 15, 15)</code> einen Roboter. Die vier Zahlen bedeuten: Startspalte, Startzeile, Breite und Länge der Welt.
+          </div>
+          <button id="button-10-3a" type="button" onclick="submitCode('10-3a')">
+            Meinen Code für a prüfen
+          </button>
+          <div id="result-10-3a" class="result" aria-live="polite" hidden></div>
+        </section>
+
+        <section class="task-card" aria-labelledby="task-3b-title">
+          <h2 id="task-3b-title">b) Quader aus Ziegeln</h2>
+          <p><strong>Schreibe</strong> ein Programm, sodass dudu einen Quader aus Ziegeln baut: 3 Ziegel lang, 5 Ziegel breit und 4 Ziegel hoch.</p>
+          <figure class="cuboid">
+            <svg viewBox="0 0 240 200" role="img" aria-label="Schrägansicht eines Quaders aus Ziegeln: 3 Ziegel lang, 5 Ziegel breit und 4 Ziegel hoch" xmlns="http://www.w3.org/2000/svg">
+              <polygon points="50,170 122,170 122,74 50,74" fill="#c0583f" stroke="#5a2a1e" stroke-width="1.2"/>
+              <polygon points="50,74 122,74 182,34 110,34" fill="#d9785f" stroke="#5a2a1e" stroke-width="1.2"/>
+              <polygon points="122,170 182,130 182,34 122,74" fill="#a8472f" stroke="#5a2a1e" stroke-width="1.2"/>
+              <line x1="74" y1="74" x2="74" y2="170" stroke="#5a2a1e" stroke-width="1.2"/>
+              <line x1="98" y1="74" x2="98" y2="170" stroke="#5a2a1e" stroke-width="1.2"/>
+              <line x1="50" y1="146" x2="122" y2="146" stroke="#5a2a1e" stroke-width="1.2"/>
+              <line x1="50" y1="122" x2="122" y2="122" stroke="#5a2a1e" stroke-width="1.2"/>
+              <line x1="50" y1="98" x2="122" y2="98" stroke="#5a2a1e" stroke-width="1.2"/>
+              <line x1="74" y1="74" x2="134" y2="34" stroke="#5a2a1e" stroke-width="1.2"/>
+              <line x1="98" y1="74" x2="158" y2="34" stroke="#5a2a1e" stroke-width="1.2"/>
+              <line x1="62" y1="66" x2="134" y2="66" stroke="#5a2a1e" stroke-width="1.2"/>
+              <line x1="74" y1="58" x2="146" y2="58" stroke="#5a2a1e" stroke-width="1.2"/>
+              <line x1="86" y1="50" x2="158" y2="50" stroke="#5a2a1e" stroke-width="1.2"/>
+              <line x1="98" y1="42" x2="170" y2="42" stroke="#5a2a1e" stroke-width="1.2"/>
+              <line x1="134" y1="162" x2="134" y2="66" stroke="#5a2a1e" stroke-width="1.2"/>
+              <line x1="146" y1="154" x2="146" y2="58" stroke="#5a2a1e" stroke-width="1.2"/>
+              <line x1="158" y1="146" x2="158" y2="50" stroke="#5a2a1e" stroke-width="1.2"/>
+              <line x1="170" y1="138" x2="170" y2="42" stroke="#5a2a1e" stroke-width="1.2"/>
+              <line x1="122" y1="146" x2="182" y2="106" stroke="#5a2a1e" stroke-width="1.2"/>
+              <line x1="122" y1="122" x2="182" y2="82" stroke="#5a2a1e" stroke-width="1.2"/>
+              <line x1="122" y1="98" x2="182" y2="58" stroke="#5a2a1e" stroke-width="1.2"/>
+              <text x="86" y="188" text-anchor="middle" font-size="11" fill="#1e1e1e">3 lang</text>
+              <text x="44" y="126" text-anchor="end" font-size="11" fill="#1e1e1e">4 hoch</text>
+              <text x="166" y="164" text-anchor="middle" font-size="11" fill="#1e1e1e">5 breit</text>
+            </svg>
+            <figcaption>Die Grundfläche ist 3 × 5 Felder groß. Auf jedem dieser 15 Felder liegen 4 Ziegel übereinander. Wo der Quader in der Welt steht, darfst du selbst festlegen.</figcaption>
+          </figure>
+          <div class="hint">
+            Beachte: <code>hinlegen()</code> legt einen Ziegel auf das Feld <strong>vor</strong> dem Roboter, <code>hinlegen(4)</code> vier Ziegel übereinander. Der Roboter kann höchstens einen Ziegel hoch- oder heruntersteigen.
+          </div>
+          <button id="button-10-3b" type="button" onclick="submitCode('10-3b')">
+            Meinen Code für b prüfen
+          </button>
+          <div id="result-10-3b" class="result" aria-live="polite" hidden></div>
+          <div class="help-stack">
+            <details>
+              <summary>Hilfe 1</summary>
+              <p>Zerlege den Quader in Reihen oder Schichten: Was muss dudu für eine einzige Reihe tun?</p>
+            </details>
+            <details>
+              <summary>Hilfe 2</summary>
+              <p>Baue eine Reihe der Länge 3 mit einer inneren Schleife. Eine äußere Schleife wiederholt das für alle 5 Reihen. Überlege, wie dudu danach zum Anfang der nächsten Reihe kommt, ohne auf einen Stapel zu steigen.</p>
+            </details>
+            <details>
+              <summary>Hilfe 3</summary>
+              <p>Ergänze die Lücken in diesem Gerüst:</p>
+              <pre><code>Robot dudu = new Robot(1, 1, 12, 12);
+for (int reihe = 0; reihe &lt; ___; reihe++) {
+   // zur nächsten Spur gehen und in Baurichtung drehen
+   ___
+   for (int feld = 0; feld &lt; ___; feld++) {
+      dudu.schritt();
+      // zum Feld der Reihe drehen, Stapel legen, zurückdrehen
+      ___
+   }
+   // zurück zum Anfang der Spur gehen
+   ___
+}</code></pre>
+            </details>
+          </div>
+        </section>
+
+        <section class="task-card" aria-labelledby="task-3c-title">
+          <h2 id="task-3c-title">c) Programmcode und Struktogramm</h2>
+          <p><strong>Notiere</strong> den Programmcode aus b) auf deinem Arbeitsblatt und <strong>zeichne</strong> das passende Struktogramm. Stelle beide Schleifen als ineinanderliegende Wiederholungsblöcke dar.</p>
+          <label class="check-row" for="complete-3c">
+            <input id="complete-3c" name="complete-3c" type="checkbox" value="ja">
+            <span>Mein Struktogramm passt zu meinem Programm aus b) und zeigt die äußere und die innere Schleife.</span>
+          </label>
+          <button type="button" onclick="checkTask('3c')">Teil c prüfen</button>
+          <p id="result-3c" class="result" aria-live="polite" hidden></p>
+        </section>
+      </aside>
+    </div>
+
+    <section class="quiz-section" aria-labelledby="final-quiz-title">
+      <h2 id="final-quiz-title">Abschlussquiz</h2>
+      <p><strong>Kreuze</strong> alle richtigen Antworten an. In manchen Fragen sind mehrere Antworten richtig.</p>
+      <form id="final-quiz" class="final-quiz" novalidate>
+        <fieldset>
+          <legend><span>1</span>Was bewirkt <code>Robot dudu = new Robot(1, 1, 12, 12);</code>?</legend>
+          <div class="choice-list">
+            <label class="choice-option">
+              <input type="checkbox" name="quiz-1" value="a">
+              <span>Es wird ein neues Objekt der Klasse Robot erzeugt.</span>
+            </label>
+            <label class="choice-option">
+              <input type="checkbox" name="quiz-1" value="b">
+              <span>Die Objektvariable dudu verweist auf den neuen Roboter.</span>
+            </label>
+            <label class="choice-option">
+              <input type="checkbox" name="quiz-1" value="c">
+              <span>Die Welt ist 12 Felder breit und 12 Felder lang.</span>
+            </label>
+            <label class="choice-option">
+              <input type="checkbox" name="quiz-1" value="d">
+              <span>Der Roboter legt sofort zwölf Ziegel.</span>
+            </label>
+          </div>
+        </fieldset>
+        <fieldset>
+          <legend><span>2</span>Wie viele Ziegel braucht der Quader (3 lang, 5 breit, 4 hoch)?</legend>
+          <div class="choice-list">
+            <label class="choice-option">
+              <input type="checkbox" name="quiz-2" value="a">
+              <span>12</span>
+            </label>
+            <label class="choice-option">
+              <input type="checkbox" name="quiz-2" value="b">
+              <span>20</span>
+            </label>
+            <label class="choice-option">
+              <input type="checkbox" name="quiz-2" value="c">
+              <span>60</span>
+            </label>
+            <label class="choice-option">
+              <input type="checkbox" name="quiz-2" value="d">
+              <span>15</span>
+            </label>
+          </div>
+        </fieldset>
+        <fieldset>
+          <legend><span>3</span>Welche Aussagen über verschachtelte Schleifen stimmen?</legend>
+          <div class="choice-list">
+            <label class="choice-option">
+              <input type="checkbox" name="quiz-3" value="a">
+              <span>Die innere Schleife wird bei jedem Durchlauf der äußeren Schleife vollständig ausgeführt.</span>
+            </label>
+            <label class="choice-option">
+              <input type="checkbox" name="quiz-3" value="b">
+              <span>Bei einer äußeren Schleife mit 5 und einer inneren mit 3 Durchläufen wird der innere Block 15-mal ausgeführt.</span>
+            </label>
+            <label class="choice-option">
+              <input type="checkbox" name="quiz-3" value="c">
+              <span>Die beiden Schleifen laufen gleichzeitig nebeneinander ab.</span>
+            </label>
+            <label class="choice-option">
+              <input type="checkbox" name="quiz-3" value="d">
+              <span>Die innere Schleife läuft nur beim ersten Durchlauf der äußeren Schleife.</span>
+            </label>
+          </div>
+        </fieldset>
+        <fieldset>
+          <legend><span>4</span>Warum legt dudu die Ziegel neben sich ab, statt auf den Quader zu steigen?</legend>
+          <div class="choice-list">
+            <label class="choice-option">
+              <input type="checkbox" name="quiz-4" value="a">
+              <span><code>hinlegen()</code> legt Ziegel auf das Feld vor dem Roboter.</span>
+            </label>
+            <label class="choice-option">
+              <input type="checkbox" name="quiz-4" value="b">
+              <span>Der Roboter kann höchstens einen Ziegel hoch- oder heruntersteigen.</span>
+            </label>
+            <label class="choice-option">
+              <input type="checkbox" name="quiz-4" value="c">
+              <span>Der Roboter kann nur auf Feldern ohne Ziegel stehen.</span>
+            </label>
+            <label class="choice-option">
+              <input type="checkbox" name="quiz-4" value="d">
+              <span>Mit <code>hinlegen(4)</code> legt der Roboter vier Ziegel nebeneinander in eine Reihe.</span>
+            </label>
+          </div>
+        </fieldset>
+        <fieldset>
+          <legend><span>5</span>Wie stellst du die Schleifen im Struktogramm dar?</legend>
+          <div class="choice-list">
+            <label class="choice-option">
+              <input type="checkbox" name="quiz-5" value="a">
+              <span>Als Wiederholungsblock wie „wiederhole 5-mal“, der die zu wiederholenden Anweisungen umschließt.</span>
+            </label>
+            <label class="choice-option">
+              <input type="checkbox" name="quiz-5" value="b">
+              <span>Die innere Schleife steht als eigener Wiederholungsblock innerhalb des äußeren Blocks.</span>
+            </label>
+            <label class="choice-option">
+              <input type="checkbox" name="quiz-5" value="c">
+              <span>Als Verzweigung mit „ja“ und „nein“.</span>
+            </label>
+            <label class="choice-option">
+              <input type="checkbox" name="quiz-5" value="d">
+              <span>Jeder Durchlauf wird als eigener Block untereinander gezeichnet.</span>
+            </label>
+          </div>
+        </fieldset>
+        <div>
+          <button type="submit">Quiz prüfen</button>
+        </div>
+        <section id="result-quiz" class="result" aria-live="polite" hidden></section>
+      </form>
+    </section>
+
+    <section id="quiz-summary" aria-labelledby="quiz-summary-title" hidden>
+      <h2 id="quiz-summary-title">Übersicht: alle Teilaufgaben und Ergebnisse</h2>
+      <p>Hier stehen alle Arbeitsaufträge dieser Aufgabe mit ihren Ergebnissen – gut geeignet für die gemeinsame Besprechung.</p>
+      <section class="summary-section">
+        <h3>a) Roboter dudu in einer 12 × 12-Welt</h3>
+        <p class="prompt"><strong>Erstelle</strong> einen Roboter mit dem Objektnamen <code>dudu</code> in einer Welt mit 12 × 12 Feldern.</p>
+        <dl class="summary-grid">
+          <dt>Richtiges Ergebnis</dt>
+          <dd><code>Robot dudu = new Robot(1, 1, 12, 12);</code> – die ersten beiden Argumente legen die Startposition fest, die letzten beiden die 12 × 12-Welt.</dd>
+        </dl>
+      </section>
+      <section class="summary-section">
+        <h3>b) Quader aus Ziegeln</h3>
+        <p class="prompt"><strong>Schreibe</strong> ein Programm, sodass dudu einen Quader aus Ziegeln baut: 3 Ziegel lang, 5 Ziegel breit und 4 Ziegel hoch.</p>
+        <dl class="summary-grid">
+          <dt>Richtiges Ergebnis</dt>
+          <dd>Eine äußere Schleife läuft über die 5 Reihen, eine innere über die 3 Felder einer Reihe. dudu geht auf der Spur neben der Reihe, dreht sich zum Feld und legt mit hinlegen(4) einen Stapel. Insgesamt liegen 3 · 5 · 4 = 60 Ziegel.
+            <pre><code>Robot dudu = new Robot(1, 1, 12, 12);
+for (int reihe = 0; reihe &lt; 5; reihe++) {
+   dudu.schritt();
+   dudu.linksDrehen();
+   for (int feld = 0; feld &lt; 3; feld++) {
+      dudu.schritt();
+      dudu.linksDrehen();
+      dudu.hinlegen(4);
+      dudu.rechtsDrehen();
+   }
+   dudu.linksDrehen();
+   dudu.linksDrehen();
+   for (int i = 0; i &lt; 3; i++) {
+      dudu.schritt();
+   }
+   dudu.linksDrehen();
+}</code></pre></dd>
+        </dl>
+      </section>
+      <section class="summary-section">
+        <h3>c) Programmcode und Struktogramm</h3>
+        <p class="prompt"><strong>Notiere</strong> den Programmcode aus b) auf deinem Arbeitsblatt und <strong>zeichne</strong> das passende Struktogramm. Stelle beide Schleifen als ineinanderliegende Wiederholungsblöcke dar.</p>
+        <dl class="summary-grid">
+          <dt>Richtiges Ergebnis</dt>
+          <dd>Im Struktogramm steht der Block „wiederhole 3-mal“ innerhalb des Blocks „wiederhole 5-mal“.</dd>
+        </dl>
+      </section>
+      <section class="summary-section">
+        <h3>Abschlussquiz – Frage 1</h3>
+        <p class="prompt">Was bewirkt <code>Robot dudu = new Robot(1, 1, 12, 12);</code>?</p>
+        <dl class="summary-grid">
+          <dt>Richtiges Ergebnis</dt>
+          <dd>Es wird ein neues Objekt der Klasse Robot erzeugt. · Die Objektvariable dudu verweist auf den neuen Roboter. · Die Welt ist 12 Felder breit und 12 Felder lang.</dd>
+        </dl>
+      </section>
+      <section class="summary-section">
+        <h3>Abschlussquiz – Frage 2</h3>
+        <p class="prompt">Wie viele Ziegel braucht der Quader (3 lang, 5 breit, 4 hoch)?</p>
+        <dl class="summary-grid">
+          <dt>Richtiges Ergebnis</dt>
+          <dd>60</dd>
+        </dl>
+      </section>
+      <section class="summary-section">
+        <h3>Abschlussquiz – Frage 3</h3>
+        <p class="prompt">Welche Aussagen über verschachtelte Schleifen stimmen?</p>
+        <dl class="summary-grid">
+          <dt>Richtiges Ergebnis</dt>
+          <dd>Die innere Schleife wird bei jedem Durchlauf der äußeren Schleife vollständig ausgeführt. · Bei einer äußeren Schleife mit 5 und einer inneren mit 3 Durchläufen wird der innere Block 15-mal ausgeführt.</dd>
+        </dl>
+      </section>
+      <section class="summary-section">
+        <h3>Abschlussquiz – Frage 4</h3>
+        <p class="prompt">Warum legt dudu die Ziegel neben sich ab, statt auf den Quader zu steigen?</p>
+        <dl class="summary-grid">
+          <dt>Richtiges Ergebnis</dt>
+          <dd><code>hinlegen()</code> legt Ziegel auf das Feld vor dem Roboter. · Der Roboter kann höchstens einen Ziegel hoch- oder heruntersteigen.</dd>
+        </dl>
+      </section>
+      <section class="summary-section">
+        <h3>Abschlussquiz – Frage 5</h3>
+        <p class="prompt">Wie stellst du die Schleifen im Struktogramm dar?</p>
+        <dl class="summary-grid">
+          <dt>Richtiges Ergebnis</dt>
+          <dd>Als Wiederholungsblock wie „wiederhole 5-mal“, der die zu wiederholenden Anweisungen umschließt. · Die innere Schleife steht als eigener Wiederholungsblock innerhalb des äußeren Blocks.</dd>
+        </dl>
+      </section>
+    </section>
+  </main>
+
+  <script src="../../klasse-9/eingaben-speichern.js?v=20260924"></script>
+  <script>
+    const SCRIPT_SERVER_URL =
+      'https://script.google.com/macros/s/AKfycby8RWL6uYrKZyoJ6m2GRpWyRmXjwsdskyCiqzKpRhIK5-wrDl-9lWWk8CiAGaVMoy0x/exec';
+
+    const IDE_ID =
+      'Java10Aufgabe3Roboter';
+
+    const MAX_CODE_LENGTH =
+      12000;
+
+    const CODE_REQUEST_TIMEOUT =
+      120000;
+
+    const pendingCodeRequests =
+      new Map();
+
+
+    function getScriptServerUrl() {
+      return SCRIPT_SERVER_URL.trim();
+    }
+
+
+    function isValidScriptServerUrl(url) {
+      try {
+        const parsedUrl =
+          new URL(url);
+
+        return (
+          parsedUrl.protocol === 'https:' &&
+          parsedUrl.hostname === 'script.google.com' &&
+          parsedUrl.pathname.endsWith('/exec') &&
+          !url.includes('DEINE_BEREITSTELLUNGS_ID')
+        );
+      } catch (error) {
+        return false;
+      }
+    }
+
+
+    function createRequestId() {
+      if (
+        window.crypto &&
+        typeof window.crypto.randomUUID === 'function'
+      ) {
+        return window.crypto.randomUUID();
+      }
+
+      return (
+        Date.now().toString(36) +
+        '-' +
+        Math.random().toString(36).substring(2)
+      );
+    }
+
+
+    /**
+     * Liest den aktuellen Stand direkt aus Hauptprogramm.java in der IDE.
+     * Die IDE stellt diese Schnittstelle durch enableFileAccess bereit.
+     */
+    function getCurrentProgramCode() {
+      const iframe =
+        document.getElementById(
+          'robot-ide'
+        );
+
+      if (
+        !iframe ||
+        !iframe.contentWindow
+      ) {
+        throw new Error(
+          'Die Online-IDE ist noch nicht bereit.'
+        );
+      }
+
+      let access;
+
+      try {
+        access =
+          iframe.contentWindow.online_ide_access;
+      } catch (error) {
+        throw new Error(
+          'Der aktuelle Programmcode konnte nicht aus der Online-IDE gelesen werden.'
+        );
+      }
+
+      if (
+        !access ||
+        typeof access.getIDE !== 'function'
+      ) {
+        throw new Error(
+          'Die Online-IDE lädt noch. Bitte warte kurz und versuche es erneut.'
+        );
+      }
+
+      const ide =
+        access.getIDE(
+          IDE_ID
+        );
+
+      if (
+        !ide ||
+        typeof ide.getFiles !== 'function'
+      ) {
+        throw new Error(
+          'Die Programmdateien sind noch nicht verfügbar.'
+        );
+      }
+
+      const files =
+        ide.getFiles();
+
+      const mainFile =
+        files.find(
+          function(file) {
+            return (
+              typeof file.getName === 'function' &&
+              file.getName() === 'Hauptprogramm.java'
+            );
+          }
+        );
+
+      if (
+        !mainFile ||
+        typeof mainFile.getText !== 'function'
+      ) {
+        throw new Error(
+          'Hauptprogramm.java wurde in der Online-IDE nicht gefunden.'
+        );
+      }
+
+      return mainFile.getText().trim();
+    }
+
+
+    /**
+     * Startet die getrennte Codeauswertung per POST. Das lange Codefeld
+     * gelangt nicht in eine URL. Nur die kurze requestId wird danach per
+     * JSONP abgefragt.
+     */
+    function submitCode(taskId) {
+      const button =
+        document.getElementById(
+          'button-' + taskId
+        );
+
+      const resultBox =
+        document.getElementById(
+          'result-' + taskId
+        );
+
+      const scriptServerUrl =
+        getScriptServerUrl();
+
+      if (
+        !isValidScriptServerUrl(
+          scriptServerUrl
+        )
+      ) {
+        showError(
+          resultBox,
+          'Die Adresse des Auswertungsservers ist nicht gültig.'
+        );
+        return;
+      }
+
+      let code;
+
+      try {
+        code =
+          getCurrentProgramCode();
+      } catch (error) {
+        showError(
+          resultBox,
+          error.message
+        );
+        return;
+      }
+
+      if (code.length < 20) {
+        showError(
+          resultBox,
+          'Dein Programmcode ist noch zu kurz für eine Auswertung.'
+        );
+        return;
+      }
+
+      if (code.length > MAX_CODE_LENGTH) {
+        showError(
+          resultBox,
+          'Dein Programmcode ist zu lang für die automatische Auswertung.'
+        );
+        return;
+      }
+
+      if (hasUnqualifiedRobotMethodCall(code)) {
+        showError(
+          resultBox,
+          'Benutze die Punktnotation. Rufe die Methoden auf einem Objekt der Klasse Roboter auf.'
+        );
+        return;
+      }
+
+      if (taskId === '10-3a') {
+        if (!/\bRobot\b/.test(code)) {
+          showError(
+            resultBox,
+            'Im aktuellen Code fehlt noch ein Robot-Objekt.'
+          );
+          return;
+        }
+      } else if (
+        !/\bRobot\b/.test(code) ||
+        !/\.hinlegen\s*\(/.test(code)
+      ) {
+        showError(
+          resultBox,
+          'Im aktuellen Code fehlen noch ein Robot-Objekt oder ein Aufruf von hinlegen().'
+        );
+        return;
+      }
+
+      button.dataset.defaultLabel =
+        button.textContent.trim();
+
+      button.disabled =
+        true;
+
+      button.textContent =
+        'Programm wird geprüft …';
+
+      resultBox.hidden =
+        false;
+
+      resultBox.className =
+        'result';
+
+      resultBox.textContent =
+        'Der aktuelle Stand von Hauptprogramm.java wird ausgewertet.';
+
+      const requestId =
+        createRequestId();
+
+      const transport =
+        createCodePostTransport(
+          scriptServerUrl,
+          requestId,
+          taskId,
+          code
+        );
+
+      const timeoutId =
+        window.setTimeout(
+          function() {
+            const pending =
+              pendingCodeRequests.get(
+                requestId
+              );
+
+            if (!pending) {
+              return;
+            }
+
+            restoreCodeButton(
+              pending
+            );
+
+            showError(
+              pending.resultBox,
+              'Der Auswertungsserver hat nicht rechtzeitig geantwortet. Bitte versuche es erneut.'
+            );
+
+            cleanupCodeRequest(
+              requestId
+            );
+          },
+          CODE_REQUEST_TIMEOUT
+        );
+
+      pendingCodeRequests.set(
+        requestId,
+        {
+          button:
+            button,
+          resultBox:
+            resultBox,
+          form:
+            transport.form,
+          iframe:
+            transport.iframe,
+          pollScript:
+            null,
+          pollTimer:
+            null,
+          timeoutId:
+            timeoutId
+        }
+      );
+
+      transport.form.submit();
+
+      scheduleCodeResultPoll(
+        requestId,
+        1800
+      );
+    }
+
+
+    /**
+     * Erkennt Aufrufe wie hinlegen() oder istWand(), denen die
+     * Objektvariable und der Punkt fehlen. Kommentare werden vorher
+     * entfernt, damit Beispieltexte keine Fehlermeldung ausloesen.
+     */
+    function hasUnqualifiedRobotMethodCall(code) {
+      const codeWithoutComments =
+        code
+          .replace(
+            /\/\*[\s\S]*?\*\//g,
+            ''
+          )
+          .replace(
+            /\/\/.*$/gm,
+            ''
+          );
+
+      return /(^|[^A-Za-z0-9_.])(istWand|nichtIstWand|hinlegen|schritt|rechtsDrehen|linksDrehen)\s*\(/m.test(
+        codeWithoutComments
+      );
+    }
+
+
+    function createCodePostTransport(
+      scriptServerUrl,
+      requestId,
+      taskId,
+      code
+    ) {
+      const iframeName =
+        'code-feedback-' +
+        requestId.replace(
+          /[^a-zA-Z0-9_-]/g,
+          ''
+        );
+
+      const iframe =
+        document.createElement(
+          'iframe'
+        );
+
+      iframe.name =
+        iframeName;
+
+      iframe.title =
+        'Unsichtbarer Übertragungsrahmen für die Codeauswertung';
+
+      iframe.setAttribute(
+        'aria-hidden',
+        'true'
+      );
+
+      iframe.style.display =
+        'none';
+
+      const form =
+        document.createElement(
+          'form'
+        );
+
+      form.method =
+        'POST';
+
+      form.action =
+        scriptServerUrl;
+
+      form.target =
+        iframeName;
+
+      form.acceptCharset =
+        'UTF-8';
+
+      form.style.display =
+        'none';
+
+      appendHiddenField(
+        form,
+        'requestType',
+        'code'
+      );
+
+      appendHiddenField(
+        form,
+        'requestId',
+        requestId
+      );
+
+      appendHiddenField(
+        form,
+        'taskId',
+        taskId
+      );
+
+      appendHiddenField(
+        form,
+        'code',
+        code
+      );
+
+      document.body.appendChild(
+        iframe
+      );
+
+      document.body.appendChild(
+        form
+      );
+
+      return {
+        iframe:
+          iframe,
+        form:
+          form
+      };
+    }
+
+
+    function appendHiddenField(
+      form,
+      name,
+      value
+    ) {
+      const input =
+        document.createElement(
+          'input'
+        );
+
+      input.type =
+        'hidden';
+
+      input.name =
+        name;
+
+      input.value =
+        String(value);
+
+      form.appendChild(
+        input
+      );
+    }
+
+
+    function scheduleCodeResultPoll(
+      requestId,
+      delay
+    ) {
+      const pending =
+        pendingCodeRequests.get(
+          requestId
+        );
+
+      if (!pending) {
+        return;
+      }
+
+      window.clearTimeout(
+        pending.pollTimer
+      );
+
+      pending.pollTimer =
+        window.setTimeout(
+          function() {
+            pollCodeResult(
+              requestId
+            );
+          },
+          delay
+        );
+    }
+
+
+    function pollCodeResult(requestId) {
+      const pending =
+        pendingCodeRequests.get(
+          requestId
+        );
+
+      if (!pending) {
+        return;
+      }
+
+      if (
+        pending.pollScript &&
+        pending.pollScript.parentNode
+      ) {
+        pending.pollScript.parentNode.removeChild(
+          pending.pollScript
+        );
+      }
+
+      const script =
+        document.createElement(
+          'script'
+        );
+
+      script.async =
+        true;
+
+      script.src =
+        createJsonpUrl(
+          getScriptServerUrl(),
+          {
+            callback:
+              '__handleCodeEvaluationResult',
+            requestType:
+              'code-result',
+            requestId:
+              requestId,
+            cacheBust:
+              Date.now()
+          }
+        );
+
+      script.onerror =
+        function() {
+          const current =
+            pendingCodeRequests.get(
+              requestId
+            );
+
+          if (!current) {
+            return;
+          }
+
+          scheduleCodeResultPoll(
+            requestId,
+            3000
+          );
+        };
+
+      pending.pollScript =
+        script;
+
+      document.body.appendChild(
+        script
+      );
+    }
+
+
+    function createJsonpUrl(
+      baseUrl,
+      parameters
+    ) {
+      const url =
+        new URL(
+          baseUrl
+        );
+
+      Object.keys(
+        parameters
+      ).forEach(
+        function(key) {
+          url.searchParams.set(
+            key,
+            String(parameters[key])
+          );
+        }
+      );
+
+      return url.toString();
+    }
+
+
+    window.__handleCodeEvaluationResult =
+      function(message) {
+        if (
+          !message ||
+          !message.requestId
+        ) {
+          return;
+        }
+
+        const pending =
+          pendingCodeRequests.get(
+            message.requestId
+          );
+
+        if (!pending) {
+          return;
+        }
+
+        if (
+          message.type !==
+          'GEMINI_CODE_EVALUATION_RESULT'
+        ) {
+          restoreCodeButton(
+            pending
+          );
+
+          showError(
+            pending.resultBox,
+            'Der Auswertungsserver verwendet noch eine ältere Version ohne Codekorrektur. Bitte aktualisiere die Apps-Script-Bereitstellung und versuche es danach erneut.'
+          );
+
+          cleanupCodeRequest(
+            message.requestId
+          );
+
+          return;
+        }
+
+        if (
+          pending.pollScript &&
+          pending.pollScript.parentNode
+        ) {
+          pending.pollScript.parentNode.removeChild(
+            pending.pollScript
+          );
+
+          pending.pollScript =
+            null;
+        }
+
+        if (message.pending) {
+          pending.resultBox.textContent =
+            'Der Programmcode wird noch ausgewertet.';
+
+          scheduleCodeResultPoll(
+            message.requestId,
+            2200
+          );
+
+          return;
+        }
+
+        restoreCodeButton(
+          pending
+        );
+
+        if (
+          !message.result ||
+          message.result.ok !== true
+        ) {
+          showError(
+            pending.resultBox,
+            message.result &&
+            message.result.message
+              ? message.result.message
+              : 'Die Codeauswertung konnte nicht abgeschlossen werden.'
+          );
+
+          cleanupCodeRequest(
+            message.requestId
+          );
+
+          return;
+        }
+
+        showEvaluation(
+          pending.resultBox,
+          message.result
+        );
+
+        cleanupCodeRequest(
+          message.requestId
+        );
+      };
+
+
+    function restoreCodeButton(pending) {
+      pending.button.disabled =
+        false;
+
+      pending.button.textContent =
+        pending.button.dataset.defaultLabel ||
+        'Code erneut prüfen';
+    }
+
+
+    function cleanupCodeRequest(requestId) {
+      const pending =
+        pendingCodeRequests.get(
+          requestId
+        );
+
+      if (!pending) {
+        return;
+      }
+
+      window.clearTimeout(
+        pending.timeoutId
+      );
+
+      window.clearTimeout(
+        pending.pollTimer
+      );
+
+      [
+        pending.pollScript,
+        pending.form,
+        pending.iframe
+      ].forEach(
+        function(element) {
+          if (
+            element &&
+            element.parentNode
+          ) {
+            element.parentNode.removeChild(
+              element
+            );
+          }
+        }
+      );
+
+      pendingCodeRequests.delete(
+        requestId
+      );
+    }
+
+
+    function showEvaluation(
+      resultBox,
+      result
+    ) {
+      resultBox.textContent =
+        '';
+
+      resultBox.hidden =
+        false;
+
+      resultBox.className =
+        'result ' +
+        getEvaluationLevelClass(
+          result.points,
+          result.maxPoints
+        );
+
+      const heading =
+        document.createElement(
+          'h3'
+        );
+
+      heading.textContent =
+        result.points +
+        ' von ' +
+        result.maxPoints +
+        ' Punkten – ' +
+        result.status;
+
+      resultBox.appendChild(
+        heading
+      );
+
+      appendList(
+        resultBox,
+        'Das ist dir gelungen:',
+        result.strengths,
+        'Es wurde noch kein eindeutiger richtiger Aspekt erkannt.'
+      );
+
+      appendList(
+        resultBox,
+        'Das solltest du überprüfen:',
+        result.missing,
+        'Es fehlen keine wesentlichen Aspekte.'
+      );
+
+      const feedbackContainer =
+        document.createElement(
+          'div'
+        );
+
+      feedbackContainer.className =
+        'feedback';
+
+      const feedbackHeading =
+        document.createElement(
+          'h4'
+        );
+
+      feedbackHeading.textContent =
+        'Rückmeldung zur Codeanalyse';
+
+      const feedbackText =
+        document.createElement(
+          'p'
+        );
+
+      feedbackText.textContent =
+        result.feedback ||
+        'Überprüfe deinen Programmcode noch einmal.';
+
+      feedbackContainer.appendChild(
+        feedbackHeading
+      );
+
+      feedbackContainer.appendChild(
+        feedbackText
+      );
+
+      resultBox.appendChild(
+        feedbackContainer
+      );
+    }
+
+
+    function getEvaluationLevelClass(
+      points,
+      maxPoints
+    ) {
+      const ratio =
+        Number(points) /
+        Math.max(
+          1,
+          Number(maxPoints)
+        );
+
+      if (ratio < 0.4) {
+        return 'low';
+      }
+
+      if (ratio < 0.75) {
+        return 'medium';
+      }
+
+      return 'high';
+    }
+
+
+    function appendList(
+      container,
+      headingText,
+      items,
+      emptyText
+    ) {
+      const heading =
+        document.createElement(
+          'h4'
+        );
+
+      heading.textContent =
+        headingText;
+
+      container.appendChild(
+        heading
+      );
+
+      if (
+        !Array.isArray(items) ||
+        items.length === 0
+      ) {
+        const paragraph =
+          document.createElement(
+            'p'
+          );
+
+        paragraph.textContent =
+          emptyText;
+
+        container.appendChild(
+          paragraph
+        );
+
+        return;
+      }
+
+      const list =
+        document.createElement(
+          'ul'
+        );
+
+      items.forEach(
+        function(item) {
+          const listItem =
+            document.createElement(
+              'li'
+            );
+
+          listItem.textContent =
+            String(item);
+
+          list.appendChild(
+            listItem
+          );
+        }
+      );
+
+      container.appendChild(
+        list
+      );
+    }
+
+
+    function showError(
+      resultBox,
+      message
+    ) {
+      resultBox.hidden =
+        false;
+
+      resultBox.className =
+        'result error';
+
+      resultBox.textContent =
+        message;
+    }
+
+
+    /**
+     * Mehrfachauswahl-Quiz (Abschlussquiz), Logik wie Informatik Klasse 9,
+     * Tabellenkalkulation Aufgabe 5a, erweitert um Hinweise je Frage.
+     */
+    function setupChoiceQuiz(config) {
+      const form =
+        document.getElementById(config.formId);
+
+      const resultBox =
+        document.getElementById(config.resultId);
+
+      if (!form || !resultBox) {
+        return;
+      }
+
+      const SOLUTIONS =
+        config.solutions;
+
+      const QUESTION_NAMES =
+        Object.keys(SOLUTIONS);
+
+      function selectedValues(name) {
+        return Array.from(
+          document.querySelectorAll(
+            'input[name="' + name + '"]:checked'
+          )
+        ).map(
+          function(input) {
+            return input.value;
+          }
+        ).sort();
+      }
+
+      function showResult(level, message, hintLines) {
+        resultBox.hidden =
+          false;
+
+        resultBox.className =
+          'result ' + level;
+
+        resultBox.textContent =
+          message;
+
+        if (
+          hintLines &&
+          hintLines.length > 0
+        ) {
+          const list =
+            document.createElement('ul');
+
+          hintLines.forEach(
+            function(line) {
+              const item =
+                document.createElement('li');
+
+              item.textContent =
+                line;
+
+              list.appendChild(item);
+            }
+          );
+
+          resultBox.appendChild(list);
+        }
+      }
+
+      form.querySelectorAll(
+        'input[type="checkbox"]'
+      ).forEach(
+        function(checkbox) {
+          checkbox.addEventListener(
+            'change',
+            function() {
+              resultBox.hidden =
+                true;
+            }
+          );
+        }
+      );
+
+      form.addEventListener(
+        'submit',
+        function(event) {
+          event.preventDefault();
+
+          const hasEmptyQuestion =
+            QUESTION_NAMES.some(
+              function(name) {
+                return selectedValues(name).length === 0;
+              }
+            );
+
+          if (hasEmptyQuestion) {
+            showResult(
+              'low',
+              'Bitte kreuze in jeder Frage mindestens eine Antwort an. Bearbeite die Fragen 1 bis ' +
+                QUESTION_NAMES.length +
+                ' vollständig.'
+            );
+
+            return;
+          }
+
+          const results =
+            QUESTION_NAMES.map(
+              function(name) {
+                const chosen =
+                  selectedValues(name);
+
+                const solution =
+                  SOLUTIONS[name];
+
+                return (
+                  chosen.length === solution.length &&
+                  chosen.join(',') === solution.join(',')
+                );
+              }
+            );
+
+          const correctCount =
+            results.filter(Boolean).length;
+
+          if (correctCount === QUESTION_NAMES.length) {
+            showResult(
+              'high',
+              config.messages.high
+            );
+
+            if (config.onSuccess) {
+              config.onSuccess();
+            }
+
+            return;
+          }
+
+          const wrongNames =
+            QUESTION_NAMES.filter(
+              function(name, index) {
+                return !results[index];
+              }
+            );
+
+          const hintLines =
+            wrongNames.map(
+              function(name) {
+                return (
+                  'Frage ' +
+                  name.replace('quiz-', '') +
+                  ': ' +
+                  (config.questionHints[name] || '')
+                );
+              }
+            );
+
+          if (correctCount === 0) {
+            showResult(
+              'low',
+              config.messages.low,
+              hintLines
+            );
+
+            return;
+          }
+
+          const wrongNumbers =
+            wrongNames.map(
+              function(name) {
+                return Number(name.replace('quiz-', ''));
+              }
+            );
+
+          /* "1, 3 und 4" statt "1 und 3 und 4" */
+          const wrongList =
+            wrongNumbers.length <= 1
+              ? wrongNumbers.join('')
+              : wrongNumbers.slice(0, -1).join(', ') +
+                ' und ' +
+                wrongNumbers[wrongNumbers.length - 1];
+
+          showResult(
+            'medium',
+            'Teilweise korrekt. Richtig sind schon ' +
+              correctCount +
+              ' von ' +
+              QUESTION_NAMES.length +
+              ' Fragen. Prüfe noch einmal Frage ' +
+              wrongList +
+              '. ' +
+              config.messages.mediumHint,
+            hintLines
+          );
+        }
+      );
+    }
+
+
+    function checkTask(taskId) {
+      const checkbox = document.getElementById('complete-' + taskId);
+      const result = document.getElementById('result-' + taskId);
+
+      result.hidden = false;
+
+      if (checkbox.checked) {
+        result.className = 'result success';
+        result.textContent = 'Erledigt. Du kannst mit dem nächsten Teil weiterarbeiten.';
+      } else {
+        result.className = 'result pending';
+        result.textContent = 'Noch nicht abgehakt. Teste dein Ergebnis und bestätige dann die Aussage.';
+      }
+    }
+
+
+    setupChoiceQuiz({
+      formId: 'final-quiz',
+      resultId: 'result-quiz',
+      solutions: {
+        "quiz-1": [
+          "a",
+          "b",
+          "c"
+        ],
+        "quiz-2": [
+          "c"
+        ],
+        "quiz-3": [
+          "a",
+          "b"
+        ],
+        "quiz-4": [
+          "a",
+          "b"
+        ],
+        "quiz-5": [
+          "a",
+          "b"
+        ]
+      },
+      questionHints: {
+        "quiz-1": "Die Zahlen in den Klammern sind Argumente für den Konstruktor: Startposition und Größe der Welt. Ziegel legt erst hinlegen().",
+        "quiz-2": "Jedes der 3 · 5 = 15 Felder der Grundfläche bekommt einen Stapel aus 4 Ziegeln.",
+        "quiz-3": "Stell dir die äußere Schleife als Reihen vor: Für jede Reihe läuft die innere Schleife von vorn bis hinten durch – nacheinander, nicht gleichzeitig.",
+        "quiz-4": "hinlegen(4) stapelt vier Ziegel auf demselben Feld vor dem Roboter. Ein Stapel aus 4 Ziegeln ist zu hoch zum Hinaufsteigen, denn der Roboter überwindet nur einen Ziegel Höhenunterschied.",
+        "quiz-5": "Eine Verzweigung entscheidet zwischen zwei Wegen, eine Schleife wiederholt. Im Struktogramm umschließt der Wiederholungsblock die Anweisungen, die wiederholt werden."
+      },
+      messages: {
+        high: 'Korrekt. Alle fünf Fragen stimmen. Unten ist jetzt die Übersicht mit allen Ergebnissen freigeschaltet.',
+        low: "Noch nicht korrekt. Sieh dir die Hinweise unter den Teilaufgaben noch einmal an und probiere den Quader in der IDE Schritt für Schritt aus.",
+        mediumHint: 'Denk daran: In manchen Fragen sind mehrere Antworten richtig, in anderen genau eine.'
+      },
+      onSuccess: function() {
+        const summary = document.getElementById('quiz-summary');
+        if (summary) summary.hidden = false;
+        savedInputs.setFlag('quizPassed');
+      }
+    });
+
+    /**
+     * Den Programmcode speichert die Online-IDE selbst. Alle weiteren Eingaben
+     * der Seite sichert die gemeinsame Speicherkomponente im localStorage.
+     */
+    const savedInputs =
+      (typeof window.persistTaskInputs === 'function')
+        ? window.persistTaskInputs(
+          "informatik10-oop-aufgabe3-v1",
+          "#complete-3c, #final-quiz input[type=\"checkbox\"]"
+        )
+        : { hasFlag: () => false, setFlag() {} };
+
+    if (savedInputs.hasFlag('quizPassed')) {
+      const summary = document.getElementById('quiz-summary');
+      if (summary) summary.hidden = false;
+    }
+  </script>
+</body>
+</html>

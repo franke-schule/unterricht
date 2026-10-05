@@ -1,0 +1,334 @@
+<!doctype html>
+<html lang="de">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="robots" content="noindex, nofollow">
+    <title>Aufgabe 1 – Binärzahlen und Zeichencodierung | Informatik 11</title>
+    <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns=%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22 viewBox=%220 0 16 16%22%3E%3Ccircle cx=%228%22 cy=%228%22 r=%227%22 fill=%22%23126e9c%22%2F%3E%3C%2Fsvg%3E">
+    <link rel="stylesheet" href="../../../../styles.css?v=20260707">
+    <link rel="stylesheet" href="../1-Kuenstliche-Intelligenz/perzeptron/task5.css?v=20260926a">
+    <link rel="stylesheet" href="../1-Kuenstliche-Intelligenz/knn/task7.css?v=20261003a">
+    <link rel="stylesheet" href="binaer/task1.css?v=20261005a">
+    <script type="module" src="binaer/ui/task1.mjs?v=20261005a"></script>
+  </head>
+  <body class="perceptron-page knn-page binary-page">
+    <div class="site-backdrop" aria-hidden="true"></div>
+    <main class="page-shell">
+      <nav class="topbar" aria-label="Navigation">
+        <a class="back-link" href="../index.html">Zur Aufgabenübersicht</a>
+        <a class="back-link" href="../../../../">Startseite</a>
+      </nav>
+      <header class="perceptron-hero">
+        <p class="perceptron-eyebrow">Codierung und Verschlüsselung · Binärzahlen</p>
+        <h1>Binärzahlen und Zeichencodierung</h1>
+        <p><strong>Aufgabe 1</strong></p>
+        <p>Finde heraus, wie ein Computer mit nur zwei Ziffern zählt, wie du Dezimalzahlen in Binärzahlen umwandelst und wie aus Buchstaben Bitfolgen werden.</p>
+      </header>
+      <p id="save-status" role="status" aria-live="polite">Dein Bearbeitungsstand wird in diesem Browser gespeichert.</p>
+
+      <nav class="tab-list" role="tablist" aria-label="Lernschritte zu Binärzahlen und Zeichencodierung">
+        <button id="tab-count" role="tab" type="button" aria-selected="true" aria-controls="count" data-tab="count">1 Zählen mit zwei Ziffern</button>
+        <button id="tab-place" role="tab" type="button" aria-selected="false" aria-controls="place" data-tab="place" tabindex="-1">2 Stellenwerte</button>
+        <button id="tab-convert" role="tab" type="button" aria-selected="false" aria-controls="convert" data-tab="convert" tabindex="-1">3 Dezimalzahlen umwandeln</button>
+        <button id="tab-chars" role="tab" type="button" aria-selected="false" aria-controls="chars" data-tab="chars" tabindex="-1">4 Buchstaben als Bitfolgen</button>
+        <button id="tab-compare" role="tab" type="button" aria-selected="false" aria-controls="compare" data-tab="compare" tabindex="-1">5 ASCII und Unicode vergleichen</button>
+        <button id="tab-finish" role="tab" type="button" aria-selected="false" aria-controls="finish" data-tab="finish" tabindex="-1">6 Abschlussquiz</button>
+      </nav>
+
+      <!-- Reiter 1 -->
+      <section id="count" class="step-panel" role="tabpanel" aria-labelledby="tab-count" data-panel="count">
+        <p class="kicker">Zählen mit zwei Ziffern</p><h2>Zählen mit nur zwei Ziffern</h2>
+        <p>Ein Computer kennt nur zwei Zustände: Strom an oder Strom aus. Er arbeitet deshalb mit nur zwei Ziffern: 0 und 1.</p>
+        <p class="knn-task"><strong>Beobachte</strong>, wann im Binärzählwerk eine neue Stelle entsteht. <strong>Zähle</strong> dazu mit „+1“ oder lass das Zählwerk laufen.</p>
+        <div class="knn-layout">
+          <figure class="knn-figure">
+            <svg id="counter-plot" class="knn-plot odo-plot" viewBox="0 0 460 320" role="img" aria-labelledby="counter-plot-title counter-plot-desc">
+              <title id="counter-plot-title">Dezimalzählwerk und Binärzählwerk</title>
+              <desc id="counter-plot-desc">Das Dezimalzählwerk zeigt 0, das Binärzählwerk zeigt 0.</desc>
+            </svg>
+          </figure>
+          <div class="knn-side">
+            <div class="knn-actions">
+              <button id="counter-step" class="primary-button" type="button">+1 weiterzählen</button>
+              <button id="counter-play" class="secondary-button" type="button" aria-pressed="false">Abspielen</button>
+            </div>
+            <div class="knn-group">
+              <p id="speed-label" class="knn-group-label">Tempo</p>
+              <div class="knn-choices" role="group" aria-labelledby="speed-label" data-choice="speed">
+                <button type="button" class="knn-choice" aria-pressed="false" data-value="slow">langsam</button>
+                <button type="button" class="knn-choice" aria-pressed="true" data-value="medium">mittel</button>
+                <button type="button" class="knn-choice" aria-pressed="false" data-value="fast">schnell</button>
+              </div>
+            </div>
+            <button id="counter-reset" class="secondary-button" type="button">Zählwerk auf 0 setzen</button>
+            <p id="counter-status" class="step-status" role="status" aria-live="polite">Dezimal 0 · binär 0. Zähle mit „+1“ weiter oder starte „Abspielen“.</p>
+          </div>
+        </div>
+
+        <fieldset id="new-place" data-mc="newPlace"><legend>Bei welchen Zahlen bekommt das Binärzählwerk eine neue Stelle? Kreuze alle passenden Zahlen an.</legend></fieldset>
+        <button id="check-new-place" class="primary-button" type="button">Antwort prüfen</button>
+        <div id="new-place-feedback" class="feedback" role="status" aria-live="polite" hidden></div>
+
+        <fieldset id="carry" data-mc="carry"><legend>Was passiert im Binärzählwerk beim Weiterzählen von 3 (Anzeige 11) auf 4? Kreuze alle passenden Aussagen an.</legend></fieldset>
+        <button id="check-carry" class="primary-button" type="button">Antwort prüfen</button>
+        <div id="carry-feedback" class="feedback" role="status" aria-live="polite" hidden></div>
+
+        <div class="knn-field">
+          <label for="after-input">Was zeigt das Binärzählwerk einen Schritt nach 1111 (15) an?</label>
+          <div class="knn-input-row"><input id="after-input" inputmode="numeric" maxlength="12" autocomplete="off"></div>
+        </div>
+        <button id="check-after" class="primary-button" type="button">Anzeige prüfen</button>
+        <div id="after-feedback" class="feedback" role="status" aria-live="polite" hidden></div>
+
+        <details><summary>Hilfe 1: Worauf achten?</summary><p>Lass das Zählwerk langsam laufen oder zähle mit „+1“. Achte nur auf das untere Zählwerk.</p></details>
+        <details><summary>Hilfe 2: Wann entsteht eine Stelle?</summary><p>Eine neue Stelle entsteht, wenn alle bisherigen Stellen eine 1 zeigen und noch einmal weitergezählt wird – wie im Dezimalzählwerk von 9 auf 10 oder von 99 auf 100.</p></details>
+        <details><summary>Hilfe 3: Teillösung</summary><p>Von 1 auf 2 wird aus 1 die Anzeige 10 – hier entsteht die zweite Stelle. Die dritte Stelle entsteht von 3 (11) auf 4 (100).</p></details>
+        <div class="flow-navigation" data-flow="count"></div>
+      </section>
+
+      <!-- Reiter 2 -->
+      <section id="place" class="step-panel" role="tabpanel" aria-labelledby="tab-place" data-panel="place" hidden>
+        <p class="kicker">Lampen und ihre Werte</p><h2>Was ist eine Stelle wert?</h2>
+        <p>Jede Lampe hat einen festen Wert. Leuchtet sie, zählt ihr Wert mit.</p>
+        <p class="knn-task"><strong>Schalte</strong> die Lampen durch Antippen ein und aus und <strong>beobachte</strong> die angezeigte Summe. <strong>Löse</strong> dann die drei Aufträge.</p>
+        <div class="knn-layout">
+          <figure class="knn-figure">
+            <div id="bit-lamps" class="bit-lamps" role="group" aria-label="Acht Lampen mit den Werten 128 bis 1">
+              <div class="bit-lamp-col"><span class="bit-lamp-value" aria-hidden="true">128</span><button type="button" class="bit-lamp" data-value="128" aria-pressed="false" aria-label="Lampe mit dem Wert 128: aus"><span class="lamp-digit">0</span><span class="lamp-state">aus</span></button></div>
+              <div class="bit-lamp-col"><span class="bit-lamp-value" aria-hidden="true">64</span><button type="button" class="bit-lamp" data-value="64" aria-pressed="false" aria-label="Lampe mit dem Wert 64: aus"><span class="lamp-digit">0</span><span class="lamp-state">aus</span></button></div>
+              <div class="bit-lamp-col"><span class="bit-lamp-value" aria-hidden="true">32</span><button type="button" class="bit-lamp" data-value="32" aria-pressed="false" aria-label="Lampe mit dem Wert 32: aus"><span class="lamp-digit">0</span><span class="lamp-state">aus</span></button></div>
+              <div class="bit-lamp-col"><span class="bit-lamp-value" aria-hidden="true">16</span><button type="button" class="bit-lamp" data-value="16" aria-pressed="false" aria-label="Lampe mit dem Wert 16: aus"><span class="lamp-digit">0</span><span class="lamp-state">aus</span></button></div>
+              <div class="bit-lamp-col"><span class="bit-lamp-value" aria-hidden="true">8</span><button type="button" class="bit-lamp" data-value="8" aria-pressed="false" aria-label="Lampe mit dem Wert 8: aus"><span class="lamp-digit">0</span><span class="lamp-state">aus</span></button></div>
+              <div class="bit-lamp-col"><span class="bit-lamp-value" aria-hidden="true">4</span><button type="button" class="bit-lamp" data-value="4" aria-pressed="false" aria-label="Lampe mit dem Wert 4: aus"><span class="lamp-digit">0</span><span class="lamp-state">aus</span></button></div>
+              <div class="bit-lamp-col"><span class="bit-lamp-value" aria-hidden="true">2</span><button type="button" class="bit-lamp" data-value="2" aria-pressed="false" aria-label="Lampe mit dem Wert 2: aus"><span class="lamp-digit">0</span><span class="lamp-state">aus</span></button></div>
+              <div class="bit-lamp-col"><span class="bit-lamp-value" aria-hidden="true">1</span><button type="button" class="bit-lamp" data-value="1" aria-pressed="false" aria-label="Lampe mit dem Wert 1: aus"><span class="lamp-digit">0</span><span class="lamp-state">aus</span></button></div>
+            </div>
+            <p id="lamp-sum" class="lamp-sum" role="status">0 (alle Lampen aus)</p>
+            <p id="lamp-binary" class="lamp-binary">Binärzahl: 00000000</p>
+          </figure>
+          <div class="knn-side">
+            <p class="knn-task">Auftrag 1: <strong>Stelle</strong> die Zahl 5 dar.</p>
+            <button id="check-target-5" class="primary-button" type="button">Zahl 5 prüfen</button>
+            <div id="target-5-feedback" class="feedback" role="status" aria-live="polite" hidden></div>
+            <p class="knn-task">Auftrag 2: <strong>Stelle</strong> die Zahl 12 dar.</p>
+            <button id="check-target-12" class="primary-button" type="button">Zahl 12 prüfen</button>
+            <div id="target-12-feedback" class="feedback" role="status" aria-live="polite" hidden></div>
+            <p class="knn-task">Auftrag 3: Welche größte Zahl kannst du mit den acht Lampen darstellen?</p>
+            <div class="knn-field">
+              <label for="max-input">Größte Zahl</label>
+              <div class="knn-input-row"><input id="max-input" inputmode="numeric" autocomplete="off"></div>
+            </div>
+            <button id="check-max" class="primary-button" type="button">Größte Zahl prüfen</button>
+            <div id="max-feedback" class="feedback" role="status" aria-live="polite" hidden></div>
+          </div>
+        </div>
+        <details><summary>Hilfe 1: Lampenwerte</summary><p>Über jeder Lampe steht ihr Wert. Eine Lampe, die an ist, zählt mit ihrem Wert zur Summe.</p></details>
+        <details><summary>Hilfe 2: Ausprobieren</summary><p>Probiere aus und beobachte die Summe. Für 5 und für 12 brauchst du jeweils genau zwei Lampen.</p></details>
+        <details><summary>Hilfe 3: Teillösung</summary><p>5 = 4 + 1. Für die größte Zahl müssen möglichst viele Werte zusammenkommen.</p></details>
+        <article id="place-remember" class="remember" hidden>
+          <h3>Merke: Stellenwertsysteme</h3>
+          <p><strong>Dezimalsystem:</strong> zehn Ziffern 0 bis 9, Basis 10. Jede Stelle ist zehnmal so viel wert wie die Stelle rechts von ihr: 345 = 3 · 100 + 4 · 10 + 5 · 1.</p>
+          <p><strong>Binärsystem (Dualsystem):</strong> nur die Ziffern 0 und 1, Basis 2. Jede Stelle ist doppelt so viel wert wie die Stelle rechts von ihr. Die Stellenwerte sind Zweierpotenzen, von rechts beginnend: 2⁰ = 1, 2¹ = 2, 2² = 4, 2³ = 8, 2⁴ = 16, 2⁵ = 32, 2⁶ = 64, 2⁷ = 128. Beispiel: 01000101 = 64 + 4 + 1 = 69.</p>
+          <p>Eine Stelle einer Binärzahl heißt <strong>Bit</strong> (von engl. <em>binary digit</em>). Ein Bit ist 0 oder 1 – wie eine Lampe, die aus oder an ist. Eine Folge von Bits wie 01000101 heißt <strong>Bitfolge</strong>.</p>
+          <p>8 Bit bilden ein <strong>Byte</strong>. Mit 8 Bit gibt es 2⁸ = 256 verschiedene Bitfolgen; sie stellen die Zahlen von 0 bis 255 dar.</p>
+        </article>
+        <div class="flow-navigation" data-flow="place"></div>
+      </section>
+
+      <!-- Reiter 3 -->
+      <section id="convert" class="step-panel" role="tabpanel" aria-labelledby="tab-convert" data-panel="convert" hidden>
+        <p class="kicker">Dezimalzahlen umwandeln</p><h2>Dezimalzahlen binär darstellen</h2>
+        <p class="knn-task"><strong>Stelle</strong> die Dezimalzahlen binär dar und orientiere dich am Beispiel 7. Tippe ein Feld an, um zwischen 0 und 1 zu wechseln, und <strong>prüfe</strong> jede Zeile einzeln.</p>
+        <p id="convert-progress" class="convert-progress" role="status">0 von 7 Zahlen richtig</p>
+        <div class="knn-table-wrap">
+          <table id="convert-table" class="knn-table bin-table">
+            <caption>Dezimalzahlen in Binärzahlen umwandeln</caption>
+            <thead><tr><th scope="col">Dezimalzahl</th><th scope="col">2⁷ = 128</th><th scope="col">2⁶ = 64</th><th scope="col">2⁵ = 32</th><th scope="col">2⁴ = 16</th><th scope="col">2³ = 8</th><th scope="col">2² = 4</th><th scope="col">2¹ = 2</th><th scope="col">2⁰ = 1</th><th scope="col">Prüfen</th></tr></thead>
+            <tbody>
+              <tr class="example-row"><th scope="row">7 (Beispiel)</th><td class="bit-static">0<span class="bit-place" aria-hidden="true">128</span></td><td class="bit-static">0<span class="bit-place" aria-hidden="true">64</span></td><td class="bit-static">0<span class="bit-place" aria-hidden="true">32</span></td><td class="bit-static">0<span class="bit-place" aria-hidden="true">16</span></td><td class="bit-static">0<span class="bit-place" aria-hidden="true">8</span></td><td class="bit-static">1<span class="bit-place" aria-hidden="true">4</span></td><td class="bit-static">1<span class="bit-place" aria-hidden="true">2</span></td><td class="bit-static">1<span class="bit-place" aria-hidden="true">1</span></td><td class="check-cell"></td></tr>
+              <tr data-number="18"><th scope="row">18</th><td><button type="button" class="bit-toggle" data-place="128" aria-pressed="false" aria-label="18: Stellenwert 128, Bit 0"><span class="bit-digit">0</span><span class="bit-place" aria-hidden="true">128</span></button></td><td><button type="button" class="bit-toggle" data-place="64" aria-pressed="false" aria-label="18: Stellenwert 64, Bit 0"><span class="bit-digit">0</span><span class="bit-place" aria-hidden="true">64</span></button></td><td><button type="button" class="bit-toggle" data-place="32" aria-pressed="false" aria-label="18: Stellenwert 32, Bit 0"><span class="bit-digit">0</span><span class="bit-place" aria-hidden="true">32</span></button></td><td><button type="button" class="bit-toggle" data-place="16" aria-pressed="false" aria-label="18: Stellenwert 16, Bit 0"><span class="bit-digit">0</span><span class="bit-place" aria-hidden="true">16</span></button></td><td><button type="button" class="bit-toggle" data-place="8" aria-pressed="false" aria-label="18: Stellenwert 8, Bit 0"><span class="bit-digit">0</span><span class="bit-place" aria-hidden="true">8</span></button></td><td><button type="button" class="bit-toggle" data-place="4" aria-pressed="false" aria-label="18: Stellenwert 4, Bit 0"><span class="bit-digit">0</span><span class="bit-place" aria-hidden="true">4</span></button></td><td><button type="button" class="bit-toggle" data-place="2" aria-pressed="false" aria-label="18: Stellenwert 2, Bit 0"><span class="bit-digit">0</span><span class="bit-place" aria-hidden="true">2</span></button></td><td><button type="button" class="bit-toggle" data-place="1" aria-pressed="false" aria-label="18: Stellenwert 1, Bit 0"><span class="bit-digit">0</span><span class="bit-place" aria-hidden="true">1</span></button></td><td class="check-cell"><button type="button" class="secondary-button row-check" aria-label="Zeile 18 prüfen">Zeile prüfen</button></td></tr>
+              <tr class="feedback-row"><td colspan="10"><div id="row-feedback-18" class="feedback" role="status" aria-live="polite" hidden></div></td></tr>
+              <tr data-number="27"><th scope="row">27</th><td><button type="button" class="bit-toggle" data-place="128" aria-pressed="false" aria-label="27: Stellenwert 128, Bit 0"><span class="bit-digit">0</span><span class="bit-place" aria-hidden="true">128</span></button></td><td><button type="button" class="bit-toggle" data-place="64" aria-pressed="false" aria-label="27: Stellenwert 64, Bit 0"><span class="bit-digit">0</span><span class="bit-place" aria-hidden="true">64</span></button></td><td><button type="button" class="bit-toggle" data-place="32" aria-pressed="false" aria-label="27: Stellenwert 32, Bit 0"><span class="bit-digit">0</span><span class="bit-place" aria-hidden="true">32</span></button></td><td><button type="button" class="bit-toggle" data-place="16" aria-pressed="false" aria-label="27: Stellenwert 16, Bit 0"><span class="bit-digit">0</span><span class="bit-place" aria-hidden="true">16</span></button></td><td><button type="button" class="bit-toggle" data-place="8" aria-pressed="false" aria-label="27: Stellenwert 8, Bit 0"><span class="bit-digit">0</span><span class="bit-place" aria-hidden="true">8</span></button></td><td><button type="button" class="bit-toggle" data-place="4" aria-pressed="false" aria-label="27: Stellenwert 4, Bit 0"><span class="bit-digit">0</span><span class="bit-place" aria-hidden="true">4</span></button></td><td><button type="button" class="bit-toggle" data-place="2" aria-pressed="false" aria-label="27: Stellenwert 2, Bit 0"><span class="bit-digit">0</span><span class="bit-place" aria-hidden="true">2</span></button></td><td><button type="button" class="bit-toggle" data-place="1" aria-pressed="false" aria-label="27: Stellenwert 1, Bit 0"><span class="bit-digit">0</span><span class="bit-place" aria-hidden="true">1</span></button></td><td class="check-cell"><button type="button" class="secondary-button row-check" aria-label="Zeile 27 prüfen">Zeile prüfen</button></td></tr>
+              <tr class="feedback-row"><td colspan="10"><div id="row-feedback-27" class="feedback" role="status" aria-live="polite" hidden></div></td></tr>
+              <tr data-number="100"><th scope="row">100</th><td><button type="button" class="bit-toggle" data-place="128" aria-pressed="false" aria-label="100: Stellenwert 128, Bit 0"><span class="bit-digit">0</span><span class="bit-place" aria-hidden="true">128</span></button></td><td><button type="button" class="bit-toggle" data-place="64" aria-pressed="false" aria-label="100: Stellenwert 64, Bit 0"><span class="bit-digit">0</span><span class="bit-place" aria-hidden="true">64</span></button></td><td><button type="button" class="bit-toggle" data-place="32" aria-pressed="false" aria-label="100: Stellenwert 32, Bit 0"><span class="bit-digit">0</span><span class="bit-place" aria-hidden="true">32</span></button></td><td><button type="button" class="bit-toggle" data-place="16" aria-pressed="false" aria-label="100: Stellenwert 16, Bit 0"><span class="bit-digit">0</span><span class="bit-place" aria-hidden="true">16</span></button></td><td><button type="button" class="bit-toggle" data-place="8" aria-pressed="false" aria-label="100: Stellenwert 8, Bit 0"><span class="bit-digit">0</span><span class="bit-place" aria-hidden="true">8</span></button></td><td><button type="button" class="bit-toggle" data-place="4" aria-pressed="false" aria-label="100: Stellenwert 4, Bit 0"><span class="bit-digit">0</span><span class="bit-place" aria-hidden="true">4</span></button></td><td><button type="button" class="bit-toggle" data-place="2" aria-pressed="false" aria-label="100: Stellenwert 2, Bit 0"><span class="bit-digit">0</span><span class="bit-place" aria-hidden="true">2</span></button></td><td><button type="button" class="bit-toggle" data-place="1" aria-pressed="false" aria-label="100: Stellenwert 1, Bit 0"><span class="bit-digit">0</span><span class="bit-place" aria-hidden="true">1</span></button></td><td class="check-cell"><button type="button" class="secondary-button row-check" aria-label="Zeile 100 prüfen">Zeile prüfen</button></td></tr>
+              <tr class="feedback-row"><td colspan="10"><div id="row-feedback-100" class="feedback" role="status" aria-live="polite" hidden></div></td></tr>
+              <tr data-number="200"><th scope="row">200</th><td><button type="button" class="bit-toggle" data-place="128" aria-pressed="false" aria-label="200: Stellenwert 128, Bit 0"><span class="bit-digit">0</span><span class="bit-place" aria-hidden="true">128</span></button></td><td><button type="button" class="bit-toggle" data-place="64" aria-pressed="false" aria-label="200: Stellenwert 64, Bit 0"><span class="bit-digit">0</span><span class="bit-place" aria-hidden="true">64</span></button></td><td><button type="button" class="bit-toggle" data-place="32" aria-pressed="false" aria-label="200: Stellenwert 32, Bit 0"><span class="bit-digit">0</span><span class="bit-place" aria-hidden="true">32</span></button></td><td><button type="button" class="bit-toggle" data-place="16" aria-pressed="false" aria-label="200: Stellenwert 16, Bit 0"><span class="bit-digit">0</span><span class="bit-place" aria-hidden="true">16</span></button></td><td><button type="button" class="bit-toggle" data-place="8" aria-pressed="false" aria-label="200: Stellenwert 8, Bit 0"><span class="bit-digit">0</span><span class="bit-place" aria-hidden="true">8</span></button></td><td><button type="button" class="bit-toggle" data-place="4" aria-pressed="false" aria-label="200: Stellenwert 4, Bit 0"><span class="bit-digit">0</span><span class="bit-place" aria-hidden="true">4</span></button></td><td><button type="button" class="bit-toggle" data-place="2" aria-pressed="false" aria-label="200: Stellenwert 2, Bit 0"><span class="bit-digit">0</span><span class="bit-place" aria-hidden="true">2</span></button></td><td><button type="button" class="bit-toggle" data-place="1" aria-pressed="false" aria-label="200: Stellenwert 1, Bit 0"><span class="bit-digit">0</span><span class="bit-place" aria-hidden="true">1</span></button></td><td class="check-cell"><button type="button" class="secondary-button row-check" aria-label="Zeile 200 prüfen">Zeile prüfen</button></td></tr>
+              <tr class="feedback-row"><td colspan="10"><div id="row-feedback-200" class="feedback" role="status" aria-live="polite" hidden></div></td></tr>
+              <tr data-number="50"><th scope="row">50</th><td><button type="button" class="bit-toggle" data-place="128" aria-pressed="false" aria-label="50: Stellenwert 128, Bit 0"><span class="bit-digit">0</span><span class="bit-place" aria-hidden="true">128</span></button></td><td><button type="button" class="bit-toggle" data-place="64" aria-pressed="false" aria-label="50: Stellenwert 64, Bit 0"><span class="bit-digit">0</span><span class="bit-place" aria-hidden="true">64</span></button></td><td><button type="button" class="bit-toggle" data-place="32" aria-pressed="false" aria-label="50: Stellenwert 32, Bit 0"><span class="bit-digit">0</span><span class="bit-place" aria-hidden="true">32</span></button></td><td><button type="button" class="bit-toggle" data-place="16" aria-pressed="false" aria-label="50: Stellenwert 16, Bit 0"><span class="bit-digit">0</span><span class="bit-place" aria-hidden="true">16</span></button></td><td><button type="button" class="bit-toggle" data-place="8" aria-pressed="false" aria-label="50: Stellenwert 8, Bit 0"><span class="bit-digit">0</span><span class="bit-place" aria-hidden="true">8</span></button></td><td><button type="button" class="bit-toggle" data-place="4" aria-pressed="false" aria-label="50: Stellenwert 4, Bit 0"><span class="bit-digit">0</span><span class="bit-place" aria-hidden="true">4</span></button></td><td><button type="button" class="bit-toggle" data-place="2" aria-pressed="false" aria-label="50: Stellenwert 2, Bit 0"><span class="bit-digit">0</span><span class="bit-place" aria-hidden="true">2</span></button></td><td><button type="button" class="bit-toggle" data-place="1" aria-pressed="false" aria-label="50: Stellenwert 1, Bit 0"><span class="bit-digit">0</span><span class="bit-place" aria-hidden="true">1</span></button></td><td class="check-cell"><button type="button" class="secondary-button row-check" aria-label="Zeile 50 prüfen">Zeile prüfen</button></td></tr>
+              <tr class="feedback-row"><td colspan="10"><div id="row-feedback-50" class="feedback" role="status" aria-live="polite" hidden></div></td></tr>
+              <tr data-number="10"><th scope="row">10</th><td><button type="button" class="bit-toggle" data-place="128" aria-pressed="false" aria-label="10: Stellenwert 128, Bit 0"><span class="bit-digit">0</span><span class="bit-place" aria-hidden="true">128</span></button></td><td><button type="button" class="bit-toggle" data-place="64" aria-pressed="false" aria-label="10: Stellenwert 64, Bit 0"><span class="bit-digit">0</span><span class="bit-place" aria-hidden="true">64</span></button></td><td><button type="button" class="bit-toggle" data-place="32" aria-pressed="false" aria-label="10: Stellenwert 32, Bit 0"><span class="bit-digit">0</span><span class="bit-place" aria-hidden="true">32</span></button></td><td><button type="button" class="bit-toggle" data-place="16" aria-pressed="false" aria-label="10: Stellenwert 16, Bit 0"><span class="bit-digit">0</span><span class="bit-place" aria-hidden="true">16</span></button></td><td><button type="button" class="bit-toggle" data-place="8" aria-pressed="false" aria-label="10: Stellenwert 8, Bit 0"><span class="bit-digit">0</span><span class="bit-place" aria-hidden="true">8</span></button></td><td><button type="button" class="bit-toggle" data-place="4" aria-pressed="false" aria-label="10: Stellenwert 4, Bit 0"><span class="bit-digit">0</span><span class="bit-place" aria-hidden="true">4</span></button></td><td><button type="button" class="bit-toggle" data-place="2" aria-pressed="false" aria-label="10: Stellenwert 2, Bit 0"><span class="bit-digit">0</span><span class="bit-place" aria-hidden="true">2</span></button></td><td><button type="button" class="bit-toggle" data-place="1" aria-pressed="false" aria-label="10: Stellenwert 1, Bit 0"><span class="bit-digit">0</span><span class="bit-place" aria-hidden="true">1</span></button></td><td class="check-cell"><button type="button" class="secondary-button row-check" aria-label="Zeile 10 prüfen">Zeile prüfen</button></td></tr>
+              <tr class="feedback-row"><td colspan="10"><div id="row-feedback-10" class="feedback" role="status" aria-live="polite" hidden></div></td></tr>
+              <tr data-number="250"><th scope="row">250</th><td><button type="button" class="bit-toggle" data-place="128" aria-pressed="false" aria-label="250: Stellenwert 128, Bit 0"><span class="bit-digit">0</span><span class="bit-place" aria-hidden="true">128</span></button></td><td><button type="button" class="bit-toggle" data-place="64" aria-pressed="false" aria-label="250: Stellenwert 64, Bit 0"><span class="bit-digit">0</span><span class="bit-place" aria-hidden="true">64</span></button></td><td><button type="button" class="bit-toggle" data-place="32" aria-pressed="false" aria-label="250: Stellenwert 32, Bit 0"><span class="bit-digit">0</span><span class="bit-place" aria-hidden="true">32</span></button></td><td><button type="button" class="bit-toggle" data-place="16" aria-pressed="false" aria-label="250: Stellenwert 16, Bit 0"><span class="bit-digit">0</span><span class="bit-place" aria-hidden="true">16</span></button></td><td><button type="button" class="bit-toggle" data-place="8" aria-pressed="false" aria-label="250: Stellenwert 8, Bit 0"><span class="bit-digit">0</span><span class="bit-place" aria-hidden="true">8</span></button></td><td><button type="button" class="bit-toggle" data-place="4" aria-pressed="false" aria-label="250: Stellenwert 4, Bit 0"><span class="bit-digit">0</span><span class="bit-place" aria-hidden="true">4</span></button></td><td><button type="button" class="bit-toggle" data-place="2" aria-pressed="false" aria-label="250: Stellenwert 2, Bit 0"><span class="bit-digit">0</span><span class="bit-place" aria-hidden="true">2</span></button></td><td><button type="button" class="bit-toggle" data-place="1" aria-pressed="false" aria-label="250: Stellenwert 1, Bit 0"><span class="bit-digit">0</span><span class="bit-place" aria-hidden="true">1</span></button></td><td class="check-cell"><button type="button" class="secondary-button row-check" aria-label="Zeile 250 prüfen">Zeile prüfen</button></td></tr>
+              <tr class="feedback-row"><td colspan="10"><div id="row-feedback-250" class="feedback" role="status" aria-live="polite" hidden></div></td></tr>
+            </tbody>
+          </table>
+        </div>
+        <details><summary>Hilfe 1: Wo anfangen?</summary><p>Suche den größten Stellenwert, der noch in die Zahl passt. Dort steht die erste 1.</p></details>
+        <details><summary>Hilfe 2: Wie weiter?</summary><p>Ziehe diesen Stellenwert von der Zahl ab. Mit dem Rest machst du genauso weiter, bis der Rest 0 ist. Alle anderen Bits sind 0.</p></details>
+        <details><summary>Hilfe 3: Teillösung</summary><p>Beispiel 7: In 7 passt 4 → Bit 4 = 1, Rest 7 − 4 = 3. In 3 passt 2 → Bit 2 = 1, Rest 1. In 1 passt 1 → Bit 1 = 1, Rest 0. Ergebnis: 00000111. Erster Schritt für 100: 128 passt nicht → Bit 128 = 0. 64 passt → Bit 64 = 1, Rest 100 − 64 = 36.</p></details>
+        <article id="convert-remember" class="remember" hidden>
+          <p><strong>Merke: Dezimalzahl in Binärzahl umwandeln.</strong> Suche den größten Stellenwert, der in die Zahl passt, und setze dort eine 1. Ziehe ihn ab und wiederhole das mit dem Rest, bis der Rest 0 ist. Alle übrigen Bits sind 0. <strong>Probe:</strong> Addiere die Stellenwerte aller Einsen – es muss die Dezimalzahl herauskommen.</p>
+        </article>
+        <div class="flow-navigation" data-flow="convert"></div>
+      </section>
+
+      <!-- Reiter 4 -->
+      <section id="chars" class="step-panel" role="tabpanel" aria-labelledby="tab-chars" data-panel="chars" hidden>
+        <p class="kicker">Buchstaben als Bitfolgen</p><h2>Buchstaben als Bitfolgen</h2>
+        <p>Ein Computer speichert nur Bitfolgen. Möchte man Buchstaben durch binäre Daten darstellen, muss man jedem Zeichen eine eindeutige Bitfolge zuordnen. Eine weit verbreitete Zuordnung heißt ASCII (American Standard Code for Information Interchange).</p>
+
+        <h3>Wie wird „Hallo“ gespeichert?</h3>
+        <p class="knn-task"><strong>Klicke</strong> auf „Nächster Schritt“ und <strong>verfolge</strong>, wie aus jedem Zeichen eine Nummer und daraus eine Bitfolge wird.</p>
+        <div class="knn-layout">
+          <figure class="knn-figure">
+            <div id="ascii-pipeline" class="pipeline" role="group" aria-label="Zeichen, Nummer in der ASCII-Tabelle und Bitfolge">
+              <div id="ascii-char-box" class="pipe-box"><p class="pipe-title">Zeichen</p><p id="ascii-char" class="pipe-big char-font">?</p></div>
+              <div class="pipe-arrow" aria-hidden="true"><svg viewBox="0 0 24 36" width="24" height="36" focusable="false"><rect x="10" y="0" width="4" height="24"></rect><polygon points="3,22 21,22 12,36"></polygon></svg></div>
+              <div id="ascii-number-box" class="pipe-box"><p class="pipe-title">Nummer in der ASCII-Tabelle</p><p id="ascii-number" class="pipe-big">?</p></div>
+              <div class="pipe-arrow" aria-hidden="true"><svg viewBox="0 0 24 36" width="24" height="36" focusable="false"><rect x="10" y="0" width="4" height="24"></rect><polygon points="3,22 21,22 12,36"></polygon></svg></div>
+              <div id="ascii-bits-box" class="pipe-box"><p id="ascii-bits-title" class="pipe-title">Bitfolge</p><div id="ascii-bits" class="bit-lamps is-readonly"></div><p id="ascii-bits-note" class="lamp-note">bei ASCII immer 0</p></div>
+            </div>
+            <p id="ascii-stored" class="pipe-stored">Bisher gespeichert: –</p>
+            <p id="ascii-step-status" class="step-status" aria-live="polite">Klicke auf „Nächster Schritt“, um mit Schritt 1 von 9 zu beginnen.</p>
+            <button id="next-ascii-step" class="primary-button" type="button">Nächster Schritt</button>
+          </figure>
+          <div class="knn-side">
+            <div class="knn-table-wrap">
+              <table id="ascii-table" class="knn-table ascii-table">
+                <caption>ASCII-Tabelle (Ausschnitt)</caption>
+                <thead><tr><th scope="col">Nr.</th><th scope="col">Zeichen</th><th scope="col">Bitfolge (7 Bit)</th></tr></thead>
+                <tbody>
+                  <tr><td data-nr="0–31"><span class="row-marker" aria-hidden="true"></span>0–31</td><td>Steuerzeichen (z. B. 10 = Zeilenumbruch)</td><td>–</td></tr>
+                  <tr><td data-nr="32"><span class="row-marker" aria-hidden="true"></span>32</td><td>Leerzeichen</td><td>0100000</td></tr>
+                  <tr><td data-nr="48"><span class="row-marker" aria-hidden="true"></span>48</td><td>0</td><td>0110000</td></tr>
+                  <tr class="gap-row"><td colspan="3"><span role="img" aria-label="weitere Zeichen">⋮</span></td></tr>
+                  <tr><td data-nr="57"><span class="row-marker" aria-hidden="true"></span>57</td><td>9</td><td>0111001</td></tr>
+                  <tr><td data-nr="65"><span class="row-marker" aria-hidden="true"></span>65</td><td>A</td><td>1000001</td></tr>
+                  <tr class="gap-row"><td colspan="3"><span role="img" aria-label="weitere Zeichen">⋮</span></td></tr>
+                  <tr><td data-nr="72"><span class="row-marker" aria-hidden="true"></span>72</td><td>H</td><td>1001000</td></tr>
+                  <tr class="gap-row"><td colspan="3"><span role="img" aria-label="weitere Zeichen">⋮</span></td></tr>
+                  <tr><td data-nr="90"><span class="row-marker" aria-hidden="true"></span>90</td><td>Z</td><td>1011010</td></tr>
+                  <tr><td data-nr="97"><span class="row-marker" aria-hidden="true"></span>97</td><td>a</td><td>1100001</td></tr>
+                  <tr class="gap-row"><td colspan="3"><span role="img" aria-label="weitere Zeichen">⋮</span></td></tr>
+                  <tr><td data-nr="108"><span class="row-marker" aria-hidden="true"></span>108</td><td>l</td><td>1101100</td></tr>
+                  <tr><td data-nr="111"><span class="row-marker" aria-hidden="true"></span>111</td><td>o</td><td>1101111</td></tr>
+                  <tr class="gap-row"><td colspan="3"><span role="img" aria-label="weitere Zeichen">⋮</span></td></tr>
+                  <tr><td data-nr="122"><span class="row-marker" aria-hidden="true"></span>122</td><td>z</td><td>1111010</td></tr>
+                  <tr><td data-nr="127"><span class="row-marker" aria-hidden="true"></span>127</td><td>Steuerzeichen (DEL)</td><td>1111111</td></tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+        <article id="charset-remember" class="remember" hidden>
+          <p><strong>Merke: Zeichensatz.</strong> Eine Zuordnung, die jedem Zeichen eine eindeutige Nummer und damit eine Bitfolge gibt, heißt <strong>Zeichensatz</strong> (allgemeiner: <strong>Codierung</strong>). Der Zeichensatz <strong>ASCII</strong> wurde 1963 festgelegt. Er verwendet 7 Bit und hat damit Platz für 128 Zeichen: Steuerzeichen, Ziffern, lateinische Groß- und Kleinbuchstaben ohne Umlaute sowie Satz- und Sonderzeichen.</p>
+          <p>Spätere 8-Bit-Erweiterungen wie ISO 8859-1 nutzen zusätzlich die Nummern 128 bis 255, zum Beispiel für Umlaute – aber nicht einheitlich: Je nach Erweiterung steht unter derselben Nummer ein anderes Zeichen.</p>
+        </article>
+
+        <h3>Unicode: eine Nummer für jedes Zeichen</h3>
+        <p class="knn-task"><strong>Klicke</strong> auf „Nächster Schritt“ und <strong>vergleiche</strong>, welche Nummer ein Zeichen in Unicode bekommt und wie viele Byte es belegt.</p>
+        <div class="knn-layout is-single">
+          <figure class="knn-figure">
+            <div id="unicode-pipeline" class="pipeline" role="group" aria-label="Zeichen, Codepunkt in Unicode und Speicherung in UTF-8">
+              <div id="unicode-char-box" class="pipe-box"><p class="pipe-title">Zeichen</p><p id="unicode-char" class="pipe-big char-font">?</p></div>
+              <div class="pipe-arrow" aria-hidden="true"><svg viewBox="0 0 24 36" width="24" height="36" focusable="false"><rect x="10" y="0" width="4" height="24"></rect><polygon points="3,22 21,22 12,36"></polygon></svg></div>
+              <div id="unicode-code-box" class="pipe-box"><p class="pipe-title">Codepunkt in Unicode</p><p id="unicode-code" class="pipe-big">?</p><p id="unicode-code-dec" class="pipe-small"></p></div>
+              <div class="pipe-arrow" aria-hidden="true"><svg viewBox="0 0 24 36" width="24" height="36" focusable="false"><rect x="10" y="0" width="4" height="24"></rect><polygon points="3,22 21,22 12,36"></polygon></svg></div>
+              <div id="unicode-bytes-box" class="pipe-box"><p class="pipe-title">Speicherung in UTF-8</p><div id="unicode-bytes" class="byte-row"></div><p id="unicode-byte-count" class="pipe-small"></p></div>
+            </div>
+            <p class="knn-task">Codepunkte schreibt man mit „U+“ und einer Nummer im Hexadezimalsystem, das du später kennenlernst. In Klammern steht die Nummer als Dezimalzahl.</p>
+            <p id="unicode-step-status" class="step-status" aria-live="polite">Klicke auf „Nächster Schritt“, um mit Schritt 1 von 6 zu beginnen.</p>
+            <button id="next-unicode-step" class="primary-button" type="button">Nächster Schritt</button>
+          </figure>
+        </div>
+        <article id="unicode-remember" class="remember" hidden>
+          <p><strong>Merke: Unicode und UTF-8.</strong> <strong>Unicode</strong> ordnet jedem Zeichen aller Schriftsysteme sowie Symbolen und Emojis eine eindeutige Nummer zu, den <strong>Codepunkt</strong>. Die ersten 128 Codepunkte stimmen mit ASCII überein. Wie ein Codepunkt als Bytes gespeichert wird, legt eine Codierung fest – meist <strong>UTF-8</strong>. Dort belegt ein Zeichen je nach Codepunkt 1 bis 4 Byte, ASCII-Zeichen nur 1 Byte.</p>
+        </article>
+
+        <h3>Zeichen-Inspektor</h3>
+        <p class="knn-task"><strong>Gib</strong> ein Wort mit Umlaut und ein Emoji ein, zum Beispiel „Grüße 😀“. <strong>Kreuze</strong> danach an, was du beobachtest.</p>
+        <div class="knn-field">
+          <label for="inspector-input">Dein Text (höchstens 20 Zeichen)</label>
+          <div class="knn-input-row"><input id="inspector-input" class="char-font" type="text" maxlength="20" placeholder="Grüße 😀" autocomplete="off"></div>
+        </div>
+        <div class="knn-table-wrap">
+          <table id="inspector-table" class="knn-table inspector-table">
+            <caption>Zeichen im Inspektor</caption>
+            <thead><tr><th scope="col">Zeichen</th><th scope="col">Codepunkt</th><th scope="col">in ASCII?</th><th scope="col">Byte in UTF-8</th></tr></thead>
+            <tbody id="inspector-body"></tbody>
+          </table>
+        </div>
+        <p id="inspector-summary" class="inspector-summary" role="status">Gib oben einen Text ein.</p>
+        <p class="inspector-hint">Hinweis: Manche Emojis setzen sich aus mehreren Codepunkten zusammen. Der Inspektor zeigt jeden Codepunkt in einer eigenen Zeile.</p>
+        <fieldset id="inspector-options" data-mc="inspectorOptions"><legend>Was zeigt der Inspektor für „Grüße 😀“? Kreuze alle passenden Aussagen an.</legend></fieldset>
+        <button id="check-inspector" class="primary-button" type="button">Beobachtung prüfen</button>
+        <div id="inspector-feedback" class="feedback" role="status" aria-live="polite" hidden></div>
+        <details><summary>Hilfe 1: Genau eintippen</summary><p>Gib genau „Grüße 😀“ in den Zeichen-Inspektor ein und lies jede Zeile der Tabelle.</p></details>
+        <details><summary>Hilfe 2: Spalten vergleichen</summary><p>Achte auf die Spalte „in ASCII?“: Nur Zeichen, die in ASCII vorkommen, belegen in UTF-8 1 Byte.</p></details>
+        <details><summary>Hilfe 3: Teillösung</summary><p>„ü“ hat den Codepunkt U+00FC (252) und belegt 2 Byte. Prüfe die anderen Zeichen genauso.</p></details>
+        <div class="flow-navigation" data-flow="chars"></div>
+      </section>
+
+      <!-- Reiter 5 -->
+      <section id="compare" class="step-panel" role="tabpanel" aria-labelledby="tab-compare" data-panel="compare" hidden>
+        <p class="kicker">ASCII und Unicode vergleichen</p><h2>ASCII und Unicode vergleichen</h2>
+        <p>Du kennst jetzt zwei Zeichensätze. Die beiden Notizzettel helfen dir, deine Beschreibung zu ordnen.</p>
+        <div class="code-notes">
+          <article id="note-ascii" class="code-note">
+            <h3>ASCII</h3>
+            <ul>
+              <li>Wie viele Bit, wie viele Zeichen?</li>
+              <li>Welche Zeichen sind enthalten – welche fehlen?</li>
+            </ul>
+          </article>
+          <article id="note-unicode" class="code-note">
+            <h3>Unicode</h3>
+            <ul>
+              <li>Wie viele Zeichen, aus welchen Schriften?</li>
+              <li>Wie hängt Unicode mit ASCII zusammen?</li>
+              <li>Wie viel Speicher braucht ein Zeichen?</li>
+            </ul>
+          </article>
+        </div>
+        <article class="card">
+          <p><strong>Beschreibe</strong> den Unterschied zwischen ASCII und Unicode. Gehe auf den Umfang, die darstellbaren Zeichen und den Speicherbedarf ein.</p>
+          <label for="compare-answer">Deine Beschreibung<textarea id="compare-answer" maxlength="600" rows="6" placeholder="ASCII …"></textarea></label>
+          <p class="counter" id="compare-counter">0 von 600 Zeichen</p>
+          <p class="privacy"><strong>Hinweis:</strong> Gib keine personenbezogenen Informationen ein. Deine Antwort wird zur automatischen Auswertung an den Skriptserver und dort an ein KI-System übertragen.</p>
+          <button id="check-compare-answer" class="primary-button" type="button">Beschreibung überprüfen</button>
+          <div id="compare-answer-feedback" class="feedback" role="status" aria-live="polite" hidden></div>
+        </article>
+        <details><summary>Hilfe 1: Umfang</summary><p>Denke an die Anzahl der Zeichen: Wie viele passen in ASCII, wie viele in Unicode?</p></details>
+        <details><summary>Hilfe 2: Zeichen-Inspektor</summary><p>Welche Zeichen aus dem Zeichen-Inspektor fehlten in ASCII? Wie viele Byte haben sie in UTF-8 belegt?</p></details>
+        <details><summary>Hilfe 3: Satzanfänge</summary><p>„ASCII verwendet … Bit und kann … Zeichen darstellen. Unicode dagegen …“</p></details>
+        <div class="flow-navigation" data-flow="compare"></div>
+      </section>
+
+      <!-- Reiter 6 -->
+      <section id="finish" class="step-panel" role="tabpanel" aria-labelledby="tab-finish" data-panel="finish" hidden>
+        <p class="kicker">Abschlussquiz</p><h2>Das Wichtigste sichern</h2>
+        <ul>
+          <li>Im Binärsystem gibt es nur die Ziffern 0 und 1. Die Stellenwerte sind Zweierpotenzen: von rechts 1, 2, 4, 8, 16, 32, 64, 128.</li>
+          <li>Eine Binärstelle heißt Bit, 8 Bit bilden ein Byte. Mit 8 Bit lassen sich die Zahlen von 0 bis 255 darstellen.</li>
+          <li>Umwandeln: größten passenden Stellenwert suchen, abziehen, mit dem Rest wiederholen. Probe: Stellenwerte aller Einsen addieren.</li>
+          <li>Ein Zeichensatz ordnet jedem Zeichen eine eindeutige Nummer und damit eine Bitfolge zu.</li>
+          <li>ASCII: 7 Bit, 128 Zeichen – lateinische Buchstaben ohne Umlaute, Ziffern, Satz- und Steuerzeichen.</li>
+          <li>Unicode: eine eindeutige Nummer (Codepunkt) für die Zeichen aller Schriften, für Symbole und Emojis; die ersten 128 sind die ASCII-Zeichen. In UTF-8 belegt ein Zeichen 1 bis 4 Byte.</li>
+        </ul>
+        <section id="final-quiz" aria-labelledby="quiz-title">
+          <h3 id="quiz-title">Abschlussquiz</h3>
+          <p>Kreuze alle richtigen Aussagen an. Bei manchen Fragen sind mehrere Antworten richtig.</p>
+          <p id="quiz-progress">0 von 6 Fragen vollständig richtig</p>
+          <form id="quiz-form">
+            <div id="quiz-questions"></div>
+            <button class="primary-button" type="submit">Quiz auswerten</button>
+          </form>
+          <div id="quiz-feedback" class="feedback" role="status" aria-live="polite" hidden></div>
+          <div id="quiz-summary" class="remember" hidden></div>
+        </section>
+        <button id="reset-progress" class="secondary-button" type="button">Bearbeitungsstand zurücksetzen</button>
+      </section>
+    </main>
+  </body>
+</html>

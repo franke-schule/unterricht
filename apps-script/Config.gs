@@ -4,6 +4,10 @@
  * - inf9/3-Modellierung-und-Programmierung-Online-IDE/aufgabe2.html
  * - inf10/2-Modellierung-und-Programmierung-Online-IDE/aufgabe1.html
  * - inf10/2-Modellierung-und-Programmierung-Online-IDE/aufgabe2.html
+ * - inf10/2-Modellierung-und-Programmierung-Online-IDE/aufgabe3.html (zwei Java-Codeauswertungen)
+ * - inf10/2-Modellierung-und-Programmierung-Online-IDE/aufgabe4.html (zwei Beschreibe-Aufgaben)
+ * - inf10/2-Modellierung-und-Programmierung-Online-IDE/aufgabe5.html (drei Java-Codeauswertungen über mehrere Dateien)
+ * - inf10/2-Modellierung-und-Programmierung-Online-IDE/aufgabe6.html (zwei Beschreibe-Aufgaben)
  * - inf10/1-Datenbanken/aufgabe5.html (zwei Beschreibe-Aufgaben)
  * - inf10/1-Datenbanken/aufgabe1-quiz.html (eine Beschreibe-Aufgabe, nicht verlinkter Test)
  * - inf10/1-Datenbanken/aufgabe2-quiz.html (eine Beschreibe-Aufgabe, nicht verlinkter Test)
@@ -14,6 +18,7 @@
  * - inf11/1-Kuenstliche-Intelligenz/aufgabe6.html (Beschreibung und vier Java-Codeauswertungen)
  * - inf11/1-Kuenstliche-Intelligenz/aufgabe7.html (eine Beschreibe-Aufgabe)
  * - inf11/1-Kuenstliche-Intelligenz/aufgabe8.html (eine Beschreibe-Aufgabe)
+ * - inf11/2-Codierung-und-Verschluesselung/aufgabe1.html (eine Beschreibe-Aufgabe)
  * - inf9/1-Tabellenkalkulation/aufgabe5a.html und aufgabe5b.html (je eine Beschreibe-Aufgabe)
  *
  * Einrichtung:

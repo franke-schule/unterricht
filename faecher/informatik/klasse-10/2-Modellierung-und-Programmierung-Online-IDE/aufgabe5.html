@@ -1,0 +1,2872 @@
+<!doctype html>
+<html lang="de">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Aufgabe 5 - Vererbung programmieren: Tiere</title>
+  <style>
+    :root {
+      --bg: #f7f6f2;
+      --surface: #ffffff;
+      --border: #e2ddd6;
+      --accent: #3b6ea5;
+      --accent-dark: #2d5682;
+      --text: #1e1e1e;
+      --muted: #6b6560;
+      --info-bg: #eef3f8;
+      --success-bg: #edf7ee;
+      --success-border: #7aae80;
+      --medium-bg: #fff4df;
+      --medium-border: #d99a3a;
+      --low-bg: #fff0f0;
+      --low-border: #d38181;
+      --error-bg: #fff0f0;
+      --error-border: #d38181;
+      --warning-bg: #fff8df;
+      --warning-border: #dfc979;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      min-height: 100vh;
+      margin: 0;
+      color: var(--text);
+      background: var(--bg);
+      font-family: "Segoe UI", system-ui, sans-serif;
+      line-height: 1.5;
+    }
+
+    button,
+    input,
+    textarea {
+      font: inherit;
+    }
+
+    header a:focus-visible {
+      outline: 3px solid rgb(255 255 255 / 80%);
+      outline-offset: 3px;
+    }
+
+    main :focus-visible {
+      outline: 3px solid var(--accent);
+      outline-offset: 2px;
+    }
+
+    .visually-hidden {
+      position: absolute;
+      width: 1px;
+      height: 1px;
+      margin: -1px;
+      padding: 0;
+      overflow: hidden;
+      clip: rect(0 0 0 0);
+      white-space: nowrap;
+      border: 0;
+    }
+
+    header {
+      padding: 1.5rem max(1rem, calc((100% - 1500px) / 2));
+      color: #ffffff;
+      background: var(--accent);
+    }
+
+    .page-nav {
+      margin-bottom: 0.9rem;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.65rem;
+    }
+
+    .back-link {
+      padding: 0.5rem 0.85rem;
+      display: inline-flex;
+      align-items: center;
+      color: #ffffff;
+      background: rgb(255 255 255 / 12%);
+      border: 1px solid rgb(255 255 255 / 55%);
+      border-radius: 5px;
+      font-weight: 650;
+      text-decoration: none;
+    }
+
+    .back-link:hover {
+      background: rgb(255 255 255 / 22%);
+    }
+
+    h1 {
+      margin: 0;
+      font-size: clamp(1.55rem, 3vw, 2rem);
+    }
+
+    header p {
+      margin: 0.35rem 0 0;
+      opacity: 0.9;
+    }
+
+    main {
+      width: min(calc(100% - 2rem), 1500px);
+      margin: 1.5rem auto 3rem;
+    }
+
+    .intro {
+      margin-bottom: 1.25rem;
+      padding: 1rem 1.15rem;
+      background: var(--info-bg);
+      border-left: 4px solid var(--accent);
+      border-radius: 6px;
+    }
+
+    .intro p {
+      margin: 0;
+    }
+
+    .info-card {
+      margin-bottom: 1rem;
+      padding: 1rem 1.15rem;
+      background: var(--info-bg);
+      border-left: 4px solid var(--accent);
+      border-radius: 6px;
+    }
+
+    .info-card h2 {
+      margin: 0 0 0.5rem;
+      color: var(--accent-dark);
+      font-size: 1.15rem;
+    }
+
+    .info-card > h3 {
+      margin: 0.9rem 0 0.15rem;
+      color: var(--accent-dark);
+      font-size: 1rem;
+    }
+
+    .info-card p {
+      margin: 0.25rem 0;
+    }
+
+    details.info-card > summary {
+      min-height: 44px;
+      display: flex;
+      align-items: center;
+      color: var(--accent-dark);
+      font-size: 1.1rem;
+      font-weight: 700;
+      cursor: pointer;
+    }
+
+    .privacy-note {
+      margin: 0 0 1rem;
+      padding: 0.85rem 1rem;
+      background: var(--warning-bg);
+      border: 1px solid var(--warning-border);
+      border-radius: 6px;
+      font-size: 0.9rem;
+    }
+
+    .exercise-layout {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) minmax(330px, 430px);
+      gap: 1.25rem;
+      align-items: start;
+    }
+
+    .ide-panel {
+      position: sticky;
+      top: 1rem;
+      min-width: 0;
+    }
+
+    .ide-container {
+      overflow: hidden;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      box-shadow: 0 2px 8px rgb(0 0 0 / 8%);
+    }
+
+    .ide-container iframe {
+      width: 100%;
+      min-height: 680px;
+      display: block;
+      border: 0;
+    }
+
+    .note {
+      margin: 0.75rem 0.25rem 0;
+      color: var(--muted);
+      font-size: 0.85rem;
+    }
+
+    .tasks-panel {
+      position: sticky;
+      top: 1rem;
+      max-height: calc(100vh - 2rem);
+      overflow-y: auto;
+      padding: 0 0.35rem 0.5rem 0.05rem;
+      scrollbar-gutter: stable;
+    }
+
+    .task-card {
+      margin-bottom: 1rem;
+      padding: 1.15rem;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      box-shadow: 0 2px 8px rgb(0 0 0 / 5%);
+    }
+
+    .task-card h2 {
+      margin: 0 0 0.5rem;
+      color: var(--accent);
+      font-size: 1.15rem;
+    }
+
+    .task-card p {
+      margin: 0.4rem 0;
+    }
+
+    .task-card ul.task-list {
+      margin: 0.4rem 0;
+      padding-left: 1.25rem;
+    }
+
+    .hint {
+      margin-top: 0.8rem;
+      padding: 0.75rem;
+      color: #493f1b;
+      background: var(--warning-bg);
+      border: 1px solid var(--warning-border);
+      border-radius: 6px;
+      font-size: 0.9rem;
+    }
+
+    .api-card {
+      margin-top: 0.8rem;
+      padding: 0.75rem;
+      background: var(--info-bg);
+      border: 1px solid #b9cde2;
+      border-radius: 6px;
+      font-size: 0.9rem;
+    }
+
+    .api-card h3 {
+      margin: 0 0 0.4rem;
+      color: var(--accent-dark);
+      font-size: 0.95rem;
+    }
+
+    .api-card ul {
+      margin: 0;
+      padding-left: 1.1rem;
+    }
+
+    .api-card li {
+      margin: 0.25rem 0;
+      overflow-wrap: anywhere;
+    }
+
+    code {
+      padding: 0.08rem 0.25rem;
+      background: #f1f3f5;
+      border-radius: 3px;
+      font-family: Consolas, "Courier New", monospace;
+    }
+
+    pre {
+      margin: 0.5rem 0 0;
+      padding: 0.7rem;
+      overflow-x: auto;
+      background: #f1f3f5;
+      border-radius: 6px;
+      font-size: 0.82rem;
+      line-height: 1.4;
+    }
+
+    pre code {
+      padding: 0;
+      background: none;
+    }
+
+    .class-figure {
+      margin: 0;
+    }
+
+    figure.cuboid {
+      margin: 0.8rem 0;
+    }
+
+    figure.cuboid svg {
+      display: block;
+      width: 100%;
+      max-width: 260px;
+      height: auto;
+      margin: 0 auto;
+    }
+
+    figure.cuboid figcaption {
+      margin-top: 0.4rem;
+      color: var(--muted);
+      font-size: 0.88rem;
+    }
+
+    textarea {
+      display: block;
+      width: 100%;
+      min-height: 150px;
+      margin: 1rem 0 0.35rem;
+      padding: 0.8rem;
+      border: 1px solid #aaa;
+      border-radius: 6px;
+      line-height: 1.45;
+      resize: vertical;
+    }
+
+    textarea:focus {
+      border-color: var(--accent);
+    }
+
+    textarea:disabled {
+      background: #f1f1f1;
+    }
+
+    .textarea-info {
+      display: flex;
+      justify-content: space-between;
+      gap: 1rem;
+      margin-bottom: 0.8rem;
+      color: var(--muted);
+      font-size: 0.82rem;
+    }
+
+    .check-row {
+      margin-top: 0.9rem;
+      display: flex;
+      align-items: flex-start;
+      gap: 0.6rem;
+    }
+
+    .check-row input {
+      width: 1.15rem;
+      height: 1.15rem;
+      margin-top: 0.18rem;
+      flex: 0 0 auto;
+      accent-color: var(--accent);
+    }
+
+    .task-card button:not(.knn-card):not(.knn-slot),
+    .quiz-section button[type="submit"] {
+      margin-top: 0.85rem;
+      padding: 0.65rem 0.9rem;
+      color: #ffffff;
+      background: var(--accent);
+      border: 0;
+      border-radius: 5px;
+      font-weight: 700;
+      cursor: pointer;
+    }
+
+    .task-card button:not(.knn-card):not(.knn-slot):hover,
+    .quiz-section button[type="submit"]:hover {
+      background: var(--accent-dark);
+    }
+
+    button:disabled {
+      opacity: 0.62;
+      cursor: wait;
+    }
+
+    .result {
+      margin: 0.75rem 0 0;
+      padding: 0.7rem 0.8rem;
+      background: var(--info-bg);
+      border: 1px solid var(--border);
+      border-radius: 5px;
+    }
+
+    .result.success {
+      background: var(--success-bg);
+      border: 1px solid var(--success-border);
+    }
+
+    .result.pending {
+      background: var(--warning-bg);
+      border: 1px solid var(--warning-border);
+    }
+
+    .result.high {
+      background: var(--success-bg);
+      border-color: var(--success-border);
+    }
+
+    .result.medium {
+      background: var(--medium-bg);
+      border-color: var(--medium-border);
+    }
+
+    .result.low {
+      background: var(--low-bg);
+      border-color: var(--low-border);
+    }
+
+    .result.error {
+      background: var(--error-bg);
+      border-color: var(--error-border);
+    }
+
+    .result h3 {
+      margin: 0 0 0.55rem;
+      font-size: 1.02rem;
+    }
+
+    .result h4 {
+      margin: 0.85rem 0 0.3rem;
+      font-size: 0.94rem;
+    }
+
+    .result p {
+      margin: 0.3rem 0;
+    }
+
+    .result ul {
+      margin: 0.3rem 0;
+      padding-left: 1.3rem;
+    }
+
+    .feedback {
+      margin-top: 0.85rem;
+      padding-top: 0.7rem;
+      border-top: 1px solid rgb(0 0 0 / 12%);
+    }
+
+    .help-stack {
+      display: grid;
+      gap: 8px;
+      margin: 20px 0 0;
+    }
+
+    .help-stack details {
+      padding: 11px 14px;
+      border: 1px solid #ead6a7;
+      border-radius: 11px;
+      background: #fffbef;
+    }
+
+    .help-stack summary {
+      cursor: pointer;
+      min-height: 44px;
+      display: flex;
+      align-items: center;
+      color: #80530d;
+      font-weight: 900;
+    }
+
+    .help-stack p {
+      margin: 9px 0 0;
+      color: #6f5527;
+      line-height: 1.45;
+    }
+
+    .help-stack pre {
+      color: #3f3417;
+      background: #fff3cf;
+    }
+
+    .observe-block {
+      margin-top: 1.1rem;
+      padding-top: 0.9rem;
+      border-top: 1px solid var(--border);
+    }
+
+    .choice-fieldset {
+      min-width: 0;
+      margin: 0.5rem 0 0;
+      padding: 0;
+      border: 0;
+    }
+
+    .choice-fieldset legend {
+      padding: 0;
+      font-weight: 700;
+    }
+
+    .sub-part {
+      margin-top: 1.1rem;
+      padding-top: 0.9rem;
+      border-top: 1px solid var(--border);
+    }
+
+    /* -- Klassenkarten (Optik wie Datenbanken Aufgabe 2, Schritt 5) -- */
+    .class-card {
+      position: relative;
+      z-index: 1;
+      overflow: hidden;
+      background: #ffffff;
+      border: 2px solid #526a84;
+      border-radius: 0;
+    }
+
+    .class-card h3 {
+      margin: 0;
+      padding: 9px 12px;
+      color: var(--text);
+      background: #edf3f9;
+      border-bottom: 2px solid #526a84;
+      font-family: Consolas, "Courier New", monospace;
+      font-size: 1rem;
+      text-align: center;
+    }
+
+    .class-card ul {
+      margin: 0;
+      padding: 0;
+      list-style: none;
+    }
+
+    .class-card ul + ul {
+      border-top: 2px solid #526a84;
+    }
+
+    .class-card li {
+      padding: 7px 11px;
+      border-bottom: 1px solid #dce3eb;
+      font-family: Consolas, "Courier New", monospace;
+      font-size: 0.85rem;
+      overflow-wrap: anywhere;
+    }
+
+    .class-card li:last-child {
+      border-bottom: 0;
+    }
+
+    /* -- Baumkanten (aus entscheidungbaeume/styles.css) -- */
+    .dt-tree-edge-layer {
+      position: absolute;
+      z-index: 0;
+      inset: 0;
+      overflow: visible;
+      pointer-events: none;
+    }
+
+    .dt-tree-edges {
+      display: block;
+      width: 100%;
+      height: 100%;
+      overflow: visible;
+    }
+
+    .dt-tree-edge {
+      fill: none;
+      stroke: #8f9bae;
+      stroke-width: 2;
+      stroke-linecap: square;
+      stroke-linejoin: miter;
+    }
+
+    .inherit-tree {
+      position: relative;
+    }
+
+    .inherit-tree .dt-tree-edge {
+      stroke: #526a84;
+      stroke-width: 2;
+      marker-start: url(#uml-inherit);
+    }
+
+    .mini-tree {
+      display: grid;
+      justify-items: center;
+      row-gap: 2.4rem;
+      margin: 1rem 0 0.4rem;
+    }
+
+    .mini-tree .class-card {
+      width: min(12rem, 100%);
+    }
+
+    .template-tree {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      column-gap: 0.5rem;
+      row-gap: 2.4rem;
+      margin: 0.8rem 0 0.4rem;
+    }
+
+    .template-tree .class-card h3 {
+      padding: 6px 4px;
+      font-size: 0.85rem;
+    }
+
+    .template-tree .class-card li {
+      padding: 5px 6px;
+      font-size: 0.75rem;
+      overflow-wrap: anywhere;
+    }
+
+    .template-tree [data-tree-node-key="tier"] {
+      grid-column: 2;
+      grid-row: 1;
+    }
+
+    .template-tree [data-tree-parent-key="tier"] {
+      grid-row: 2;
+    }
+
+    /* -- Karten in Felder ziehen (aus knn/task7.css, Präfix entfernt) -- */
+    .knn-bank { display: flex; flex-wrap: wrap; gap: .5rem; min-height: 3.4rem; padding: .6rem; border: 1px dashed #9db4c2; border-radius: .6rem; background: #f9fcfe; }
+    .knn-card { min-height: 44px; border: 1px solid #b9d1df; border-radius: 9px; padding: 8px 12px; color: #1e3a5c; background: #fff; font: inherit; font-weight: 750; text-align: left; cursor: grab; touch-action: none; user-select: none; }
+    .knn-card.is-picked, .knn-slot.is-picked { outline: 3px solid var(--accent); outline-offset: 2px; }
+    .knn-card.is-dragging, .knn-slot.is-dragging { opacity: .45; }
+    .knn-slots { display: grid; gap: .5rem; }
+    .knn-slot { display: grid; grid-template-columns: 5.5rem minmax(0, 1fr); align-items: center; gap: .75rem; box-sizing: border-box; width: 100%; min-width: 76px; min-height: 48px; padding: 6px 12px; border: 2px dashed var(--accent); border-radius: 9px; background: #eef6fb; color: #1e3a5c; font: inherit; text-align: left; cursor: pointer; touch-action: none; }
+    .knn-slot.is-filled { border-style: solid; background: #fff; cursor: grab; }
+    .knn-slot.is-drop-target { background: #d7ebf6; border-color: #1e3a5c; }
+    .knn-slot-label { font-weight: 800; color: var(--accent); }
+    .knn-slot-text { font-weight: 750; }
+    .knn-drag-ghost { position: fixed; z-index: 1000; pointer-events: none; transform: translate(-50%, -50%); display: inline-flex; align-items: center; max-width: 90vw; border-color: var(--accent); box-shadow: 0 6px 18px rgba(18, 50, 74, .25); }
+
+    .slot-dnd {
+      display: flex;
+      flex-direction: column;
+      gap: .75rem;
+      margin: .75rem 0;
+    }
+
+    .slot-dnd .knn-slots { order: 1; }
+    .slot-dnd .knn-bank { order: 2; }
+
+    .slot-dnd .knn-slot-label {
+      position: absolute;
+      width: 1px;
+      height: 1px;
+      overflow: hidden;
+      clip: rect(0 0 0 0);
+      white-space: nowrap;
+    }
+
+    .slot-dnd .knn-slot {
+      position: relative;
+      z-index: 1;
+      min-height: 46px;
+      display: flex;
+      align-items: center;
+      overflow-wrap: anywhere;
+      hyphens: auto;
+    }
+
+    .slot-dnd .knn-card {
+      min-height: 46px;
+      overflow-wrap: anywhere;
+    }
+
+    .hierarchy-dnd .knn-slots {
+      position: relative;
+      display: grid;
+      grid-template-columns: repeat(6, minmax(0, 1fr));
+      column-gap: .4rem;
+      row-gap: 2.2rem;
+    }
+
+    .hierarchy-dnd .knn-slot {
+      justify-content: center;
+      padding: 4px 6px;
+      text-align: center;
+      border-radius: 0;
+    }
+
+    .hierarchy-dnd .knn-card {
+      border-radius: 0;
+    }
+
+    .hierarchy-dnd .knn-slot,
+    .hierarchy-dnd .knn-card {
+      font-size: 0.82rem;
+    }
+
+    .hierarchy-dnd .knn-slot[data-index="0"] { grid-column: 3 / 5; grid-row: 1; }
+    .hierarchy-dnd .knn-slot[data-index="1"] { grid-column: 1 / 3; grid-row: 2; }
+    .hierarchy-dnd .knn-slot[data-index="2"] { grid-column: 3 / 5; grid-row: 2; }
+    .hierarchy-dnd .knn-slot[data-index="3"] { grid-column: 5 / 7; grid-row: 2; }
+    .hierarchy-dnd .knn-slot[data-index="4"] { grid-column: 2 / 4; grid-row: 3; }
+    .hierarchy-dnd .knn-slot[data-index="5"] { grid-column: 4 / 6; grid-row: 3; }
+
+    #tree-6a {
+      display: flex;
+      flex-direction: column;
+      gap: 2.2rem;
+      margin: .9rem 0 .4rem;
+    }
+
+    #tree-6a .actor-node {
+      width: 8rem;
+      margin: 0 auto;
+    }
+
+    #tree-6a .actor-node h3 {
+      border-bottom: 0;
+    }
+
+    #tree-6a .slot-dnd {
+      margin: 0;
+    }
+
+    .class-builder .knn-slots {
+      display: flex;
+      flex-direction: column;
+      gap: 0;
+      background: #ffffff;
+      border: 2px solid #526a84;
+      border-radius: 0;
+    }
+
+    .class-builder .class-card-title {
+      margin: 0;
+      padding: 9px 12px;
+      color: var(--text);
+      background: #edf3f9;
+      border-bottom: 2px solid #526a84;
+      font-family: Consolas, "Courier New", monospace;
+      font-size: 1rem;
+      text-align: center;
+    }
+
+    .class-builder .knn-slot {
+      justify-content: flex-start;
+      padding: 6px 11px;
+      background: #f3f7fb;
+      border: 0;
+      border-bottom: 1px solid #dce3eb;
+      border-radius: 0;
+      outline: 2px dashed #9db4c2;
+      outline-offset: -6px;
+      font-family: Consolas, "Courier New", monospace;
+      font-size: 0.85rem;
+      font-weight: 700;
+    }
+
+    .class-builder .knn-slot.is-filled {
+      background: #ffffff;
+      outline: 0;
+    }
+
+    .class-builder .knn-slot.section-start {
+      border-top: 2px solid #526a84;
+    }
+
+    .class-builder .knn-slot:last-child {
+      border-bottom: 0;
+    }
+
+    .class-builder .knn-card {
+      border-radius: 0;
+      font-family: Consolas, "Courier New", monospace;
+      font-size: 0.85rem;
+    }
+
+    [data-card-kind="class"] {
+      border-radius: 0;
+    }
+
+    .slot-dnd .knn-slot.is-drop-target {
+      background: #d7ebf6;
+    }
+
+    .slot-dnd .knn-slot.is-picked,
+    .slot-dnd .knn-slot:focus-visible {
+      outline: 3px solid var(--accent);
+      outline-offset: -3px;
+    }
+
+    /* -- Abschlussquiz und Übersicht (aus tabellenkalkulation.css) -- */
+    .quiz-section,
+    #quiz-summary {
+      margin-top: 1.5rem;
+      padding: 1.15rem;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      box-shadow: 0 2px 8px rgb(0 0 0 / 5%);
+    }
+
+    .quiz-section h2,
+    #quiz-summary h2 {
+      margin: 0 0 0.6rem;
+      color: var(--accent);
+      font-size: 1.2rem;
+    }
+
+    .quiz-section > p,
+    #quiz-summary > p {
+      margin: 0.4rem 0;
+    }
+
+    .final-quiz {
+      display: grid;
+      gap: 1rem;
+      margin-top: 0.75rem;
+    }
+
+    .final-quiz fieldset {
+      min-width: 0;
+      padding: 1rem;
+      border: 1px solid #d7dee8;
+      border-radius: 10px;
+    }
+
+    .final-quiz legend {
+      padding: 0 0.5rem;
+      color: var(--accent-dark);
+      font-weight: 800;
+    }
+
+    .final-quiz legend span {
+      display: inline-grid;
+      place-items: center;
+      width: 27px;
+      height: 27px;
+      margin-right: 6px;
+      border-radius: 50%;
+      background: #eff6ff;
+      color: var(--accent-dark);
+    }
+
+    .choice-list {
+      display: grid;
+      gap: 0.6rem;
+      margin: 0.9rem 0 0;
+    }
+
+    .choice-option {
+      display: flex;
+      align-items: flex-start;
+      gap: 0.7rem;
+      min-height: 44px;
+      padding: 0.7rem 0.9rem;
+      border: 1px solid #d7dee8;
+      border-radius: 10px;
+      background: #fbfcfe;
+      cursor: pointer;
+    }
+
+    .choice-option:hover {
+      border-color: var(--accent);
+      background: #eff6ff;
+    }
+
+    .choice-option:has(input:checked) {
+      border-color: var(--accent);
+      background: #eff6ff;
+    }
+
+    .choice-option input {
+      flex: 0 0 auto;
+      width: 20px;
+      height: 20px;
+      margin-top: 1px;
+      accent-color: var(--accent);
+    }
+
+    .choice-option span {
+      line-height: 1.4;
+      overflow-wrap: anywhere;
+    }
+
+    .summary-section {
+      padding: 1rem 1.1rem;
+      margin-top: 0.9rem;
+      border: 1px solid #d7dee8;
+      border-radius: 10px;
+      background: #fbfcfe;
+    }
+
+    .summary-section h3 {
+      margin: 0 0 0.3rem;
+      color: var(--accent-dark);
+      font-size: 1.05rem;
+    }
+
+    .summary-section .prompt {
+      margin: 0 0 0.7rem;
+      color: var(--muted);
+      font-size: 0.9rem;
+    }
+
+    .summary-grid {
+      display: grid;
+      grid-template-columns: minmax(150px, .4fr) minmax(0, 1fr);
+      gap: .4rem 1rem;
+      margin: 0;
+    }
+
+    .summary-grid dt {
+      color: #52647a;
+      font-weight: 700;
+    }
+
+    .summary-grid dd {
+      min-width: 0;
+      margin: 0;
+      overflow-wrap: anywhere;
+    }
+
+    .summary-grid ul {
+      margin: 0.3rem 0 0;
+      padding-left: 1.2rem;
+    }
+
+    @media (max-width: 1050px) {
+      .exercise-layout {
+        grid-template-columns: 1fr;
+      }
+
+      .ide-panel,
+      .tasks-panel {
+        position: static;
+      }
+
+      .tasks-panel {
+        max-height: none;
+        overflow: visible;
+        padding: 0;
+      }
+    }
+
+    @media (max-width: 760px) {
+      .summary-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .summary-grid dt {
+        margin-top: .4rem;
+      }
+    }
+
+    @media (max-width: 620px) {
+      .ide-container iframe {
+        min-height: 580px;
+      }
+
+      .knn-slot,
+      .knn-card {
+        font-size: 0.78rem;
+        overflow-wrap: anywhere;
+        hyphens: auto;
+      }
+
+      .class-builder .knn-slot,
+      .class-builder .knn-card {
+        font-size: 0.78rem;
+      }
+
+      .hierarchy-dnd .knn-slot,
+      .hierarchy-dnd .knn-card {
+        font-size: 0.72rem;
+      }
+
+      .hierarchy-dnd .knn-slot {
+        padding: 4px 2px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false"><defs><marker id="uml-inherit" viewBox="0 0 12 12" refX="12" refY="6" markerWidth="14" markerHeight="14" markerUnits="userSpaceOnUse" orient="auto-start-reverse"><path d="M0,0 L12,6 L0,12 Z" fill="#ffffff" stroke="#526a84" stroke-width="1.5"/></marker></defs></svg>
+  <header>
+    <nav class="page-nav" aria-label="Seitennavigation">
+      <a class="back-link" href="../">&larr; Aufgabenübersicht Klasse 10</a>
+      <a class="back-link" href="../../../../">Startseite</a>
+    </nav>
+    <h1>Aufgabe 5 - Vererbung programmieren: Tiere</h1>
+    <p>Ein Klassendiagramm mit Vererbung in Java umsetzen und testen.</p>
+  </header>
+
+  <main>
+    <section class="intro" aria-label="Arbeitsauftrag">
+      <p>
+        Setze das Klassendiagramm der Tiere in Java-Code um und teste deine Klassen mit einem eigenen Hauptprogramm. Neue Dateien legst du in der IDE mit dem „+“ neben „Dateien“ an, zum Beispiel <code>Hund.java</code>.
+      </p>
+    </section>
+
+    <div class="exercise-layout">
+      <section class="ide-panel" aria-label="Online-IDE">
+        <div class="ide-container">
+          <iframe
+            id="ide-5"
+            title="Online-IDE zu Aufgabe 5 - Vererbung programmieren: Tiere"
+            srcdoc="<script>window.jo_doc = window.frameElement.textContent;</script><script src='../../../../include/js/includeide/includeIDE.js'></script>">
+            {
+              'id': 'Java10Aufgabe5Tiere',
+              'speed': 10,
+              'withBottomPanel': true,
+              'withPCode': true,
+              'withConsole': false,
+              'withFileList': true,
+              'withErrorList': true,
+              'enableFileAccess': true
+            }
+
+            <script type="text/plain" title="Anleitung" data-type="hint">
+## AUFGABE 5 - VERERBUNG PROGRAMMIEREN: TIERE
+
+a) Wandle das Klassendiagramm in Java-Code um. Tätigkeiten geben nur einen Text mit println aus.
+
+b) Schreibe ein eigenes Hauptprogramm mit Objekten von Tier, Hund, Katze und Delfin und teste deine Klassen.
+
+c) Bonus: Erstelle eine weitere Unterklasse von Tier und eine Unterklasse von Hund und teste sie.
+
+Neue Dateien legst du mit dem + neben "Dateien" an.
+            </script>
+
+            <script type="plain/text" title="Hauptprogramm.java">
+//Hier kommt dein Programm zum Testen hinein
+</script>
+
+            <script type="plain/text" title="Tier.java">
+//Hier wird die Klasse Tier definiert, für die anderen Klassen musst du selbst JAVA-Dateien erstellen (mit dem +)
+</script>
+          </iframe>
+        </div>
+        <p class="note">
+          Tipp: Speichere nach jedem funktionierenden Teil eine Kopie deines
+          Codes, bevor du ihn für den nächsten Teil erweiterst.
+        </p>
+      </section>
+
+      <aside class="tasks-panel" aria-label="Aufgabenschritte">
+        <div class="privacy-note">
+          <strong>Hinweis:</strong> Der aktuelle Inhalt aller Dateien in der Online-IDE wird zur automatischen Codeanalyse an ein KI-System übertragen. Schreibe keine Namen oder andere personenbezogenen Daten in Kommentare.
+        </div>
+
+        <details id="merkkarte-vererbung" class="info-card">
+          <summary>Merkkarte: Vererbung und Polymorphie</summary>
+            <h3>Oberklasse und Unterklasse</h3>
+            <p>Computer ist eine Unterklasse von Artikel, Laptop eine Unterklasse von Computer. Es gilt die „ist ein“-Beziehung: Ein Laptop <em>ist ein</em> Computer, und ein Computer <em>ist ein</em> Artikel.</p>
+            <h3>extends</h3>
+            <p><code>class Computer extends Artikel</code> bedeutet: Computer erbt alle Attribute und Methoden von Artikel. Deshalb hat ein Computer-Objekt auch <code>name</code>, <code>preis</code> und <code>gewicht</code>, ohne dass sie in Computer noch einmal stehen.</p>
+            <h3>super(…)</h3>
+            <p>Im Konstruktor der Unterklasse ruft <code>super(_name, _preis, _gewicht);</code> den Konstruktor der Oberklasse auf. So bekommen die geerbten Attribute ihre Werte.</p>
+            <h3>Überschreiben</h3>
+            <p>Eine Unterklasse kann eine geerbte Methode neu definieren: gleicher Name, gleiche Parameter, eigener Inhalt. <code>@Override</code> kennzeichnet das. Überschreibt eine Unterklasse eine Methode nicht, wird die geerbte Methode ausgeführt.</p>
+            <h3>Polymorphie</h3>
+            <p>Eine Variable vom Typ der Oberklasse kann auf ein Objekt einer Unterklasse verweisen: <code>Artikel smart1 = new Smartphone(…);</code>. Beim Aufruf <code>smart1.zeigeInfos();</code> wird die Methode des tatsächlichen Objekts ausgeführt, hier also <code>zeigeInfos()</code> aus Smartphone. Derselbe Aufruf führt so je nach Objekt zu unterschiedlichem Verhalten.</p>
+            <h3>Im Klassendiagramm</h3>
+            <p>Ein Pfeil mit leerer Dreiecksspitze zeigt von der Unterklasse zur Oberklasse. Geerbte Attribute stehen nur in der Oberklasse. Eine überschriebene Methode steht in der Karte der Unterklasse noch einmal.</p>
+            <div id="mini-tree" class="inherit-tree mini-tree" role="img" aria-label="Klassendiagramm: Fahrrad erbt von Fahrzeug und überschreibt fahren()">
+              <article class="class-card" data-card-kind="class" data-tree-node-key="fahrzeug">
+                <h3>Fahrzeug</h3>
+                <ul><li>raeder: int</li></ul>
+                <ul><li>fahren(): void</li></ul>
+              </article>
+              <article class="class-card" data-card-kind="class" data-tree-node-key="fahrrad" data-tree-parent-key="fahrzeug">
+                <h3>Fahrrad</h3>
+                <ul><li>klingel: boolean</li></ul>
+                <ul><li>fahren(): void</li></ul>
+              </article>
+            </div>
+        </details>
+
+        <section class="task-card" aria-labelledby="task-vorlage-title">
+          <h2 id="task-vorlage-title">Vorlage: Klassendiagramm</h2>
+          <figure class="class-figure">
+            <div id="template-tree" class="inherit-tree template-tree" role="img" aria-label="Klassendiagramm: Hund, Katze und Delfin erben von Tier. Hund und Katze überschreiben zeigeDaten(), Delfin nicht.">
+              <article class="class-card" data-card-kind="class" data-tree-node-key="tier">
+                <h3>Tier</h3>
+                <ul><li>alter: int</li><li>name: String</li></ul>
+                <ul><li>zeigeDaten(): void</li></ul>
+              </article>
+              <article class="class-card" data-card-kind="class" data-tree-node-key="hund" data-tree-parent-key="tier">
+                <h3>Hund</h3>
+                <ul><li>rasse: String</li></ul>
+                <ul><li>bellen(): void</li><li>zeigeDaten(): void</li></ul>
+              </article>
+              <article class="class-card" data-card-kind="class" data-tree-node-key="katze" data-tree-parent-key="tier">
+                <h3>Katze</h3>
+                <ul><li>freigaenger: boolean</li></ul>
+                <ul><li>miauen(): void</li><li>zeigeDaten(): void</li></ul>
+              </article>
+              <article class="class-card" data-card-kind="class" data-tree-node-key="delfin" data-tree-parent-key="tier">
+                <h3>Delfin</h3>
+                <ul><li>tauchtiefe: int</li></ul>
+                <ul><li>schwimmen(): void</li></ul>
+              </article>
+            </div>
+            <figcaption class="note">Hund und Katze überschreiben zeigeDaten(), Delfin nicht.</figcaption>
+          </figure>
+        </section>
+
+        <section class="task-card" aria-labelledby="task-5a-title">
+          <h2 id="task-5a-title">a) Klassen programmieren</h2>
+          <p><strong>Wandle</strong> das Klassendiagramm in Java-Code um. Lege für Hund, Katze und Delfin je eine eigene Datei an; Tätigkeiten wie <code>bellen()</code> geben nur einen Text mit <code>println</code> aus.</p>
+          <div class="hint">
+            Einen Konstruktor brauchst du nicht. Die Werte bekommen die Objekte später im Hauptprogramm, z. B. mit <code>h.name = "Bello";</code>.
+          </div>
+          <button id="button-10-5a" type="button" onclick="submitCode('10-5a')">
+            Meine Klassen für a prüfen
+          </button>
+          <div id="result-10-5a" class="result" aria-live="polite" hidden></div>
+          <div class="help-stack">
+            <details>
+              <summary>Hilfe 1</summary>
+              <p>Welches Schlüsselwort verbindet eine Unterklasse mit ihrer Oberklasse? Du kennst es aus <code>class Computer extends Artikel</code>.</p>
+            </details>
+            <details>
+              <summary>Hilfe 2</summary>
+              <p>Welche Attribute muss Hund nicht mehr selbst deklarieren, weil er sie von Tier erbt? In Hund steht nur, was im Klassendiagramm in der Karte Hund steht.</p>
+            </details>
+            <details>
+              <summary>Hilfe 3</summary>
+              <p>Ergänze die Lücken:</p>
+              <pre><code>class Hund extends ___ {
+   String ___;
+
+   void bellen() {
+      println(___ + " bellt: Wuff!");
+   }
+
+   @Override
+   void zeigeDaten() {
+      println(___);
+   }
+}</code></pre>
+            </details>
+          </div>
+        </section>
+
+        <section class="task-card" aria-labelledby="task-5b-title">
+          <h2 id="task-5b-title">b) Eigenes Testprogramm</h2>
+          <ul class="task-list">
+            <li><strong>Erzeuge</strong> in Hauptprogramm.java Objekte von Tier, Hund, Katze und Delfin, gib ihnen Werte und rufe ihre Methoden auf.</li>
+            <li><strong>Baue</strong> mindestens einen polymorphen Aufruf ein: eine Variable vom Typ Tier, die auf einen Hund oder eine Katze verweist.</li>
+            <li><strong>Vergleiche</strong> die Ausgabe von zeigeDaten() bei Hund und Delfin.</li>
+          </ul>
+          <button id="button-10-5b" type="button" onclick="submitCode('10-5b')">
+            Mein Hauptprogramm für b prüfen
+          </button>
+          <div id="result-10-5b" class="result" aria-live="polite" hidden></div>
+          <div class="help-stack">
+            <details>
+              <summary>Hilfe 1</summary>
+              <p>Ein Objekt erzeugst du wie in Aufgabe 4 mit new. Die Werte weist du mit der Punktnotation zu: <code>h.name = "Bello";</code>.</p>
+            </details>
+            <details>
+              <summary>Hilfe 2</summary>
+              <p>Für den polymorphen Aufruf steht links der Typ der Oberklasse und rechts ein Objekt einer Unterklasse. Rufe danach zeigeDaten() über diese Variable auf.</p>
+            </details>
+            <details>
+              <summary>Hilfe 3</summary>
+              <p>Ergänze die Lücken:</p>
+              <pre><code>Hund h = new Hund();
+h.name = "Bello";
+h.alter = 5;
+h.rasse = ___;
+h.zeigeDaten();
+h.___();
+
+Tier t = new ___();
+t.name = "Minka";
+t.zeigeDaten();</code></pre>
+            </details>
+          </div>
+          <div id="observe-5b" class="observe-block">
+            <fieldset class="choice-fieldset">
+              <legend>Was beobachtest du bei zeigeDaten()? Kreuze alle zutreffenden Aussagen an.</legend>
+              <div class="choice-list">
+                <label class="choice-option">
+                  <input type="checkbox" name="obs-5" value="a">
+                  <span>Hund gibt mit zeigeDaten() auch seine Rasse aus.</span>
+                </label>
+                <label class="choice-option">
+                  <input type="checkbox" name="obs-5" value="b">
+                  <span>Delfin gibt mit zeigeDaten() einen Satz nach demselben Muster aus wie ein Tier-Objekt.</span>
+                </label>
+                <label class="choice-option">
+                  <input type="checkbox" name="obs-5" value="c">
+                  <span>Delfin gibt mit zeigeDaten() auch seine Tauchtiefe aus.</span>
+                </label>
+                <label class="choice-option">
+                  <input type="checkbox" name="obs-5" value="d">
+                  <span>Bei einer Variablen vom Typ Tier, die auf einen Hund oder eine Katze verweist, läuft zeigeDaten() aus Hund bzw. Katze.</span>
+                </label>
+              </div>
+            </fieldset>
+            <button id="check-obs-5" type="button">Beobachtungen prüfen</button>
+            <div id="result-obs-5" class="result" aria-live="polite" hidden></div>
+          </div>
+        </section>
+
+        <section class="task-card" aria-labelledby="task-5c-title">
+          <h2 id="task-5c-title">c) Bonus (freiwillig): eigene Unterklassen</h2>
+          <p><strong>Erstelle</strong> eine weitere Unterklasse von Tier und eine Unterklasse von Hund nach deiner Wahl und <strong>teste</strong> beide im Hauptprogramm.</p>
+          <div class="hint">
+            Eine Unterklasse von Hund erbt auch alles, was Hund von Tier geerbt hat.
+          </div>
+          <button id="button-10-5c" type="button" onclick="submitCode('10-5c')">
+            Meine Bonusklassen prüfen
+          </button>
+          <div id="result-10-5c" class="result" aria-live="polite" hidden></div>
+        </section>
+      </aside>
+    </div>
+
+    <section class="quiz-section" aria-labelledby="final-quiz-title">
+      <h2 id="final-quiz-title">Abschlussquiz</h2>
+      <p><strong>Kreuze</strong> alle richtigen Antworten an. In manchen Fragen sind mehrere Antworten richtig.</p>
+      <form id="final-quiz" class="final-quiz" novalidate>
+        <fieldset>
+          <legend><span>1</span>Welche Attribute besitzt ein Hund-Objekt?</legend>
+          <div class="choice-list">
+            <label class="choice-option">
+              <input type="checkbox" name="quiz-1" value="a">
+              <span>rasse</span>
+            </label>
+            <label class="choice-option">
+              <input type="checkbox" name="quiz-1" value="b">
+              <span>name</span>
+            </label>
+            <label class="choice-option">
+              <input type="checkbox" name="quiz-1" value="c">
+              <span>alter</span>
+            </label>
+            <label class="choice-option">
+              <input type="checkbox" name="quiz-1" value="d">
+              <span>freigaenger</span>
+            </label>
+          </div>
+        </fieldset>
+        <fieldset>
+          <legend><span>2</span>Was passiert bei <code>d.zeigeDaten();</code>, wenn <code>d</code> auf ein Delfin-Objekt verweist?</legend>
+          <div class="choice-list">
+            <label class="choice-option">
+              <input type="checkbox" name="quiz-2" value="a">
+              <span>Es wird zeigeDaten() aus der Klasse Tier ausgeführt.</span>
+            </label>
+            <label class="choice-option">
+              <input type="checkbox" name="quiz-2" value="b">
+              <span>Es passiert nichts, weil Delfin keine Methode zeigeDaten() besitzt.</span>
+            </label>
+            <label class="choice-option">
+              <input type="checkbox" name="quiz-2" value="c">
+              <span>Es erscheint eine Fehlermeldung, weil zeigeDaten() in Delfin fehlt.</span>
+            </label>
+            <label class="choice-option">
+              <input type="checkbox" name="quiz-2" value="d">
+              <span>Es wird zeigeDaten() aus der Klasse Hund ausgeführt.</span>
+            </label>
+          </div>
+        </fieldset>
+        <fieldset>
+          <legend><span>3</span>Welche Anweisungen sind im Hauptprogramm erlaubt?</legend>
+          <div class="choice-list">
+            <label class="choice-option">
+              <input type="checkbox" name="quiz-3" value="a">
+              <span><code>Tier t = new Hund();</code></span>
+            </label>
+            <label class="choice-option">
+              <input type="checkbox" name="quiz-3" value="b">
+              <span><code>t.zeigeDaten();</code> nach <code>Tier t = new Hund();</code></span>
+            </label>
+            <label class="choice-option">
+              <input type="checkbox" name="quiz-3" value="c">
+              <span><code>t.bellen();</code> nach <code>Tier t = new Hund();</code></span>
+            </label>
+            <label class="choice-option">
+              <input type="checkbox" name="quiz-3" value="d">
+              <span><code>Hund h = new Tier();</code></span>
+            </label>
+          </div>
+        </fieldset>
+        <fieldset>
+          <legend><span>4</span>Warum muss Hund die Attribute name und alter nicht selbst deklarieren?</legend>
+          <div class="choice-list">
+            <label class="choice-option">
+              <input type="checkbox" name="quiz-4" value="a">
+              <span>Weil Hund mit extends Tier alle Attribute von Tier erbt.</span>
+            </label>
+            <label class="choice-option">
+              <input type="checkbox" name="quiz-4" value="b">
+              <span>Weil das Hauptprogramm die Attribute festlegt.</span>
+            </label>
+            <label class="choice-option">
+              <input type="checkbox" name="quiz-4" value="c">
+              <span>Weil ein Hund ein Tier ist und deshalb alles hat, was ein Tier hat.</span>
+            </label>
+            <label class="choice-option">
+              <input type="checkbox" name="quiz-4" value="d">
+              <span>Weil Attribute ohne Datentyp automatisch übernommen werden.</span>
+            </label>
+          </div>
+        </fieldset>
+        <fieldset>
+          <legend><span>5</span>Welche Aussagen über <code>Tier t = new Katze(); t.zeigeDaten();</code> stimmen?</legend>
+          <div class="choice-list">
+            <label class="choice-option">
+              <input type="checkbox" name="quiz-5" value="a">
+              <span>Es wird zeigeDaten() aus Katze ausgeführt.</span>
+            </label>
+            <label class="choice-option">
+              <input type="checkbox" name="quiz-5" value="b">
+              <span>Das ist ein Beispiel für Polymorphie.</span>
+            </label>
+            <label class="choice-option">
+              <input type="checkbox" name="quiz-5" value="c">
+              <span>Es wird zeigeDaten() aus Tier ausgeführt, weil t vom Typ Tier ist.</span>
+            </label>
+            <label class="choice-option">
+              <input type="checkbox" name="quiz-5" value="d">
+              <span>Die Katze verliert dabei ihr Attribut freigaenger.</span>
+            </label>
+          </div>
+        </fieldset>
+        <div>
+          <button type="submit">Quiz prüfen</button>
+        </div>
+        <section id="result-quiz" class="result" aria-live="polite" hidden></section>
+      </form>
+    </section>
+
+    <section id="quiz-summary" aria-labelledby="quiz-summary-title" hidden>
+      <h2 id="quiz-summary-title">Übersicht: alle Teilaufgaben und Ergebnisse</h2>
+      <p>Hier stehen alle Arbeitsaufträge dieser Aufgabe mit ihren Ergebnissen – gut geeignet für die gemeinsame Besprechung.</p>
+      <section class="summary-section">
+        <h3>a) Klassen programmieren</h3>
+        <p class="prompt"><strong>Wandle</strong> das Klassendiagramm in Java-Code um. Lege für Hund, Katze und Delfin je eine eigene Datei an; Tätigkeiten wie <code>bellen()</code> geben nur einen Text mit <code>println</code> aus.</p>
+        <dl class="summary-grid">
+          <dt>Richtiges Ergebnis</dt>
+          <dd>Hund, Katze und Delfin erben mit extends Tier die Attribute name und alter sowie zeigeDaten(). Jede Unterklasse deklariert nur ihr eigenes Attribut und ihre eigene Methode; Hund und Katze überschreiben zeigeDaten().
+            <pre><code>class Tier {
+   int alter;
+   String name;
+
+   void zeigeDaten() {
+      println("Das Tier " + name + " ist " + alter + " Jahre alt.");
+   }
+}
+
+class Hund extends Tier {
+   String rasse;
+
+   void bellen() {
+      println(name + " bellt: Wuff!");
+   }
+
+   @Override
+   void zeigeDaten() {
+      println("Der Hund " + name + " ist " + alter + " Jahre alt. Rasse: " + rasse);
+   }
+}</code></pre></dd>
+        </dl>
+      </section>
+      <section class="summary-section">
+        <h3>b) Eigenes Testprogramm</h3>
+        <p class="prompt"><strong>Erzeuge</strong> in Hauptprogramm.java Objekte von Tier, Hund, Katze und Delfin, gib ihnen Werte und rufe ihre Methoden auf. <strong>Baue</strong> mindestens einen polymorphen Aufruf ein: eine Variable vom Typ Tier, die auf einen Hund oder eine Katze verweist. <strong>Vergleiche</strong> die Ausgabe von zeigeDaten() bei Hund und Delfin.</p>
+        <dl class="summary-grid">
+          <dt>Richtiges Ergebnis</dt>
+          <dd>Ein Testprogramm erzeugt Objekte aller vier Klassen, weist Werte mit der Punktnotation zu und ruft ihre Methoden auf. Polymorph: <code>Tier t = new Katze(); t.zeigeDaten();</code> führt zeigeDaten() aus Katze aus.</dd>
+        </dl>
+      </section>
+      <section class="summary-section">
+        <h3>Beobachtung zu zeigeDaten()</h3>
+        <p class="prompt">Was beobachtest du bei zeigeDaten()? Kreuze alle zutreffenden Aussagen an.</p>
+        <dl class="summary-grid">
+          <dt>Richtiges Ergebnis</dt>
+          <dd>Delfin nutzt die geerbte zeigeDaten() aus Tier, Hund und Katze nutzen ihre eigene.</dd>
+        </dl>
+      </section>
+      <section class="summary-section">
+        <h3>c) Bonus (freiwillig): eigene Unterklassen</h3>
+        <p class="prompt"><strong>Erstelle</strong> eine weitere Unterklasse von Tier und eine Unterklasse von Hund nach deiner Wahl und <strong>teste</strong> beide im Hauptprogramm.</p>
+        <dl class="summary-grid">
+          <dt>Richtiges Ergebnis</dt>
+          <dd>Beispiel: <code>class Pferd extends Tier</code> und <code>class Welpe extends Hund</code>. Ein Welpe erbt alles von Hund und damit auch von Tier.</dd>
+        </dl>
+      </section>
+      <section class="summary-section">
+        <h3>Abschlussquiz – Frage 1</h3>
+        <p class="prompt">Welche Attribute besitzt ein Hund-Objekt?</p>
+        <dl class="summary-grid">
+          <dt>Richtiges Ergebnis</dt>
+          <dd>rasse · name · alter</dd>
+        </dl>
+      </section>
+      <section class="summary-section">
+        <h3>Abschlussquiz – Frage 2</h3>
+        <p class="prompt">Was passiert bei <code>d.zeigeDaten();</code>, wenn <code>d</code> auf ein Delfin-Objekt verweist?</p>
+        <dl class="summary-grid">
+          <dt>Richtiges Ergebnis</dt>
+          <dd>Es wird zeigeDaten() aus der Klasse Tier ausgeführt.</dd>
+        </dl>
+      </section>
+      <section class="summary-section">
+        <h3>Abschlussquiz – Frage 3</h3>
+        <p class="prompt">Welche Anweisungen sind im Hauptprogramm erlaubt?</p>
+        <dl class="summary-grid">
+          <dt>Richtiges Ergebnis</dt>
+          <dd><code>Tier t = new Hund();</code> · <code>t.zeigeDaten();</code> nach <code>Tier t = new Hund();</code></dd>
+        </dl>
+      </section>
+      <section class="summary-section">
+        <h3>Abschlussquiz – Frage 4</h3>
+        <p class="prompt">Warum muss Hund die Attribute name und alter nicht selbst deklarieren?</p>
+        <dl class="summary-grid">
+          <dt>Richtiges Ergebnis</dt>
+          <dd>Weil Hund mit extends Tier alle Attribute von Tier erbt. · Weil ein Hund ein Tier ist und deshalb alles hat, was ein Tier hat.</dd>
+        </dl>
+      </section>
+      <section class="summary-section">
+        <h3>Abschlussquiz – Frage 5</h3>
+        <p class="prompt">Welche Aussagen über <code>Tier t = new Katze(); t.zeigeDaten();</code> stimmen?</p>
+        <dl class="summary-grid">
+          <dt>Richtiges Ergebnis</dt>
+          <dd>Es wird zeigeDaten() aus Katze ausgeführt. · Das ist ein Beispiel für Polymorphie.</dd>
+        </dl>
+      </section>
+    </section>
+  </main>
+
+  <script type="module">
+    import { renderInheritance } from './klassendiagramm.mjs';
+
+    const template = document.getElementById('template-tree');
+    if (template) renderInheritance(template);
+
+    const merkkarte = document.getElementById('merkkarte-vererbung');
+    const miniTree = document.getElementById('mini-tree');
+    function drawMiniTree() {
+      if (merkkarte && merkkarte.open && miniTree) renderInheritance(miniTree);
+    }
+    if (merkkarte) merkkarte.addEventListener('toggle', drawMiniTree);
+    drawMiniTree();
+  </script>
+  <script src="../../klasse-9/eingaben-speichern.js?v=20260924"></script>
+  <script>
+    const SCRIPT_SERVER_URL =
+      'https://script.google.com/macros/s/AKfycby8RWL6uYrKZyoJ6m2GRpWyRmXjwsdskyCiqzKpRhIK5-wrDl-9lWWk8CiAGaVMoy0x/exec';
+
+    const IDE_ID =
+      'Java10Aufgabe5Tiere';
+
+    const MAX_CODE_LENGTH =
+      12000;
+
+    const CODE_REQUEST_TIMEOUT =
+      120000;
+
+    const pendingCodeRequests =
+      new Map();
+
+
+    function getScriptServerUrl() {
+      return SCRIPT_SERVER_URL.trim();
+    }
+
+
+    function isValidScriptServerUrl(url) {
+      try {
+        const parsedUrl =
+          new URL(url);
+
+        return (
+          parsedUrl.protocol === 'https:' &&
+          parsedUrl.hostname === 'script.google.com' &&
+          parsedUrl.pathname.endsWith('/exec') &&
+          !url.includes('DEINE_BEREITSTELLUNGS_ID')
+        );
+      } catch (error) {
+        return false;
+      }
+    }
+
+
+    function createRequestId() {
+      if (
+        window.crypto &&
+        typeof window.crypto.randomUUID === 'function'
+      ) {
+        return window.crypto.randomUUID();
+      }
+
+      return (
+        Date.now().toString(36) +
+        '-' +
+        Math.random().toString(36).substring(2)
+      );
+    }
+
+
+    /**
+     * Liest alle Dateien aus der Online-IDE, auch Dateien ohne Endung .java.
+     * Die IDE stellt diese Schnittstelle durch enableFileAccess bereit.
+     * Hauptprogramm.java steht zuerst, leere Dateien und die Anleitung der
+     * Aufgabe (Anleitung.md) entfallen.
+     */
+    function collectProgramFiles() {
+      const iframe =
+        document.getElementById(
+          'ide-5'
+        );
+
+      if (
+        !iframe ||
+        !iframe.contentWindow
+      ) {
+        throw new Error(
+          'Die Online-IDE ist noch nicht bereit.'
+        );
+      }
+
+      let access;
+
+      try {
+        access =
+          iframe.contentWindow.online_ide_access;
+      } catch (error) {
+        throw new Error(
+          'Der aktuelle Programmcode konnte nicht aus der Online-IDE gelesen werden.'
+        );
+      }
+
+      if (
+        !access ||
+        typeof access.getIDE !== 'function'
+      ) {
+        throw new Error(
+          'Die Online-IDE lädt noch. Bitte warte kurz und versuche es erneut.'
+        );
+      }
+
+      const ide =
+        access.getIDE(
+          IDE_ID
+        );
+
+      if (
+        !ide ||
+        typeof ide.getFiles !== 'function'
+      ) {
+        throw new Error(
+          'Die Programmdateien sind noch nicht verfügbar.'
+        );
+      }
+
+      const files =
+        ide.getFiles();
+
+      if (
+        !files ||
+        typeof files.filter !== 'function' ||
+        files.length === 0
+      ) {
+        throw new Error(
+          'Die Programmdateien sind noch nicht verfügbar.'
+        );
+      }
+
+      const entries =
+        files
+          .filter(
+            function(file) {
+              return (
+                typeof file.getName === 'function' &&
+                typeof file.getText === 'function'
+              );
+            }
+          )
+          .map(
+            function(file) {
+              return {
+                name:
+                  file.getName(),
+                text:
+                  file.getText().trim()
+              };
+            }
+          )
+          .filter(
+            function(entry) {
+              return (
+                entry.text.length > 0 &&
+                entry.name !== 'Anleitung.md'
+              );
+            }
+          );
+
+      const mainIndex =
+        entries.findIndex(
+          function(entry) {
+            return entry.name === 'Hauptprogramm.java';
+          }
+        );
+
+      if (mainIndex > 0) {
+        entries.unshift(
+          entries.splice(
+            mainIndex,
+            1
+          )[0]
+        );
+      }
+
+      return entries;
+    }
+
+
+    /**
+     * Fügt alle Dateien zu einem Text zusammen. Jede Datei beginnt mit
+     * einer Kommentarzeile mit ihrem Namen.
+     */
+    function getAllProgramCode() {
+      return collectProgramFiles()
+        .map(
+          function(entry) {
+            return (
+              '// ===== Datei: ' +
+              entry.name +
+              ' =====\n' +
+              entry.text
+            );
+          }
+        )
+        .join('\n\n');
+    }
+
+
+    /**
+     * Entfernt Kommentare, damit Beispieltexte keine Meldung auslösen
+     * und Startkommentare nicht als Lösung zählen.
+     */
+    function stripComments(code) {
+      return code
+        .replace(
+          /\/\*[\s\S]*?\*\//g,
+          ''
+        )
+        .replace(
+          /\/\/.*$/gm,
+          ''
+        );
+    }
+
+
+    /**
+     * Startet die getrennte Codeauswertung per POST. Das lange Codefeld
+     * gelangt nicht in eine URL. Nur die kurze requestId wird danach per
+     * JSONP abgefragt.
+     */
+    function submitCode(taskId) {
+      const button =
+        document.getElementById(
+          'button-' + taskId
+        );
+
+      const resultBox =
+        document.getElementById(
+          'result-' + taskId
+        );
+
+      const scriptServerUrl =
+        getScriptServerUrl();
+
+      if (
+        !isValidScriptServerUrl(
+          scriptServerUrl
+        )
+      ) {
+        showError(
+          resultBox,
+          'Die Adresse des Auswertungsservers ist nicht gültig.'
+        );
+        return;
+      }
+
+      let entries;
+
+      try {
+        entries =
+          collectProgramFiles();
+      } catch (error) {
+        showError(
+          resultBox,
+          error.message
+        );
+        return;
+      }
+
+      const code =
+        entries
+          .map(
+            function(entry) {
+              return (
+                '// ===== Datei: ' +
+                entry.name +
+                ' =====\n' +
+                entry.text
+              );
+            }
+          )
+          .join('\n\n');
+
+      const plainText =
+        entries
+          .map(
+            function(entry) {
+              return entry.text;
+            }
+          )
+          .join('\n\n');
+
+      if (plainText.length < 20) {
+        showError(
+          resultBox,
+          'Dein Programmcode ist noch zu kurz für eine Auswertung.'
+        );
+        return;
+      }
+
+      if (code.length > MAX_CODE_LENGTH) {
+        showError(
+          resultBox,
+          'Dein Programmcode ist zu lang für die automatische Auswertung. Entferne nicht benötigte Kommentare oder Dateien.'
+        );
+        return;
+      }
+
+      const executableCode =
+        stripComments(
+          plainText
+        );
+
+      if (
+        taskId === '10-5a' &&
+        !/\bclass\s+\w+/.test(executableCode)
+      ) {
+        showError(
+          resultBox,
+          'Lege zuerst die Klassen an: Tier steht in Tier.java, für Hund, Katze und Delfin legst du mit dem „+“ neue Dateien an.'
+        );
+        return;
+      }
+
+      if (taskId === '10-5b') {
+        const mainEntry =
+          entries.find(
+            function(entry) {
+              return entry.name === 'Hauptprogramm.java';
+            }
+          );
+
+        if (
+          !mainEntry ||
+          !/\bnew\b/.test(
+            stripComments(
+              mainEntry.text
+            )
+          )
+        ) {
+          showError(
+            resultBox,
+            'Erzeuge in Hauptprogramm.java zuerst Objekte mit new.'
+          );
+          return;
+        }
+      }
+
+      if (
+        taskId === '10-5c' &&
+        (executableCode.match(/\bclass\s+\w+/g) || []).length < 6
+      ) {
+        showError(
+          resultBox,
+          'Für den Bonus brauchst du zwei weitere Klassen: eine Unterklasse von Tier und eine Unterklasse von Hund.'
+        );
+        return;
+      }
+
+      button.dataset.defaultLabel =
+        button.textContent.trim();
+
+      button.disabled =
+        true;
+
+      button.textContent =
+        'Programm wird geprüft …';
+
+      resultBox.hidden =
+        false;
+
+      resultBox.className =
+        'result';
+
+      resultBox.textContent =
+        'Der aktuelle Stand aller Dateien wird ausgewertet.';
+
+      const requestId =
+        createRequestId();
+
+      const transport =
+        createCodePostTransport(
+          scriptServerUrl,
+          requestId,
+          taskId,
+          code
+        );
+
+      const timeoutId =
+        window.setTimeout(
+          function() {
+            const pending =
+              pendingCodeRequests.get(
+                requestId
+              );
+
+            if (!pending) {
+              return;
+            }
+
+            restoreCodeButton(
+              pending
+            );
+
+            showError(
+              pending.resultBox,
+              'Der Auswertungsserver hat nicht rechtzeitig geantwortet. Bitte versuche es erneut.'
+            );
+
+            cleanupCodeRequest(
+              requestId
+            );
+          },
+          CODE_REQUEST_TIMEOUT
+        );
+
+      pendingCodeRequests.set(
+        requestId,
+        {
+          button:
+            button,
+          resultBox:
+            resultBox,
+          form:
+            transport.form,
+          iframe:
+            transport.iframe,
+          pollScript:
+            null,
+          pollTimer:
+            null,
+          timeoutId:
+            timeoutId
+        }
+      );
+
+      transport.form.submit();
+
+      scheduleCodeResultPoll(
+        requestId,
+        1800
+      );
+    }
+
+
+    function createCodePostTransport(
+      scriptServerUrl,
+      requestId,
+      taskId,
+      code
+    ) {
+      const iframeName =
+        'code-feedback-' +
+        requestId.replace(
+          /[^a-zA-Z0-9_-]/g,
+          ''
+        );
+
+      const iframe =
+        document.createElement(
+          'iframe'
+        );
+
+      iframe.name =
+        iframeName;
+
+      iframe.title =
+        'Unsichtbarer Übertragungsrahmen für die Codeauswertung';
+
+      iframe.setAttribute(
+        'aria-hidden',
+        'true'
+      );
+
+      iframe.style.display =
+        'none';
+
+      const form =
+        document.createElement(
+          'form'
+        );
+
+      form.method =
+        'POST';
+
+      form.action =
+        scriptServerUrl;
+
+      form.target =
+        iframeName;
+
+      form.acceptCharset =
+        'UTF-8';
+
+      form.style.display =
+        'none';
+
+      appendHiddenField(
+        form,
+        'requestType',
+        'code'
+      );
+
+      appendHiddenField(
+        form,
+        'requestId',
+        requestId
+      );
+
+      appendHiddenField(
+        form,
+        'taskId',
+        taskId
+      );
+
+      appendHiddenField(
+        form,
+        'code',
+        code
+      );
+
+      document.body.appendChild(
+        iframe
+      );
+
+      document.body.appendChild(
+        form
+      );
+
+      return {
+        iframe:
+          iframe,
+        form:
+          form
+      };
+    }
+
+
+    function appendHiddenField(
+      form,
+      name,
+      value
+    ) {
+      const input =
+        document.createElement(
+          'input'
+        );
+
+      input.type =
+        'hidden';
+
+      input.name =
+        name;
+
+      input.value =
+        String(value);
+
+      form.appendChild(
+        input
+      );
+    }
+
+
+    function scheduleCodeResultPoll(
+      requestId,
+      delay
+    ) {
+      const pending =
+        pendingCodeRequests.get(
+          requestId
+        );
+
+      if (!pending) {
+        return;
+      }
+
+      window.clearTimeout(
+        pending.pollTimer
+      );
+
+      pending.pollTimer =
+        window.setTimeout(
+          function() {
+            pollCodeResult(
+              requestId
+            );
+          },
+          delay
+        );
+    }
+
+
+    function pollCodeResult(requestId) {
+      const pending =
+        pendingCodeRequests.get(
+          requestId
+        );
+
+      if (!pending) {
+        return;
+      }
+
+      if (
+        pending.pollScript &&
+        pending.pollScript.parentNode
+      ) {
+        pending.pollScript.parentNode.removeChild(
+          pending.pollScript
+        );
+      }
+
+      const script =
+        document.createElement(
+          'script'
+        );
+
+      script.async =
+        true;
+
+      script.src =
+        createJsonpUrl(
+          getScriptServerUrl(),
+          {
+            callback:
+              '__handleCodeEvaluationResult',
+            requestType:
+              'code-result',
+            requestId:
+              requestId,
+            cacheBust:
+              Date.now()
+          }
+        );
+
+      script.onerror =
+        function() {
+          const current =
+            pendingCodeRequests.get(
+              requestId
+            );
+
+          if (!current) {
+            return;
+          }
+
+          scheduleCodeResultPoll(
+            requestId,
+            3000
+          );
+        };
+
+      pending.pollScript =
+        script;
+
+      document.body.appendChild(
+        script
+      );
+    }
+
+
+    function createJsonpUrl(
+      baseUrl,
+      parameters
+    ) {
+      const url =
+        new URL(
+          baseUrl
+        );
+
+      Object.keys(
+        parameters
+      ).forEach(
+        function(key) {
+          url.searchParams.set(
+            key,
+            String(parameters[key])
+          );
+        }
+      );
+
+      return url.toString();
+    }
+
+
+    window.__handleCodeEvaluationResult =
+      function(message) {
+        if (
+          !message ||
+          !message.requestId
+        ) {
+          return;
+        }
+
+        const pending =
+          pendingCodeRequests.get(
+            message.requestId
+          );
+
+        if (!pending) {
+          return;
+        }
+
+        if (
+          message.type !==
+          'GEMINI_CODE_EVALUATION_RESULT'
+        ) {
+          restoreCodeButton(
+            pending
+          );
+
+          showError(
+            pending.resultBox,
+            'Der Auswertungsserver verwendet noch eine ältere Version ohne Codekorrektur. Bitte aktualisiere die Apps-Script-Bereitstellung und versuche es danach erneut.'
+          );
+
+          cleanupCodeRequest(
+            message.requestId
+          );
+
+          return;
+        }
+
+        if (
+          pending.pollScript &&
+          pending.pollScript.parentNode
+        ) {
+          pending.pollScript.parentNode.removeChild(
+            pending.pollScript
+          );
+
+          pending.pollScript =
+            null;
+        }
+
+        if (message.pending) {
+          pending.resultBox.textContent =
+            'Der Programmcode wird noch ausgewertet.';
+
+          scheduleCodeResultPoll(
+            message.requestId,
+            2200
+          );
+
+          return;
+        }
+
+        restoreCodeButton(
+          pending
+        );
+
+        if (
+          !message.result ||
+          message.result.ok !== true
+        ) {
+          showError(
+            pending.resultBox,
+            message.result &&
+            message.result.message
+              ? message.result.message
+              : 'Die Codeauswertung konnte nicht abgeschlossen werden.'
+          );
+
+          cleanupCodeRequest(
+            message.requestId
+          );
+
+          return;
+        }
+
+        showEvaluation(
+          pending.resultBox,
+          message.result
+        );
+
+        cleanupCodeRequest(
+          message.requestId
+        );
+      };
+
+
+    function restoreCodeButton(pending) {
+      pending.button.disabled =
+        false;
+
+      pending.button.textContent =
+        pending.button.dataset.defaultLabel ||
+        'Code erneut prüfen';
+    }
+
+
+    function cleanupCodeRequest(requestId) {
+      const pending =
+        pendingCodeRequests.get(
+          requestId
+        );
+
+      if (!pending) {
+        return;
+      }
+
+      window.clearTimeout(
+        pending.timeoutId
+      );
+
+      window.clearTimeout(
+        pending.pollTimer
+      );
+
+      [
+        pending.pollScript,
+        pending.form,
+        pending.iframe
+      ].forEach(
+        function(element) {
+          if (
+            element &&
+            element.parentNode
+          ) {
+            element.parentNode.removeChild(
+              element
+            );
+          }
+        }
+      );
+
+      pendingCodeRequests.delete(
+        requestId
+      );
+    }
+
+
+    function showEvaluation(
+      resultBox,
+      result
+    ) {
+      resultBox.textContent =
+        '';
+
+      resultBox.hidden =
+        false;
+
+      resultBox.className =
+        'result ' +
+        getEvaluationLevelClass(
+          result.points,
+          result.maxPoints
+        );
+
+      const heading =
+        document.createElement(
+          'h3'
+        );
+
+      heading.textContent =
+        result.points +
+        ' von ' +
+        result.maxPoints +
+        ' Punkten – ' +
+        result.status;
+
+      resultBox.appendChild(
+        heading
+      );
+
+      appendList(
+        resultBox,
+        'Das ist dir gelungen:',
+        result.strengths,
+        'Es wurde noch kein eindeutiger richtiger Aspekt erkannt.'
+      );
+
+      appendList(
+        resultBox,
+        'Das solltest du überprüfen:',
+        result.missing,
+        'Es fehlen keine wesentlichen Aspekte.'
+      );
+
+      const feedbackContainer =
+        document.createElement(
+          'div'
+        );
+
+      feedbackContainer.className =
+        'feedback';
+
+      const feedbackHeading =
+        document.createElement(
+          'h4'
+        );
+
+      feedbackHeading.textContent =
+        'Rückmeldung zur Codeanalyse';
+
+      const feedbackText =
+        document.createElement(
+          'p'
+        );
+
+      feedbackText.textContent =
+        result.feedback ||
+        'Überprüfe deinen Programmcode noch einmal.';
+
+      feedbackContainer.appendChild(
+        feedbackHeading
+      );
+
+      feedbackContainer.appendChild(
+        feedbackText
+      );
+
+      resultBox.appendChild(
+        feedbackContainer
+      );
+    }
+
+
+    function getEvaluationLevelClass(
+      points,
+      maxPoints
+    ) {
+      const ratio =
+        Number(points) /
+        Math.max(
+          1,
+          Number(maxPoints)
+        );
+
+      if (ratio < 0.4) {
+        return 'low';
+      }
+
+      if (ratio < 0.75) {
+        return 'medium';
+      }
+
+      return 'high';
+    }
+
+
+    function appendList(
+      container,
+      headingText,
+      items,
+      emptyText
+    ) {
+      const heading =
+        document.createElement(
+          'h4'
+        );
+
+      heading.textContent =
+        headingText;
+
+      container.appendChild(
+        heading
+      );
+
+      if (
+        !Array.isArray(items) ||
+        items.length === 0
+      ) {
+        const paragraph =
+          document.createElement(
+            'p'
+          );
+
+        paragraph.textContent =
+          emptyText;
+
+        container.appendChild(
+          paragraph
+        );
+
+        return;
+      }
+
+      const list =
+        document.createElement(
+          'ul'
+        );
+
+      items.forEach(
+        function(item) {
+          const listItem =
+            document.createElement(
+              'li'
+            );
+
+          listItem.textContent =
+            String(item);
+
+          list.appendChild(
+            listItem
+          );
+        }
+      );
+
+      container.appendChild(
+        list
+      );
+    }
+
+
+    function showError(
+      resultBox,
+      message
+    ) {
+      resultBox.hidden =
+        false;
+
+      resultBox.className =
+        'result error';
+
+      resultBox.textContent =
+        message;
+    }
+
+
+    /**
+     * Schreibt Text in ein Element. Teile zwischen Backticks werden als
+     * Code dargestellt, alles andere bleibt reiner Text.
+     */
+    function formatInto(element, text) {
+      element.textContent = '';
+
+      String(text).split('`').forEach(
+        function(part, index) {
+          if (!part) {
+            return;
+          }
+
+          if (index % 2 === 1) {
+            const code =
+              document.createElement('code');
+
+            code.textContent =
+              part;
+
+            element.appendChild(code);
+            return;
+          }
+
+          element.appendChild(
+            document.createTextNode(part)
+          );
+        }
+      );
+    }
+
+
+    /**
+     * Mehrfachauswahl außerhalb des Abschlussquiz mit eigenem Prüfen-Button.
+     * Reihenfolge der Prüfung: nichts gewählt, falsche Option, vollständig, teilweise.
+     */
+    function setupObservation(config) {
+      const button =
+        document.getElementById(config.buttonId);
+
+      const resultBox =
+        document.getElementById(config.resultId);
+
+      if (!button || !resultBox) {
+        return;
+      }
+
+      button.addEventListener(
+        'click',
+        function() {
+          const chosen =
+            Array.from(
+              document.querySelectorAll(
+                'input[name="' + config.name + '"]:checked'
+              )
+            ).map(
+              function(input) {
+                return input.value;
+              }
+            );
+
+          resultBox.hidden =
+            false;
+
+          if (chosen.length === 0) {
+            resultBox.className =
+              'result pending';
+
+            resultBox.textContent =
+              'Bitte kreuze mindestens eine Beobachtung an.';
+
+            return;
+          }
+
+          const wrongChosen =
+            config.options.filter(
+              function(option) {
+                return (
+                  !option.correct &&
+                  chosen.includes(option.value)
+                );
+              }
+            );
+
+          if (wrongChosen.length > 0) {
+            resultBox.className =
+              'result low';
+
+            formatInto(
+              resultBox,
+              wrongChosen[0].hint
+            );
+
+            return;
+          }
+
+          const allCorrect =
+            config.options.every(
+              function(option) {
+                return (
+                  !option.correct ||
+                  chosen.includes(option.value)
+                );
+              }
+            );
+
+          resultBox.className =
+            allCorrect
+              ? 'result high'
+              : 'result medium';
+
+          formatInto(
+            resultBox,
+            allCorrect
+              ? config.success
+              : config.partial
+          );
+        }
+      );
+    }
+
+
+    /**
+     * Mehrfachauswahl-Quiz (Abschlussquiz), Logik wie Informatik Klasse 9,
+     * Tabellenkalkulation Aufgabe 5a, erweitert um Hinweise je Frage.
+     */
+    function setupChoiceQuiz(config) {
+      const form =
+        document.getElementById(config.formId);
+
+      const resultBox =
+        document.getElementById(config.resultId);
+
+      if (!form || !resultBox) {
+        return;
+      }
+
+      const SOLUTIONS =
+        config.solutions;
+
+      const QUESTION_NAMES =
+        Object.keys(SOLUTIONS);
+
+      function selectedValues(name) {
+        return Array.from(
+          document.querySelectorAll(
+            'input[name="' + name + '"]:checked'
+          )
+        ).map(
+          function(input) {
+            return input.value;
+          }
+        ).sort();
+      }
+
+      function showResult(level, message, hintLines) {
+        resultBox.hidden =
+          false;
+
+        resultBox.className =
+          'result ' + level;
+
+        resultBox.textContent =
+          message;
+
+        if (
+          hintLines &&
+          hintLines.length > 0
+        ) {
+          const list =
+            document.createElement('ul');
+
+          hintLines.forEach(
+            function(line) {
+              const item =
+                document.createElement('li');
+
+              item.textContent =
+                line;
+
+              list.appendChild(item);
+            }
+          );
+
+          resultBox.appendChild(list);
+        }
+      }
+
+      form.querySelectorAll(
+        'input[type="checkbox"]'
+      ).forEach(
+        function(checkbox) {
+          checkbox.addEventListener(
+            'change',
+            function() {
+              resultBox.hidden =
+                true;
+            }
+          );
+        }
+      );
+
+      form.addEventListener(
+        'submit',
+        function(event) {
+          event.preventDefault();
+
+          const hasEmptyQuestion =
+            QUESTION_NAMES.some(
+              function(name) {
+                return selectedValues(name).length === 0;
+              }
+            );
+
+          if (hasEmptyQuestion) {
+            showResult(
+              'low',
+              'Bitte kreuze in jeder Frage mindestens eine Antwort an. Bearbeite die Fragen 1 bis ' +
+                QUESTION_NAMES.length +
+                ' vollständig.'
+            );
+
+            return;
+          }
+
+          const results =
+            QUESTION_NAMES.map(
+              function(name) {
+                const chosen =
+                  selectedValues(name);
+
+                const solution =
+                  SOLUTIONS[name];
+
+                return (
+                  chosen.length === solution.length &&
+                  chosen.join(',') === solution.join(',')
+                );
+              }
+            );
+
+          const correctCount =
+            results.filter(Boolean).length;
+
+          if (correctCount === QUESTION_NAMES.length) {
+            showResult(
+              'high',
+              config.messages.high
+            );
+
+            if (config.onSuccess) {
+              config.onSuccess();
+            }
+
+            return;
+          }
+
+          const wrongNames =
+            QUESTION_NAMES.filter(
+              function(name, index) {
+                return !results[index];
+              }
+            );
+
+          const hintLines =
+            wrongNames.map(
+              function(name) {
+                return (
+                  'Frage ' +
+                  name.replace('quiz-', '') +
+                  ': ' +
+                  (config.questionHints[name] || '')
+                );
+              }
+            );
+
+          if (correctCount === 0) {
+            showResult(
+              'low',
+              config.messages.low,
+              hintLines
+            );
+
+            return;
+          }
+
+          const wrongNumbers =
+            wrongNames.map(
+              function(name) {
+                return Number(name.replace('quiz-', ''));
+              }
+            );
+
+          /* "1, 3 und 4" statt "1 und 3 und 4" */
+          const wrongList =
+            wrongNumbers.length <= 1
+              ? wrongNumbers.join('')
+              : wrongNumbers.slice(0, -1).join(', ') +
+                ' und ' +
+                wrongNumbers[wrongNumbers.length - 1];
+
+          showResult(
+            'medium',
+            'Teilweise korrekt. Richtig sind schon ' +
+              correctCount +
+              ' von ' +
+              QUESTION_NAMES.length +
+              ' Fragen. Prüfe noch einmal Frage ' +
+              wrongList +
+              '. ' +
+              config.messages.mediumHint,
+            hintLines
+          );
+        }
+      );
+    }
+
+
+    setupObservation({
+      "buttonId": "check-obs-5",
+      "resultId": "result-obs-5",
+      "name": "obs-5",
+      "options": [
+        {
+          "value": "a",
+          "correct": true,
+          "hint": ""
+        },
+        {
+          "value": "b",
+          "correct": true,
+          "hint": ""
+        },
+        {
+          "value": "c",
+          "correct": false,
+          "hint": "Noch nicht korrekt. Delfin besitzt keine eigene zeigeDaten()-Methode. Er erbt sie von Tier, und die kennt das Attribut tauchtiefe nicht."
+        },
+        {
+          "value": "d",
+          "correct": true,
+          "hint": ""
+        }
+      ],
+      "success": "Korrekt. Hund überschreibt zeigeDaten(), Delfin nicht – deshalb nutzt Delfin die geerbte Methode aus Tier. Bei t entscheidet das Objekt (Hund oder Katze), welche Methode läuft.",
+      "partial": "Teilweise korrekt. Starte dein Testprogramm noch einmal und vergleiche die Ausgaben von Hund, Delfin und der Variablen t Zeile für Zeile."
+    });
+
+    setupChoiceQuiz({
+      formId: 'final-quiz',
+      resultId: 'result-quiz',
+      solutions: {
+        "quiz-1": [
+          "a",
+          "b",
+          "c"
+        ],
+        "quiz-2": [
+          "a"
+        ],
+        "quiz-3": [
+          "a",
+          "b"
+        ],
+        "quiz-4": [
+          "a",
+          "c"
+        ],
+        "quiz-5": [
+          "a",
+          "b"
+        ]
+      },
+      questionHints: {
+        "quiz-1": "Ein Hund erbt name und alter von Tier und hat zusätzlich rasse. freigaenger gehört zu Katze – Geschwisterklassen erben nichts voneinander.",
+        "quiz-2": "Delfin überschreibt zeigeDaten() nicht. Deshalb wird die Methode ausgeführt, die Delfin von Tier geerbt hat.",
+        "quiz-3": "Über eine Variable vom Typ Tier lassen sich nur Methoden aufrufen, die Tier kennt. Und nicht jedes Tier ist ein Hund – deshalb darf eine Hund-Variable kein Tier-Objekt aufnehmen.",
+        "quiz-4": "Die Attribute stehen nur einmal in der Oberklasse. Durch extends erbt jede Unterklasse sie – deklariert Hund sie noch einmal, entstehen doppelte Attribute.",
+        "quiz-5": "Der Typ der Variablen bestimmt, welche Methoden aufrufbar sind; welche Fassung läuft, bestimmt das Objekt. Das Katze-Objekt bleibt vollständig erhalten."
+      },
+      messages: {
+        high: 'Korrekt. Alle fünf Fragen stimmen. Unten ist jetzt die Übersicht mit allen Ergebnissen freigeschaltet.',
+        low: "Noch nicht korrekt. Öffne die Merkkarte und vergleiche sie mit deinen Klassen und der Ausgabe deines Testprogramms.",
+        mediumHint: 'Denk daran: In manchen Fragen sind mehrere Antworten richtig, in anderen genau eine.'
+      },
+      onSuccess: function() {
+        const summary = document.getElementById('quiz-summary');
+        if (summary) summary.hidden = false;
+        savedInputs.setFlag('quizPassed');
+      }
+    });
+
+    /**
+     * Öffnet die Merkkarte, wenn die Seite mit #merkkarte-vererbung aufgerufen wird
+     * (Link aus Aufgabe 6).
+     */
+    (function openMerkkarteFromHash() {
+      const merkkarte = document.getElementById('merkkarte-vererbung');
+
+      if (
+        merkkarte &&
+        window.location &&
+        window.location.hash === '#merkkarte-vererbung'
+      ) {
+        merkkarte.open = true;
+      }
+    })();
+
+    /**
+     * Den Programmcode speichert die Online-IDE selbst. Alle weiteren Eingaben
+     * der Seite sichert die gemeinsame Speicherkomponente im localStorage.
+     */
+    const savedInputs =
+      (typeof window.persistTaskInputs === 'function')
+        ? window.persistTaskInputs(
+          "informatik10-oop-aufgabe5-v1",
+          "#observe-5b input[type=\"checkbox\"], #final-quiz input[type=\"checkbox\"]"
+        )
+        : { hasFlag: () => false, setFlag() {} };
+
+    if (savedInputs.hasFlag('quizPassed')) {
+      const summary = document.getElementById('quiz-summary');
+      if (summary) summary.hidden = false;
+    }
+  </script>
+</body>
+</html>
