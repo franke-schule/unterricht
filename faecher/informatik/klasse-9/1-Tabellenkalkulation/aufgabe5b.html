@@ -467,6 +467,7 @@
     </main>
 
     <script src="../eingaben-speichern.js?v=20260924"></script>
+    <script src="../../quiz-fragen-pruefen.js?v=20261006"></script>
     <script>
       (() => {
         "use strict";
@@ -904,6 +905,24 @@
             if (summary) summary.hidden = false;
             savedInputs.setFlag("quizPassed");
           }
+        });
+
+        /* Abschlussquiz: Jede Frage lässt sich zusätzlich einzeln prüfen. */
+        window.addQuizQuestionChecks({
+          form: document.getElementById("final-quiz"),
+          solutions: {
+            "quiz-1": ["a"],
+            "quiz-2": ["a", "b"],
+            "quiz-3": ["a", "b", "c"]
+          },
+          hints: {
+            "quiz-1": "Zähle im Diagramm die Pfeile, die in WENN hineinführen, und überlege, wofür jeder Pfeil steht.",
+            "quiz-2": "Setze die Losnummern ein: Ist 70 größer als 70? Und welcher Wert steht in der Klammer an zweiter Stelle?",
+            "quiz-3": "Teste die Losnummern 70 und 71 einmal mit „größer“ und einmal mit „größer gleich“. Wo unterscheiden sich die Ergebnisse?"
+          },
+          buttonClass: "primary-action",
+          feedbackClass: "result",
+          onAllCorrect: () => document.getElementById("final-quiz").requestSubmit()
         });
 
         /**

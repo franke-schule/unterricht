@@ -366,6 +366,20 @@ function bindEvents() {
   document.getElementById("check-step5").addEventListener("click", checkStep5);
   document.getElementById("check-step6").addEventListener("click", checkStep6);
   document.getElementById("final-quiz").addEventListener("submit", checkStep7);
+  // Jede Quizfrage lässt sich zusätzlich einzeln prüfen (../quiz-fragen-pruefen.js).
+  window.addQuizQuestionChecks?.({
+    form: document.getElementById("final-quiz"),
+    solutions: { "quiz-one": ["one-n"], "quiz-two": ["foreign"], "quiz-three": ["one-n"] },
+    hints: {
+      "quiz-one": "Lies die Beziehung in beide Richtungen: Wie viele Fotos kann ein Benutzer haben, und wie vielen Benutzern gehört ein Foto?",
+      "quiz-two": "Vergleiche die Werte in photos.user_id mit der Spalte id in der Tabelle users.",
+      "quiz-three": "Denk an das Beispiel Schulklasse – Schüler: Bei welcher Tabelle steht das n, wenn zu einem Datensatz viele andere gehören?",
+    },
+    buttonClass: "primary-button",
+    rowClass: "action-row",
+    levels: { high: "success", medium: "hint", low: "error" },
+    onAllCorrect: () => document.getElementById("final-quiz").requestSubmit(),
+  });
   document.getElementById("reset-module").addEventListener("click", () => { if (window.confirm("Möchtest du alle Eingaben und den Fortschritt zurücksetzen?")) { localStorage.removeItem(STORAGE_KEY); window.location.reload(); } });
 
   document.querySelectorAll('input[name="photos-per-user"], input[name="users-per-photo"]').forEach((input) => input.addEventListener("change", () => {

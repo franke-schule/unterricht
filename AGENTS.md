@@ -167,6 +167,11 @@ Vorgaben:
 - Mindestens zwei Fragen eines Quiz haben mehrere richtige Antworten. Einzelne
   Fragen dürfen genau eine richtige Antwort haben, aber ein Quiz aus
   ausschließlich einfach zu beantwortenden Fragen erfüllt die Vorgabe nicht.
+- Jede Frage hat einen eigenen Button „Frage N prüfen“ mit eigener
+  Rückmeldung direkt darunter. Der gemeinsame Auswertungs-Button bleibt;
+  stimmen alle Fragen einzeln, läuft die Gesamtauswertung automatisch.
+  Dafür `faecher/informatik/quiz-fragen-pruefen.js` (`addQuizQuestionChecks`)
+  einbinden.
 - `manifest-quizaufgaben.txt` gilt verbindlich.
 - Als Referenz die bestehenden Quiz-Implementierungen in Informatik Klasse 10,
   Einheit Datenbanken verwenden (dort als letzter Schritt `#final-quiz`).

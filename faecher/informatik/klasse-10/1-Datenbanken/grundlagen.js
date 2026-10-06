@@ -219,6 +219,21 @@ function bindStep6() {
     });
   });
   document.getElementById("final-quiz").addEventListener("submit", checkStep6);
+  // Jede Quizfrage lässt sich zusätzlich einzeln prüfen (../quiz-fragen-pruefen.js).
+  window.addQuizQuestionChecks?.({
+    form: document.getElementById("final-quiz"),
+    solutions: STEP6_CORRECT,
+    hints: {
+      q1: "Überlege, was die Spalten und was die Zeilen einer Tabelle festhalten – und wie viele Zeilen eine Tabelle haben darf.",
+      q2: "Ein Primärschlüssel muss jeden Datensatz eindeutig kennzeichnen. Was folgt daraus für doppelte und für leere Werte?",
+      q3: "Lies den Wert als Jahr-Monat-Tag. Welcher Datentyp speichert genau solche Werte – und welche Angabe ist gar kein Datentyp?",
+      q4: "Die Klasse wird zur Tabelle, ihre Attribute werden zu Spalten. Wo steht dann ein einzelnes Objekt mit seinen Attributwerten?",
+    },
+    buttonClass: "primary-button",
+    rowClass: "action-row",
+    levels: { high: "success", medium: "partial", low: "hint" },
+    onAllCorrect: () => document.getElementById("final-quiz").requestSubmit(),
+  });
 }
 
 function applyStoredState() {

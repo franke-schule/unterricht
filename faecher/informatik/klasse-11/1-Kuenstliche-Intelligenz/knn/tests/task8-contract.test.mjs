@@ -49,7 +49,7 @@ assert.match(html, /\.\.\/\.\.\/\.\.\/\.\.\/styles\.css\?v=20260707/);
 assert.match(html, /perzeptron\/task5\.css\?v=20260926a/);
 assert.match(html, /knn\/task7\.css\?v=20261003a/);
 assert.match(html, /knn\/task8\.css\?v=20261004a/);
-assert.match(html, /knn\/ui\/task8\.mjs\?v=20261004a/);
+assert.match(html, /knn\/ui\/task8\.mjs\?v=20261006q/);
 ['knn/task7.css', 'knn/task8.css', 'knn/ui/task8.mjs', 'perzeptron/task5.css', 'knn/ui/card-slots.mjs', 'knn/ui/knn-plot.mjs', 'knn/logic/knn.mjs', 'knn/logic/evaluation.mjs',
   'knn/data/shirts.mjs', 'knn/data/task8.mjs', 'perzeptron/ui/semantic-answer.mjs', 'perzeptron/logic/perceptron.mjs', 'aufgabe7.html']
   .forEach((path) => assert.ok(existsSync(new URL('../../' + path, import.meta.url)), path + ' fehlt'));

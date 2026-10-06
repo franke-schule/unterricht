@@ -924,6 +924,21 @@ function setupQuiz() {
     feedback('quiz-feedback', complete === 6 ? 'success' : 'partial', complete === 6 ? 'Alle sechs Fragen sind vollständig richtig beantwortet.' : complete + ' von 6 Fragen sind vollständig richtig. Verbessere die markierten Fragen und prüfe erneut.');
     if (complete === 6) { state.quiz.quizSolved = true; saveState(); renderQuizSummary(); } else $('#quiz-summary').hidden = !state.quiz.quizSolved;
   });
+  // Jede Quizfrage lässt sich zusätzlich einzeln prüfen (quiz-fragen-pruefen.js).
+  window.addQuizQuestionChecks?.({
+    questions: [...root.children].map((box, index) => ({
+      fieldset: box,
+      feedback: box.querySelector('.feedback'),
+      solution: QUIZ[index].options.filter((option) => option.correct).map((option) => option.id),
+      hint: (selected) => {
+        const wrongChosen = QUIZ[index].options.filter((option) => !option.correct && selected.includes(option.id));
+        return wrongChosen.length ? wrongChosen.map((option) => option.why).join(' ') : QUIZ[index].hint;
+      },
+    })),
+    buttonClass: 'primary-button',
+    levels: { high: 'success', medium: 'partial', low: 'error' },
+    onAllCorrect: () => $('#quiz-form').requestSubmit(),
+  });
 }
 
 function setupReset() {

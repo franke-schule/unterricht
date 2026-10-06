@@ -852,6 +852,18 @@ function bindEvents() {
   document.getElementById("check-s6-drag").addEventListener("click", checkS6Drag);
   document.getElementById("check-s6-f6b").addEventListener("click", checkS6F6b);
   document.getElementById("final-quiz").addEventListener("submit", checkQuiz);
+  // Jede Quizfrage lässt sich zusätzlich einzeln prüfen (../quiz-fragen-pruefen.js).
+  window.addQuizQuestionChecks?.({
+    questions: TRANSAKTIONEN_QUIZ.map((question, index) => ({
+      fieldset: document.getElementById(`quiz-q${index + 1}`)?.closest("fieldset"),
+      solution: question.options.filter((option) => option.correct).map((option) => option.id),
+      hint: question.hint,
+    })),
+    buttonClass: "primary-button",
+    rowClass: "action-row",
+    levels: { high: "success", medium: "partial", low: "hint" },
+    onAllCorrect: () => document.getElementById("final-quiz").requestSubmit(),
+  });
   document.getElementById("print-summary").addEventListener("click", () => window.print());
   document.getElementById("reset-module").addEventListener("click", () => {
     if (window.confirm("Möchtest du alle Eingaben und den Fortschritt zurücksetzen?")) { localStorage.removeItem(STORAGE_KEY); window.location.reload(); }

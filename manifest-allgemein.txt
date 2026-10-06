@@ -85,17 +85,29 @@ Lernmodule werden so gebaut, dass die Zwischenstaende der Schuelerinnen und
 Schueler beim Aufgabenwechsel erhalten bleiben. Wer zur Aufgabenuebersicht
 oder zu einer anderen Aufgabe wechselt und spaeter zurueckkehrt, findet seine
 Bearbeitung unveraendert vor.
+Das gilt fuer jedes neue und jedes ueberarbeitete Lernmodul ausnahmslos,
+auch wenn der Auftrag die Speicherung nicht erwaehnt. Ein Modul ohne
+vollstaendigen Zwischenspeicher gilt als nicht fertig.
 Jedes interaktive Lernmodul bindet dafuer eine wiederverwendbare
 Speicherkomponente ein. Sie erfasst die Eingaben und den Bearbeitungsstand
 automatisch; aufgabenspezifische Interaktionen werden an sie angebunden.
 
   - Im localStorage des Browsers speichern, mit einem eigenen, versionierten
     Schluessel pro Seite (z. B. informatik9-tabellenkalkulation-aufgabe2a-v1).
-  - Bei jeder Aenderung speichern, nicht erst beim Verlassen der Seite.
+  - Bei jeder Aenderung speichern (input- bzw. change-Ereignis), nicht erst
+    beim Klick auf Pruefen und nicht erst beim Verlassen der Seite.
   - Alle Eingaben erhalten: Textfelder, Formeln und Tabellenzellen, Auswahlen,
-    Kontrollkaestchen, Zuordnungen sowie Freischaltungen wie eine nach
-    bestandenem Quiz sichtbare Uebersicht. Rueckmeldungen muessen nicht
-    wiederhergestellt werden; ein erneuter Klick auf Pruefen erzeugt sie neu.
+    Kontrollkaestchen, Optionsfelder, Zuordnungen sowie Freischaltungen wie
+    eine nach bestandenem Quiz sichtbare Uebersicht. Rueckmeldungen muessen
+    nicht wiederhergestellt werden; ein erneuter Klick auf Pruefen erzeugt
+    sie neu.
+  - Speichern allein genuegt nicht: Jedes gespeicherte Feld wird beim Laden
+    auch wieder in die Seite eingetragen. Das gilt fuer jedes Formular und
+    jeden Reiter der Seite, nicht nur fuer das erste.
+  - Eingeblendete Inhalte, auf denen spaetere Schritte aufbauen (z. B. nach
+    der Pruefung aufgedeckte Loesungen oder Messwerte, die in eine Tabelle
+    uebertragen werden), sowie der zuletzt aktive Reiter werden ebenfalls
+    wiederhergestellt.
   - Erst wiederherstellen, wenn alle Listener der Seite registriert sind,
     damit abhaengige Anzeigen (Zeichenzaehler, Animationen) zum
     wiederhergestellten Stand passen.
@@ -378,15 +390,20 @@ zusaetzlich eine konkrete Textmeldung anzeigen.
 
 Feedback-Buttons bei Multiple-Choice-Fragen:
 
-  - Jede Multiple-Choice-Frage ausserhalb des Abschlussquiz erhaelt einen
-    eigenen Pruefen-Button mit eigener Rueckmeldung direkt unter der Frage.
+  - Jede Multiple-Choice-Frage erhaelt einen eigenen Pruefen-Button mit
+    eigener Rueckmeldung direkt unter der Frage. Das gilt auch fuer das
+    Abschlussquiz.
   - Mehrere MC-Fragen in einem Reiter oder einer Aufgabenkarte nicht ueber
     einen gemeinsamen Button am Ende pruefen. Das gilt auch, wenn eine
     MC-Frage mit einer anderen Teilaufgabe (z. B. Zahleneingabe) kombiniert
     ist: Die MC-Frage bekommt trotzdem ihren eigenen Button.
   - Ein Reiter gilt erst als abgeschlossen, wenn alle Teilfragen richtig
     beantwortet sind; Freischaltungen erscheinen erst dann.
-  - Ausgenommen ist das Abschlussquiz (#final-quiz); dort gilt
+  - Im Abschlussquiz (#final-quiz) bleibt zusaetzlich der gemeinsame
+    Auswertungs-Button. Sind alle Fragen einzeln richtig geprueft, laeuft
+    die Gesamtauswertung samt Freischaltung automatisch. Dafuer die
+    gemeinsame Komponente faecher/informatik/quiz-fragen-pruefen.js
+    verwenden (addQuizQuestionChecks); im Uebrigen gilt
     manifest-quizaufgaben.txt.
 
 
@@ -401,8 +418,11 @@ Vor Abschluss mindestens pruefen:
   [ ] Rueck- und Startseitenlink zeigen auf die richtigen Ziele.
   [ ] Dynamische Rueckmeldungen sind verstaendlich und barrierearm.
   [ ] Eingaben bleiben nach Wechsel zur Uebersicht und Rueckkehr erhalten.
-  [ ] Jede MC-Frage ausserhalb des Abschlussquiz hat einen eigenen
-      Pruefen-Button.
+      Im Browser getestet: in jedem Reiter jede Eingabeart ausfuellen, ohne
+      auf Pruefen zu klicken, zur Uebersicht wechseln, zurueckkehren und
+      pruefen, dass alle Werte, Freischaltungen und der Reiter erhalten sind.
+  [ ] Jede MC-Frage hat einen eigenen Pruefen-Button, auch im
+      Abschlussquiz.
   [ ] Inline-JavaScript ist syntaktisch gueltig.
   [ ] Sicherungsblatt-Download ist anfangs verborgen.
   [ ] Lehrercode stimmt mit der Dekodierdatei ueberein.

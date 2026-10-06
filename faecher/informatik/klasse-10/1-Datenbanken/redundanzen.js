@@ -640,6 +640,39 @@ function renderStep7() {
     saveState();
   };
   if (state.step7.checked && state.completed.includes(7)) setFeedback(7, "success", "Stark – alle vier Bereiche sind richtig. Deine Auswertung ist jetzt freigeschaltet.");
+  bindFinalQuestionChecks();
+}
+
+// Jede Frage der Sicherung lässt sich zusätzlich einzeln prüfen (../quiz-fragen-pruefen.js).
+function bindFinalQuestionChecks() {
+  const form = document.getElementById("final-quiz");
+  const fieldsets = form.querySelectorAll("fieldset");
+  const ASSIGNMENT = { username: "users", email: "users", description: "photos", url: "photos" };
+  window.addQuizQuestionChecks?.({
+    questions: [
+      { fieldset: fieldsets[0], solution: ["repeat"], hint: "Denk an die Tabelle aus Fotos und Benutzerdaten: Was stand dort bei jedem Foto desselben Benutzers immer wieder?" },
+      { fieldset: fieldsets[1], solution: ["changes", "contradictions", "inconsistency"], hint: "Überlege, was passiert, wenn ein Benutzer seine E-Mail-Adresse ändert, sie aber an vielen Stellen gespeichert ist." },
+      { fieldset: fieldsets[2], solution: ["split"], hint: "Erinnere dich an die Tabellen users und photos: Wie verhindert man, dass die Benutzerdaten bei jedem Foto wiederholt werden?" },
+      {
+        fieldset: fieldsets[3],
+        check: () => {
+          const selects = [...form.querySelectorAll("[data-final-field]")];
+          const filled = selects.filter((select) => select.value);
+          const right = filled.filter((select) => ASSIGNMENT[select.dataset.finalField] === select.value).length;
+          const hint = "Frage dich bei jedem Attribut: Beschreibt es den Benutzer oder das Foto?";
+          if (!filled.length) return { result: "empty", text: "Ordne jedes Attribut einer Tabelle zu." };
+          if (right === selects.length) return { result: "correct", text: "Korrekt. username und email gehören zu users, description und url zu photos." };
+          if (right === filled.length) return { result: "missing", text: `Teilweise korrekt. Deine Zuordnungen stimmen, aber es fehlen noch Attribute. ${hint}` };
+          if (right) return { result: "mixed", text: `Teilweise korrekt. ${right} von ${selects.length} Attributen ${right === 1 ? "ist" : "sind"} richtig zugeordnet. ${hint}` };
+          return { result: "wrong", text: `Noch nicht korrekt. ${hint}` };
+        },
+      },
+    ],
+    buttonClass: "primary-button",
+    rowClass: "action-row",
+    levels: { high: "success", medium: "hint", low: "error" },
+    onAllCorrect: () => form.requestSubmit(),
+  });
 }
 
 function labelsFor(values, choices) {

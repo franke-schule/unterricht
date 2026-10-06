@@ -323,6 +323,7 @@
     </main>
 
     <script src="../eingaben-speichern.js?v=20260924"></script>
+    <script src="../../quiz-fragen-pruefen.js?v=20261006"></script>
     <script>
       (() => {
         "use strict";
@@ -757,6 +758,24 @@
             if (summary) summary.hidden = false;
             savedInputs.setFlag("quizPassed");
           }
+        });
+
+        /* Abschlussquiz: Jede Frage lässt sich zusätzlich einzeln prüfen. */
+        window.addQuizQuestionChecks({
+          form: document.getElementById("final-quiz"),
+          solutions: {
+            "quiz-1": ["a", "b", "c"],
+            "quiz-2": ["a", "b", "d"],
+            "quiz-3": ["a", "b", "d"]
+          },
+          hints: {
+            "quiz-1": "Verfolge im Diagramm die Pfeile: In welche Richtung fließen die Werte, und wo kommt das Ergebnis an?",
+            "quiz-2": "Überlege, was ein Verteiler mit dem ankommenden Wert macht und wie viele Pfeile aus einer Funktion herausführen.",
+            "quiz-3": "Eine Eingabe wird eingetippt, eine Konstante steht fest im Diagramm. Die Lage im Diagramm entscheidet das nicht."
+          },
+          buttonClass: "primary-action",
+          feedbackClass: "result",
+          onAllCorrect: () => document.getElementById("final-quiz").requestSubmit()
         });
 
         /**

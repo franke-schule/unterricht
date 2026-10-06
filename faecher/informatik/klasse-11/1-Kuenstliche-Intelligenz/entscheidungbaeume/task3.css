@@ -442,6 +442,7 @@
 .quiz-option { display: flex; align-items: flex-start; gap: 9px; padding: 9px 11px; border-radius: 9px; background: rgba(240, 244, 251, 0.75); cursor: pointer; }
 .quiz-option input { margin-top: 3px; accent-color: var(--dt-blue); }
 .quiz-item-feedback { min-height: 1.2rem; margin: 10px 0 0; font-size: 0.82rem; font-weight: 800; }
+.quiz-item-check { margin-top: 12px; }
 .quiz-summary { margin-top: 18px; padding: 18px; border-radius: 14px; background: #edf3ff; }
 .quiz-summary h3 { margin-top: 0; }
 .quiz-summary ol { display: grid; gap: 11px; padding-left: 22px; }

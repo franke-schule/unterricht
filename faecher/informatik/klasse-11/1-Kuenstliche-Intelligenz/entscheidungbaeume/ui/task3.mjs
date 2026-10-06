@@ -908,7 +908,15 @@ function renderTreeQuiz() {
       label.append(input, document.createTextNode(option)); options.append(label);
     });
     const feedback = document.createElement("p"); feedback.className = "quiz-item-feedback";
-    fieldset.append(legend, options, feedback); return fieldset;
+    feedback.setAttribute("role", "status"); feedback.setAttribute("aria-live", "polite");
+    // Jede Frage lässt sich auch einzeln prüfen.
+    const check = document.createElement("button");
+    check.type = "button"; check.className = "dt-primary-button quiz-item-check"; check.textContent = `Frage ${index + 1} prüfen`;
+    check.addEventListener("click", () => {
+      const allCorrect = checkTreeQuizItem(index) && TREE_QUIZ.every((_, other) => isTreeQuizItemCorrect(other));
+      if (allCorrect && !state.treeQuizComplete) document.querySelector("#final-quiz").requestSubmit();
+    });
+    fieldset.append(legend, options, check, feedback); return fieldset;
   }));
   updateTreeQuizProgress();
   if (state.treeQuizComplete) showTreeQuizSummary();
@@ -950,23 +958,34 @@ function unlockSolution(event) {
     : "Der eingegebene Code ist nicht gültig.";
 }
 
+function isTreeQuizItemCorrect(index) {
+  const item = TREE_QUIZ[index];
+  const selection = treeQuizSelection(index);
+  return selection.every((choice) => item.correct.includes(choice)) && item.correct.every((choice) => selection.includes(choice));
+}
+
+// Bewertet eine Quizfrage und zeigt die Rückmeldung direkt darunter.
+function checkTreeQuizItem(index) {
+  const item = TREE_QUIZ[index];
+  const fieldset = document.querySelector(`[data-tree-quiz-index="${index}"]`);
+  const selection = treeQuizSelection(index);
+  const wrongChoices = selection.filter((choice) => !item.correct.includes(choice)).length;
+  const isCorrect = isTreeQuizItemCorrect(index);
+  fieldset.classList.toggle("is-correct", isCorrect);
+  fieldset.classList.toggle("is-wrong", !isCorrect);
+  let text = `✓ Richtig. ${item.feedback}`;
+  if (selection.length === 0) text = "Kreuze zuerst mindestens eine Aussage an.";
+  else if (wrongChoices > 0) text = `Noch nicht: Mindestens eine angekreuzte Aussage stimmt nicht. Hinweis: ${item.feedback}`;
+  else if (!isCorrect) text = "Teilweise richtig: Deine Kreuze stimmen, aber es fehlt noch mindestens eine richtige Aussage.";
+  fieldset.querySelector(".quiz-item-feedback").textContent = text;
+  return isCorrect;
+}
+
 function checkTreeQuiz(event) {
   event.preventDefault();
   let correct = 0;
   TREE_QUIZ.forEach((item, index) => {
-    const fieldset = document.querySelector(`[data-tree-quiz-index="${index}"]`);
-    const selection = treeQuizSelection(index);
-    const wrongChoices = selection.filter((choice) => !item.correct.includes(choice)).length;
-    const foundChoices = selection.filter((choice) => item.correct.includes(choice)).length;
-    const isCorrect = wrongChoices === 0 && foundChoices === item.correct.length;
-    fieldset.classList.toggle("is-correct", isCorrect);
-    fieldset.classList.toggle("is-wrong", !isCorrect);
-    let text = `✓ Richtig. ${item.feedback}`;
-    if (selection.length === 0) text = "Kreuze zuerst mindestens eine Aussage an.";
-    else if (wrongChoices > 0) text = `Noch nicht: Mindestens eine angekreuzte Aussage stimmt nicht. Hinweis: ${item.feedback}`;
-    else if (!isCorrect) text = "Teilweise richtig: Deine Kreuze stimmen, aber es fehlt noch mindestens eine richtige Aussage.";
-    fieldset.querySelector(".quiz-item-feedback").textContent = text;
-    if (isCorrect) correct += 1;
+    if (checkTreeQuizItem(index)) correct += 1;
   });
   const feedback = document.querySelector("#tree-quiz-feedback");
   feedback.hidden = false;

@@ -1561,6 +1561,7 @@ class Tower extends Computer {
     if (builder && state && check && result) mountHierarchy(builder, state, check, result);
   </script>
   <script src="../../klasse-9/eingaben-speichern.js?v=20260924"></script>
+  <script src="../../quiz-fragen-pruefen.js?v=20261006"></script>
   <script>
     /**
      * ==========================================================
@@ -2398,6 +2399,20 @@ class Tower extends Computer {
           );
         }
       );
+
+      /* Jede Frage lässt sich zusätzlich einzeln prüfen (../../quiz-fragen-pruefen.js). */
+      if (typeof window.addQuizQuestionChecks === 'function') {
+        window.addQuizQuestionChecks({
+          form: form,
+          solutions: SOLUTIONS,
+          hints: config.questionHints,
+          buttonClass: '',
+          feedbackClass: 'result',
+          onAllCorrect: function() {
+            form.requestSubmit();
+          }
+        });
+      }
 
       form.addEventListener(
         'submit',

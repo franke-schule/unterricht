@@ -1184,6 +1184,18 @@ function renderQuiz(panel) {
   const overviewSlot = element('div', 'sql9-overview-slot');
   const refreshOverview = () => { overviewSlot.replaceChildren(); if (state.quizPassed) overviewSlot.append(renderOverview()); };
   form.addEventListener('submit', (event) => { event.preventDefault(); checkQuiz(); showFeedback(); refreshOverview(); updateTabMarks(); });
+  // Jede Quizfrage lässt sich zusätzlich einzeln prüfen (../quiz-fragen-pruefen.js).
+  window.addQuizQuestionChecks?.({
+    questions: FINAL_QUIZ.map((question, index) => ({
+      fieldset: form.querySelectorAll('fieldset')[index],
+      solution: question.options.filter(([, , right]) => right).map(([id]) => id),
+      hint: question.hint,
+    })),
+    buttonClass: 'primary-button',
+    rowClass: 'action-row',
+    levels: { high: 'success', medium: 'partial', low: 'hint' },
+    onAllCorrect: () => form.requestSubmit(),
+  });
   card.append(form); panel.append(card, overviewSlot, renderSummary());
   showFeedback(); refreshOverview();
 }

@@ -234,6 +234,18 @@ document.querySelector('#check-description').addEventListener('click',checkDescr
 document.querySelectorAll('[data-code-task]').forEach(button => button.addEventListener('click',() => checkCode(button)));
 document.querySelector('#quiz-form').addEventListener('change',event => { if (event.target.matches('input[type="checkbox"]')) { state.quiz = QUIZ.map((_,i) => selected(i)); save(); } });
 document.querySelector('#quiz-form').addEventListener('submit',checkQuiz);
+// Jede Quizfrage lässt sich zusätzlich einzeln prüfen (../../../quiz-fragen-pruefen.js).
+window.addQuizQuestionChecks?.({
+  questions: QUIZ.map((question,i) => ({
+    fieldset: document.querySelector(`[data-quiz="${i}"]`),
+    feedback: document.querySelector('#quiz-feedback-' + i),
+    solution: question.correct.map(String),
+    hint: question.explanation,
+  })),
+  buttonClass: 'primary-button',
+  levels: { high: 'success', medium: 'partial', low: 'error' },
+  onAllCorrect: () => document.querySelector('#quiz-form').requestSubmit(),
+});
 document.querySelector('#solution-code-form').addEventListener('submit',unlockSolution);
 restore();
 document.querySelector('#description').value = state.description;

@@ -202,11 +202,22 @@ function renderFinalQuiz(panel) {
   const card = element('section', 'task-card sql-task'); card.append(element('h3', '', 'Vier Fragen zur SQL-Wiederholung'), element('p', '', 'Kreuze alle richtigen Antworten an. Bei manchen Fragen sind mehrere Antworten richtig.'));
   const form = element('form', 'final-quiz'); form.id = 'final-quiz'; form.noValidate = true;
   FINAL_QUIZ.forEach((question, index) => { const field = document.createElement('fieldset'); const legend = document.createElement('legend'); legend.append(element('span', '', String(index + 1)), document.createTextNode(question.prompt)); field.append(legend); const choices = element('div', 'choice-list'); question.options.forEach(([id, labelText]) => { const label = element('label', 'choice-option'); const input = document.createElement('input'); input.type = 'checkbox'; input.name = `sql-final-${question.id}`; input.value = id; input.checked = Array.isArray(state.quiz[question.id]) && state.quiz[question.id].includes(id); input.addEventListener('change', () => { const selected = Array.isArray(state.quiz[question.id]) ? state.quiz[question.id].filter((value) => question.options.some(([option]) => option === value)) : []; state.quiz[question.id] = input.checked ? [...new Set([...selected, id])] : selected.filter((value) => value !== id); state.quizFeedback = null; save(); card.querySelector('.sql-quiz-feedback')?.remove(); }); label.append(input, element('span', '', labelText)); choices.append(label); }); field.append(choices); form.append(field); });
-  const actions = element('div', 'action-row'); const submit = element('button', 'primary-button', 'Quiz prüfen'); submit.type = 'submit'; actions.append(submit); form.append(actions); form.addEventListener('submit', (event) => { event.preventDefault(); checkFinalQuiz(); }); card.append(form);
+  const actions = element('div', 'action-row'); const submit = element('button', 'primary-button', 'Quiz prüfen'); submit.type = 'submit'; actions.append(submit); form.append(actions); form.addEventListener('submit', (event) => { event.preventDefault(); checkFinalQuiz(); }); addQuestionChecks(form, FINAL_QUIZ, (question) => question.options.filter(([, , right]) => right).map(([id]) => id)); card.append(form);
   if (state.quizFeedback) { const feedback = element('p', `feedback ${state.quizFeedback.level} sql-quiz-feedback`, state.quizFeedback.text); feedback.setAttribute('aria-live', 'polite'); card.append(feedback); }
   if (state.quizPassed) { const overview = element('section', 'short-summary sql-quiz-overview'); overview.append(element('h3', '', 'Abschlussquiz: Fragen und richtige Antworten')); const list = document.createElement('ol'); FINAL_QUIZ.forEach((question) => { const item = document.createElement('li'); item.append(element('strong', '', question.prompt)); const answers = document.createElement('ul'); question.options.filter(([, , correct]) => correct).forEach(([, answer]) => answers.append(element('li', '', answer))); item.append(answers); list.append(item); }); overview.append(list); card.append(overview); }
   panel.append(card);
 }
+// Jede Quizfrage lässt sich zusätzlich einzeln prüfen (../quiz-fragen-pruefen.js).
+function addQuestionChecks(form, questions, solutionOf) {
+  window.addQuizQuestionChecks?.({
+    questions: questions.map((question, index) => ({ fieldset: form.querySelectorAll('fieldset')[index], solution: solutionOf(question), hint: question.hint })),
+    buttonClass: 'primary-button',
+    rowClass: 'action-row',
+    levels: { high: 'success', medium: 'partial', low: 'hint' },
+    onAllCorrect: () => form.requestSubmit(),
+  });
+}
+
 function checkFinalQuiz() {
   const open = FINAL_QUIZ.map((question, index) => !Array.isArray(state.quiz[question.id]) || !state.quiz[question.id].length ? index + 1 : null).filter(Boolean);
   if (open.length) state.quizFeedback = { level: 'hint', text: `Beantworte zuerst alle Fragen. Noch ohne Kreuz: Frage ${open.join(', ')}.` };
@@ -415,6 +426,7 @@ function renderMenuQuiz(panel) {
   });
   const actions = element('div', 'action-row'); const button = element('button', 'primary-button', 'Quiz prüfen'); button.type = 'submit'; actions.append(button); form.append(actions);
   form.addEventListener('submit', (event) => { event.preventDefault(); const unanswered = MENU_QUIZ.flatMap((question, index) => menuQuizSelection(question.id).length ? [] : [index + 1]); if (unanswered.length) menuFeedback('quiz', 'hint', `Beantworte zuerst alle Fragen. Noch ohne Kreuz: Frage ${unanswered.join(', ')}.`); else { const results = MENU_QUIZ.map((question) => evaluateQuizQuestion(question, menuQuizSelection(question.id))); const count = results.filter(Boolean).length; if (count === 3) menuFeedback('quiz', 'success', 'Korrekt: Alle drei Fragen stimmen.'); else { const wrong = MENU_QUIZ.flatMap((question, index) => results[index] ? [] : [index + 1]); const hints = MENU_QUIZ.filter((question, index) => !results[index]).map((question) => question.hint).join(' '); menuFeedback('quiz', count ? 'partial' : 'hint', `${count ? `Teilweise korrekt: ${count} von 3 Fragen stimmen.` : 'Noch nicht korrekt.'} Prüfe Frage ${wrong.join(', ')} noch einmal. ${hints}`); } } renderMenuModule(); });
+  addQuestionChecks(form, MENU_QUIZ, (question) => question.options.filter((option) => option.correct).map((option) => option.id));
   card.append(form); renderMenuFeedback(card, 'quiz'); panel.append(card);
 }
 function listFrom(lines) { const list = document.createElement('ul'); lines.forEach((line) => list.append(element('li', '', line))); return list; }
@@ -504,9 +516,10 @@ function checkVerbundQuiz() {
 function renderVerbundCheck(panel) {
   panel.append(verbundHeading(6, 'Sichern', 'Abschlussquiz')); const card = element('section', 'task-card'); card.append(element('h3', '', `${SONG_VERBUND_QUIZ.length} Fragen zum Verbund`), element('p', '', 'Kreuze alle richtigen Antworten an. Bei manchen Fragen sind mehrere Antworten richtig.'));
   const form = element('form', 'final-quiz'); form.id = 'final-quiz'; form.noValidate = true;
-  SONG_VERBUND_QUIZ.forEach((question, index) => { const group = document.createElement('fieldset'); const legend = document.createElement('legend'); legend.append(element('span', '', String(index + 1)), document.createTextNode(question.prompt)); group.append(legend); const choices = element('div', 'choice-list'); question.options.forEach((option) => { const label = element('label', 'choice-option'); const input = document.createElement('input'); input.type = 'checkbox'; input.name = `verbund-quiz-${question.id}`; input.value = option.id; input.checked = quizSelection(question.id).includes(option.id); input.addEventListener('change', () => { toggleQuizOption(question.id, option.id, input.checked); card.querySelector('.feedback')?.remove(); }); label.append(input, element('span', '', option.text)); choices.append(label); }); group.append(choices); form.append(group); });
+  SONG_VERBUND_QUIZ.forEach((question, index) => { const group = document.createElement('fieldset'); const legend = document.createElement('legend'); legend.append(element('span', '', String(index + 1)), document.createTextNode(question.prompt)); group.append(legend); const choices = element('div', 'choice-list'); question.options.forEach((option) => { const label = element('label', 'choice-option'); const input = document.createElement('input'); input.type = 'checkbox'; input.name = `verbund-quiz-${question.id}`; input.value = option.id; input.checked = quizSelection(question.id).includes(option.id); input.addEventListener('change', () => { toggleQuizOption(question.id, option.id, input.checked); card.querySelector('.feedback:not(.quiz-question-feedback)')?.remove(); }); label.append(input, element('span', '', option.text)); choices.append(label); }); group.append(choices); form.append(group); });
   const actions = element('div', 'action-row'); const button = element('button', 'primary-button', 'Quiz prüfen'); button.type = 'submit'; actions.append(button); form.append(actions);
   form.addEventListener('submit', (event) => { event.preventDefault(); checkVerbundQuiz(); });
+  addQuestionChecks(form, SONG_VERBUND_QUIZ, (question) => question.options.filter((option) => option.correct).map((option) => option.id));
   card.append(form); appendVerbundFeedback(card, 'check'); panel.append(card);
 }
 function renderVerbundSummary(panel) {

@@ -172,17 +172,25 @@ function renderQuiz() {
     const fieldset = document.createElement("fieldset"); fieldset.className = "quiz-question"; fieldset.dataset.quizIndex = index;
     const legend = document.createElement("legend"); legend.textContent = `Frage ${index + 1}: ${item.question}`; const options = document.createElement("div"); options.className = "quiz-options";
     item.options.forEach(([value, label]) => { const option = document.createElement("label"); option.className = "quiz-option"; const input = document.createElement("input"); input.type = "checkbox"; input.name = `quiz-${index}`; input.value = value; input.checked = (state.quiz[index] ?? []).includes(value); input.addEventListener("change", () => { state.quiz[index] = [...document.querySelectorAll(`input[name="quiz-${index}"]:checked`)].map((entry) => entry.value); state.quizComplete = false; document.querySelector("#quiz-summary").hidden = true; saveState(); }); option.append(input, document.createTextNode(label)); options.append(option); });
-    const feedback = document.createElement("p"); feedback.className = "quiz-item-feedback"; fieldset.append(legend, options, feedback); return fieldset;
+    const feedback = document.createElement("p"); feedback.className = "quiz-item-feedback"; feedback.setAttribute("role", "status"); feedback.setAttribute("aria-live", "polite");
+    // Jede Frage lässt sich auch einzeln prüfen.
+    const check = document.createElement("button"); check.type = "button"; check.className = "dt-primary-button quiz-item-check"; check.textContent = `Frage ${index + 1} prüfen`;
+    check.addEventListener("click", () => {
+      const allCorrect = checkQuizItem(index) && QUIZ.every((_, other) => sameValues(quizSelection(other), QUIZ[other].correct));
+      if (allCorrect && !state.quizComplete) document.querySelector("#quiz-form").requestSubmit();
+    });
+    fieldset.append(legend, options, check, feedback); return fieldset;
   }));
 }
 function sameValues(first, second) { return first.length === second.length && first.every((value) => second.includes(value)); }
 function showQuizSummary() { const summary = document.querySelector("#quiz-summary"); summary.hidden = false; summary.innerHTML = "<h3 id=\"quiz-summary-title\">Abschlussübersicht</h3><p>Alle Auswahlentscheidungen sind richtig.</p>"; const list = document.createElement("ol"); QUIZ.forEach((item) => { const entry = document.createElement("li"); entry.innerHTML = `<strong>${item.question}</strong><br>Richtig: ${item.options.filter(([value]) => item.correct.includes(value)).map(([, label]) => label).join(" ")}`; list.append(entry); }); summary.append(list); }
-function checkQuiz(event) {
-  event.preventDefault(); let correct = 0;
-  QUIZ.forEach((item, index) => {
-    const selected = [...event.currentTarget.querySelectorAll(`input[name="quiz-${index}"]:checked`)].map((input) => input.value);
+function quizSelection(index) { return [...document.querySelectorAll(`#quiz-form input[name="quiz-${index}"]:checked`)].map((input) => input.value); }
+// Bewertet eine Quizfrage und zeigt die Rückmeldung direkt darunter.
+function checkQuizItem(index) {
+    const item = QUIZ[index];
+    const selected = quizSelection(index);
     const valid = sameValues(selected, item.correct);
-    const fieldset = event.currentTarget.querySelector(`[data-quiz-index="${index}"]`);
+    const fieldset = document.querySelector(`#quiz-form [data-quiz-index="${index}"]`);
     fieldset.classList.toggle("is-correct", valid); fieldset.classList.toggle("is-wrong", !valid);
     const labelsFor = (values) => item.options.filter(([value]) => values.includes(value)).map(([, label]) => label);
     const missing = item.correct.filter((value) => !selected.includes(value));
@@ -193,8 +201,12 @@ function checkQuiz(event) {
     fieldset.querySelector(".quiz-item-feedback").textContent = valid
       ? `✓ Richtig gewählt: ${labelsFor(item.correct).join(" / ")}`
       : `Noch nicht. ${decisions.join(" ")}`;
-    if (valid) correct += 1; state.quiz[index] = selected;
-  });
+    state.quiz[index] = selected;
+    return valid;
+}
+function checkQuiz(event) {
+  event.preventDefault(); let correct = 0;
+  QUIZ.forEach((item, index) => { if (checkQuizItem(index)) correct += 1; });
   if (correct === QUIZ.length) { state.quizComplete = true; markVisited("quiz"); showFeedback("quiz-feedback", "success", "Alle sechs Fragen sind richtig beantwortet."); showQuizSummary(); }
   else showFeedback("quiz-feedback", "wrong", `${correct} von ${QUIZ.length} Fragen sind vollständig richtig. Verbessere die markierten Fragen und versuche es erneut.`);
   saveState();

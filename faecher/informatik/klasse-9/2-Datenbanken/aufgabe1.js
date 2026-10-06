@@ -615,6 +615,26 @@ function buildQuizHintList(results) {
   return items;
 }
 
+// Jede Quizfrage lässt sich zusätzlich einzeln prüfen (../quiz-fragen-pruefen.js).
+function bindQuizQuestionChecks() {
+  const form = document.getElementById('final-quiz');
+  window.addQuizQuestionChecks?.({
+    questions: QUIZ_QUESTIONS.map((question) => ({
+      fieldset: form.querySelector(`input[name="${question.id}"]`)?.closest('fieldset'),
+      solution: question.options.filter((option) => option.correct).map((option) => option.id),
+      hint: (chosen) => {
+        const hint = question.hint.replace(/^Frage \d+: /, '');
+        const wrongOption = question.options.find((option) => !option.correct && chosen.includes(option.id));
+        return wrongOption ? `${hint} ${wrongOption.reason}` : hint;
+      },
+    })),
+    buttonClass: 'primary-button',
+    rowClass: 'action-row',
+    levels: { high: 'success', medium: 'partial', low: 'hint' },
+    onAllCorrect: () => form.requestSubmit(),
+  });
+}
+
 function checkQuiz(event) {
   event.preventDefault();
   QUIZ_QUESTIONS.forEach((question) => { state.quiz[question.id] = selectedValues(question.id); });
@@ -718,6 +738,7 @@ function bindGlobalEvents() {
   document.getElementById('check-roles').addEventListener('click', checkRoles);
   document.getElementById('check-cases').addEventListener('click', checkCases);
   document.getElementById('final-quiz').addEventListener('submit', checkQuiz);
+  bindQuizQuestionChecks();
 
   document.getElementById('reset-module').addEventListener('click', () => {
     if (!window.confirm('Möchtest du wirklich alle Eingaben dieses Lernmoduls löschen?')) return;

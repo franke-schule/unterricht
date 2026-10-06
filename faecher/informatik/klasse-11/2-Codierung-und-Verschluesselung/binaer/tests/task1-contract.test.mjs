@@ -42,7 +42,7 @@ assert.deepEqual([...topbar.matchAll(/<a class="back-link" href="([^"]*)">([^<]*
   ['../index.html', 'Zur Aufgabenübersicht'], ['../../../../', 'Startseite'],
 ]);
 assert.match(html, /<body class="perceptron-page knn-page binary-page">/);
-['../../../../styles.css?v=20260707', '../1-Kuenstliche-Intelligenz/perzeptron/task5.css?v=20260926a', '../1-Kuenstliche-Intelligenz/knn/task7.css?v=20261003a', 'binaer/task1.css?v=20261005a', 'binaer/ui/task1.mjs?v=20261005a']
+['../../../../styles.css?v=20260707', '../1-Kuenstliche-Intelligenz/perzeptron/task5.css?v=20260926a', '../1-Kuenstliche-Intelligenz/knn/task7.css?v=20261003a', 'binaer/task1.css?v=20261005a', 'binaer/ui/task1.mjs?v=20261006q']
   .forEach((link) => {
     assert.ok(html.includes('"' + link + '"'), link + ' fehlt im HTML');
     assert.ok(existsSync(new URL('../../' + link.split('?')[0], import.meta.url)), link + ' existiert nicht');

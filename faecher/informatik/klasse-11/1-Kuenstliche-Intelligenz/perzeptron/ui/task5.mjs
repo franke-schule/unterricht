@@ -154,6 +154,26 @@ function setupQuiz() {
     document.querySelector('#quiz-progress').textContent = complete + ' von 6 Fragen vollständig richtig'; feedback('quiz-feedback',complete === 6 ? 'success' : 'partial',complete === 6 ? 'Alle sechs Fragen sind vollständig richtig beantwortet.' : complete + ' von 6 Fragen sind vollständig richtig. Verbessere die markierten Fragen und prüfe erneut.');
     const overview = document.querySelector('#quiz-summary'); overview.hidden = complete !== 6; if (complete === 6) overview.innerHTML = '<h3>Quizübersicht</h3><ul>' + summary.join('') + '</ul>';
   });
+  // Jede Quizfrage lässt sich zusätzlich einzeln prüfen (../../../quiz-fragen-pruefen.js).
+  const QUIZ_HINTS = [
+    'Überlege für jeden Bestandteil, welche Rolle er in Reiter 2 hatte. Gewichte werden nur beim Lernen mit einem Zielwert verändert.',
+    'Rechne a = w₁ · x₁ + w₂ · x₂ und vergleiche a mit θ. Ein einzelnes negatives Gewicht entscheidet die Ausgabe nicht allein.',
+    'Vergleiche mit der Lernregel aus Reiter 4: Wann ändert sich überhaupt etwas, und in welche Richtung?',
+    'Rechne die Epoche aus Reiter 4 Schritt für Schritt nach und notiere die Werte nach jedem Datensatz.',
+    'Denk an die Trenngerade und an die Grenzen aus Reiter 7: Kann eine einzelne Gerade jede Punktwolke trennen?',
+    'Überlege, woher das Perzeptron weiß, was richtig ist, und was beim Lernen tatsächlich passiert.',
+  ];
+  window.addQuizQuestionChecks?.({
+    questions: [...root.children].map((box, index) => ({
+      fieldset: box,
+      feedback: box.querySelector('.feedback'),
+      solution: QUIZ[index].options.filter((option) => option.correct).map((option) => option.id),
+      hint: QUIZ_HINTS[index],
+    })),
+    buttonClass: 'primary-button',
+    levels: { high: 'success', medium: 'partial', low: 'error' },
+    onAllCorrect: () => document.querySelector('#quiz-form').requestSubmit(),
+  });
 }
 function setupReset() { document.querySelector('#reset-progress').addEventListener('click',() => { if (!confirm('Bearbeitungsstand wirklich zurücksetzen?')) return; try { localStorage.removeItem(STORAGE_KEY); } catch {} location.reload(); }); }
 

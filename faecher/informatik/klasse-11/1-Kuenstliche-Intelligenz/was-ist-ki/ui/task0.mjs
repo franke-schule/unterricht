@@ -480,6 +480,18 @@ function setupQuiz() {
       overview.innerHTML = '<h3>Übersicht aller Teilaufgaben</h3><ul>' + overviewItems.join('') + '</ul><h3>Quizübersicht</h3><ul>' + summary.join('') + '</ul>';
     }
   });
+  // Jede Quizfrage lässt sich zusätzlich einzeln prüfen (../../../quiz-fragen-pruefen.js).
+  window.addQuizQuestionChecks?.({
+    questions: [...root.children].map((box, index) => ({
+      fieldset: box,
+      feedback: box.querySelector('.feedback'),
+      solution: QUIZ[index].options.filter((option) => option.correct).map((option) => option.id),
+      hint: QUIZ[index].hint,
+    })),
+    buttonClass: 'primary-button',
+    levels: { high: 'success', medium: 'partial', low: 'error' },
+    onAllCorrect: () => document.querySelector('#quiz-form').requestSubmit(),
+  });
 }
 
 function setupReset() {
