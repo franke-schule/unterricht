@@ -6,6 +6,7 @@ const MAX_LENGTH = 3000;
 const DEPTH_NOTE = "Ein tieferer Baum kann Trainingsdaten besser klassifizieren. Für die Auswahl eines Modells ist jedoch entscheidend, wie gut es unbekannte Testdaten klassifiziert.";
 const SOLUTION_CODE = "M8TR-DP7H";
 const STEP_IDS = ["task41", "task42", "task4a"];
+const STORAGE_KEY = "informatik11-ki-aufgabe4-v1";
 
 const semanticTasks = [
   { answerId: "depth-one-answer", buttonId: "check-depth-one", feedbackId: "depth-one-feedback", countId: "depth-one-count", taskId: "11-4-1" },
@@ -14,10 +15,41 @@ const semanticTasks = [
 
 let activeStepIndex = 0;
 
+// Zwischenstand: aktiver Reiter, Freitexte und Tabelleneinträge (Rückmeldungen entstehen beim Prüfen neu).
+function loadState() {
+  try {
+    const parsed = JSON.parse(localStorage.getItem(STORAGE_KEY));
+    if (!parsed || typeof parsed !== "object") return { activeStep: STEP_IDS[0], fields: {} };
+    return {
+      activeStep: STEP_IDS.includes(parsed.activeStep) ? parsed.activeStep : STEP_IDS[0],
+      fields: parsed.fields && typeof parsed.fields === "object" ? parsed.fields : {},
+    };
+  } catch { return { activeStep: STEP_IDS[0], fields: {} }; }
+}
+const state = loadState();
+function saveState() {
+  try { localStorage.setItem(STORAGE_KEY, JSON.stringify(state)); } catch { /* ohne Speicher weiterarbeiten */ }
+}
+function fieldKey(element) {
+  return element.id || `depth-${element.dataset.depth}-${element.dataset.field}`;
+}
+function persistFields() {
+  document.querySelectorAll(".task4-answer, .task4-table-input").forEach((element) => {
+    const key = fieldKey(element);
+    if (typeof state.fields[key] === "string") {
+      element.value = state.fields[key].slice(0, MAX_LENGTH);
+      element.dispatchEvent(new Event("input", { bubbles: true }));
+    }
+    element.addEventListener("input", () => { state.fields[key] = element.value; saveState(); });
+  });
+}
+
 function showStep(stepId, moveFocus = false) {
   const nextIndex = STEP_IDS.indexOf(stepId);
   if (nextIndex < 0) return;
   activeStepIndex = nextIndex;
+  state.activeStep = stepId;
+  saveState();
   document.querySelectorAll("[data-step-panel]").forEach((panel) => {
     panel.hidden = panel.dataset.stepPanel !== stepId;
   });
@@ -48,7 +80,7 @@ function setupTabs() {
   });
   document.querySelector("#task4-previous").addEventListener("click", () => showStep(STEP_IDS[activeStepIndex - 1]));
   document.querySelector("#task4-next").addEventListener("click", () => showStep(STEP_IDS[activeStepIndex + 1]));
-  showStep(STEP_IDS[0]);
+  showStep(state.activeStep);
 }
 
 function appendFeedbackList(container, title, items, fallback) {
@@ -171,3 +203,4 @@ setupTabs();
 semanticTasks.forEach(setupSemanticTask);
 document.querySelector("#depth-table-form").addEventListener("submit", checkDepthTable);
 document.querySelector("#solution-code-form").addEventListener("submit", unlockSolution);
+persistFields();

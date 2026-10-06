@@ -29,7 +29,7 @@ const referenceTree = Object.freeze({
   },
 });
 
-const defaultState = () => ({ activeStep: "test", visited: [], predictions: {}, classificationAttempts: 0, matrix: {}, accuracy: {}, quiz: {}, quizComplete: false });
+const defaultState = () => ({ activeStep: "test", visited: [], predictions: {}, classificationAttempts: 0, labelsRevealed: false, matrix: {}, accuracy: {}, quiz: {}, quizComplete: false });
 function loadState() {
   try {
     const parsed = JSON.parse(localStorage.getItem(STORAGE_KEY));
@@ -116,15 +116,31 @@ function checkClassification(event) {
   if (correct === FISH_TEST_DATASET.length) showFeedback("classification-feedback", "success", "Korrekt: Alle fünf Vorhersagen folgen dem Entscheidungsbaum. Vergleiche jetzt die eingeblendeten tatsächlichen Labels.");
   else if (correct > 0) showFeedback("classification-feedback", "wrong", `${correct} von 5 Vorhersagen sind korrekt. Prüfe zuerst ${firstWrong.id}: ${fishHints(firstWrong)[1]}`);
   else showFeedback("classification-feedback", "wrong", `Noch nicht korrekt. Beginne bei ${firstWrong.id} mit ${fishHints(firstWrong)[0]}`);
-  if (correct === FISH_TEST_DATASET.length || state.classificationAttempts >= 2) {
-    FISH_TEST_DATASET.forEach((fish) => {
-      const result = event.currentTarget.elements[fish.id].closest(".task3c-test-fish").querySelector(".task3c-test-result");
-      const prediction = state.predictions[fish.id] || "keine Vorhersage";
-      result.hidden = false;
-      result.textContent = `Tatsächlich: ${fish.classification}. Vorhersage: ${prediction}. ${prediction === fish.classification ? "Korrekt." : "Nicht korrekt."}`;
-    });
-  }
+  if (correct === FISH_TEST_DATASET.length || state.classificationAttempts >= 2) { state.labelsRevealed = true; revealActualLabels(); }
   saveState();
+}
+// Die tatsaechlichen Labels werden fuer die Konfusionsmatrix gebraucht und bleiben deshalb nach dem Freischalten sichtbar.
+function revealActualLabels() {
+  const form = document.querySelector("#classification-form");
+  FISH_TEST_DATASET.forEach((fish) => {
+    const result = form.elements[fish.id].closest(".task3c-test-fish").querySelector(".task3c-test-result");
+    const prediction = state.predictions[fish.id] || "keine Vorhersage";
+    result.hidden = false;
+    result.textContent = `Tatsächlich: ${fish.classification}. Vorhersage: ${prediction}. ${prediction === fish.classification ? "Korrekt." : "Nicht korrekt."}`;
+  });
+}
+// Matrix- und Genauigkeitsfelder bei jeder Eingabe sichern und beim Laden wiederherstellen.
+function persistForm(selector, stateKey) {
+  const form = document.querySelector(selector);
+  const saved = state[stateKey] && typeof state[stateKey] === "object" ? state[stateKey] : {};
+  [...form.elements].forEach((input) => {
+    if (!input.name || typeof saved[input.name] !== "string") return;
+    if (input.type === "radio") input.checked = input.value === saved[input.name];
+    else input.value = saved[input.name];
+  });
+  const store = () => { state[stateKey] = Object.fromEntries(new FormData(form)); saveState(); };
+  form.addEventListener("input", store);
+  form.addEventListener("change", store);
 }
 function checkMatrix(event) {
   event.preventDefault(); const values = Object.fromEntries(new FormData(event.currentTarget)); let correct = 0; let firstWrong = null;
@@ -216,7 +232,10 @@ if (typeof document !== "undefined") {
   document.querySelector("#check-accuracy-values").addEventListener("click", checkAccuracyValues);
   document.querySelector("#quiz-form").addEventListener("submit", checkQuiz);
   document.querySelector("#solution-code-form").addEventListener("submit", unlockSolution);
-  bindNavigation(); showStep(STEPS.includes(state.activeStep) ? state.activeStep : "test");
+  bindNavigation();
+  persistForm("#matrix-form", "matrix"); persistForm("#accuracy-form", "accuracy");
+  if (state.labelsRevealed) revealActualLabels();
+  showStep(STEPS.includes(state.activeStep) ? state.activeStep : "test");
   if (state.quizComplete) { markVisited("quiz"); showQuizSummary(); }
 }
 
