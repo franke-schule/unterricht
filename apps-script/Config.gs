@@ -8,7 +8,7 @@
  * - inf10/2-Modellierung-und-Programmierung-Online-IDE/aufgabe4.html (zwei Beschreibe-Aufgaben)
  * - inf10/2-Modellierung-und-Programmierung-Online-IDE/aufgabe5.html (drei Java-Codeauswertungen über mehrere Dateien)
  * - inf10/2-Modellierung-und-Programmierung-Online-IDE/aufgabe6.html (zwei Beschreibe-Aufgaben)
- * - inf10/1-Datenbanken/aufgabe5.html (zwei Beschreibe-Aufgaben)
+ * - inf10/1-Datenbanken/aufgabe5.html (drei Beschreibe-Aufgaben)
  * - inf10/1-Datenbanken/aufgabe1-quiz.html (eine Beschreibe-Aufgabe, nicht verlinkter Test)
  * - inf10/1-Datenbanken/aufgabe2-quiz.html (eine Beschreibe-Aufgabe, nicht verlinkter Test)
  * - inf10/1-Datenbanken/aufgabe3-quiz.html (zwei Beschreibe-Aufgaben, nicht verlinkter Test)

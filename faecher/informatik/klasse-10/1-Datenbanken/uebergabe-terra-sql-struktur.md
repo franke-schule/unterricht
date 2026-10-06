@@ -557,8 +557,10 @@ enthält keinen SQL-Textvergleich.
 
 Die zwei ausdrücklich geforderten Beschreibe-Aufgaben (`sql-b2-3` und
 `sql-b3-1`) verwenden die bereits vorhandene Apps-Script-/Gemini-Pipeline.
-Alle SQL-Abfragen und die Selbstkontrolle von Blatt 3 A3 bleiben vollständig
-lokal; es wurde keine weitere Server-Pipeline ergänzt.
+Alle SQL-Abfragen bleiben vollständig lokal; es wurde keine weitere
+Server-Pipeline ergänzt. Die frühere Selbstkontrolle von Blatt 3 A3 ist
+inzwischen ebenfalls eine Beschreibe-Aufgabe (`sql-b3-3`) über dieselbe
+Pipeline.
 
 ## Ergänzung: Aufgabe 6 mit dem Mensa-Kreuzprodukt
 
