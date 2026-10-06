@@ -1,0 +1,149 @@
+Wiederholungs-Quiz zu Aufgabe 4 – Anleitung zur vollständigen Löschung
+======================================================================
+
+Quiz:           Test zu Aufgabe 4 – Zentripetalkraft (Physik 11, Einheit
+                1-Kreisbewegungen; Inhalte der Abfrage 3 und von Aufgabe 4
+                bis vor die Herleitung)
+Seite:          faecher/physik/klasse-11/1-Kreisbewegungen/aufgabe4-quiz.html
+Online:         https://www.florian-franke.org/faecher/physik/klasse-11/
+                1-Kreisbewegungen/aufgabe4-quiz.html
+Angelegt:       06.10.2026
+Löschen:        nur auf ausdrückliche Anweisung der Lehrkraft
+Regeln:         manifest-wiederholungs-quiz.txt
+
+Das Quiz ist eigenständig: Es bindet keine Datei eines anderen Tests ein, und
+keine andere Seite bindet seine Dateien ein. Gemeinsam genutzte Dateien
+(styles.css, bewegung-koerpern.css, kraefte-bewegung.css,
+components/token-drag.mjs, components/physics-notation.mjs bzw. .css,
+perzeptron/ui/semantic-answer.mjs) wurden nur eingebunden, nicht verändert,
+und bleiben beim Löschen unangetastet. aufgabe4-quiz.css ist eine eigene Kopie
+der CSS des Quiz zu Aufgabe 3 (mit drei statt zwei Zuordnungsspalten).
+
+
+1. Neue Dateien
+---------------
+
+In faecher/physik/klasse-11/1-Kreisbewegungen/:
+  aufgabe4-quiz.html
+  aufgabe4-quiz.mjs
+  aufgabe4-quiz.css
+  aufgabe4-quiz-loeschen.txt   (diese Anleitung)
+
+
+2. Geänderte Dateien in diesem Repository
+-----------------------------------------
+
+apps-script/Tasks.gs
+  Drei aufeinanderfolgende Blöcke direkt nach
+  'ph11-a3-quiz-schnur-beschreibung' und direkt vor
+  'ph11-kreisbewegungen-zentripetalkraft-beschreibung':
+    'ph11-a4-quiz-hammerwurf-beschreibung': { ... },
+    'ph11-a4-quiz-radius-beschreibung': { ... },
+    'ph11-a4-quiz-seil-beschreibung': { ... },
+
+apps-script/Config.gs
+  Kommentarzeile im Kopf:
+    " * - phy11/1-Kreisbewegungen/aufgabe4-quiz.html (drei Beschreibe-Aufgaben,
+      nicht verlinkter Test)"
+
+apps-script/tests/code-routing.test.js
+  Drei Zeilen in der Liste der geprüften Beschreibe-Aufgaben, direkt nach
+  'ph11-a3-quiz-schnur-beschreibung':
+    'ph11-a4-quiz-hammerwurf-beschreibung',
+    'ph11-a4-quiz-radius-beschreibung',
+    'ph11-a4-quiz-seil-beschreibung',
+
+Nicht geändert: Menüs und Übersichtsseiten. Das Quiz ist dort nirgends
+verlinkt; es muss kein Menüeintrag entfernt werden.
+
+
+3. Änderungen außerhalb dieses Repositorys
+------------------------------------------
+
+Präsentation ../informatik-material/phy11/1-Kreisbewegungen/
+phy11-kreisbewegungen.html:
+  - eigene Folie 6 („Quiz zu Aufgabe 4: Zentripetalkraft“, id folie-6)
+    direkt hinter Folie 5 (Aufgabe 4: Zentripetalkraft), mit Link und
+    QR-Code zu https://www.florian-franke.org/faecher/physik/klasse-11/
+    1-Kreisbewegungen/aufgabe4-quiz.html (eingefügt am 06.10.2026),
+  - die bisherigen Folien 6 bis 8 (Aufgabe 5 bis 7) wurden dafür zu
+    Folien 7 bis 9 umnummeriert (id="folie-n" und aria-label „Folie n: …“).
+QR-Code als Datei: ../informatik-material/phy11/1-Kreisbewegungen/
+  Phy11-Quiz4.svg
+Kurzlink: keiner (vollständige Adresse). Falls später einer angelegt wird,
+  hier nachtragen.
+
+
+4. Aufgaben auf dem Skriptserver
+--------------------------------
+
+  ph11-a4-quiz-hammerwurf-beschreibung   Aufgabe 4 des Quiz, 4 Aspekte
+    „Eine Hammerwerferin lässt die Kugel am Seil gleichmäßig im Kreis laufen
+    und lässt sie dann los. Beschreibe, in welche Richtungen die
+    Bahngeschwindigkeit und die Zentripetalkraft an der kreisenden Kugel
+    zeigen. Erkläre, wie sich die Kugel unmittelbar nach dem Loslassen
+    bewegt.“
+  ph11-a4-quiz-radius-beschreibung       Aufgabe 5 des Quiz, 4 Aspekte
+    „Ben behauptet: ‚Je größer der Radius der Kreisbahn, desto größer ist
+    die Zentripetalkraft.‘ Beschreibe, unter welcher Bedingung Ben recht hat
+    und unter welcher nicht. Begründe beide Fälle.“
+  ph11-a4-quiz-seil-beschreibung         Aufgabe 6 des Quiz, 3 Aspekte
+    „Beim Hammerwurf zieht das Seil die Kugel zum Kreismittelpunkt, und die
+    Kugel zieht am Seil nach außen. Mia sagt: ‚Diese beiden Kräfte heben
+    sich auf, es ist ein Kräftegleichgewicht.‘ Begründe, ob Mia recht hat.“
+
+Verwendet von aufgabe4-quiz.mjs (Konstante DESCRIBE_TASKS, Feld taskId).
+Gemeinsames Präfix aller drei IDs: ph11-a4-quiz-
+
+
+5. Checkliste zum Löschen
+-------------------------
+
+  [ ] Quizdateien löschen:
+        git rm faecher/physik/klasse-11/1-Kreisbewegungen/aufgabe4-quiz.html
+        git rm faecher/physik/klasse-11/1-Kreisbewegungen/aufgabe4-quiz.mjs
+        git rm faecher/physik/klasse-11/1-Kreisbewegungen/aufgabe4-quiz.css
+  [ ] apps-script/Tasks.gs: die drei Blöcke 'ph11-a4-quiz-…': { ... },
+      vollständig entfernen (je bis einschließlich der schließenden
+      Klammer mit Komma und der folgenden Leerzeile).
+  [ ] apps-script/Config.gs: die Kommentarzeile zu aufgabe4-quiz.html
+      entfernen.
+  [ ] apps-script/tests/code-routing.test.js: die drei Zeilen
+      'ph11-a4-quiz-…' entfernen. Danach darf hinter dem letzten
+      Listeneintrag kein Komma stehen.
+  [ ] Präsentation (../informatik-material/phy11/1-Kreisbewegungen/
+      phy11-kreisbewegungen.html): die komplette
+      <section … id="folie-6" aria-label="Folie 6: Quiz zu Aufgabe 4 …">
+      … </section> entfernen. Danach die Folien 7 bis 9 wieder zu 6 bis 8
+      zurückzählen (id="folie-n" und „Folie n:“ im aria-label). Wurde
+      vorher schon das Quiz zu Aufgabe 3 entfernt, verschieben sich alle
+      Nummern um eins nach vorn. Im Browser prüfen: Auf die Folie
+      „Aufgabe 4: Zentripetalkraft“ folgt Aufgabe 5, der Zähler stimmt.
+  [ ] Phy11-Quiz4.svg in ../informatik-material/phy11/1-Kreisbewegungen/
+      löschen.
+  [ ] Kurzlink deaktivieren, falls nachträglich einer angelegt wurde.
+  [ ] Kontrolle, dass keine Reste bleiben (in beiden Repositorys):
+        git grep -nw "aufgabe4-quiz"
+        git grep -n "ph11-a4-quiz-"
+        git grep -n "Phy11-Quiz4"
+      Erlaubt sind nur noch Treffer in dieser Anleitung.
+  [ ] Tests ausführen:
+        node apps-script/tests/code-routing.test.js
+        node apps-script/tests/sql-description-tasks.test.js
+        node apps-script/tests/physik11-kreisbewegung-task.test.js
+        Get-ChildItem faecher/physik/klasse-11/1-Kreisbewegungen/tests/*.mjs |
+          % { node $_.FullName }
+  [ ] Skriptserver: Tasks.gs und Config.gs aus dem Repository in das
+      Google-Apps-Script-Projekt übernehmen und die Bereitstellung auf eine
+      neue Version setzen (Bereitstellen > Bereitstellungen verwalten >
+      Bearbeiten > Version: Neue Version). Die /exec-URL bleibt gleich.
+      Ohne diesen Schritt kennt der Online-Server die drei Aufgaben weiter.
+  [ ] Website neu hochladen, damit aufgabe4-quiz.html auch online entfernt
+      ist.
+  [ ] Zuletzt diese Anleitung löschen:
+        git rm faecher/physik/klasse-11/1-Kreisbewegungen/aufgabe4-quiz-loeschen.txt
+
+Hinweis: In den Browsern der Schülerinnen und Schüler bleibt ggf. der
+localStorage-Eintrag "physik11-kreisbewegungen-aufgabe4-test-v1" zurück. Er
+enthält nur die Quizeingaben, wird von keiner anderen Seite gelesen und muss
+nicht entfernt werden.
