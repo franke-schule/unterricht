@@ -32,6 +32,11 @@
  * Sind nach einer Prüfung alle Fragen richtig, ruft die Komponente
  * onAllCorrect auf. So läuft die bestehende Gesamtauswertung samt
  * Freischaltung der Übersicht ohne zusätzlichen Klick.
+ *
+ * Optional: onCheck(question, result) läuft nach jeder Prüfung einer Frage
+ * (z. B. für eine farbige Markierung der Frage). Der Rückgabewert enthält
+ * checkAll(); damit zeigt der gemeinsame Auswertungs-Button die Rückmeldung
+ * aller Fragen in denselben Wortlauten an.
  */
 (() => {
   "use strict";
@@ -151,19 +156,29 @@
         });
       });
 
-      button.addEventListener("click", () => {
+      question.showResult = () => {
         const outcome = evaluate(question);
         feedback.hidden = false;
         feedback.className = `${feedbackClass} quiz-question-feedback ${levels[LEVEL_OF[outcome.result] || "low"]}`;
         feedback.textContent = outcome.text || defaultText(outcome.result, number, question);
+        if (typeof config.onCheck === "function") config.onCheck(question, outcome.result);
+        return outcome.result === "correct";
+      };
 
-        if (outcome.result === "correct" && !completed && questions.every((item) => evaluate(item).result === "correct")) {
+      button.addEventListener("click", () => {
+        const correct = question.showResult();
+        if (correct && !completed && questions.every((item) => evaluate(item).result === "correct")) {
           completed = true;
           if (typeof config.onAllCorrect === "function") config.onAllCorrect();
         }
       });
     });
 
-    return { questions };
+    return {
+      questions,
+      // Zeigt die Rückmeldung aller Fragen, z. B. beim gemeinsamen
+      // Auswertungs-Button, und liefert die Zahl der richtigen Fragen.
+      checkAll: () => questions.filter((question) => question.showResult()).length,
+    };
   };
 })();

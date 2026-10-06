@@ -1,5 +1,5 @@
 import { CLASSIFICATIONS } from "../data/monkeys.mjs";
-import { ENTROPY_QUIZ, TREE_QUIZ, expectedTableValues } from "../logic/fish-learning.mjs";
+import { ENTROPY_QUIZ, TREE_QUIZ, expectedTableValues } from "../logic/fish-learning.mjs?v=20261006";
 import { FISH_DATASET, FISH_FEATURES, FISH_LABELS } from "../data/fish.mjs";
 import {
   createFeatureNode,
@@ -879,6 +879,8 @@ function treeQuizSelection(index) {
   return Array.isArray(state.treeQuizAnswers[index]) ? state.treeQuizAnswers[index] : [];
 }
 
+let treeQuizChecks = null;
+
 function renderTreeQuiz() {
   const container = document.querySelector("#tree-quiz-questions");
   container.replaceChildren(...TREE_QUIZ.map((item, index) => {
@@ -903,21 +905,33 @@ function renderTreeQuiz() {
         updateTreeQuizProgress();
         updateUnlocks();
         fieldset.classList.remove("is-correct", "is-wrong");
-        fieldset.querySelector(".quiz-item-feedback").textContent = "";
       });
       label.append(input, document.createTextNode(option)); options.append(label);
     });
     const feedback = document.createElement("p"); feedback.className = "quiz-item-feedback";
     feedback.setAttribute("role", "status"); feedback.setAttribute("aria-live", "polite");
-    // Jede Frage lässt sich auch einzeln prüfen.
-    const check = document.createElement("button");
-    check.type = "button"; check.className = "dt-primary-button quiz-item-check"; check.textContent = `Frage ${index + 1} prüfen`;
-    check.addEventListener("click", () => {
-      const allCorrect = checkTreeQuizItem(index) && TREE_QUIZ.every((_, other) => isTreeQuizItemCorrect(other));
-      if (allCorrect && !state.treeQuizComplete) document.querySelector("#final-quiz").requestSubmit();
-    });
-    fieldset.append(legend, options, check, feedback); return fieldset;
+    fieldset.append(legend, options, feedback); return fieldset;
   }));
+  // Jede Frage lässt sich einzeln prüfen (../../../quiz-fragen-pruefen.js).
+  treeQuizChecks = window.addQuizQuestionChecks?.({
+    questions: TREE_QUIZ.map((item, index) => {
+      const fieldset = container.querySelector(`[data-tree-quiz-index="${index}"]`);
+      return {
+        fieldset,
+        feedback: fieldset.querySelector(".quiz-item-feedback"),
+        solution: item.correct.map(String),
+        success: `Korrekt. ${item.feedback}`,
+        hint: item.hint,
+      };
+    }),
+    buttonClass: "dt-primary-button",
+    feedbackClass: "quiz-item-feedback",
+    onCheck: (question, result) => {
+      question.fieldset.classList.toggle("is-correct", result === "correct");
+      question.fieldset.classList.toggle("is-wrong", result !== "correct");
+    },
+    onAllCorrect: () => { if (!state.treeQuizComplete) document.querySelector("#final-quiz").requestSubmit(); },
+  });
   updateTreeQuizProgress();
   if (state.treeQuizComplete) showTreeQuizSummary();
 }
@@ -958,35 +972,10 @@ function unlockSolution(event) {
     : "Der eingegebene Code ist nicht gültig.";
 }
 
-function isTreeQuizItemCorrect(index) {
-  const item = TREE_QUIZ[index];
-  const selection = treeQuizSelection(index);
-  return selection.every((choice) => item.correct.includes(choice)) && item.correct.every((choice) => selection.includes(choice));
-}
-
-// Bewertet eine Quizfrage und zeigt die Rückmeldung direkt darunter.
-function checkTreeQuizItem(index) {
-  const item = TREE_QUIZ[index];
-  const fieldset = document.querySelector(`[data-tree-quiz-index="${index}"]`);
-  const selection = treeQuizSelection(index);
-  const wrongChoices = selection.filter((choice) => !item.correct.includes(choice)).length;
-  const isCorrect = isTreeQuizItemCorrect(index);
-  fieldset.classList.toggle("is-correct", isCorrect);
-  fieldset.classList.toggle("is-wrong", !isCorrect);
-  let text = `✓ Richtig. ${item.feedback}`;
-  if (selection.length === 0) text = "Kreuze zuerst mindestens eine Aussage an.";
-  else if (wrongChoices > 0) text = `Noch nicht: Mindestens eine angekreuzte Aussage stimmt nicht. Hinweis: ${item.feedback}`;
-  else if (!isCorrect) text = "Teilweise richtig: Deine Kreuze stimmen, aber es fehlt noch mindestens eine richtige Aussage.";
-  fieldset.querySelector(".quiz-item-feedback").textContent = text;
-  return isCorrect;
-}
-
 function checkTreeQuiz(event) {
   event.preventDefault();
-  let correct = 0;
-  TREE_QUIZ.forEach((item, index) => {
-    if (checkTreeQuizItem(index)) correct += 1;
-  });
+  // Rückmeldung je Frage in denselben Wortlauten wie die Einzelprüfung.
+  const correct = treeQuizChecks ? treeQuizChecks.checkAll() : 0;
   const feedback = document.querySelector("#tree-quiz-feedback");
   feedback.hidden = false;
   feedback.className = `dt-feedback ${correct === TREE_QUIZ.length ? "success" : "wrong"}`;

@@ -129,6 +129,7 @@ test("Abschlussquiz des Pflichtteils nutzt Mehrfachauswahl ohne Entropie", () =>
     assert.ok(item.correct.length >= 1 && item.correct.every((index) => index >= 0 && index < item.options.length));
     assert.doesNotMatch(`${item.question} ${item.options.join(" ")}`, /Entropie/);
     assert.ok(item.feedback.length > 15);
+    assert.ok(item.hint.length > 15);
   });
 });
 
