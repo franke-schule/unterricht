@@ -17,9 +17,10 @@ let activeStepIndex = 0;
 
 // Zwischenstand: aktiver Reiter, Freitexte und Tabelleneinträge (Rückmeldungen entstehen beim Prüfen neu).
 function loadState() {
+  const emptyState = { activeStep: STEP_IDS[0], fields: {}, checks: {}, comparisonUnlocked: false, resultsUnlocked: false };
   try {
     const parsed = JSON.parse(localStorage.getItem(STORAGE_KEY));
-    if (!parsed || typeof parsed !== "object") return { activeStep: STEP_IDS[0], fields: {} };
+    if (!parsed || typeof parsed !== "object" || Array.isArray(parsed)) return emptyState;
     const fields = parsed.fields && typeof parsed.fields === "object" && !Array.isArray(parsed.fields) ? parsed.fields : {};
     const checks = parsed.checks && typeof parsed.checks === "object" && !Array.isArray(parsed.checks) ? parsed.checks : {};
     return {
@@ -29,7 +30,7 @@ function loadState() {
       comparisonUnlocked: parsed.comparisonUnlocked === true,
       resultsUnlocked: parsed.resultsUnlocked === true,
     };
-  } catch { return { activeStep: STEP_IDS[0], fields: {}, checks: {}, comparisonUnlocked: false, resultsUnlocked: false }; }
+  } catch { return emptyState; }
 }
 const state = loadState();
 function saveState() {

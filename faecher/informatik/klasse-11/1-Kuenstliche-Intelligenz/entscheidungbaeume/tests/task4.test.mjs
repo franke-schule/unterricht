@@ -99,6 +99,7 @@ function fakeElement(initial = {}) {
       contains(name) { return classes.has(name); },
     },
     addEventListener(type, listener) { listeners[type] = listener; },
+    dispatchEvent(event) { listeners[event.type]?.(event); return true; },
     async dispatch(type, event = {}) { return listeners[type]?.({ preventDefault() {}, ...event }); },
     setAttribute(name, value) { this[name] = value; },
     focus() { this.focused = true; },
@@ -112,7 +113,15 @@ function fakeElement(initial = {}) {
   };
 }
 
-test("UI-Interaktionen prüfen Tabelle und zeigen den Lernhinweis erst beim Absenden", async () => {
+for (const scenario of [
+  { name: "ohne gespeicherten Stand", stored: null },
+  { name: "mit älterem Stand ohne Quizfelder", stored: JSON.stringify({ activeStep: "task42", fields: { "depth-one-answer": "Vorhandene Antwort" } }), activeStep: "task42", answer: "Vorhandene Antwort" },
+  { name: "mit gespeichertem Quizstand", stored: JSON.stringify({ activeStep: "task41", fields: {}, checks: { "depth-comparison-quiz:training-less": true }, comparisonUnlocked: true, resultsUnlocked: true }), checked: true, unlocked: true },
+  { name: "mit beschädigtem JSON", stored: "{kaputt" },
+  { name: "mit ungültigem Array", stored: "[]" },
+  { name: "mit gesperrtem Speicher", blocked: true },
+]) {
+test(`UI initialisiert und bleibt bedienbar ${scenario.name}`, async () => {
   const ids = [
     "depth-one-answer", "check-depth-one", "depth-one-feedback", "depth-one-count",
     "depth-description-answer", "check-depth-description", "depth-description-feedback", "depth-description-count", "depth-learning-note",
@@ -121,9 +130,12 @@ test("UI-Interaktionen prüfen Tabelle und zeigen den Lernhinweis erst beim Abse
     "depth-comparison-feedback", "depth-learning-note", "depth-description-note", "final-quiz",
     "final-quiz-feedback", "task4-summary",
   ];
-  const elements = Object.fromEntries(ids.map((id) => [id, fakeElement()]));
+  const elements = Object.fromEntries(ids.map((id) => [id, fakeElement({ id })]));
   elements["solution-code-form"].elements = { "solution-code": fakeElement() };
   const comparisonFieldset = fakeElement();
+  const checkbox = fakeElement({ value: "training-less", checked: false });
+  checkbox.closest = () => elements["depth-comparison-quiz"];
+  comparisonFieldset.querySelectorAll = () => [checkbox];
   elements["depth-comparison-quiz"].querySelector = () => comparisonFieldset;
   const finalFieldsets = [fakeElement(), fakeElement(), fakeElement()];
   elements["final-quiz"].querySelectorAll = () => finalFieldsets;
@@ -139,8 +151,8 @@ test("UI-Interaktionen prüfen Tabelle und zeigen den Lernhinweis erst beim Abse
     querySelector(selector) { return elements[selector.replace(/^#/, "")]; },
     querySelectorAll(selector) {
       if (selector === "#depth-table-form input") return tableInputs;
-      if (selector === 'input[type="checkbox"]') return [];
-      if (selector === ".task4-answer, .task4-table-input") return [];
+      if (selector === 'input[type="checkbox"]') return [checkbox];
+      if (selector === ".task4-answer, .task4-table-input") return [elements["depth-one-answer"], elements["depth-description-answer"], ...tableInputs];
       if (selector === "[data-step-tab]") return tabs;
       if (selector === "[data-step-panel]") return panels;
       return [];
@@ -148,21 +160,35 @@ test("UI-Interaktionen prüfen Tabelle und zeigen den Lernhinweis erst beim Abse
     createElement() { return fakeElement(); },
     body: { append() {} },
   };
-  globalThis.window = { addQuizQuestionChecks() { return { checkAll: () => 0 }; } };
+  let quizBindings = 0;
+  globalThis.window = { addQuizQuestionChecks() { quizBindings++; return { checkAll: () => 0 }; } };
+  let saved = scenario.stored;
+  globalThis.localStorage = {
+    getItem() { if (scenario.blocked) throw new Error("Speicher gesperrt"); return saved; },
+    setItem(_key, value) { if (scenario.blocked) throw new Error("Speicher gesperrt"); saved = value; },
+  };
 
   try {
-    await import(new URL(`../ui/task4.mjs?interaction-test=${Date.now()}`, import.meta.url));
+    await import(new URL(`../ui/task4.mjs?interaction-test=${encodeURIComponent(scenario.name)}`, import.meta.url));
 
-    assert.deepEqual(panels.map((panel) => panel.hidden), [false, true, true, true]);
+    assert.equal(quizBindings, 2, "Vergleichsfrage und Abschlussquiz müssen auch beim ersten Besuch initialisiert werden");
+    assert.equal(checkbox.checked, scenario.checked === true);
+    assert.equal(elements["depth-one-answer"].value, scenario.answer || "");
+    assert.deepEqual(panels.map((panel) => panel.hidden), panels.map((panel) => panel.dataset.stepPanel !== (scenario.activeStep || "task41")));
+    await tabs[0].dispatch("click");
     await elements["task4-next"].dispatch("click");
     assert.deepEqual(panels.map((panel) => panel.hidden), [true, false, true, true]);
     await tabs[2].dispatch("click");
     assert.deepEqual(panels.map((panel) => panel.hidden), [true, true, false, true]);
 
-    assert.equal(elements["depth-learning-note"].hidden, true);
+    assert.equal(elements["depth-learning-note"].hidden, !scenario.unlocked);
+    assert.equal(elements["task4-summary"].hidden, !scenario.unlocked);
+    checkbox.checked = !checkbox.checked;
+    await checkbox.dispatch("change");
+    if (!scenario.blocked) assert.equal(JSON.parse(saved).checks["depth-comparison-quiz:training-less"], checkbox.checked);
     elements["depth-description-answer"].value = "kurz";
     await elements["check-depth-description"].dispatch("click");
-    assert.equal(elements["depth-learning-note"].hidden, true);
+    assert.equal(elements["depth-learning-note"].hidden, !scenario.unlocked);
     assert.equal(elements["depth-description-note"].hidden, false);
     assert.match(elements["depth-description-feedback"].textContent, /ausführlichere Antwort/);
     assert.match(elements["depth-description-note"].textContent, /fünf Testfischen bleibt jedoch gleich/);
@@ -186,5 +212,7 @@ test("UI-Interaktionen prüfen Tabelle und zeigen den Lernhinweis erst beim Abse
   } finally {
     delete globalThis.document;
     delete globalThis.window;
+    delete globalThis.localStorage;
   }
 });
+}
