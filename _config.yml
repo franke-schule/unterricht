@@ -1,0 +1,4 @@
+# Lokale Build- und Pruefdateien sind kein Bestandteil der Unterrichtswebsite.
+# Insbesondere Bibliotheksdokumentation in tmp/ darf Jekyll nicht verarbeiten.
+exclude:
+  - tmp

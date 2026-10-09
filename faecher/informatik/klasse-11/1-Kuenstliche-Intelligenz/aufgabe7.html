@@ -10,6 +10,7 @@
     <link rel="stylesheet" href="perzeptron/task5.css?v=20260926a">
     <link rel="stylesheet" href="knn/task7.css?v=20261003a">
     <script src="../../quiz-fragen-pruefen.js?v=20261006b"></script>
+    <script type="module" src="../../klasse-10/1-Datenbanken/tab-navigation.mjs?v=20261010a"></script>
     <script type="module" src="knn/ui/task7.mjs?v=20261006q"></script>
   </head>
   <body class="perceptron-page knn-page">
@@ -336,6 +337,21 @@
           </form>
           <div id="quiz-feedback" class="feedback" role="status" aria-live="polite" hidden></div>
           <div id="quiz-summary" class="remember" hidden></div>
+        </section>
+        <section class="solution-download" aria-labelledby="solution-download-title">
+          <h3 id="solution-download-title">Sicherungsblatt zu Aufgabe 7</h3>
+          <details class="solution-reveal">
+            <summary>Sicherungsblatt anzeigen</summary>
+            <form class="solution-code-form" onsubmit="unlockSolution(event, 'M7KP-D9G4', 'solution-download-link', 'solution-code-message')">
+              <label for="solution-code">Lehrercode eingeben</label>
+              <div class="solution-code-controls">
+                <input id="solution-code" name="solution-code" type="text" maxlength="9" autocomplete="off" autocapitalize="characters" spellcheck="false" required>
+                <button type="submit">Code prüfen</button>
+              </div>
+              <p id="solution-code-message" class="solution-code-message" aria-live="polite"></p>
+              <a id="solution-download-link" class="download-button" href="sicherungsblatt-aufgabe-7-loesungen.pdf" download hidden>&#8595; Sicherungsblatt herunterladen</a>
+            </form>
+          </details>
         </section>
         <button id="reset-progress" class="secondary-button" type="button">Bearbeitungsstand zurücksetzen</button>
       </section>

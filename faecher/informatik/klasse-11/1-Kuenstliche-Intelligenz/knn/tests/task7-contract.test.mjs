@@ -6,7 +6,7 @@ const ui = readFileSync(new URL('../ui/task7.mjs', import.meta.url), 'utf8');
 const menu = readFileSync(new URL('../../../index.html', import.meta.url), 'utf8');
 
 const panel = (id) => {
-  const match = html.match(new RegExp('<section id="' + id + '"[\\s\\S]*?</section>(?=\\s*(?:<!--|<section|</main>))'));
+  const match = html.match(new RegExp('<section id="' + id + '"[\\s\\S]*?</section>(?=\\s*(?:<!--|<section id="[^"]+" class="step-panel"|</main>))'));
   assert.ok(match, 'Panel ' + id + ' fehlt');
   return match[0];
 };
@@ -67,8 +67,12 @@ assert.doesNotMatch(discover, /Nachbar/);
 assert.doesNotMatch(discover, /Abstandsmaß/);
 assert.doesNotMatch(ui.slice(ui.indexOf('discoverReasons: {'), ui.indexOf('neighboursReasons: {')), /KNN|Nachbar|Abstandsmaß/);
 
-// Kein Sicherungsblatt, kein Lehrercode
-assert.doesNotMatch(html, /solution-download|solution-code|Lehrercode/);
+// Sicherungsblatt im frei erreichbaren Abschlussreiter; gemeinsame Freigabelogik.
+assert.match(panel('finish'), /class="solution-download"/);
+assert.match(html, /klasse-10\/1-Datenbanken\/tab-navigation\.mjs/);
+assert.match(html, /unlockSolution\(event, 'M7KP-D9G4'/);
+assert.match(html, /id="solution-download-link"[^>]*download hidden/);
+assert.ok(existsSync(new URL('../../sicherungsblatt-aufgabe-7-loesungen.pdf', import.meta.url)));
 assert.doesNotMatch(ui, /solution-download|solution-code|unlockSolution/);
 
 // Skriptserver, Speicherung und Wiederverwendung

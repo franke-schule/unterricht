@@ -1,0 +1,175 @@
+\documentclass[11pt,a4paper]{article}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage[ngerman]{babel}
+\usepackage{lmodern,amsmath,amssymb,graphicx,booktabs,tabularx,array}
+\usepackage[table]{xcolor}
+\usepackage{tikz}
+\usetikzlibrary{arrows.meta,positioning,shapes.geometric}
+\usepackage[most]{tcolorbox}
+\usepackage{microtype,hyperref}
+\usepackage[a4paper,left=18mm,right=18mm,top=15mm,bottom=15mm,headheight=0pt]{geometry}
+\definecolor{navy}{HTML}{174A63}
+\definecolor{blue}{HTML}{2E7698}
+\definecolor{lightblue}{HTML}{EAF3F7}
+\definecolor{lightgray}{HTML}{F2F3F4}
+\definecolor{midgray}{HTML}{66727A}
+\definecolor{green}{HTML}{477A63}
+\definecolor{orange}{HTML}{B96A2B}
+\definecolor{sizeS}{HTML}{287B61}
+\definecolor{sizeM}{HTML}{2E7698}
+\definecolor{sizeL}{HTML}{AF3F47}
+\hypersetup{colorlinks=true,linkcolor=navy,urlcolor=blue,pdftitle={Sicherungsblatt Aufgabe 7 -- kNN: Idee und Abstand}}
+\setlength{\parindent}{0pt}
+\setlength{\parskip}{2pt}
+\renewcommand{\familydefault}{\sfdefault}
+\pagestyle{empty}
+\newtcolorbox{merke}[1][]{enhanced,colback=lightgray,colframe=navy,
+  boxrule=0.9pt,arc=1.5mm,left=3mm,right=3mm,top=1.5mm,bottom=1.5mm,
+  fonttitle=\bfseries,title=Merke,#1}
+\newcommand{\sectionline}[1]{%
+  \vspace{1mm}{\large\bfseries\color{navy}#1}\par\vspace{1mm}%
+  {\color{blue}\hrule height 0.8pt}\vspace{1mm}}
+\newcommand{\sheettitle}[2]{%
+  \begin{tcolorbox}[colback=navy,colframe=navy,arc=2mm,boxrule=0pt,left=5mm,right=5mm,top=2mm,bottom=2mm]
+    {\color{white}\fontsize{19}{22}\selectfont\bfseries #1}\par
+    \vspace{0.5mm}{\color{white}\large #2}
+  \end{tcolorbox}}
+\tikzset{
+  S/.style={circle,draw=sizeS,fill=sizeS!12,line width=1pt,minimum size=2.6mm,inner sep=0pt},
+  M/.style={regular polygon,regular polygon sides=3,draw=sizeM,fill=sizeM!12,line width=1pt,minimum size=3.2mm,inner sep=0pt},
+  L/.style={rectangle,draw=sizeL,fill=sizeL!12,line width=1pt,minimum size=2.6mm,inner sep=0pt},
+  N/.style={diamond,draw=orange,fill=orange!18,line width=1.2pt,minimum size=4mm,inner sep=0pt}}
+\newcommand{\sizes}{\textcolor{sizeS}{$\circ$ S}\quad\textcolor{sizeM}{$\triangle$ M}\quad\textcolor{sizeL}{$\square$ L}}
+\begin{document}
+\sheettitle{kNN: Idee und Abstand}{Künstliche Intelligenz · Sicherungsblatt zu Aufgabe 7 · Informatik 11}
+
+\sectionline{1. Die nächsten Nachbarn entscheiden}
+\begin{minipage}[c]{0.50\linewidth}
+\centering
+\begin{tikzpicture}[x=1mm,y=1mm,>=Latex,font=\scriptsize]
+  \draw[black!12,step=5] (0,0) grid (40,45);
+  \draw[->,navy] (0,0) -- (43,0);
+  \draw[->,navy] (0,0) -- (0,47);
+  \foreach \x in {0,10,20,30,40} {\pgfmathtruncatemacro{\v}{160+\x}\node[below] at (\x,0) {\v};}
+  \foreach \y in {0,10,20,30,40} {\pgfmathtruncatemacro{\v}{85+\y}\node[left] at (0,\y) {\v};}
+  \node[above right,text=navy] at (0,47) {Brustumfang $y$ (cm)};
+  \node[below,text=navy] at (20,-3) {Körpergröße $x$ (cm)};
+  % Alle 15 Trainingsdaten aus shirts.mjs, Ursprung (160|85).
+  \foreach \x/\y in {5/2,16/10,0/0,10/7,14/12} \node[S] at (\x,\y) {};
+  \foreach \x/\y in {20/17,20/20,25/24,17/16} \node[M] at (\x,\y) {};
+  \foreach \x/\y in {30/31,26/28,32/40,30/36,36/43,28/32} \node[L] at (\x,\y) {};
+  \coordinate (new) at (26,25);
+  \draw[orange,line width=1.4pt] (new) -- (25,24);
+  \foreach \x/\y in {26/28,30/31,28/32,20/20} \draw[navy,dashed] (new) -- (\x,\y);
+  % Symbole über den Verbindungslinien erneut zeichnen.
+  \node[M] at (25,24) {}; \node[M] at (20,20) {};
+  \foreach \x/\y in {26/28,30/31,28/32} \node[L] at (\x,\y) {};
+  \node[N,label={[font=\scriptsize,text=orange]right:N}] at (new) {};
+\end{tikzpicture}
+\end{minipage}\hfill
+\begin{minipage}[c]{0.47\linewidth}
+\textbf{Neue Person N(186|110)}\par
+{\small Euklidische Abstände, aufsteigend:}\par
+\renewcommand{\arraystretch}{1}
+\begin{tabular}{@{}c c c r@{}}
+\toprule
+Rang & Nr. & Größe & $d$ (cm)\\\midrule
+1 & 7 & \textcolor{sizeM}{$\triangle$ M} & 1,41\\
+2 & 8 & \textcolor{sizeL}{$\square$ L} & 3,00\\
+3 & 2 & \textcolor{sizeL}{$\square$ L} & 7,21\\
+4 & 15 & \textcolor{sizeL}{$\square$ L} & 7,28\\
+5 & 6 & \textcolor{sizeM}{$\triangle$ M} & 7,81\\\bottomrule
+\end{tabular}\par\smallskip
+$k=1$: \textcolor{sizeM}{$\triangle$ M}\quad$\Rightarrow$ \textbf{M}\par
+$k=5$: 2 M, 3 L\quad$\Rightarrow$ \textbf{L}\par
+{\small $k$: Anzahl der Nachbarn}\par
+{\small\sizes\quad\textcolor{orange}{$\diamond$ N: neu}}
+\end{minipage}
+\vspace{1mm}
+\centering
+\begin{tikzpicture}[>=Latex,font=\small,
+  flowbox/.style={draw=blue,fill=lightblue,rounded corners=1.5mm,minimum height=8mm,align=center,inner sep=1mm}]
+  \node[flowbox] (a) at (0,0) {1 Abstände zu allen\\Trainingspunkten};
+  \node[flowbox] (b) at (4.8,0) {2 Die $k$ kleinsten\\Abstände auswählen};
+  \node[flowbox] (c) at (9.1,0) {3 Häufigste\\Klasse zählen};
+  \node[flowbox] (d) at (12.6,0) {4 N dieser\\Klasse zuordnen};
+  \draw[->,thick,navy] (a) -- (b); \draw[->,thick,navy] (b) -- (c); \draw[->,thick,navy] (c) -- (d);
+\end{tikzpicture}\par
+\raggedright
+
+\sectionline{2. Abstand messen: direkt oder entlang der Achsen}
+\begin{minipage}[t]{0.49\linewidth}
+\centering\textbf{Euklidischer Abstand}\par
+\begin{tikzpicture}[x=6mm,y=6mm,font=\small]
+  \draw[black!12] (0,0) grid (4,4.5);
+  \draw[orange,line width=1.4pt] (0,0) -- (3,0) node[midway,below] {3 cm} -- (3,4) node[midway,right] {4 cm};
+  \draw[blue,line width=1.6pt] (0,0) -- (3,4) node[midway,above left] {$d=5$ cm};
+  \draw[midgray] (2.65,0) -- (2.65,0.35) -- (3,0.35);
+  \fill[navy] (0,0) circle (1.2mm) node[below left,font=\scriptsize] {A(180|102)};
+  \node[N,label={[font=\scriptsize]above:N(183|106)}] at (3,4) {};
+\end{tikzpicture}\par
+{\small Direkte Verbindung (Pythagoras)}
+\vspace{2mm}\par $\displaystyle d_E=\sqrt{(x_2-x_1)^2+(y_2-y_1)^2}$\par\vspace{2mm}
+{\small N--A: $\sqrt{3^2+4^2}=\mathbf{5}$ cm\\
+N--B(185|109): $\sqrt{2^2+3^2}\approx\mathbf{3{,}61}$ cm}
+\end{minipage}\hfill
+\begin{minipage}[t]{0.49\linewidth}
+\centering\textbf{Manhattan-Abstand}\par
+\begin{tikzpicture}[x=6mm,y=6mm,font=\small]
+  \draw[black!20] (0,0) grid (5,4.5);
+  \draw[orange,line width=1.4pt] (0,0) -- (5,0) node[midway,below] {5 Blöcke} -- (5,3) node[midway,right] {3};
+  \draw[blue,dashed,line width=1.4pt] (0,0) -- (0,2) -- (2,2) -- (2,3) -- (5,3);
+  \draw[midgray,dotted,line width=1pt] (0,0) -- (5,3);
+  \fill[navy] (0,0) circle (1.2mm) node[below left,font=\scriptsize] {H(1|1)};
+  \fill[navy] (5,3) circle (1.2mm) node[above left,font=\scriptsize] {K(6|4)};
+  \node[font=\scriptsize,align=center,text=blue] at (2.5,4.1) {Beide Routen: 8 Blocklängen};
+\end{tikzpicture}\par
+{\small Weg parallel zu den Achsen}
+\vspace{2mm}\par $\displaystyle d_M=|x_2-x_1|+|y_2-y_1|$\par\vspace{2mm}
+{\small H--K: $|6-1|+|4-1|=5+3=\mathbf{8}$}
+\end{minipage}
+
+\sectionline{3. Das Abstandsmaß verändert die Nachbarschaft}
+\begin{minipage}[c]{0.39\linewidth}
+\centering
+\begin{tikzpicture}[x=7mm,y=7mm,>=Latex,font=\scriptsize]
+  \draw[black!12] (0,0) grid (5,3);
+  \draw[->,navy] (0,0) -- (5.5,0) node[below] {$x$};
+  \draw[->,navy] (0,0) -- (0,3.5) node[left] {$y$};
+  \draw[blue,line width=1.3pt] (0,0) -- (3,3);
+  \draw[orange,dashed,line width=1.3pt] (0,0) -- (3,0) -- (3,3);
+  \draw[navy,line width=1.3pt] (0,0) -- (5,0);
+  \foreach \x/\y/\lab in {0/0/P(0|0),3/3/A(3|3),5/0/B(5|0)} \fill[navy] (\x,\y) circle (1.1mm) node[above=1mm,fill=white,inner sep=1pt] {\lab};
+\end{tikzpicture}
+\end{minipage}\hfill
+\begin{minipage}[c]{0.58\linewidth}
+\renewcommand{\arraystretch}{1.15}
+\begin{tabularx}{\linewidth}{@{}l>{\centering\arraybackslash}X>{\centering\arraybackslash}X@{}}
+\toprule
+Von P zu & euklidisch & Manhattan\\\midrule
+A(3|3) & $\sqrt{18}\approx4{,}24$ & $3+3=6$\\
+B(5|0) & $5$ & $5+0=5$\\\midrule
+Nächster & \textbf{A} & \textbf{B}\\\bottomrule
+\end{tabularx}\par
+{\small Für dieselben Punkte gilt immer $d_M\ge d_E$.}
+\end{minipage}
+
+\sectionline{4. Schulshirts klassifizieren: N(178|98), $k=5$}
+{\small Fünf kleinste euklidische Abstände (in cm):}\par\smallskip
+\centering
+\begin{tikzpicture}[font=\small,>=Latex]
+  \foreach \x/\id/\dist/\style in {0/11/3{,}16/M,2.7/4/3{,}61/S,5.4/14/4{,}12/S,8.1/3/4{,}47/M,10.8/6/7{,}28/M} {
+    \node[\style] at (\x,0) {};
+    \node[above=2mm] at (\x,0) {Nr. \id};
+    \node[below=2mm] at (\x,0) {$\dist$};
+  }
+  \draw[->,navy,thick] (11.5,0) -- (12.4,0);
+  \node[align=center,text=sizeM,font=\bfseries] at (13.8,0) {3 M, 2 S\\Shirtgröße M};
+\end{tikzpicture}\par
+\raggedright
+\begin{merke}[title=Gleichstand]
+\small Ungerades $k$: Bei zwei Klassen kein Gleichstand. Bei mehr Klassen kann er bleiben.\\
+Dann zählt die Klasse des nächsten Nachbarn unter den gleichauf liegenden Klassen.
+\end{merke}
+\end{document}
