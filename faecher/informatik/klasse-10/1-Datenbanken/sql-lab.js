@@ -161,8 +161,9 @@ function moveTabFocus(event, labels, index) {
 
 function schemaCard(schemas) {
   const card = element('aside', 'scenario-card accent sql-schema-card'); card.setAttribute('aria-label', 'Tabellenschema der SQL-Übungsdaten');
-  card.append(element('strong', 'schema-title', schemas.length === 1 ? 'Tabellenschema' : 'Tabellenschemata'));
   const scroll = element('div', 'schema-scroll'); scroll.tabIndex = 0; scroll.setAttribute('aria-label', 'Tabellenschemata horizontal scrollen');
+  // Überschrift und Innenabstände gehören zur Wischfläche des gesamten Kastens.
+  scroll.append(element('strong', 'schema-title', schemas.length === 1 ? 'Tabellenschema' : 'Tabellenschemata'));
   schemas.forEach(({ table, columns }) => { const code = element('code', 'schema-code', `${table} (${columns.map(([name, type]) => `${name}: ${type}`).join(', ')})`); scroll.append(code); });
   card.append(scroll); return card;
 }

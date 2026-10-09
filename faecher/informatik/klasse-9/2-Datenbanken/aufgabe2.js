@@ -913,8 +913,9 @@ function renderTabs() {
 // nach schemaCard in klasse-10/1-Datenbanken/sql-lab.js
 function schemaCard(schemas) {
   const card = element('aside', 'scenario-card accent sql-schema-card'); card.setAttribute('aria-label', 'Tabellenschema der SQL-Übungsdaten');
-  card.append(element('strong', 'schema-title', schemas.length === 1 ? 'Tabellenschema' : 'Tabellenschemata'));
   const scroll = element('div', 'schema-scroll'); scroll.tabIndex = 0; scroll.setAttribute('aria-label', 'Tabellenschemata horizontal scrollen');
+  // Überschrift und Innenabstände gehören zur Wischfläche des gesamten Kastens.
+  scroll.append(element('strong', 'schema-title', schemas.length === 1 ? 'Tabellenschema' : 'Tabellenschemata'));
   schemas.forEach(({ table, columns }) => scroll.append(element('code', 'schema-code', `${table} (${columns.map(([name, type]) => `${name}: ${type}`).join(', ')})`)));
   card.append(scroll);
   return card;

@@ -3,10 +3,11 @@
 .sql-page .step-tab[aria-selected="true"] { color: #fff; border-color: #1455b1; background: linear-gradient(135deg, #087d9c, #2458c7); }
 .sql-page .step-panel { min-height: 0; }
 .sql-page .progress-card { position: static; }
-.sql-schema-card { position: sticky; top: 10px; z-index: 15; max-width: 100%; margin-bottom: 18px; padding: 10px 13px; box-shadow: 0 8px 22px rgba(30, 52, 85, .12); }
+.sql-schema-card { position: sticky; top: 10px; z-index: 15; max-width: 100%; margin-bottom: 18px; padding: 0; box-shadow: 0 8px 22px rgba(30, 52, 85, .12); }
 .schema-title { display: block; margin-bottom: 6px; color: #1b426f; }
-.schema-scroll { display: grid; gap: 4px; max-width: 100%; overflow-x: auto; padding: 2px 2px 5px; scrollbar-gutter: stable; }
-.schema-scroll:focus-visible { outline: 3px solid rgba(23, 99, 213, .32); outline-offset: 2px; }
+.schema-scroll { display: grid; align-content: start; gap: 4px; min-height: 88px; max-width: 100%; overflow-x: auto; padding: 10px 13px 15px; border-radius: inherit; scrollbar-gutter: stable; -webkit-overflow-scrolling: touch; }
+.schema-scroll .schema-title { position: sticky; left: 0; width: max-content; max-width: 100%; }
+.schema-scroll:focus-visible { outline: 3px solid rgba(23, 99, 213, .32); outline-offset: -3px; }
 .schema-code { width: max-content; min-width: 100%; color: #244d78; font: .82rem/1.45 "SFMono-Regular", Consolas, monospace; white-space: nowrap; }
 .attribute-pills { display: flex; flex-wrap: wrap; gap: 7px; margin-top: 12px; }
 .attribute-pills code { padding: 5px 8px; border: 1px solid #b8cde2; border-radius: 7px; background: #fff; color: #244d78; }
