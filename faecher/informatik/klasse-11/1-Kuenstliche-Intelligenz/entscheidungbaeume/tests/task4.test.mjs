@@ -44,7 +44,7 @@ test("Aufgabe 4 bindet Tabs, Material und Skriptserver passend ein", async () =>
   assert.match(page, /ENTER_Online/);
   assert.match(page, /Gib keine personenbezogenen Informationen ein. Deine Antwort wird zur automatischen Auswertung an den Skriptserver und dort an ein KI-System übertragen./);
   const tabs = [...page.matchAll(/data-step-tab="([^"]+)"/g)].map((match) => match[1]);
-  assert.deepEqual(tabs, ["task41", "task42", "task4a"]);
+  assert.deepEqual(tabs, ["task41", "task42", "task4a", "task4abschluss"]);
   const trainingPosition = page.indexOf("Datensatz_Fische_Einstieg_Trainingsdaten.csv");
   const task42Position = page.indexOf('id="task42"');
   const testPosition = page.indexOf("Datensatz_Fische_Einstieg_Testdaten.csv");
@@ -54,12 +54,20 @@ test("Aufgabe 4 bindet Tabs, Material und Skriptserver passend ein", async () =>
   assert.equal(testPosition > task42Position && testPosition < task4aPosition, true);
   assert.equal(largePosition > task4aPosition, true);
   const extension = page.match(/<section id="task4a"[\s\S]*?<\/section>/)?.[0] ?? "";
-  const extensionTask = extension.split('<section class="solution-download"')[0];
-  assert.doesNotMatch(extensionTask, /<(?:input|textarea|button)\b/i, "Vertiefungen dürfen keine Eingabefelder oder Prüfbuttons enthalten");
+  assert.doesNotMatch(extension, /<(?:input|textarea|button)\b/i, "Vertiefungen dürfen keine Eingabefelder oder Prüfbuttons enthalten");
   assert.match(extension, /kein Eingabefeld und keine automatische Korrektur/i);
-  assert.match(extension, /href="sicherungsblatt-aufgabe-4-loesungen\.pdf" download hidden/);
+  const ending = page.match(/<section id="task4abschluss"[\s\S]*?<\/section>\s*<\/div>/)?.[0] ?? "";
+  assert.match(ending, /id="final-quiz"/);
+  assert.equal((ending.match(/class="solution-download"/g) ?? []).length, 1);
+  assert.match(ending, /href="sicherungsblatt-aufgabe-4-loesungen\.pdf" download hidden/);
   assert.match(page, /id="depth-learning-note"[^>]*hidden/);
-  assert.equal((page.match(/Hilfe 3:/g) ?? []).length, 0);
+  assert.equal((page.match(/Hilfe 3:/g) ?? []).length, 1);
+  const comparePosition = page.indexOf('id="depth-comparison-quiz"');
+  const answerPosition = page.indexOf('id="depth-description-answer"');
+  assert.equal(comparePosition > page.indexOf('id="depth-table-form"') && comparePosition < answerPosition, true);
+  assert.match(page, /quiz-fragen-pruefen\.js/);
+  assert.match(script, /addQuizQuestionChecks/);
+  assert.match(ending, /Quiz auswerten/);
   assert.match(page, /Maximale Baumtiefe<\/th><th scope="col">Anzahl falsch klassifizierter Trainingsdaten<\/th><th scope="col">Genauigkeit des Entscheidungsbaums nach Testphase/);
   ["11-4-1", "11-4-2"].forEach((taskId) => {
     assert.match(script, new RegExp(taskId));
@@ -96,6 +104,11 @@ function fakeElement(initial = {}) {
     focus() { this.focused = true; },
     replaceChildren() {},
     append() {},
+    before() {},
+    after() {},
+    querySelector() { return null; },
+    querySelectorAll() { return []; },
+    closest() { return fakeElement({ id: "form" }); },
   };
 }
 
@@ -104,12 +117,19 @@ test("UI-Interaktionen prüfen Tabelle und zeigen den Lernhinweis erst beim Abse
     "depth-one-answer", "check-depth-one", "depth-one-feedback", "depth-one-count",
     "depth-description-answer", "check-depth-description", "depth-description-feedback", "depth-description-count", "depth-learning-note",
     "depth-table-form", "depth-table-feedback", "task4-previous", "task4-next",
-    "solution-code-form", "solution-code-message", "solution-download-link",
+    "solution-code-form", "solution-code-message", "solution-download-link", "depth-comparison-quiz",
+    "depth-comparison-feedback", "depth-learning-note", "depth-description-note", "final-quiz",
+    "final-quiz-feedback", "task4-summary",
   ];
   const elements = Object.fromEntries(ids.map((id) => [id, fakeElement()]));
   elements["solution-code-form"].elements = { "solution-code": fakeElement() };
-  const tabs = ["task41", "task42", "task4a"].map((step) => fakeElement({ dataset: { stepTab: step } }));
-  const panels = ["task41", "task42", "task4a"].map((step) => fakeElement({ dataset: { stepPanel: step } }));
+  const comparisonFieldset = fakeElement();
+  elements["depth-comparison-quiz"].querySelector = () => comparisonFieldset;
+  const finalFieldsets = [fakeElement(), fakeElement(), fakeElement()];
+  elements["final-quiz"].querySelectorAll = () => finalFieldsets;
+  elements["final-quiz"].requestSubmit = () => elements["final-quiz"].dispatch("submit");
+  const tabs = ["task41", "task42", "task4a", "task4abschluss"].map((step) => fakeElement({ dataset: { stepTab: step } }));
+  const panels = ["task41", "task42", "task4a", "task4abschluss"].map((step) => fakeElement({ dataset: { stepPanel: step } }));
   const tableInputs = FISH_DEPTH_RESULTS.flatMap((row) => [
     fakeElement({ value: String(row.trainingErrors), dataset: { depth: String(row.depth), field: "trainingErrors" } }),
     fakeElement({ value: `${row.testAccuracy}%`, dataset: { depth: String(row.depth), field: "testAccuracy" } }),
@@ -119,6 +139,8 @@ test("UI-Interaktionen prüfen Tabelle und zeigen den Lernhinweis erst beim Abse
     querySelector(selector) { return elements[selector.replace(/^#/, "")]; },
     querySelectorAll(selector) {
       if (selector === "#depth-table-form input") return tableInputs;
+      if (selector === 'input[type="checkbox"]') return [];
+      if (selector === ".task4-answer, .task4-table-input") return [];
       if (selector === "[data-step-tab]") return tabs;
       if (selector === "[data-step-panel]") return panels;
       return [];
@@ -126,22 +148,24 @@ test("UI-Interaktionen prüfen Tabelle und zeigen den Lernhinweis erst beim Abse
     createElement() { return fakeElement(); },
     body: { append() {} },
   };
+  globalThis.window = { addQuizQuestionChecks() { return { checkAll: () => 0 }; } };
 
   try {
     await import(new URL(`../ui/task4.mjs?interaction-test=${Date.now()}`, import.meta.url));
 
-    assert.deepEqual(panels.map((panel) => panel.hidden), [false, true, true]);
+    assert.deepEqual(panels.map((panel) => panel.hidden), [false, true, true, true]);
     await elements["task4-next"].dispatch("click");
-    assert.deepEqual(panels.map((panel) => panel.hidden), [true, false, true]);
+    assert.deepEqual(panels.map((panel) => panel.hidden), [true, false, true, true]);
     await tabs[2].dispatch("click");
-    assert.deepEqual(panels.map((panel) => panel.hidden), [true, true, false]);
+    assert.deepEqual(panels.map((panel) => panel.hidden), [true, true, false, true]);
 
     assert.equal(elements["depth-learning-note"].hidden, true);
     elements["depth-description-answer"].value = "kurz";
     await elements["check-depth-description"].dispatch("click");
-    assert.equal(elements["depth-learning-note"].hidden, false);
-    assert.match(elements["depth-learning-note"].textContent, /unbekannte Testdaten klassifiziert/);
+    assert.equal(elements["depth-learning-note"].hidden, true);
+    assert.equal(elements["depth-description-note"].hidden, false);
     assert.match(elements["depth-description-feedback"].textContent, /ausführlichere Antwort/);
+    assert.match(elements["depth-description-note"].textContent, /fünf Testfischen bleibt jedoch gleich/);
 
     await elements["depth-table-form"].dispatch("submit");
     assert.equal(elements["depth-table-feedback"].className, "dt-feedback success");
@@ -161,5 +185,6 @@ test("UI-Interaktionen prüfen Tabelle und zeigen den Lernhinweis erst beim Abse
     assert.equal(elements["solution-download-link"].hidden, false);
   } finally {
     delete globalThis.document;
+    delete globalThis.window;
   }
 });

@@ -1,0 +1,29 @@
+{"kind":"deck","id":"pr/7v7hdy","name":"Deck"}
+{"kind":"layout","layoutId":"97a09735-2242-4c85-b0e2-9a987e2ab018","name":"Master","type":"master"}
+{"kind":"layout","layoutId":"84d4dd8f-0ad6-47b3-8015-a0600c43eb93","name":"Title Slide","type":"title"}
+{"kind":"slide","id":"sl/sy8upa","slide":1,"title":"Wasserstromstärke","textShapes":3}
+{"kind":"textbox","id":"sh/ahkjedkv","slide":1,"text":"Wasserstromstärke","textPreview":"Wasserstromstärke","textChars":17,"textLines":1,"bbox":[70,48,1100,76]}
+{"kind":"textbox","id":"sh/xkb2983m","slide":1,"text":"1 / 4","textPreview":"1 / 4","textChars":5,"textLines":1,"bbox":[1140,58,90,40]}
+{"kind":"textbox","id":"sh/cj21g321","slide":1,"text":"Im Abfluss und am Feuerwehrschlauch fließen jeweils 5 l in 1 s. Was ist gleich?","textPreview":"Im Abfluss und am Feuerwehrschlauch fließen jeweils 5 l in 1 s. Was ist gleich?","textChars":79,"textLines":1,"bbox":[76,150,1110,135]}
+{"kind":"image","id":"im/uxsvm5wj","slide":1,"name":"","alt":"Abfluss und Feuerwehrschlauch, beide mit der Angabe 5 Liter je Sekunde","bbox":[82,320,1116,270]}
+{"kind":"notes","id":"nt/sy8upa","slide":1,"text":"Mögliche Antwort: In beiden Situationen passieren in jeder Sekunde 5 Liter Wasser eine betrachtete Stelle. Die Wasserstromstärke ist also gleich, obwohl Ort und Weg des Wassers verschieden sind. Bildquelle: vom Nutzer bereitgestellte Abbildung."}
+{"kind":"slide","id":"sl/6tzai5","slide":2,"title":"Stromstärke in drei Kontexten","textShapes":3}
+{"kind":"textbox","id":"sh/1oza1wri","slide":2,"text":"Stromstärke in drei Kontexten","textPreview":"Stromstärke in drei Kontexten","textChars":29,"textLines":1,"bbox":[70,48,1100,76]}
+{"kind":"textbox","id":"sh/el8bqh87","slide":2,"text":"2 / 4","textPreview":"2 / 4","textChars":5,"textLines":1,"bbox":[1140,58,90,40]}
+{"kind":"textbox","id":"sh/sj6to7q1","slide":2,"text":"Was zeigen die markierten Stellen? Erkläre es für Menschen, Elektronen und Wasser.","textPreview":"Was zeigen die markierten Stellen? Erkläre es für Menschen, Elektronen und Wasser.","textChars":82,"textLines":1,"bbox":[740,212,475,315]}
+{"kind":"image","id":"im/2x0bi1wj","slide":2,"name":"","alt":"Handschriftliche Skizze zu Schülerstromstärke, elektrischer Stromstärke und Wasserstromstärke mit markierten Stellen","bbox":[52,148,628,486]}
+{"kind":"notes","id":"nt/6tzai5","slide":2,"text":"Mögliche Antwort: Die grünen Markierungen zeigen jeweils eine gedachte feste Stelle. Dort wird betrachtet, wie viele Schülerinnen und Schüler oder Elektronen beziehungsweise wie viel Wasser in derselben Zeit vorbeikommen. Bildquelle: vom Nutzer bereitgestellte Tafelnotiz."}
+{"kind":"slide","id":"sl/943o8c","slide":3,"title":"Schülerstromstärke","textShapes":5}
+{"kind":"textbox","id":"sh/oz69wjm9","slide":3,"text":"Schülerstromstärke","textPreview":"Schülerstromstärke","textChars":18,"textLines":1,"bbox":[70,48,1100,76]}
+{"kind":"textbox","id":"sh/nyxs3e5o","slide":3,"text":"3 / 4","textPreview":"3 / 4","textChars":5,"textLines":1,"bbox":[1140,58,90,40]}
+{"kind":"textbox","id":"sh/2xorut43","slide":3,"text":"Wo ist die Schülerstromstärke größer? Begründe.","textPreview":"Wo ist die Schülerstromstärke größer? Begründe.","textChars":47,"textLines":1,"bbox":[76,158,1115,95]}
+{"kind":"textbox","id":"sh/1wvq1oni","slide":3,"text":"Tür A: 12 Personen in 3 s","textPreview":"Tür A: 12 Personen in 3 s","textChars":25,"textLines":1,"bbox":[92,323,1080,76]}
+{"kind":"textbox","id":"sh/0vm9sjmd","slide":3,"text":"Tür B: 10 Personen in 2 s","textPreview":"Tür B: 10 Personen in 2 s","textChars":25,"textLines":1,"bbox":[92,440,1080,76]}
+{"kind":"notes","id":"nt/943o8c","slide":3,"text":"Lösung: Tür A: 12 Personen in 3 Sekunden, also 4 Personen pro Sekunde. Tür B: 10 Personen in 2 Sekunden, also 5 Personen pro Sekunde. An Tür B ist die Schülerstromstärke größer. Entscheidend ist die Anzahl pro gleicher Zeit, nicht die Gesamtzahl."}
+{"kind":"slide","id":"sl/qzo76h","slide":4,"title":"Die gemeinsame Idee","textShapes":5}
+{"kind":"textbox","id":"sh/nipsfy10","slide":4,"text":"Die gemeinsame Idee","textPreview":"Die gemeinsame Idee","textChars":19,"textLines":1,"bbox":[70,48,1100,76]}
+{"kind":"textbox","id":"sh/ojy9o3il","slide":4,"text":"4 / 4","textPreview":"4 / 4","textChars":5,"textLines":1,"bbox":[1140,58,90,40]}
+{"kind":"textbox","id":"sh/9k7ah8j6","slide":4,"text":"Ergänze den Satz für alle drei Beispiele:","textPreview":"Ergänze den Satz für alle drei Beispiele:","textChars":41,"textLines":1,"bbox":[76,165,1110,85]}
+{"kind":"textbox","id":"sh/algrqd0r","slide":4,"text":"Eine Stromstärke ist größer, wenn in derselben Zeit ...","textPreview":"Eine Stromstärke ist größer, wenn in derselben Zeit ...","textChars":55,"textLines":1,"bbox":[76,312,1110,145]}
+{"kind":"textbox","id":"sh/vmpsji1c","slide":4,"text":"Denke an Schülerinnen und Schüler, Elektronen und Wasser.","textPreview":"Denke an Schülerinnen und Schüler, Elektronen und Wasser.","textChars":57,"textLines":1,"bbox":[76,502,1100,95]}
+{"kind":"notes","id":"nt/qzo76h","slide":4,"text":"Mögliche Antwort: Eine Stromstärke ist größer, wenn in derselben Zeit mehr durch eine feste Stelle fließt. Bei der Schülerstromstärke sind es mehr Menschen, bei der Wasserstromstärke mehr Wasser und bei der elektrischen Stromstärke mehr elektrische Ladung. Im vereinfachten Elektronenmodell: mehr Elektronen pro gleicher Zeit."}

@@ -3,14 +3,14 @@ import { evaluateSemanticAnswer } from "./semantic-answer.mjs";
 
 const SCRIPT_SERVER_URL = "https://script.google.com/macros/s/AKfycby8RWL6uYrKZyoJ6m2GRpWyRmXjwsdskyCiqzKpRhIK5-wrDl-9lWWk8CiAGaVMoy0x/exec";
 const MAX_LENGTH = 3000;
-const DEPTH_NOTE = "Ein tieferer Baum kann Trainingsdaten besser klassifizieren. Für die Auswahl eines Modells ist jedoch entscheidend, wie gut es unbekannte Testdaten klassifiziert.";
+const DEPTH_NOTE = "Die Trainingsfehler sinken bei größerer Tiefe, die Genauigkeit auf diesen fünf Testfischen bleibt jedoch gleich. In dieser Tabelle führen weniger Trainingsfehler daher nicht zu einer höheren Testgenauigkeit.";
 const SOLUTION_CODE = "M8TR-DP7H";
-const STEP_IDS = ["task41", "task42", "task4a"];
+const STEP_IDS = ["task41", "task42", "task4a", "task4abschluss"];
 const STORAGE_KEY = "informatik11-ki-aufgabe4-v1";
 
 const semanticTasks = [
   { answerId: "depth-one-answer", buttonId: "check-depth-one", feedbackId: "depth-one-feedback", countId: "depth-one-count", taskId: "11-4-1" },
-  { answerId: "depth-description-answer", buttonId: "check-depth-description", feedbackId: "depth-description-feedback", countId: "depth-description-count", taskId: "11-4-2", noteId: "depth-learning-note" },
+  { answerId: "depth-description-answer", buttonId: "check-depth-description", feedbackId: "depth-description-feedback", countId: "depth-description-count", taskId: "11-4-2", noteId: "depth-description-note" },
 ];
 
 let activeStepIndex = 0;
@@ -20,11 +20,16 @@ function loadState() {
   try {
     const parsed = JSON.parse(localStorage.getItem(STORAGE_KEY));
     if (!parsed || typeof parsed !== "object") return { activeStep: STEP_IDS[0], fields: {} };
+    const fields = parsed.fields && typeof parsed.fields === "object" && !Array.isArray(parsed.fields) ? parsed.fields : {};
+    const checks = parsed.checks && typeof parsed.checks === "object" && !Array.isArray(parsed.checks) ? parsed.checks : {};
     return {
       activeStep: STEP_IDS.includes(parsed.activeStep) ? parsed.activeStep : STEP_IDS[0],
-      fields: parsed.fields && typeof parsed.fields === "object" ? parsed.fields : {},
+      fields: Object.fromEntries(Object.entries(fields).filter(([, value]) => typeof value === "string").map(([key, value]) => [key, value.slice(0, MAX_LENGTH)])),
+      checks: Object.fromEntries(Object.entries(checks).filter(([, value]) => typeof value === "boolean")),
+      comparisonUnlocked: parsed.comparisonUnlocked === true,
+      resultsUnlocked: parsed.resultsUnlocked === true,
     };
-  } catch { return { activeStep: STEP_IDS[0], fields: {} }; }
+  } catch { return { activeStep: STEP_IDS[0], fields: {}, checks: {}, comparisonUnlocked: false, resultsUnlocked: false }; }
 }
 const state = loadState();
 function saveState() {
@@ -41,6 +46,14 @@ function persistFields() {
       element.dispatchEvent(new Event("input", { bubbles: true }));
     }
     element.addEventListener("input", () => { state.fields[key] = element.value; saveState(); });
+  });
+}
+
+function setupCheckboxPersistence() {
+  document.querySelectorAll('input[type="checkbox"]').forEach((input) => {
+    const key = `${input.closest("form").id}:${input.value}`;
+    input.checked = state.checks[key] === true;
+    input.addEventListener("change", () => { state.checks[key] = input.checked; saveState(); });
   });
 }
 
@@ -185,6 +198,101 @@ function normalizeSolutionCode(value) {
   return value.toUpperCase().replace(/[^A-Z0-9]/g, "");
 }
 
+function checkedValues(fieldset) {
+  return [...fieldset.querySelectorAll('input[type="checkbox"]')].filter((input) => input.checked).map((input) => input.value);
+}
+
+function setupQuestionChecks() {
+  const comparisonForm = document.querySelector("#depth-comparison-quiz");
+  const comparisonFeedback = document.querySelector("#depth-comparison-feedback");
+  const comparisonFieldset = comparisonForm.querySelector("fieldset");
+  const note = document.querySelector("#depth-learning-note");
+  const comparison = window.addQuizQuestionChecks({
+    questions: [{
+      fieldset: comparisonFieldset,
+      solution: ["training-less", "test-same"],
+      feedback: comparisonFeedback,
+      success: "Richtig. Die Trainingsfehler sinken von 3 auf 0; die Testgenauigkeit bleibt bei allen drei Bäumen bei 4 von 5.",
+      hint: (values) => values.includes("perfect-proof")
+        ? "Prüfe die Aussage über neue Fische: Folgt sie wirklich aus den Trainingsfehlern und diesen fünf Testfischen?"
+        : "Vergleiche auch die Testspalte: Ist dort bei größerer Tiefe ein zusätzlicher Fisch richtig?",
+      check: () => {
+        const values = checkedValues(comparisonFieldset);
+        if (!values.length) return { result: "empty", text: "Kreuze mindestens eine Aussage an." };
+        const right = values.filter((value) => ["training-less", "test-same"].includes(value)).length;
+        const wrong = values.length - right;
+        let result = !wrong && right === 2 ? "correct" : right && !wrong ? "missing" : right ? "mixed" : "wrong";
+        const text = result === "correct"
+          ? "Richtig. Die Trainingsfehler sinken von 3 auf 0; die Testgenauigkeit bleibt bei allen drei Bäumen bei 4 von 5."
+          : result === "missing"
+            ? "Teilweise korrekt. Deine Kreuze stimmen, aber es fehlt noch mindestens eine richtige Antwort. Vergleiche auch die Testspalte: Ist dort bei größerer Tiefe ein zusätzlicher Fisch richtig?"
+            : result === "mixed"
+              ? "Teilweise korrekt. Mindestens ein Kreuz ist nicht richtig. Prüfe die Aussage über neue Fische: Folgt sie wirklich aus den Trainingsfehlern und diesen fünf Testfischen?"
+              : "Trainingsfehler und Testgenauigkeit sind verschiedene Ergebnisse. Lies beide Spalten für Tiefe 1 und Tiefe 3 noch einmal.";
+        return { result, text };
+      },
+    }],
+    buttonClass: "dt-primary-button",
+    feedbackClass: "fish-semantic-feedback",
+    levels: { high: "success", medium: "partial", low: "error" },
+    onCheck: (_question, result) => {
+      if (result === "correct") { state.comparisonUnlocked = true; note.hidden = false; saveState(); }
+    },
+  });
+
+  const finalForm = document.querySelector("#final-quiz");
+  const finalFeedback = document.querySelector("#final-quiz-feedback");
+  const finalQuestions = [...finalForm.querySelectorAll("fieldset")];
+  const finalSuccess = [
+    "Richtig. Nur die Trainingsfehler sinken; die Testgenauigkeit bleibt dreimal bei 80 %.",
+    "Richtig. Gleiche Testgenauigkeit erlaubt eine vorläufige Wahl, beweist aber weder die beste Tiefe noch, dass Tiefe 3 neue Fische schlechter einordnet.",
+    "Richtig. Mehr getrennte Daten helfen bei der Wahl; ein weiterer unabhängiger Test überprüft den gewählten Baum.",
+  ];
+  const finalHints = [
+    "Lies die Werte der Trainingsspalte und der Testspalte getrennt ab.",
+    "Unterscheide einen beobachteten Gleichstand von einem Beweis über weitere Fische.",
+    "Fische, mit denen du trainierst oder die Tiefe auswählst, sind kein unabhängiger Abschlusstest.",
+  ];
+  const finalSolutions = [["q1-train", "q1-test"], ["q2-no-guarantee", "q2-simple"], ["q3-more", "q3-final"]];
+  const quiz = window.addQuizQuestionChecks({
+    questions: finalQuestions.map((fieldset, index) => ({
+      fieldset,
+      solution: finalSolutions[index],
+      success: finalSuccess[index],
+      hint: finalHints[index],
+      number: index + 1,
+      check: () => {
+        const values = checkedValues(fieldset);
+        if (!values.length) return { result: "empty", text: "Kreuze mindestens eine Aussage an." };
+        const correct = values.filter((value) => finalSolutions[index].includes(value)).length;
+        const incorrect = values.length - correct;
+        if (!incorrect && correct === finalSolutions[index].length) return { result: "correct", text: finalSuccess[index] };
+        if (correct && !incorrect) return { result: "missing", text: `Teilweise korrekt. Deine Kreuze stimmen, aber es fehlt noch mindestens eine richtige Antwort. ${finalHints[index]}` };
+        if (correct) return { result: "mixed", text: `Teilweise korrekt. Mindestens ein Kreuz ist nicht richtig. ${finalHints[index]}` };
+        return { result: "wrong", text: `Noch nicht korrekt. ${finalHints[index]}` };
+      },
+    })),
+    buttonClass: "dt-primary-button",
+    feedbackClass: "fish-semantic-feedback",
+    levels: { high: "success", medium: "incomplete", low: "error" },
+    onAllCorrect: () => finalForm.requestSubmit(),
+  });
+  finalForm.addEventListener("submit", (event) => {
+    event.preventDefault();
+    const correct = quiz.checkAll();
+    finalFeedback.hidden = false;
+    finalFeedback.className = `fish-semantic-feedback${correct === 3 ? " success" : " error"}`;
+    finalFeedback.textContent = correct === 3
+      ? "Richtig. Du unterscheidest Training und Test und kannst die Baumtiefe nur vorläufig beurteilen."
+      : correct > 0
+        ? "Teilweise korrekt. Prüfe die Fragen mit der Rückmeldung direkt darunter noch einmal."
+        : "Noch nicht korrekt. Vergleiche Trainingsfehler, Testgenauigkeit und die Größe der Testgruppe erneut.";
+    if (correct === 3) { state.resultsUnlocked = true; document.querySelector("#task4-summary").hidden = false; }
+    saveState();
+  });
+  return { comparison, quiz };
+}
+
 function unlockSolution(event) {
   event.preventDefault();
   const form = event.currentTarget;
@@ -204,3 +312,8 @@ semanticTasks.forEach(setupSemanticTask);
 document.querySelector("#depth-table-form").addEventListener("submit", checkDepthTable);
 document.querySelector("#solution-code-form").addEventListener("submit", unlockSolution);
 persistFields();
+setupCheckboxPersistence();
+setupQuestionChecks();
+document.querySelector("#depth-learning-note").hidden = !state.comparisonUnlocked;
+document.querySelector("#task4-summary").hidden = !state.resultsUnlocked;
+document.querySelector("#depth-description-note").textContent = DEPTH_NOTE;

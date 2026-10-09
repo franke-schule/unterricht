@@ -95,9 +95,10 @@ genauer aufteilen.
 \end{center}
 
 \begin{merke}
-Mit größerer Tiefe sinken hier die \fach{Trainingsfehler} von 3 auf 0. Die \fach{Testgenauigkeit} bleibt bei
-allen drei Bäumen gleich: 80\,\%. Deshalb genügt für diese Testdaten bereits der einfachere Baum der Tiefe 1.
-Für die Wahl eines Baums zählt, wie gut er \emph{unbekannte Testdaten} klassifiziert.
+Mehr Baumtiefe garantiert keine höhere Genauigkeit bei unbekannten Daten. Bei diesen fünf Testfischen sind alle drei
+Bäume gleich genau; deshalb ist der einfachere Baum der Tiefe 1 eine vorläufig begründbare Wahl. Für eine
+belastbarere Entscheidung vergleicht man die Tiefen mit mehr bisher unbenutzten Fischen und prüft den gewählten Baum
+anschließend mit weiteren, bei der Wahl nicht verwendeten Fischen.
 \end{merke}
 
 \begin{beispiel}[title=Vertiefung 4a: großer Datensatz]

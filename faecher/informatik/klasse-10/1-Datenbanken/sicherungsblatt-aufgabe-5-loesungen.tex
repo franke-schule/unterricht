@@ -163,10 +163,13 @@ LIMIT 1 & lässt nur die erste Zeile übrig.
 \end{tabularx}
 
 \vspace{8mm}
-\merkebox{\texttt{AND} verlangt beide Bedingungen; bei \texttt{OR} genügt eine
-geklammerte Gruppe.\par\vspace{2mm}
-Aggregatfunktionen liefern aus vielen Werten ein Ergebnis; \texttt{AS} benennt
-die Ergebnisspalte.\par\vspace{2mm}
+\merkebox{Bei \texttt{AND} müssen beide Bedingungen erfüllt sein, bei \texttt{OR}
+muss nur eine Bedingung erfüllt sein.\par\vspace{2mm}
+Aggregatsfunktionen empfangen mehrere Parameter und geben einen Wert zurück.\par
+Beispiel: \texttt{MIN(centimeters)} gibt im InstaHub-Kontext die kleinste
+registrierte Person aus. Als Parameter kommen die Größen aller Datensätze rein.
+Rückgabewert ist der kleinste Wert.\par\vspace{2mm}
+\texttt{AS} benennt die Ergebnisspalte.\par\vspace{2mm}
 \texttt{ORDER BY ... DESC} sortiert absteigend; \texttt{LIMIT 1} zeigt nur die
 erste Ergebniszeile.}
 

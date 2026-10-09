@@ -1,0 +1,81 @@
+Wiederholungs-Quiz zu Aufgabe 5 – Anleitung zur vollständigen Löschung
+=====================================================================
+
+Quiz:       Test zu Aufgabe 5 – Das Perzeptron (Informatik 11)
+Modul:      faecher/informatik/klasse-11/1-Kuenstliche-Intelligenz/aufgabe5.html
+Online:     https://www.florian-franke.org/faecher/informatik/klasse-11/1-Kuenstliche-Intelligenz/aufgabe5-quiz.html
+Angelegt:   07.10.2026
+Löschen:    nur auf ausdrückliche Anweisung der Lehrkraft
+Regeln:     manifest-wiederholungs-quiz.txt
+
+Die Quizseite bindet nur gemeinsame Komponenten und Stylesheets ein, aber keine
+Dateien eines anderen Quiz. Es wurde kein Menüeintrag angelegt.
+
+1. Neue Dateien
+---------------
+
+faecher/informatik/klasse-11/1-Kuenstliche-Intelligenz/aufgabe5-quiz.html
+faecher/informatik/klasse-11/1-Kuenstliche-Intelligenz/aufgabe5-quiz.mjs
+faecher/informatik/klasse-11/1-Kuenstliche-Intelligenz/aufgabe5-quiz.css
+faecher/informatik/klasse-11/1-Kuenstliche-Intelligenz/aufgabe5-quiz-loeschen.txt
+../informatik-material/inf11/inf11-aufgabe5-quiz.svg (QR-Datei)
+
+2. Geänderte Dateien
+--------------------
+
+apps-script/Tasks.gs: drei zusammenhängende Blöcke direkt vor '11-5-1',
+  alle mit dem Präfix 'inf11-a5-quiz-'.
+apps-script/Config.gs: Kommentarzeile im Kopf zu aufgabe5-quiz.html.
+apps-script/tests/code-routing.test.js: drei IDs in der Liste der geprüften
+  Beschreibe-Aufgaben.
+../informatik-material/inf11/inf11-ki.html: Quizfolie 10 unmittelbar nach
+  Aufgabe-5-Folie 9. Die früheren Folien 10 bis 12 tragen nun 11 bis 13,
+  jeweils in id und aria-label. Die Präsentation ist möglicherweise nicht
+  versioniert; die vor der Änderung erstellte Sicherungskopie aufbewahren.
+Kurzlink: keiner angelegt. Falls später einer eingerichtet wird, hier nachtragen.
+
+3. Skriptserver-Aufgaben
+-----------------------
+
+inf11-a5-quiz-ausgabe-beschreibung, Quizaufgabe 4, 4 Punkte:
+  „Ein unbekanntes Tier hat x₁ = 1 und x₂ = 3. Es gelten w₁ = −1,
+  w₂ = 2 und θ = 3. Beschreibe die Rechnung von den beiden Beiträgen
+  bis zur Klasse.“
+inf11-a5-quiz-training-beschreibung, Quizaufgabe 5, 4 Punkte:
+  „Für ein Trainingsbeispiel gelten x₁ = 2, x₂ = 1, t = 0,
+  w₁ = w₂ = θ = 1 und α = 1. Beschreibe, welche Ausgabe entsteht und
+  wie sich die Parameter nach diesem Schritt ändern.“
+inf11-a5-quiz-testdaten-beschreibung, Quizaufgabe 6, 3 Punkte:
+  „Ein Perzeptron ordnet alle vier Tiere aus seiner Trainingsdatei richtig
+  ein. Jemand behauptet: „Damit erkennt es auch jedes neue Tier richtig.“
+  Beurteile die Aussage und beschreibe, wie du sie überprüfst.“
+
+4. Checkliste zur Löschung
+--------------------------
+
+[ ] Die drei Quizdateien .html, .mjs und .css mit git rm löschen.
+[ ] apps-script/Tasks.gs: alle drei vollständigen Blöcke mit dem Präfix
+    'inf11-a5-quiz-' entfernen.
+[ ] apps-script/Config.gs: Kommentarzeile zu aufgabe5-quiz.html entfernen.
+[ ] apps-script/tests/code-routing.test.js: die drei IDs entfernen und
+    Kommas in der Liste prüfen.
+[ ] Präsentation ../informatik-material/inf11/inf11-ki.html: Quizfolie 10
+    vollständig entfernen; folgende Folien in id und aria-label um eins
+    zurückzählen. Im Browser Folienfolge und Zähler prüfen.
+[ ] ../informatik-material/inf11/inf11-aufgabe5-quiz.svg löschen.
+[ ] Einen später angelegten Kurzlink deaktivieren und diese Anleitung bei
+    seiner Einrichtung entsprechend ergänzen.
+[ ] Restekontrolle in beiden Repositorys bzw. Ordnern: git grep -nw
+    "aufgabe5-quiz" und git grep -n "inf11-a5-quiz-". Die Präsentation
+    zusätzlich mit Textsuche prüfen. Nur diese Anleitung darf noch Treffer
+    enthalten.
+[ ] node apps-script/tests/code-routing.test.js sowie alle Tests in
+    apps-script/tests und perzeptron/tests ausführen; git diff --check.
+[ ] Auf dem Skriptserver Tasks.gs und Config.gs übernehmen und die
+    Bereitstellung auf eine neue Version setzen. Die /exec-URL bleibt gleich.
+[ ] Website neu hochladen, damit die Quizseite auch online verschwindet.
+[ ] Zuletzt diese Löschanleitung mit git rm löschen.
+
+Der localStorage-Eintrag
+"informatik11-kuenstliche-intelligenz-aufgabe5-test-v1" kann in den
+Browsern der Lernenden zurückbleiben. Er wird von keiner anderen Seite gelesen.

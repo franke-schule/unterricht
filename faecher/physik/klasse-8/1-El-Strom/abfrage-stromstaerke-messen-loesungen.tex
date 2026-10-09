@@ -1,0 +1,109 @@
+\documentclass[10pt,a4paper]{article}
+
+% Die Loesungsfassung unterscheidet sich ausschliesslich durch \solutiontrue.
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage[ngerman]{babel}
+\usepackage[a4paper,margin=14mm]{geometry}
+\usepackage{lmodern}
+\usepackage[table]{xcolor}
+\usepackage{tabularx}
+\usepackage{microtype}
+\usepackage{tikz}
+
+\newif\ifsolution
+\solutiontrue
+
+\pagestyle{empty}
+\setlength{\parindent}{0pt}
+\setlength{\parskip}{0pt}
+\renewcommand{\familydefault}{\sfdefault}
+
+\definecolor{Navy}{HTML}{17324D}
+\definecolor{Blue}{HTML}{3B6EA5}
+\definecolor{Gold}{HTML}{F3B33D}
+\definecolor{Ink}{HTML}{1E2935}
+\definecolor{Muted}{HTML}{617080}
+\definecolor{Line}{HTML}{D8E1E8}
+\color{Ink}
+
+\newcommand{\kopf}{%
+  \colorbox{Navy}{\parbox{\dimexpr\linewidth-2\fboxsep\relax}{%
+    \vspace{1.3mm}\color{white}
+    \begin{tabularx}{\linewidth}{@{}Xr@{}}
+      {\small\bfseries PHYSIK · KLASSE 8} &
+      \colorbox{Gold}{\color{Navy}\small\bfseries\strut\ifsolution LÖSUNGEN\else ABFRAGE\fi}
+    \end{tabularx}
+    \vspace{0.9mm}
+    {\fontsize{16}{19}\selectfont\bfseries Elektrischer Strom · Stromstärke messen}\par
+    \vspace{0.3mm}{\small Batterie · Amperemeter · unverzweigter Stromkreis}\vspace{1.1mm}
+  }}\par\vspace{2mm}}
+\newcommand{\frage}[2]{%
+  \vspace{0.8mm}{\color{Blue}\bfseries\large #1 · #2}\par
+  \vspace{0.4mm}{\color{Blue}\rule{\linewidth}{0.65pt}}\par\vspace{0.5mm}}
+\newcommand{\antwortfeld}[2]{%
+  \vspace{1mm}%
+  \begin{tikzpicture}[x=1mm,y=1mm]
+    \path[use as bounding box] (0,0) rectangle (181.5,-8*#1);
+    \ifsolution
+      \node[anchor=north west,text width=179mm,inner sep=0pt,align=left,
+        font=\small,text=Blue] at (0,-1) {#2};
+    \else
+      \foreach \i in {1,...,#1}{\draw[Line,line width=.55pt] (0,-8*\i) -- (181.5,-8*\i);}
+    \fi
+  \end{tikzpicture}\par}
+\newcommand{\schaltkreis}[3]{%
+  \begin{scope}[shift={(#1,#2)}]
+    \draw[Blue,line width=.85pt] (0,0)--(24,0) (27,0)--(60,0)--(60,-22)
+      (0,0)--(0,-22)--(15,-22) (23,-22)--(37,-22) (45,-22)--(60,-22);
+    \draw[Blue,line width=.85pt] (24,-2.5)--(24,2.5) (27,-4)--(27,4);
+    \draw[Blue,line width=.85pt,fill=white] (19,-22) circle (4) (41,-22) circle (4);
+    \ifnum#3=1
+      \draw[Blue,line width=.7pt] (16.2,-24.8)--(21.8,-19.2) (16.2,-19.2)--(21.8,-24.8);
+      \node[font=\small,text=Blue] at (41,-22) {A};
+    \else
+      \node[font=\small,text=Blue] at (19,-22) {A};
+      \draw[Blue,line width=.7pt] (38.2,-24.8)--(43.8,-19.2) (38.2,-19.2)--(43.8,-24.8);
+    \fi
+  \end{scope}}
+\newcommand{\karofeld}[2]{%
+  \vspace{0.5mm}%
+  \begin{tikzpicture}[x=1mm,y=1mm]
+    \path[use as bounding box] (0,0) rectangle (181.5,-#1);
+    \draw[step=5mm,Line!65,line width=.25pt] (0,-#1) grid (181.5,0);
+    \draw[Line,line width=.55pt] (0,0) rectangle (181.5,-#1);
+    \ifsolution #2\fi
+  \end{tikzpicture}\par}
+\newcommand{\fuss}{%
+  \vfill{\color{Line}\rule{\linewidth}{0.5pt}}\par\vspace{1mm}
+  \begin{tabularx}{\linewidth}{@{}Xr@{}}
+    {\small\color{Muted}Klasse 8 · Physik · Elektrischer Strom} &
+    {\small\color{Muted}\ifsolution Lösungen\else Abfrage\fi{} · Seite 1 von 1}
+  \end{tabularx}}
+
+\begin{document}
+\kopf
+
+\frage{1}{Die Batterie}
+\textbf{Erkläre} die Funktionsweise einer Batterie. Gehe auf die beiden Pole ein. Benutze Fachbegriffe zur Beschreibung der Vorgänge an den Polen.\par
+\antwortfeld{4}{Chemische Reaktionen trennen in der Batterie elektrische Ladungen. Am Minuspol entsteht ein Elektronenüberschuss, am Pluspol ein Elektronenmangel. Dadurch entsteht eine elektrische Spannung zwischen den Polen. Ist der äußere Stromkreis geschlossen, bewegen sich Elektronen vom Minuspol durch den Leiter zum Pluspol. Die Batterie wandelt dabei chemische Energie in elektrische Energie um.}
+
+\frage{2}{Das Amperemeter anschließen}
+\textbf{Skizziere} einen Schaltplan mit einem elektrischen Bauteil. Die Stromstärke des Stromkreises soll gemessen werden. \textbf{Erkläre}, warum du das Messgerät nicht parallel zum Bauteil anschließt.\par
+\karofeld{35}{\schaltkreis{61}{-6}{1}}
+\antwortfeld{2}{Das Amperemeter steht in Reihe mit dem Bauteil, hier einer Lampe. Ein paralleler Anschluss würde die Lampe überbrücken; dabei droht ein Kurzschluss.}
+
+\frage{3}{Vor und nach der Lampe messen}
+\textbf{Skizziere} Schaltpläne für einen Versuch, der überprüft, ob eine Lampe in einem unverzweigten Stromkreis Strom verbraucht. \textbf{Nenne} beide Messstellen und das erwartete Ergebnis.\par
+\karofeld{38}{%
+  \schaltkreis{15}{-7}{1}%
+  \schaltkreis{105}{-7}{0}%
+}
+\antwortfeld{2}{Messstelle 1: Amperemeter vor der Lampe. Messstelle 2: Amperemeter hinter der Lampe. Die Stromstärke ist an beiden Stellen gleich groß; die Lampe verbraucht keinen Strom.}
+
+\frage{4}{Messwert an anderer Stelle}
+Vor einer Lampe misst du in einem unverzweigten Stromkreis $I=0{,}20\,\mathrm{A}$. \textbf{Erkläre}, welchen Wert du hinter der Lampe erwartest.\par
+\antwortfeld{2}{Hinter der Lampe erwarte ich ebenfalls $I=0{,}20\,\mathrm{A}$. In einem unverzweigten Stromkreis ist die Stromstärke überall gleich groß. Die Lampe wandelt elektrische Energie in Licht und Wärme um, verbraucht aber keine elektrische Ladung.}
+
+\fuss
+\end{document}

@@ -89,7 +89,7 @@ LEHRPLANBEZUG
 „analysieren den Einfluss von Trainingsdaten und Parametern auf die Zuverlässigkeit der Ergebnisse eines Verfahrens maschinellen Lernens“.
 
 VORWISSEN DER KLASSE
-Aufgabe 7 vollständig (KNN, k, Gleichstandsregel, euklidischer Abstand, Manhattan-Metrik, Schulshirt-Daten); Konfusionsmatrix 2×2 und Genauigkeit aus Aufgabe 3c (Zeilen erwartetes Label, Spalten berechnetes Label); Baumtiefe als Hyperparameter und Vergleich Trainings-/Testfehler aus Aufgabe 4.
+Aufgabe 7 vollständig (KNN, k, Gleichstandsregel, euklidischer Abstand, Manhattan-Metrik, Schulshirt-Daten); Konfusionsmatrix 2×2 und Genauigkeit aus Aufgabe 3b (Zeilen erwartetes Label, Spalten berechnetes Label); Baumtiefe als Hyperparameter und Vergleich Trainings-/Testfehler aus Aufgabe 4.
 
 GLEICHSTANDSREGEL wie in Aufgabe 7: nur ungerade k; bei verbleibendem Gleichstand entscheidet der nächstgelegene Nachbar. Die Heftbeispiele mit k = 2 entfallen.
 
@@ -104,7 +104,7 @@ REITERSTRUKTUR (verbindlich, kompakt halten)
 3. „k mit Validierungsdaten bestimmen“
    Aufteilung in Trainings-, Validierungs- und Testdaten (Kreisdiagramm wie Heft S. 24) und das Vorgehen von S. 25. Zuerst das Heftbeispiel nachvollziehen: Trainingsdaten orange (3|2), (5|3); blau (3,5|3), (2|2,5), (1,5|1); Validierungspunkt P(3,5|2) mit Label blau. Ergebnis: k = 1 falsch, k = 3 korrekt, k = 5 korrekt. Danach die Schulshirts: eine Tabelle mit 4–5 Validierungspunkten × k ∈ {1, 3, 5, 7}. Einige Zellen tragen die SuS selbst ein (korrekt/falsch, mithilfe der k-Grafik), die übrigen sind vorgegeben. Die Daten sind so gewählt, dass ein k klar am besten abschneidet. Die SuS wählen das beste k; dazu eine Beschreibe-Aufgabe über die vorhandene KI-Auswertung (Skriptserver): „**Begründe** mithilfe der Tabelle, welchen Wert für k du wählst.“ Merke-Kasten erst danach: k ist ein Hyperparameter (wie die Baumtiefe in Aufgabe 4); Validierungsdaten dienen nur der Wahl von k. Wählbare Fehlvorstellung: „Man wählt k mit den Testdaten.“ Die Rückmeldung erklärt: Dann misst der Test nicht mehr, wie gut das Modell mit unbekannten Daten zurechtkommt.
 4. „Das Modell testen“
-   Mit dem in Reiter 3 ermittelten k klassifiziert das Modell 6–8 Testpersonen, mit mindestens zwei Fehlklassifikationen. Die SuS füllen eine 3×3-Konfusionsmatrix (S/M/L) und berechnen die Genauigkeit. Anknüpfung an die 2×2-Matrix aus Aufgabe 3c: Zeilen erwartet, Spalten berechnet, die Diagonale zählt die richtigen Klassifikationen. Die Konfusionsmatrix-Komponente aus entscheidungbaeume/ui/task3c.mjs wiederverwenden bzw. auf drei Klassen erweitern, ohne Aufgabe 3c zu verändern. Feedback unterscheidet typische Fehler (Zeile/Spalte vertauscht, Nenner ohne Fehlklassifikationen).
+   Mit dem in Reiter 3 ermittelten k klassifiziert das Modell 6–8 Testpersonen, mit mindestens zwei Fehlklassifikationen. Die SuS füllen eine 3×3-Konfusionsmatrix (S/M/L) und berechnen die Genauigkeit. Anknüpfung an die 2×2-Matrix aus Aufgabe 3b: Zeilen erwartet, Spalten berechnet, die Diagonale zählt die richtigen Klassifikationen. Die Konfusionsmatrix-Komponente aus entscheidungbaeume/ui/task3c.mjs wiederverwenden bzw. auf drei Klassen erweitern, ohne Aufgabe 3b zu verändern. Feedback unterscheidet typische Fehler (Zeile/Spalte vertauscht, Nenner ohne Fehlklassifikationen).
 5. „Daten als Fehlerquelle“
    Drei kurze Fälle, je eine Multiple-Choice-Frage mit eigenem Prüfen-Button:
    (a) Ungleiche Verteilung: 5 × S, 1 × M (Heft S. 30) → für k ≥ 3 wird immer S vorhergesagt.
@@ -118,7 +118,7 @@ REITERSTRUKTUR (verbindlich, kompakt halten)
 KEIN Sicherungsblatt und KEIN Wiederholungs-Quiz (nicht beauftragt).
 
 WIEDERVERWENDUNG
-Seitengerüst, Reiter, Hilfen, Speicherung und semantische Auswertung wie in Aufgabe 7; Konfusionsmatrix aus Aufgabe 3c; Drag-and-Drop wie in Aufgabe 7; Abschlussquiz nach Informatik 10, Datenbanken (#final-quiz). Menüeintrag in faecher/informatik/klasse-11/index.html hinter Aufgabe 7, Rücklink „Zu Aufgabe 7“.
+Seitengerüst, Reiter, Hilfen, Speicherung und semantische Auswertung wie in Aufgabe 7; Konfusionsmatrix aus Aufgabe 3b; Drag-and-Drop wie in Aufgabe 7; Abschlussquiz nach Informatik 10, Datenbanken (#final-quiz). Menüeintrag in faecher/informatik/klasse-11/index.html hinter Aufgabe 7, Rücklink „Zu Aufgabe 7“.
 
 PROJEKTVORGABEN, DIE NICHT IN DEN MANIFESTEN STEHEN
 - Reiter sind jederzeit frei wechselbar, ohne Freischaltlogik. Jeder Reiter endet mit einem Weiter-Button.

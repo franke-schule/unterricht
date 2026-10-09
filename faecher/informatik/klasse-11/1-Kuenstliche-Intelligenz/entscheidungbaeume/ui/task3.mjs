@@ -539,12 +539,21 @@ function renderFlowNavigation() {
     const button = document.createElement("button");
     button.type = "button";
     button.className = "dt-primary-button";
-    button.textContent = next.id === "entropy" ? "Zu den Aufgaben für die Schnellen" : `Weiter: ${stepLabel(next.id)}`;
+    button.textContent = next.id === "entropy" ? "Zu Aufgabe 3c – für die Schnellen: Entropie" : `Weiter: ${stepLabel(next.id)}`;
     button.addEventListener("click", () => {
       showStep(next.id);
       document.querySelector(`#tab-${next.id}`)?.focus({ preventScroll: true });
     });
-    container.replaceChildren(button);
+    if (next.id === "entropy") {
+      const requiredTask = document.createElement("a");
+      requiredTask.className = "dt-primary-button";
+      requiredTask.href = "aufgabe3b.html";
+      requiredTask.textContent = "Weiter zu Aufgabe 3b: Klassifikation der Testdaten";
+      button.className = "dt-secondary-button";
+      container.replaceChildren(requiredTask, button);
+    } else {
+      container.replaceChildren(button);
+    }
   });
 }
 
@@ -826,7 +835,7 @@ function renderQuiz() {
         state.quizAnswers[index] = optionIndex;
         state.quizComplete = false;
         document.querySelector("#quiz-summary").hidden = true;
-        document.querySelector("#task3b-complete").hidden = true;
+        document.querySelector("#task3c-complete").hidden = true;
         saveState();
         updateQuizProgress();
         fieldset.classList.remove("is-correct", "is-wrong");
@@ -853,7 +862,7 @@ function showQuizSummary() {
   const list = document.createElement("ol");
   ENTROPY_QUIZ.forEach((item) => { const li = document.createElement("li"); li.append(document.createTextNode(item.question), Object.assign(document.createElement("strong"), { textContent: `Richtig: ${item.options[item.correct]}` })); list.append(li); });
   summary.append(list);
-  document.querySelector("#task3b-complete").hidden = false;
+  document.querySelector("#task3c-complete").hidden = false;
 }
 
 function checkQuiz(event) {

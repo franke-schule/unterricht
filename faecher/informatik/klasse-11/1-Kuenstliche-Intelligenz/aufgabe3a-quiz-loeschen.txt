@@ -3,7 +3,7 @@ Wiederholungs-Quiz zu Aufgabe 3a – Anleitung zur vollständigen Löschung
 
 Quiz:           Test zu Aufgabe 3a – Einen Entscheidungsbaum erstellen
                 (Informatik 11, Einheit 1-Kuenstliche-Intelligenz)
-Modul:          aufgabe3.html, Pflichtteil Aufgabe 3a (ohne 3b Entropie)
+Modul:          aufgabe3.html, Pflichtteil Aufgabe 3a (ohne 3c Entropie)
 Seite:          faecher/informatik/klasse-11/1-Kuenstliche-Intelligenz/
                 aufgabe3a-quiz.html
 Online:         https://www.florian-franke.org/faecher/informatik/klasse-11/

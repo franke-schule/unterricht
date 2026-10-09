@@ -1,0 +1,284 @@
+{
+  "schema": "openai.presentation.layout/v4",
+  "unit": "px",
+  "slide": {
+    "aid": "sl/6tzai5",
+    "id": "6tzai5",
+    "slide": 2,
+    "layoutId": "84d4dd8f-0ad6-47b3-8015-a0600c43eb93",
+    "layoutName": "Title Slide",
+    "layoutType": "title",
+    "masterLayoutId": "97a09735-2242-4c85-b0e2-9a987e2ab018",
+    "masterLayoutName": "Master",
+    "backgroundColor": "#FFFFFF",
+    "frame": {
+      "left": 0,
+      "top": 0,
+      "width": 1280,
+      "height": 720
+    }
+  },
+  "theme": {
+    "colorSchemeName": "ChatGPT",
+    "colors": {
+      "accent1": "#156082",
+      "accent2": "#E97132",
+      "accent3": "#196B24",
+      "accent4": "#0F9ED5",
+      "accent5": "#A02B93",
+      "accent6": "#4EA72E",
+      "bg1": "#FFFFFF",
+      "bg2": "#000000",
+      "tx1": "#1F1F1F",
+      "tx2": "#FFFFFF",
+      "dk1": "#000000",
+      "lt1": "#FFFFFF",
+      "dk2": "#0E2841",
+      "lt2": "#E8E8E8",
+      "hlink": "#467886",
+      "folHlink": "#96607D"
+    },
+    "typefaces": [
+      "Arial"
+    ]
+  },
+  "inheritedLayers": [
+    {
+      "scope": "layout",
+      "id": "84d4dd8f-0ad6-47b3-8015-a0600c43eb93",
+      "name": "Title Slide",
+      "type": "title",
+      "parentLayoutId": "97a09735-2242-4c85-b0e2-9a987e2ab018",
+      "elements": []
+    },
+    {
+      "scope": "master",
+      "id": "97a09735-2242-4c85-b0e2-9a987e2ab018",
+      "name": "Master",
+      "type": "master",
+      "elements": []
+    }
+  ],
+  "elements": [
+    {
+      "order": 1,
+      "kind": "shape",
+      "scope": "slide",
+      "aid": "sh/1oza1wri",
+      "id": "1",
+      "bbox": [
+        70,
+        48,
+        1100,
+        76
+      ],
+      "geometry": "rect",
+      "text": "Stromstärke in drei Kontexten",
+      "textPreview": "Stromstärke in drei Kontexten",
+      "resolvedFontSize": 44,
+      "resolvedTextStyle": {
+        "fontSize": 44,
+        "typeface": "Arial",
+        "color": "#17324D",
+        "bold": true,
+        "alignment": "left",
+        "autoFit": "none",
+        "insets": {
+          "top": 4.8,
+          "right": 9.6,
+          "bottom": 4.8,
+          "left": 9.6
+        }
+      },
+      "textLayout": {
+        "lineCount": 1,
+        "lines": [
+          {
+            "index": 1,
+            "text": "Stromstärke in drei Kontexten"
+          }
+        ]
+      },
+      "paragraphs": [
+        {
+          "index": 1,
+          "text": "Stromstärke in drei Kontexten",
+          "resolvedTextStyle": {
+            "fontSize": 44,
+            "typeface": "Arial",
+            "color": "#17324D",
+            "bold": true
+          },
+          "runs": [
+            {
+              "index": 1,
+              "text": "Stromstärke in drei Kontexten",
+              "fontSize": 44,
+              "typeface": "Arial",
+              "color": "#17324D",
+              "bold": true
+            }
+          ],
+          "marginLeft": 0
+        }
+      ],
+      "lineWidth": 0
+    },
+    {
+      "order": 2,
+      "kind": "shape",
+      "scope": "slide",
+      "aid": "sh/el8bqh87",
+      "id": "2",
+      "bbox": [
+        1140,
+        58,
+        90,
+        40
+      ],
+      "geometry": "rect",
+      "text": "2 / 4",
+      "textPreview": "2 / 4",
+      "resolvedFontSize": 20,
+      "resolvedTextStyle": {
+        "fontSize": 20,
+        "typeface": "Arial",
+        "color": "#4A6578",
+        "alignment": "left",
+        "autoFit": "none",
+        "insets": {
+          "top": 4.8,
+          "right": 9.6,
+          "bottom": 4.8,
+          "left": 9.6
+        }
+      },
+      "textLayout": {
+        "lineCount": 1,
+        "lines": [
+          {
+            "index": 1,
+            "text": "2 / 4"
+          }
+        ]
+      },
+      "paragraphs": [
+        {
+          "index": 1,
+          "text": "2 / 4",
+          "resolvedTextStyle": {
+            "fontSize": 20,
+            "typeface": "Arial",
+            "color": "#4A6578"
+          },
+          "runs": [
+            {
+              "index": 1,
+              "text": "2 / 4",
+              "fontSize": 20,
+              "typeface": "Arial",
+              "color": "#4A6578"
+            }
+          ],
+          "marginLeft": 0
+        }
+      ],
+      "lineWidth": 0
+    },
+    {
+      "order": 3,
+      "kind": "image",
+      "scope": "slide",
+      "aid": "im/2x0bi1wj",
+      "id": "3",
+      "bbox": [
+        52,
+        148,
+        628,
+        486
+      ],
+      "alt": "Handschriftliche Skizze zu Schülerstromstärke, elektrischer Stromstärke und Wasserstromstärke mit markierten Stellen",
+      "contentType": "image/png",
+      "imageFit": "contain",
+      "asset": {
+        "assetId": "52528e37-87d2-4add-a422-aecdfb918768",
+        "contentType": "image/png",
+        "byteLength": 102114
+      }
+    },
+    {
+      "order": 4,
+      "kind": "shape",
+      "scope": "slide",
+      "aid": "sh/sj6to7q1",
+      "id": "4",
+      "bbox": [
+        740,
+        212,
+        475,
+        315
+      ],
+      "geometry": "rect",
+      "text": "Was zeigen die markierten Stellen? Erkläre es für Menschen, Elektronen und Wasser.",
+      "textPreview": "Was zeigen die markierten Stellen? Erkläre es für Menschen, Elektronen und Wasser.",
+      "resolvedFontSize": 34,
+      "resolvedTextStyle": {
+        "fontSize": 34,
+        "typeface": "Arial",
+        "color": "#17324D",
+        "alignment": "left",
+        "autoFit": "none",
+        "insets": {
+          "top": 4.8,
+          "right": 9.6,
+          "bottom": 4.8,
+          "left": 9.6
+        }
+      },
+      "textLayout": {
+        "lineCount": 4,
+        "lines": [
+          {
+            "index": 1,
+            "text": "Was zeigen die markierten"
+          },
+          {
+            "index": 2,
+            "text": "Stellen? Erkläre es für"
+          },
+          {
+            "index": 3,
+            "text": "Menschen, Elektronen und"
+          },
+          {
+            "index": 4,
+            "text": "Wasser."
+          }
+        ]
+      },
+      "paragraphs": [
+        {
+          "index": 1,
+          "text": "Was zeigen die markierten Stellen? Erkläre es für Menschen, Elektronen und Wasser.",
+          "resolvedTextStyle": {
+            "fontSize": 34,
+            "typeface": "Arial",
+            "color": "#17324D"
+          },
+          "runs": [
+            {
+              "index": 1,
+              "text": "Was zeigen die markierten Stellen? Erkläre es für Menschen, Elektronen und Wasser.",
+              "fontSize": 34,
+              "typeface": "Arial",
+              "color": "#17324D"
+            }
+          ],
+          "marginLeft": 0
+        }
+      ],
+      "lineWidth": 0
+    }
+  ],
+  "composeRuns": []
+}

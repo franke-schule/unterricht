@@ -10,10 +10,20 @@
 .task4-material-links a { display: block; padding: 11px 13px; border: 1px solid #b9c8df; border-radius: 10px; color: var(--dt-blue); background: #fff; font-weight: 800; text-decoration: none; }
 .task4-material-links a:hover { background: #f0f5ff; }
 .task4-sections { display: grid; gap: 26px; }
+.task4-sections > * { min-width: 0; }
+.task4-sections > .fish-tab-panel { width: 100%; min-width: 0; margin-inline: 0; box-sizing: border-box; }
 .task4-card { scroll-margin-top: 18px; }
 .task4-card > .fish-step-heading { margin-bottom: 18px; }
 .task4-data-boundary { margin: 0 0 18px; padding: 11px 13px; border-left: 4px solid #7998d6; color: #405471; background: #f4f7fd; line-height: 1.45; }
 .task4-work-order { margin: 0 0 18px; color: var(--dt-ink); font-size: 1.04rem; line-height: 1.55; }
+.task4-quiz fieldset { display: grid; gap: 10px; margin: 0 0 18px; padding: 16px; border: 1px solid #cfd8e8; border-radius: 12px; }
+.task4-quiz legend { padding: 0 6px; color: var(--dt-ink); font-weight: 850; }
+.task4-quiz fieldset label { display: flex; align-items: flex-start; gap: 10px; padding: 10px 12px; border-radius: 8px; background: #f7f9fe; line-height: 1.5; cursor: pointer; }
+.task4-quiz input[type="checkbox"] { flex: 0 0 auto; width: 1.15rem; height: 1.15rem; margin: .18rem 0 0; accent-color: var(--dt-blue); }
+.task4-quiz input[type="checkbox"]:focus-visible { outline: 3px solid rgba(40, 86, 198, .35); outline-offset: 2px; }
+.task4-quiz-feedback { margin: 10px 0; }
+.task4-learning-note p:last-child { margin-bottom: 0; }
+.task4-card > .task4-learning-note[hidden], .task4-learning-note[hidden] { display: none; }
 /* Arbeitsschritte als nummerierte Karten: Nummer und Text stehen linksbündig nebeneinander. */
 .task4-instructions { display: grid; gap: 10px; padding: 0; list-style: none; text-align: left; counter-reset: task4-step; }
 .task4-instructions li {
@@ -70,4 +80,6 @@
   .task4-tabs { overflow-x: auto; padding-bottom: 6px; }
   .task4-tabs button { min-width: 132px; }
   .task4-bottom-nav button { flex: 1; }
+  .task4-quiz fieldset { padding: 12px; }
+  .task4-quiz fieldset label { padding: 9px 8px; }
 }

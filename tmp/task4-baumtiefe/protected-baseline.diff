@@ -1,0 +1,28 @@
+diff --git a/apps-script/Config.gs b/apps-script/Config.gs
+index ffaf965..1581f6c 100644
+--- a/apps-script/Config.gs
++++ b/apps-script/Config.gs
+@@ -16,6 +16,7 @@
+  * - phy11/1-Kreisbewegungen/aufgabe3-quiz.html (drei Beschreibe-Aufgaben, nicht verlinkter Test)
+  * - phy11/1-Kreisbewegungen/aufgabe4-quiz.html (drei Beschreibe-Aufgaben, nicht verlinkter Test)
+  * - inf11/1-Kuenstliche-Intelligenz/aufgabe3a-quiz.html (drei Beschreibe-Aufgaben, nicht verlinkter Test)
++ * - inf11/1-Kuenstliche-Intelligenz/aufgabe5-quiz.html (drei Beschreibe-Aufgaben, nicht verlinkter Test)
+  * - inf11/1-Kuenstliche-Intelligenz/aufgabe6.html (Beschreibung und vier Java-Codeauswertungen)
+  * - inf11/1-Kuenstliche-Intelligenz/aufgabe7.html (eine Beschreibe-Aufgabe)
+  * - inf11/1-Kuenstliche-Intelligenz/aufgabe8.html (eine Beschreibe-Aufgabe)
+diff --git a/apps-script/tests/code-routing.test.js b/apps-script/tests/code-routing.test.js
+index 4e88f19..9d3aa3c 100644
+--- a/apps-script/tests/code-routing.test.js
++++ b/apps-script/tests/code-routing.test.js
+@@ -357,7 +357,10 @@ assert.equal(
+   'ph11-a4-quiz-seil-beschreibung',
+   'inf11-a3a-quiz-informationsgewinn-beschreibung',
+   'inf11-a3a-quiz-attributwahl-beschreibung',
+-  'inf11-a3a-quiz-vorgehen-beschreibung'
++  'inf11-a3a-quiz-vorgehen-beschreibung',
++  'inf11-a5-quiz-ausgabe-beschreibung',
++  'inf11-a5-quiz-training-beschreibung',
++  'inf11-a5-quiz-testdaten-beschreibung'
+ ].forEach(
+   function(taskId) {
+     const sqlDescriptionGet =

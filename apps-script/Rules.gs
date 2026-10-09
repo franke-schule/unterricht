@@ -102,18 +102,49 @@ function evaluateFishDepthDevelopmentByRules_(answer, maxPoints) {
   const strengths = [];
   const missing = [];
   let points = 0;
-  const decreasingErrors =
-    containsAny_(text, ['weniger falsch', 'fehler sink', 'fehler werden weniger', 'fehlklassifizierte trainingsdaten sink', 'falsch klassifizierten trainingsdaten sink', '3 1 0']) ||
-    (containsAny_(text, ['tiefe 3', 'baumtiefe 3']) && containsAny_(text, ['keine trainingsdaten falsch', 'kein trainingsfisch falsch', 'null fehler', '0 fehler', 'alle trainingsdaten korrekt', 'alle trainingsdaten richtig']));
+  const decreasingErrors = /train/.test(text) && (
+    /(?:fehler|fehleranzahl)[^.!?;]{0,70}(?:sinken|sink\w*|werden weniger|nehmen ab|verringern sich)/.test(text) ||
+    /weniger\s+(?:trainings)?fehler/.test(text) ||
+    containsAny_(text, ['3 ueber 1 auf 0', '3 ueber 1 bis 0', 'von 3 auf 0', 'von drei auf null'])
+  );
   if (decreasingErrors) { points++; strengths.push('Du beschreibst die sinkende Zahl falsch klassifizierter Trainingsdaten.'); }
-  else { missing.push('Beschreibe, dass die Zahl falsch klassifizierter Trainingsdaten sinkt und bei Tiefe 3 null ist.'); }
-  if (containsAny_(text, ['genauigkeit']) && containsAny_(text, ['alle drei', 'gleich', 'unveraendert', 'unverändert', 'verbessert sich nicht', 'steigt nicht', '80'])) { points++; strengths.push('Du erkennst, dass die Genauigkeit nach der Testphase gleich bleibt.'); }
-  else { missing.push('Beschreibe, dass die Genauigkeit bei allen drei Baumtiefen gleich bleibt beziehungsweise nicht steigt.'); }
-  const choosesDepthThree = containsAny_(text, ['tiefe 3', 'baumtiefe 3']) && containsAny_(text, ['waehle', 'wähle', 'verwende', 'nehmen', 'genommen', 'sinnvoll', 'sollte']);
-  const justifiesDepthThree = containsAny_(text, ['alle trainingsdaten korrekt', 'alle trainingsdaten richtig', 'keine trainingsdaten falsch', 'kein trainingsfisch falsch', 'null fehler', '0 fehler']);
-  if (choosesDepthThree && justifiesDepthThree) { points++; strengths.push('Du waehlst Tiefe 3 mit einer passenden Begruendung.'); }
-  else { missing.push('Entscheide dich begruendet fuer Tiefe 3, weil dort alle Trainingsdaten korrekt eingeordnet werden.'); }
-  return createFishRuleEvaluation_(points, maxPoints, strengths, missing, points === maxPoints ? 'Du beschreibst beide Entwicklungen und begruendest die Wahl von Baumtiefe 3.' : 'Ergaenze die noch fehlende Entwicklung oder Begruendung deiner Wahl.');
+  else { missing.push('Beschreibe, wie sich die Fehler in der Trainingsphase bei höherer Baumtiefe verändern.'); }
+
+  // Verneinungen gelten nur für die jeweilige Aussage. Ein später behaupteter
+  // Testvorteil darf nicht durch ein früheres „steigt nicht“ verdeckt werden.
+  const claimsTestChange = text.split(/[.!?;,\n]+|\b(?:aber|jedoch|sondern|weil|und)\b/).some(function(statement) {
+    const affirmative = statement
+      .replace(/\b(?:steigt|sinkt|faellt|nimmt zu|nimmt ab|verbessert sich|verringert sich)\s+(?:(?:hier|dabei|dadurch)\s+)?nicht\b/g, 'bleibt gleich')
+      .replace(/\b(?:nimmt nicht (?:zu|ab)|(?:verbessert|verringert) sich nicht|(?:wird|ist) nicht (?:besser|hoeher|geringer))\b/g, 'bleibt gleich')
+      .replace(/\b(?:keine|keinen|nicht)\s+(?:hoehere|bessere|geringere)\s+(?:test)?genauigkeit\b/g, 'gleiche genauigkeit')
+      .replace(/\b(?:nicht|keine)\s+mehr testfische richtig\b/g, 'gleich viele testfische richtig');
+    return /\b(?:test)?genauigkeit\b[^.!?;,]{0,60}\b(?:steigt|sinkt|faellt|nimmt zu|nimmt ab|verbessert sich|verringert sich|(?:ist|wird)\s+(?:hoeher|besser|geringer))\b/.test(affirmative) ||
+      /\b(?:hoehere|bessere|geringere)\s+(?:test)?genauigkeit\b/.test(affirmative) ||
+      /\bmehr testfische richtig\b/.test(affirmative);
+  });
+  const equalTestAccuracy = containsAny_(text, ['genauigkeit']) &&
+    containsAny_(text, ['gleich', 'unveraendert', 'steigt nicht', 'nimmt nicht zu', 'nicht hoeher']) && !claimsTestChange;
+  if (equalTestAccuracy) { points++; strengths.push('Du erkennst, dass die Genauigkeit auf diesen Testdaten gleich bleibt.'); }
+  else { missing.push('Vergleiche die Genauigkeit bei den Baumtiefen 1 bis 3.'); }
+
+  const explainsNoConnection = /fehler/.test(text) && /genauigkeit/.test(text) && (
+    /haeng\w*[^.!?;]{0,70}nicht[^.!?;]{0,30}zusammen/.test(text) ||
+    /kein(?:en)?\s+(?:direkten\s+|erkennbaren\s+)?zusammenhang/.test(text) ||
+    /genauigkeit[^.!?;]{0,50}(?:unabhaengig|haengt[^.!?;]{0,20}nicht)/.test(text) ||
+    /weniger\s+(?:trainings)?fehler[^.!?;]{0,100}(?:nicht zu|keine (?:hoehere|bessere))[^.!?;]{0,40}genauigkeit/.test(text)
+  );
+  if (explainsNoConnection && !claimsTestChange) {
+    points++;
+    strengths.push('Du erklärst, dass weniger Trainingsfehler in dieser Tabelle nicht zu höherer Testgenauigkeit führen.');
+  } else {
+    missing.push('Erkläre den Zusammenhang zwischen Trainingsfehlern und Genauigkeit in dieser Tabelle.');
+  }
+  const feedback = points === maxPoints
+    ? 'Richtig. Bei höherer Baumtiefe entstehen weniger Trainingsfehler. Die Genauigkeit bleibt bei Tiefe 1 bis 3 gleich. Weniger Trainingsfehler führen in dieser Tabelle nicht zu höherer Testgenauigkeit.'
+    : points > 0
+      ? 'Teilweise korrekt. Prüfe beide Ergebnisspalten und ergänze den noch fehlenden Zusammenhang. Achte darauf, dass sich deine Aussagen zur Genauigkeit nicht widersprechen.'
+      : 'Noch nicht korrekt. Vergleiche die Trainingsfehler und die Genauigkeit bei Tiefe 1 bis 3 und beschreibe den Zusammenhang in dieser Tabelle.';
+  return createFishRuleEvaluation_(points, maxPoints, strengths, missing, feedback);
 }
 
 

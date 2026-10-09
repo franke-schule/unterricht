@@ -29,7 +29,7 @@
 
 \color{Ink}
 \newcommand{\sectiontitle}[1]{%
-  \vspace{2.0mm}{\color{Blue}\bfseries\large #1}\par
+  \vspace{1.0mm}{\color{Blue}\bfseries\large #1}\par
   \vspace{0.7mm}{\color{Blue}\rule{\linewidth}{0.7pt}}\par\vspace{1.0mm}}
 \newcommand{\codebox}[1]{%
   \colorbox{CodeBg}{\parbox{\dimexpr\linewidth-2\fboxsep\relax}{\ttfamily\small #1}}}
@@ -78,11 +78,14 @@ Gemischtes Eis & 2,50~€\\\hline
 
 \vspace{0.5mm}
 {\centering\textcolor{Blue}{\bfseries Ausgangstabellen \; $\longrightarrow$ \; Kreuzprodukt \; $\longrightarrow$ \; Ergebnisrelation}\par
-\vspace{0.5mm}\colorbox{Mint}{\parbox{74mm}{\centering\textbf{4 · 3 · 1 = 12 Datensätze}}}\par}
-\vspace{0.8mm}
+\colorbox{Mint}{\parbox{\dimexpr\linewidth-2\fboxsep\relax}{\centering\small
+\textbf{Berechnung der Anzahl (Az) an Datensätzen in der Ergebnisrelation:}\par
+\textbf{Az in Tabelle Vorspeise * Az in Tabelle Hauptspeise * Az in Tabelle Nachspeise}\par
+\textbf{= 4 * 3 * 1 Datensätze = 12 Datensätze}}}\par}
+\vspace{0.2mm}
 
 {\small\textcolor{Blue}{\bfseries Ergebnisrelation: alle 12 Menüs}}\par\vspace{0.4mm}
-{\footnotesize\ttfamily
+{\footnotesize\ttfamily\renewcommand{\arraystretch}{1.02}
 \begin{tabularx}{\linewidth}{@{}>{\raggedright\arraybackslash}X>{\raggedleft\arraybackslash}p{15mm}>{\raggedright\arraybackslash}X>{\raggedleft\arraybackslash}p{15mm}>{\raggedright\arraybackslash}X>{\raggedleft\arraybackslash}p{15mm}@{}}
 \rowcolor{Sky}\multicolumn{2}{c}{\bfseries Vorspeise} & \multicolumn{2}{c}{\bfseries Hauptspeise} & \multicolumn{2}{c}{\bfseries Nachspeise}\\
 \rowcolor{CodeBg}\textbf{name} & \textbf{preis} & \textbf{name} & \textbf{preis} & \textbf{name} & \textbf{preis}\\

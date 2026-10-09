@@ -5,7 +5,7 @@
 - `aufgabe3.html`, `ui/task3.mjs` und `task3.css`: Freitextfeld, Zeichenzähler, Hilfen und zugängliche Rückmeldung.
 - `ui/semantic-answer.mjs`: bestehende JSONP-Anbindung an den Skriptserver mit Ladezustand und Fehlerbehandlung.
 - `data/fish.mjs` und `logic/fish-learning.mjs`: Fischdaten und die bereits vorhandene Konfiguration der Tiefenergebnisse.
-- `aufgabe3c.html` und `ui/task3c.mjs`: Trennung von Trainings- und Testdaten sowie Darstellung der Testgenauigkeit.
+- `aufgabe3b.html` und `ui/task3c.mjs`: Trennung von Trainings- und Testdaten sowie Darstellung der Testgenauigkeit.
 - `styles.css`: Karten, Buttons und Feedbackzustände des Entscheidungsbaum-Moduls.
 
 ## Aktuelle Struktur und Skriptserver

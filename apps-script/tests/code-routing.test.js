@@ -357,7 +357,10 @@ assert.equal(
   'ph11-a4-quiz-seil-beschreibung',
   'inf11-a3a-quiz-informationsgewinn-beschreibung',
   'inf11-a3a-quiz-attributwahl-beschreibung',
-  'inf11-a3a-quiz-vorgehen-beschreibung'
+  'inf11-a3a-quiz-vorgehen-beschreibung',
+  'inf11-a5-quiz-ausgabe-beschreibung',
+  'inf11-a5-quiz-training-beschreibung',
+  'inf11-a5-quiz-testdaten-beschreibung'
 ].forEach(
   function(taskId) {
     const sqlDescriptionGet =

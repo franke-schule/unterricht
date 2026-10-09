@@ -8,15 +8,16 @@
     <link rel="stylesheet" href="../../../../styles.css?v=20260707">
     <link rel="stylesheet" href="entscheidungbaeume/styles.css?v=20260820g">
     <link rel="stylesheet" href="entscheidungbaeume/task3.css?v=20260821b">
-    <link rel="stylesheet" href="entscheidungbaeume/task4.css?v=20260928a">
-    <script type="module" src="entscheidungbaeume/ui/task4.mjs?v=20261006a"></script>
+    <link rel="stylesheet" href="entscheidungbaeume/task4.css?v=20261008c">
+    <script src="../../quiz-fragen-pruefen.js?v=20261006b"></script>
+    <script type="module" src="entscheidungbaeume/ui/task4.mjs?v=20261008d"></script>
   </head>
   <body class="decision-tree-page dt-fish-page task4-page tabs-ready">
     <div class="site-backdrop" aria-hidden="true"></div>
     <main class="page-shell decision-tree-shell">
       <nav class="topbar" aria-label="Navigation">
         <a class="back-link" href="../index.html">Zur Aufgabenübersicht</a>
-        <a class="back-link" href="aufgabe3c.html">Zu Aufgabe 3c</a>
+        <a class="back-link" href="aufgabe3b.html">Zu Aufgabe 3b</a>
         <a class="back-link" href="../../../../">Startseite</a>
       </nav>
 
@@ -31,6 +32,7 @@
         <button id="tab-task41" type="button" role="tab" aria-selected="true" aria-controls="task41" data-step-tab="task41"><span>1</span>Aufgabe 4.1</button>
         <button id="tab-task42" type="button" role="tab" aria-selected="false" aria-controls="task42" tabindex="-1" data-step-tab="task42"><span>2</span>Aufgabe 4.2</button>
         <button id="tab-task4a" type="button" role="tab" aria-selected="false" aria-controls="task4a" tabindex="-1" data-step-tab="task4a"><span>3</span>Aufgabe 4a</button>
+        <button id="tab-task4abschluss" type="button" role="tab" aria-selected="false" aria-controls="task4abschluss" tabindex="-1" data-step-tab="task4abschluss"><span>4</span>Abschluss</button>
       </nav>
 
       <div class="task4-sections">
@@ -72,18 +74,37 @@
             <button class="dt-primary-button" type="submit">Tabelle überprüfen</button>
             <div id="depth-table-feedback" class="dt-feedback" role="status" aria-live="polite" hidden></div>
           </form>
+          <section class="task4-card task4-comparison" aria-labelledby="depth-comparison-title">
+            <h3 id="depth-comparison-title">Vergleiche Training und Test</h3>
+            <p>Vergleiche die beiden Ergebnisspalten für die Baumtiefen 1 bis 3. Kreuze alle Aussagen an, die zu deinen Ergebnissen passen.</p>
+            <form id="depth-comparison-quiz" class="task4-quiz" novalidate>
+              <fieldset><legend>Welche Aussagen passen zu den Ergebnissen?</legend>
+                <label><input type="checkbox" name="comparison" value="training-less"> Mit zunehmender Tiefe sinkt die Zahl der Trainingsfehler von 3 auf 0.</label>
+                <label><input type="checkbox" name="comparison" value="test-same"> Alle drei Bäume klassifizieren 4 von 5 Testfischen richtig.</label>
+                <label><input type="checkbox" name="comparison" value="test-better"> Der Baum der Tiefe 3 erreicht bei den Testfischen eine höhere Genauigkeit als Tiefe 1.</label>
+                <label><input type="checkbox" name="comparison" value="perfect-proof"> Weil Tiefe 3 alle Trainingsfische richtig einordnet, wird er auch neue Fische sicher besser einordnen.</label>
+              </fieldset>
+            </form>
+            <div id="depth-comparison-feedback" class="fish-semantic-feedback" role="status" aria-live="polite" hidden></div>
+            <div id="depth-learning-note" class="task4-learning-note" hidden>
+              <p>Merke: Mehr Baumtiefe kann Trainingsfehler verringern. Sie garantiert aber keine höhere Genauigkeit bei unbekannten Daten. Hier bleiben alle drei Bäume bei 4 von 5 richtigen Testfischen.</p>
+              <p>Fünf Testfische sind eine kleine Grundlage für die Modellwahl. Vergleiche die Baumtiefen mit mehr bisher unbenutzten Fischen. Wenn du danach eine Tiefe auswählst, prüfe den gewählten Baum abschließend mit weiteren Fischen, die du für diese Wahl noch nicht verwendet hast.</p>
+            </div>
+          </section>
           <details class="fish-help-details"><summary>Hilfe 1: Falsch einsortierte Trainingsfische zählen</summary><p>Klicke beispielsweise ein Blatt mit der Anzeige „feindselig 67 %“ an. Nach einem Klick auf „Knotendetails“ kannst du zählen, wie viele Fische dort fälschlicherweise einsortiert sind, obwohl ihr Label „friedlich“ lautet. Untersuche auf diese Weise alle Blätter, die keine 100 % erreichen.</p></details>
           <details class="fish-help-details"><summary>Hilfe 2: Genauigkeit nach der Testphase ablesen</summary><p>Aktiviere nun den Testmodus, importiere die Testdaten und lies unter „Konfusionsmatrix“ die Genauigkeit ab.</p></details>
-
           <div class="task4-card" aria-labelledby="depth-description-title">
-            <h3 id="depth-description-title">Beschreiben und entscheiden</h3>
-            <p class="task4-work-order">Beschreibe, wie sich die Anzahl falsch klassifizierter Trainingsdaten mit zunehmender Baumtiefe verändert.<br>Beschreibe, wie sich die Genauigkeit verändert.<br>Entscheide anschließend, welche Baumtiefe du verwenden würdest.</p>
+            <h3 id="depth-description-title">Beschreibe den Zusammenhang</h3>
+            <ul class="task4-work-order" role="list"><li><strong>Beschreibe</strong>, wie sich die Trainingsfehler von Tiefe 1 bis 3 verändern.</li><li><strong>Vergleiche</strong> die Genauigkeit bei den fünf Testfischen.</li><li><strong>Erkläre</strong>, ob weniger Trainingsfehler in dieser Tabelle zu einer höheren Genauigkeit führen.</li></ul>
             <label class="fish-text-label" for="depth-description-answer">Deine Beschreibung</label>
             <textarea id="depth-description-answer" class="task4-answer" maxlength="3000" rows="7" placeholder="Mit größerer Baumtiefe …"></textarea>
             <p class="task4-privacy"><strong>Hinweis:</strong> Gib keine personenbezogenen Informationen ein. Deine Antwort wird zur automatischen Auswertung an den Skriptserver und dort an ein KI-System übertragen.</p>
             <div class="task4-text-actions"><div class="fish-text-meta"><span id="depth-description-count">0 von 3000 Zeichen</span><span>Die Antwort wird semantisch ausgewertet.</span></div><button id="check-depth-description" class="dt-primary-button" type="button">Antwort überprüfen</button></div>
-            <p id="depth-learning-note" class="task4-learning-note" role="status" aria-live="polite" hidden></p>
+            <p id="depth-description-note" class="task4-learning-note" hidden></p>
             <div id="depth-description-feedback" class="fish-semantic-feedback" role="status" aria-live="polite" hidden></div>
+            <details class="fish-help-details"><summary>Hilfe 1: Vergleiche beide Spalten.</summary><p>Lies die Trainingsfehler und die Testgenauigkeit jeweils von Tiefe 1 bis 3 ab.</p></details>
+            <details class="fish-help-details"><summary>Hilfe 2: Prüfe den Zugewinn.</summary><p>Welcher tiefere Baum ordnet mehr Testfische richtig ein als Tiefe 1?</p></details>
+            <details class="fish-help-details"><summary>Hilfe 3: Verknüpfe die Beobachtungen.</summary><p>Die Trainingsfehler sinken von 3 über 1 auf 0; die Testgenauigkeit bleibt bei 80 %. Formuliere, was das für den Zusammenhang zwischen beiden Ergebnissen in dieser Tabelle bedeutet.</p></details>
           </div>
         </section>
 
@@ -94,23 +115,46 @@
             <a href="entscheidungbaeume/data/downloads/Datensatz_Fische_Großer_Datensatz.csv" download>↓ Großen Fischdatensatz herunterladen</a>
           </div>
           <p class="task4-no-correction"><strong>Hinweis:</strong> Diese Vertiefung enthält kein Eingabefeld und keine automatische Korrektur.</p>
+        </section>
+
+        <section id="task4abschluss" class="task4-card fish-tab-panel" role="tabpanel" aria-labelledby="tab-task4abschluss" data-step-panel="task4abschluss" hidden>
+          <div class="fish-step-heading"><span class="fish-step-number">4</span><div><h2>Das nimmst du mit</h2><p>Prüfe, was die Fischdaten über Baumtiefe und Genauigkeit zeigen. Bei jeder Frage können mehrere Aussagen richtig sein.</p></div></div>
+          <form id="final-quiz" class="task4-quiz" novalidate>
+            <fieldset><legend>Was zeigen die Ergebnisse der drei Bäume?</legend>
+              <label><input type="checkbox" name="q1-train" value="q1-train"> Die Zahl falsch eingeordneter Trainingsfische sinkt von 3 über 1 auf 0.</label>
+              <label><input type="checkbox" name="q1-test" value="q1-test"> Alle drei Bäume erreichen bei den fünf Testfischen 80 % Genauigkeit.</label>
+              <label><input type="checkbox" name="q1-deep" value="q1-deep"> Tiefe 3 erreicht hier eine höhere Testgenauigkeit als Tiefe 1.</label>
+              <label><input type="checkbox" name="q1-perfect" value="q1-perfect"> Tiefe 3 ordnet alle fünf Testfische richtig ein.</label>
+            </fieldset>
+            <fieldset><legend>Was folgt aus dem Vergleich?</legend>
+              <label><input type="checkbox" name="q2-no-guarantee" value="q2-no-guarantee"> Mehr Baumtiefe garantiert keine höhere Genauigkeit bei unbekannten Daten.</label>
+              <label><input type="checkbox" name="q2-simple" value="q2-simple"> Bei gleicher beobachteter Testgenauigkeit ist Tiefe 1 eine vorläufig begründbare Wahl.</label>
+              <label><input type="checkbox" name="q2-overfit" value="q2-overfit"> Die fünf Testfische beweisen, dass Tiefe 3 neue Fische schlechter einordnet als Tiefe 1.</label>
+              <label><input type="checkbox" name="q2-best" value="q2-best"> Tiefe 3 ist sicher die beste Wahl, weil dort keine Trainingsfehler auftreten.</label>
+            </fieldset>
+            <fieldset><legend>Wie prüfst du eine Tiefenwahl verlässlicher?</legend>
+              <label><input type="checkbox" name="q3-more" value="q3-more"> Vergleiche die Tiefen mit mehr bisher unbenutzten Fischen.</label>
+              <label><input type="checkbox" name="q3-final" value="q3-final"> Prüfe den danach gewählten Baum abschließend mit weiteren Fischen, die bei der Wahl nicht verwendet wurden.</label>
+              <label><input type="checkbox" name="q3-train" value="q3-train"> Nimm die fünf Testfische zum Training hinzu und bewerte den Baum anschließend nur mit diesen Fischen.</label>
+              <label><input type="checkbox" name="q3-five" value="q3-five"> Fünf Testfische reichen immer für eine endgültige Entscheidung.</label>
+            </fieldset>
+            <div class="task4-text-actions"><button class="dt-primary-button" type="submit">Quiz auswerten</button></div>
+            <p id="final-quiz-feedback" class="fish-semantic-feedback" role="status" aria-live="polite" hidden></p>
+          </form>
+          <div id="task4-summary" class="task4-learning-note" hidden>
+            <p>4.1 – Tiefe 1: Der Baum teilt nach der Schuppenfarbe; 3 von 9 Trainingsfischen werden falsch eingeordnet.</p>
+            <p>4.2 – Tiefenvergleich: Trainingsfehler 3, 1, 0; Testgenauigkeit jeweils 4 von 5 = 80 %. Mehr Tiefe brachte bei diesen Testfischen keinen Zugewinn.</p>
+            <p>Merke: Mehr Baumtiefe kann Trainingsfehler verringern. Sie garantiert aber keine höhere Genauigkeit bei unbekannten Daten. Hier bleiben alle drei Bäume bei 4 von 5 richtigen Testfischen.</p>
+            <p>Fünf Testfische sind eine kleine Grundlage für die Modellwahl. Vergleiche die Baumtiefen mit mehr bisher unbenutzten Fischen. Wenn du danach eine Tiefe auswählst, prüfe den gewählten Baum abschließend mit weiteren Fischen, die du für diese Wahl noch nicht verwendet hast.</p>
+          </div>
           <section class="solution-download" aria-labelledby="solution-download-title">
             <h2 id="solution-download-title">Sicherungsblatt zu Aufgabe 4</h2>
-            <details class="solution-reveal">
-              <summary>Sicherungsblatt anzeigen</summary>
+            <details class="solution-reveal"><summary>Sicherungsblatt anzeigen</summary>
               <form id="solution-code-form" class="solution-code-form">
                 <label for="solution-code">Lehrercode eingeben</label>
-                <div class="solution-code-controls">
-                  <input id="solution-code" name="solution-code" type="text"
-                    maxlength="9" autocomplete="off" autocapitalize="characters"
-                    spellcheck="false" required>
-                  <button type="submit">Code prüfen</button>
-                </div>
+                <div class="solution-code-controls"><input id="solution-code" name="solution-code" type="text" maxlength="9" autocomplete="off" autocapitalize="characters" spellcheck="false" required><button type="submit">Code prüfen</button></div>
                 <p id="solution-code-message" class="solution-code-message" aria-live="polite"></p>
-                <a id="solution-download-link" class="download-button"
-                  href="sicherungsblatt-aufgabe-4-loesungen.pdf" download hidden>
-                  &#8595; Sicherungsblatt herunterladen
-                </a>
+                <a id="solution-download-link" class="download-button" href="sicherungsblatt-aufgabe-4-loesungen.pdf" download hidden>&#8595; Sicherungsblatt herunterladen</a>
               </form>
             </details>
           </section>

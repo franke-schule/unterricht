@@ -36,14 +36,14 @@ test("Quiz besitzt mindestens zwei richtige Antworten pro eindeutiger Frage", ()
   });
 });
 
-test("Aufgabe 3c ist registriert und verwendet Reiter, Matrix und Checkbox-Quiz", async () => {
+test("Aufgabe 3b ist registriert und verwendet Reiter, Matrix und Checkbox-Quiz", async () => {
   const [index, page, script, css] = await Promise.all([
     readFile(new URL("../../../index.html", import.meta.url), "utf8"),
-    readFile(new URL("../../aufgabe3c.html", import.meta.url), "utf8"),
+    readFile(new URL("../../aufgabe3b.html", import.meta.url), "utf8"),
     readFile(new URL("../ui/task3c.mjs", import.meta.url), "utf8"),
     readFile(new URL("../task3c.css", import.meta.url), "utf8"),
   ]);
-  assert.match(index, /Aufgabe 3c - Klassifikation der Testdaten - Fischdaten/);
+  assert.match(index, /Aufgabe 3b - Klassifikation der Testdaten - Fischdaten/);
   assert.match(page, /class="fish-progress task3c-tabs" role="tablist"/);
   assert.equal([...page.matchAll(/data-step-tab="[^"]+"/g)].length, 7);
   assert.equal([...page.matchAll(/data-step-panel="[^"]+"/g)].length, 7);
@@ -53,5 +53,5 @@ test("Aufgabe 3c ist registriert und verwendet Reiter, Matrix und Checkbox-Quiz"
   assert.match(script, /informatik11-fish-test-task3c-v1/);
   assert.doesNotMatch(script, /informatik11-fish-tree-task3-v1/);
   assert.match(css, /@media \(max-width: 700px\)/);
-  assert.equal(existsSync(new URL("../../aufgabe3c.html", import.meta.url)), true);
+  assert.equal(existsSync(new URL("../../aufgabe3b.html", import.meta.url)), true);
 });

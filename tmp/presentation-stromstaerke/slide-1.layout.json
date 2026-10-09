@@ -1,0 +1,276 @@
+{
+  "schema": "openai.presentation.layout/v4",
+  "unit": "px",
+  "slide": {
+    "aid": "sl/sy8upa",
+    "id": "sy8upa",
+    "slide": 1,
+    "layoutId": "84d4dd8f-0ad6-47b3-8015-a0600c43eb93",
+    "layoutName": "Title Slide",
+    "layoutType": "title",
+    "masterLayoutId": "97a09735-2242-4c85-b0e2-9a987e2ab018",
+    "masterLayoutName": "Master",
+    "backgroundColor": "#FFFFFF",
+    "frame": {
+      "left": 0,
+      "top": 0,
+      "width": 1280,
+      "height": 720
+    }
+  },
+  "theme": {
+    "colorSchemeName": "ChatGPT",
+    "colors": {
+      "accent1": "#156082",
+      "accent2": "#E97132",
+      "accent3": "#196B24",
+      "accent4": "#0F9ED5",
+      "accent5": "#A02B93",
+      "accent6": "#4EA72E",
+      "bg1": "#FFFFFF",
+      "bg2": "#000000",
+      "tx1": "#1F1F1F",
+      "tx2": "#FFFFFF",
+      "dk1": "#000000",
+      "lt1": "#FFFFFF",
+      "dk2": "#0E2841",
+      "lt2": "#E8E8E8",
+      "hlink": "#467886",
+      "folHlink": "#96607D"
+    },
+    "typefaces": [
+      "Arial"
+    ]
+  },
+  "inheritedLayers": [
+    {
+      "scope": "layout",
+      "id": "84d4dd8f-0ad6-47b3-8015-a0600c43eb93",
+      "name": "Title Slide",
+      "type": "title",
+      "parentLayoutId": "97a09735-2242-4c85-b0e2-9a987e2ab018",
+      "elements": []
+    },
+    {
+      "scope": "master",
+      "id": "97a09735-2242-4c85-b0e2-9a987e2ab018",
+      "name": "Master",
+      "type": "master",
+      "elements": []
+    }
+  ],
+  "elements": [
+    {
+      "order": 1,
+      "kind": "shape",
+      "scope": "slide",
+      "aid": "sh/ahkjedkv",
+      "id": "1",
+      "bbox": [
+        70,
+        48,
+        1100,
+        76
+      ],
+      "geometry": "rect",
+      "text": "Wasserstromstärke",
+      "textPreview": "Wasserstromstärke",
+      "resolvedFontSize": 44,
+      "resolvedTextStyle": {
+        "fontSize": 44,
+        "typeface": "Arial",
+        "color": "#17324D",
+        "bold": true,
+        "alignment": "left",
+        "autoFit": "none",
+        "insets": {
+          "top": 4.8,
+          "right": 9.6,
+          "bottom": 4.8,
+          "left": 9.6
+        }
+      },
+      "textLayout": {
+        "lineCount": 1,
+        "lines": [
+          {
+            "index": 1,
+            "text": "Wasserstromstärke"
+          }
+        ]
+      },
+      "paragraphs": [
+        {
+          "index": 1,
+          "text": "Wasserstromstärke",
+          "resolvedTextStyle": {
+            "fontSize": 44,
+            "typeface": "Arial",
+            "color": "#17324D",
+            "bold": true
+          },
+          "runs": [
+            {
+              "index": 1,
+              "text": "Wasserstromstärke",
+              "fontSize": 44,
+              "typeface": "Arial",
+              "color": "#17324D",
+              "bold": true
+            }
+          ],
+          "marginLeft": 0
+        }
+      ],
+      "lineWidth": 0
+    },
+    {
+      "order": 2,
+      "kind": "shape",
+      "scope": "slide",
+      "aid": "sh/xkb2983m",
+      "id": "2",
+      "bbox": [
+        1140,
+        58,
+        90,
+        40
+      ],
+      "geometry": "rect",
+      "text": "1 / 4",
+      "textPreview": "1 / 4",
+      "resolvedFontSize": 20,
+      "resolvedTextStyle": {
+        "fontSize": 20,
+        "typeface": "Arial",
+        "color": "#4A6578",
+        "alignment": "left",
+        "autoFit": "none",
+        "insets": {
+          "top": 4.8,
+          "right": 9.6,
+          "bottom": 4.8,
+          "left": 9.6
+        }
+      },
+      "textLayout": {
+        "lineCount": 1,
+        "lines": [
+          {
+            "index": 1,
+            "text": "1 / 4"
+          }
+        ]
+      },
+      "paragraphs": [
+        {
+          "index": 1,
+          "text": "1 / 4",
+          "resolvedTextStyle": {
+            "fontSize": 20,
+            "typeface": "Arial",
+            "color": "#4A6578"
+          },
+          "runs": [
+            {
+              "index": 1,
+              "text": "1 / 4",
+              "fontSize": 20,
+              "typeface": "Arial",
+              "color": "#4A6578"
+            }
+          ],
+          "marginLeft": 0
+        }
+      ],
+      "lineWidth": 0
+    },
+    {
+      "order": 3,
+      "kind": "shape",
+      "scope": "slide",
+      "aid": "sh/cj21g321",
+      "id": "3",
+      "bbox": [
+        76,
+        150,
+        1110,
+        135
+      ],
+      "geometry": "rect",
+      "text": "Im Abfluss und am Feuerwehrschlauch fließen jeweils 5 l in 1 s. Was ist gleich?",
+      "textPreview": "Im Abfluss und am Feuerwehrschlauch fließen jeweils 5 l in 1 s. Was ist gleich?",
+      "resolvedFontSize": 34,
+      "resolvedTextStyle": {
+        "fontSize": 34,
+        "typeface": "Arial",
+        "color": "#17324D",
+        "alignment": "left",
+        "autoFit": "none",
+        "insets": {
+          "top": 4.8,
+          "right": 9.6,
+          "bottom": 4.8,
+          "left": 9.6
+        }
+      },
+      "textLayout": {
+        "lineCount": 2,
+        "lines": [
+          {
+            "index": 1,
+            "text": "Im Abfluss und am Feuerwehrschlauch fließen jeweils 5 l in 1 s. Was ist"
+          },
+          {
+            "index": 2,
+            "text": "gleich?"
+          }
+        ]
+      },
+      "paragraphs": [
+        {
+          "index": 1,
+          "text": "Im Abfluss und am Feuerwehrschlauch fließen jeweils 5 l in 1 s. Was ist gleich?",
+          "resolvedTextStyle": {
+            "fontSize": 34,
+            "typeface": "Arial",
+            "color": "#17324D"
+          },
+          "runs": [
+            {
+              "index": 1,
+              "text": "Im Abfluss und am Feuerwehrschlauch fließen jeweils 5 l in 1 s. Was ist gleich?",
+              "fontSize": 34,
+              "typeface": "Arial",
+              "color": "#17324D"
+            }
+          ],
+          "marginLeft": 0
+        }
+      ],
+      "lineWidth": 0
+    },
+    {
+      "order": 4,
+      "kind": "image",
+      "scope": "slide",
+      "aid": "im/uxsvm5wj",
+      "id": "4",
+      "bbox": [
+        82,
+        320,
+        1116,
+        270
+      ],
+      "alt": "Abfluss und Feuerwehrschlauch, beide mit der Angabe 5 Liter je Sekunde",
+      "contentType": "image/png",
+      "imageFit": "contain",
+      "asset": {
+        "assetId": "95c7e1c3-9bc6-4a91-83d9-30ae7a448e0a",
+        "contentType": "image/png",
+        "byteLength": 339683
+      }
+    }
+  ],
+  "composeRuns": []
+}

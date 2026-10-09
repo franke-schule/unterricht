@@ -9,7 +9,7 @@
     <link rel="stylesheet" href="entscheidungbaeume/styles.css?v=20260820g">
     <link rel="stylesheet" href="entscheidungbaeume/task3.css?v=20261006b">
     <script src="../../quiz-fragen-pruefen.js?v=20261006b"></script>
-    <script type="module" src="entscheidungbaeume/ui/task3.mjs?v=20261006b"></script>
+    <script type="module" src="entscheidungbaeume/ui/task3.mjs?v=20261009a"></script>
   </head>
   <body class="decision-tree-page dt-fish-page tabs-ready">
     <div class="site-backdrop" aria-hidden="true"></div>
@@ -37,7 +37,7 @@
         <button id="tab-tree" type="button" role="tab" data-step-tab="tree" aria-controls="baum-bauen"><span>3</span>Baum</button>
         <button id="tab-algorithm" type="button" role="tab" data-step-tab="algorithm" aria-controls="algorithmus"><span>4</span>Algorithmus</button>
         <button id="tab-quiz" type="button" role="tab" data-step-tab="quiz" aria-controls="abschlussquiz"><span>5</span>Abschlussquiz</button>
-        <button id="tab-entropy" type="button" role="tab" data-step-tab="entropy" aria-controls="entropie"><span>3b</span>Entropie</button>
+        <button id="tab-entropy" type="button" role="tab" data-step-tab="entropy" aria-controls="entropie"><span>3c</span>Für die Schnellen: Entropie</button>
       </nav>
       <p id="save-status" class="fish-save-status" role="status" aria-live="polite">Dein Bearbeitungsstand wird in diesem Browser gespeichert.</p>
 
@@ -286,7 +286,7 @@
       <section id="entropie" class="fish-step fish-extension fish-tab-panel" role="tabpanel" tabindex="0" aria-labelledby="tab-entropy entropy-title" data-step-panel="entropy" hidden>
         <div class="fish-extension-badge">Optional · Für die Schnellen</div>
         <div class="fish-step-heading">
-          <span class="fish-step-number">Aufgabe 3b</span>
+          <span class="fish-step-number">Aufgabe 3c</span>
           <div><h2 id="entropy-title">Entropie als alternatives Splitkriterium</h2><p>Diese Vertiefung ist freiwillig und blockiert den regulären Lernpfad nicht.</p></div>
         </div>
         <div class="entropy-intro">
@@ -315,7 +315,7 @@
           <div id="quiz-feedback" class="dt-feedback" role="status" aria-live="polite" hidden></div>
           <div id="quiz-summary" class="quiz-summary" hidden></div>
         </section>
-        <section id="task3b-complete" class="dt-remember fish-complete" hidden>
+        <section id="task3c-complete" class="dt-remember fish-complete" hidden>
           <p class="fish-kicker">Merke</p><h2>Vertiefungsaufgabe abgeschlossen</h2>
           <p>Die Anzahl der Fehlklassifikationen und die Entropie sind unterschiedliche Möglichkeiten, die Qualität eines Splits zu beurteilen. Beide verfolgen dasselbe Grundziel: Es sollen möglichst homogene Teilmengen entstehen.</p>
         </section>

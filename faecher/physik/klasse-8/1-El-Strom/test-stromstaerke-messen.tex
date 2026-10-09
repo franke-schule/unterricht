@@ -1,0 +1,108 @@
+\documentclass[10pt,a4paper]{article}
+
+% Die Loesungsfassung unterscheidet sich ausschliesslich durch \solutiontrue.
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage[ngerman]{babel}
+\usepackage[a4paper,margin=14mm]{geometry}
+\usepackage{lmodern}
+\usepackage[table]{xcolor}
+\usepackage{tabularx}
+\usepackage{microtype}
+\usepackage{amssymb}
+\usepackage{tikz}
+
+\newif\ifsolution
+\solutionfalse
+
+\pagestyle{empty}
+\setlength{\parindent}{0pt}
+\setlength{\parskip}{0pt}
+\renewcommand{\familydefault}{\sfdefault}
+
+\definecolor{Navy}{HTML}{17324D}
+\definecolor{Blue}{HTML}{3B6EA5}
+\definecolor{Gold}{HTML}{F3B33D}
+\definecolor{Ink}{HTML}{1E2935}
+\definecolor{Muted}{HTML}{617080}
+\definecolor{Line}{HTML}{D8E1E8}
+\color{Ink}
+
+\newcommand{\kopf}{%
+  \colorbox{Navy}{\parbox{\dimexpr\linewidth-2\fboxsep\relax}{%
+    \vspace{1.3mm}\color{white}
+    \begin{tabularx}{\linewidth}{@{}Xr@{}}
+      {\small\bfseries PHYSIK · KLASSE 8} &
+      \colorbox{Gold}{\color{Navy}\small\bfseries\strut\ifsolution LÖSUNGEN\else TEST\fi}
+    \end{tabularx}
+    \vspace{0.9mm}
+    {\fontsize{16}{19}\selectfont\bfseries Elektrischer Strom · Stromstärke messen}\par
+    \vspace{0.3mm}{\small Test zur Abfrage · Batterie und Stromstärkemessung}\vspace{1.1mm}
+  }}\par\vspace{2mm}}
+\newcommand{\frage}[2]{%
+  \vspace{1.7mm}{\color{Blue}\bfseries\normalsize #1 · #2}\par
+  \vspace{0.2mm}{\color{Blue}\rule{\linewidth}{0.55pt}}\par\vspace{0.7mm}}
+\newcommand{\wahl}[2]{%
+  \noindent\ifsolution\ifnum#1=1 $\boxtimes$\else $\square$\fi\else $\square$\fi\enspace #2\par}
+\newcommand{\antwortfeld}[2]{%
+  \vspace{0.7mm}%
+  \begin{tikzpicture}[x=1mm,y=1mm]
+    \path[use as bounding box] (0,0) rectangle (181.5,-8*#1);
+    \ifsolution
+      \node[anchor=north west,text width=179mm,inner sep=0pt,align=left,
+        font=\small,text=Blue] at (0,-1) {#2};
+    \else
+      \foreach \i in {1,...,#1}{\draw[Line,line width=.55pt] (0,-8*\i) -- (181.5,-8*\i);}
+    \fi
+  \end{tikzpicture}\par}
+\newcommand{\fuss}{%
+  \vfill{\color{Line}\rule{\linewidth}{0.5pt}}\par\vspace{1mm}
+  \begin{tabularx}{\linewidth}{@{}Xr@{}}
+    {\small\color{Muted}Klasse 8 · Physik · Elektrischer Strom} &
+    {\small\color{Muted}\ifsolution Lösungen\else Test\fi{} · Seite 1 von 1}
+  \end{tabularx}}
+
+\begin{document}
+\kopf
+\textbf{Kreuze} bei den Fragen 1 bis 5 alle richtigen Aussagen an. Es können mehrere Antworten richtig sein.\par
+
+\frage{1}{Die Batterie}
+\wahl{1}{Am Minuspol herrscht ein Elektronenüberschuss.}
+\wahl{0}{Am Pluspol herrscht ein Elektronenüberschuss.}
+\wahl{1}{Chemische Reaktionen trennen elektrische Ladungen.}
+\wahl{0}{Eine Batterie erzeugt Elektronen aus dem Nichts.}
+
+\frage{2}{Stromstärke und Messgerät}
+\wahl{1}{Das Formelzeichen der Stromstärke ist $I$.}
+\wahl{1}{Die Einheit der Stromstärke ist Ampere (A).}
+\wahl{0}{Mit einem Amperemeter misst man die Spannung.}
+\wahl{0}{Die Einheit der Stromstärke ist Volt (V).}
+
+\frage{3}{Das Amperemeter einbauen}
+\wahl{1}{Man unterbricht den Stromkreis und fügt das Amperemeter in Reihe ein.}
+\wahl{0}{Man schließt das Amperemeter parallel zur Lampe an.}
+\wahl{0}{Man verbindet das Amperemeter direkt mit beiden Batteriepolen.}
+\wahl{1}{Der Strom durch die Lampe fließt auch durch das in Reihe geschaltete Messgerät.}
+
+\frage{4}{Vor und nach der Lampe}
+\wahl{1}{Im unverzweigten Stromkreis ist die Stromstärke vor und hinter der Lampe gleich groß.}
+\wahl{0}{Die Lampe verbraucht einen Teil des Stroms.}
+\wahl{1}{Man kann beide Messstellen nacheinander mit demselben Amperemeter prüfen.}
+\wahl{0}{Hinter der Lampe muss das Amperemeter immer null anzeigen.}
+
+\frage{5}{Fehlerhafter Anschluss}
+\wahl{1}{Ein Amperemeter parallel zur Lampe kann diese überbrücken.}
+\wahl{1}{Bei diesem Anschluss droht ein Kurzschluss.}
+\wahl{0}{Der parallele Anschluss ist die richtige Messung des Lampenstroms.}
+\wahl{0}{Das Messgerät schützt die Batterie bei diesem Anschluss sicher.}
+
+\frage{6}{Versuch beschreiben}
+\textbf{Beschreibe}, wie du mit einem Amperemeter prüfst, ob eine Lampe Strom verbraucht. Gib zwei Messstellen an.\par
+\antwortfeld{3}{Ich baue Batterie und Lampe zu einem unverzweigten Stromkreis auf. Das Amperemeter setze ich zuerst in Reihe vor der Lampe ein und lese den Wert ab. Danach setze ich es in Reihe hinter der Lampe ein und vergleiche beide Werte.}
+
+\frage{7}{Messwerte beschreiben}
+Vor und hinter der Lampe zeigt das Amperemeter jeweils $0{,}18\,\mathrm{A}$. \textbf{Beschreibe}, was diese Messwerte über die Stromstärke aussagen.\par
+\antwortfeld{3}{Die Stromstärke ist an beiden Messstellen gleich groß. Im unverzweigten Stromkreis wird kein Strom verbraucht; die Lampe wandelt elektrische Energie in Licht und Wärme um.}
+
+\fuss
+\end{document}
