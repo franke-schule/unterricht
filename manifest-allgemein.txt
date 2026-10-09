@@ -35,6 +35,15 @@ Regeln:
   - Aufgaben als sichtbare Buttons darstellen, nicht als Dateiliste.
   - Bei mehreren Themen die vorhandene topic-list-/topic-section-Struktur
     verwenden.
+  - Themenbereiche auf Jahrgangsuebersichten samt ihren Aufgabenkacheln mit
+    details.topic-disclosure und summary auf- und zuklappbar machen. Die
+    Themenueberschrift steht als h2 im summary; die vorhandene module-grid
+    folgt innerhalb von details. Der topic-list die Klasse
+    topic-list-collapsible hinzufuegen.
+  - Den aktuellen Themenbereich durch das open-Attribut an details
+    standardmaessig oeffnen, die anderen standardmaessig geschlossen lassen.
+    Ohne open-Attribut an allen Themenbereichen startet die Seite vollstaendig
+    zugeklappt. Die Bereiche bleiben unabhaengig voneinander bedienbar.
   - Ordnernummer und Themenueberschrift muessen zueinander passen.
   - Pro Aufgabe eine eigene HTML-Datei verwenden.
   - Buttontext kurz halten: Aufgabennummer plus knappe Beschreibung.
