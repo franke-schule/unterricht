@@ -1,0 +1,34 @@
+{
+  "checkedAt": "2026-10-10T18:16:28.994Z",
+  "endpoint": "https://unterrichtkiichezbn4-ki-auswertung.functions.fnc.fr-par.scw.cloud/",
+  "health": {
+    "status": 200,
+    "body": {
+      "ok": true,
+      "service": "unterricht-ki",
+      "provider": "scaleway",
+      "version": "0.1.0",
+      "taskCount": 67,
+      "configured": true,
+      "evaluationEnabled": true
+    }
+  },
+  "origins": [
+    {
+      "origin": "http://127.0.0.1:8765",
+      "status": 204,
+      "allowOrigin": "http://127.0.0.1:8765"
+    },
+    {
+      "origin": "https://www.florian-franke.org",
+      "status": 403,
+      "allowOrigin": "*"
+    },
+    {
+      "origin": "https://florian-franke.org",
+      "status": 403,
+      "allowOrigin": "*"
+    }
+  ],
+  "modelCalls": 0
+}

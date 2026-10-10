@@ -34,7 +34,9 @@ assert.equal(diagnoseSqlError('no such column: residence', 'SELECT name FROM use
 assert.equal(diagnoseSqlError('no such column: Leipzig', 'SELECT name FROM users WHERE city = Leipzig'), "WHERE: Setze den Textwert Leipzig in Anführungszeichen, zum Beispiel 'Leipzig'.");
 assert.equal(diagnoseSqlError('no such column: Leipzig', 'SELECT name FROM users WHERE city <> Leipzig'), "WHERE: Setze den Textwert Leipzig in Anführungszeichen, zum Beispiel 'Leipzig'.");
 for (const sql of ["SELECT name FROM users WHERE city = 'Leipzig'", 'SELECT name FROM users WHERE city = "Leipzig"', 'SELECT name FROM users WHERE centimeters > 180', "SELECT name FROM users WHERE birthday = '2008-01-01'", 'SELECT name FROM users WHERE city = country', 'SELECT name FROM users WHERE city IS NULL', "SELECT name FROM users WHERE city = LOWER('LEIPZIG')", "SELECT name FROM users WHERE city = 'SELECT FROM WHERE'", '-- city = Leipzig\nSELECT name FROM users WHERE city = country']) assert.equal(missingTextQuote(sql, 'Leipzig'), null, sql);
-assert.equal(isValidScriptServerUrl('https://script.google.com/macros/s/test/exec'), true);
+assert.equal(isValidScriptServerUrl('https://unterrichtkiichezbn4-ki-auswertung.functions.fnc.fr-par.scw.cloud/'), true);
+assert.equal(isValidScriptServerUrl('https://script.google.com/macros/s/test/exec'), false);
+assert.equal(isValidScriptServerUrl('https://unterrichtkiichezbn4-ki-auswertung.functions.fnc.fr-par.scw.cloud/?answer=test'), false);
 assert.equal(isValidScriptServerUrl('http://script.google.com/macros/s/test/exec'), false);
 assert.equal(isValidScriptServerUrl('https://example.test/exec'), false);
 assert.deepEqual(classifyDescriptionResult({ ok: true, points: 3, maxPoints: 3, status: 'korrekt', strengths: ['Tabelle erkannt.'], missing: [], feedback: 'Passt.' }), { level: 'high', points: 3, maxPoints: 3, status: 'korrekt', strengths: ['Tabelle erkannt.'], missing: [], text: 'Passt.' });

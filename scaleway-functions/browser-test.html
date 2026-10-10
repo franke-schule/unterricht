@@ -1,0 +1,96 @@
+<!doctype html>
+<html lang="de">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Scaleway: isolierter Browsertest</title>
+</head>
+<body>
+  <main>
+    <h1>Scaleway: isolierter Browsertest</h1>
+    <p>Prüfe den Serverstatus und sende danach die beiden vorbereiteten fiktiven Eingaben.</p>
+    <p>Jeder Klick auf einen Auswertungsbutton verursacht einen Modellaufruf. Der Statusaufruf ruft kein Modell auf.</p>
+    <p>Erlaubte Herkunft für diese Seite: <code>http://127.0.0.1:8765</code></p>
+    <button id="health" type="button">Serverstatus prüfen</button>
+    <button id="text" type="button" disabled>Freitext auswerten</button>
+    <button id="code" type="button" disabled>Programmcode auswerten</button>
+    <h2>Ergebnis</h2>
+    <p id="status" role="status" aria-live="polite">Der Serverstatus wird beim Öffnen geprüft.</p>
+    <pre id="result" aria-label="Vollständige Serverantwort"></pre>
+  </main>
+  <script>
+    'use strict';
+    const endpoint = 'https://unterrichtkiichezbn4-ki-auswertung.functions.fnc.fr-par.scw.cloud/';
+    const statusElement = document.getElementById('status');
+    const resultElement = document.getElementById('result');
+    const buttons = [...document.querySelectorAll('button')];
+    let evaluationReady = false;
+    let busy = false;
+
+    function updateButtons() {
+      buttons.forEach(button => {
+        button.disabled = busy || (button.id !== 'health' && !evaluationReady);
+      });
+    }
+
+    async function send(kind) {
+      if (busy) return;
+      busy = true;
+      updateButtons();
+      const controller = new AbortController();
+      const timer = setTimeout(() => controller.abort(), 130000);
+      statusElement.textContent = kind === 'health' ? 'Serverstatus wird geprüft …' : 'Auswertung läuft …';
+      resultElement.textContent = '';
+      try {
+        let requestId;
+        let options = { method: 'GET', signal: controller.signal, credentials: 'omit', cache: 'no-store', referrerPolicy: 'no-referrer' };
+        if (kind !== 'health') {
+          requestId = 'browser_' + crypto.randomUUID().replaceAll('-', '');
+          const payload = kind === 'text' ? {
+            requestId,
+            taskId: 'b',
+            answer: 'Zuerst erzeugt new Circle(200, 50, 50) ein neues Kreisobjekt und speichert es in der Variablen ball. Die Zahlen bestimmen Position und Größe des Kreises. move(10, 10) verschiebt ihn. setFillColor(Color.red) färbt ihn rot. destroy() entfernt ihn wieder. Die Befehle werden nacheinander ausgeführt.'
+          } : {
+            requestId,
+            taskId: '10-3a',
+            requestType: 'code',
+            code: 'Robot dudu = new Robot(1, 1, 12, 12);'
+          };
+          options = { ...options, method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload) };
+        }
+        const response = await fetch(endpoint, options);
+        const data = await response.json();
+        resultElement.textContent = JSON.stringify(data, null, 2);
+        if (!response.ok) throw new Error(`HTTP ${response.status}: ${data.result?.message || 'Anfrage fehlgeschlagen.'}`);
+        if (kind === 'health') {
+          evaluationReady = data.ok === true && data.provider === 'scaleway' && data.configured === true && data.evaluationEnabled === true;
+          statusElement.textContent = evaluationReady
+            ? 'Server erreichbar. Jetzt Freitext und Programmcode einzeln auswerten.'
+            : 'Serverantwort erhalten. configured und evaluationEnabled müssen true sein.';
+        } else {
+          const expectedType = kind === 'text' ? 'GEMINI_EVALUATION_RESULT' : 'GEMINI_CODE_EVALUATION_RESULT';
+          const expectedMaxPoints = kind === 'text' ? 6 : 3;
+          if (data.requestId !== requestId || data.type !== expectedType || data.result?.ok !== true || data.result.maxPoints !== expectedMaxPoints) {
+            throw new Error('Die Antwort hat nicht das erwartete Aufgaben-/Ergebnisformat.');
+          }
+          statusElement.textContent = `${kind === 'text' ? 'Freitext' : 'Programmcode'} erfolgreich ausgewertet: ${data.result.points} von ${data.result.maxPoints} Punkten. Feedback unten prüfen.`;
+        }
+      } catch (error) {
+        if (kind === 'health') evaluationReady = false;
+        statusElement.textContent = error.name === 'AbortError'
+          ? 'Zeitlimit überschritten. Bitte den Fehler vor einem erneuten Test prüfen.'
+          : error instanceof TypeError
+            ? 'Verbindung im Browser fehlgeschlagen. AI_ALLOWED_ORIGINS, Bereitstellungsstatus und Netzwerk prüfen. Details stehen in der Browserkonsole.'
+            : error.message;
+      } finally {
+        clearTimeout(timer);
+        busy = false;
+        updateButtons();
+      }
+    }
+
+    buttons.forEach(button => button.addEventListener('click', () => send(button.id)));
+    send('health');
+  </script>
+</body>
+</html>

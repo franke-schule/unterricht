@@ -1,12 +1,12 @@
 import { normaliseNumber } from '../../perzeptron/logic/perceptron.mjs';
-import { evaluateSemanticAnswer } from '../../perzeptron/ui/semantic-answer.mjs';
+import { evaluateSemanticAnswer } from '../../perzeptron/ui/semantic-answer.mjs?v=20261010-scaleway';
 import { SHIRT_SYMBOLS, SHIRT_TRAINING } from '../data/shirts.mjs';
 import { BLANK_IDS, COMPARE_A, COMPARE_B, COMPARE_P, EXPECTED, N1, N2, N5, PAIR_A, PAIR_B, STOP_H, STOP_K } from '../data/task7.mjs';
 import { euclidean, formatDecimal, withinTolerance } from '../logic/knn.mjs';
 import { setupCardSlots } from './card-slots.mjs';
 import { renderLegend, renderShirtPlot } from './knn-plot.mjs';
 
-const SERVER_URL = 'https://script.google.com/macros/s/AKfycby8RWL6uYrKZyoJ6m2GRpWyRmXjwsdskyCiqzKpRhIK5-wrDl-9lWWk8CiAGaVMoy0x/exec';
+const SERVER_URL = 'https://unterrichtkiichezbn4-ki-auswertung.functions.fnc.fr-par.scw.cloud/';
 const TASK_ID = '11-7-1';
 const STORAGE_KEY = 'informatik11-knn-aufgabe7-v1';
 const STEPS = ['discover', 'neighbours', 'euclid', 'manhattan', 'apply', 'finish'];

@@ -1566,55 +1566,14 @@ class Tower extends Computer {
   <script>
     /**
      * ==========================================================
-     * Beschreibe-Aufgaben: Antwort per JSONP an den Skriptserver
+     * Beschreibe-Aufgaben: Antwort per POST/JSON an Scaleway
      * (Weg wie in Informatik Klasse 10, Aufgabe 1)
      * ==========================================================
      */
-    const SCRIPT_SERVER_URL =
-      'https://script.google.com/macros/s/AKfycby8RWL6uYrKZyoJ6m2GRpWyRmXjwsdskyCiqzKpRhIK5-wrDl-9lWWk8CiAGaVMoy0x/exec';
-
-    const MAX_ANSWER_LENGTH =
+    const SCRIPT_SERVER_URL = 'https://unterrichtkiichezbn4-ki-auswertung.functions.fnc.fr-par.scw.cloud/';
+const SCW_TASK_POINTS = {"10-4a":4,"10-4c":5};
+const MAX_ANSWER_LENGTH =
       800;
-
-
-    /**
-     * Gibt die eingetragene Apps-Script-Adresse bereinigt zurueck.
-     */
-    function getScriptServerUrl() {
-      return SCRIPT_SERVER_URL.trim();
-    }
-
-
-    /**
-     * Prueft, ob die Apps-Script-Adresse grundsaetzlich verwendbar ist.
-     */
-    function isValidScriptServerUrl(url) {
-      try {
-        const parsedUrl =
-          new URL(url);
-
-        return (
-          parsedUrl.protocol === 'https:' &&
-          parsedUrl.hostname === 'script.google.com' &&
-          parsedUrl.pathname.endsWith('/exec') &&
-          !url.includes('DEINE_BEREITSTELLUNGS_ID') &&
-          !url.includes('DEINE_SCRIPT_ID')
-        );
-      } catch (error) {
-        return false;
-      }
-    }
-
-
-    /**
-     * Speichert aktuell laufende Anfragen.
-     */
-    const pendingRequests = new Map();
-
-
-    /**
-     * Aktualisiert die Zeichenanzeige eines Textfeldes.
-     */
     function updateCharacterCount(taskId) {
       const textarea =
         document.getElementById(
@@ -1637,393 +1596,35 @@ class Tower extends Computer {
         ' Zeichen';
     }
 
+async function submitAnswer(taskId) {
+  const textarea = document.getElementById('answer-' + taskId);
+  const button = document.getElementById('button-' + taskId);
+  const resultBox = document.getElementById('result-' + taskId);
+  if (!textarea || !button || !resultBox || button.disabled) return;
+  const answer = textarea.value.trim();
+  if (answer.length < 10 || answer.length > 3000) {
+    showError(resultBox, answer.length < 10 ? 'Bitte formuliere eine etwas ausführlichere Antwort.' : 'Bitte kürze deine Antwort auf höchstens 3000 Zeichen.');
+    textarea.focus(); return;
+  }
+  const serverTaskId = taskId;
+  button.disabled = true;
+  textarea.disabled = true;
+  button.textContent = 'Antwort wird geprüft …';
+  resultBox.hidden = false;
+  resultBox.className = 'result';
+  resultBox.textContent = 'Deine Antwort wird ausgewertet.';
+  try {
+    const { evaluateSemanticAnswer } = await import('../../klasse-11/1-Kuenstliche-Intelligenz/perzeptron/ui/semantic-answer.mjs?v=20261010-scaleway');
+    const result = await evaluateSemanticAnswer({ serverUrl: SCRIPT_SERVER_URL, taskId: serverTaskId,
+      answer, expectedMaxPoints: SCW_TASK_POINTS[serverTaskId] });
+    showEvaluation(resultBox, result);
+  } catch (error) { showError(resultBox, error.message || 'Die Auswertung konnte nicht abgeschlossen werden.'); }
+  finally {
+    button.disabled = false; textarea.disabled = false;
+    button.textContent = 'Antwort erneut prüfen';
+  }
+}
 
-    /**
-     * Erzeugt eine eindeutige Kennung für eine Anfrage.
-     */
-    function createRequestId() {
-      if (
-        window.crypto &&
-        typeof window.crypto.randomUUID === 'function'
-      ) {
-        return window.crypto.randomUUID();
-      }
-
-      return (
-        Date.now().toString(36) +
-        '-' +
-        Math.random().toString(36).substring(2)
-      );
-    }
-
-
-    /**
-     * Sendet eine Antwort per JSONP an die externe Apps-Script-Web-App.
-     */
-    function submitAnswer(taskId) {
-      const textarea =
-        document.getElementById(
-          'answer-' + taskId
-        );
-
-      const button =
-        document.getElementById(
-          'button-' + taskId
-        );
-
-      const resultBox =
-        document.getElementById(
-          'result-' + taskId
-        );
-
-      const answer =
-        textarea.value.trim();
-
-      const scriptServerUrl =
-        getScriptServerUrl();
-
-
-      if (answer.length < 10) {
-        showError(
-          resultBox,
-          'Bitte formuliere eine etwas ausführlichere Antwort.'
-        );
-
-        textarea.focus();
-        return;
-      }
-
-
-      if (
-        !isValidScriptServerUrl(scriptServerUrl)
-      ) {
-        showError(
-          resultBox,
-          'Die Adresse des Auswertungsservers wurde noch nicht richtig eingetragen.'
-        );
-
-        return;
-      }
-
-
-      button.disabled = true;
-      textarea.disabled = true;
-
-      button.textContent =
-        'Antwort wird geprüft …';
-
-      resultBox.hidden = false;
-      resultBox.className = 'result';
-
-      resultBox.textContent =
-        'Deine Antwort wird ausgewertet.';
-
-
-      const requestId =
-        createRequestId();
-
-      const jsonpUrl =
-        createJsonpUrl(
-          scriptServerUrl,
-          {
-            callback:
-              '__handleGeminiEvaluationResult',
-            requestId:
-              requestId,
-            taskId:
-              taskId,
-            answer:
-              answer
-          }
-        );
-
-      if (jsonpUrl.length > 1800) {
-        button.disabled =
-          false;
-
-        textarea.disabled =
-          false;
-
-        button.textContent =
-          'Antwort prüfen';
-
-        showError(
-          resultBox,
-          'Deine Antwort ist zu lang für die automatische Übertragung. Bitte kürze sie etwas und versuche es erneut.'
-        );
-
-        return;
-      }
-
-      const script =
-        document.createElement('script');
-
-      script.async =
-        true;
-
-      script.src =
-        jsonpUrl;
-
-      script.onerror =
-        function() {
-          const pending =
-            pendingRequests.get(
-              requestId
-            );
-
-          if (!pending) {
-            return;
-          }
-
-          restoreTaskControls(
-            pending
-          );
-
-          showError(
-            pending.resultBox,
-            'Der Auswertungsserver konnte nicht geladen werden.'
-          );
-
-          cleanupRequest(
-            requestId
-          );
-        };
-
-      const timeoutId =
-        window.setTimeout(
-          function() {
-            const pending =
-              pendingRequests.get(
-                requestId
-              );
-
-            if (!pending) {
-              return;
-            }
-
-            restoreTaskControls(
-              pending
-            );
-
-            showError(
-              pending.resultBox,
-              'Der Auswertungsserver hat nicht rechtzeitig geantwortet. Bitte versuche es erneut.'
-            );
-
-            cleanupRequest(
-              requestId
-            );
-          },
-          60000
-        );
-
-      pendingRequests.set(
-        requestId,
-        {
-          script: script,
-          textarea: textarea,
-          button: button,
-          resultBox: resultBox,
-          timeoutId: timeoutId
-        }
-      );
-
-      document.body.appendChild(
-        script
-      );
-    }
-
-
-    /**
-     * Erstellt die JSONP-Adresse fuer Apps Script.
-     */
-    function createJsonpUrl(
-      baseUrl,
-      parameters
-    ) {
-      const url =
-        new URL(baseUrl);
-
-      Object.keys(parameters).forEach(
-        function(key) {
-          url.searchParams.set(
-            key,
-            parameters[key]
-          );
-        }
-      );
-
-      return url.toString();
-    }
-
-
-    /**
-     * Wird von Apps Script per JSONP aufgerufen.
-     */
-    window.__handleGeminiEvaluationResult =
-      function(message) {
-        handleEvaluationMessage(
-          normalizeServerMessage(message)
-        );
-      };
-
-
-    /**
-     * Verarbeitet eine Rueckmeldung des Auswertungsservers.
-     */
-    function handleEvaluationMessage(message) {
-      if (
-        !message ||
-        message.type !==
-          'GEMINI_EVALUATION_RESULT' ||
-        !message.requestId
-      ) {
-        return;
-      }
-
-      const pending =
-        pendingRequests.get(
-          message.requestId
-        );
-
-      if (!pending) {
-        console.warn(
-          'Auswertungsnachricht ohne passende offene Anfrage empfangen:',
-          message.requestId
-        );
-
-        return;
-      }
-
-      window.clearTimeout(
-        pending.timeoutId
-      );
-
-      restoreTaskControls(
-        pending
-      );
-
-      const result =
-        message.result;
-
-      if (
-        !result ||
-        result.ok !== true
-      ) {
-        showError(
-          pending.resultBox,
-
-          result && result.message
-            ? result.message
-            : 'Die Rueckmeldung konnte nicht erstellt werden.'
-        );
-
-        cleanupRequest(
-          message.requestId
-        );
-
-        return;
-      }
-
-      showEvaluation(
-        pending.resultBox,
-        result
-      );
-
-      cleanupRequest(
-        message.requestId
-      );
-    }
-
-
-    /**
-     * Apps Script und Browser koennen Daten je nach Sandbox als Objekt
-     * oder als JSON-String uebergeben.
-     */
-    function normalizeServerMessage(data) {
-      if (
-        data &&
-        typeof data === 'object'
-      ) {
-        return data;
-      }
-
-      if (typeof data !== 'string') {
-        return null;
-      }
-
-      try {
-        const parsed =
-          JSON.parse(data);
-
-        if (
-          parsed &&
-          typeof parsed === 'object'
-        ) {
-          return parsed;
-        }
-      } catch (error) {
-        return null;
-      }
-
-      return null;
-    }
-
-
-    /**
-     * Aktiviert Textfeld und Schaltfläche wieder.
-     */
-    function restoreTaskControls(
-      pending
-    ) {
-      pending.button.disabled =
-        false;
-
-      pending.textarea.disabled =
-        false;
-
-      pending.button.textContent =
-        'Antwort erneut prüfen';
-    }
-
-
-    /**
-     * Entfernt Hilfselemente und gespeicherte Anfrage.
-     */
-    function cleanupRequest(
-      requestId
-    ) {
-      const pending =
-        pendingRequests.get(
-          requestId
-        );
-
-      if (!pending) {
-        return;
-      }
-
-      window.clearTimeout(
-        pending.timeoutId
-      );
-
-      if (
-        pending.script &&
-        pending.script.parentNode
-      ) {
-        pending.script.parentNode.removeChild(
-          pending.script
-        );
-      }
-
-      pendingRequests.delete(
-        requestId
-      );
-    }
-
-
-    /**
-     * Zeigt eine erfolgreiche KI-Auswertung an.
-     */
     function showEvaluation(
       resultBox,
       result

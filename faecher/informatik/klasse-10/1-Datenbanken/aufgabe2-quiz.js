@@ -1,10 +1,10 @@
-import { evaluateSemanticAnswer } from '../../klasse-11/1-Kuenstliche-Intelligenz/perzeptron/ui/semantic-answer.mjs';
+import { evaluateSemanticAnswer } from '../../klasse-11/1-Kuenstliche-Intelligenz/perzeptron/ui/semantic-answer.mjs?v=20261010-scaleway';
 
 // Test zu Aufgabe 2 (Redundanzen): nicht verlinkte Seite, jede Aufgabe mit eigenem Prüfen-Button.
 // Bewusst eigenständig und ohne Abhängigkeit zum Test zu Aufgabe 1, damit beide Tests getrennt gelöscht werden können.
 // Die Löschanleitung steht in aufgabe1-quiz-skriptserver.txt.
 const STORAGE_KEY = 'informatik10-datenbanken-aufgabe2-test-v1';
-const SCRIPT_SERVER_URL = 'https://script.google.com/macros/s/AKfycby8RWL6uYrKZyoJ6m2GRpWyRmXjwsdskyCiqzKpRhIK5-wrDl-9lWWk8CiAGaVMoy0x/exec';
+const SCRIPT_SERVER_URL = 'https://unterrichtkiichezbn4-ki-auswertung.functions.fnc.fr-par.scw.cloud/';
 const DESCRIBE_MIN_LENGTH = 30;
 
 // Aufgabe 4: Beschreibe-Aufgabe, bewertet über den Skriptserver.
@@ -635,7 +635,7 @@ function renderMcQuestions() {
   document.getElementById('mc-questions').replaceChildren(...MC_QUESTIONS.map(mcQuestion));
 }
 
-// Beschreibe-Aufgabe: Prüfen über die vorhandene JSONP-Anbindung an den Skriptserver.
+// Beschreibe-Aufgabe: Prüfen über die POST-/JSON-Anbindung an den Skriptserver.
 const describePending = {};
 const describeErrors = {};
 // Anfragen laufen nacheinander, auch wenn mehrere Prüfen-Buttons kurz hintereinander

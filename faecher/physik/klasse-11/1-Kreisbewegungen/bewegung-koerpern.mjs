@@ -4,7 +4,7 @@ import { setupPhysicsStepTabs } from "./components/physics-step-tabs.mjs";
 import { appendPhysicsText, physicsTextSpan } from "./components/physics-notation.mjs?v=20260911a";
 import { createPhysicsTaskProgress } from "./components/physics-task-progress.mjs?v=20260930a";
 
-const SCRIPT_SERVER_URL = "https://script.google.com/macros/s/AKfycby8RWL6uYrKZyoJ6m2GRpWyRmXjwsdskyCiqzKpRhIK5-wrDl-9lWWk8CiAGaVMoy0x/exec";
+const SCRIPT_SERVER_URL = "https://unterrichtkiichezbn4-ki-auswertung.functions.fnc.fr-par.scw.cloud/";
 const taskProgress = createPhysicsTaskProgress("aufgabe1");
 
 export { createPointVectorGrid, setupPhysicsSemanticTask, setupPhysicsStepTabs };

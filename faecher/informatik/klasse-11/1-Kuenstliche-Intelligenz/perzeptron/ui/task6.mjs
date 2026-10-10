@@ -1,6 +1,6 @@
-import { evaluateSemanticAnswer } from './semantic-answer.mjs';
+import { evaluateSemanticAnswer, evaluateCodeAnswer } from './semantic-answer.mjs?v=20261010-scaleway';
 
-const SERVER_URL = 'https://script.google.com/macros/s/AKfycby8RWL6uYrKZyoJ6m2GRpWyRmXjwsdskyCiqzKpRhIK5-wrDl-9lWWk8CiAGaVMoy0x/exec';
+const SERVER_URL = 'https://unterrichtkiichezbn4-ki-auswertung.functions.fnc.fr-par.scw.cloud/';
 const STORAGE_KEY = 'informatik11-ki-aufgabe6-v1';
 const SOLUTION_CODE = 'M6QS-D4B7';
 const IDE_IDS = { einfach: 'Java11Aufgabe6Einfach', schwer: 'Java11Aufgabe6Schwer' };
@@ -125,43 +125,8 @@ function getCode() {
   return file.getText();
 }
 function codeRequest(taskId, code) {
-  return new Promise((resolve,reject) => {
-    const requestId = globalThis.crypto?.randomUUID?.() ?? `${Date.now()}-${Math.random()}`;
-    const frame = document.createElement('iframe');
-    frame.name = 'code-feedback-' + requestId.replace(/[^a-zA-Z0-9_-]/g,'');
-    frame.title = 'Unsichtbarer Übertragungsrahmen für die Codeauswertung';
-    frame.setAttribute('aria-hidden','true'); frame.hidden = true;
-    const form = document.createElement('form');
-    form.method = 'POST'; form.action = SERVER_URL; form.target = frame.name; form.acceptCharset = 'UTF-8'; form.hidden = true;
-    for (const [name,value] of Object.entries({requestType:'code',requestId,taskId,code})) {
-      const input = document.createElement('input'); input.type = 'hidden'; input.name = name; input.value = value; form.append(input);
-    }
-    document.body.append(frame,form);
-    let pollScript = null, pollTimer = null;
-    const cleanup = () => { clearTimeout(timeout); clearTimeout(pollTimer); pollScript?.remove(); frame.remove(); form.remove(); delete window.__task6CodeCallbacks[requestId]; };
-    const timeout = setTimeout(() => { cleanup(); reject(new Error('Der Auswertungsserver hat nicht rechtzeitig geantwortet. Bitte versuche es erneut.')); },60000);
-    window.__task6CodeCallbacks[requestId] = message => {
-      if (message?.type !== 'GEMINI_CODE_EVALUATION_RESULT') { cleanup(); reject(new Error('Für Aufgabe 6 ist noch keine aktuelle Serverversion bereitgestellt. Bitte informiere deine Lehrkraft.')); return; }
-      if (message.pending) { pollTimer = setTimeout(poll,2200); return; }
-      cleanup();
-      if (message.result?.ok === true) resolve(message.result);
-      else reject(new Error(message.result?.message || 'Die Codeauswertung konnte nicht abgeschlossen werden.'));
-    };
-    function poll() {
-      pollScript?.remove();
-      pollScript = document.createElement('script');
-      const url = new URL(SERVER_URL);
-      for (const [key,value] of Object.entries({callback:'__handleTask6CodeResult',requestType:'code-result',requestId,cacheBust:Date.now()})) url.searchParams.set(key,String(value));
-      pollScript.src = url.toString(); pollScript.async = true;
-      pollScript.onerror = () => { pollTimer = setTimeout(poll,3000); };
-      document.body.append(pollScript);
-    }
-    form.submit();
-    pollTimer = setTimeout(poll,1500);
-  });
+  return evaluateCodeAnswer({ serverUrl: SERVER_URL, taskId, code });
 }
-window.__task6CodeCallbacks = Object.create(null);
-window.__handleTask6CodeResult = message => { window.__task6CodeCallbacks[message?.requestId]?.(message); };
 async function checkCode(button) {
   const taskId = button.dataset.codeTask, box = resultBox(taskId);
   let code;

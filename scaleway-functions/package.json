@@ -1,0 +1,14 @@
+{
+  "name": "unterricht-scaleway-auswertung",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Getrennter Scaleway-Testserver mit vorhandenen Aufgaben und Bewertungsregeln",
+  "type": "commonjs",
+  "main": "handler.js",
+  "engines": { "node": ">=22" },
+  "scripts": {
+    "build": "node build-core.js",
+    "test": "node build-core.js && node --test tests/*.test.js"
+  }
+}
+

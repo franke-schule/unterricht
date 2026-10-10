@@ -1,0 +1,292 @@
+TAP version 13
+# Aufgabe 2: aktueller IDE-Code, POST/JSON, Ergebnisse, Fehler und Vorprüfung erfolgreich.
+# Subtest: apps-script\\tests\\aufgabe2-client.test.js
+ok 1 - apps-script\\tests\\aufgabe2-client.test.js
+  ---
+  duration_ms: 196.8931
+  type: 'test'
+  ...
+# Rubriken für Aufgabe 4 erkennen korrekte Varianten und weisen typische Fehlkonzepte zurück.
+# Subtest: apps-script\\tests\\aufgabe4-rules.test.js
+ok 2 - apps-script\\tests\\aufgabe4-rules.test.js
+  ---
+  duration_ms: 159.4767
+  type: 'test'
+  ...
+# Aufgabe 5: alle IDE-Dateien, Sortierung, Filter, POST/JSON, Aufgaben a/b/c und Vorprüfungen erfolgreich.
+# Subtest: apps-script\\tests\\aufgabe5-client.test.js
+ok 3 - apps-script\\tests\\aufgabe5-client.test.js
+  ---
+  duration_ms: 197.6056
+  type: 'test'
+  ...
+# Rubrik für Aufgabe 5 erkennt vollständige und unvollständige Erklärungen.
+# Subtest: apps-script\\tests\\aufgabe5-perzeptron-rules.test.js
+ok 4 - apps-script\\tests\\aufgabe5-perzeptron-rules.test.js
+  ---
+  duration_ms: 169.6786
+  type: 'test'
+  ...
+# Die KNN-Beschreibe-Aufgabe 11-7-1 ist serverseitig korrekt definiert.
+# Subtest: apps-script\\tests\\aufgabe7-knn-task.test.js
+ok 5 - apps-script\\tests\\aufgabe7-knn-task.test.js
+  ---
+  duration_ms: 190.7557
+  type: 'test'
+  ...
+# Die KNN-Beschreibe-Aufgabe 11-8-1 ist serverseitig korrekt definiert.
+# Subtest: apps-script\\tests\\aufgabe8-knn-task.test.js
+ok 6 - apps-script\\tests\\aufgabe8-knn-task.test.js
+  ---
+  duration_ms: 196.2076
+  type: 'test'
+  ...
+# Routing-Regressionen für Text- und Codeauswertung sind erfolgreich.
+# Subtest: apps-script\\tests\\code-routing.test.js
+ok 7 - apps-script\\tests\\code-routing.test.js
+  ---
+  duration_ms: 197.8543
+  type: 'test'
+  ...
+# DFD-Beschreibe-Aufgaben und Client-/Server-IDs sind konsistent.
+# Subtest: apps-script\\tests\\dfd-description-tasks.test.js
+ok 8 - apps-script\\tests\\dfd-description-tasks.test.js
+  ---
+  duration_ms: 200.0138
+  type: 'test'
+  ...
+# Aufgaben 10-3a bis 10-6e: Konfiguration, Prompts und Routing sind erfolgreich.
+# Subtest: apps-script\\tests\\inf10-oop-tasks.test.js
+ok 9 - apps-script\\tests\\inf10-oop-tasks.test.js
+  ---
+  duration_ms: 201.427
+  type: 'test'
+  ...
+# Die Beschreibe-Aufgabe inf11-cod-a1-ascii-unicode ist serverseitig korrekt definiert.
+# Subtest: apps-script\\tests\\inf11-codierung-aufgabe1-task.test.js
+ok 10 - apps-script\\tests\\inf11-codierung-aufgabe1-task.test.js
+  ---
+  duration_ms: 206.1669
+  type: 'test'
+  ...
+# Aufgabe-4-und-Experiment-Quiz: Serverrubriken, Rechenwerte, Mehrfachauswahl und beschädigte Speicherstände geprüft.
+# Subtest: apps-script\\tests\\physik11-aufgabe4-experiment-quiz.test.js
+ok 11 - apps-script\\tests\\physik11-aufgabe4-experiment-quiz.test.js
+  ---
+  duration_ms: 207.9689
+  type: 'test'
+  ...
+# Die Physik-11-Diagrammbeschreibung hat eine vollständige serverseitige Rubrik.
+# Subtest: apps-script\\tests\\physik11-diagramm-task.test.js
+ok 12 - apps-script\\tests\\physik11-diagramm-task.test.js
+  ---
+  duration_ms: 197.0535
+  type: 'test'
+  ...
+# Die beiden Physik-11-Freitextaufgaben zur Haftreibung sind vollständig konfiguriert.
+# Subtest: apps-script\\tests\\physik11-haftreibung-zentripetalkraft.test.js
+ok 13 - apps-script\\tests\\physik11-haftreibung-zentripetalkraft.test.js
+  ---
+  duration_ms: 201.5186
+  type: 'test'
+  ...
+# Die beiden Physik-11-Freitextaufgaben zum Kettenkarussell sind vollständig konfiguriert.
+# Subtest: apps-script\\tests\\physik11-kettenkarussell.test.js
+ok 14 - apps-script\\tests\\physik11-kettenkarussell.test.js
+  ---
+  duration_ms: 182.0356
+  type: 'test'
+  ...
+# Die Physik-11-Kräftebeschreibung ist serverseitig mit dem didaktischen Hinweis abgesichert.
+# Subtest: apps-script\\tests\\physik11-kraefte-task.test.js
+ok 15 - apps-script\\tests\\physik11-kraefte-task.test.js
+  ---
+  duration_ms: 166.5459
+  type: 'test'
+  ...
+# Die Skriptserver-Rubrik deckt neun richtige, teilweise richtige, widersprüchliche und leere Antwortklassen ab.
+# Subtest: apps-script\\tests\\physik11-kreisbewegung-task.test.js
+ok 16 - apps-script\\tests\\physik11-kreisbewegung-task.test.js
+  ---
+  duration_ms: 158.9408
+  type: 'test'
+  ...
+# Die drei neuen Herleitungs-Freitextaufgaben sind vollständig konfiguriert und buildPrompt_ übernimmt Beispielantworten korrekt.
+# Subtest: apps-script\\tests\\physik11-zentripetalkraft-herleitung.test.js
+ok 17 - apps-script\\tests\\physik11-zentripetalkraft-herleitung.test.js
+  ---
+  duration_ms: 138.5215
+  type: 'test'
+  ...
+# SQL-Beschreibe-Aufgaben und Client-/Server-IDs sind konsistent.
+# Subtest: apps-script\\tests\\sql-description-tasks.test.js
+ok 18 - apps-script\\tests\\sql-description-tasks.test.js
+  ---
+  duration_ms: 154.6258
+  type: 'test'
+  ...
+# Subtest: Alle 67 Aufgaben behalten ihre Kennung, den Eingabetyp und das Ergebnisformat
+ok 19 - Alle 67 Aufgaben behalten ihre Kennung, den Eingabetyp und das Ergebnisformat
+  ---
+  duration_ms: 23.8086
+  type: 'test'
+  ...
+# Subtest: Quader-Testvorlage baut exakt 3x5 Felder mit je vier Ziegeln ohne Kollision
+ok 20 - Quader-Testvorlage baut exakt 3x5 Felder mit je vier Ziegeln ohne Kollision
+  ---
+  duration_ms: 3.9696
+  type: 'test'
+  ...
+# Subtest: Vergleichsvariante mit hinlegen(3) behält Grundfläche, hat aber die falsche Höhe
+ok 21 - Vergleichsvariante mit hinlegen(3) behält Grundfläche, hat aber die falsche Höhe
+  ---
+  duration_ms: 2.6226
+  type: 'test'
+  ...
+# Subtest: Healthcheck zeigt nur Status und ruft kein Modell auf
+ok 22 - Healthcheck zeigt nur Status und ruft kein Modell auf
+  ---
+  duration_ms: 3.5865
+  type: 'test'
+  ...
+# Subtest: Auswertung ist ohne ausdrückliche Aktivierung gesperrt
+ok 23 - Auswertung ist ohne ausdrückliche Aktivierung gesperrt
+  ---
+  duration_ms: 0.9708
+  type: 'test'
+  ...
+# Subtest: Echte POST-Struktur, Projekt-URL, Schema und vorhandenes Feedbackformat
+ok 24 - Echte POST-Struktur, Projekt-URL, Schema und vorhandenes Feedbackformat
+  ---
+  duration_ms: 4.6065
+  type: 'test'
+  ...
+# Subtest: Codeauswertung nutzt Programmcode und liefert passende Ergebnishülle
+ok 25 - Codeauswertung nutzt Programmcode und liefert passende Ergebnishülle
+  ---
+  duration_ms: 1.2643
+  type: 'test'
+  ...
+# Subtest: Ungültige Anfragen lösen keinen kostenpflichtigen Aufruf aus
+ok 26 - Ungültige Anfragen lösen keinen kostenpflichtigen Aufruf aus
+  ---
+  duration_ms: 1.4792
+  type: 'test'
+  ...
+# Subtest: Base64 und UTF-8 werden korrekt gelesen; Codegrenze bleibt erhalten
+ok 27 - Base64 und UTF-8 werden korrekt gelesen; Codegrenze bleibt erhalten
+  ---
+  duration_ms: 1.9612
+  type: 'test'
+  ...
+# Subtest: CORS erlaubt nur konfigurierte Origins und passende Voranfragen
+ok 28 - CORS erlaubt nur konfigurierte Origins und passende Voranfragen
+  ---
+  duration_ms: 0.506
+  type: 'test'
+  ...
+# Subtest: Modellfehler und Timeouts werden ohne Secrets/Antwortinhalte zurückgegeben
+ok 29 - Modellfehler und Timeouts werden ohne Secrets/Antwortinhalte zurückgegeben
+  ---
+  duration_ms: 4.8231
+  type: 'test'
+  ...
+# Subtest: Konfigurationsfehler werden vor dem Modellaufruf erkannt
+ok 30 - Konfigurationsfehler werden vor dem Modellaufruf erkannt
+  ---
+  duration_ms: 0.7946
+  type: 'test'
+  ...
+# Subtest: Lokale Aufrufbremse begrenzt Aufrufe ohne IPs oder Schülertexte zu speichern
+ok 31 - Lokale Aufrufbremse begrenzt Aufrufe ohne IPs oder Schülertexte zu speichern
+  ---
+  duration_ms: 1.8823
+  type: 'test'
+  ...
+# Subtest: Alle Aufgaben, Prompts, Normalisierungen und Regeln stimmen mit den Originalen überein
+ok 32 - Alle Aufgaben, Prompts, Normalisierungen und Regeln stimmen mit den Originalen überein
+  ---
+  duration_ms: 36.9328
+  type: 'test'
+  ...
+# Subtest: Vorhandene IDE-Abfrage, Vorprüfung, Ergebnisanzeige und Abschlussquiz bleiben erhalten
+ok 33 - Vorhandene IDE-Abfrage, Vorprüfung, Ergebnisanzeige und Abschlussquiz bleiben erhalten
+  ---
+  duration_ms: 2.8549
+  type: 'test'
+  ...
+# Subtest: Code aus Hauptprogramm.java geht als JSON-Body an Scaleway; a/b haben eigene Punktegrenzen
+ok 34 - Code aus Hauptprogramm.java geht als JSON-Body an Scaleway; a/b haben eigene Punktegrenzen
+  ---
+  duration_ms: 6.7993
+  type: 'test'
+  ...
+# Subtest: Fehlende IDE und bestehende Code-Vorprüfungen verhindern Modellanfragen
+ok 35 - Fehlende IDE und bestehende Code-Vorprüfungen verhindern Modellanfragen
+  ---
+  duration_ms: 2.739
+  type: 'test'
+  ...
+# Subtest: Doppelklick wird abgefangen; Fehler geben den Prüfbutton für einen erneuten Versuch frei
+ok 36 - Doppelklick wird abgefangen; Fehler geben den Prüfbutton für einen erneuten Versuch frei
+  ---
+  duration_ms: 2.7929
+  type: 'test'
+  ...
+# Subtest: Falsche requestId und Punktegrenzen werden nicht als gültige Codebewertung angezeigt
+ok 37 - Falsche requestId und Punktegrenzen werden nicht als gültige Codebewertung angezeigt
+  ---
+  duration_ms: 4.3464
+  type: 'test'
+  ...
+# Subtest: Timeout beendet die Codeanfrage und stellt den ursprünglichen Button wieder her
+ok 38 - Timeout beendet die Codeanfrage und stellt den ursprünglichen Button wieder her
+  ---
+  duration_ms: 2.6331
+  type: 'test'
+  ...
+# Subtest: Pilot behält Ergebnisanzeige, Lehrercode, IDE und Eingabespeicherung bei
+ok 39 - Pilot behält Ergebnisanzeige, Lehrercode, IDE und Eingabespeicherung bei
+  ---
+  duration_ms: 2.3558
+  type: 'test'
+  ...
+# Subtest: 3000 Zeichen werden im POST-Body übertragen; vorhandene Anzeige verarbeitet b und c
+ok 40 - 3000 Zeichen werden im POST-Body übertragen; vorhandene Anzeige verarbeitet b und c
+  ---
+  duration_ms: 4.587
+  type: 'test'
+  ...
+# Subtest: Doppelklick erzeugt keine zweite Anfrage; beide Aufgaben können getrennt laufen
+ok 41 - Doppelklick erzeugt keine zweite Anfrage; beide Aufgaben können getrennt laufen
+  ---
+  duration_ms: 3.5844
+  type: 'test'
+  ...
+# Subtest: Ungültige Eingabe führt vor dem Versand zu einer Rückmeldung
+ok 42 - Ungültige Eingabe führt vor dem Versand zu einer Rückmeldung
+  ---
+  duration_ms: 2.01
+  type: 'test'
+  ...
+# Subtest: Fehler und falsch zugeordnete oder beschädigte Ergebnisse geben die Eingabe frei
+ok 43 - Fehler und falsch zugeordnete oder beschädigte Ergebnisse geben die Eingabe frei
+  ---
+  duration_ms: 7.4877
+  type: 'test'
+  ...
+# Subtest: Timeout bricht die Anfrage ab und ermöglicht erneutes Prüfen
+ok 44 - Timeout bricht die Anfrage ab und ermöglicht erneutes Prüfen
+  ---
+  duration_ms: 2.1827
+  type: 'test'
+  ...
+1..44
+# tests 44
+# suites 0
+# pass 44
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 611.8526

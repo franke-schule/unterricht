@@ -1,7 +1,7 @@
 import { numberMatches, runEpoch } from '../logic/perceptron.mjs';
-import { evaluateSemanticAnswer } from './semantic-answer.mjs';
+import { evaluateSemanticAnswer } from './semantic-answer.mjs?v=20261010-scaleway';
 
-const SERVER_URL = 'https://script.google.com/macros/s/AKfycby8RWL6uYrKZyoJ6m2GRpWyRmXjwsdskyCiqzKpRhIK5-wrDl-9lWWk8CiAGaVMoy0x/exec';
+const SERVER_URL = 'https://unterrichtkiichezbn4-ki-auswertung.functions.fnc.fr-par.scw.cloud/';
 const STORAGE_KEY = 'informatik11-perzeptron-aufgabe5-v1';
 const SOLUTION_CODE = 'M3VN-DKXT';
 const STEPS = ['discover', 'structure', 'decide', 'learn', 'simulator', 'fast', 'limits', 'summary'];

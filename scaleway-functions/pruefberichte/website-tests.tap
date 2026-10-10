@@ -1,0 +1,872 @@
+TAP version 13
+# Alle Tests für beziehungsarten.test.mjs sind gruen.
+# Subtest: faecher\\informatik\\klasse-10\\1-Datenbanken\\tests\\beziehungsarten.test.mjs
+ok 1 - faecher\\informatik\\klasse-10\\1-Datenbanken\\tests\\beziehungsarten.test.mjs
+  ---
+  duration_ms: 474.0761
+  type: 'test'
+  ...
+# Mensa-Kreuzprodukt, Filter und qualifizierte Spalten erfolgreich geprüft
+# Subtest: faecher\\informatik\\klasse-10\\1-Datenbanken\\tests\\menue-kreuzprodukt.test.mjs
+ok 2 - faecher\\informatik\\klasse-10\\1-Datenbanken\\tests\\menue-kreuzprodukt.test.mjs
+  ---
+  duration_ms: 758.1416
+  type: 'test'
+  ...
+# Aufgabe 2, Schritt 2: Reihenfolge, Sperre und verdeckte Auflösungen geprüft
+# Subtest: faecher\\informatik\\klasse-10\\1-Datenbanken\\tests\\redundanzen-step2.test.mjs
+ok 3 - faecher\\informatik\\klasse-10\\1-Datenbanken\\tests\\redundanzen-step2.test.mjs
+  ---
+  duration_ms: 261.8577
+  type: 'test'
+  ...
+# Sicherungsblatt in Arbeitsreiter und Auswertung geprüft
+# Subtest: faecher\\informatik\\klasse-10\\1-Datenbanken\\tests\\sicherungsblatt-auswertung.test.mjs
+ok 4 - faecher\\informatik\\klasse-10\\1-Datenbanken\\tests\\sicherungsblatt-auswertung.test.mjs
+  ---
+  duration_ms: 268.5067
+  type: 'test'
+  ...
+# Song-Verbund: Daten, 32 → 8 → 4, Schlüsselpaare und SQL-Fehlerfälle erfolgreich geprüft
+# Subtest: faecher\\informatik\\klasse-10\\1-Datenbanken\\tests\\song-verbund.test.mjs
+ok 5 - faecher\\informatik\\klasse-10\\1-Datenbanken\\tests\\song-verbund.test.mjs
+  ---
+  duration_ms: 771.0107
+  type: 'test'
+  ...
+# sql-lab-core tests passed
+# Subtest: faecher\\informatik\\klasse-10\\1-Datenbanken\\tests\\sql-lab-core.test.mjs
+ok 6 - faecher\\informatik\\klasse-10\\1-Datenbanken\\tests\\sql-lab-core.test.mjs
+  ---
+  duration_ms: 260.8878
+  type: 'test'
+  ...
+# 22 SQL-Referenzen sowie Äquivalenz-, Datums- und Relationsfälle erfolgreich ausgeführt
+# Subtest: faecher\\informatik\\klasse-10\\1-Datenbanken\\tests\\sql-reference-queries.test.mjs
+ok 7 - faecher\\informatik\\klasse-10\\1-Datenbanken\\tests\\sql-reference-queries.test.mjs
+  ---
+  duration_ms: 1170.6293
+  type: 'test'
+  ...
+# SQL-UI-Vertrag für Schema, Platzhalter, Ergebnisfenster und Punktefeedback geprüft
+# Subtest: faecher\\informatik\\klasse-10\\1-Datenbanken\\tests\\sql-ui-contract.test.mjs
+ok 8 - faecher\\informatik\\klasse-10\\1-Datenbanken\\tests\\sql-ui-contract.test.mjs
+  ---
+  duration_ms: 773.4423
+  type: 'test'
+  ...
+# Alle Tests für transaktionen.test.mjs sind gruen.
+# Subtest: faecher\\informatik\\klasse-10\\1-Datenbanken\\tests\\transaktionen.test.mjs
+ok 9 - faecher\\informatik\\klasse-10\\1-Datenbanken\\tests\\transaktionen.test.mjs
+  ---
+  duration_ms: 378.8603
+  type: 'test'
+  ...
+# Subtest: Klassifikation folgt Ja- und Nein-Zweigen bis zum Blatt
+ok 10 - Klassifikation folgt Ja- und Nein-Zweigen bis zum Blatt
+  ---
+  duration_ms: 9.2299
+  type: 'test'
+  ...
+# Subtest: Baumvalidierung erkennt leere und fehlende Zweige
+ok 11 - Baumvalidierung erkennt leere und fehlende Zweige
+  ---
+  duration_ms: 4.1869
+  type: 'test'
+  ...
+# Subtest: Trainingsdaten besitzen die erwarteten Mengen, Klassen und Reihenfolgen
+ok 12 - Trainingsdaten besitzen die erwarteten Mengen, Klassen und Reihenfolgen
+  ---
+  duration_ms: 11.0931
+  type: 'test'
+  ...
+# Subtest: Unterschiedliche Klassen sind im jeweiligen Merkmalsraum unterscheidbar
+ok 13 - Unterschiedliche Klassen sind im jeweiligen Merkmalsraum unterscheidbar
+  ---
+  duration_ms: 0.697
+  type: 'test'
+  ...
+# Subtest: Easy-Trainingsdaten sind allein mit Lächeln und X-Augen widerspruchsfrei
+ok 14 - Easy-Trainingsdaten sind allein mit Lächeln und X-Augen widerspruchsfrei
+  ---
+  duration_ms: 0.4305
+  type: 'test'
+  ...
+# Subtest: Originaler Easy-Zweimerkmal-Baum klassifiziert 12 von 12 Trainingsaffen korrekt
+ok 15 - Originaler Easy-Zweimerkmal-Baum klassifiziert 12 von 12 Trainingsaffen korrekt
+  ---
+  duration_ms: 0.8539
+  type: 'test'
+  ...
+# Subtest: Zungen-Affen gehören nicht zur Merkmalsklasse Lächeln
+ok 16 - Zungen-Affen gehören nicht zur Merkmalsklasse Lächeln
+  ---
+  duration_ms: 0.602
+  type: 'test'
+  ...
+# Subtest: Lächelnde Mundform ist von Zunge und sichtbaren Zähnen getrennt
+ok 17 - Lächelnde Mundform ist von Zunge und sichtbaren Zähnen getrennt
+  ---
+  duration_ms: 0.5539
+  type: 'test'
+  ...
+# Subtest: Nur die Easy-Speicherung wird durch Datensatzversion 2 invalidiert
+ok 18 - Nur die Easy-Speicherung wird durch Datensatzversion 2 invalidiert
+  ---
+  duration_ms: 0.5351
+  type: 'test'
+  ...
+# Subtest: Auswertung deckt vollständig, teilweise und komplett falsch ab
+ok 19 - Auswertung deckt vollständig, teilweise und komplett falsch ab
+  ---
+  duration_ms: 1.292
+  type: 'test'
+  ...
+# Subtest: Auch die fortgeschrittenen Trainingsdaten lassen sich vollständig trennen
+ok 20 - Auch die fortgeschrittenen Trainingsdaten lassen sich vollständig trennen
+  ---
+  duration_ms: 0.9399
+  type: 'test'
+  ...
+# Subtest: Testdaten besitzen die geforderten Größen und Klassenverteilungen
+ok 21 - Testdaten besitzen die geforderten Größen und Klassenverteilungen
+  ---
+  duration_ms: 12.5844
+  type: 'test'
+  ...
+# Subtest: Testdaten überschneiden sich nicht mit Trainingsdaten derselben Variante
+ok 22 - Testdaten überschneiden sich nicht mit Trainingsdaten derselben Variante
+  ---
+  duration_ms: 22.0123
+  type: 'test'
+  ...
+# Subtest: Konfusionsmatrix bildet TP, FP, FN und TN korrekt ab
+ok 23 - Konfusionsmatrix bildet TP, FP, FN und TN korrekt ab
+  ---
+  duration_ms: 0.9169
+  type: 'test'
+  ...
+# Subtest: Ein Testdatum wird höchstens einmal aufgenommen
+ok 24 - Ein Testdatum wird höchstens einmal aufgenommen
+  ---
+  duration_ms: 0.4776
+  type: 'test'
+  ...
+# Subtest: Beide Vergleichsbäume erreichen 12 von 12 Trainingsdaten
+ok 25 - Beide Vergleichsbäume erreichen 12 von 12 Trainingsdaten
+  ---
+  duration_ms: 1.3337
+  type: 'test'
+  ...
+# Subtest: Vergleichsbäume behalten die unterschiedliche Reihenfolge ihrer ersten Merkmale
+ok 26 - Vergleichsbäume behalten die unterschiedliche Reihenfolge ihrer ersten Merkmale
+  ---
+  duration_ms: 0.2855
+  type: 'test'
+  ...
+# Subtest: Äffchen 03 enthält die im Training unbekannte Kombination aus X-Augen und sichtbaren Zähnen
+ok 27 - Äffchen 03 enthält die im Training unbekannte Kombination aus X-Augen und sichtbaren Zähnen
+  ---
+  duration_ms: 0.5281
+  type: 'test'
+  ...
+# Subtest: Originaler Easy-Zweimerkmal-Baum klassifiziert 8 von 8 Testaffen korrekt
+ok 28 - Originaler Easy-Zweimerkmal-Baum klassifiziert 8 von 8 Testaffen korrekt
+  ---
+  duration_ms: 9.0395
+  type: 'test'
+  ...
+# Subtest: Baum A erreicht 8/8, Baum B 7/8 und nur Äffchen 03 unterscheidet sich
+ok 29 - Baum A erreicht 8/8, Baum B 7/8 und nur Äffchen 03 unterscheidet sich
+  ---
+  duration_ms: 1.1512
+  type: 'test'
+  ...
+# Subtest: Fischdatensatz enthält die geforderten neun gelabelten Trainingsdaten
+ok 30 - Fischdatensatz enthält die geforderten neun gelabelten Trainingsdaten
+  ---
+  duration_ms: 4.0265
+  type: 'test'
+  ...
+# Subtest: erste vier Splits liefern die geforderten Fehler und Informationsgewinne
+ok 31 - erste vier Splits liefern die geforderten Fehler und Informationsgewinne
+  ---
+  duration_ms: 1.2506
+  type: 'test'
+  ...
+# Subtest: blaue Teilmenge erkennt Gleichstand und orange Teilmenge Bauchfarbe
+ok 32 - blaue Teilmenge erkennt Gleichstand und orange Teilmenge Bauchfarbe
+  ---
+  duration_ms: 1.416
+  type: 'test'
+  ...
+# Subtest: letzter Split Blau/Punkte wird durch Bauchfarbe fehlerfrei
+ok 33 - letzter Split Blau/Punkte wird durch Bauchfarbe fehlerfrei
+  ---
+  duration_ms: 0.7697
+  type: 'test'
+  ...
+# Subtest: Referenzbaum und fachlich äquivalenter Gleichstandsbaum werden logisch erkannt
+ok 34 - Referenzbaum und fachlich äquivalenter Gleichstandsbaum werden logisch erkannt
+  ---
+  duration_ms: 23.9664
+  type: 'test'
+  ...
+# Subtest: Zahleneingaben und Entropieformeln behandeln typische Eingaben robust
+ok 35 - Zahleneingaben und Entropieformeln behandeln typische Eingaben robust
+  ---
+  duration_ms: 3.247
+  type: 'test'
+  ...
+# Subtest: Abschlussquiz des Pflichtteils nutzt Mehrfachauswahl ohne Entropie
+ok 36 - Abschlussquiz des Pflichtteils nutzt Mehrfachauswahl ohne Entropie
+  ---
+  duration_ms: 1.4792
+  type: 'test'
+  ...
+# Subtest: Entropiequiz enthält vier eindeutig auswertbare Fragen
+ok 37 - Entropiequiz enthält vier eindeutig auswertbare Fragen
+  ---
+  duration_ms: 0.4996
+  type: 'test'
+  ...
+# Subtest: Aufgabe 3 ist verlinkt und nutzt die vorhandene semantische Aufgaben-ID
+ok 38 - Aufgabe 3 ist verlinkt und nutzt die vorhandene semantische Aufgaben-ID
+  ---
+  duration_ms: 59.0966
+  type: 'test'
+  ...
+# Subtest: Aufgabenseite besitzt eindeutige IDs, gültige lokale Links und responsive Breakpoints
+ok 39 - Aufgabenseite besitzt eindeutige IDs, gültige lokale Links und responsive Breakpoints
+  ---
+  duration_ms: 8.7794
+  type: 'test'
+  ...
+# Subtest: Fisch-Testdaten sind unabhängig von den neun Trainingsdaten
+ok 40 - Fisch-Testdaten sind unabhängig von den neun Trainingsdaten
+  ---
+  duration_ms: 3.481
+  type: 'test'
+  ...
+# Subtest: Referenzbaum liefert die fachlich korrekte Konfusionsmatrix und Genauigkeit
+ok 41 - Referenzbaum liefert die fachlich korrekte Konfusionsmatrix und Genauigkeit
+  ---
+  duration_ms: 1.1812
+  type: 'test'
+  ...
+# Subtest: Quiz besitzt mindestens zwei richtige Antworten pro eindeutiger Frage
+ok 42 - Quiz besitzt mindestens zwei richtige Antworten pro eindeutiger Frage
+  ---
+  duration_ms: 0.7039
+  type: 'test'
+  ...
+# Subtest: Aufgabe 3b ist registriert und verwendet Reiter, Matrix und Checkbox-Quiz
+ok 43 - Aufgabe 3b ist registriert und verwendet Reiter, Matrix und Checkbox-Quiz
+  ---
+  duration_ms: 74.8174
+  type: 'test'
+  ...
+# Subtest: Baumtiefen liefern die erwarteten Tabellenwerte
+ok 44 - Baumtiefen liefern die erwarteten Tabellenwerte
+  ---
+  duration_ms: 3.4929
+  type: 'test'
+  ...
+# Subtest: Tabellenprüfung akzeptiert Zahlen und typische Prozentschreibweisen
+ok 45 - Tabellenprüfung akzeptiert Zahlen und typische Prozentschreibweisen
+  ---
+  duration_ms: 0.5863
+  type: 'test'
+  ...
+# Subtest: Aufgabe 4 bindet Tabs, Material und Skriptserver passend ein
+ok 46 - Aufgabe 4 bindet Tabs, Material und Skriptserver passend ein
+  ---
+  duration_ms: 58.2553
+  type: 'test'
+  ...
+# Subtest: UI initialisiert und bleibt bedienbar ohne gespeicherten Stand
+ok 47 - UI initialisiert und bleibt bedienbar ohne gespeicherten Stand
+  ---
+  duration_ms: 11.4913
+  type: 'test'
+  ...
+# Subtest: UI initialisiert und bleibt bedienbar mit älterem Stand ohne Quizfelder
+ok 48 - UI initialisiert und bleibt bedienbar mit älterem Stand ohne Quizfelder
+  ---
+  duration_ms: 6.7633
+  type: 'test'
+  ...
+# Subtest: UI initialisiert und bleibt bedienbar mit gespeichertem Quizstand
+ok 49 - UI initialisiert und bleibt bedienbar mit gespeichertem Quizstand
+  ---
+  duration_ms: 11.9802
+  type: 'test'
+  ...
+# Subtest: UI initialisiert und bleibt bedienbar mit beschädigtem JSON
+ok 50 - UI initialisiert und bleibt bedienbar mit beschädigtem JSON
+  ---
+  duration_ms: 5.823
+  type: 'test'
+  ...
+# Subtest: UI initialisiert und bleibt bedienbar mit ungültigem Array
+ok 51 - UI initialisiert und bleibt bedienbar mit ungültigem Array
+  ---
+  duration_ms: 5.7336
+  type: 'test'
+  ...
+# Subtest: UI initialisiert und bleibt bedienbar mit gesperrtem Speicher
+ok 52 - UI initialisiert und bleibt bedienbar mit gesperrtem Speicher
+  ---
+  duration_ms: 7.1885
+  type: 'test'
+  ...
+# Subtest: Eine Kante beginnt an der Parent-Unterkante und endet an der Child-Oberkante
+ok 53 - Eine Kante beginnt an der Parent-Unterkante und endet an der Child-Oberkante
+  ---
+  duration_ms: 25.0745
+  type: 'test'
+  ...
+# Subtest: Zwei Child-Kanten verwenden denselben lückenlosen Parent- und Split-Anker
+ok 54 - Zwei Child-Kanten verwenden denselben lückenlosen Parent- und Split-Anker
+  ---
+  duration_ms: 0.6661
+  type: 'test'
+  ...
+# Subtest: Dynamische und unterschiedlich große Knoten bestimmen ihre Anker selbst
+ok 55 - Dynamische und unterschiedlich große Knoten bestimmen ihre Anker selbst
+  ---
+  duration_ms: 2.0202
+  type: 'test'
+  ...
+# Perzeptron-Logik und Eingabevarianten sind korrekt.
+# Subtest: faecher\\informatik\\klasse-11\\1-Kuenstliche-Intelligenz\\perzeptron\\tests\\perceptron.test.mjs
+ok 16 - faecher\\informatik\\klasse-11\\1-Kuenstliche-Intelligenz\\perzeptron\\tests\\perceptron.test.mjs
+  ---
+  duration_ms: 463.5418
+  type: 'test'
+  ...
+# Scaleway: POST/JSON, Text-/Codegrenzen, gesperrter Google-Endpunkt, Netzwerkfehler und Timeout geprüft.
+# Subtest: faecher\\informatik\\klasse-11\\1-Kuenstliche-Intelligenz\\perzeptron\\tests\\semantic-answer.test.mjs
+ok 17 - faecher\\informatik\\klasse-11\\1-Kuenstliche-Intelligenz\\perzeptron\\tests\\semantic-answer.test.mjs
+  ---
+  duration_ms: 358.4725
+  type: 'test'
+  ...
+# node:internal/modules/run_main:107
+#     triggerUncaughtException(
+#     ^
+# AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+# + actual - expected
+# + 'Zahnlaenge;Augengroesse;Label\\r\\n2;2;1\\r\\n4;1;0\\r\\n6;2;0\\r\\n0;4;1\\r\\n'
+# - 'Zahnlänge;Augengröße;Label\\r\\n2;2;1\\r\\n4;1;0\\r\\n6;2;0\\r\\n0;4;1\\r\\n'
+#     at file:///C:/Users/ffran/Documents/git/unterricht/faecher/informatik/klasse-11/1-Kuenstliche-Intelligenz/perzeptron/tests/task5-contract.test.mjs:59:8
+#     at ModuleJob.run (node:internal/modules/esm/module_job:439:25)
+#     at async node:internal/modules/esm/loader:643:26
+#     at async asyncRunEntryPointWithESMLoader (node:internal/modules/run_main:101:5) {
+#   generatedMessage: true,
+#   code: 'ERR_ASSERTION',
+#   actual: 'Zahnlaenge;Augengroesse;Label\\r\\n2;2;1\\r\\n4;1;0\\r\\n6;2;0\\r\\n0;4;1\\r\\n',
+#   expected: 'Zahnlänge;Augengröße;Label\\r\\n2;2;1\\r\\n4;1;0\\r\\n6;2;0\\r\\n0;4;1\\r\\n',
+#   operator: 'strictEqual',
+#   diff: 'simple'
+# }
+# Node.js v24.18.0
+# Subtest: faecher\\informatik\\klasse-11\\1-Kuenstliche-Intelligenz\\perzeptron\\tests\\task5-contract.test.mjs
+not ok 18 - faecher\\informatik\\klasse-11\\1-Kuenstliche-Intelligenz\\perzeptron\\tests\\task5-contract.test.mjs
+  ---
+  duration_ms: 404.5765
+  type: 'test'
+  location: 'C:\\Users\\ffran\\Documents\\git\\unterricht\\faecher\\informatik\\klasse-11\\1-Kuenstliche-Intelligenz\\perzeptron\\tests\\task5-contract.test.mjs:1:1'
+  failureType: 'testCodeFailure'
+  exitCode: 1
+  signal: ~
+  error: 'test failed'
+  code: 'ERR_TEST_FAILURE'
+  ...
+# Nummerierung, Einzelprüfungen, Fachbegriffe und Mehrfachauswahl sind abgesichert.
+# Subtest: faecher\\physik\\klasse-11\\1-Kreisbewegungen\\tests\\bewegung-koerpern-config.test.mjs
+ok 19 - faecher\\physik\\klasse-11\\1-Kreisbewegungen\\tests\\bewegung-koerpern-config.test.mjs
+  ---
+  duration_ms: 448.4576
+  type: 'test'
+  ...
+# Winkelverlauf, Umlaufzeit, sichere Formelmischung, Bahngeschwindigkeit und orthogonale Kreisvektoren sind numerisch geprüft.
+# Subtest: faecher\\physik\\klasse-11\\1-Kreisbewegungen\\tests\\circle-kinematics.test.mjs
+ok 20 - faecher\\physik\\klasse-11\\1-Kreisbewegungen\\tests\\circle-kinematics.test.mjs
+  ---
+  duration_ms: 258.4806
+  type: 'test'
+  ...
+# Haftreibungskraft: sechs Reiter, Bilder, getrennte Prüfungen, Zahleneingaben, Quiz und Downloads sind konfiguriert.
+# Subtest: faecher\\physik\\klasse-11\\1-Kreisbewegungen\\tests\\haftreibung-zentripetalkraft-config.test.mjs
+ok 21 - faecher\\physik\\klasse-11\\1-Kreisbewegungen\\tests\\haftreibung-zentripetalkraft-config.test.mjs
+  ---
+  duration_ms: 358.8608
+  type: 'test'
+  ...
+# Kettenkarussell: Geometrie, Rückmeldelogik, Quiz, HTML und Begleitdateien sind konsistent konfiguriert.
+# Subtest: faecher\\physik\\klasse-11\\1-Kreisbewegungen\\tests\\kettenkarussell-config.test.mjs
+ok 22 - faecher\\physik\\klasse-11\\1-Kreisbewegungen\\tests\\kettenkarussell-config.test.mjs
+  ---
+  duration_ms: 381.6283
+  type: 'test'
+  ...
+# node:internal/modules/run_main:107
+#     triggerUncaughtException(
+#     ^
+# AssertionError [ERR_ASSERTION]: The input did not match the regular expression /\\\\fill\\[Gold\\] \\(20,-7\\) circle/. Input:
+# '\\\\documentclass[10pt,a4paper]{article}\\n' +
+#   '\\n' +
+#   '\\\\usepackage[T1]{fontenc}\\n' +
+#   '\\\\usepackage[utf8]{inputenc}\\n' +
+#   '\\\\usepackage[ngerman]{babel}\\n' +
+#   '\\\\usepackage[a4paper,margin=14mm]{geometry}\\n' +
+#   '\\\\usepackage{lmodern}\\n' +
+#   '\\\\usepackage[table]{xcolor}\\n' +
+#   '\\\\usepackage{tabularx}\\n' +
+#   '\\\\usepackage{array}\\n' +
+#   '\\\\usepackage{amsmath}\\n' +
+#   '\\\\usepackage{microtype}\\n' +
+#   '\\\\usepackage[most]{tcolorbox}\\n' +
+#   '\\\\usepackage{tikz}\\n' +
+#   '\\\\usetikzlibrary{arrows.meta,calc,positioning}\\n' +
+#   '\\n' +
+#   '\\\\pagestyle{empty}\\n' +
+#   '\\\\setlength{\\\\parindent}{0pt}\\n' +
+#   '\\\\setlength{\\\\parskip}{0pt}\\n' +
+#   '\\\\renewcommand{\\\\familydefault}{\\\\sfdefault}\\n' +
+#   '\\\\renewcommand{\\\\arraystretch}{1.08}\\n' +
+#   '\\n' +
+#   '\\\\definecolor{Navy}{HTML}{17324D}\\n' +
+#   '\\\\definecolor{Blue}{HTML}{3B6EA5}\\n' +
+#   '\\\\definecolor{Sky}{HTML}{EAF3FA}\\n' +
+#   '\\\\definecolor{Mint}{HTML}{E8F5EF}\\n' +
+#   '\\\\definecolor{Gold}{HTML}{F3B33D}\\n' +
+#   '\\\\definecolor{Ink}{HTML}{1E2935}\\n' +
+#   '\\\\definecolor{Muted}{HTML}{617080}\\n' +
+#   '\\\\definecolor{Line}{HTML}{D8E1E8}\\n' +
+#   '\\\\definecolor{Crack}{HTML}{D2601A}\\n' +
+#   '\\n' +
+#   '\\\\color{Ink}\\n' +
+#   '\\\\newcommand{\\\\sectiontitle}[1]{%\\n' +
+#   '  \\\\vspace{0.45mm}{\\\\color{Blue}\\\\bfseries\\\\large \#1}\\\\par\\n' +
+#   '  \\\\vspace{0.15mm}{\\\\color{Blue}\\\\rule{\\\\linewidth}{0.7pt}}\\\\par\\n' +
+#   '  \\\\vspace{0.2mm}}\\n' +
+#   '\\\\newcommand{\\\\unit}[1]{\\\\,\\\\mathrm{\#1}}\\n' +
+#   '\\\\newcommand{\\\\accunit}{\\\\frac{\\\\mathrm{m}}{\\\\mathrm{s}^{2}}}\\n' +
+#   '\\\\newcommand{\\\\forcearrow}[3]{\\\\draw[-{Latex[length=2.1mm]},Blue,line width=0.9pt] \#1 -- node[fill=white,inner sep=1pt,font=\\\\scriptsize,align=center] {\#3} \#2;}\\n' +
+#   '\\n' +
+#   '\\\\begin{document}\\n' +
+#   '\\n' +
+#   '\\\\colorbox{Navy}{%\\n' +
+#   '  \\\\parbox{\\\\dimexpr\\\\linewidth-2\\\\fboxsep\\\\relax}{%\\n' +
+#   '    \\\\vspace{1.5mm}\\\\color{white}\\n' +
+#   '    \\\\begin{tabularx}{\\\\linewidth}{@{}Xr@{}}\\n' +
+#   '      {\\\\small\\\\bfseries PHYSIK · KLASSE 11} &\\n' +
+#   '      \\\\colorbox{Gold}{\\\\color{Navy}\\\\small\\\\bfseries\\\\strut LÖSUNGEN}\\n' +
+#   '    \\\\end{tabularx}\\n' +
+#   '    \\\\vspace{1mm}\\n' +
+#   '    {\\\\fontsize{18}{21}\\\\selectfont\\\\bfseries Wiederholung 2 -- Kräfte und Bewegung}\\\\par\\n' +
+#   '    \\\\vspace{0.3mm}{\\\\large Sicherungsblatt}\\\\vspace{1.2mm}\\n' +
+#   '  }%\\n' +
+#   '}\\n' +
+#   '\\n' +
+#   '\\\\vspace{1mm}\\n' +
+#   '\\\\colorbox{Sky}{\\\\parbox{\\\\dimexpr\\\\linewidth-2\\\\fboxsep\\\\relax}{%\\n' +
+#   '  \\\\vspace{0.6mm}\\\\textcolor{Blue}{\\\\bfseries Ziel:} Das newtonsche Grundgesetz anwenden und Kräftegleichgewicht von Wechselwirkung unterscheiden.\\\\vspace{0.6mm}}}\\n' +
+#   '\\n' +
+#   '\\\\sectiontitle{1 · Newtonsches Grundgesetz}\\n' +
+#   '\\\\begin{tcolorbox}[colback=Sky,colframe=Line,arc=1.2mm,boxrule=.6pt,left=2mm,right=2mm,top=.7mm,bottom=.7mm]\\n' +
+#   '{\\\\centering\\\\fontsize{19}{22}\\\\selectfont $\\\\vec F\\\\cdot\\\\Delta t=m\\\\cdot\\\\Delta\\\\vec v$\\\\par}\\n' +
+#   '\\\\begin{tabularx}{\\\\linewidth}{@{}>{\\\\bfseries}l X >{\\\\bfseries}l X@{}}\\n' +
+#   '  $\\\\vec F$ & resultierende Kraft, Einheit N & $\\\\Delta t$ & Zeitspanne, Einheit s\\\\\\\\\\n' +
+#   '  $m$ & Masse, Einheit kg & $\\\\Delta\\\\vec v$ & Geschwindigkeitsänderung, Einheit $\\\\frac{\\\\mathrm{m}}{\\\\mathrm{s}}$\\n' +
+#   '\\\\end{tabularx}\\n' +
+#   '\\\\vspace{0.5mm}\\n' +
+#   'Bei konstanter resultierender Kraft und konstanter Masse gilt: Kraftimpuls = Änderung des Bewegungsimpulses.\\\\\\\\\\n' +
+#   'Die Geschwindigkeitsänderung zeigt in Richtung der resultierenden Kraft.\\n' +
+#   '\\\\end{tcolorbox}\\n' +
+#   '\\\\vspace{0.3mm}\\n' +
+#   '\\\\begin{tabularx}{\\\\linewidth}{@{}X X@{}}\\n' +
+#   '\\\\colorbox{Mint}{\\\\parbox{\\\\dimexpr\\\\linewidth-2\\\\fboxsep\\\\relax}{\\\\centering Gleiche Masse: größere Kraft $\\\\to$ größere Beschleunigung.}} &\\n' +
+#   '\\\\colorbox{Mint}{\\\\parbox{\\\\dimexpr\\\\linewidth-2\\\\fboxsep\\\\relax}{\\\\centering Gleiche Kraft: kleinere Masse $\\\\to$ größere Beschleunigung.}}\\n' +
+#   '\\\\end{tabularx}\\n' +
+#   '\\n' +
+#   '\\\\sectiontitle{2 · Beschleunigung berechnen}\\n' +
+#   '\\\\begin{tcolorbox}[colback=white,colframe=Line,arc=1.2mm,boxrule=.65pt,left=2.2mm,right=2.2mm,top=1.1mm,bottom=1.1mm]\\n' +
+#   '\\\\textcolor{Blue}{\\\\bfseries Beispiel aus Teilaufgabe 3}\\\\par\\\\vspace{0.35mm}\\n' +
+#   '{\\\\renewcommand{\\\\arraystretch}{1.42}%\\n' +
+#   '\\\\begin{tabularx}{\\\\linewidth}{@{}>{\\\\bfseries}p{19mm}X@{}}\\n' +
+#   'Gegeben: & $m=100\\\\unit{g}=0{,}100\\\\unit{kg}$, $F=1{,}2\\\\unit{N}$\\\\\\\\\\n' +
+#   'Gesucht: & $a$ in $\\\\accunit$\\\\\\\\\\n' +
+#   'Ansatz: & $F=m\\\\cdot a$, also $a=\\\\dfrac{F}{m}$\\\\\\\\\\n' +
+#   'Rechnung: & $a=\\\\dfrac{1{,}2\\\\unit{N}}{0{,}100\\\\unit{kg}}=12\\\\,\\\\accunit$\\n' +
+#   '\\\\end{tabularx}}\\n' +
+#   '\\\\vspace{0.25mm}\\\\hfill\\\\textcolor{Blue}{\\\\bfseries Ergebnis: $a=12\\\\,\\\\accunit$ \\\\quad 2 gültige Ziffern}\\\\par\\n' +
+#   '\\\\vspace{0.25mm}{\\\\small $m=0{,}100\\\\unit{kg}$ sind drei gültige Ziffern. $F=1{,}2\\\\unit{N}$ sind zwei gültige Ziffern. Daher wird das Endergebnis mit zwei gültigen Ziffern angegeben.}\\n' +
+#   '\\\\end{tcolorbox}\\n' +
+#   '\\n' +
+#   '\\\\sectiontitle{3 · Kräftegleichgewicht}\\n' +
+#   '\\\\begin{tabularx}{\\\\linewidth}{@{}X@{\\\\hspace{1mm}}X@{\\\\hspace{1mm}}X@{}}\\n' +
+#   '\\\\centering\\\\textbf{Fallschirmspringer}\\\\par\\\\scriptsize Konstante Sinkgeschwindigkeit\\n' +
+#   '\\\\begin{tikzpicture}[x=.8mm,y=.62mm,>=Latex]\\n' +
+#   '  \\\\draw[fill=Sky,draw=Blue] (0,5) .. controls (10,18) and (30,18) .. (40,5) -- cycle;\\n' +
+#   '  % Springer: Hände an den Leinen, Kraftpfeile gleich lang (F_R = F_G).\\n' +
+#   '  \\\\draw[Line] (5,7)--(16.5,-1) (35,7)--(23.5,-1);\\n' +
+#   '  \\\\draw[Navy,line width=.6pt,line cap=round,line join=round]\\n' +
+#   '    (16.5,-1)--(20,-4.5)--(23.5,-1)\\n' +
+#   '    (18.3,-17)--(19.2,-10) (21.7,-17)--(20.8,-10);\\n' +
+#   '  \\\\draw[fill=Mint,draw=Navy,line width=.45pt,rounded corners=.5mm] (18.6,-3.6) rectangle (21.4,-10.4);\\n' +
+#   '  \\\\draw[fill=Mint,draw=Navy,line width=.45pt] (20,-0.4) circle[radius=1mm];\\n' +
+#   '  \\\\draw[-{Latex},Blue,line width=.7pt] (20,-6.5)--(20,17) node[above,font=\\\\scriptsize] {Luftwiderstandskraft $F_R$};\\n' +
+#   '  \\\\draw[-{Latex},Blue,line width=.7pt] (20,-6.5)--(20,-30) node[below,font=\\\\scriptsize] {Gewichtskraft $F_G$};\\n' +
+#   '  \\\\fill[Blue] (20,-6.5) circle[radius=.55mm];\\n' +
+#   '  \\\\node[font=\\\\scriptsize] at (20,-38) {$F_R=F_G$};\\n' +
+#   '\\\\end{tikzpicture}\\n' +
+#   '&\\\\centering\\\\textbf{Körper auf dem Tisch}\\\\par\\n' +
+#   '\\\\begin{tikzpicture}[x=.8mm,y=.62mm,>=Latex]\\n' +
+#   '  \\\\draw[fill=Sky,draw=Blue] (5,-10) rectangle (35,-7); \\\\draw[Blue] (10,-7)--(10,-13) (30,-7)--(30,-13); \\\\draw[fill=Mint,draw=Blue] (14,-7) rectangle (26,1);\\n' +
+#   '  % Gleich lange Pfeile; die Tischkraft greift leicht versetzt an der Auflagefläche an, damit sich die Pfeile nicht überdecken.\\n' +
+#   '  \\\\draw[-{Latex},Blue,line width=.7pt] (22,-7)--(22,15) node[above,font=\\\\scriptsize,align=center] {Kraft des Tisches\\\\\\\\auf den Körper};\\n' +
+#   '  \\\\draw[-{Latex},Crack,line width=.7pt] (20,-3)--(20,-25) node[below,font=\\\\scriptsize] {Gewichtskraft};\\n' +
+#   '  \\\\fill[Crack] (20,-3) circle[radius=.55mm];\\n' +
+#   '  \\\\fill[Blue] (22,-7) circle[radius=.55mm];\\n' +
+#   '\\\\end{tikzpicture}\\n' +
+#   '&\\\\centering\\\\textbf{Auto}\\\\par\\\\scriptsize fährt mit konstanter Geschwindigkeit\\\\par\\n' +
+#   '\\\\begin{tikzpicture}[x=.8mm,y=.62mm,>=Latex]\\n' +
+#   '  \\\\draw[fill=Sky,draw=Blue] (7,-4)--(12,4)--(30,4)--(36,-4)--cycle; \\\\draw[Blue] (13,-4) circle (2) (30,-4) circle (2);\\n' +
+#   '  \\\\draw[-{Latex},Blue,line width=.7pt] (20,0)--(38,0);\\n' +
+#   '  \\\\draw[-{Latex},Blue,line width=.7pt] (20,0)--(2,0);\\n' +
+#   '  \\\\fill[Blue] (20,0) circle (1.15);\\n' +
+#   '  \\\\node[font=\\\\scriptsize,align=center] at (33,12) {Kraft durch\\\\\\\\Motor $F_M$};\\n' +
+#   '  \\\\node[font=\\\\scriptsize,align=center] at (7,-12) {Reibungs-\\\\\\\\kraft};\\n' +
+#   '\\\\end{tikzpicture}\\n' +
+#   '\\\\end{tabularx}\\n' +
+#   '\\\\vspace{0.8mm}\\n' +
+#   '{\\\\centering\\\\color{Blue}\\\\bfseries Kräftegleichgewicht -- zwei Kräfte wirken auf denselben Körper\\\\par}\\n' +
+#   '\\\\vspace{1.4mm}\\n' +
+#   '\\n' +
+#   '\\\\begin{minipage}{\\\\linewidth}\\n' +
+#   '\\\\sectiontitle{4 · Wechselwirkung beim Crashtest}\\n' +
+#   '\\\\begin{tcolorbox}[colback=Sky,colframe=Line,arc=1.2mm,boxrule=.6pt,left=2mm,right=2mm,top=1mm,bottom=1mm]\\n' +
+#   '\\\\begin{tabularx}{\\\\linewidth}{@{}>{\\\\centering\\\\arraybackslash}p{82mm}@{\\\\hspace{3mm}}X@{}}\\n' +
+#   '\\\\begin{tikzpicture}[x=.75mm,y=.68mm,>=Latex]\\n' +
+#   '  % Das Auto ist in die Mauer gefahren: Die Front steht an der Wandfläche und\\n' +
+#   '  % ist eingedrückt, die Bruchlinien zeigen den Schaden.\\n' +
+#   '  \\\\draw[fill=Muted!25,draw=Navy,line width=.5pt] (4,-10) rectangle (16,10);\\n' +
+#   '  \\\\draw[fill=Sky,draw=Blue] (16,-6)--(20,-3)--(16.5,0)--(21,2.5)--(18,5)--(42,5)--(49,-6)--cycle;\\n' +
+#   '  \\\\draw[Blue] (27,-6) circle (2) (42,-6) circle (2);\\n' +
+#   '  \\\\draw[Crack,line width=.8pt,line cap=round,line join=round] (18.5,6)--(21.5,8)--(19.5,10.5);\\n' +
+#   '  \\\\draw[Crack,line width=.8pt,line cap=round,line join=round] (20.5,-7.5)--(17.5,-9)--(20.5,-11);\\n' +
+#   '  \\\\fill[Gold] (16,0) circle (1.5);\\n' +
+#   '  \\\\draw[-{Latex},Blue,line width=.9pt] (16,0)--(5,0);\\n' +
+#   '  \\\\draw[-{Latex},Blue,line width=.9pt] (16,0)--(29,0);\\n' +
+#   '  \\\\node[font=\\\\scriptsize,align=center] at (3,15) {Kraft des Autos\\\\\\\\auf die Wand};\\n' +
+#   '  \\\\node[font=\\\\scriptsize,align=center] at (33,15) {Kraft der Wand\\\\\\\\auf das Auto};\\n' +
+#   '  \\\\node[font=\\\\scriptsize,below] at (16,-13) {Kontaktpunkt};\\n' +
+#   '\\\\end{tikzpicture}\\n' +
+#   '& \\\\small Die beiden Kräfte sind gleich groß. Ihre Richtungen sind entgegengesetzt. Sie wirken auf verschiedene Körper. Deshalb bilden sie kein Kräftegleichgewicht an einem einzelnen Körper.\\n' +
+#   '\\\\end{tabularx}\\n' +
+#   '\\\\end{tcolorbox}\\n' +
+#   '\\\\vspace{0.8mm}\\n' +
+#   '{\\\\centering\\\\color{Blue}\\\\bfseries Wechselwirkung -- zwei Kräfte wirken auf unterschiedliche Körper\\\\par}\\n' +
+#   '\\\\end{minipage}\\n' +
+#   '\\n' +
+#   '\\\\vfill\\n' +
+#   '{\\\\color{Line}\\\\rule{\\\\linewidth}{0.5pt}}\\\\par\\\\vspace{1mm}\\n' +
+#   '\\\\begin{tabularx}{\\\\linewidth}{@{}Xr@{}}\\n' +
+#   '  {\\\\small\\\\color{Muted}Klasse 11 · Physik · Kreisbewegungen} &\\n' +
+#   '  {\\\\small\\\\color{Muted}Sicherungsblatt · Wiederholung 2}\\n' +
+#   '\\\\end{tabularx}\\n' +
+#   '\\n' +
+#   '\\\\end{document}\\n'
+#     at file:///C:/Users/ffran/Documents/git/unterricht/faecher/physik/klasse-11/1-Kreisbewegungen/tests/kraefte-bewegung-config.test.mjs:39:8
+#     at ModuleJob.run (node:internal/modules/esm/module_job:439:25)
+#     at async node:internal/modules/esm/loader:643:26
+#     at async asyncRunEntryPointWithESMLoader (node:internal/modules/run_main:101:5) {
+#   generatedMessage: true,
+#   code: 'ERR_ASSERTION',
+#   actual: '\\\\documentclass[10pt,a4paper]{article}\\n' +
+#     '\\n' +
+#     '\\\\usepackage[T1]{fontenc}\\n' +
+#     '\\\\usepackage[utf8]{inputenc}\\n' +
+#     '\\\\usepackage[ngerman]{babel}\\n' +
+#     '\\\\usepackage[a4paper,margin=14mm]{geometry}\\n' +
+#     '\\\\usepackage{lmodern}\\n' +
+#     '\\\\usepackage[table]{xcolor}\\n' +
+#     '\\\\usepackage{tabularx}\\n' +
+#     '\\\\usepackage{array}\\n' +
+#     '\\\\usepackage{amsmath}\\n' +
+#     '\\\\usepackage{microtype}\\n' +
+#     '\\\\usepackage[most]{tcolorbox}\\n' +
+#     '\\\\usepackage{tikz}\\n' +
+#     '\\\\usetikzlibrary{arrows.meta,calc,positioning}\\n' +
+#     '\\n' +
+#     '\\\\pagestyle{empty}\\n' +
+#     '\\\\setlength{\\\\parindent}{0pt}\\n' +
+#     '\\\\setlength{\\\\parskip}{0pt}\\n' +
+#     '\\\\renewcommand{\\\\familydefault}{\\\\sfdefault}\\n' +
+#     '\\\\renewcommand{\\\\arraystretch}{1.08}\\n' +
+#     '\\n' +
+#     '\\\\definecolor{Navy}{HTML}{17324D}\\n' +
+#     '\\\\definecolor{Blue}{HTML}{3B6EA5}\\n' +
+#     '\\\\definecolor{Sky}{HTML}{EAF3FA}\\n' +
+#     '\\\\definecolor{Mint}{HTML}{E8F5EF}\\n' +
+#     '\\\\definecolor{Gold}{HTML}{F3B33D}\\n' +
+#     '\\\\definecolor{Ink}{HTML}{1E2935}\\n' +
+#     '\\\\definecolor{Muted}{HTML}{617080}\\n' +
+#     '\\\\definecolor{Line}{HTML}{D8E1E8}\\n' +
+#     '\\\\definecolor{Crack}{HTML}{D2601A}\\n' +
+#     '\\n' +
+#     '\\\\color{Ink}\\n' +
+#     '\\\\newcommand{\\\\sectiontitle}[1]{%\\n' +
+#     '  \\\\vspace{0.45mm}{\\\\color{Blue}\\\\bfseries\\\\large \#1}\\\\par\\n' +
+#     '  \\\\vspace{0.15mm}{\\\\color{Blue}\\\\rule{\\\\linewidth}{0.7pt}}\\\\par\\n' +
+#     '  \\\\vspace{0.2mm}}\\n' +
+#     '\\\\newcommand{\\\\unit}[1]{\\\\,\\\\mathrm{\#1}}\\n' +
+#     '\\\\newcommand{\\\\accunit}{\\\\frac{\\\\mathrm{m}}{\\\\mathrm{s}^{2}}}\\n' +
+#     '\\\\newcommand{\\\\forcearrow}[3]{\\\\draw[-{Latex[length=2.1mm]},Blue,line width=0.9pt] \#1 -- node[fill=white,inner sep=1pt,font=\\\\scriptsize,align=center] {\#3} \#2;}\\n' +
+#     '\\n' +
+#     '\\\\begin{document}\\n' +
+#     '\\n' +
+#     '\\\\colorbox{Navy}{%\\n' +
+#     '  \\\\parbox{\\\\dimexpr\\\\linewidth-2\\\\fboxsep\\\\relax}{%\\n' +
+#     '    \\\\vspace{1.5mm}\\\\color{white}\\n' +
+#     '    \\\\begin{tabularx}{\\\\linewidth}{@{}Xr@{}}\\n' +
+#     '      {\\\\small\\\\bfseries PHYSIK · KLASSE 11} &\\n' +
+#     '      \\\\colorbox{Gold}{\\\\color{Navy}\\\\small\\\\bfseries\\\\strut LÖSUNGEN}\\n' +
+#     '    \\\\end{tabularx}\\n' +
+#     '    \\\\vspace{1mm}\\n' +
+#     '    {\\\\fontsize{18}{21}\\\\selectfont\\\\bfseries Wiederholung 2 -- Kräfte und Bewegung}\\\\par\\n' +
+#     '    \\\\vspace{0.3mm}{\\\\large Sicherungsblatt}\\\\vspace{1.2mm}\\n' +
+#     '  }%\\n' +
+#     '}\\n' +
+#     '\\n' +
+#     '\\\\vspace{1mm}\\n' +
+#     '\\\\colorbox{Sky}{\\\\parbox{\\\\dimexpr\\\\linewidth-2\\\\fboxsep\\\\relax}{%\\n' +
+#     '  \\\\vspace{0.6mm}\\\\textcolor{Blue}{\\\\bfseries Ziel:} Das newtonsche Grundgesetz anwenden und Kräftegleichgewicht von Wechselwirkung unterscheiden.\\\\vspace{0.6mm}}}\\n' +
+#     '\\n' +
+#     '\\\\sectiontitle{1 · Newtonsches Grundgesetz}\\n' +
+#     '\\\\begin{tcolorbox}[colback=Sky,colframe=Line,arc=1.2mm,boxrule=.6pt,left=2mm,right=2mm,top=.7mm,bottom=.7mm]\\n' +
+#     '{\\\\centering\\\\fontsize{19}{22}\\\\selectfont $\\\\vec F\\\\cdot\\\\Delta t=m\\\\cdot\\\\Delta\\\\vec v$\\\\par}\\n' +
+#     '\\\\begin{tabularx}{\\\\linewidth}{@{}>{\\\\bfseries}l X >{\\\\bfseries}l X@{}}\\n' +
+#     '  $\\\\vec F$ & resultierende Kraft, Einheit N & $\\\\Delta t$ & Zeitspanne, Einheit s\\\\\\\\\\n' +
+#     '  $m$ & Masse, Einheit kg & $\\\\Delta\\\\vec v$ & Geschwindigkeitsänderung, Einheit $\\\\frac{\\\\mathrm{m}}{\\\\mathrm{s}}$\\n' +
+#     '\\\\end{tabularx}\\n' +
+#     '\\\\vspace{0.5mm}\\n' +
+#     'Bei konstanter resultierender Kraft und konstanter Masse gilt: Kraftimpuls = Änderung des Bewegungsimpulses.\\\\\\\\\\n' +
+#     'Die Geschwindigkeitsänderung zeigt in Richtung der resultierenden Kraft.\\n' +
+#     '\\\\end{tcolorbox}\\n' +
+#     '\\\\vspace{0.3mm}\\n' +
+#     '\\\\begin{tabularx}{\\\\linewidth}{@{}X X@{}}\\n' +
+#     '\\\\colorbox{Mint}{\\\\parbox{\\\\dimexpr\\\\linewidth-2\\\\fboxsep\\\\relax}{\\\\centering Gleiche Masse: größere Kraft $\\\\to$ größere Beschleunigung.}} &\\n' +
+#     '\\\\colorbox{Mint}{\\\\parbox{\\\\dimexpr\\\\linewidth-2\\\\fboxsep\\\\relax}{\\\\centering Gleiche Kraft: kleinere Masse $\\\\to$ größere Beschleunigung.}}\\n' +
+#     '\\\\end{tabularx}\\n' +
+#     '\\n' +
+#     '\\\\sectiontitle{2 · Beschleunigung berechnen}\\n' +
+#     '\\\\begin{tcolorbox}[colback=white,colframe=Line,arc=1.2mm,boxrule=.65pt,left=2.2mm,right=2.2mm,top=1.1mm,bottom=1.1mm]\\n' +
+#     '\\\\textcolor{Blue}{\\\\bfseries Beispiel aus Teilaufgabe 3}\\\\par\\\\vspace{0.35mm}\\n' +
+#     '{\\\\renewcommand{\\\\arraystretch}{1.42}%\\n' +
+#     '\\\\begin{tabularx}{\\\\linewidth}{@{}>{\\\\bfseries}p{19mm}X@{}}\\n' +
+#     'Gegeben: & $m=100\\\\unit{g}=0{,}100\\\\unit{kg}$, $F=1{,}2\\\\unit{N}$\\\\\\\\\\n' +
+#     'Gesucht: & $a$ in $\\\\accunit$\\\\\\\\\\n' +
+#     'Ansatz: & $F=m\\\\cdot a$, also $a=\\\\dfrac{F}{m}$\\\\\\\\\\n' +
+#     'Rechnung: & $a=\\\\dfrac{1{,}2\\\\unit{N}}{0{,}100\\\\unit{kg}}=12\\\\,\\\\accunit$\\n' +
+#     '\\\\end{tabularx}}\\n' +
+#     '\\\\vspace{0.25mm}\\\\hfill\\\\textcolor{Blue}{\\\\bfseries Ergebnis: $a=12\\\\,\\\\accunit$ \\\\quad 2 gültige Ziffern}\\\\par\\n' +
+#     '\\\\vspace{0.25mm}{\\\\small $m=0{,}100\\\\unit{kg}$ sind drei gültige Ziffern. $F=1{,}2\\\\unit{N}$ sind zwei gültige Ziffern. Daher wird das Endergebnis mit zwei gültigen Ziffern angegeben.}\\n' +
+#     '\\\\end{tcolorbox}\\n' +
+#     '\\n' +
+#     '\\\\sectiontitle{3 · Kräftegleichgewicht}\\n' +
+#     '\\\\begin{tabularx}{\\\\linewidth}{@{}X@{\\\\hspace{1mm}}X@{\\\\hspace{1mm}}X@{}}\\n' +
+#     '\\\\centering\\\\textbf{Fallschirmspringer}\\\\par\\\\scriptsize Konstante Sinkgeschwindigkeit\\n' +
+#     '\\\\begin{tikzpicture}[x=.8mm,y=.62mm,>=Latex]\\n' +
+#     '  \\\\draw[fill=Sky,draw=Blue] (0,5) .. controls (10,18) and (30,18) .. (40,5) -- cycle;\\n' +
+#     '  % Springer: Hände an den Leinen, Kraftpfeile gleich lang (F_R = F_G).\\n' +
+#     '  \\\\draw[Line] (5,7)--(16.5,-1) (35,7)--(23.5,-1);\\n' +
+#     '  \\\\draw[Navy,line width=.6pt,line cap=round,line join=round]\\n' +
+#     '    (16.5,-1)--(20,-4.5)--(23.5,-1)\\n' +
+#     '    (18.3,-17)--(19.2,-10) (21.7,-17)--(20.8,-10);\\n' +
+#     '  \\\\draw[fill=Mint,draw=Navy,line width=.45pt,rounded corners=.5mm] (18.6,-3.6) rectangle (21.4,-10.4);\\n' +
+#     '  \\\\draw[fill=Mint,draw=Navy,line width=.45pt] (20,-0.4) circle[radius=1mm];\\n' +
+#     '  \\\\draw[-{Latex},Blue,line width=.7pt] (20,-6.5)--(20,17) node[above,font=\\\\scriptsize] {Luftwiderstandskraft $F_R$};\\n' +
+#     '  \\\\draw[-{Latex},Blue,line width=.7pt] (20,-6.5)--(20,-30) node[below,font=\\\\scriptsize] {Gewichtskraft $F_G$};\\n' +
+#     '  \\\\fill[Blue] (20,-6.5) circle[radius=.55mm];\\n' +
+#     '  \\\\node[font=\\\\scriptsize] at (20,-38) {$F_R=F_G$};\\n' +
+#     '\\\\end{tikzpicture}\\n' +
+#     '&\\\\centering\\\\textbf{Körper auf dem Tisch}\\\\par\\n' +
+#     '\\\\begin{tikzpicture}[x=.8mm,y=.62mm,>=Latex]\\n' +
+#     '  \\\\draw[fill=Sky,draw=Blue] (5,-10) rectangle (35,-7); \\\\draw[Blue] (10,-7)--(10,-13) (30,-7)--(30,-13); \\\\draw[fill=Mint,draw=Blue] (14,-7) rectangle (26,1);\\n' +
+#     '  % Gleich lange Pfeile; die Tischkraft greift leicht versetzt an der Auflagefläche an, damit sich die Pfeile nicht überdecken.\\n' +
+#     '  \\\\draw[-{Latex},Blue,line width=.7pt] (22,-7)--(22,15) node[above,font=\\\\scriptsize,align=center] {Kraft des Tisches\\\\\\\\auf den Körper};\\n' +
+#     '  \\\\draw[-{Latex},Crack,line width=.7pt] (20,-3)--(20,-25) node[below,font=\\\\scriptsize] {Gewichtskraft};\\n' +
+#     '  \\\\fill[Crack] (20,-3) circle[radius=.55mm];\\n' +
+#     '  \\\\fill[Blue] (22,-7) circle[radius=.55mm];\\n' +
+#     '\\\\end{tikzpicture}\\n' +
+#     '&\\\\centering\\\\textbf{Auto}\\\\par\\\\scriptsize fährt mit konstanter Geschwindigkeit\\\\par\\n' +
+#     '\\\\begin{tikzpicture}[x=.8mm,y=.62mm,>=Latex]\\n' +
+#     '  \\\\draw[fill=Sky,draw=Blue] (7,-4)--(12,4)--(30,4)--(36,-4)--cycle; \\\\draw[Blue] (13,-4) circle (2) (30,-4) circle (2);\\n' +
+#     '  \\\\draw[-{Latex},Blue,line width=.7pt] (20,0)--(38,0);\\n' +
+#     '  \\\\draw[-{Latex},Blue,line width=.7pt] (20,0)--(2,0);\\n' +
+#     '  \\\\fill[Blue] (20,0) circle (1.15);\\n' +
+#     '  \\\\node[font=\\\\scriptsize,align=center] at (33,12) {Kraft durch\\\\\\\\Motor $F_M$};\\n' +
+#     '  \\\\node[font=\\\\scriptsize,align=center] at (7,-12) {Reibungs-\\\\\\\\kraft};\\n' +
+#     '\\\\end{tikzpicture}\\n' +
+#     '\\\\end{tabularx}\\n' +
+#     '\\\\vspace{0.8mm}\\n' +
+#     '{\\\\centering\\\\color{Blue}\\\\bfseries Kräftegleichgewicht -- zwei Kräfte wirken auf denselben Körper\\\\par}\\n' +
+#     '\\\\vspace{1.4mm}\\n' +
+#     '\\n' +
+#     '\\\\begin{minipage}{\\\\linewidth}\\n' +
+#     '\\\\sectiontitle{4 · Wechselwirkung beim Crashtest}\\n' +
+#     '\\\\begin{tcolorbox}[colback=Sky,colframe=Line,arc=1.2mm,boxrule=.6pt,left=2mm,right=2mm,top=1mm,bottom=1mm]\\n' +
+#     '\\\\begin{tabularx}{\\\\linewidth}{@{}>{\\\\centering\\\\arraybackslash}p{82mm}@{\\\\hspace{3mm}}X@{}}\\n' +
+#     '\\\\begin{tikzpicture}[x=.75mm,y=.68mm,>=Latex]\\n' +
+#     '  % Das Auto ist in die Mauer gefahren: Die Front steht an der Wandfläche und\\n' +
+#     '  % ist eingedrückt, die Bruchlinien zeigen den Schaden.\\n' +
+#     '  \\\\draw[fill=Muted!25,draw=Navy,line width=.5pt] (4,-10) rectangle (16,10);\\n' +
+#     '  \\\\draw[fill=Sky,draw=Blue] (16,-6)--(20,-3)--(16.5,0)--(21,2.5)--(18,5)--(42,5)--(49,-6)--cycle;\\n' +
+#     '  \\\\draw[Blue] (27,-6) circle (2) (42,-6) circle (2);\\n' +
+#     '  \\\\draw[Crack,line width=.8pt,line cap=round,line join=round] (18.5,6)--(21.5,8)--(19.5,10.5);\\n' +
+#     '  \\\\draw[Crack,line width=.8pt,line cap=round,line join=round] (20.5,-7.5)--(17.5,-9)--(20.5,-11);\\n' +
+#     '  \\\\fill[Gold] (16,0) circle (1.5);\\n' +
+#     '  \\\\draw[-{Latex},Blue,line width=.9pt] (16,0)--(5,0);\\n' +
+#     '  \\\\draw[-{Latex},Blue,line width=.9pt] (16,0)--(29,0);\\n' +
+#     '  \\\\node[font=\\\\scriptsize,align=center] at (3,15) {Kraft des Autos\\\\\\\\auf die Wand};\\n' +
+#     '  \\\\node[font=\\\\scriptsize,align=center] at (33,15) {Kraft der Wand\\\\\\\\auf das Auto};\\n' +
+#     '  \\\\node[font=\\\\scriptsize,below] at (16,-13) {Kontaktpunkt};\\n' +
+#     '\\\\end{tikzpicture}\\n' +
+#     '& \\\\small Die beiden Kräfte sind gleich groß. Ihre Richtungen sind entgegengesetzt. Sie wirken auf verschiedene Körper. Deshalb bilden sie kein Kräftegleichgewicht an einem einzelnen Körper.\\n' +
+#     '\\\\end{tabularx}\\n' +
+#     '\\\\end{tcolorbox}\\n' +
+#     '\\\\vspace{0.8mm}\\n' +
+#     '{\\\\centering\\\\color{Blue}\\\\bfseries Wechselwirkung -- zwei Kräfte wirken auf unterschiedliche Körper\\\\par}\\n' +
+#     '\\\\end{minipage}\\n' +
+#     '\\n' +
+#     '\\\\vfill\\n' +
+#     '{\\\\color{Line}\\\\rule{\\\\linewidth}{0.5pt}}\\\\par\\\\vspace{1mm}\\n' +
+#     '\\\\begin{tabularx}{\\\\linewidth}{@{}Xr@{}}\\n' +
+#     '  {\\\\small\\\\color{Muted}Klasse 11 · Physik · Kreisbewegungen} &\\n' +
+#     '  {\\\\small\\\\color{Muted}Sicherungsblatt · Wiederholung 2}\\n' +
+#     '\\\\end{tabularx}\\n' +
+#     '\\n' +
+#     '\\\\end{document}\\n',
+#   expected: /\\\\fill\\[Gold\\] \\(20,-7\\) circle/,
+#   operator: 'match',
+#   diff: 'simple'
+# }
+# Node.js v24.18.0
+# Subtest: faecher\\physik\\klasse-11\\1-Kreisbewegungen\\tests\\kraefte-bewegung-config.test.mjs
+not ok 23 - faecher\\physik\\klasse-11\\1-Kreisbewegungen\\tests\\kraefte-bewegung-config.test.mjs
+  ---
+  duration_ms: 413.6062
+  type: 'test'
+  location: 'C:\\Users\\ffran\\Documents\\git\\unterricht\\faecher\\physik\\klasse-11\\1-Kreisbewegungen\\tests\\kraefte-bewegung-config.test.mjs:1:1'
+  failureType: 'testCodeFailure'
+  exitCode: 1
+  signal: ~
+  error: 'test failed'
+  code: 'ERR_TEST_FAILURE'
+  ...
+# Einheiten stehen als Bruch, Indizes sind tiefgestellt und beides kommt aus der gemeinsamen Komponente.
+# Subtest: faecher\\physik\\klasse-11\\1-Kreisbewegungen\\tests\\physics-notation.test.mjs
+ok 24 - faecher\\physik\\klasse-11\\1-Kreisbewegungen\\tests\\physics-notation.test.mjs
+  ---
+  duration_ms: 422.6024
+  type: 'test'
+  ...
+# Bei einem Skriptserverfehler bleiben Antwort und erneute Prüfung erhalten; die sichere Hervorhebung wird genutzt.
+# Subtest: faecher\\physik\\klasse-11\\1-Kreisbewegungen\\tests\\physics-semantic-task-error.test.mjs
+ok 25 - faecher\\physik\\klasse-11\\1-Kreisbewegungen\\tests\\physics-semantic-task-error.test.mjs
+  ---
+  duration_ms: 312.8497
+  type: 'test'
+  ...
+# Das Physikmanifest bündelt Index-, Koordinatensystem- und Ziffernregeln und ist zentral verlinkt.
+# Subtest: faecher\\physik\\klasse-11\\1-Kreisbewegungen\\tests\\physik-manifest.test.mjs
+ok 26 - faecher\\physik\\klasse-11\\1-Kreisbewegungen\\tests\\physik-manifest.test.mjs
+  ---
+  duration_ms: 341.6357
+  type: 'test'
+  ...
+# Die Vektorraster-Hilfsfunktionen begrenzen Endpunkte, überspringen den festen Ursprung und liefern Hitbox-Sektoren.
+# Subtest: faecher\\physik\\klasse-11\\1-Kreisbewegungen\\tests\\point-vector-grid.test.mjs
+ok 27 - faecher\\physik\\klasse-11\\1-Kreisbewegungen\\tests\\point-vector-grid.test.mjs
+  ---
+  duration_ms: 261.9354
+  type: 'test'
+  ...
+# Übungen zur Zentripetalkraft: Rückmeldelogik, Zuordnungen, Quiz, HTML und Menü sind konsistent konfiguriert.
+# Subtest: faecher\\physik\\klasse-11\\1-Kreisbewegungen\\tests\\uebungen-zentripetalkraft-config.test.mjs
+ok 28 - faecher\\physik\\klasse-11\\1-Kreisbewegungen\\tests\\uebungen-zentripetalkraft-config.test.mjs
+  ---
+  duration_ms: 304.744
+  type: 'test'
+  ...
+# Kreisbewegungsmodul:Formeln, Lückentext, Freitextfeedback und responsive Animationen sind konfiguriert.
+# Subtest: faecher\\physik\\klasse-11\\1-Kreisbewegungen\\tests\\winkelgeschwindigkeit-kreisbewegung-config.test.mjs
+ok 29 - faecher\\physik\\klasse-11\\1-Kreisbewegungen\\tests\\winkelgeschwindigkeit-kreisbewegung-config.test.mjs
+  ---
+  duration_ms: 287.4565
+  type: 'test'
+  ...
+# node:internal/modules/run_main:107
+#     triggerUncaughtException(
+#     ^
+# AssertionError [ERR_ASSERTION]: Expected values to be strictly deep-equal:
+# + actual - expected
+#   [
+# +   'Kreisbewegungen',
+#     'Entdecken',
+#     'Verstehen',
+#     'Verstehen',
+#     'Anwenden',
+#     'Sichern',
+#     at file:///C:/Users/ffran/Documents/git/unterricht/faecher/physik/klasse-11/1-Kreisbewegungen/tests/zentripetalkraft-config.test.mjs:18:8
+#     at ModuleJob.run (node:internal/modules/esm/module_job:439:25)
+#     at async node:internal/modules/esm/loader:643:26
+#     at async asyncRunEntryPointWithESMLoader (node:internal/modules/run_main:101:5) {
+#   generatedMessage: true,
+#   code: 'ERR_ASSERTION',
+#   actual: [
+#     'Kreisbewegungen',
+#     'Entdecken',
+#     'Verstehen',
+#     'Verstehen',
+#     'Anwenden',
+#     'Sichern',
+#     'Übertragen'
+#   ],
+#   expected: [
+#     'Entdecken',
+#     'Verstehen',
+#     'Verstehen',
+#     'Anwenden',
+#     'Sichern',
+#     'Übertragen'
+#   ],
+#   operator: 'deepStrictEqual',
+#   diff: 'simple'
+# }
+# Node.js v24.18.0
+# Subtest: faecher\\physik\\klasse-11\\1-Kreisbewegungen\\tests\\zentripetalkraft-config.test.mjs
+not ok 30 - faecher\\physik\\klasse-11\\1-Kreisbewegungen\\tests\\zentripetalkraft-config.test.mjs
+  ---
+  duration_ms: 240.4414
+  type: 'test'
+  location: 'C:\\Users\\ffran\\Documents\\git\\unterricht\\faecher\\physik\\klasse-11\\1-Kreisbewegungen\\tests\\zentripetalkraft-config.test.mjs:1:1'
+  failureType: 'testCodeFailure'
+  exitCode: 1
+  signal: ~
+  error: 'test failed'
+  code: 'ERR_TEST_FAILURE'
+  ...
+1..70
+# tests 70
+# suites 0
+# pass 67
+# fail 3
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 1485.0022

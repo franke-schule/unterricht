@@ -1443,66 +1443,21 @@ class Hund extends Tier {
   <script src="../../klasse-9/eingaben-speichern.js?v=20260924"></script>
   <script src="../../quiz-fragen-pruefen.js?v=20261006b"></script>
   <script>
-    const SCRIPT_SERVER_URL =
-      'https://script.google.com/macros/s/AKfycby8RWL6uYrKZyoJ6m2GRpWyRmXjwsdskyCiqzKpRhIK5-wrDl-9lWWk8CiAGaVMoy0x/exec';
-
-    const IDE_ID =
+    const SCRIPT_SERVER_URL = 'https://unterrichtkiichezbn4-ki-auswertung.functions.fnc.fr-par.scw.cloud/';
+const SCW_TASK_POINTS = {"10-5a":6,"10-5b":5,"10-5c":4};
+const IDE_ID =
       'Java10Aufgabe5Tiere';
-
-    const MAX_CODE_LENGTH =
+const MAX_CODE_LENGTH =
       12000;
+    function restoreCodeButton(pending) {
+      pending.button.disabled =
+        false;
 
-    const CODE_REQUEST_TIMEOUT =
-      120000;
-
-    const pendingCodeRequests =
-      new Map();
-
-
-    function getScriptServerUrl() {
-      return SCRIPT_SERVER_URL.trim();
+      pending.button.textContent =
+        pending.button.dataset.defaultLabel ||
+        'Code erneut prüfen';
     }
 
-
-    function isValidScriptServerUrl(url) {
-      try {
-        const parsedUrl =
-          new URL(url);
-
-        return (
-          parsedUrl.protocol === 'https:' &&
-          parsedUrl.hostname === 'script.google.com' &&
-          parsedUrl.pathname.endsWith('/exec') &&
-          !url.includes('DEINE_BEREITSTELLUNGS_ID')
-        );
-      } catch (error) {
-        return false;
-      }
-    }
-
-
-    function createRequestId() {
-      if (
-        window.crypto &&
-        typeof window.crypto.randomUUID === 'function'
-      ) {
-        return window.crypto.randomUUID();
-      }
-
-      return (
-        Date.now().toString(36) +
-        '-' +
-        Math.random().toString(36).substring(2)
-      );
-    }
-
-
-    /**
-     * Liest alle Dateien aus der Online-IDE, auch Dateien ohne Endung .java.
-     * Die IDE stellt diese Schnittstelle durch enableFileAccess bereit.
-     * Hauptprogramm.java steht zuerst, leere Dateien und die Anleitung der
-     * Aufgabe (Anleitung.md) entfallen.
-     */
     function collectProgramFiles() {
       const iframe =
         document.getElementById(
@@ -1613,11 +1568,6 @@ class Hund extends Tier {
       return entries;
     }
 
-
-    /**
-     * Fügt alle Dateien zu einem Text zusammen. Jede Datei beginnt mit
-     * einer Kommentarzeile mit ihrem Namen.
-     */
     function getAllProgramCode() {
       return collectProgramFiles()
         .map(
@@ -1633,11 +1583,6 @@ class Hund extends Tier {
         .join('\n\n');
     }
 
-
-    /**
-     * Entfernt Kommentare, damit Beispieltexte keine Meldung auslösen
-     * und Startkommentare nicht als Lösung zählen.
-     */
     function stripComments(code) {
       return code
         .replace(
@@ -1649,40 +1594,11 @@ class Hund extends Tier {
           ''
         );
     }
-
-
-    /**
-     * Startet die getrennte Codeauswertung per POST. Das lange Codefeld
-     * gelangt nicht in eine URL. Nur die kurze requestId wird danach per
-     * JSONP abgefragt.
-     */
-    function submitCode(taskId) {
-      const button =
-        document.getElementById(
-          'button-' + taskId
-        );
-
-      const resultBox =
-        document.getElementById(
-          'result-' + taskId
-        );
-
-      const scriptServerUrl =
-        getScriptServerUrl();
-
-      if (
-        !isValidScriptServerUrl(
-          scriptServerUrl
-        )
-      ) {
-        showError(
-          resultBox,
-          'Die Adresse des Auswertungsservers ist nicht gültig.'
-        );
-        return;
-      }
-
-      let entries;
+async function submitCode(taskId) {
+  const button = document.getElementById('button-' + taskId);
+  const resultBox = document.getElementById('result-' + taskId);
+  if (!button || !resultBox || button.disabled) return;
+        let entries;
 
       try {
         entries =
@@ -1785,477 +1701,21 @@ class Hund extends Tier {
         return;
       }
 
-      button.dataset.defaultLabel =
-        button.textContent.trim();
 
-      button.disabled =
-        true;
-
-      button.textContent =
-        'Programm wird geprüft …';
-
-      resultBox.hidden =
-        false;
-
-      resultBox.className =
-        'result';
-
-      resultBox.textContent =
-        'Der aktuelle Stand aller Dateien wird ausgewertet.';
-
-      const requestId =
-        createRequestId();
-
-      const transport =
-        createCodePostTransport(
-          scriptServerUrl,
-          requestId,
-          taskId,
-          code
-        );
-
-      const timeoutId =
-        window.setTimeout(
-          function() {
-            const pending =
-              pendingCodeRequests.get(
-                requestId
-              );
-
-            if (!pending) {
-              return;
-            }
-
-            restoreCodeButton(
-              pending
-            );
-
-            showError(
-              pending.resultBox,
-              'Der Auswertungsserver hat nicht rechtzeitig geantwortet. Bitte versuche es erneut.'
-            );
-
-            cleanupCodeRequest(
-              requestId
-            );
-          },
-          CODE_REQUEST_TIMEOUT
-        );
-
-      pendingCodeRequests.set(
-        requestId,
-        {
-          button:
-            button,
-          resultBox:
-            resultBox,
-          form:
-            transport.form,
-          iframe:
-            transport.iframe,
-          pollScript:
-            null,
-          pollTimer:
-            null,
-          timeoutId:
-            timeoutId
-        }
-      );
-
-      transport.form.submit();
-
-      scheduleCodeResultPoll(
-        requestId,
-        1800
-      );
-    }
-
-
-    function createCodePostTransport(
-      scriptServerUrl,
-      requestId,
-      taskId,
-      code
-    ) {
-      const iframeName =
-        'code-feedback-' +
-        requestId.replace(
-          /[^a-zA-Z0-9_-]/g,
-          ''
-        );
-
-      const iframe =
-        document.createElement(
-          'iframe'
-        );
-
-      iframe.name =
-        iframeName;
-
-      iframe.title =
-        'Unsichtbarer Übertragungsrahmen für die Codeauswertung';
-
-      iframe.setAttribute(
-        'aria-hidden',
-        'true'
-      );
-
-      iframe.style.display =
-        'none';
-
-      const form =
-        document.createElement(
-          'form'
-        );
-
-      form.method =
-        'POST';
-
-      form.action =
-        scriptServerUrl;
-
-      form.target =
-        iframeName;
-
-      form.acceptCharset =
-        'UTF-8';
-
-      form.style.display =
-        'none';
-
-      appendHiddenField(
-        form,
-        'requestType',
-        'code'
-      );
-
-      appendHiddenField(
-        form,
-        'requestId',
-        requestId
-      );
-
-      appendHiddenField(
-        form,
-        'taskId',
-        taskId
-      );
-
-      appendHiddenField(
-        form,
-        'code',
-        code
-      );
-
-      document.body.appendChild(
-        iframe
-      );
-
-      document.body.appendChild(
-        form
-      );
-
-      return {
-        iframe:
-          iframe,
-        form:
-          form
-      };
-    }
-
-
-    function appendHiddenField(
-      form,
-      name,
-      value
-    ) {
-      const input =
-        document.createElement(
-          'input'
-        );
-
-      input.type =
-        'hidden';
-
-      input.name =
-        name;
-
-      input.value =
-        String(value);
-
-      form.appendChild(
-        input
-      );
-    }
-
-
-    function scheduleCodeResultPoll(
-      requestId,
-      delay
-    ) {
-      const pending =
-        pendingCodeRequests.get(
-          requestId
-        );
-
-      if (!pending) {
-        return;
-      }
-
-      window.clearTimeout(
-        pending.pollTimer
-      );
-
-      pending.pollTimer =
-        window.setTimeout(
-          function() {
-            pollCodeResult(
-              requestId
-            );
-          },
-          delay
-        );
-    }
-
-
-    function pollCodeResult(requestId) {
-      const pending =
-        pendingCodeRequests.get(
-          requestId
-        );
-
-      if (!pending) {
-        return;
-      }
-
-      if (
-        pending.pollScript &&
-        pending.pollScript.parentNode
-      ) {
-        pending.pollScript.parentNode.removeChild(
-          pending.pollScript
-        );
-      }
-
-      const script =
-        document.createElement(
-          'script'
-        );
-
-      script.async =
-        true;
-
-      script.src =
-        createJsonpUrl(
-          getScriptServerUrl(),
-          {
-            callback:
-              '__handleCodeEvaluationResult',
-            requestType:
-              'code-result',
-            requestId:
-              requestId,
-            cacheBust:
-              Date.now()
-          }
-        );
-
-      script.onerror =
-        function() {
-          const current =
-            pendingCodeRequests.get(
-              requestId
-            );
-
-          if (!current) {
-            return;
-          }
-
-          scheduleCodeResultPoll(
-            requestId,
-            3000
-          );
-        };
-
-      pending.pollScript =
-        script;
-
-      document.body.appendChild(
-        script
-      );
-    }
-
-
-    function createJsonpUrl(
-      baseUrl,
-      parameters
-    ) {
-      const url =
-        new URL(
-          baseUrl
-        );
-
-      Object.keys(
-        parameters
-      ).forEach(
-        function(key) {
-          url.searchParams.set(
-            key,
-            String(parameters[key])
-          );
-        }
-      );
-
-      return url.toString();
-    }
-
-
-    window.__handleCodeEvaluationResult =
-      function(message) {
-        if (
-          !message ||
-          !message.requestId
-        ) {
-          return;
-        }
-
-        const pending =
-          pendingCodeRequests.get(
-            message.requestId
-          );
-
-        if (!pending) {
-          return;
-        }
-
-        if (
-          message.type !==
-          'GEMINI_CODE_EVALUATION_RESULT'
-        ) {
-          restoreCodeButton(
-            pending
-          );
-
-          showError(
-            pending.resultBox,
-            'Der Auswertungsserver verwendet noch eine ältere Version ohne Codekorrektur. Bitte aktualisiere die Apps-Script-Bereitstellung und versuche es danach erneut.'
-          );
-
-          cleanupCodeRequest(
-            message.requestId
-          );
-
-          return;
-        }
-
-        if (
-          pending.pollScript &&
-          pending.pollScript.parentNode
-        ) {
-          pending.pollScript.parentNode.removeChild(
-            pending.pollScript
-          );
-
-          pending.pollScript =
-            null;
-        }
-
-        if (message.pending) {
-          pending.resultBox.textContent =
-            'Der Programmcode wird noch ausgewertet.';
-
-          scheduleCodeResultPoll(
-            message.requestId,
-            2200
-          );
-
-          return;
-        }
-
-        restoreCodeButton(
-          pending
-        );
-
-        if (
-          !message.result ||
-          message.result.ok !== true
-        ) {
-          showError(
-            pending.resultBox,
-            message.result &&
-            message.result.message
-              ? message.result.message
-              : 'Die Codeauswertung konnte nicht abgeschlossen werden.'
-          );
-
-          cleanupCodeRequest(
-            message.requestId
-          );
-
-          return;
-        }
-
-        showEvaluation(
-          pending.resultBox,
-          message.result
-        );
-
-        cleanupCodeRequest(
-          message.requestId
-        );
-      };
-
-
-    function restoreCodeButton(pending) {
-      pending.button.disabled =
-        false;
-
-      pending.button.textContent =
-        pending.button.dataset.defaultLabel ||
-        'Code erneut prüfen';
-    }
-
-
-    function cleanupCodeRequest(requestId) {
-      const pending =
-        pendingCodeRequests.get(
-          requestId
-        );
-
-      if (!pending) {
-        return;
-      }
-
-      window.clearTimeout(
-        pending.timeoutId
-      );
-
-      window.clearTimeout(
-        pending.pollTimer
-      );
-
-      [
-        pending.pollScript,
-        pending.form,
-        pending.iframe
-      ].forEach(
-        function(element) {
-          if (
-            element &&
-            element.parentNode
-          ) {
-            element.parentNode.removeChild(
-              element
-            );
-          }
-        }
-      );
-
-      pendingCodeRequests.delete(
-        requestId
-      );
-    }
-
+  button.dataset.defaultLabel = button.textContent.trim();
+  button.disabled = true;
+  button.textContent = 'Programm wird geprüft …';
+  resultBox.hidden = false;
+  resultBox.className = 'result';
+  resultBox.textContent = 'Der aktuelle Programmcode wird ausgewertet.';
+  try {
+    const { evaluateCodeAnswer } = await import('../../klasse-11/1-Kuenstliche-Intelligenz/perzeptron/ui/semantic-answer.mjs?v=20261010-scaleway');
+    const result = await evaluateCodeAnswer({ serverUrl: SCRIPT_SERVER_URL, taskId, code,
+      expectedMaxPoints: SCW_TASK_POINTS[taskId] });
+    showEvaluation(resultBox, result);
+  } catch (error) { showError(resultBox, error.message || 'Die Auswertung konnte nicht abgeschlossen werden.'); }
+  finally { restoreCodeButton({ button }); }
+}
 
     function showEvaluation(
       resultBox,

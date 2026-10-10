@@ -9,12 +9,12 @@ import {
   moveSubtree,
   setNodeAtPath,
 } from "../logic/decision-tree.mjs";
-import { evaluateSemanticAnswer } from "./semantic-answer.mjs";
+import { evaluateSemanticAnswer } from "./semantic-answer.mjs?v=20261010-scaleway";
 import { renderTreeEdges } from "./tree-edges.mjs?v=20260820d";
 
 const STORAGE_KEY = "informatik11-fish-tree-task3-v1";
 const SOLUTION_CODE = "M2HV-DNMF";
-const SCRIPT_SERVER_URL = "https://script.google.com/macros/s/AKfycby8RWL6uYrKZyoJ6m2GRpWyRmXjwsdskyCiqzKpRhIK5-wrDl-9lWWk8CiAGaVMoy0x/exec";
+const SCRIPT_SERVER_URL = "https://unterrichtkiichezbn4-ki-auswertung.functions.fnc.fr-par.scw.cloud/";
 const SEMANTIC_TASK_ID = "11-3a-f";
 const PALETTE_MIME = "application/x-fish-tree-palette";
 const TREE_MIME = "application/x-fish-tree-node";

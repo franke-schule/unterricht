@@ -1,0 +1,17 @@
+[
+  {
+    "file": "faecher/informatik/klasse-11/1-Kuenstliche-Intelligenz/perzeptron/tests/task5-contract.test.mjs",
+    "failedBeforeMigration": true,
+    "reason": "CSV-Kopfzeile Zahnlaenge/Augengroesse statt Umlauten"
+  },
+  {
+    "file": "faecher/physik/klasse-11/1-Kreisbewegungen/tests/kraefte-bewegung-config.test.mjs",
+    "failedBeforeMigration": true,
+    "reason": "Veraltete Koordinatenprüfung der Sicherungsblatt-Grafik"
+  },
+  {
+    "file": "faecher/physik/klasse-11/1-Kreisbewegungen/tests/zentripetalkraft-config.test.mjs",
+    "failedBeforeMigration": true,
+    "reason": "Veralteter Filter der Eyebrow-Überschrift"
+  }
+]

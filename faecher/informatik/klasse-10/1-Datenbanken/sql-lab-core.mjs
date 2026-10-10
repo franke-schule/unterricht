@@ -265,12 +265,8 @@ export function explainSqlError(error) {
 }
 
 export function isValidScriptServerUrl(url) {
-  try {
-    const parsed = new URL(String(url || '').trim());
-    return parsed.protocol === 'https:' && parsed.hostname === 'script.google.com' && parsed.pathname.endsWith('/exec');
-  } catch {
-    return false;
-  }
+  try { return new URL(String(url || '').trim()).href === 'https://unterrichtkiichezbn4-ki-auswertung.functions.fnc.fr-par.scw.cloud/'; }
+  catch { return false; }
 }
 
 export function classifyDescriptionResult(result) {

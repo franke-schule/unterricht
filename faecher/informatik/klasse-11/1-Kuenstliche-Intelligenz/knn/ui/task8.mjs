@@ -1,5 +1,5 @@
 import { normaliseNumber } from '../../perzeptron/logic/perceptron.mjs';
-import { evaluateSemanticAnswer } from '../../perzeptron/ui/semantic-answer.mjs';
+import { evaluateSemanticAnswer } from '../../perzeptron/ui/semantic-answer.mjs?v=20261010-scaleway';
 import { SHIRT_CLASSES, SHIRT_SYMBOLS, SHIRT_TRAINING } from '../data/shirts.mjs';
 import {
   EXPECTED, HEFT_VALIDATION, HOUSES, HOUSE_AREAS, HOUSE_K, LARGE_K_PERSONS, OPEN_CELLS, OUTLIER_POINT, REGRESSION,
@@ -10,7 +10,7 @@ import { classify } from '../logic/knn.mjs';
 import { setupCardSlots } from './card-slots.mjs';
 import { renderLegend, renderShirtPlot } from './knn-plot.mjs?v=20261004a';
 
-const SERVER_URL = 'https://script.google.com/macros/s/AKfycby8RWL6uYrKZyoJ6m2GRpWyRmXjwsdskyCiqzKpRhIK5-wrDl-9lWWk8CiAGaVMoy0x/exec';
+const SERVER_URL = 'https://unterrichtkiichezbn4-ki-auswertung.functions.fnc.fr-par.scw.cloud/';
 const TASK_ID = '11-8-1';
 const STORAGE_KEY = 'informatik11-knn-aufgabe8-v1';
 const STEPS = ['training', 'kvalue', 'validation', 'testing', 'data', 'regression', 'finish'];

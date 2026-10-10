@@ -1,7 +1,7 @@
-import { evaluateSemanticAnswer } from "../../../../informatik/klasse-11/1-Kuenstliche-Intelligenz/perzeptron/ui/semantic-answer.mjs";
+import { evaluateSemanticAnswer } from "../../../../informatik/klasse-11/1-Kuenstliche-Intelligenz/perzeptron/ui/semantic-answer.mjs?v=20261010-scaleway";
 
 const MAX_LENGTH = 3000;
-const SCRIPT_SERVER_URL = "https://script.google.com/macros/s/AKfycby8RWL6uYrKZyoJ6m2GRpWyRmXjwsdskyCiqzKpRhIK5-wrDl-9lWWk8CiAGaVMoy0x/exec";
+const SCRIPT_SERVER_URL = "https://unterrichtkiichezbn4-ki-auswertung.functions.fnc.fr-par.scw.cloud/";
 
 function appendFeedbackList(container, title, items, fallback) {
   const heading = document.createElement("h4");
@@ -39,7 +39,7 @@ function renderSemanticResult(container, result, feedbackBuilder) {
 }
 
 /**
- * Aktiviert eine Freitextkarte mit der vorhandenen Apps-Script-/JSONP-Architektur.
+ * Aktiviert eine Freitextkarte mit der vorhandenen POST-/JSON-Anbindung an Scaleway.
  * Die Aufgabenkennung und der Erwartungshorizont liegen ausschließlich im
  * Skriptserver. Die Auswertung startet nur über den Prüfbutton.
  */

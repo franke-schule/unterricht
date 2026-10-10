@@ -1,0 +1,310 @@
+{
+  "createdAt": "2026-10-10T17:57:08.092Z",
+  "repoRoot": "C:\\Users\\ffran\\Documents\\git\\unterricht",
+  "backupRoot": "C:\\Users\\ffran\\Documents\\Scaleway-Sicherungen\\website-vor-wechsel-2026-10-10T17-57-07-765Z",
+  "baselineCommit": "8f16a67dc2ecd59f7995c5b2bf8461b92470d5c3",
+  "endpoint": "https://unterrichtkiichezbn4-ki-auswertung.functions.fnc.fr-par.scw.cloud/",
+  "deployed": false,
+  "manualTests13And14": "Auf ausdrücklichen Benutzerwunsch übersprungen",
+  "files": [
+    {
+      "file": "faecher/informatik/klasse-10/1-Datenbanken/aufgabe1-quiz.js",
+      "beforeSha256": "c3aef2dee8ab0a9c6596fbcfc466c336259ae9a4675c4acad5cef3f9ddb9d903",
+      "afterSha256": "f318fe9dbd912685458280ae6bfb8bf3078d40d209a7b8803413ed20234b5fc3"
+    },
+    {
+      "file": "faecher/informatik/klasse-10/1-Datenbanken/aufgabe2-quiz.js",
+      "beforeSha256": "a36c7c2659ae8596aeb493c520c42e12c305c893f912a451f3f69e3e6a8e6d4f",
+      "afterSha256": "a65f73eec175885f10f511af71dd5e4d49d421f39f358c2aa217450de95d36f1"
+    },
+    {
+      "file": "faecher/informatik/klasse-10/1-Datenbanken/aufgabe3-quiz.js",
+      "beforeSha256": "0c428d0997707ea6a6d43a7d33f1563c9ca87e02f1888d7b3206861b93db925a",
+      "afterSha256": "332b27e553df6d9fa05ba196a6a2444d76e0c4067f8a24a47149cc5d6a489a88"
+    },
+    {
+      "file": "faecher/informatik/klasse-10/1-Datenbanken/sql-lab.js",
+      "beforeSha256": "4280fabd0f4d1143b013ad41f0d33cf8e0475e917245dbb08cdf61c975525842",
+      "afterSha256": "4f4fe06b6a6d818d749db3574ff04333e7633d01594bcc5d7b15480effcbbb9e"
+    },
+    {
+      "file": "faecher/informatik/klasse-10/2-Modellierung-und-Programmierung-Online-IDE/aufgabe1.html",
+      "beforeSha256": "e23dfc1ce56ff5424f89e4717a9242fd0dd210fd759ef20f994e11b3f83e7254",
+      "afterSha256": "f92ec83bfc2f6e396f6acceb9f4174a42cb300d513f8113e3ed9c7327f0400c0"
+    },
+    {
+      "file": "faecher/informatik/klasse-10/2-Modellierung-und-Programmierung-Online-IDE/aufgabe2.html",
+      "beforeSha256": "8d532e23715a55ebe1d30ce11995588f11ead34178148380d611aa7e95668a11",
+      "afterSha256": "6460f58ee39fa1424dcf1efee65fa66c383e76c24648e9b114a3c6fc5cc51969"
+    },
+    {
+      "file": "faecher/informatik/klasse-10/2-Modellierung-und-Programmierung-Online-IDE/aufgabe3.html",
+      "beforeSha256": "fd59f2639c01bd341c2a4acb4010faedefa0ef9f7f8746b98e44ab25640dc273",
+      "afterSha256": "666548d132010d02d99dc11f81a6567a54e6155234e63f9a5d6eaf5e733ddb0c"
+    },
+    {
+      "file": "faecher/informatik/klasse-10/2-Modellierung-und-Programmierung-Online-IDE/aufgabe4.html",
+      "beforeSha256": "5aef588f0d956fa1687e703caf0f00a5760b4ae290b58ebbc7ed94c76d6f96d3",
+      "afterSha256": "108468ac142691ef16d36d9ad1aca7697a2fd80ff034e55068b316120260ad98"
+    },
+    {
+      "file": "faecher/informatik/klasse-10/2-Modellierung-und-Programmierung-Online-IDE/aufgabe5.html",
+      "beforeSha256": "1bad10bcd787efacf903a1b6ddd0bac374e576140f37e73036314fd7ff542ccc",
+      "afterSha256": "da543e0dd2c812389a4762598aab301fe1b28e3d6eed9b5f601d6e3de0d9f0d8"
+    },
+    {
+      "file": "faecher/informatik/klasse-10/2-Modellierung-und-Programmierung-Online-IDE/aufgabe6.html",
+      "beforeSha256": "8357fb25855cbe32d19ffc07b88a80587ee5b912ab0cbf17df31e05a896b40ae",
+      "afterSha256": "cd5543bbf5d0bffc5057f21f5fc9ea5b652bcb58f8756eb54269166a4999f507"
+    },
+    {
+      "file": "faecher/informatik/klasse-11/1-Kuenstliche-Intelligenz/aufgabe3a-quiz.mjs",
+      "beforeSha256": "ef0cac565651e7dde58402a11cedb443614b45316d191f675bcd4f651a8f74c9",
+      "afterSha256": "93b968792504b5a4b49b493de2e1f1fcd5df00689b910caa5a5d1f739f4df809"
+    },
+    {
+      "file": "faecher/informatik/klasse-11/1-Kuenstliche-Intelligenz/aufgabe5-quiz.mjs",
+      "beforeSha256": "9ed01ce324e32bcc5019117f7308945b3ea1cb3544816d9de4a311da044e2cb2",
+      "afterSha256": "4d535ec3d883dec4dc8f12b73069f45e895df295b7737144c0ac630ab46dcd31"
+    },
+    {
+      "file": "faecher/informatik/klasse-11/1-Kuenstliche-Intelligenz/entscheidungbaeume/ui/task3.mjs",
+      "beforeSha256": "a463d92aeadd6cd284706be1fc8459383e340b06b8a92fcf3b52cb5ad17dd0ee",
+      "afterSha256": "62bf431ae399b2ae76db037fb887b219f1d6838402e0437b7766cb18eaba9d05"
+    },
+    {
+      "file": "faecher/informatik/klasse-11/1-Kuenstliche-Intelligenz/entscheidungbaeume/ui/task4.mjs",
+      "beforeSha256": "4a84687a6af8f09aa7e937d0ab089a0ade087128b3b5135cf28495ae22f71b0c",
+      "afterSha256": "7ef9fa735eca1acb84a0f12a67667149308e3b524ea90b69ad4141ed72bff4a6"
+    },
+    {
+      "file": "faecher/informatik/klasse-11/1-Kuenstliche-Intelligenz/knn/ui/task7.mjs",
+      "beforeSha256": "fceefa89b3005ec08ec988fa203620ec3d337d299347cf1692bb1c78a31ae78c",
+      "afterSha256": "52914a1517934ec043c3e12311e65ea8c1060a989d8392f0dd732b4ce9860b4c"
+    },
+    {
+      "file": "faecher/informatik/klasse-11/1-Kuenstliche-Intelligenz/knn/ui/task8.mjs",
+      "beforeSha256": "32050e9f1691900f5b43ccb00ee80f6a27edc864debcb41eb04d67c1a6290928",
+      "afterSha256": "6453cb65cafac56a2aead2d6d24e83efc1472128e37c1257045e1f1dc1ae2694"
+    },
+    {
+      "file": "faecher/informatik/klasse-11/1-Kuenstliche-Intelligenz/perzeptron/ui/task5.mjs",
+      "beforeSha256": "64a622b1489e41bca7f8c5d9e57b857f05a78a2dc46791243eeef0620079ee65",
+      "afterSha256": "65b41f67aafbde0d1895351ae6352610cd433b28a370e7b7bfae331904436449"
+    },
+    {
+      "file": "faecher/informatik/klasse-11/1-Kuenstliche-Intelligenz/perzeptron/ui/task6.mjs",
+      "beforeSha256": "46bbf97a6ff2144dbed27c942a76eaed24801f21c4a6397d23b4759e4cba1a9b",
+      "afterSha256": "c00264942c7b25201d6e52ca55b83b46ddf1b4f8dd98b7a82cda4580dfbd3e72"
+    },
+    {
+      "file": "faecher/informatik/klasse-11/2-Codierung-und-Verschluesselung/binaer/ui/task1.mjs",
+      "beforeSha256": "0047dfdc85b2742b0274325123ef4561c754d63d00eb3d40135bc2400752530d",
+      "afterSha256": "82b4b7a4c2ac7bb30191d3382f66728d3f5052a7cd80f120807979263d6e3a4f"
+    },
+    {
+      "file": "faecher/informatik/klasse-9/1-Tabellenkalkulation/aufgabe5a.html",
+      "beforeSha256": "3be470030f51ab0c1529d68c8342bd4b1ed871fa13ad0b306a436857c949f117",
+      "afterSha256": "4a379254c1b9422a329b095d79d6d5d74d3708291a76f0d4bbb5938edf548438"
+    },
+    {
+      "file": "faecher/informatik/klasse-9/1-Tabellenkalkulation/aufgabe5b.html",
+      "beforeSha256": "f2425f7a1335bf990c238100649d7df8997d5cd26ef9b3df70ee93791bec99cf",
+      "afterSha256": "49ba164eae6a6f8aa5a950dcc0206b182948c9c4fada6c36fda0555e8b7be96a"
+    },
+    {
+      "file": "faecher/informatik/klasse-9/3-Modellierung-und-Programmierung-Online-IDE/aufgabe1.html",
+      "beforeSha256": "8ce59a8cdf3356766625a3d4e35f345e90a80bb44a1839551c47989e917e704c",
+      "afterSha256": "1ddad308954ac0de1c01a58f5e3148c2ba9fd3314855bad7a0ba8dba5ce4182a"
+    },
+    {
+      "file": "faecher/informatik/klasse-9/3-Modellierung-und-Programmierung-Online-IDE/aufgabe2.html",
+      "beforeSha256": "112d239bced3cfe23f06c78f333c58bdc5622b89aabdc0bf75bc01dbe9507f4f",
+      "afterSha256": "444d18e64785871e38d7e5726b342b8d038fd5b1780f1e2d914c73d3413e8d09"
+    },
+    {
+      "file": "faecher/physik/klasse-11/1-Kreisbewegungen/aufgabe3-quiz.mjs",
+      "beforeSha256": "5789bbd0b2ad5bf41ff7824db8cd8e2fbe881aa985548f1ec18146997b3b1109",
+      "afterSha256": "5031bbf237c71691d7f705414afb916ffe0ac5274a256e7bfdb84bf8ee19f979"
+    },
+    {
+      "file": "faecher/physik/klasse-11/1-Kreisbewegungen/aufgabe4-quiz.mjs",
+      "beforeSha256": "6003c014243e609ffa936cc952806ead4c42493d3dda7f54dcfc387b037142ee",
+      "afterSha256": "f9a7f4288a10f7686d6e5fffb67881d875552acc77dd21b341f5b9ea1e765f19"
+    },
+    {
+      "file": "faecher/physik/klasse-11/1-Kreisbewegungen/aufgabe4-und-experiment-quiz.mjs",
+      "beforeSha256": "0773282949af36f4df5f319e0a05e1e27c9ee4ce602f2585bbfcb4c239d9d02c",
+      "afterSha256": "c2a51a3362704d7e7b3520709191fc234bd1e63148b527d9d1ae80f5c056e969"
+    },
+    {
+      "file": "faecher/physik/klasse-11/1-Kreisbewegungen/bewegung-koerpern.mjs",
+      "beforeSha256": "706aadc9e5a9c9283dd4a1b53be87c8550d8743fd192a99f29e74a30be46777f",
+      "afterSha256": "9456a7597d16b9487bdb5df71334a98825bd7dd5596751e4f746258a27cfd53f"
+    },
+    {
+      "file": "faecher/physik/klasse-11/1-Kreisbewegungen/components/physics-semantic-task.mjs",
+      "beforeSha256": "53f0293984f4240e91046548f087c69cf8edeb2b3c4f3d01dbaa571d6a3a0acf",
+      "afterSha256": "0d8ccce16d67f82e686af343d2f62dc53881a4c6fc593754bf9ed123d65a2172"
+    },
+    {
+      "file": "faecher/physik/klasse-11/1-Kreisbewegungen/kettenkarussell.mjs",
+      "beforeSha256": "7d6015b7df7b0ce83fbd7674768194aa1dc1b0c9f04ec7aca212e77e8bc3fce9",
+      "afterSha256": "4d0d4e37c7474ac63d7c0ceafdf767825eee626a76890eeac84c7c76310a344b"
+    },
+    {
+      "file": "faecher/physik/klasse-11/1-Kreisbewegungen/kraefte-bewegung.mjs",
+      "beforeSha256": "d59ce6ed3d2aea09dc33ad884771eade19142d0b5edccb0ff242c5e4c8459316",
+      "afterSha256": "1d3bdfa8a5452fe6c1b86c7c80dd0e16c43ebdd87ea35d3e9b201de70e01cac9"
+    },
+    {
+      "file": "faecher/physik/klasse-11/1-Kreisbewegungen/wdh2-quiz.mjs",
+      "beforeSha256": "ca9a153e51c7ff64bf5062a84ba1d2f31ac4a7fb3d8cada7dda3b448ebe3fbb7",
+      "afterSha256": "4b75883ec3da0b0145fdbf1c187a248832a65894167776cee66a0aeeefbf3c4f"
+    },
+    {
+      "file": "faecher/physik/klasse-11/1-Kreisbewegungen/winkelgeschwindigkeit-kreisbewegung.mjs",
+      "beforeSha256": "b6492b4c954df6faf5458db19c14bb4c17e9c9028d2981408324fa054bc97d98",
+      "afterSha256": "353da18c8ea5ce59d6d21aa466aafab260bbe0ecace5d7ce7727f77581deaa79"
+    },
+    {
+      "file": "faecher/informatik/klasse-11/1-Kuenstliche-Intelligenz/perzeptron/ui/semantic-answer.mjs",
+      "beforeSha256": "b84ca695b3e2bb1fd7c05dcfcf3e6c75ff64d11d89ad0ec3a91d98693e351cdb",
+      "afterSha256": "5d0a451d76e9dba17a793a24640ecafefaa846f5331c9f952036e790ad4181ff"
+    },
+    {
+      "file": "faecher/informatik/klasse-11/1-Kuenstliche-Intelligenz/entscheidungbaeume/ui/semantic-answer.mjs",
+      "beforeSha256": "fce977eafd0ff45d160695f9e4045e96537a1a07c267c750bddf3de7435217db",
+      "afterSha256": "be931739d6689a8cc8a3838014a1f0449550016e99c733482703a5e63d82b370"
+    },
+    {
+      "file": "faecher/informatik/klasse-10/1-Datenbanken/sql-lab-core.mjs",
+      "beforeSha256": "0f0c692e1b1157ba8b047c39459f6204e00956ee62b006693264b6c7da51aef4",
+      "afterSha256": "9737505f54c7eb17fbe69269ff524b0d47062f9195a2158fd807c7e7dfe65ec4"
+    }
+  ],
+  "testFiles": [
+    {
+      "file": "apps-script/tests/aufgabe2-client.test.js",
+      "category": "test",
+      "beforeSha256": "0b172f5f084536cd22b4924fc0582f33a5410d91619d24aca15862b5b6b51022",
+      "afterSha256": "876b1b87fc1c0873e8cdc218c0ca5efba13fa709bc95fcd2fb81f36d0f0f6546"
+    },
+    {
+      "file": "apps-script/tests/aufgabe5-client.test.js",
+      "category": "test",
+      "beforeSha256": "31ac10838693a589d6dede89b9d5d1e0c5ddb20fc4006e148efcc26e7b934cce",
+      "afterSha256": "c3ada84bf3c790f2bc8ee81a7e518626cdabc390a6109a28bb7c81f89f569b42"
+    },
+    {
+      "file": "faecher/informatik/klasse-10/1-Datenbanken/tests/sql-lab-core.test.mjs",
+      "category": "test",
+      "beforeSha256": "69f2443cba377afc626c663c6c47a789d7f2bfb7444a4b6c770717115be5ae49",
+      "afterSha256": "4d0e052d772fdebd9f3480cab1c8ea552429fc66aebf2490429c430e3b9410fc"
+    },
+    {
+      "file": "faecher/informatik/klasse-11/1-Kuenstliche-Intelligenz/perzeptron/tests/semantic-answer.test.mjs",
+      "category": "test",
+      "beforeSha256": "8d4b9570f1484d2cf394a352406a0c892aafa69efa3c5fa4fcd4f017c58245af",
+      "afterSha256": "d35dfda12da5cd0b31cb48c0cc9e3c21a5f50fb8e9f1a0b30d7faa07ecc03b3d"
+    },
+    {
+      "file": "faecher/informatik/klasse-11/1-Kuenstliche-Intelligenz/entscheidungbaeume/tests/task3.test.mjs",
+      "category": "test",
+      "beforeSha256": "9f7cfa2db293b836aa039d28c0d997ad769d83b53da4c9b3a9412bab32fe0608",
+      "afterSha256": "d7634d13dee6780ef723983dc0ed399a20edc7038bd7b0559c3e6a24e1e9beb3"
+    }
+  ],
+  "verifiedAt": "2026-10-10T18:18:08.386Z",
+  "validation": {
+    "completedAt": "2026-10-10T18:18:25.081Z",
+    "sourceAndBackupsVerified": true,
+    "server": {
+      "files": 23,
+      "tests": 44,
+      "pass": 44,
+      "fail": 0
+    },
+    "allTaskContracts": {
+      "tasks": 67,
+      "providerSimulated": true
+    },
+    "website": {
+      "files": 30,
+      "tests": 70,
+      "pass": 67,
+      "fail": 3
+    },
+    "preExistingFailures": [
+      {
+        "file": "faecher/informatik/klasse-11/1-Kuenstliche-Intelligenz/perzeptron/tests/task5-contract.test.mjs",
+        "failedBeforeMigration": true,
+        "reason": "CSV-Kopfzeile Zahnlaenge/Augengroesse statt Umlauten"
+      },
+      {
+        "file": "faecher/physik/klasse-11/1-Kreisbewegungen/tests/kraefte-bewegung-config.test.mjs",
+        "failedBeforeMigration": true,
+        "reason": "Veraltete Koordinatenprüfung der Sicherungsblatt-Grafik"
+      },
+      {
+        "file": "faecher/physik/klasse-11/1-Kreisbewegungen/tests/zentripetalkraft-config.test.mjs",
+        "failedBeforeMigration": true,
+        "reason": "Veralteter Filter der Eyebrow-Überschrift"
+      }
+    ],
+    "browser": {
+      "pages": 10,
+      "simulatedRequests": 23,
+      "errorAndRetry": true,
+      "realModelCalls": 0
+    },
+    "rollback": {
+      "files": 40,
+      "restored": true,
+      "conflictProtection": true,
+      "actualRepoModified": false
+    },
+    "gitDiffCheck": "passed",
+    "liveCors": {
+      "checkedAt": "2026-10-10T18:16:28.994Z",
+      "endpoint": "https://unterrichtkiichezbn4-ki-auswertung.functions.fnc.fr-par.scw.cloud/",
+      "health": {
+        "status": 200,
+        "body": {
+          "ok": true,
+          "service": "unterricht-ki",
+          "provider": "scaleway",
+          "version": "0.1.0",
+          "taskCount": 67,
+          "configured": true,
+          "evaluationEnabled": true
+        }
+      },
+      "origins": [
+        {
+          "origin": "http://127.0.0.1:8765",
+          "status": 204,
+          "allowOrigin": "http://127.0.0.1:8765"
+        },
+        {
+          "origin": "https://www.florian-franke.org",
+          "status": 403,
+          "allowOrigin": "*"
+        },
+        {
+          "origin": "https://florian-franke.org",
+          "status": 403,
+          "allowOrigin": "*"
+        }
+      ],
+      "modelCalls": 0
+    },
+    "reportsPath": "scaleway-functions/pruefberichte"
+  },
+  "pending": [
+    "Produktions-Origin in AI_ALLOWED_ORIGINS freigeben",
+    "Zugangsschutz/globales Missbrauchslimit und Klassenlast abstimmen",
+    "Website nach Freigabe veröffentlichen",
+    "Beobachten und Google erst nach umfangreicher Abnahme stilllegen/löschen"
+  ]
+}

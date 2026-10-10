@@ -1,0 +1,188 @@
+{
+  "mode": "Simulierte API; keine echten Modellaufrufe",
+  "pages": [
+    {
+      "file": "faecher/informatik/klasse-10/2-Modellierung-und-Programmierung-Online-IDE/aufgabe1.html",
+      "taskControls": 4
+    },
+    {
+      "file": "faecher/informatik/klasse-10/2-Modellierung-und-Programmierung-Online-IDE/aufgabe2.html",
+      "taskControls": 3
+    },
+    {
+      "file": "faecher/informatik/klasse-10/2-Modellierung-und-Programmierung-Online-IDE/aufgabe3.html",
+      "taskControls": 2
+    },
+    {
+      "file": "faecher/informatik/klasse-10/2-Modellierung-und-Programmierung-Online-IDE/aufgabe4.html",
+      "taskControls": 2
+    },
+    {
+      "file": "faecher/informatik/klasse-10/2-Modellierung-und-Programmierung-Online-IDE/aufgabe5.html",
+      "taskControls": 3
+    },
+    {
+      "file": "faecher/informatik/klasse-10/2-Modellierung-und-Programmierung-Online-IDE/aufgabe6.html",
+      "taskControls": 2
+    },
+    {
+      "file": "faecher/informatik/klasse-9/1-Tabellenkalkulation/aufgabe5a.html",
+      "taskControls": 1
+    },
+    {
+      "file": "faecher/informatik/klasse-9/1-Tabellenkalkulation/aufgabe5b.html",
+      "taskControls": 1
+    },
+    {
+      "file": "faecher/informatik/klasse-9/3-Modellierung-und-Programmierung-Online-IDE/aufgabe1.html",
+      "taskControls": 2
+    },
+    {
+      "file": "faecher/informatik/klasse-9/3-Modellierung-und-Programmierung-Online-IDE/aufgabe2.html",
+      "taskControls": 1
+    }
+  ],
+  "requests": [
+    {
+      "taskId": "1a",
+      "requestType": "text",
+      "method": "POST",
+      "inputInUrl": false
+    },
+    {
+      "taskId": "1b",
+      "requestType": "text",
+      "method": "POST",
+      "inputInUrl": false
+    },
+    {
+      "taskId": "1c",
+      "requestType": "text",
+      "method": "POST",
+      "inputInUrl": false
+    },
+    {
+      "taskId": "1f",
+      "requestType": "text",
+      "method": "POST",
+      "inputInUrl": false
+    },
+    {
+      "taskId": "10-2a",
+      "requestType": "code",
+      "method": "POST",
+      "inputInUrl": false
+    },
+    {
+      "taskId": "10-2b",
+      "requestType": "code",
+      "method": "POST",
+      "inputInUrl": false
+    },
+    {
+      "taskId": "10-2c",
+      "requestType": "code",
+      "method": "POST",
+      "inputInUrl": false
+    },
+    {
+      "taskId": "10-3a",
+      "requestType": "code",
+      "method": "POST",
+      "inputInUrl": false
+    },
+    {
+      "taskId": "10-3b",
+      "requestType": "code",
+      "method": "POST",
+      "inputInUrl": false
+    },
+    {
+      "taskId": "10-4a",
+      "requestType": "text",
+      "method": "POST",
+      "inputInUrl": false
+    },
+    {
+      "taskId": "10-4c",
+      "requestType": "text",
+      "method": "POST",
+      "inputInUrl": false
+    },
+    {
+      "taskId": "10-5a",
+      "requestType": "code",
+      "method": "POST",
+      "inputInUrl": false
+    },
+    {
+      "taskId": "10-5b",
+      "requestType": "code",
+      "method": "POST",
+      "inputInUrl": false
+    },
+    {
+      "taskId": "10-5c",
+      "requestType": "code",
+      "method": "POST",
+      "inputInUrl": false
+    },
+    {
+      "taskId": "10-6b",
+      "requestType": "text",
+      "method": "POST",
+      "inputInUrl": false
+    },
+    {
+      "taskId": "10-6e",
+      "requestType": "text",
+      "method": "POST",
+      "inputInUrl": false
+    },
+    {
+      "taskId": "inf9-dfd-zylinder-beschreibung",
+      "requestType": "text",
+      "method": "POST",
+      "inputInUrl": false
+    },
+    {
+      "taskId": "inf9-dfd-fehlersuche-gewinnspiel",
+      "requestType": "text",
+      "method": "POST",
+      "inputInUrl": false
+    },
+    {
+      "taskId": "b",
+      "requestType": "text",
+      "method": "POST",
+      "inputInUrl": false
+    },
+    {
+      "taskId": "c",
+      "requestType": "text",
+      "method": "POST",
+      "inputInUrl": false
+    },
+    {
+      "taskId": "2b",
+      "requestType": "text",
+      "method": "POST",
+      "inputInUrl": false
+    },
+    {
+      "taskId": "b",
+      "requestType": "text",
+      "method": "POST",
+      "inputInUrl": false
+    },
+    {
+      "taskId": "b",
+      "requestType": "text",
+      "method": "POST",
+      "inputInUrl": false
+    }
+  ],
+  "errors": [],
+  "browser": "154.0.8037.99",
+  "errorAndRetry": true
+}

@@ -1,13 +1,13 @@
 import { enableTokenDrag, wasDragged } from "./components/token-drag.mjs";
 import { appendPhysicsText, physicsTextSpan } from "./components/physics-notation.mjs?v=20260911a";
-import { evaluateSemanticAnswer } from "../../../informatik/klasse-11/1-Kuenstliche-Intelligenz/perzeptron/ui/semantic-answer.mjs";
+import { evaluateSemanticAnswer } from "../../../informatik/klasse-11/1-Kuenstliche-Intelligenz/perzeptron/ui/semantic-answer.mjs?v=20261010-scaleway";
 
 // Wiederholungs-Quiz zu Aufgabe 4 (Zentripetalkraft, Reiter 1 und 2 ohne Herleitung) mit den
 // Inhalten der Abfrage 3: nicht verlinkte Seite, jede Aufgabe mit eigenem Prüfen-Button.
 // Eigenständig aufgebaut (Vorlage: Wiederholungs-Quiz zu Aufgabe 3), damit der Test ohne Reste wieder
 // entfernt werden kann. Löschanleitung: aufgabe4-quiz-loeschen.txt.
 const STORAGE_KEY = "physik11-kreisbewegungen-aufgabe4-test-v1";
-const SCRIPT_SERVER_URL = "https://script.google.com/macros/s/AKfycby8RWL6uYrKZyoJ6m2GRpWyRmXjwsdskyCiqzKpRhIK5-wrDl-9lWWk8CiAGaVMoy0x/exec";
+const SCRIPT_SERVER_URL = "https://unterrichtkiichezbn4-ki-auswertung.functions.fnc.fr-par.scw.cloud/";
 const DESCRIBE_MIN_LENGTH = 30;
 
 // Aufgaben 4 bis 6: Beschreibe-Aufgaben, bewertet über den Skriptserver.
@@ -596,7 +596,7 @@ function renderMcQuestions() {
   document.getElementById("mc-questions").replaceChildren(...MC_QUESTIONS.map(mcQuestion));
 }
 
-// Beschreibe-Aufgaben: Prüfen über die vorhandene JSONP-Anbindung an den Skriptserver.
+// Beschreibe-Aufgaben: Prüfen über die POST-/JSON-Anbindung an den Skriptserver.
 const describePending = {};
 const describeErrors = {};
 // Anfragen laufen nacheinander, auch wenn mehrere Prüfen-Buttons kurz hintereinander

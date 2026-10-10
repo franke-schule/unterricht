@@ -1,10 +1,39 @@
 Wechsel auf Scaleways
 ====================
 
-Stand: 04.10.2026. Die Umstellung ist PAUSIERT. Schritt 7 und alle folgenden
-Schritte sind noch nicht durchgeführt. Dieses Dokument ist die Arbeitsanleitung
-und zugleich das Änderungsprotokoll. Weder API-Schlüssel noch Schülerantworten
-oder Codeeingaben gehören in diese Datei.
+Stand: 10.10.2026. Der lokale Website-Code ist auf Scaleway umgestellt;
+die Änderungen sind noch nicht veröffentlicht. Die manuellen Chat-Tests 13
+(Quaderbewertung) und 14 (Fehler/erneuter Versuch) wurden auf ausdrücklichen
+Benutzerwunsch übersprungen. Die technische Prüfung erfolgte automatisch.
+35 Website-Dateien und fünf zugehörige Tests sind geändert; alle Originale
+wurden vorab außerhalb des Repositorys gesichert und per SHA256 geprüft.
+Details, Prüfergebnisse und Rücksicherung: Abschnitt "Gebündelte lokale
+Website-Umstellung" weiter unten und scaleway-functions/website-migration-log.json.
+In der aktuellen
+Schrittfolge im Chat sind Schritt 3 (direkter Modellaufruf), Schritt 4
+(Function erreichbar) und Schritt 5 (Secrets/Konfiguration) abgeschlossen.
+Die Google-Sicherungen sind vom Benutzer als vorhanden bestätigt. Speicherort,
+gesicherte Deployment-Version und Lesetest sind hier noch nicht dokumentiert.
+Der neue Server ist separat gebaut, auf Scaleway hochgeladen und erreichbar.
+Der Benutzer hat die korrekte Healthcheck-Ausgabe und anschließend die korrekte
+PowerShell-Ausgabe des ersten Auswertungstests bestätigt. Die vollständige
+Bewertung wurde im Chat noch nicht übermittelt. Der öffentliche Website-Wechsel
+ist noch nicht erfolgt. Der Vergleich dreier Freitextantworten (Chat-Schritt 7) ist
+vom Benutzer als passend bestätigt. Auch der Codevergleich (Chat-Schritt 8)
+ist als passend bestätigt. Beide Auswertungen im Browser (Chat-Schritt 9)
+funktionieren laut Benutzer. Ein Backup des Repositorys unterricht ist laut
+Benutzer ebenfalls vorhanden. Der ergänzende Scaleway-Teststand wurde archiviert
+und vom Benutzer außerhalb des Projekts kopiert (Chat-Schritt 10 bestätigt).
+Chat-Schritt 11 (Informatik 9, Online-IDE, Aufgabe 1 mit Freitext b/c und IDE)
+ist am 10.10.2026 vom Benutzer als erfolgreich bestätigt. Chat-Schritt 12
+(Informatik 10, Online-IDE, Aufgabe 3 mit Codeauswertung) wurde anschließend
+ebenfalls mit "Schritt 12 erfolgreich" bestätigt.
+Die lokalen Website-Dateien verwenden nun Scaleway. Google-.gs-Dateien und
+die bisherige Google-Bereitstellung bleiben als Rückweg erhalten.
+Dieses Dokument ist die Arbeitsanleitung und zugleich das Änderungsprotokoll.
+Weder API-Schlüssel noch Schülerantworten oder Codeeingaben gehören hinein.
+Die Nummern 7 bis 14 weiter unten stammen aus der ursprünglichen Anleitung;
+die aktuelle Chat-Anleitung verwendet eine eigene Nummerierung.
 
 Ziel
 ----
@@ -12,6 +41,13 @@ Die Unterrichtswebsite soll KI-Anfragen künftig an eine eigene Scaleway
 Function senden. Diese ruft Scaleway Generative APIs auf und gibt das bisherige
 Feedbackformat an die Website zurück. Die bisherige Apps-Script-Bereitstellung
 bleibt bis zur erfolgreichen Abnahme als Rückweg verfügbar.
+Verbindliche Reihenfolge: sichern -> parallel aufbauen -> umfangreich testen
+-> produktiv wechseln -> beobachten -> Google stilllegen -> erst dann löschen.
+Die Google-Dateien, die aktive Bereitstellung und der bisherige Schlüssel
+bleiben während Aufbau, Tests und Rückfallfrist erhalten. Kein automatischer
+Rückfall zu Google im neuen Client; ein Rückwechsel erfolgt bewusst und wird
+protokolliert. Die gesicherte Archivkopie bleibt auch nach einer Löschung des
+Google-Projekts erhalten.
 Das Endgerät verbindet sich dabei weiterhin mit der Function; Scaleway kann
 also dessen IP-Adresse beim Eingang der Anfrage sehen. Der anschließende
 Modellaufruf kommt von Scaleway, nicht direkt vom Endgerät. Serverless
@@ -21,13 +57,15 @@ Aktueller Stand und wichtige Abhängigkeiten
 -------------------------------------------
 * Die produktive Serverlogik liegt lokal in apps-script/Config.gs, Code.gs,
   Gemini.gs, EvaluationSchema.gs, Helpers.gs, Rules.gs und Tasks.gs.
-* Die Website enthält derzeit in 24 produktiven Dateien eine feste
-  script.google.com/macros/s/.../exec-Adresse. Eine zentrale URL-Konfiguration
-  gibt es bislang nicht.
-* Es gibt drei Übertragungswege: Freitext per JSONP-GET (Antwort im URL),
+* Vor der Migration enthielten 32 Website-Dateien eine feste
+  script.google.com/macros/s/.../exec-Adresse. Diese sowie drei vorhandene
+  Helfer sind lokal umgestellt. Alle Auswertungen verwenden den vorhandenen
+  gemeinsamen semantic-answer.mjs-Helfer mit POST/JSON an Scaleway.
+* Der Ausgangsstand hatte drei Übertragungswege: Freitext per JSONP-GET (Antwort im URL),
   einfache Codeanfragen per Formular/iframe und Codeanfragen mit späterem
   JSONP-Abruf des Ergebnisses. Der letzte Weg nutzt Apps Script CacheService
-  mit einer Laufzeit von 600 Sekunden.
+  mit einer Laufzeit von 600 Sekunden. Im lokalen Website-Code sind diese
+  Auswertungswege durch direkte POST-Anfragen ersetzt; die IDE-Frames bleiben.
 * Die bestehende Gemini-Integration nutzt GEMINI_API_KEY und GEMINI_MODEL als
   Script Properties. Google-spezifische Aufrufe in .gs-Dateien sind auf einer
   Scaleway Function nicht unverändert lauffähig.
@@ -59,6 +97,10 @@ abgeschlossen und probeweise lesbar sein.
    und bereitgestellten Stand vergleichen und Abweichungen dokumentieren.
    Die aktuelle Bereitstellung während der Testphase nicht löschen oder
    überschreiben.
+   Konkretes Vorgehen: In Google Apps Script unter Bereitstellen ->
+   Bereitstellungen verwalten die aktive Version ablesen. Im Projektverlauf
+   genau diese Version öffnen und deren Dateien vollständig sichern. Auch
+   den aktuellen Editorstand separat sichern, wenn er davon abweicht.
 4. Die Namen der benötigten Script Properties erfassen. Geheimwerte nur in
    einem verschlüsselten Passwortmanager bzw. Secret-Backup sichern; keine
    Schlüssel im Repository, in dieser Datei, in Screenshots oder Logs ablegen.
@@ -89,6 +131,21 @@ Schritt 7: Scaleway-Zugang und isolierten Test vorbereiten
    setzen (z. B. AI_API_KEY, AI_PROJECT_ID, AI_MODEL). Keine Variablennamen
    mit reserviertem SCW_-Präfix für eigene Secrets verwenden. HTTPS-Endpunkt
    zunächst nur mit künstlichen Testdaten verwenden; URL und Version notieren.
+   In der Konsole: richtiges Projekt auswählen -> Serverless -> Functions ->
+   Create a function -> Namespace anlegen (z. B. unterricht-ki-test,
+   Region Paris/fr-par) -> Node als Laufzeit -> zunächst Hello world ->
+   Create function. Im Test-Reiter einen einfachen Aufruf prüfen.
+   Danach Settings -> Secrets -> Add secret für AI_API_KEY; AI_PROJECT_ID
+   und AI_MODEL als Konfiguration setzen und neu bereitstellen.
+   Alternativ die Werte unter Namespace settings hinterlegen: In Classic
+   die Einträge einzeln bearbeiten und mit dem Bestätigungssymbol übernehmen.
+   Laut Scaleway werden bereite Functions bei Namespace-Änderungen automatisch
+   erneut bereitgestellt; hier ist kein globales Save settings erforderlich.
+   Für diese Migration wurden die Werte im Namespace hinterlegt.
+   Für zunächst lokale Servertests kann die Function privat bleiben.
+   Beim Browser-Test einer statischen Website benötigt ein direkter Aufruf
+   einen öffentlichen Endpunkt mit Missbrauchsschutz. Einen Scaleway-
+   IAM-Schlüssel niemals dafür an den Browser ausliefern.
 
 Schritt 8: Apps-Script-Logik in die Function übertragen
 -----------------------------------------------------
@@ -97,6 +154,12 @@ Schritt 8: Apps-Script-Logik in die Function übertragen
    Gemini.gs übernehmen und gegen die Scaleway-Antwort testen. Die Kriterien
    nicht stillschweigend ändern; Modellunterschiede anhand von Testfällen
    beurteilen.
+   Den neuen Node-Code in einem separaten Ordner scaleway-functions/ anlegen;
+   apps-script/ als unveränderte Quelle und Rückweg erhalten. Config.gs wird
+   zu Konfiguration, Code.gs zum Handler, Gemini.gs zur Scaleway-Anbindung.
+   Die übrigen Dateien werden zu wiederverwendbaren JavaScript-Modulen.
+   Handler und Module anschließend als vollständiges Function-Paket
+   bereitstellen; das Hello-world-Beispiel allein ersetzt den Server nicht.
 2. Code.gs in einen HTTP-Handler für die Function übertragen. Empfohlenes
    Ziel: POST mit JSON {requestId, taskId, answer} beziehungsweise
    {requestId, taskId, code}; Antwort als JSON {requestId, result}.
@@ -108,6 +171,9 @@ Schritt 8: Apps-Script-Logik in die Function übertragen
    Nachrichten-/Antwortstruktur verwenden. Schemaausgabe bzw. robustes
    Parsen, normalizeEvaluation_ und applyRuleBasedMinimum_ sinngemäß
    beibehalten. Das Gemini-spezifische store:false nicht ungeprüft übertragen.
+   Für Schemaausgabe response_format mit type=json_schema verwenden und
+   EVALUATION_SCHEMA passend einbetten. Den Modelltext aus der Chat-Antwort
+   lesen, als JSON parsen und zusätzlich serverseitig validieren.
 4. Apps-Script-Dienste ersetzen: PropertiesService durch Function-Secrets,
    UrlFetchApp durch den HTTP-Client der Function, ContentService/HtmlService
    durch HTTP-JSON-Antworten. Für direkte POST-Antworten werden JSONP,
@@ -127,52 +193,62 @@ Schritt 8: Apps-Script-Logik in die Function übertragen
 
 Schritt 9: Website-Code umstellen
 --------------------------------
-Die folgenden 24 Dateien enthalten bei der Bestandsaufnahme eine produktive
-Apps-Script-/exec-Adresse und müssen einzeln überprüft werden. „Offen“ heißt:
-Noch keine Umstellung vorgenommen. Jede Änderung sofort im Protokoll unten
-eintragen. Vor dem Beginn mit rg -n 'script\.google\.com|script\.googleusercontent\.com'
-die Liste erneut abgleichen.
+Die folgenden 32 Dateien enthielten bei der Bestandsaufnahme eine produktive
+Apps-Script-/exec-Adresse. Alle sind am 10.10.2026 lokal umgestellt, ebenso die
+drei zusätzlich aufgeführten Helfer. Die Klammerangaben der Gruppen nennen den
+früheren Übertragungsweg. Die Änderung jeder Datei samt Vorher-/Nachher-SHA256
+ist in scaleway-functions/website-migration-log.json protokolliert.
 
 Informatik 9, Tabellenkalkulation (JSONP):
-  [offen] faecher/informatik/klasse-9/1-Tabellenkalkulation/aufgabe5a.html
-  [offen] faecher/informatik/klasse-9/1-Tabellenkalkulation/aufgabe5b.html
+  [lokal umgestellt] faecher/informatik/klasse-9/1-Tabellenkalkulation/aufgabe5a.html
+  [lokal umgestellt] faecher/informatik/klasse-9/1-Tabellenkalkulation/aufgabe5b.html
 
 Informatik 9, Online-IDE (Formular/iframe bzw. Code-Ergebnis):
-  [offen] faecher/informatik/klasse-9/3-Modellierung-und-Programmierung-Online-IDE/aufgabe1.html
-  [offen] faecher/informatik/klasse-9/3-Modellierung-und-Programmierung-Online-IDE/aufgabe2.html
+  [lokal umgestellt] faecher/informatik/klasse-9/3-Modellierung-und-Programmierung-Online-IDE/aufgabe1.html
+  [lokal umgestellt] faecher/informatik/klasse-9/3-Modellierung-und-Programmierung-Online-IDE/aufgabe2.html
 
 Informatik 10, Datenbanken (JSONP und Code-Ergebnis):
-  [offen] faecher/informatik/klasse-10/1-Datenbanken/sql-lab.js
-  [offen] faecher/informatik/klasse-10/1-Datenbanken/aufgabe1-quiz.js
-  [offen] faecher/informatik/klasse-10/1-Datenbanken/aufgabe2-quiz.js
-  [offen] faecher/informatik/klasse-10/1-Datenbanken/aufgabe3-quiz.js
+  [lokal umgestellt] faecher/informatik/klasse-10/1-Datenbanken/sql-lab.js
+  [lokal umgestellt] faecher/informatik/klasse-10/1-Datenbanken/aufgabe1-quiz.js
+  [lokal umgestellt] faecher/informatik/klasse-10/1-Datenbanken/aufgabe2-quiz.js
+  [lokal umgestellt] faecher/informatik/klasse-10/1-Datenbanken/aufgabe3-quiz.js
 
 Informatik 10, Online-IDE (Formular/iframe bzw. Code-Ergebnis):
-  [offen] faecher/informatik/klasse-10/2-Modellierung-und-Programmierung-Online-IDE/aufgabe1.html
-  [offen] faecher/informatik/klasse-10/2-Modellierung-und-Programmierung-Online-IDE/aufgabe2.html
+  [lokal umgestellt] faecher/informatik/klasse-10/2-Modellierung-und-Programmierung-Online-IDE/aufgabe1.html
+  [lokal umgestellt] faecher/informatik/klasse-10/2-Modellierung-und-Programmierung-Online-IDE/aufgabe2.html
+  [lokal umgestellt] faecher/informatik/klasse-10/2-Modellierung-und-Programmierung-Online-IDE/aufgabe3.html
+  [lokal umgestellt] faecher/informatik/klasse-10/2-Modellierung-und-Programmierung-Online-IDE/aufgabe4.html
+  [lokal umgestellt] faecher/informatik/klasse-10/2-Modellierung-und-Programmierung-Online-IDE/aufgabe5.html
+  [lokal umgestellt] faecher/informatik/klasse-10/2-Modellierung-und-Programmierung-Online-IDE/aufgabe6.html
 
 Informatik 11, Künstliche Intelligenz (JSONP):
-  [offen] faecher/informatik/klasse-11/1-Kuenstliche-Intelligenz/aufgabe3a-quiz.mjs
-  [offen] faecher/informatik/klasse-11/1-Kuenstliche-Intelligenz/entscheidungbaeume/ui/task3.mjs
-  [offen] faecher/informatik/klasse-11/1-Kuenstliche-Intelligenz/entscheidungbaeume/ui/task4.mjs
-  [offen] faecher/informatik/klasse-11/1-Kuenstliche-Intelligenz/knn/ui/task7.mjs
-  [offen] faecher/informatik/klasse-11/1-Kuenstliche-Intelligenz/knn/ui/task8.mjs
-  [offen] faecher/informatik/klasse-11/1-Kuenstliche-Intelligenz/perzeptron/ui/task5.mjs
-  [offen] faecher/informatik/klasse-11/1-Kuenstliche-Intelligenz/perzeptron/ui/task6.mjs
+  [lokal umgestellt] faecher/informatik/klasse-11/1-Kuenstliche-Intelligenz/aufgabe3a-quiz.mjs
+  [lokal umgestellt] faecher/informatik/klasse-11/1-Kuenstliche-Intelligenz/aufgabe5-quiz.mjs
+  [lokal umgestellt] faecher/informatik/klasse-11/1-Kuenstliche-Intelligenz/entscheidungbaeume/ui/task3.mjs
+  [lokal umgestellt] faecher/informatik/klasse-11/1-Kuenstliche-Intelligenz/entscheidungbaeume/ui/task4.mjs
+  [lokal umgestellt] faecher/informatik/klasse-11/1-Kuenstliche-Intelligenz/knn/ui/task7.mjs
+  [lokal umgestellt] faecher/informatik/klasse-11/1-Kuenstliche-Intelligenz/knn/ui/task8.mjs
+  [lokal umgestellt] faecher/informatik/klasse-11/1-Kuenstliche-Intelligenz/perzeptron/ui/task5.mjs
+  [lokal umgestellt] faecher/informatik/klasse-11/1-Kuenstliche-Intelligenz/perzeptron/ui/task6.mjs
+
+Informatik 11, Codierung und Verschlüsselung (JSONP):
+  [lokal umgestellt] faecher/informatik/klasse-11/2-Codierung-und-Verschluesselung/binaer/ui/task1.mjs
 
 Physik 11, Kreisbewegungen (JSONP):
-  [offen] faecher/physik/klasse-11/1-Kreisbewegungen/aufgabe3-quiz.mjs
-  [offen] faecher/physik/klasse-11/1-Kreisbewegungen/bewegung-koerpern.mjs
-  [offen] faecher/physik/klasse-11/1-Kreisbewegungen/kettenkarussell.mjs
-  [offen] faecher/physik/klasse-11/1-Kreisbewegungen/kraefte-bewegung.mjs
-  [offen] faecher/physik/klasse-11/1-Kreisbewegungen/wdh2-quiz.mjs
-  [offen] faecher/physik/klasse-11/1-Kreisbewegungen/winkelgeschwindigkeit-kreisbewegung.mjs
-  [offen] faecher/physik/klasse-11/1-Kreisbewegungen/components/physics-semantic-task.mjs
+  [lokal umgestellt] faecher/physik/klasse-11/1-Kreisbewegungen/aufgabe3-quiz.mjs
+  [lokal umgestellt] faecher/physik/klasse-11/1-Kreisbewegungen/aufgabe4-quiz.mjs
+  [lokal umgestellt] faecher/physik/klasse-11/1-Kreisbewegungen/aufgabe4-und-experiment-quiz.mjs
+  [lokal umgestellt] faecher/physik/klasse-11/1-Kreisbewegungen/bewegung-koerpern.mjs
+  [lokal umgestellt] faecher/physik/klasse-11/1-Kreisbewegungen/kettenkarussell.mjs
+  [lokal umgestellt] faecher/physik/klasse-11/1-Kreisbewegungen/kraefte-bewegung.mjs
+  [lokal umgestellt] faecher/physik/klasse-11/1-Kreisbewegungen/wdh2-quiz.mjs
+  [lokal umgestellt] faecher/physik/klasse-11/1-Kreisbewegungen/winkelgeschwindigkeit-kreisbewegung.mjs
+  [lokal umgestellt] faecher/physik/klasse-11/1-Kreisbewegungen/components/physics-semantic-task.mjs
 
 Zusätzlich ohne eigene feste URL zu bearbeiten:
-  [offen] faecher/informatik/klasse-11/1-Kuenstliche-Intelligenz/perzeptron/ui/semantic-answer.mjs
-  [offen] faecher/informatik/klasse-11/1-Kuenstliche-Intelligenz/entscheidungbaeume/ui/semantic-answer.mjs
-  [offen] faecher/informatik/klasse-10/1-Datenbanken/sql-lab-core.mjs
+  [lokal umgestellt] faecher/informatik/klasse-11/1-Kuenstliche-Intelligenz/perzeptron/ui/semantic-answer.mjs
+  [lokal umgestellt] faecher/informatik/klasse-11/1-Kuenstliche-Intelligenz/entscheidungbaeume/ui/semantic-answer.mjs
+  [lokal umgestellt] faecher/informatik/klasse-10/1-Datenbanken/sql-lab-core.mjs
 
 Konkrete Anpassung nach Übertragungsweg:
 * JSONP: dynamische <script>-Tags und callback-Parameter durch fetch-POST
@@ -180,26 +256,30 @@ Konkrete Anpassung nach Übertragungsweg:
   Gemeinsame semantic-answer.mjs-Helfer und ihre Aufrufer zusammen umstellen.
 * iframe: versteckte Formulare/Frames und Prüfung einer Google-Absenderdomain
   durch fetch-POST und direkte JSON-Auswertung ersetzen. Auch lokale
-  URL-Validatoren in den vier Online-IDE-Seiten und beiden
+  URL-Validatoren in sämtlichen betroffenen Online-IDE-Seiten und beiden
   Tabellenkalkulationsseiten prüfen.
 * Code-Polling: requestType=code, requestType=code-result und den JSONP-Abruf
   durch eine einzige POST-Anfrage mit Antwort ersetzen. Timeout-, Lade- und
   Fehlermeldungen erhalten.
-* sql-lab-core.mjs akzeptiert derzeit nur die Google-/exec-Adresse;
-  Validierung für die neue HTTPS-Function-URL anpassen.
+* sql-lab-core.mjs akzeptiert jetzt die konkrete HTTPS-Function-URL.
 * Bestehende taskId-Zuordnung, Ergebnisanzeige und Aufgabenlogik beibehalten.
   Die Function-URL gehört in den Website-Code, der geheime API-Key niemals.
   Bei gemeinsam genutzten Helfern keine unnötige neue Parallelstruktur bauen.
+* Zunächst wurde nur eine getrennte Testkopie der Website umgestellt, einschließlich
+  eigener Kopien aller gemeinsam genutzten Helfer. Die produktive Website
+  blieb zunächst unverändert. Nach bestätigten Chat-Schritten 11 und 12 wurden
+  nun auch die lokalen Originaldateien umgestellt. Die öffentliche Website
+  wird erst mit einer gesonderten Veröffentlichung geändert.
 
-Schritt 10: Test, Umstellung und Beobachtung
-------------------------------------------
+Schritt 10: Umfangreicher Test vor dem produktiven Wechsel
+--------------------------------------------------------
 1. Servertests für Routing, unbekannte taskId, zu lange Eingaben, Modellfehler,
    ungültiges JSON, Zeitüberschreitung und Feedbackformat ausführen. Vorhandene
    apps-script/tests/*.js als fachliche Referenz verwenden bzw. anpassen.
 2. Website-Tests der betroffenen Bereiche aktualisieren, darunter
    faecher/informatik/klasse-10/1-Datenbanken/tests/sql-lab-core.test.mjs
-   und die semantic-answer-Tests. Je einen echten Browser-Test pro
-   Übertragungsweg mit fiktiven Antworten und Codes durchführen.
+   und die semantic-answer-Tests. Jede betroffene Modul-/Quizseite im Browser
+   mit fiktiven Antworten und Codes testen, nicht nur einen Helfer.
 3. Im Browser-Netzwerkprotokoll prüfen: POST an die Function; kein API-Key im
    Client; keine Antwort im URL; keine produktive Anfrage mehr an Google
    Apps Script oder Gemini. CORS, Mobilansicht, Fehlermeldungen und erneuten
@@ -208,14 +288,66 @@ Schritt 10: Test, Umstellung und Beobachtung
    script.google.com, script.googleusercontent.com, GEMINI_API_KEY,
    evaluateWithGemini_, callback= und requestType=code-result. Historische
    Dokumentation und Rückweg-Einträge dürfen bewusst bestehen bleiben.
-5. git diff --check und die relevanten Tests ausführen. Jede geänderte Datei
-   mit Grund, Commit und Test im Änderungsprotokoll erfassen. Erst danach
-   Website und Function abgestimmt bereitstellen und mit künstlichen Daten
-   erneut prüfen. Die alte Google-Bereitstellung samt Schlüssel während der
-   vereinbarten Rückfallfrist unverändert erhalten.
-6. Nach fachlicher und datenschutzrechtlicher Freigabe den Wechsel abnehmen,
-   Rückfallfrist und verantwortliche Person festhalten. Erst danach den alten
-   Schlüssel widerrufen und die alte Bereitstellung stilllegen.
+5. Für JEDE taskId mindestens eine richtige, eine teilweise richtige und
+   eine falsche Antwort bzw. entsprechende Codebeispiele testen. Leere
+   Eingaben, Umlaute, Sonderzeichen, Mehrzeilencode und Eingaben an den
+   Längengrenzen prüfen. Erwartete Punktespannen und fachliche Aussagen vor
+   dem Test festlegen; Unterschiede zu Gemini fachlich bewerten. KI-Wortlaute
+   müssen nicht identisch sein. Kritische Fälle mehrfach wiederholen.
+6. Fehlersituationen gezielt simulieren: ungültiger Key, unbekannte taskId,
+   429/Kontingentgrenze, Modellfehler, beschädigte Modellantwort, offline und
+   Timeout. Keine leere Antwort als korrekt werten; erneuter Versuch muss
+   möglich sein. Rasche Mehrfachklicks und Zuordnung über requestId prüfen.
+7. Einen kontrollierten Lasttest mit der zu erwartenden Klassengröße
+   durchführen (z. B. 30 gleichzeitige Anfragen). Laufzeit, Fehlerquote,
+   Kaltstart, Tokenverbrauch und Kosten messen. Rate-Limits und maximale
+   Function-Skalierung passend einstellen. Kostenbudget für Tests vorsehen.
+8. Auf Desktop, Tablet/Smartphone und den verwendeten Schulbrowsern testen.
+   Protokolle auf Schlüssel, Eingabetexte und unnötige personenbezogene
+   Daten prüfen. Testergebnisse mit Datum, Function-Version, Modell-ID und
+   Website-Commit dokumentieren; offene Fehler vor Freigabe beheben.
+9. git diff --check und relevante Tests ausführen. Jede geänderte Datei
+   mit Grund, Commit und Test im Änderungsprotokoll erfassen. Den Rückwechsel
+   mit der Testwebsite tatsächlich üben: alte Website-Version bereitstellen,
+   Google-Auswertung mit künstlichen Daten prüfen, dann Scaleway-Testversion
+   wiederherstellen. Ein vorhandenes Backup allein genügt dafür nicht.
+
+Schritt 11: Produktiv wechseln, Google als Rückweg behalten
+----------------------------------------------------------
+Nach bestandenen Tests und fachlicher/datenschutzrechtlicher Freigabe den
+getesteten Serverstand und Website-Commit produktiv bereitstellen. Direkt
+danach alle betroffenen Aufgabentypen mit künstlichen Eingaben kontrollieren.
+Google-Dateien und die bisherige Bereitstellung weiterhin erhalten.
+
+Schritt 12: Beobachtungsphase und Abnahme
+----------------------------------------
+Als Empfehlung 2 bis 4 Wochen mit mehreren realen Unterrichtssitzungen
+vorsehen. Nicht allein nach Kalender abnehmen: Freitext, Java-Code und Quiz
+müssen tatsächlich genutzt und ohne offene wesentliche Fehler geprüft sein.
+Nur erforderliche technische Metriken beobachten; Schülerantworten nicht
+für die Migration zusätzlich speichern oder an beide Anbieter senden.
+Bei wesentlichen Fehlern bewusst zurückwechseln und erneut testen.
+Abnahme, Testberichte, Function-Version, Modell-ID, Website-Commit und Ende
+der Rückfallfrist im Protokoll festhalten.
+
+Schritt 13: Google zunächst stilllegen
+-------------------------------------
+Nach erfolgreicher Abnahme und Ablauf der Rückfallfrist die Google-Web-App
+unter Bereitstellen -> Bereitstellungen verwalten archivieren. Danach die
+Website erneut prüfen: Alle KI-Auswertungen müssen weiterhin über Scaleway
+funktionieren. Es darf kein verbliebener produktiver Google-Aufruf scheitern.
+Ein Archivieren ist zunächst rückgängig zu machen; die Dateien bleiben dabei
+erhalten. Bei nötiger Rückkehr Bereitstellung reaktivieren.
+
+Schritt 14: Erst jetzt Google-Projekt/Dateien löschen
+---------------------------------------------------
+Löschen erst, wenn Tests, Beobachtung, Abnahme und die Prüfung mit archivierter
+Google-Bereitstellung erfolgreich abgeschlossen sind. Vorher Backup noch
+einmal auf Vollständigkeit und Lesbarkeit prüfen. Den Gemini-Key nur dann
+widerrufen, wenn er nicht von anderen Projekten verwendet wird. Anschließend
+kann das alte Google-Projekt gelöscht werden. Archivkopie und Git-Historie
+behalten; lokale .gs-Referenzdateien müssen für den Betrieb von Scaleway
+nicht gelöscht werden. Löschung mit Datum und Backup-Verweis protokollieren.
 
 Rückweg zu Apps Script
 ----------------------
@@ -240,13 +372,337 @@ Apps-Script-Live-Export: Datum, gesicherte Version/Deployment-ID und
 geschützter Speicherort eintragen (keine Secrets oder Schülerdaten).
 Secret-Backup: nur Verweis auf Passwortmanager-Eintrag eintragen.
 Scaleway-Projekt/Region/Modell/Function-Version: bei Schritt 7 eintragen.
+Testbericht (taskIds, Browser, Last, Fehlerfälle, Rückwechsel): eintragen.
+Beobachtungsphase (Beginn/Ende, Unterrichtseinsätze, offene Fehler): eintragen.
+Abnahme und Freigabe zur Google-Stilllegung/Löschung: eintragen.
+Archivierung/Löschung/Key-Widerruf: getrennt mit Datum dokumentieren.
 
 Für JEDE Server- und Website-Datei einen Eintrag nach diesem Muster ergänzen:
   Datum | Datei | vorheriger Übertragungsweg/URL | neue Function-URL bzw.
   Änderung | Grund | Commit | Test/Ergebnis | Rückweg/alter Commit
 
-Noch keine Migrationsänderungen durchgeführt. Die Liste in Schritt 9 ist die
-Bestandsaufnahme, keine Behauptung bereits vorgenommener Änderungen.
+Die Liste in Schritt 9 dokumentiert nun die lokal umgestellten Website-Dateien.
+Die ursprünglichen Google-.gs-Dateien bleiben unverändert; lediglich zwei
+Website-Transporttests unter apps-script/tests/ wurden angepasst.
+Der neue Server liegt separat in scaleway-functions/.
+
+Vorbereitungsstand vom 10.10.2026:
+* Direkter Generative-API-Test in PowerShell: vom Benutzer als erfolgreich
+  bestätigt; verwendetes Modell mistral-small-3.2-24b-instruct-2506.
+* Function ki-auswertung in Paris/fr-par erreichbar. Testantwort: v26.3.0.
+  Endpoint: https://unterrichtkiichezbn4-ki-auswertung.functions.fnc.fr-par.scw.cloud/
+* AI_API_KEY als Secret, AI_PROJECT_ID und AI_MODEL als Umgebungsvariablen
+  im Namespace hinterlegt; Schritt 5 vom Benutzer als abgeschlossen bestätigt.
+* Lokaler Prüfstand vor Codeübertragung: Branch main,
+  Commit 8f16a67dc2ecd59f7995c5b2bf8461b92470d5c3. Nur diese Anleitung ist
+  gegenüber HEAD verändert. Das ist noch kein ausgeführtes Backup.
+* Google-Sicherungen: am 10.10.2026 vom Benutzer als vorhanden bestätigt;
+  nicht durch dieses Werkzeug eingesehen. Live-Version, Backup-Pfad und
+  Lesetest vor Produktivwechsel ergänzen.
+* Repository-/Website-Backup: am 10.10.2026 vom Benutzer als bereits vorhanden
+  bestätigt. Es wird kein zweites vollständiges Repo-Backup erstellt.
+  Datum, Ausgangs-Commit, Speicherort und Lesetest der vorhandenen Sicherung
+  sind hier noch nicht übermittelt; vor Produktivwechsel ergänzen.
+
+Serveraufbau vom 10.10.2026:
+* Ausgangsstand: main, 8f16a67dc2ecd59f7995c5b2bf8461b92470d5c3.
+  Die folgenden neuen Dateien sind noch nicht committed.
+* scaleway-functions/.gitignore: generierte Kerndateien und dist/ ausschließen.
+* scaleway-functions/package.json: Node/CommonJS-Paket ohne Abhängigkeiten;
+  Version 0.1.0, Handler handler.handle.
+* scaleway-functions/build-core.js: 67 Aufgaben, unveränderte Prompts,
+  Normalisierung und Bewertungsregeln aus den lokalen .gs-Quellen übernehmen.
+  SHA256-Quellmanifest erzeugen; Google-Dateien bleiben unverändert.
+* scaleway-functions/scaleway-client.js: Gemini-HTTP-Aufruf durch Scaleway
+  Generative APIs mit Projekt-URL, Bearer-Key und strukturiertem Bewertungs-JSON
+  ersetzen. Modellantwort validieren; Timeouts und Fehler ohne Eingaben/Secrets
+  zurückgeben. Das vorhandene Feedbackformat bleibt erhalten.
+* scaleway-functions/handler.js: Healthcheck und direkte POST/JSON-Auswertung
+  für Freitext/Code. Eingabelimits, explizite CORS-Origins und zusätzliche
+  Aufrufbremse je Instanz. Keine JSONP-, iframe- oder CacheService-Übertragung.
+  Modellaufrufe bleiben ohne AI_EVALUATION_ENABLED=true deaktiviert.
+* scaleway-functions/tests/server.test.js: 11 lokale Tests mit simulierten
+  Modellantworten; alle bestanden. Darunter Vergleich aller 67 Aufgaben,
+  Prompts, Normalisierungen und Regeln mit den Originalen, Eingabevalidierung,
+  Fehlerfälle, Codeauswertung, CORS, UTF-8 und Aufrufbremse.
+* Bestehende apps-script/tests/*.test.js: alle 18 Testdateien bestanden.
+  Lokale Prüfungen sind keine Live-Prüfung des Scaleway-Modells oder Lasttests.
+* scaleway-functions/package.ps1: ZIP bauen, fünf Dateien direkt im ZIP-Root
+  prüfen und SHA256 erzeugen. ZIP enthält keine API-Schlüssel.
+* scaleway-functions/README.md: Konfiguration, Upload, isolierter Test,
+  neuer Übertragungsvertrag, Schutzgrenzen und Rückweg dokumentiert.
+* Generiert: evaluation-core.js, source-manifest.json und
+  dist/ki-auswertung-test.zip; Builddateien werden nicht in Git aufgenommen.
+  ZIP-SHA256 dieses Stands:
+  996E15BCA8C9A4004069E2FEA2F68FC9CBD9E516F410F41B617253D4EE41B0B3
+  Bei späterem Neubau die dann aktuelle Prüfsumme archivieren.
+* Rückweg für diesen Schritt: Die Website arbeitet weiter mit Google; dort
+  wurde nichts umgestellt. Für Scaleway vor dem Upload den bisherigen
+  Beispielcode bei Bedarf separat aufbewahren. Nach Upload jedes getestete
+  Function-ZIP mit Prüfsumme extern archivieren und bei Bedarf erneut hochladen.
+* Cloud-Healthcheck: korrekte PowerShell-Ausgabe am 10.10.2026 vom Benutzer
+  bestätigt (Schritt 6b).
+* Erster Auswertungstest (6c): anschließend korrekte PowerShell-Ausgabe vom
+  Benutzer bestätigt. Erwartet waren requestId scaleway_test_001, result.ok=true,
+  maxPoints=6 und fachlich nachvollziehbares Feedback. Vollständige Ausgabe
+  und tatsächlicher Function-Timeout wurden hier nicht übermittelt; keine
+  unabhängige Cloud-Prüfung oder Abnahme aller Aufgaben daraus ableiten.
+* scaleway-functions/test-bewertungen.ps1: Chat-Schritt 7; drei
+  fiktive Antworten zur Aufgabe b über die bestehende Function auswerten.
+  Erwartete Spannen vor dem Test: vollständig 5-6, teilweise 1-3, falsch 0
+  von jeweils 6 Punkten. Das Skript prüft zuerst den Healthcheck, führt drei
+  Modellaufrufe aus und zeigt Punkte, Stärken, fehlende Aspekte und Feedback.
+  Kein Schlüssel im Skript; kein Website-Code verändert. Rückweg: Tests
+  beenden und AI_EVALUATION_ENABLED=false setzen. Vergleichstest am 10.10.2026
+  vom Benutzer als passend bestätigt; keine vollständigen Ausgaben übermittelt.
+* Chat-Schritt 8: dasselbe Testskript um den Parameter
+  -Aufgabentyp code erweitert. Aufgabe 10-3a verlangt Robot dudu in einer
+  12x12-Welt. Vorab festgelegte Erwartungen: vollständiger Code 3/3,
+  Weltgröße 8x8 statt 12x12 bei richtigem Objektnamen/Konstruktor 2/3,
+  reine Textausgabe ohne Robot 0/3. Übertragung mit requestType=code und
+  Feld code; Ergebnistyp GEMINI_CODE_EVALUATION_RESULT prüfen. Drei weitere
+  Modellaufrufe; keine Ausführung des Schülercodes, kein neuer Serverupload.
+  Lokale PowerShell-Syntaxprüfung durchgeführt. Live-Codevergleich am
+  10.10.2026 vom Benutzer als passend bestätigt; keine vollständige
+  Ergebnisliste im Chat übermittelt. Das ist noch keine Prüfung aller Aufgaben.
+* Chat-Schritt 9: scaleway-functions/browser-test.html und
+  browser-test-server.js neu erstellt. Ein isolierter lokaler HTTP-Server
+  stellt ausschließlich diese Testseite auf 127.0.0.1:8765 bereit; er ist
+  kein KI-Proxy. Die Seite ruft die Scaleway-Function direkt aus dem Browser
+  auf (GET-Status, POST-Freitext zu b, POST-Code zu 10-3a). Kein API-Key im
+  Browser, keine zusätzlichen Bibliotheken, Anzeige per textContent.
+  JavaScript-Syntax, HTTP-Auslieferung und 404 bei Zugriff auf andere Dateien
+  lokal erfolgreich geprüft. Dabei keine Scaleway-/Modellaufrufe ausgeführt.
+* Für Chat-Schritt 9: AI_ALLOWED_ORIGINS als normale Namespace-Variable um
+  http://127.0.0.1:8765 ergänzen (ohne abschließenden Slash, kein Sternchen).
+  Bestehende Origins bei Bedarf in derselben kommagetrennten Liste behalten.
+  Speichern, erneute Bereitstellung abwarten, AI_EVALUATION_ENABLED=true
+  lassen. Lokal node scaleway-functions/browser-test-server.js starten und
+  http://127.0.0.1:8765/ im Browser öffnen. Je einmal Freitext und Code
+  auswerten; erwartet werden erfolgreiche JSON-Antworten mit maxPoints 6
+  bzw. 3 und passenden Punkten/Feedback. Das sind zwei Modellaufrufe.
+  Live-CORS-/Browsertest: beide Auswertungen am 10.10.2026 vom Benutzer
+  als funktionierend bestätigt; keine produktive Website-Datei geändert.
+  Rückweg: Testserver mit Strg+C beenden, bei Pause Auswertung deaktivieren;
+  die lokale Origin nach Abschluss der lokalen Tests aus der Liste entfernen.
+* Chat-Schritt 10: vorhandenes Repo-Backup vom Benutzer bestätigt; nur eine
+  Ergänzung für die neuen Scaleway-Dateien erstellt, kein neues Repo-Vollbackup.
+  Archiv: tmp/scaleway-backups/scaleway-teststand-2026-10-10-182848/scaleway-teststand.zip
+  Enthält 16 Dateien: scaleway-functions/ einschließlich Tests, generiertem
+  Bewertungskern, Quellmanifest, getesteter Function-ZIP und SHA256-Datei sowie
+  die Migrationsanleitung. Zusätzlich eingebettet: scaleway-stand.json mit
+  Branch main, Commit 8f16a67dc2ecd59f7995c5b2bf8461b92470d5c3 und Datei-Prüfsummen.
+  Archiv-SHA256:
+  492583C909ADE314DFB45848CF5A6765754355B608E620C4714D4403B8AB77D6
+  Alle 16 Quelldateien aus dem ZIP gelesen, Längen und SHA256 erfolgreich
+  gegen die lokalen Quellen geprüft. Archivgröße ca. 130 KiB.
+  Kein API-Schlüssel enthalten; Google-Live-Export bleibt im eigenen Backup.
+  Den ganzen Sicherungsordner neben dem vorhandenen Repo-Backup außerhalb
+  des Projekts aufbewahren. Externe Kopie am 10.10.2026 vom Benutzer bestätigt
+  ("Ist kopiert"); konkreter externer Speicherort hier nicht übermittelt.
+  Die hier gespeicherte Archivkopie liegt in tmp/ und wird von Git ignoriert.
+  Rücksicherung zunächst in einen getrennten Ordner: vorhandenes Repo-Backup
+  herstellen, diese Ergänzung entpacken und die im Manifest gespeicherten
+  Datei-Prüfsummen prüfen. Secret-Werte weiterhin aus geschütztem Speicher.
+* Chat-Schritt 11, Website-Pilot am 10.10.2026:
+  - Neu: scaleway-functions/prepare-website-test.js. Erstellt ausschließlich
+    tmp/scaleway-website-test/ mit Aufgabe 1, include/-Ressourcen, bestehender
+    Eingabespeicherung und Sicherungsblatt. Dokumentiert Prüfsummen und Commit
+    in test-copy-manifest.json; fremde Zielordner werden nicht überschrieben.
+  - Neu: scaleway-functions/website-pilot-transport.js. Ersetzt nur in der
+    Testseite Google-JSONP/iframe/postMessage durch POST/JSON an die getestete
+    Scaleway-Function. Antwort steht im Body, keine Eingaben in URL-Parametern.
+    requestId/Ergebnistyp prüfen, Ergebnisse validieren, Timeout 130 Sekunden,
+    Doppelklickschutz und erneute Bedienbarkeit nach Erfolg/Fehler.
+  - Geändert: scaleway-functions/browser-test-server.js. Standardmodus bleibt
+    die bisherige Diagnose. --website liefert die Testkopie auf derselben Origin
+    http://127.0.0.1:8765; Startseite leitet zur Pilotaufgabe weiter. Nur diese
+    Aufgabe und benötigte Ressourcen werden ausgeliefert; andere Aufgaben,
+    Serverquellen und Pfadwechsel werden gesperrt. Kein KI-Proxy im lokalen Server.
+  - Neu: scaleway-functions/tests/website-pilot.test.js (sechs erfolgreiche
+    Prüfungen mit simulierten Antworten) und tests/website-server.check.js
+    (erfolgreicher lokaler HTTP-Test; keine Modellanfragen).
+  - README.md und diese Anleitung um Erstellung, manuelle Prüfung und Rückweg
+    ergänzt. Vor der späteren Produktivumstellung den dann aktuellen Stand
+    einschließlich dieser neuen Dateien erneut extern sichern.
+  - Original: faecher/informatik/klasse-9/3-Modellierung-und-Programmierung-Online-IDE/aufgabe1.html
+    Ausgangscommit: 8f16a67dc2ecd59f7995c5b2bf8461b92470d5c3
+    Original-SHA256:
+    8ce59a8cdf3356766625a3d4e35f345e90a80bb44a1839551c47989e917e704c
+    Testseiten-SHA256:
+    d8253246a0551cd8a3659880fba7cea16e39788653dbcaba8e563e098dbc279e
+    Layout, Ergebnisanzeige und Lehrercode aus der Originalseite übernommen;
+    Hinweisbox kennzeichnet Scaleway-Test und verlangt erfundene Antworten.
+    Die vorhandene lokale Eingabespeicherung bleibt aktiv.
+  - Nächste manuelle Aktion: bisherigen lokalen Server mit Strg+C beenden;
+    node scaleway-functions/browser-test-server.js --website starten;
+    http://127.0.0.1:8765/ öffnen. Online-IDE starten, je eine erfundene Antwort
+    zu b und c prüfen (zwei Modellaufrufe). Beide Ergebnisse müssen Punkte von
+    maximal 6 und nachvollziehbares Feedback zeigen; Buttons danach wieder
+    verfügbar. Am 10.10.2026 vom Benutzer mit "Schritt 11 erfolgreich" bestätigt.
+    Keine vollständigen Ergebnisdaten übermittelt; Bestätigung des Benutzers,
+    keine unabhängige Live-Abnahme sämtlicher Aufgaben.
+  - Keine Änderung der Scaleway-Origin oder neuer Function-Upload nötig.
+    Rückweg: lokalen Server beenden. Originalseite, Google-Dateien und aktive
+    Google-Bereitstellung wurden durch diesen Schritt nicht geändert.
+* Chat-Schritt 12, Codeauswertung aus der IDE, vorbereitet am 10.10.2026:
+  - Neu: scaleway-functions/website-code-pilot-transport.js. Ersetzt in der
+    kopierten Informatik-10-Aufgabe 3 Formular-POST und JSONP-Polling durch
+    eine POST/JSON-Anfrage an denselben Scaleway-Endpunkt. Hauptprogramm.java
+    wird zum Klickzeitpunkt gelesen; requestType=code, Feld code, requestId.
+    Eingaben stehen nicht in der URL. Ergebnistyp und requestId validieren;
+    Punktebereich für 10-3a ist 0-3, für 10-3b 0-6. Timeout 130 Sekunden,
+    Doppelklickschutz und ursprünglicher Button nach Erfolg/Fehler wieder aktiv.
+  - Geändert: scaleway-functions/prepare-website-test.js. Kopiert nun auch
+    die Codeaufgabe. Übernimmt IDE_ID, MAX_CODE_LENGTH, Codeabfrage,
+    Punktnotationsprüfung, vorhandene Eingabe-Vorprüfungen und Buttonrücksetzung
+    unmittelbar aus der Originalseite. Ergebnisanzeige und Abschlussquiz
+    bleiben wörtlich erhalten. Ergänzt das Manifest um codePilot mit SHA256.
+    Kopiert außerdem faecher/informatik/quiz-fragen-pruefen.js unverändert.
+  - Geändert: scaleway-functions/browser-test-server.js. Gibt zusätzlich genau
+    diese zweite Testaufgabe und die Quiz-Komponente frei. Startseiten-Link
+    bleibt die bereits getestete Informatik-9-Aufgabe; Codepilot per Direktlink.
+  - Neu: scaleway-functions/tests/website-code-pilot.test.js. Sechs Prüfungen:
+    Wiederverwendung, aktueller IDE-Code/JSON-Body, beide Punktegrenzen,
+    Vorprüfungen ohne Modellaufruf, Doppelklick/erneuter Versuch, Ergebnisfehler
+    und Timeout. Bestehende Website-/HTTP-Prüfungen ergänzt bzw. erneut geprüft;
+    insgesamt 13 lokale Prüfungen erfolgreich, keine echten Modellanfragen.
+  - README.md und diese Anleitung aktualisiert. Text-Testseite unverändert:
+    ihr SHA256 bleibt d8253246a0551cd8a3659880fba7cea16e39788653dbcaba8e563e098dbc279e.
+  - Original: faecher/informatik/klasse-10/2-Modellierung-und-Programmierung-Online-IDE/aufgabe3.html
+    Ausgangscommit: 8f16a67dc2ecd59f7995c5b2bf8461b92470d5c3
+    Original-SHA256:
+    fd59f2639c01bd341c2a4acb4010faedefa0ef9f7f8746b98e44ab25640dc273
+    Testseiten-SHA256:
+    bf125657832e30dde79494e8ee926d8e1b9f53cd797213646d95f0661572c9f3
+    Vorhandene IDE-Speicherung und Speicherung der Quiz-Eingaben bleiben aktiv.
+    Nur erfundenen Testcode ohne personenbezogene Daten verwenden.
+  - Nächste manuelle Aktion: lokalen Server mit Strg+C beenden und mit
+    node scaleway-functions/browser-test-server.js --website neu starten.
+    http://127.0.0.1:8765/faecher/informatik/klasse-10/2-Modellierung-und-Programmierung-Online-IDE/aufgabe3.html
+    öffnen. In Hauptprogramm.java zunächst
+    Robot dudu = new Robot(1, 1, 12, 12);
+    eingeben und "Meinen Code für a prüfen" klicken: erwartet 3/3.
+    Danach beide Weltmaße 12 durch 8 ersetzen und erneut a prüfen: erwartet
+    2/3 mit Hinweis auf die geforderte 12x12-Welt. Zwei Modellaufrufe.
+    Bei abweichenden Ergebnissen Punkte und Rückmeldung festhalten.
+    Die Weltmaße im Ergebnis unterscheiden prüft zugleich, dass nach einer
+    Codeänderung der aktuelle IDE-Inhalt übertragen wird.
+  - Der Live-Test von a wurde anschließend vom Benutzer mit
+    "Schritt 12 erfolgreich" bestätigt. Die zusätzliche fachliche Bewertung
+    des Quadercodes in b wurde später auf Benutzerwunsch übersprungen.
+    Kein neuer Function-Upload oder Änderung der lokalen Origin nötig.
+    Rückweg: lokalen Server beenden; für die bisherigen Tests wie zuvor die
+    Informatik-9-Testseite öffnen. Google und produktive Dateien sind unverändert.
+* Die weitere lokale Umstellung und automatische Prüfung sind im nächsten
+  Abschnitt dokumentiert. Fachliche Modellprüfung weiterer Aufgaben,
+  Klassenlast und die öffentliche Freigabe bleiben offen.
+
+Gebündelte lokale Website-Umstellung am 10.10.2026
+------------------------------------------------
+Auftrag: die letzten beiden manuellen Chat-Tests überspringen und alle
+automatisch durchführbaren Änderungen in einem Zug ausführen. Diese beiden
+Tests sind nicht als manuell bestanden eingetragen.
+
+Ausgangsbranch: main.
+Ausgangscommit: 8f16a67dc2ecd59f7995c5b2bf8461b92470d5c3.
+Zusätzliche externe Sicherung vor den Website-Änderungen:
+C:\Users\ffran\Documents\Scaleway-Sicherungen\website-vor-wechsel-2026-10-10T17-57-07-765Z
+Die 35 Website-Originale liegen unter original/, die fünf alten Testdateien
+unter original-tests/. Zusätzlich enthalten: Google-Quellen, Scaleway-Teststand
+und die vorherige Anleitung. SHA256-Lesetest aller Website-Originale erfolgreich.
+Das ersetzt nicht den vom Benutzer bestätigten Export der Google-Live-Version.
+
+Änderungen:
+* 32 bisherige Endpoint-Dateien plus drei vorhandene Helfer lokal umgestellt.
+  Freitext, Java-Code und Mehrdatei-Code gehen als POST mit JSON zur Function.
+  Die Eingaben stehen nicht in URLs. Kein API-Key wird an den Browser gegeben.
+* Der vorhandene Perzeptron-Helfer semantic-answer.mjs führt den Transport aus.
+  Entscheidungsbaum-Helfer und bisherige Aufrufer verwenden ihn weiter.
+  Import-Versionen wurden für die Migration aktualisiert.
+* JSONP, versteckte Übertragungsformulare und Ergebnis-Polling entfernt;
+  auch der getrennte Perzeptron-Codeaufruf ist ersetzt.
+* Aufgabenkennungen, Punkte, Bewertungsregeln und Ergebnisformat beibehalten.
+  Bestehende IDE-Codeabfragen, Mehrdatei-Zusammenstellung, Ergebnisanzeigen,
+  Quiz, Lehrercode und Eingabespeicherung bleiben erhalten.
+* Fünf vorhandene Transport-/URL-Tests angepasst. Keine Änderung an Google-.gs.
+* Vorschau mit browser-test-server.js --repository ermöglicht alle lokalen
+  Website-Seiten; Serverquellen, Secrets und Verzeichnisse wie .git bleiben gesperrt.
+* Änderungen sind uncommittet. Es erfolgte kein Push, keine Veröffentlichung,
+  keine Löschung und keine Änderung an der bereitgestellten Function.
+  Das bisherige Function-ZIP bleibt verwendbar; kein erneuter Upload nötig.
+
+Automatische Prüfung:
+* 35 Original-Sicherungen, JavaScript-Syntax, relative Imports und unveränderte
+  HTML-Aufgaben/Ergebnisanzeigen/IDE-Abfragen geprüft. Alle Google-.gs-Dateien
+  stimmen byteweise mit der ergänzenden Sicherung überein.
+* 44 Server-/Transporttests erfolgreich. Ein zusätzlicher Vertragstest prüft
+  alle 67 Aufgaben gegen simulierte Modellantworten mit identischen Kennungen,
+  Punktegrenzen und Ergebnistypen. Kein echter Modellaufruf.
+* Headless Chrome: zehn echte HTML-Seiten, 23 simulierte POST-Anfragen,
+  Fehler 429 und erneutes Auswerten erfolgreich; keine JavaScript-Seitenfehler.
+  Die IDE-Dateiliste war für diese Transportprüfung simuliert. Die echte IDE
+  und echte Modellbewertung wurden zuvor in den Chat-Schritten 11/12 geprüft.
+* Mehrdatei-Code, Eingabegrenzen, falsche Antwortzuordnung, Timeout und
+  Buttonrücksetzung geprüft; Quader-Testdaten zusätzlich mechanisch geprüft.
+* Erweiterte bestehende Website-Tests: 67 von 70 erfolgreich. Drei Fehler
+  mit dem unveränderten Ausgangsstand reproduziert, unabhängig vom Wechsel:
+  - Perzeptron task5-contract: CSV-Kopfzeile Zahnlaenge/Augengroesse statt Umlauten.
+  - Physik kraefte-bewegung-config: veraltete Grafik-Koordinaten im Test.
+  - Physik zentripetalkraft-config: veralteter Filter der Eyebrow-Überschrift.
+  Diese fachfremden Tests/Materialien wurden nicht verändert.
+* Rücksicherung aller 35 Website-Dateien plus fünf Tests in einem getrennten
+  Prüfordner erfolgreich. Spätere Änderungen lösen einen Abbruch aus,
+  bevor Dateien überschrieben werden. Das echte Repository wurde dabei
+  nicht zurückgesetzt; ein erneuter Google-Live-Aufruf gehörte nicht dazu.
+* Healthcheck der bereitgestellten Function: HTTP 200, Version 0.1.0,
+  67 Aufgaben, configured=true, evaluationEnabled=true.
+  OPTIONS für http://127.0.0.1:8765 erfolgreich (204).
+  OPTIONS für https://www.florian-franke.org und https://florian-franke.org:
+  jeweils HTTP 403. Für die öffentliche Domain fehlt noch die Origin-Freigabe.
+  Diese Prüfung verwendete keine Eingaben und erzeugte keine Modellkosten.
+* Ausführliche maschinenlesbare Berichte: scaleway-functions/pruefberichte/.
+
+Konkreter Rückweg:
+1. Änderungen zunächst anhand website-migration-log.json prüfen. Jede der
+   40 Dateien hat Vorher-/Nachher-SHA256 und eine geprüfte Originalkopie.
+2. Nur wenn tatsächlich ein Rückwechsel gewünscht ist, in PowerShell ausführen:
+   & 'C:\Users\ffran\Documents\Scaleway-Sicherungen\website-vor-wechsel-2026-10-10T17-57-07-765Z\restore-website.ps1'
+   Das Skript liest migration-manifest.json aus demselben Sicherungsordner,
+   prüft sämtliche Quellen und Zielstände und kopiert die Originale zurück.
+   Bei späteren unabhängigen Änderungen stoppt es; diese vorher vergleichen
+   und den Rückwechsel gezielt übernehmen. Kein git reset erforderlich.
+3. Bei bereits veröffentlichter Scaleway-Website anschließend die zurück-
+   gesicherten Website-Dateien veröffentlichen. Die Google-Bereitstellung
+   muss weiterhin aktiv sein. Mit künstlichen Eingaben kontrollieren.
+4. Ursache, Datum und Ergebnis protokollieren. Neue scaleway-functions/-Dateien
+   können zur Dokumentation bestehen bleiben; sie ändern den Google-Betrieb nicht.
+
+Verbleibende Schritte für den öffentlichen Wechsel:
+1. In Scaleway AI_ALLOWED_ORIGINS um die tatsächliche Website-Origin ergänzen.
+   CNAME des Repositorys: www.florian-franke.org. Für die aktuell verwendete
+   Hauptdomain lautet die Liste während lokaler Tests:
+   http://127.0.0.1:8765,https://www.florian-franke.org
+   Die Variante https://florian-franke.org nur ergänzen, falls dort die Website
+   ebenfalls direkt erreichbar ist. Kein abschließender Slash, keine Pfade.
+   Danach automatische erneute Bereitstellung abwarten. Zur kostenlosen
+   technischen Kontrolle: node scaleway-functions/check-live-cors.js.
+   Diese Konto-Einstellung konnte ohne authentisierten Scaleway-Zugang hier
+   nicht automatisch verändert werden.
+2. Vor dem Unterrichtseinsatz Zugangsschutz/globales Missbrauchslimit und
+   Kostenbegrenzung festlegen. Der vorhandene Wert von zehn Anfragen je Minute
+   pro Instanz ersetzt das nicht und kann bereits eine Klasse ausbremsen.
+   Skalierung und Klassenlast separat abstimmen. Die Umstellung allein ist
+   keine datenschutzrechtliche Freigabe; die offenen organisatorischen Punkte
+   aus dieser Anleitung bleiben bestehen.
+3. Den lokal vorbereiteten Website-Stand nach Freigabe veröffentlichen.
+   Es wurde bisher nichts hochgeladen. Für eine lokale Gesamtvorschau einen
+   bereits laufenden Testserver mit Strg+C beenden, dann im Repository:
+   node scaleway-functions/browser-test-server.js --repository
+   Browseradresse: http://127.0.0.1:8765/
+4. Veröffentlichung und Beobachtung protokollieren. Google-Dateien und aktive
+   Bereitstellung erst nach umfangreicher tatsächlicher Nutzung, Prüfung und
+   Abnahme gemäß den ursprünglichen Schritten 12 bis 14 stilllegen/löschen.
 
 Dokumentation zum Nachprüfen beim späteren Start
 ------------------------------------------------
@@ -256,5 +712,9 @@ Projektbezogene API-URL: https://www.scaleway.com/en/docs/generative-apis/api-cl
 Function-Secrets: https://www.scaleway.com/en/docs/serverless-functions/how-to/secure-a-function/
 Reservierte Variablen und IP: https://www.scaleway.com/en/docs/serverless-functions/reference-content/functions-limitations/
 Datenschutz: https://www.scaleway.com/en/docs/generative-apis/reference-content/data-privacy/
+Function erstellen: https://www.scaleway.com/en/docs/serverless-functions/quickstart/
+JSON-Schema: https://www.scaleway.com/en/docs/generative-apis/how-to/use-structured-outputs
+Google-Versionen: https://developers.google.com/apps-script/guides/versions
+Google-Bereitstellungen archivieren: https://developers.google.com/apps-script/concepts/deployments
 Aktuelle Modellliste, Authentisierung, Preise und Datenschutzangaben vor
 Schritt 7 erneut direkt in der Scaleway-Dokumentation prüfen.

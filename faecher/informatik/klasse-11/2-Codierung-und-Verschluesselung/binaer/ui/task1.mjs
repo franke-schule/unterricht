@@ -1,11 +1,11 @@
-import { evaluateSemanticAnswer } from '../../../1-Kuenstliche-Intelligenz/perzeptron/ui/semantic-answer.mjs';
+import { evaluateSemanticAnswer } from '../../../1-Kuenstliche-Intelligenz/perzeptron/ui/semantic-answer.mjs?v=20261010-scaleway';
 import { ASCII_STEPS, COUNTER_MAX, EXPECTED, ROWS, SPEEDS, UNICODE_STEPS } from '../data/task1.mjs';
 import { bitsToValue, carryCount, evaluateRow, evaluateTarget, gainsPlace, termsOf, toBits } from '../logic/binary.mjs';
 import { formatCodePoint, inspect } from '../logic/chars.mjs';
 import { createLampRow } from './bit-lamps.mjs';
 import { createPlayer, renderOdometer } from './odometer.mjs';
 
-const SERVER_URL = 'https://script.google.com/macros/s/AKfycby8RWL6uYrKZyoJ6m2GRpWyRmXjwsdskyCiqzKpRhIK5-wrDl-9lWWk8CiAGaVMoy0x/exec';
+const SERVER_URL = 'https://unterrichtkiichezbn4-ki-auswertung.functions.fnc.fr-par.scw.cloud/';
 const TASK_ID = 'inf11-cod-a1-ascii-unicode';
 const STORAGE_KEY = 'informatik11-codierung-aufgabe1-v1';
 const STEPS = ['count', 'place', 'convert', 'chars', 'compare', 'finish'];

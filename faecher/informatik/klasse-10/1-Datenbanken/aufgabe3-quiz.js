@@ -1,9 +1,9 @@
 // Wiederholungs-Quiz zu Aufgabe 3: nicht verlinkte Seite, jede Aufgabe mit eigenem Prüfen-Button.
 // Löschanleitung: aufgabe3-quiz-loeschen.txt.
 import { enableTokenDrag, wasDragged } from "../../../physik/klasse-11/1-Kreisbewegungen/components/token-drag.mjs";
-import { evaluateSemanticAnswer } from "../../klasse-11/1-Kuenstliche-Intelligenz/perzeptron/ui/semantic-answer.mjs";
+import { evaluateSemanticAnswer } from "../../klasse-11/1-Kuenstliche-Intelligenz/perzeptron/ui/semantic-answer.mjs?v=20261010-scaleway";
 const STORAGE_KEY = "informatik10-datenbanken-aufgabe3-test-v1";
-const SCRIPT_SERVER_URL = "https://script.google.com/macros/s/AKfycby8RWL6uYrKZyoJ6m2GRpWyRmXjwsdskyCiqzKpRhIK5-wrDl-9lWWk8CiAGaVMoy0x/exec";
+const SCRIPT_SERVER_URL = "https://unterrichtkiichezbn4-ki-auswertung.functions.fnc.fr-par.scw.cloud/";
 const DESCRIBE_MIN_LENGTH = 30;
 
 const DESCRIBE_TASKS = [
@@ -548,7 +548,7 @@ function renderMcQuestions() {
   document.getElementById("mc-questions").replaceChildren(...MC_QUESTIONS.map(mcQuestion));
 }
 
-// Beschreibe-Aufgaben: Prüfen über die vorhandene JSONP-Anbindung an den Skriptserver.
+// Beschreibe-Aufgaben: Prüfen über die POST-/JSON-Anbindung an den Skriptserver.
 const describePending = {};
 const describeErrors = {};
 // Anfragen laufen nacheinander, auch wenn mehrere Prüfen-Buttons kurz hintereinander

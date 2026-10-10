@@ -1,7 +1,7 @@
 import { FISH_DEPTH_RESULTS, numberMatches, percentageMatches } from "../logic/fish-depth.mjs";
-import { evaluateSemanticAnswer } from "./semantic-answer.mjs";
+import { evaluateSemanticAnswer } from "./semantic-answer.mjs?v=20261010-scaleway";
 
-const SCRIPT_SERVER_URL = "https://script.google.com/macros/s/AKfycby8RWL6uYrKZyoJ6m2GRpWyRmXjwsdskyCiqzKpRhIK5-wrDl-9lWWk8CiAGaVMoy0x/exec";
+const SCRIPT_SERVER_URL = "https://unterrichtkiichezbn4-ki-auswertung.functions.fnc.fr-par.scw.cloud/";
 const MAX_LENGTH = 3000;
 const DEPTH_NOTE = "Die Trainingsfehler sinken bei größerer Tiefe, die Genauigkeit auf diesen fünf Testfischen bleibt jedoch gleich. In dieser Tabelle führen weniger Trainingsfehler daher nicht zu einer höheren Testgenauigkeit.";
 const SOLUTION_CODE = "M8TR-DP7H";
