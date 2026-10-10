@@ -32,6 +32,7 @@ code { font-family: "SFMono-Regular", Consolas, "Liberation Mono", monospace; }
 .module-header { max-width: 800px; margin: 0 auto 28px; text-align: center; }
 .module-header h1 { margin: 12px 0 10px; font-size: clamp(2.1rem, 5vw, 3.7rem); line-height: 1.05; letter-spacing: -0.045em; color: #123568; }
 .module-header p { margin: 0; color: var(--db-muted); font-size: clamp(1rem, 2vw, 1.16rem); line-height: 1.65; }
+.module-header .module-task-number { margin-bottom: 6px; }
 .eyebrow { display: inline-flex; align-items: center; gap: 8px; padding: 7px 12px; border: 1px solid #abddea; border-radius: 999px; color: #0d6f8b; background: #eefbfe; font-size: 0.78rem; font-weight: 800; letter-spacing: 0.075em; text-transform: uppercase; }
 
 .data-status { display: flex; align-items: center; justify-content: center; gap: 12px; width: min(620px, 100%); margin: 48px auto; padding: 22px; border: 1px solid var(--db-line); border-radius: 16px; background: white; color: var(--db-muted); }

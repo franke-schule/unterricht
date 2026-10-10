@@ -64,6 +64,9 @@ Jede Aufgabenseite benoetigt:
   - einen sichtbaren Rueckweg zur Aufgabenuebersicht der Jahrgangsstufe,
   - einen sichtbaren Link zur Startseite,
   - eine eindeutige Hauptueberschrift,
+  - die Aufgabennummer direkt unter der Hauptueberschrift als eigene Zeile
+    (z. B. "Aufgabe 7"), nicht als Bestandteil der Ueberschrift oder nur
+    oberhalb davon in der Kopfleiste,
   - einen kurzen Arbeitsauftrag,
   - einen klar abgegrenzten Arbeits- und Rueckmeldungsbereich.
 
@@ -85,6 +88,13 @@ Position von Arbeitsauftraegen:
     fett gesetzt.
 
 Bestehende Layoutklassen wiederverwenden, bevor neue Klassen angelegt werden.
+Alle Reiter eines Lernmoduls werden in ihrer sichtbaren Reihenfolge ab 1
+fortlaufend nummeriert, einschliesslich Merksaetzen, Abschlussquiz und
+Auswertung. Ein Haekchen darf die Nummer ergaenzen, aber nicht ersetzen.
+Auch bei vielen Reitern sollen auf einem Laptop alle Reiter ohne horizontales
+Scrollen sichtbar sein. Als Vorlage dient Informatik Klasse 10, Datenbanken,
+Aufgabe 6: gleichmaessig aufgeteilte Reiter mit umbrechenden Beschriftungen.
+Auf kleineren Bildschirmen duerfen die Reiter in mehrere Zeilen umbrechen.
 Auf Menueebenen wenig erklaerenden Text verwenden; die eigentliche Anleitung
 gehoert auf die Aufgabenseite.
 

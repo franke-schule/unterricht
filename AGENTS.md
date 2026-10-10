@@ -326,6 +326,15 @@ Keine neue Design-Sprache für einzelne Aufgaben entwickeln.
 Keine Inline-Sonderlösungen, wenn bereits eine zentrale Komponente oder CSS-Klasse
 existiert.
 
+Alle Reiter eines Lernmoduls werden ab 1 fortlaufend durchnummeriert, auch
+Merksatz-, Abschlussquiz- und Auswertungsreiter. Alle Reiter sollen auf einem
+Laptop ohne horizontales Scrollen sichtbar sein; auf kleineren Bildschirmen
+dürfen sie in mehrere Zeilen umbrechen. Referenz: Informatik Klasse 10,
+Datenbanken, Aufgabe 6.
+
+Die Aufgabennummer steht immer als eigene Zeile direkt unter der
+Hauptüberschrift des Lernmoduls.
+
 
 # 9. Responsive Design
 

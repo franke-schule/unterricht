@@ -776,7 +776,7 @@ function renderTabs() {
   tabs.innerHTML = STEP_TITLES.map((title, index) => {
     const step = index + 1;
     return `<button id="tab-${step}" class="step-tab ${state.completed.includes(step) ? "is-complete" : ""}" type="button" role="tab" aria-controls="step-${step}" aria-selected="${state.currentStep === step}" data-step="${step}"><span>${step}</span><small>${title}</small></button>`;
-  }).join("") + `<button id="tab-summary" class="step-tab" type="button" role="tab" aria-controls="step-summary" aria-selected="${state.currentStep === "summary"}" data-step="summary" ${state.summaryUnlocked ? "" : "hidden"}><span>✓</span><small>Übersicht</small></button>`;
+  }).join("") + `<button id="tab-summary" class="step-tab" type="button" role="tab" aria-controls="step-summary" aria-selected="${state.currentStep === "summary"}" data-step="summary" ${state.summaryUnlocked ? "" : "hidden"}><span>${STEP_TITLES.length + 1}</span><small>Übersicht</small></button>`;
   tabs.querySelectorAll("button").forEach((button) => button.addEventListener("click", () => navigateTo(button.dataset.step === "summary" ? "summary" : Number(button.dataset.step))));
   enableTabKeyboardNavigation(tabs);
   syncTabSemantics(tabs, state.currentStep);

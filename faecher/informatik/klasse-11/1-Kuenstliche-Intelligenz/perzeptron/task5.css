@@ -3,8 +3,10 @@
 .perceptron-page #simulator { --dt-ink:var(--p-ink); --dt-blue:var(--p-blue); --dt-violet:#7048cf; }
 .perceptron-page .perceptron-hero { padding:2rem; border-radius:1.25rem; background:linear-gradient(135deg,#e7f5fb,#f8fbfd); margin:1.5rem 0; }
 .perceptron-page .perceptron-eyebrow,.perceptron-page .kicker { color:#126e9c; font-weight:700; margin:0 0 .35rem; }
-.perceptron-page .tab-list { display:flex; gap:.5rem; overflow:auto; padding:.3rem 0; border-bottom:2px solid #c9dae4; }
-.perceptron-page .tab-list button { flex:0 0 auto; min-height:44px; border:1px solid #9db4c2; border-radius:.65rem; padding:.55rem .8rem; background:#fff; color:#12324a; font:inherit; font-weight:700; }
+.perceptron-page .tab-list { display:grid; grid-auto-flow:column; grid-auto-columns:minmax(0,1fr); gap:.5rem; padding:.3rem 0; border-bottom:2px solid #c9dae4; }
+.perceptron-page .tab-list button { min-width:0; min-height:64px; border:1px solid #9db4c2; border-radius:.65rem; padding:.55rem .45rem; background:#fff; color:#12324a; font:inherit; font-size:.85rem; line-height:1.3; font-weight:700; white-space:normal; overflow-wrap:anywhere; hyphens:auto; cursor:pointer; }
+@media (max-width:1000px) { .perceptron-page .tab-list { grid-auto-flow:row; grid-template-columns:repeat(4,minmax(0,1fr)); } }
+@media (max-width:600px) { .perceptron-page .tab-list { grid-template-columns:repeat(2,minmax(0,1fr)); } }
 .perceptron-page .tab-list button[aria-selected=true] { background:#126e9c; color:#fff; border-color:#126e9c; }
 .perceptron-page .step-panel { margin:1.2rem 0; padding:1.25rem; border:1px solid #c9dae4; border-radius:1rem; background:#fff; }
 .perceptron-page h2:focus { outline:3px solid #f0a202; outline-offset:4px; }

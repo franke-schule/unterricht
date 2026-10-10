@@ -251,7 +251,7 @@ function renderTabs() {
   tabs.innerHTML = STEP_TITLES.map((title, index) => {
     const step = index + 1;
     return `<button id="tab-${step}" class="step-tab" type="button" role="tab" aria-controls="step-${step}" data-step="${step}"><span>${step}</span><small>${escapeHtml(title)}</small></button>`;
-  }).join("") + `<button id="tab-summary" class="step-tab" type="button" role="tab" aria-controls="step-summary" data-step="summary" ${state.summaryUnlocked ? "" : "hidden"}><span>✓</span><small>Auswertung</small></button>`;
+  }).join("") + `<button id="tab-summary" class="step-tab" type="button" role="tab" aria-controls="step-summary" data-step="summary" ${state.summaryUnlocked ? "" : "hidden"}><span>${STEP_TITLES.length + 1}</span><small>Auswertung</small></button>`;
   syncTabSemantics(tabs, state.currentStep);
 }
 
