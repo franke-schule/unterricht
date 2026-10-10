@@ -1,4 +1,6 @@
 .perceptron-page { --p-ink:#12324a; --p-blue:#126e9c; --p-red:#af3f47; --p-mint:#e7f6ef; --p-gold:#fff3cf; }
+/* Anleitung und Materiallinks aus Aufgabe 4 mit den Farben dieses Moduls. */
+.perceptron-page #simulator { --dt-ink:var(--p-ink); --dt-blue:var(--p-blue); --dt-violet:#7048cf; }
 .perceptron-page .perceptron-hero { padding:2rem; border-radius:1.25rem; background:linear-gradient(135deg,#e7f5fb,#f8fbfd); margin:1.5rem 0; }
 .perceptron-page .perceptron-eyebrow,.perceptron-page .kicker { color:#126e9c; font-weight:700; margin:0 0 .35rem; }
 .perceptron-page .tab-list { display:flex; gap:.5rem; overflow:auto; padding:.3rem 0; border-bottom:2px solid #c9dae4; }
