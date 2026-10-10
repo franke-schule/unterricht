@@ -1,0 +1,149 @@
+Wiederholungsquiz: Aufgabe 4 und Experiment – vollständige Löschung
+==================================================================
+
+Quiz:       Aufgabe 4 und Experiment – Zentripetalkraft und phyphox
+Grundlage:  Physik 11, 1-Kreisbewegungen, Aufgabe 4 (insbesondere Formel,
+            Rechenaufgaben 11–13 und Proportionalitäten) sowie das im
+            Unterricht durchgeführte phyphox-Experiment.
+Angelegt:   10.10.2026
+Löschen:    ausschließlich auf Anweisung der Lehrkraft, kein Löschdatum
+Seite:      faecher/physik/klasse-11/1-Kreisbewegungen/aufgabe4-und-experiment-quiz.html
+Online:     https://www.florian-franke.org/faecher/physik/klasse-11/1-Kreisbewegungen/aufgabe4-und-experiment-quiz.html
+Regeln:     manifest-wiederholungs-quiz.txt
+
+Das Quiz ist eigenständig und auf keiner Menü- oder Übersichtsseite verlinkt.
+Das ältere aufgabe4-quiz bleibt separat bestehen und wird nicht gelöscht.
+Gemeinsame Komponenten und Fach-CSS werden nur eingebunden, nicht verändert.
+
+1. Neue Dateien
+---------------
+
+In faecher/physik/klasse-11/1-Kreisbewegungen/:
+  aufgabe4-und-experiment-quiz.html
+  aufgabe4-und-experiment-quiz.mjs
+  aufgabe4-und-experiment-quiz.css
+  aufgabe4-und-experiment-quiz-quadratisch.svg
+  aufgabe4-und-experiment-quiz-einfach.svg
+  aufgabe4-und-experiment-quiz-loeschen.txt (diese Anleitung, zuletzt löschen)
+
+In apps-script/tests/:
+  physik11-aufgabe4-experiment-quiz.test.js
+
+Außerhalb dieses Repositorys:
+  ../informatik-material/phy11/1-Kreisbewegungen/aufgabe4-und-experiment-quiz.svg
+
+2. Geänderte Dateien und genaue Stellen
+---------------------------------------
+
+apps-script/Tasks.gs:
+  Drei zusammenhängende Blöcke mit dem Präfix ph11-a4-und-experiment-quiz-
+  direkt nach 'ph11-a4-quiz-seil-beschreibung' und vor
+  'ph11-kreisbewegungen-zentripetalkraft-beschreibung'.
+
+apps-script/Config.gs:
+  Kommentarzeile im Kopf:
+  " * - phy11/1-Kreisbewegungen/aufgabe4-und-experiment-quiz.html
+    (drei Beschreibe-/Begründe-Aufgaben, nicht verlinkter Test)"
+
+apps-script/tests/code-routing.test.js:
+  Drei Aufgaben-IDs in der Liste der Beschreibe-Aufgaben, direkt nach
+  'ph11-a4-quiz-seil-beschreibung'.
+
+../informatik-material/phy11/1-Kreisbewegungen/phy11-kreisbewegungen.html:
+  Neue Folie 7, id="folie-7", Titel "Quiz zu Aufgabe 4 und Experiment".
+  Sie steht hinter der bisherigen Folie 6 "Quiz zu Aufgabe 4:
+  Zentripetalkraft" und vor Aufgabe 5. Sie enthält die vollständige URL
+  und den QR-Code als base64-SVG. Die früheren Folien 7–9 wurden zu 8–10
+  umnummeriert (id und Nummer in aria-label).
+  Für die Löschung zuerst anhand des Titels und der Quiz-URL identifizieren:
+  Falls andere Folien inzwischen entfernt oder ergänzt wurden, kann ihre
+  aktuelle Nummer abweichen.
+
+Kurzlink: keiner. Der QR-Code kodiert die vollständige Online-Adresse.
+Sicherung der Präsentation vor der Änderung:
+  C:/Users/ffran/AppData/Local/Temp/phy11-quiz-20261010-jgocl87j/phy11-kreisbewegungen-vorher.html
+  Die Sicherung ist kein Quizbestandteil. Sie dient nur zur Wiederherstellung
+  bei Bedarf und wird nicht über eine Rücksicherung zum Löschen verwendet,
+  damit spätere Präsentationsänderungen erhalten bleiben.
+
+3. Aufgaben-IDs und Aufgabentexte auf dem Skriptserver
+-----------------------------------------------------
+
+  ph11-a4-und-experiment-quiz-experiment-beschreibung
+  Aufgabe 4: Das phyphox-Experiment, 4 Aspekte/Punkte
+  „Beschreibe Aufbau und Durchführung des phyphox-Experiments zur Zentripetalbeschleunigung. Nenne, welche Größen das Smartphone misst, welche Größe ihr verändert und welche Größe gleich bleibt.“
+
+  ph11-a4-und-experiment-quiz-kraft-beschreibung
+  Aufgabe 5: Von der Beschleunigung zur Kraft, 3 Aspekte/Punkte
+  „Ein Smartphone liefert Messwerte für die Zentripetalbeschleunigung, aber nicht für die Kraft. Begründe, wie man bei bekannter Masse die Zentripetalkraft bestimmen kann und warum Kraft und Beschleunigung bei gleichbleibender Masse dieselbe Abhängigkeit von der Winkelgeschwindigkeit haben.“
+
+  ph11-a4-und-experiment-quiz-diagramme-beschreibung
+  Aufgabe 6: Messdiagramme begründen, 4 Aspekte/Punkte
+  „Begründe anhand beider Diagramme, welche Proportionalität zwischen der Zentripetalbeschleunigung und der Winkelgeschwindigkeit die Messpunkte nahelegen. Erkläre, warum die Punkte gegen eine direkte Proportionalität zur Winkelgeschwindigkeit sprechen und welche Größe bei dieser Messreihe gleich bleiben muss.“
+
+Alle drei IDs werden von DESCRIBE_TASKS in aufgabe4-und-experiment-quiz.mjs verwendet.
+Gemeinsames Präfix: ph11-a4-und-experiment-quiz-
+
+4. Checkliste zum vollständigen Löschen
+---------------------------------------
+
+  [ ] Quizdateien löschen:
+      git rm faecher/physik/klasse-11/1-Kreisbewegungen/aufgabe4-und-experiment-quiz.html
+      git rm faecher/physik/klasse-11/1-Kreisbewegungen/aufgabe4-und-experiment-quiz.mjs
+      git rm faecher/physik/klasse-11/1-Kreisbewegungen/aufgabe4-und-experiment-quiz.css
+      git rm faecher/physik/klasse-11/1-Kreisbewegungen/aufgabe4-und-experiment-quiz-quadratisch.svg
+      git rm faecher/physik/klasse-11/1-Kreisbewegungen/aufgabe4-und-experiment-quiz-einfach.svg
+  [ ] apps-script/Tasks.gs: ausschließlich die drei Blöcke mit Präfix
+      ph11-a4-und-experiment-quiz- vollständig entfernen, einschließlich
+      jeweils abschließender Klammer und Komma. Andere Aufgaben behalten.
+  [ ] apps-script/Config.gs: genau die Kommentarzeile zu diesem Quiz entfernen.
+  [ ] apps-script/tests/code-routing.test.js: die drei IDs entfernen.
+      Auf gültige Kommas in der verbleibenden Liste achten.
+  [ ] Zugehörigen Regressionstest löschen:
+      git rm apps-script/tests/physik11-aufgabe4-experiment-quiz.test.js
+  [ ] In ../informatik-material/phy11/1-Kreisbewegungen/phy11-kreisbewegungen.html
+      die gesamte section mit Titel "Quiz zu Aufgabe 4 und Experiment"
+      entfernen, einschließlich Link und eingebettetem QR-Code.
+      Alle folgenden Folien in id und aria-label um eins zurückzählen.
+      Bei unverändertem Stand werden Folien 8–10 wieder zu 7–9.
+      Das ältere Quiz zu Aufgabe 4 bleibt bestehen.
+  [ ] Die QR-SVG-Datei neben der Präsentation löschen:
+      ../informatik-material/phy11/1-Kreisbewegungen/aufgabe4-und-experiment-quiz.svg
+  [ ] Falls später ein Kurzlink angelegt wurde: diesen deaktivieren.
+      Für den ursprünglichen Stand ist kein Kurzlink zu entfernen.
+  [ ] Restekontrolle in beiden Repositorys:
+      git grep -nw "aufgabe4-und-experiment-quiz"
+      git grep -n "ph11-a4-und-experiment-quiz-"
+      Erlaubt sind zuletzt nur Treffer in dieser Löschanleitung.
+  [ ] Alle Apps-Script-Tests sowie die Modultests ausführen:
+      Get-ChildItem apps-script/tests/*.test.js | ForEach-Object { node $_.FullName }
+      Get-ChildItem faecher/physik/klasse-11/1-Kreisbewegungen/tests/*.test.mjs | ForEach-Object { node $_.FullName }
+      git diff --check
+      Hinweis zum Stand vom 10.10.2026: Der vorhandene Test
+      kraefte-bewegung-config.test.mjs erwartet eine inzwischen geänderte
+      Fallschirmspringer-Skizze in einem älteren Sicherungsblatt. Diese
+      bestehende Abweichung ist unabhängig von diesem Quiz.
+  [ ] Präsentation im Browser prüfen: Nummerierung und Zähler stimmen;
+      die entfernte Quiz-Folie kommt nicht mehr vor.
+  [ ] Skriptserver: Tasks.gs und Config.gs im Google-Apps-Script-Projekt
+      aktualisieren. Bereitstellen > Bereitstellungen verwalten > Bearbeiten
+      > Version: Neue Version. Die /exec-URL bleibt gleich. Ohne diesen
+      Schritt kennt der Online-Server die drei Aufgaben weiterhin.
+  [ ] Website neu hochladen, damit die Quizdateien auch online entfernt sind.
+  [ ] Änderungen in unterricht und informatik-material committen.
+  [ ] Zuletzt diese Anleitung löschen:
+      git rm faecher/physik/klasse-11/1-Kreisbewegungen/aufgabe4-und-experiment-quiz-loeschen.txt
+
+localStorage-Schlüssel:
+  physik11-kreisbewegungen-aufgabe4-und-experiment-test-v1
+Der Eintrag darf in den Browsern zurückbleiben. Andere Seiten lesen ihn
+nicht. Während das Quiz existiert, löscht "Quiz neu starten" den Stand.
+
+5. Bereitstellung nach dem Anlegen
+----------------------------------
+
+Die MC-, Lücken- und Zuordnungsaufgaben werden direkt im Browser geprüft.
+Für die drei Freitextaufgaben müssen Tasks.gs und Config.gs auf den
+Skriptserver übernommen und als neue Version bereitgestellt werden.
+Danach die Website mit allen sechs Quizdateien hochladen. Die Link-Präsentation
+und die zusätzliche QR-SVG liegen bereits im vorgesehenen Materialordner.

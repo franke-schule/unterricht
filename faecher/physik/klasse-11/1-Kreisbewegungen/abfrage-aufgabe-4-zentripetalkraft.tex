@@ -1,0 +1,164 @@
+\documentclass[10pt,a4paper]{article}
+
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage[ngerman]{babel}
+\usepackage[a4paper,margin=14mm]{geometry}
+\usepackage{lmodern}
+\usepackage[table]{xcolor}
+\usepackage{tabularx}
+\usepackage{amsmath}
+\usepackage{microtype}
+\usepackage{tikz}
+\usetikzlibrary{arrows.meta,calc}
+
+% Vorlage: abfrage-aufgabe-3-kreisbewegung-3.tex.
+% Die Lösungsfassung unterscheidet sich nur durch \solutiontrue.
+\newif\ifsolution
+\solutionfalse
+
+\pagestyle{empty}
+\setlength{\parindent}{0pt}
+\setlength{\parskip}{0pt}
+\renewcommand{\familydefault}{\sfdefault}
+
+\definecolor{Navy}{HTML}{17324D}
+\definecolor{Blue}{HTML}{3B6EA5}
+\definecolor{Sky}{HTML}{EAF3FA}
+\definecolor{Gold}{HTML}{F3B33D}
+\definecolor{Ink}{HTML}{1E2935}
+\definecolor{Muted}{HTML}{617080}
+\definecolor{Line}{HTML}{D8E1E8}
+\color{Ink}
+
+\newcommand{\vB}{v_{\mathrm B}}
+\newcommand{\FZ}{F_{\mathrm Z}}
+\newcommand{\aZ}{a_{\mathrm Z}}
+\newcommand{\kopf}[1]{%
+  \colorbox{Navy}{\parbox{\dimexpr\linewidth-2\fboxsep\relax}{%
+    \vspace{1.3mm}\color{white}
+    \begin{tabularx}{\linewidth}{@{}Xr@{}}
+      {\small\bfseries PHYSIK · KLASSE 11} &
+      \colorbox{Gold}{\color{Navy}\small\bfseries\strut\ifsolution LÖSUNGEN\else ABFRAGE\fi}
+    \end{tabularx}
+    \vspace{0.9mm}
+    {\fontsize{16}{19}\selectfont\bfseries Aufgabe 4 -- Zentripetalkraft}\par
+    \vspace{0.3mm}{\small #1}\vspace{1.1mm}
+  }}\par\vspace{2mm}}
+\newcommand{\frage}[2]{%
+  \vspace{2.2mm}{\color{Blue}\bfseries\large #1 · #2}\par
+  \vspace{0.4mm}{\color{Blue}\rule{\linewidth}{0.65pt}}\par\vspace{1.4mm}}
+\ifsolution
+  \newcommand{\antwortfeld}[2]{%
+    \par\vspace{2mm}\noindent
+    \begin{minipage}[t][\dimexpr9mm*#1\relax][t]{\linewidth}
+      \vspace*{1mm}\small\color{Blue}#2
+    \end{minipage}\par}
+\else
+  \newcommand{\antwortfeld}[2]{%
+    \par\vspace{2mm}\noindent
+    \begin{minipage}[t][\dimexpr9mm*#1\relax][t]{\linewidth}
+      \vspace*{0pt}%
+      \begin{tikzpicture}[x=1mm,y=1mm]
+        \foreach \i in {1,...,#1}{\draw[Line,line width=.55pt] (0,{-9*\i}) -- (181.5,{-9*\i});}
+        \path[use as bounding box] (0,0) rectangle (181.5,{-9*#1});
+      \end{tikzpicture}
+    \end{minipage}\par}
+\fi
+\newcommand{\fuss}[1]{%
+  \vfill{\color{Line}\rule{\linewidth}{0.5pt}}\par\vspace{1mm}
+  \begin{tabularx}{\linewidth}{@{}Xr@{}}
+    {\small\color{Muted}Klasse 11 · Physik · Kreisbewegungen} &
+    {\small\color{Muted}\ifsolution Lösungen\else Abfrage\fi{} · Seite #1 von 2}
+  \end{tabularx}}
+
+% Repräsentative Punkte näherungsweise aus dem beigefügten phyphox-Screenshot
+% nachgezeichnet, keine exportierten Rohdaten. Paare: omega / Beschleunigung.
+% Beide Auftragungen verwenden genau dieselben Punkte, ohne Ausgleichslinie.
+\newcommand{\messpunkte}{%
+  0.1/0.2,0.4/0.5,0.7/0.3,1.0/0.6,1.3/0.3,1.6/0.4,1.8/0.6,
+  2.0/0.5,2.2/0.8,2.4/1.0,2.6/0.9,2.8/1.3,3.0/1.5,3.2/1.9,
+  3.4/2.1,3.6/2.2,3.8/2.5,4.0/2.9,4.2/3.0,4.4/3.4,4.6/4.0,
+  4.8/4.2,5.0/4.8,5.2/5.1,5.4/5.3,5.6/5.8,5.8/5.9,6.0/6.5,
+  6.2/7.1,6.4/7.6,6.6/7.5,6.8/8.2,7.0/8.5,7.2/9.1,7.4/9.9,
+  7.6/10.3,7.8/11.1,8.0/11.2,8.2/12.6,8.4/11.8,8.6/13.4,
+  8.8/14.1,9.0/14.5,9.2/15.8,9.4/16.0,9.6/17.5,9.8/18.1,
+  10.0/18.3,10.2/19.8,10.4/20.1,10.6/20.0,10.8/21.1}
+\newcommand{\messdiagramm}[1]{%
+  \begin{tikzpicture}[x=1mm,y=1mm,font=\small]
+    \path[use as bounding box] (-7,-14) rectangle (78,64);
+    \foreach \y in {5,10,15,20}{%
+      \draw[Line,line width=.35pt] (0,{2.4*\y}) -- (70,{2.4*\y});
+      \draw[Navy,line width=.55pt] (-1,{2.4*\y}) -- (1,{2.4*\y});
+      \node[anchor=east,font=\scriptsize] at (-1.8,{2.4*\y}) {\y};}
+    \ifnum#1=1
+      \foreach \x in {25,50,75,100}{%
+        \draw[Line,line width=.35pt] ({.56*\x},0) -- ({.56*\x},53);
+        \draw[Navy,line width=.55pt] ({.56*\x},-1) -- ({.56*\x},1);
+        \node[anchor=north,font=\scriptsize] at ({.56*\x},-1.7) {\x};}
+      \foreach \w/\a in \messpunkte{\fill[Blue] ({.56*\w*\w},{2.4*\a}) circle (.58);}
+      \node[anchor=north] at (35,-7) {$\omega^2\ \text{in}\ \dfrac{1}{\mathrm{s}^2}$};
+    \else
+      \foreach \x in {2,4,6,8,10}{%
+        \draw[Line,line width=.35pt] ({6*\x},0) -- ({6*\x},53);
+        \draw[Navy,line width=.55pt] ({6*\x},-1) -- ({6*\x},1);
+        \node[anchor=north,font=\scriptsize] at ({6*\x},-1.7) {\x};}
+      \foreach \w/\a in \messpunkte{\fill[Blue] ({6*\w},{2.4*\a}) circle (.58);}
+      \node[anchor=north] at (35,-7) {$\omega\ \text{in}\ \dfrac{1}{\mathrm{s}}$};
+    \fi
+    \draw[-{Latex[length=2mm]},Navy,line width=.7pt] (0,0) -- (73,0);
+    \draw[-{Latex[length=2mm]},Navy,line width=.7pt] (0,0) -- (0,56);
+    \node[anchor=north east,font=\scriptsize] at (-1,-1.7) {0};
+    \node[anchor=west] at (2,59) {$\aZ\ \text{in}\ \dfrac{\mathrm{m}}{\mathrm{s}^2}$};
+  \end{tikzpicture}}
+
+\begin{document}
+\kopf{Zentripetalkraft berechnen · Formel umstellen · Experiment beschreiben}
+
+\frage{1}{Zentripetalkraft berechnen}
+Ein Auto der Masse $m=1{,}2\cdot10^3\,\mathrm{kg}$ fährt mit $\vB=72\,\frac{\mathrm{km}}{\mathrm{h}}$ durch eine Kurve mit dem Radius $r=50\,\mathrm{m}$.
+\textbf{Rechne} die Geschwindigkeit in $\frac{\mathrm{m}}{\mathrm{s}}$ \textbf{um} und \textbf{berechne} die nötige Zentripetalkraft mit Rechenweg und Einheit; gib das Ergebnis mit zwei gültigen Ziffern an.\par
+\antwortfeld{5}{$\displaystyle\vB=72\,\frac{\mathrm{km}}{\mathrm{h}}=\frac{72\cdot1000\,\mathrm{m}}{3600\,\mathrm{s}}=20\,\frac{\mathrm{m}}{\mathrm{s}}$.\\[3mm]
+$\displaystyle\FZ=\frac{m\vB^2}{r}=\frac{1{,}2\cdot10^3\,\mathrm{kg}\cdot\left(20\,\frac{\mathrm{m}}{\mathrm{s}}\right)^2}{50\,\mathrm{m}}=9{,}6\cdot10^3\,\mathrm{N}=9{,}6\,\mathrm{kN}$.\\[2mm]
+Die Haftreibung zwischen Reifen und Straße muss diese nach innen gerichtete Kraft aufbringen.}
+
+\frage{2}{Formel umstellen und Geschwindigkeit bestimmen}
+Auf einen Körper der Masse $m=0{,}50\,\mathrm{kg}$ wirkt auf einer Kreisbahn mit $r=0{,}80\,\mathrm{m}$ eine Zentripetalkraft von $\FZ=40\,\mathrm{N}$.
+\textbf{Stelle} $\FZ=\frac{m\vB^2}{r}$ nach $\vB$ \textbf{um} und \textbf{berechne} die Bahngeschwindigkeit mit Rechenweg, Einheit und zwei gültigen Ziffern.\par
+\antwortfeld{5}{$\displaystyle\FZ=\frac{m\vB^2}{r}\quad\Rightarrow\quad\FZ r=m\vB^2\quad\Rightarrow\quad\vB^2=\frac{\FZ r}{m}\quad\Rightarrow\quad\vB=\sqrt{\frac{\FZ r}{m}}$.\\[3mm]
+$\displaystyle\vB=\sqrt{\frac{40\,\mathrm{N}\cdot0{,}80\,\mathrm{m}}{0{,}50\,\mathrm{kg}}}=\sqrt{64\,\frac{\mathrm{m}^2}{\mathrm{s}^2}}=8{,}0\,\frac{\mathrm{m}}{\mathrm{s}}$.\\[2mm]
+Für den Betrag der Bahngeschwindigkeit wird die positive Wurzel verwendet.}
+
+\frage{3}{Das phyphox-Experiment beschreiben}
+\textbf{Beschreibe} den Aufbau und die Durchführung des im Unterricht durchgeführten phyphox-Experiments zur Zentripetalbeschleunigung.
+Gehe darauf ein, welche Größen das Smartphone misst, welche Größe ihr verändert und welche Größe gleich bleibt.\par
+\antwortfeld{5}{Das Smartphone wird auf einer waagerechten Kreisbahn sicher befestigt, zum Beispiel auf einer drehbaren Scheibe, mit festem Abstand seiner Sensoren zur Drehachse. In phyphox wird das Experiment zur Zentripetalbeschleunigung gestartet. Man misst bei verschiedenen Drehgeschwindigkeiten, jeweils möglichst gleichmäßig. Der Beschleunigungssensor misst den Betrag der Zentripetalbeschleunigung $\aZ$, das Gyroskop die Winkelgeschwindigkeit $\omega$. Verändert wird $\omega$; der Radius $r$ bleibt gleich. Die Messwertpaare werden aufgezeichnet. Gleichwertige Beschreibungen des verwendeten Aufbaus sind richtig.}
+
+\fuss{1}
+\newpage
+\kopf{Von der Beschleunigung zur Kraft · Messdiagramme auswerten}
+
+\frage{4}{Von der Beschleunigung auf die Kraft schließen}
+Im Experiment wird die Zentripetalbeschleunigung gemessen, aber keine Kraft.
+\textbf{Erkläre} mithilfe eines physikalischen Gesetzes, wie man bei bekannter Masse die zugehörige Zentripetalkraft bestimmen kann und warum man bei gleichbleibender Masse auch auf deren Abhängigkeit von $\omega$ schließen kann.\par
+\antwortfeld{4}{Nach dem zweiten Newtonschen Gesetz gilt für die resultierende Kraft $\vec F_{\mathrm{res}}=m\vec a$. Die zum Kreismittelpunkt gerichtete Kraft bewirkt die Zentripetalbeschleunigung; für die Beträge gilt $\FZ=m\aZ$. Bei bekannter Masse erhält man die Kraft durch Multiplikation der Beschleunigung mit der Masse. Bleibt $m$ gleich, sind Kraft und Beschleunigung proportional: Verdoppelt sich $\aZ$, verdoppelt sich $\FZ$. Beide haben daher dieselbe Abhängigkeit von $\omega$.}
+
+\frage{5}{Die Proportionalität aus Messpunkten begründen}
+Die Diagramme zeigen dieselben Messwerte des phyphox-Experiments bei gleichbleibendem Radius: links über $\omega^2$, rechts über $\omega$.\par\vspace{2mm}
+\begin{minipage}[t]{0.48\linewidth}
+  \centering
+  {\small\bfseries A · Quadratische Auftragung}\par\vspace{1mm}
+  \messdiagramm{1}
+\end{minipage}\hfill
+\begin{minipage}[t]{0.48\linewidth}
+  \centering
+  {\small\bfseries B · Einfache Auftragung}\par\vspace{1mm}
+  \messdiagramm{2}
+\end{minipage}\par
+{\scriptsize\color{Muted}Messpunkte nach dem Screenshot näherungsweise nachgezeichnet.}\par\vspace{2mm}
+\textbf{Begründe} anhand \emph{beider} Diagramme, welche Proportionalität zwischen $\aZ$ und $\omega$ die Messpunkte nahelegen.
+\textbf{Erkläre} auch, warum die Messpunkte gegen $\aZ\sim\omega$ sprechen.\par
+\antwortfeld{5}{In A liegen die Messpunkte näherungsweise auf einer Geraden durch den Ursprung. Daher ist $\aZ$ proportional zu $\omega^2$: $\aZ\sim\omega^2$. In B liegen die Punkte auf einer nach oben gekrümmten Kurve, nicht auf einer Ursprungsgeraden. Das spricht gegen $\aZ\sim\omega$. Zum Beispiel steigt bei einer Verdopplung von $\omega$ von etwa $5\,\frac{1}{\mathrm{s}}$ auf $10\,\frac{1}{\mathrm{s}}$ die Beschleunigung von ungefähr $5\,\frac{\mathrm{m}}{\mathrm{s}^2}$ auf $20\,\frac{\mathrm{m}}{\mathrm{s}^2}$, also auf etwa das Vierfache. Die Streuung der Messpunkte ist mit Messunsicherheiten vereinbar; die Proportionalität gilt hier bei festem Radius.}
+
+\fuss{2}
+\end{document}
