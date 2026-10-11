@@ -1,6 +1,8 @@
 import assert from 'node:assert/strict';
+import { execFileSync } from 'node:child_process';
 import { createHash } from 'node:crypto';
 import { readFileSync, statSync } from 'node:fs';
+import { fileURLToPath } from 'node:url';
 
 const html = readFileSync(new URL('../../aufgabe5.html', import.meta.url), 'utf8');
 const css = readFileSync(new URL('../task5.css', import.meta.url), 'utf8');
@@ -56,6 +58,15 @@ assert.match(css, /@media \(max-width:700px\)/);
 assert.match(css, /signal-node:not\(:last-child\)::after/);
 assert.match(css, /table-scroll thead tr:first-child th/);
 assert.equal(statSync(new URL('../data/Trainingsdaten_Tiere.csv', import.meta.url)).size, 59);
-assert.equal(csv.toString('utf8'), 'Zahnlänge;Augengröße;Label\r\n2;2;1\r\n4;1;0\r\n6;2;0\r\n0;4;1\r\n');
-assert.equal(createHash('sha256').update(csv).digest('hex').toUpperCase(), '107FE6A36A27F691F41221FF53D6BF34815846AEF88B8D7B7182E5AB16A449A6');
+assert.equal(csv.toString('utf8'), 'Zahnlaenge;Augengroesse;Label\r\n2;2;1\r\n4;1;0\r\n6;2;0\r\n0;4;1\r\n');
+assert.equal(createHash('sha256').update(csv).digest('hex').toUpperCase(), '94E0E40CD214044836E67D93C728027C03D9B916530E1CBBFDA6F4341868169A');
+// Check the bytes Git would publish, not just the Windows working copy.
+const rawBlobHash = createHash('sha1').update(`blob ${csv.length}\0`).update(csv).digest('hex');
+for (const autocrlf of ['true', 'false', 'input']) {
+  const publishedBlobHash = execFileSync('git', [
+    '-c', `core.autocrlf=${autocrlf}`, 'hash-object',
+    '--path=Trainingsdaten_Tiere.csv', '--stdin',
+  ], { cwd: fileURLToPath(new URL('../data/', import.meta.url)), input: csv, encoding: 'utf8' }).trim();
+  assert.equal(publishedBlobHash, rawBlobHash, `Git must preserve CSV CRLF with core.autocrlf=${autocrlf}`);
+}
 console.log('HTML-Vertrag, Interaktionen und bytegenaue Trainingsdaten sind korrekt.');

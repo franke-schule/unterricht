@@ -1,0 +1,2 @@
+# Perzeptron Online requires CRLF; preserve the download bytes in Git.
+Trainingsdaten_Tiere.csv -text whitespace=cr-at-eol
