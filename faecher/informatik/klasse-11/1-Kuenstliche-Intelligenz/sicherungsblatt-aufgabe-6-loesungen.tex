@@ -71,7 +71,7 @@
   result/.style={draw=safe,fill=safebg,rounded corners=1.5mm,minimum height=10mm,align=center,inner sep=2mm}]
   \node[flowbox,minimum width=27mm] (input) at (0,0) {$x_1,\;x_2$\\Eingaben};
   \node[flowbox,minimum width=37mm] (sum) at (4.1,0) {$a=w_1x_1+w_2x_2$\\gewichtete Summe};
-  \node[flowbox,minimum width=28mm] (test) at (8.6,0) {$a\ge\theta$\,?\\Vergleich};
+  \node[flowbox,minimum width=28mm] (test) at (8.6,0) {$a>\theta$\,?\\Vergleich};
   \node[result,minimum width=29mm] (out) at (12.4,0) {ja: \textbf{1}\\nein: \textbf{0}};
   \draw[->,thick,navy] (input) -- (sum);
   \draw[->,thick,navy] (sum) -- (test);
@@ -95,7 +95,7 @@ double gewichtete_Summe =
 \vspace{0pt}
 \begin{definition}[title=Schritt 3 · Ausgabe als \texttt{int}]
 \begin{lstlisting}[style=java-sheet]
-if (gewichtete_Summe >= theta) {
+if (gewichtete_Summe > theta) {
     berechnete_ausgabe = 1;
 } else {
     berechnete_ausgabe = 0;
@@ -157,7 +157,7 @@ $(6|2)$ & 0 & 0 & keine Änderung & $(-3,0,2)$\\
 \end{tabularx}
 \end{center}
 \begin{merke}[title=Vorher $\longrightarrow$ nachher]
-{\small $(4|1)$: zu Beginn $1\cdot4+1\cdot1=5\ge1\Rightarrow\boxed{1}$;\quad
+{\small $(4|1)$: zu Beginn $1\cdot4+1\cdot1=5>1\Rightarrow\boxed{1}$;\quad
 nach dem Training $-3\cdot4+4\cdot1=-8<1\Rightarrow\boxed{0}$.\\
 \texttt{double}: Eingaben, Gewichte, Lernrate, Summe · \texttt{int}: Label, Ausgabe, \texttt{delta}.}
 \end{merke}

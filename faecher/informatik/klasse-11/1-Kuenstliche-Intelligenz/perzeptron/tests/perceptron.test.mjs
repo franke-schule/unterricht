@@ -2,8 +2,11 @@ import assert from 'node:assert/strict';
 import { activation, calculate, normaliseNumber, numberMatches, runEpoch, trainOne } from '../logic/perceptron.mjs';
 
 assert.equal(activation(2, 3), 0);
-assert.equal(activation(3, 3), 1);
+assert.equal(activation(3, 3), 0);
+assert.equal(activation(0, 0), 0);
+assert.equal(activation(-2, -2), 0);
 assert.equal(activation(4, 3), 1);
+assert.deepEqual(trainOne({ x1: 1, x2: 1, target: 1 }, { w1: 1, w2: 1, threshold: 2, rate: 1 }), { sum: 2, output: 0, delta: 1, w1: 2, w2: 2, threshold: 1 });
 assert.deepEqual(calculate({ x1: 2, x2: 4, w1: -1, w2: 2, threshold: 3 }), { sum: 6, output: 1 });
 assert.deepEqual(calculate({ x1: 4, x2: 1, w1: -1, w2: 2, threshold: 3 }), { sum: -2, output: 0 });
 assert.deepEqual(trainOne({ x1: 4, x2: 1, target: 0 }, { w1: 1, w2: 1, threshold: 1, rate: 1 }), { sum: 5, output: 1, delta: -1, w1: -3, w2: 0, threshold: 2 });

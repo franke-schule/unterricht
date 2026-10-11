@@ -19,7 +19,7 @@ Gelesene Regeln: `AGENTS.md`, `manifest-allgemein.txt`, `manifest-online-ide-pro
 
 **Wichtiger Serverbefund:** `apps-script/Gemini.gs` formuliert Codeauswertungen bisher ausdrücklich als Roboteraufgaben und fragt nach Wandkollisionen, Drehungen und Ziegeln. Neue `Tasks.gs`-Einträge allein liefern für das Perzeptron kein brauchbares Feedback. `buildCodePrompt_` bekommt deshalb eine allgemeine, durch Task-Daten konfigurierbare Variante für beliebige künftige Programmierkontexte; für vorhandene Roboter-Tasks bleibt der bisherige Prompt erhalten.
 
-**Fachliche Referenz:** `punktKlassifizieren` bildet eine `double`-Summe und liefert bei `a >= theta` den Wert 1, sonst 0. `trainieren` bildet dieselbe Summe für einen `Datenpunkt`, bestimmt `delta = Label − Ausgabe`, ändert bei `delta = 1` beide Gewichte um `+ lernrate · Eingabe` und `theta` um `− lernrate`, bei `delta = −1` entsprechend umgekehrt; bei `delta = 0` bleibt alles unverändert. Funktional gleichwertig ist die allgemeine Delta-Formel. Das `int` der gewichteten Summe in der einfachen BlueJ-Vorlage ist ein fachlicher Typfehler für Dezimalwerte und wird im Schüler-Startstand zu `double`. Die überzähligen und uneinheitlich nummerierten BlueJ-Kommentare werden bereinigt, ohne die fachlichen Lücken vorwegzunehmen.
+**Fachliche Referenz:** `punktKlassifizieren` bildet eine `double`-Summe und liefert bei `a > theta` den Wert 1, sonst 0. `trainieren` bildet dieselbe Summe für einen `Datenpunkt`, bestimmt `delta = Label − Ausgabe`, ändert bei `delta = 1` beide Gewichte um `+ lernrate · Eingabe` und `theta` um `− lernrate`, bei `delta = −1` entsprechend umgekehrt; bei `delta = 0` bleibt alles unverändert. Funktional gleichwertig ist die allgemeine Delta-Formel. Das `int` der gewichteten Summe in der einfachen BlueJ-Vorlage ist ein fachlicher Typfehler für Dezimalwerte und wird im Schüler-Startstand zu `double`. Die überzähligen und uneinheitlich nummerierten BlueJ-Kommentare werden bereinigt, ohne die fachlichen Lücken vorwegzunehmen.
 
 ## 2. Lernziel und Lernweg
 
@@ -69,7 +69,7 @@ Alle drei Aufgabenkarten stehen rechts neben der IDE und haben einen eigenen Pr�
 | Schritt und Button | Arbeitsauftrag | Hilfe 1 | Hilfe 2 | Hilfe 3 |
 | --- | --- | --- | --- | --- |
 | „2. Gewichtete Summe“ / „Code zu Schritt 2 prüfen“ | „**Ersetze** den Platzhalter für `gewichtete_Summe` durch die gewichtete Summe der beiden Eingabewerte von `punkt`.“ | „Beide Eingaben tragen zur Summe bei.“ | „Multipliziere jeden Eingabewert mit seinem passenden Gewicht und addiere die Produkte.“ | „Lies `x_1` und `x_2` über die Getter von `punkt`; speichere das Ergebnis als `double`.“ |
-| „3. Ausgabe bestimmen“ / „Code zu Schritt 3 prüfen“ | „**Ergänze** beide Zweige der Treppenfunktion, damit `berechnete_ausgabe` bei Erreichen des Schwellenwerts 1 und sonst 0 enthält.“ | „Überlege, in welchem Zweig die Ausgabe 1 sein muss.“ | „Bei Gleichheit mit `theta` gehört der Punkt bereits zur Ausgabe 1.“ | „Setze `berechnete_ausgabe` im `>=`-Zweig auf 1 und im anderen Zweig auf 0.“ |
+| „3. Ausgabe bestimmen“ / „Code zu Schritt 3 prüfen“ | „**Ergänze** beide Zweige der Treppenfunktion, damit `berechnete_ausgabe` bei Überschreiten des Schwellenwerts 1 und sonst 0 enthält.“ | „Überlege, in welchem Zweig die Ausgabe 1 sein muss.“ | „Bei Gleichheit mit `theta` ist die Ausgabe 0. Nur bei größerer Summe ist sie 1.“ | „Setze `berechnete_ausgabe` im `>`-Zweig auf 1 und im anderen Zweig auf 0.“ |
 | „4. Parameter anpassen“ / „Code zu Schritt 4 prüfen“ | „**Ergänze** die Anpassung von `w_1`, `w_2` und `theta` für `delta = 1` und `delta = -1`. Bei `delta = 0` bleiben alle drei Werte unverändert.“ | „Nur ein Fehler verändert die Parameter.“ | „Bei `delta = 1` wachsen die Gewichte entsprechend den Eingaben und `theta` sinkt; bei `delta = -1` kehren sich die Vorzeichen um.“ | „Verwende bei jeder Änderung `lernrate` und die Getter von `punkt`. Prüfe besonders das Vorzeichen der Änderung von `theta`.“ |
 
 Die letzte Hilfe hat wörtlich die Einleitung: „Diese Anweisungen gehören in `trainieren`, stehen aber nicht in der richtigen Reihenfolge. Kopiere nur die Zeilen, die du brauchst, und ordne sie an den passenden Stellen ein.“ Sie enthält **neun einzeln kopierbare Anweisungen** aus der BlueJ-Lösung: eine Summenberechnung, zwei Ausgabesetzungen, drei Aktualisierungen für `delta = 1`, drei für `delta = -1`. Präsentationsreihenfolge, bewusst inkorrekt: `w_2` für negatives Delta; Ausgabe 1; `theta` für positives Delta; Summe; `w_1` für positives Delta; Ausgabe 0; `theta` für negatives Delta; `w_2` für positives Delta; `w_1` für negatives Delta. Die Anweisungen werden erst beim Bau wörtlich aus der Lösung in die IDE-Syntax übertragen. Keine zusätzliche komplette Methode und keine automatisch sortierte Lösung zeigen.
@@ -81,7 +81,7 @@ Die letzte Hilfe hat wörtlich die Einleitung: „Diese Anweisungen gehören in 
 - Button: „Meine Trainingsmethode prüfen“.
 - Direkt darunter ein zunächst geschlossener `details`-Bereich mit `summary` „Formelsammlung anzeigen“. Inhalt wörtlich:
   - „Gewichtete Summe: a = w₁ · x₁ + w₂ · x₂“
-  - „Ausgabe: f(a) = 1 für a ≥ θ, sonst 0“
+  - „Ausgabe: f(a) = 1 für a > θ, sonst 0“
   - „Fehler: δ = t − f(a)“
   - „Gewichte: wᵢ neu = wᵢ alt + δ · α · xᵢ“
   - „Schwellenwert: θ neu = θ alt − δ · α“
@@ -101,9 +101,9 @@ Quiz-Einleitung: „Kreuze alle richtigen Aussagen an. Bei manchen Fragen sind m
 
 | Frage | Optionen in dieser Reihenfolge | Richtige Optionen | Erklärung bei der Auswertung |
 | --- | --- | --- | --- |
-| „1. Was macht `punktKlassifizieren`?“ | A „Die Methode multipliziert beide Eingaben mit ihren Gewichten.“ · B „Sie addiert die beiden Produkte.“ · C „Sie verändert die Gewichte bei jeder Klassifikation.“ · D „Sie gibt 1 zurück, wenn die Summe mindestens so groß wie `theta` ist.“ | A, B, D | „Die Methode berechnet die gewichtete Summe und vergleicht sie mit `theta`. Sie verändert keine Parameter.“ |
+| „1. Was macht `punktKlassifizieren`?“ | A „Die Methode multipliziert beide Eingaben mit ihren Gewichten.“ · B „Sie addiert die beiden Produkte.“ · C „Sie verändert die Gewichte bei jeder Klassifikation.“ · D „Sie gibt 1 zurück, wenn die Summe größer als `theta` ist.“ | A, B, D | „Die Methode berechnet die gewichtete Summe und vergleicht sie mit `theta`. Sie verändert keine Parameter.“ |
 | „2. Welche Aussagen zum Training stimmen?“ | A „`delta` ist das Label minus die berechnete Ausgabe.“ · B „Bei `delta = 0` bleiben Gewichte und Schwellenwert unverändert.“ · C „Das Label des Datenpunkts wird überschrieben.“ · D „Die Lernrate beeinflusst die Größe der Anpassung.“ | A, B, D | „Das Label bleibt erhalten. Nur bei einem Fehler werden die Parameter angepasst; die Lernrate bestimmt die Schrittweite.“ |
-| „3. Was gilt, wenn die gewichtete Summe genau `theta` entspricht?“ | A „Die Ausgabe ist 1.“ · B „Die Ausgabe ist 0.“ · C „`delta` ist unabhängig vom Label immer 0.“ · D „Die Gewichte werden sofort verändert.“ | A | „Der Vergleich verwendet `>=`. Bei Gleichheit ist die Ausgabe 1; erst das Label entscheidet über `delta`.“ |
+| „3. Was gilt, wenn die gewichtete Summe genau `theta` entspricht?“ | A „Die Ausgabe ist 1.“ · B „Die Ausgabe ist 0.“ · C „`delta` ist unabhängig vom Label immer 0.“ · D „Die Gewichte werden sofort verändert.“ | B | „Der Vergleich verwendet `>`. Bei Gleichheit ist die Ausgabe 0; erst das Label entscheidet über `delta`.“ |
 | „4. Welche Änderungen gelten bei `delta = -1`?“ | A „Für jedes Gewicht gilt: neuer Wert = alter Wert − α · Eingabe.“ · B „`theta` wird um α erhöht.“ · C „Jedes Gewicht wird unabhängig von der Eingabe um genau 1 kleiner.“ · D „Das Label wird in 1 geändert.“ | A, B | „Bei `delta = -1` werden die gewichteten Lernschritte abgezogen und `theta` um α erhöht. Das Label wird nicht geändert.“ |
 
 Wörtliche Quiz-Meldungen: korrekt je Frage „Richtig. Alle passenden Aussagen sind markiert.“; sonst „Noch nicht vollständig. Prüfe die Aussagen und versuche es erneut.“ Gesamterfolg „Alle vier Fragen sind vollständig richtig beantwortet.“; sonst „{Anzahl} von 4 Fragen sind vollständig richtig. Verbessere die markierten Fragen und prüfe erneut.“ Nach vier vollständig richtigen Fragen zeigt die bestehende Quiz-Übersicht Fragestellungen und richtige Optionen aller vier Fragen. Falsche Antworten bleiben bearbeitbar. Quiz-Auswahl und Freischaltung der Übersicht bleiben nach dem Seitenwechsel erhalten.
@@ -116,11 +116,11 @@ Wörtliche Quiz-Meldungen: korrekt je Frage „Richtig. Alle passenden Aussagen 
 
 | Task-ID | Typ, Punkte | Erwartete Aspekte |
 | --- | --- | --- |
-| `11-6-klassifizieren` | Text, 4 | Eingaben werden mit den passenden Gewichten multipliziert; Produkte werden addiert; Summe wird einschließlich Gleichheit mit `theta` verglichen; Rückgabe ist 1 oder 0 ohne Änderung der Parameter. |
+| `11-6-klassifizieren` | Text, 4 | Eingaben werden mit den passenden Gewichten multipliziert; Produkte werden addiert; Summe wird streng mit `theta` verglichen, Gleichheit liefert 0; Rückgabe ist 1 oder 0 ohne Änderung der Parameter. |
 | `11-6-einfach-summe` | Code, 3 | Beide Werte über die passenden `Datenpunkt`-Getter; korrekt zugeordnete Produkte und Addition; Ergebnis als `double` ohne Abschneiden. |
-| `11-6-einfach-ausgabe` | Code, 3 | Vergleich einschließlich Gleichheit; Ausgabe 1 im zutreffenden Zweig; Ausgabe 0 im anderen Zweig. |
+| `11-6-einfach-ausgabe` | Code, 3 | Strenger Größer-Vergleich; Ausgabe 1 bei Überschreiten des Schwellenwerts; Ausgabe 0 bei Gleichheit oder kleinerer Summe. |
 | `11-6-einfach-anpassung` | Code, 5 | Beide Gewichte bei `delta = 1` mit Eingaben und Lernrate erhöhen; `theta` dann verringern; beide Gewichte bei `delta = -1` entsprechend verringern; `theta` dann erhöhen; bei `delta = 0` nichts ändern. |
-| `11-6-schwer-trainieren` | Code, 6 | Gewichtete Summe ohne Ganzzahlverlust; Treppenfunktion mit `>=`; `delta = Label − Ausgabe`; beide Gewichte korrekt mit Eingaben und Lernrate anpassen; `theta` mit umgekehrtem Vorzeichen anpassen; bei `delta = 0` nichts ändern. |
+| `11-6-schwer-trainieren` | Code, 6 | Gewichtete Summe ohne Ganzzahlverlust; Treppenfunktion mit `>`; `delta = Label − Ausgabe`; beide Gewichte korrekt mit Eingaben und Lernrate anpassen; `theta` mit umgekehrtem Vorzeichen anpassen; bei `delta = 0` nichts ändern. |
 
 Der Text-Task bekommt eine eigene `systemInstruction`, die sinngleiche Erklärungen anerkennt und bei Lücken Hinweise statt einer Musterlösung verlangt. Für Code werden alternative, funktional gleichwertige Implementierungen anerkannt: eine gemeinsame Delta-Formel statt zweier Zweige, sinnvolle Hilfsvariablen, Aufruf von `punktKlassifizieren` statt doppelter Berechnung und äquivalente Reihenfolgen ohne Verhaltensänderung. Die statische Analyse behauptet nie, den Code ausgeführt zu haben. Syntaxprobleme und fachliche Fehler werden getrennt benannt, soweit aus dem Text erkennbar. Anweisungen in Schülerkommentaren werden nicht als Bewertungsanweisungen befolgt.
 
@@ -157,7 +157,7 @@ Diese Fälle prüfen das **Verhalten**, nicht einen bestimmten Wortlaut des Java
 | Positiver Fehler mit halber Lernrate | `w₁ = 0`, `w₂ = 0`, `theta = 1`, `α = 0,5`; `(2,2,1)` | `a = 0`, Ausgabe `0`, `δ = 1`; nachher `w₁ = 1`, `w₂ = 1`, `theta = 0,5`. |
 | Kein Fehler | `w₁ = 1`, `w₂ = 1`, `theta = 1`, `α = 0,5`; `(2,2,1)` | `a = 4`, Ausgabe `1`, `δ = 0`; alle drei Parameter unverändert. |
 | Nicht ganzzahlige Summe | `w₁ = 0,25`, `w₂ = 0,5`, `theta = 0,6`; Eingaben `(1,1)` | `a = 0,75`, Klassifikation `1`; ein `int`-Zwischenergebnis würde diesen Test verfehlen. |
-| Gleichheit | `w₁ = 0,25`, `w₂ = 0,5`, `theta = 0,75`; Eingaben `(1,1)` | `a = theta`; Klassifikation `1`. Beim Training entscheidet anschließend das Label über `δ`. |
+| Gleichheit | `w₁ = 0,25`, `w₂ = 0,5`, `theta = 0,75`; Eingaben `(1,1)` | `a = theta`; Klassifikation `0`. Beim Training entscheidet anschließend das Label über `δ`. |
 | Ganze Epoche aus Aufgabe 5 | Start `w₁ = w₂ = theta = α = 1`; vier Datenpunkte in der obigen Reihenfolge | Nach einem Durchlauf `w₁ = −3`, `w₂ = 4`, `theta = 1`. |
 
 Zusätzlich prüfen: Beide unbearbeiteten Startstände kompilieren und starten; korrekter, teilweise korrekter und fehlerhafter Code erzeugen zum jeweiligen Task passende statische Rückmeldungen; absichtlich falsch sortierte Schnipsel führen nicht unbemerkt zu einer funktionierenden Lösung; ein Wechsel und Neuladen bewahrt beide unterschiedlichen Code-Stände; lange Antwort und langer Code werden verständlich abgefangen; Serverausfall, Timeout und unbekannte Task-ID bleiben vom fachlichen Urteil unterscheidbar.

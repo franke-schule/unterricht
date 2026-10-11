@@ -6,7 +6,7 @@ export const TRAINING_ROWS = [
 ];
 
 export function activation(sum, threshold) {
-  return sum >= threshold ? 1 : 0;
+  return sum > threshold ? 1 : 0;
 }
 
 export function calculate({ x1, x2, w1, w2, threshold }) {

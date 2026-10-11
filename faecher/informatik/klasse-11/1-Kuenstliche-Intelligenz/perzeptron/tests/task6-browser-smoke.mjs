@@ -91,7 +91,7 @@ for (const [variant,id] of [['einfach','Java11Aufgabe6Einfach'],['schwer','Java1
   assert(/CASE_PLUS[\s\S]*w_1 = 1(?:\.0)?; w_2 = 1(?:\.0)?; theta = 0\.5/.test(calculated),variant+': δ = 1 oder halbe Lernrate falsch: '+calculated);
   assert(/CASE_ZERO[\s\S]*Keine Anpassung der Gewichte notwendig!/.test(calculated),variant+': δ = 0 falsch: '+calculated);
   assert(calculated.includes('CASE_DECIMAL 1'),variant+': Dezimalsumme falsch: '+calculated);
-  assert(calculated.includes('CASE_EQUAL 1'),variant+': Grenzfall a = theta falsch: '+calculated);
+  assert(calculated.includes('CASE_EQUAL 0'),variant+': Grenzfall a = theta falsch: '+calculated);
   assert(/CASE_EPOCH[\s\S]*-3(?:\.0)?\*x_1 \+ 4(?:\.0)?\*x_2 = 1(?:\.0)?/.test(calculated),variant+': ganze Epoche falsch: '+calculated);
   await evaluate("document.querySelector('#change-variant').click()");
 }

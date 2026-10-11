@@ -12,12 +12,12 @@ const FALLBACK = {
   '11-6-schwer-trainieren': ['Deine Trainingsmethode bildet Ausgabe, Fehler und Parameteränderung schlüssig ab.', 'Ein Teil der Trainingsschritte stimmt. Prüfe den ersten noch fehlenden Schritt in der Rückmeldung.', 'Beginne mit Summe, Schwellenvergleich und Fehler; danach kommen die Parameteränderungen.']
 };
 const QUIZ = [
-  { question:'1. Was macht `punktKlassifizieren`?', options:['Die Methode multipliziert beide Eingaben mit ihren Gewichten.','Sie addiert die beiden Produkte.','Sie verändert die Gewichte bei jeder Klassifikation.','Sie gibt 1 zurück, wenn die Summe mindestens so groß wie `theta` ist.'], correct:[0,1,3], explanation:'Die Methode berechnet die gewichtete Summe und vergleicht sie mit `theta`. Sie verändert keine Parameter.' },
+  { question:'1. Was macht `punktKlassifizieren`?', options:['Die Methode multipliziert beide Eingaben mit ihren Gewichten.','Sie addiert die beiden Produkte.','Sie verändert die Gewichte bei jeder Klassifikation.','Sie gibt 1 zurück, wenn die Summe größer als `theta` ist.'], correct:[0,1,3], explanation:'Die Methode berechnet die gewichtete Summe und vergleicht sie mit `theta`. Sie verändert keine Parameter.' },
   { question:'2. Welche Aussagen zum Training stimmen?', options:['`delta` ist das Label minus die berechnete Ausgabe.','Bei `delta = 0` bleiben Gewichte und Schwellenwert unverändert.','Das Label des Datenpunkts wird überschrieben.','Die Lernrate beeinflusst die Größe der Anpassung.'], correct:[0,1,3], explanation:'Das Label bleibt erhalten. Nur bei einem Fehler werden die Parameter angepasst; die Lernrate bestimmt die Schrittweite.' },
-  { question:'3. Was gilt, wenn die gewichtete Summe genau `theta` entspricht?', options:['Die Ausgabe ist 1.','Die Ausgabe ist 0.','`delta` ist unabhängig vom Label immer 0.','Die Gewichte werden sofort verändert.'], correct:[0], explanation:'Der Vergleich verwendet `>=`. Bei Gleichheit ist die Ausgabe 1; erst das Label entscheidet über `delta`.' },
+  { question:'3. Was gilt, wenn die gewichtete Summe genau `theta` entspricht?', options:['Die Ausgabe ist 1.','Die Ausgabe ist 0.','`delta` ist unabhängig vom Label immer 0.','Die Gewichte werden sofort verändert.'], correct:[1], explanation:'Der Vergleich verwendet `>`. Bei Gleichheit ist die Ausgabe 0; erst das Label entscheidet über `delta`.' },
   { question:'4. Welche Änderungen gelten bei `delta = -1`?', options:['Für jedes Gewicht gilt: neuer Wert = alter Wert − α · Eingabe.','`theta` wird um α erhöht.','Jedes Gewicht wird unabhängig von der Eingabe um genau 1 kleiner.','Das Label wird in 1 geändert.'], correct:[0,1], explanation:'Bei `delta = -1` werden die gewichteten Lernschritte abgezogen und `theta` um α erhöht. Das Label wird nicht geändert.' }
 ];
-const state = { variant: null, description: '', quiz: QUIZ.map(() => []), quizSummary: false };
+const state = { activationRule: 'strict', variant: null, description: '', quiz: QUIZ.map(() => []), quizSummary: false };
 
 function save() {
   try { localStorage.setItem(STORAGE_KEY, JSON.stringify(state)); }
@@ -30,7 +30,7 @@ function restore() {
     if (['einfach','schwer'].includes(saved.variant)) state.variant = saved.variant;
     if (typeof saved.description === 'string') state.description = saved.description.slice(0,600);
     if (Array.isArray(saved.quiz)) state.quiz = QUIZ.map((_,i) => Array.isArray(saved.quiz[i]) ? saved.quiz[i].filter(v => Number.isInteger(v) && v >= 0 && v < 4) : []);
-    if (saved.quizSummary === true) state.quizSummary = true;
+    if (saved.quizSummary === true && saved.activationRule === 'strict') state.quizSummary = true;
   } catch { /* Beschädigte oder gesperrte Speicherung beeinträchtigt die Aufgabe nicht. */ }
 }
 function choose(variant) {

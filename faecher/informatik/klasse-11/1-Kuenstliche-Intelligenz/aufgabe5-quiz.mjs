@@ -17,11 +17,11 @@ const DESCRIBE_MAX_POINTS = DESCRIBE_TASKS.reduce((sum, task) => sum + task.maxP
 const CLOZE_TERMS = [
   { key: "Lernrate", reason: "Die Lernrate bestimmt die Größe einer Anpassung beim Training; im beschriebenen Rechenweg kommt sie nicht vor." },
   { key: "Gewicht", reason: "Mit einem Gewicht wird eine Eingabe multipliziert, bevor die Produkte addiert werden." },
-  { key: "0", reason: "Unterhalb des Schwellenwerts gibt die Treppenfunktion 0 aus." },
+  { key: "0", reason: "Unterhalb des Schwellenwerts und bei Gleichheit gibt die Treppenfunktion 0 aus." },
   { key: "Eingaben", reason: "Die Merkmalswerte bilden die Eingaben des Perzeptrons." },
   { key: "Zielwert", reason: "Der Zielwert wird erst beim Training mit der Ausgabe verglichen." },
   { key: "Schwellenwert", reason: "Die gewichtete Summe wird mit dem Schwellenwert verglichen." },
-  { key: "1", reason: "Bei Gleichheit mit oder oberhalb des Schwellenwerts ist die Ausgabe 1." },
+  { key: "1", reason: "Nur oberhalb des Schwellenwerts ist die Ausgabe 1. Bei Gleichheit ist sie 0." },
   { key: "Summe", reason: "Die Produkte aus Eingaben und Gewichten werden zur gewichteten Summe addiert." },
 ];
 const CLOZE_SOLUTION = ["Eingaben", "Gewicht", "Summe", "Schwellenwert", "1", "0"];
@@ -30,7 +30,7 @@ const CLOZE_PARTS = [
   ". Jede Eingabe wird mit einem ",
   " multipliziert. Die Produkte ergeben die gewichtete ",
   ". Sie wird mit dem ",
-  " verglichen. Ist die Summe mindestens so groß, gibt die Treppenfunktion ",
+  " verglichen. Ist die Summe größer, gibt die Treppenfunktion ",
   " aus; andernfalls ",
   ".",
 ];
@@ -44,7 +44,7 @@ const SORT_VALUES = [
   { key: "p1", label: "(4 | 1)", zone: "zero", reason: "a = −4 + 2 = −2. Vergleiche −2 mit dem Schwellenwert 3." },
   { key: "p2", label: "(0 | 2)", zone: "one", reason: "a = 0 + 4 = 4. Vergleiche 4 mit dem Schwellenwert 3." },
   { key: "p3", label: "(3 | 2)", zone: "zero", reason: "a = −3 + 4 = 1. Vergleiche 1 mit dem Schwellenwert 3." },
-  { key: "p4", label: "(3 | 3)", zone: "one", reason: "a = −3 + 6 = 3. Denke daran, dass die Regel auch bei Gleichheit a ≥ θ gilt." },
+  { key: "p4", label: "(3 | 3)", zone: "zero", reason: "a = −3 + 6 = 3. Bei Gleichheit mit θ = 3 ist a > θ nicht erfüllt; die Ausgabe ist 0." },
   { key: "p5", label: "(5 | 3)", zone: "zero", reason: "a = −5 + 6 = 1. Vergleiche 1 mit dem Schwellenwert 3." },
   { key: "p6", label: "(2 | 3)", zone: "one", reason: "a = −2 + 6 = 4. Vergleiche 4 mit dem Schwellenwert 3." },
 ];
@@ -53,14 +53,14 @@ const MC_QUESTIONS = [
   { id: "q1", text: "Ein Tier wird durch zwei Merkmalswerte beschrieben. Welche Aussagen zum Perzeptron stimmen?", why: "Merkmalswerte sind Eingaben. Gewichte bestimmen ihre Beiträge zur Summe; der Schwellenwert legt die Grenze für Ausgabe 1 fest.", options: [
     { id: "inputs", text: "Die Merkmalswerte sind die Eingaben.", correct: true },
     { id: "weights", text: "Die Gewichte beeinflussen die Beiträge der Eingaben zur Summe.", correct: true },
-    { id: "threshold", text: "Der Schwellenwert bestimmt, ab welcher Summe Ausgabe 1 entsteht.", correct: true },
+    { id: "threshold", text: "Der Schwellenwert bestimmt, welche Grenze die Summe für Ausgabe 1 überschreiten muss.", correct: true },
     { id: "learning", text: "Die Ausgabe legt ohne Zielwert neue Gewichte fest.", reason: "Eine Anpassung braucht den Vergleich der Ausgabe mit dem Zielwert." },
   ] },
-  { id: "q2", text: "Für x₁ = 3, x₂ = 3, w₁ = −1, w₂ = 2 und θ = 3: Was stimmt?", why: "a = −1 · 3 + 2 · 3 = 3. Wegen a ≥ θ liefert das Perzeptron 1; im Modul bedeutet das ungefährlich.", options: [
+  { id: "q2", text: "Für x₁ = 3, x₂ = 3, w₁ = −1, w₂ = 2 und θ = 3: Was stimmt?", why: "a = −1 · 3 + 2 · 3 = 3. Bei a = θ ist a > θ nicht erfüllt. Das Perzeptron liefert 0; im Modul bedeutet das gefährlich.", options: [
     { id: "sum", text: "Die gewichtete Summe beträgt 3.", correct: true },
-    { id: "output", text: "Die Ausgabe ist 1.", correct: true },
-    { id: "class", text: "Das Tier wird als ungefährlich eingeordnet.", correct: true },
-    { id: "equal", text: "Bei Gleichheit mit dem Schwellenwert entsteht Ausgabe 0.", reason: "Die Regel lautet a ≥ θ. Gleichheit führt deshalb zu Ausgabe 1." },
+    { id: "output", text: "Die Ausgabe ist 1.", reason: "Die Summe muss den Schwellenwert überschreiten. Bei Gleichheit ist die Ausgabe 0." },
+    { id: "class", text: "Das Tier wird als gefährlich eingeordnet.", correct: true },
+    { id: "equal", text: "Bei Gleichheit mit dem Schwellenwert entsteht Ausgabe 0.", correct: true },
   ] },
   { id: "q3", text: "Ein Trainingsbeispiel wird richtig eingeordnet. Welche Aussagen stimmen?", why: "Bei richtiger Einordnung stimmen Zielwert und Ausgabe überein. Daher ist δ = 0 und die Parameter bleiben gleich.", options: [
     { id: "delta", text: "Die Abweichung δ ist 0.", correct: true },
@@ -93,7 +93,7 @@ const LOCAL_TASKS = [
 ];
 
 const DEFAULT_STATE = {
-  version: 2,
+  version: 3,
   cloze: {},
   sort: {},
   mc: Object.fromEntries(MC_QUESTIONS.map((question) => [question.id, []])),
@@ -138,7 +138,7 @@ function loadState() {
       if (typeof saved.texts?.[task.id] === "string") fresh.texts[task.id] = saved.texts[task.id];
     });
     // Stände aus der Zeit mit Abgabe-Button (ohne version) bringen nur ihre Eingaben mit.
-    if (saved.version !== 2) return fresh;
+    if (![2, 3].includes(saved.version)) return fresh;
     ["cloze", "sort"].forEach((key) => {
       fresh.checked[key] = saved.checked?.[key] === true;
       fresh.first[key] = clampPoints(saved.first?.[key], MAX_POINTS[key]);
@@ -155,6 +155,12 @@ function loadState() {
       }
       fresh.first.describe[task.id] = clampPoints(saved.first?.describe?.[task.id], task.maxPoints);
     });
+    // Alte Bewertungen des geänderten Grenzfalls erneut prüfen; Eingaben erhalten.
+    if (saved.version === 2) {
+      fresh.checked.cloze = false; fresh.first.cloze = null;
+      fresh.checked.sort = false; fresh.first.sort = null;
+      fresh.checked.mc.q2 = false; fresh.first.mc.q2 = null;
+    }
     return fresh;
   } catch {
     return fresh;
