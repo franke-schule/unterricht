@@ -105,5 +105,5 @@ for (const [variant,id,marker] of [['einfach','Java11Aufgabe6Einfach','TEST_EINF
   const text = await evaluate(ideExpression(variant,id,"return ide.currentWorkspace.files.find(file=>file.name==='Perzeptron.java').getText();"));
   assert(text.includes(marker) && !text.includes(variant==='einfach'?'TEST_SCHWER':'TEST_EINFACH'),variant+': Code-Stand nach Wechsel/Neuladen nicht getrennt erhalten.');
 }
-console.log('Aufgabe 6: mobile Breite, beide IDE-Starts, alle Rechenfälle und getrennte Code-Stände bestanden.');
+console.log('Aufgabe 6.1: mobile Breite, beide IDE-Starts, alle Rechenfälle und getrennte Code-Stände bestanden.');
 socket.close();

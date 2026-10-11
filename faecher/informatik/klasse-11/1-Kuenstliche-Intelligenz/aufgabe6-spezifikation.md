@@ -1,11 +1,11 @@
-# Verbindliche Spezifikation: Aufgabe 6 – Perzeptron implementieren
+# Verbindliche Spezifikation: Aufgabe 6.1 – Perzeptron implementieren
 
 **Stand:** 28. September 2026
 **Umfang:** Planung; keine Implementierung. Diese Spezifikation ist die Eingabe für Bau, regelbasierte Vorprüfung und fachliche Endabnahme. Schülertexte in Anführungszeichen sind wörtlich zu übernehmen.
 
 ## 1. Quellen und Entscheidungen
 
-Gelesene Regeln: `AGENTS.md`, `manifest-allgemein.txt`, `manifest-online-ide-programmieraufgaben.txt`, `manifest-quizaufgaben.txt`. Für Aufgabe 6 wird kein Sicherungsblatt erstellt; damit entstehen weder Lehrercode noch PDF. Ein zusätzliches Wiederholungs-Quiz ist nicht beauftragt.
+Gelesene Regeln: `AGENTS.md`, `manifest-allgemein.txt`, `manifest-online-ide-programmieraufgaben.txt`, `manifest-quizaufgaben.txt`. Für Aufgabe 6.1 wird kein Sicherungsblatt erstellt; damit entstehen weder Lehrercode noch PDF. Ein zusätzliches Wiederholungs-Quiz ist nicht beauftragt.
 
 | Zweck | Konkrete Referenz |
 | --- | --- |
@@ -23,13 +23,13 @@ Gelesene Regeln: `AGENTS.md`, `manifest-allgemein.txt`, `manifest-online-ide-pro
 
 ## 2. Lernziel und Lernweg
 
-Nach Aufgabe 5 übertragen die Lernenden die bekannte Perzeptron-Rechnung in Java. Sie können `punktKlassifizieren` als Berechnung und Entscheidung erklären, die Schritte von `trainieren` implementieren und am Programmlauf prüfen, wie ein gelabelter Datenpunkt Gewichte und Schwellenwert verändert. Die einfache und die schwere Variante haben dasselbe Ziel und dasselbe Abschlussquiz. Fachbegriffe und Formeln sind aus Aufgabe 5 bekannt; Aufgabe 6 festigt sie an einem konkreten Programmlauf und wendet sie erst danach im Code an.
+Nach Aufgabe 5 übertragen die Lernenden die bekannte Perzeptron-Rechnung in Java. Sie können `punktKlassifizieren` als Berechnung und Entscheidung erklären, die Schritte von `trainieren` implementieren und am Programmlauf prüfen, wie ein gelabelter Datenpunkt Gewichte und Schwellenwert verändert. Die einfache und die schwere Variante haben dasselbe Ziel und dasselbe Abschlussquiz. Fachbegriffe und Formeln sind aus Aufgabe 5 bekannt; Aufgabe 6.1 festigt sie an einem konkreten Programmlauf und wendet sie erst danach im Code an.
 
 Reihenfolge: Beispiel starten und Ausgabe beobachten → vorhandene Klassifikationsmethode verstehen → Training implementieren → mit verschiedenen Datenpunkten prüfen → Zusammenfassung und Abschlussquiz. Die Varianten sind alternative Wege, keine hintereinander freizuschaltenden Stufen. Beschreibung und Quiz dürfen auch bei unvollständigem Code erreichbar bleiben.
 
 ## 3. Seite, IDE und Zustand
 
-- Zielseite: `faecher/informatik/klasse-11/1-Kuenstliche-Intelligenz/aufgabe6.html`. Der Button für Aufgabe 6 folgt in `faecher/informatik/klasse-11/index.html` unmittelbar auf Aufgabe 5; Linkziel ist dieselbe Seite.
+- Zielseite: `faecher/informatik/klasse-11/1-Kuenstliche-Intelligenz/aufgabe6.html`. Der Button für Aufgabe 6.1 folgt in `faecher/informatik/klasse-11/index.html` unmittelbar auf Aufgabe 5; Linkziel ist dieselbe Seite.
 - Beim Öffnen steht vor dem Arbeitsbereich eine Wahl „Einfach“ oder „Schwer“. Danach links die vorhandene eingebettete Online-IDE, rechts die gemeinsame Beschreibe-Aufgabe und darunter die zur Variante gehörenden Aufgaben bzw. Hilfen. Auf schmalen Bildschirmen folgt die rechte Spalte unter der IDE. Zusammenfassung und `#final-quiz` stehen nach dem Arbeitsbereich; das Quiz ist das letzte Lern-Element.
 - Ein IDE-Workspace je Variante, mit stabilen, unterschiedlichen IDs `Java11Aufgabe6Einfach` und `Java11Aufgabe6Schwer`. Beide enthalten `Anleitung` als anfänglich sichtbaren IDE-Hinweis sowie `Hauptprogramm.java`, `Perzeptron.java` und `Datenpunkt.java`. Die Dateien werden wie in Informatik 9, Aufgabe 2 eingebettet; `enableFileAccess` erlaubt das Lesen von `Perzeptron.java` für das Feedback. Inaktive IDE samt Bedienelementen ist ausgeblendet und nicht fokussierbar. Ein Variantenwechsel darf keinen Workspace neu initialisieren oder überschreiben.
 - `Datenpunkt.java` bewahrt den Konstruktor, zwei `double`-Eingaben, das `int`-Label und die drei Getter. `Perzeptron.java` bewahrt Attribute, Konstruktor, `punktKlassifizieren`, `trainieren` und `trenngeradeAusgeben`. BlueJ-Dateien wie `.ctxt`, `.class` und `package.bluej` werden nicht geladen. Die Lösung wird nicht als sichtbare Schülerdatei eingebettet.
@@ -43,7 +43,7 @@ Reihenfolge: Beispiel starten und Ausgabe beobachten → vorhandene Klassifikati
 
 ### Einstieg und Anleitung
 
-- H1: „Aufgabe 6 – Perzeptron implementieren“
+- H1: „Aufgabe 6.1 – Perzeptron implementieren“
 - Kurzer Arbeitsauftrag über der IDE: „Untersuche zuerst, wie das vorhandene Perzeptron Punkte klassifiziert. Implementiere danach das Training in der einfachen oder schweren Variante und prüfe deinen Code mit Beispielpunkten.“
 - Wahl: „Wähle deinen Weg. Beide Varianten führen zum selben Ziel; dein Code bleibt beim Wechsel getrennt gespeichert.“
 - Buttons: „Einfach – mit Hilfen“ und „Schwer – selbstständig“; Wechselknopf: „Variante wechseln“.
@@ -135,7 +135,7 @@ Der Text-Task bekommt eine eigene `systemInstruction`, die sinngleiche Erklärun
 - Datei nicht gefunden: „`Perzeptron.java` wurde in dieser Variante nicht gefunden.“
 - Code zu lang: „Dein Programmcode ist zu lang für die automatische Auswertung.“
 - Server-Timeout: „Der Auswertungsserver hat nicht rechtzeitig geantwortet. Bitte versuche es erneut.“
-- Server kennt Task noch nicht: „Für Aufgabe 6 ist noch keine aktuelle Serverversion bereitgestellt. Bitte informiere deine Lehrkraft.“
+- Server kennt Task noch nicht: „Für Aufgabe 6.1 ist noch keine aktuelle Serverversion bereitgestellt. Bitte informiere deine Lehrkraft.“
 
 Die serverseitigen Meldungen erscheinen mit Punkten, Status, „Das ist dir gelungen“, „Das solltest du überprüfen“ und individuellem Text direkt unter der zugehörigen Aufgabe. Rückmeldungen müssen korrekt, teilweise korrekt und noch nicht korrekt unterscheidbar machen und auf den nächsten sinnvoll bearbeitbaren Schritt hinweisen. Als wörtliche Fallback-Texte, falls ein Ergebnis keinen eigenen Feedbacktext enthält:
 
@@ -177,12 +177,12 @@ Zusätzlich prüfen: Beide unbearbeiteten Startstände kompilieren und starten; 
 
 ## 8. Akzeptanzkriterien – regelbasierte Vorprüfung
 
-1. `aufgabe6.html` liegt im KI-Einheitsordner, ist per Aufgabe-6-Button nach Aufgabe 5 in der Klassen-11-Übersicht erreichbar und hat korrekte relative Rück-, Start-, CSS- und Skript-Links.
+1. `aufgabe6.html` liegt im KI-Einheitsordner, ist per Aufgabe-6.1-Button nach Aufgabe 5 in der Klassen-11-Übersicht erreichbar und hat korrekte relative Rück-, Start-, CSS- und Skript-Links.
 2. Die Seite zeigt vor der IDE die Wahl „Einfach“/„Schwer“. Beide Varianten nutzen unterschiedliche IDE-IDs und die drei genannten Java-Dateien plus Anleitung. Kein BlueJ-Metadatenfile und keine sichtbare Lösungsdatei sind eingebettet.
 3. Beide unbearbeiteten IDE-Projekte kompilieren und starten im Browser. Die einfache Summe ist als `double` deklariert; `trainieren` ist in der schweren Variante leer. `punktKlassifizieren` ist in beiden vollständig vorhanden.
 4. Die gemeinsame Beschreibe-Aufgabe ist in beiden Varianten sichtbar. Einfache Variante: drei getrennte Code-Prüfbuttons, je drei Hilfen und ein letzter anfangs geschlossener Schnipselbereich mit neun kopierbaren, falsch geordneten Anweisungen. Schwere Variante: eigener Code-Prüfbutton, Beschreibung und geschlossene Formelsammlung mit allen fünf Formeln.
 5. Der aktive IDE-Dateizugriff liefert jeweils `Perzeptron.java`, niemals `Hauptprogramm.java` oder den Stand der anderen Variante. Die vier Code-Task-IDs werden per POST mit `requestType=code` verwendet; die Text-ID nutzt die vorhandene Textanbindung. `MAX_CODE_LENGTH` und URL-Limit werden vor dem Absenden behandelt.
-6. Alle fünf IDs sind in `Tasks.gs` mit dem festgelegten Typ und `maxPoints` vorhanden. `Config.gs` nennt Aufgabe 6. `Gemini.gs` erzeugt einen durch Task-Daten konfigurierbaren Code-Prompt, für diese Tasks ohne Robot-Kriterien und im Test auch für einen anderen Programmierkontext nutzbar; der Prompt für `10-2a` bleibt im Regressionstest unverändert. Der bestehende Antwort- und Transportvertrag bleibt erhalten.
+6. Alle fünf IDs sind in `Tasks.gs` mit dem festgelegten Typ und `maxPoints` vorhanden. `Config.gs` nennt Aufgabe 6.1. `Gemini.gs` erzeugt einen durch Task-Daten konfigurierbaren Code-Prompt, für diese Tasks ohne Robot-Kriterien und im Test auch für einen anderen Programmierkontext nutzbar; der Prompt für `10-2a` bleibt im Regressionstest unverändert. Der bestehende Antwort- und Transportvertrag bleibt erhalten.
 7. Die vier Quizfragen und ihre Antwortschlüssel stimmen exakt mit Abschnitt 4 überein. Mindestens zwei Fragen haben mehrere richtige Antworten; hier sind es drei. Das Quiz hat je Frage Textfeedback, Fortschritt und nach vollständiger Lösung eine Übersicht mit Frage und richtigen Optionen.
 8. Textfeld, Quiz-Auswahl und Variantenwahl bleiben nach Navigation und Neuladen erhalten; beide Code-Stände bleiben auch nach mindestens zweimaligem Variantenwechsel unabhängig erhalten. Speichern funktioniert ohne Browser-Speicherzugriff weiterhin als Arbeitsseite, mit verständlicher Statusmeldung.
 9. Sichtbare Labels, eindeutige Buttons und IDs, `aria-live="polite"`, tastaturbedienbare Auswahl/Hilfen, lesbarer Fokus und Text zusätzlich zu Farbzuständen sind vorhanden. Das Layout ist auf Desktop, Tablet und Smartphone benutzbar; IDE und Aufgaben stehen auf breiten Ansichten nebeneinander.

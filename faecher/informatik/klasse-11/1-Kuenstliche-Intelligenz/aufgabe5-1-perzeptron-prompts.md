@@ -387,7 +387,7 @@ Keine Änderungen an gemeinsam genutzten Altdateien voraussetzen.
 
 Einziger vorgesehener bestehender Integrationspunkt:
 `faecher/informatik/klasse-11/index.html`, neue Kachel nach Aufgabe 5 und
-vor Aufgabe 6: „Aufgabe 5.1“ / „Das Perzeptron verbessert sich“.
+vor Aufgabe 6.1: „Aufgabe 5.1“ / „Das Perzeptron verbessert sich“.
 Im neuen Modul Links zur Jahrgangsübersicht, Startseite und bisherigen
 Aufgabe 5 vorsehen. Keine neue Verlinkung durch Änderung von Aufgabe 5.
 

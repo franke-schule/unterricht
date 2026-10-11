@@ -33,7 +33,7 @@ assert.match(html, /<meta charset="utf-8">/);
 assert.match(html, /<title>Aufgabe 7 – Der k-nächste-Nachbarn-Algorithmus \| Informatik 11<\/title>/);
 const topbar = html.match(/<nav class="topbar" aria-label="Navigation">([\s\S]*?)<\/nav>/)[1];
 assert.deepEqual([...topbar.matchAll(/<a class="back-link" href="([^"]*)">([^<]*)<\/a>/g)].map((m) => [m[1], m[2]]), [
-  ['../index.html', 'Zur Aufgabenübersicht'], ['aufgabe6.html', 'Zu Aufgabe 6'], ['../../../../', 'Startseite'],
+  ['../index.html', 'Zur Aufgabenübersicht'], ['aufgabe6.html', 'Zu Aufgabe 6.1'], ['../../../../', 'Startseite'],
 ]);
 assert.match(html, /<body class="perceptron-page knn-page">/);
 assert.match(html, /knn\/task7\.css\?v=20261003a/);
@@ -97,7 +97,7 @@ assert.match(html, /class="privacy"/);
   assert.match(html, new RegExp('<desc id="' + id + '-desc">'));
 });
 
-// Menü: Aufgabe 7 steht direkt nach Aufgabe 6
+// Menü: Aufgabe 7 steht direkt nach Aufgabe 6.1
 const positions = [0, 1, 2, 3, 4, 5, 6, 7].map((n) => menu.indexOf('1-Kuenstliche-Intelligenz/aufgabe' + n + '.html"'));
 assert.ok(positions[7] > positions[6] && positions[6] > positions[5] && positions[5] > positions[4], 'Menüreihenfolge');
 assert.match(menu, /<a class="module-button" href="1-Kuenstliche-Intelligenz\/aufgabe7\.html">\s*<strong>Aufgabe 7<\/strong>\s*<span>k-nächste Nachbarn: Idee und Abstand<\/span>/);

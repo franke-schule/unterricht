@@ -1,0 +1,102 @@
+<!doctype html>
+<html lang="de">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="robots" content="noindex, nofollow">
+  <title>Aufgabe 6.0 – Objektorientierte Programmierung wiederholen | Informatik 11</title>
+  <link rel="stylesheet" href="../../../../styles.css?v=20260707">
+  <link rel="stylesheet" href="perzeptron/task5.css?v=20261010-tabs">
+  <link rel="stylesheet" href="perzeptron/task6-0.css?v=20261011">
+  <script src="../../quiz-fragen-pruefen.js?v=20261006b"></script>
+  <script src="../../klasse-9/eingaben-speichern.js"></script>
+  <script type="module" src="perzeptron/ui/task6-0.mjs?v=20261011-observation"></script>
+</head>
+<body class="perceptron-page task6-0-page">
+<div class="site-backdrop" aria-hidden="true"></div>
+<main class="page-shell">
+  <nav class="topbar" aria-label="Navigation"><a class="back-link" href="../index.html">Zur Aufgabenübersicht</a><a class="back-link" href="../../../../">Startseite</a></nav>
+  <header class="perceptron-hero"><p class="perceptron-eyebrow">Künstliche Intelligenz · Programmierung</p><h1>Objektorientierte Programmierung wiederholen</h1><p class="module-task-number"><strong>Aufgabe 6.0</strong></p><p>Entdecke an zwei Datenpunkten, was eine Klasse beschreibt und was zu einem Objekt gehört. Lies anschließend Methoden und probiere ihre Aufrufe in Java aus.</p></header>
+  <p id="save-status" role="status" aria-live="polite">Dein Bearbeitungsstand wird in diesem Browser gespeichert.</p>
+  <nav class="tab-list" role="tablist" aria-label="Lernschritte zur objektorientierten Programmierung">
+    <button id="tab-objects" role="tab" type="button" aria-selected="true" aria-controls="objects" data-tab="objects">1 Klasse und Objekte</button>
+    <button id="tab-signatures" role="tab" type="button" aria-selected="false" aria-controls="signatures" data-tab="signatures" tabindex="-1">2 Methodendeklarationen</button>
+    <button id="tab-completion" role="tab" type="button" aria-selected="false" aria-controls="completion" data-tab="completion" tabindex="-1">3 Punktnotation und Auswahlfenster</button>
+    <button id="tab-transfer" role="tab" type="button" aria-selected="false" aria-controls="transfer" data-tab="transfer" tabindex="-1">4 Anwenden und Übergang</button>
+    <button id="tab-quiz" role="tab" type="button" aria-selected="false" aria-controls="quiz" data-tab="quiz" tabindex="-1">5 Abschlussquiz und Auswertung</button>
+  </nav>
+  <div class="task6-0-layout">
+    <div class="task6-0-content">
+      <section id="objects" class="step-panel" role="tabpanel" aria-labelledby="tab-objects" data-panel="objects"><h2>Klasse und Objekte</h2>
+        <div id="block-1a"></div>
+        <article class="card object-comparison" aria-label="Zwei Objekte der Klasse Datenpunkt"><h3>Zwei Objekte</h3><div class="object-cards"><div class="object-card"><strong>punkt</strong><span>x_1 = 2.5</span><span>x_2 = 4.0</span><span id="punkt-label-state" aria-live="polite">label = 1</span></div><div class="object-card"><strong>andererPunkt</strong><span>x_1 = 6.0</span><span>x_2 = 2.0</span><span>label = 0</span></div></div></article>
+        <div id="block-1b"></div><div id="remember-1" class="remember" hidden><p>Eine Klasse beschreibt Attribute und Methoden. Jedes Objekt dieser Klasse besitzt eigene Attributwerte.</p></div>
+        <div class="flow-navigation" data-flow="objects"></div>
+      </section>
+      <section id="signatures" class="step-panel" role="tabpanel" aria-labelledby="tab-signatures" data-panel="signatures" hidden><h2>Methodendeklarationen lesen</h2>
+        <div id="block-2a-setter"></div><div id="block-2a-getter"></div><div id="block-2b"></div><div id="block-2c"></div>
+        <div id="remember-2" class="remember" hidden><p>Eingabeparameter stehen mit Datentyp und Namen in den runden Klammern der Methodendeklaration. Der Rückgabetyp steht vor dem Methodennamen.</p><p>Beim Methodenaufruf werden Argumente an die Eingabeparameter übergeben. Die Argumente müssen zu den Parametertypen passen.</p><p>Die Ganzzahl <code>2</code> darf an einen <code>double</code>-Parameter übergeben werden. Die Dezimalzahl <code>2.5</code> passt ohne Umwandlung nicht zu einem <code>int</code>-Parameter.</p></div>
+        <div class="flow-navigation" data-flow="signatures"></div>
+      </section>
+      <section id="completion" class="step-panel" role="tabpanel" aria-labelledby="tab-completion" data-panel="completion" hidden><h2>Punktnotation und Auswahlfenster</h2>
+        <div id="block-3a"></div><div id="block-3b"></div>
+        <p class="data-boundary">Das Auswahlfenster zeigt zum Typ von <code>punkt</code> passende zugängliche Mitglieder. Es können auch geerbte Methoden erscheinen. Die <code>private</code>-Attribute von <code>Datenpunkt</code> sind im Hauptprogramm nicht direkt zugänglich. Eine Auswahl hilft beim Schreiben; sie führt die Methode nicht aus.</p>
+        <p>Erscheint kein Fenster, prüfe <code>punkt</code>, seine vorherige Deklaration, den Gültigkeitsbereich und vorhandene Programmfehler; löse die Vorschläge danach erneut aus.</p>
+        <div id="remember-3" class="remember" hidden><p>Mit der Punktnotation rufst du eine Methode an einem bestimmten Objekt auf. Auch ohne Eingabeparameter gehören runde Klammern zum Aufruf.</p><p>Das Auswahlfenster hilft dir, zugängliche Mitglieder des Objekttyps zu finden und einen Aufruf zu ergänzen. Es führt die Methode nicht aus.</p></div>
+        <div class="flow-navigation" data-flow="completion"></div>
+      </section>
+      <section id="transfer" class="step-panel" role="tabpanel" aria-labelledby="tab-transfer" data-panel="transfer" hidden><h2>Anwenden und Übergang</h2>
+        <div id="block-4a"></div><div id="block-4b"></div><div id="block-4c"></div>
+        <p class="data-boundary">In Aufgabe 6.1 begegnen dir diese Getter und Signaturen wieder. Wie das Perzeptron trainiert, erarbeitest du erst dort.</p>
+        <div class="flow-navigation" data-flow="transfer"></div>
+      </section>
+      <section id="quiz" class="step-panel" role="tabpanel" aria-labelledby="tab-quiz" data-panel="quiz" hidden><h2>Abschlussquiz und Auswertung</h2>
+        <section id="final-quiz" aria-labelledby="quiz-title"><h3 id="quiz-title">Abschlussquiz</h3><p><strong>Kreuze</strong> bei jeder Frage alle richtigen Aussagen an. <strong>Prüfe</strong> jede Frage einzeln und <strong>werte</strong> danach das Quiz aus.</p><p id="quiz-progress">0 von 6 Fragen vollständig richtig</p><form id="quiz-form"><div id="quiz-questions"></div><button class="primary-button" type="submit">Quiz auswerten</button></form><p id="quiz-feedback" class="feedback" role="status" aria-live="polite" hidden></p><div id="quiz-summary" class="remember" hidden></div></section>
+        <a class="primary-button task6-0-next-link" href="aufgabe6.html">Weiter zu Aufgabe 6.1</a>
+      </section>
+    </div>
+  <section class="task6-0-ide" aria-label="Online-IDE"><h2>Online-IDE: Datenpunkt</h2><p>Dein Code wird von der Online-IDE gespeichert. Die Zurücksetzen-Funktion der IDE setzt den Code zurück.</p><p>Bei ganzzahligen <code>double</code>-Werten hängt das Startprogramm <code>.0</code> an, damit die Dezimalzahlen erkennbar bleiben.</p><div class="ide-container"><iframe id="frame-repeat" title="Online-IDE: Datenpunkt-Wiederholung" srcdoc="<script>window.jo_doc = window.frameElement.textContent;</script><script src='../../../../include/js/includeide/includeIDE.js'></script>">
+{'id':'Java11Aufgabe6_0Wiederholung','speed':10,'withBottomPanel':true,'withPCode':true,'withConsole':true,'withFileList':true,'withErrorList':true,'enableFileAccess':true}
+<script type="text/plain" title="Anleitung" data-type="hint">
+Starte Hauptprogramm.java und beobachte die Konsole. Wechsle über die Dateiliste zu Datenpunkt.java, um Attribute und Methoden nachzulesen. Eine Auswahl im Fenster ergänzt Code, führt den Aufruf aber noch nicht aus.
+</script>
+<script type="plain/text" title="Hauptprogramm.java">
+Datenpunkt punkt = new Datenpunkt(2.5, 4.0, 1);
+Datenpunkt andererPunkt = new Datenpunkt(6.0, 2.0, 0);
+String punktX1Text = "" + punkt.gibEingabewertX1();
+if (punkt.gibEingabewertX1() % 1 == 0 && punktX1Text.indexOf(".") &lt; 0) { punktX1Text = punktX1Text + ".0"; }
+String punktX2Text = "" + punkt.gibEingabewertX2();
+if (punkt.gibEingabewertX2() % 1 == 0 && punktX2Text.indexOf(".") &lt; 0) { punktX2Text = punktX2Text + ".0"; }
+String andererX1Text = "" + andererPunkt.gibEingabewertX1();
+if (andererPunkt.gibEingabewertX1() % 1 == 0 && andererX1Text.indexOf(".") &lt; 0) { andererX1Text = andererX1Text + ".0"; }
+String andererX2Text = "" + andererPunkt.gibEingabewertX2();
+if (andererPunkt.gibEingabewertX2() % 1 == 0 && andererX2Text.indexOf(".") &lt; 0) { andererX2Text = andererX2Text + ".0"; }
+System.out.println("Vorher punkt: x_1=" + punktX1Text + ", x_2=" + punktX2Text + ", label=" + punkt.gibLabel());
+System.out.println("Vorher andererPunkt: x_1=" + andererX1Text + ", x_2=" + andererX2Text + ", label=" + andererPunkt.gibLabel());
+punkt.setzeLabel(0);
+System.out.println("Nachher punkt: x_1=" + punktX1Text + ", x_2=" + punktX2Text + ", label=" + punkt.gibLabel());
+System.out.println("Nachher andererPunkt: x_1=" + andererX1Text + ", x_2=" + andererX2Text + ", label=" + andererPunkt.gibLabel());
+</script>
+<script type="plain/text" title="Datenpunkt.java">
+public class Datenpunkt {
+    private double x_1;
+    private double x_2;
+    private int label;
+    public Datenpunkt(double wert_x_1, double wert_x_2, int wert_label) {
+        x_1 = wert_x_1;
+        x_2 = wert_x_2;
+        label = wert_label;
+    }
+    public double gibEingabewertX1() { return x_1; }
+    public double gibEingabewertX2() { return x_2; }
+    public int gibLabel() { return label; }
+    public void setzeEingabewertX1(double neuerWert) { x_1 = neuerWert; }
+    public void setzeLabel(int neuesLabel) { label = neuesLabel; }
+}
+</script>
+          </iframe></div></section>
+  </div>
+  <section class="card task6-0-reset"><h2>Bearbeitungsstand</h2><p>Deine Antworten und dein Lernfortschritt werden gelöscht. Dein Code in der Online-IDE bleibt erhalten.</p><button id="reset-progress" class="secondary-button" type="button">Bearbeitungsstand zurücksetzen</button></section>
+</main>
+</body>
+</html>

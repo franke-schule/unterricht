@@ -58,7 +58,7 @@ Validierungsdaten, systematische Wahl des „besten“ k, zu kleines/zu großes 
 KEIN Sicherungsblatt und KEIN Wiederholungs-Quiz (nicht beauftragt).
 
 WIEDERVERWENDUNG (Planer prüft und legt konkret fest)
-Seitengerüst, Reiter, gestufte Hilfen, Speicherung der Zwischenstände und semantische Auswertung aus aufgabe5.html, perzeptron/ui/task5.mjs und perzeptron/ui/semantic-answer.mjs; SVG-Koordinatensystem aus Aufgabe 5, Reiter 1; Drag-and-Drop nach setupCloze in was-ist-ki/ui/task0.mjs; Abschlussquiz nach Informatik 10, Datenbanken (#final-quiz). Menüeintrag in faecher/informatik/klasse-11/index.html hinter Aufgabe 6, Rücklink „Zu Aufgabe 6“.
+Seitengerüst, Reiter, gestufte Hilfen, Speicherung der Zwischenstände und semantische Auswertung aus aufgabe5.html, perzeptron/ui/task5.mjs und perzeptron/ui/semantic-answer.mjs; SVG-Koordinatensystem aus Aufgabe 5, Reiter 1; Drag-and-Drop nach setupCloze in was-ist-ki/ui/task0.mjs; Abschlussquiz nach Informatik 10, Datenbanken (#final-quiz). Menüeintrag in faecher/informatik/klasse-11/index.html hinter Aufgabe 6.1, Rücklink „Zu Aufgabe 6.1“.
 
 PROJEKTVORGABEN, DIE NICHT IN DEN MANIFESTEN STEHEN
 - Reiter sind jederzeit frei wechselbar, ohne Freischaltlogik. Jeder Reiter endet mit einem Weiter-Button.
