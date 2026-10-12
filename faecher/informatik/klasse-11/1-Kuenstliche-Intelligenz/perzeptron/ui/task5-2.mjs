@@ -2,6 +2,7 @@ import {calculate,normaliseNumber} from '../logic/perceptron.mjs';
 import {parseLinearRelation as parse,equivalent,countMatching} from '../logic/linear-inequality.mjs';
 import {numberMatches,runEpoch} from '../logic/perceptron.mjs';
 import {evaluateSemanticAnswer} from './semantic-answer.mjs?v=20261010-scaleway';
+import {unlockSolution} from '../../../../klasse-10/1-Datenbanken/tab-navigation.mjs';
 
 const KEY='informatik11-perzeptron-aufgabe5-2-v1';
 const SERVER_URL='https://unterrichtkiichezbn4-ki-auswertung.functions.fnc.fr-par.scw.cloud/';
@@ -218,15 +219,15 @@ function checkThreeCondition() {
   else if(countMatching(relation,ROWS).count===4)showFeedback('three-condition','Teilweise korrekt. Diese Bedingung trennt zwar die vier Punkte, beschreibt aber nicht alle feuernden Eingaben des vorgegebenen Neurons.','partial');
   else showFeedback('three-condition','Noch nicht korrekt. Prüfe, auf welcher Seite die Eingabe (1;0) liegt.');
 }
-function appendSummary(parent,title,auftrag,antwort,ergebnis,complete=false) {
+function appendSummary(parent,title,auftrag,antwort,ergebnis,complete=false,revealResult=complete) {
   const article=document.createElement('article');article.className='summary-item summary-section';
   const heading=document.createElement('h3');heading.textContent=title+' ';
-  const badge=document.createElement('span');badge.className='summary-result '+(complete?'complete':'open');badge.textContent=complete?'✓ richtig geprüft':'noch offen';heading.append(badge);
+  if(complete!==null){const badge=document.createElement('span');badge.className='summary-result '+(complete?'complete':'open');badge.textContent=complete?'✓ richtig geprüft':'noch offen';heading.append(badge);}
   const prompt=document.createElement('p');prompt.className='prompt';prompt.textContent=auftrag;
   const list=document.createElement('dl');list.className='summary-grid';
   const add=(term,text)=>{const dt=document.createElement('dt'),dd=document.createElement('dd');dt.textContent=term;dd.textContent=text;list.append(dt,dd);};
   add('Deine Antwort',antwort||'Noch keine Eingabe');
-  if(complete)add('Richtiges Ergebnis',ergebnis);
+  if(revealResult)add('Richtiges Ergebnis',ergebnis);
   article.append(heading,prompt,list);parent.append(article);
 }
 function summaryRows(rows,answers) {
@@ -239,6 +240,13 @@ function summaryParameters(prefix) {
   if(prefix==='one'||prefix==='two'){const p=model[prefix];return `w₁ = ${fmt(p.w1)}, w₂ = ${fmt(p.w2)}, s = ${fmt(p.s)}\n${summaryRows(ROWS,rowOutputs(ROWS,p).map(row=>row.output))}`;}
   return ['w1','w2','s'].map((key,i)=>`${['w₁','w₂','s'][i]} = ${value(prefix+'-'+key).trim()||'noch nicht eingegeben'}`).join(', ');
 }
+function summaryInputs(selector) {
+  return [...$(selector).querySelectorAll('[data-answer],[data-field]')].map(input=>{
+    const key=input.dataset.answer||input.dataset.field;
+    const answer=input.value===''?'Noch keine Eingabe':input.tagName==='SELECT'?input.selectedOptions[0].textContent.trim():input.value;
+    return `${FIELD_LABELS[key]}: ${answer}`;
+  }).join('\n');
+}
 function renderSummary() {
   const root=$('#summary');if(!root)return;root.replaceChildren();
   const status=[
@@ -248,15 +256,18 @@ function renderSummary() {
     ['6 Delta-Lernregel',[1,2,3,4].every(i=>checked['learn-'+i])]
   ];
   for(const [title,done] of status){const p=document.createElement('p');p.textContent=`${title}: ${done?'bearbeitet':'offen'}`;root.append(p);}
-  if(!REQUIRED.every(id=>checked[id]))return;
-  appendSummary(root,'1 Signalweg','Verfolge den Signalweg vom Eingang bis zur Ausgabe.','Hase (2|4)','a=6>3, Ausgabe 1 · ungefährlich.',true);
-  appendSummary(root,'2 Hai berechnen','Berechne mit w₁=-1, w₂=2 und θ=3 die Klasse des Hais.','-4+2=-2','a=-2<3, Ausgabe 0 · gefährlich.',true);
-  appendSummary(root,'3 Fehlendes Feuer','Verändere Gewichte und Schwellenwert, bis alle vier Ausgaben stimmen.',summaryParameters('one'),'A/D=0 und B/C=1.',true);
-  appendSummary(root,'4 Unerwünschtes Feuer','Stelle das Neuron für die vier Soll-Ausgaben ein.',summaryParameters('two'),'A/D=0 und B/C=1.',true);
-  appendSummary(root,'5.1 Vier Ausgaben','Bestimme die vier Ausgaben des festen Neurons.',summaryRows(ROWS,readSelects('.three-row-select')),'A=0, D=0, B=1, C=1.',true);
-  appendSummary(root,'5.2 Grenzproben','Prüfe bei x₁=0,25 die drei x₂-Werte.',summaryRows(PROBES,readSelects('.three-probe-select')),'x₂=0,5/1/1,5 ergibt 0/0/1.',true);
-  appendSummary(root,'5.3 Feuerbedingung','Formuliere die strenge Feuerbedingung.',value('three-condition'),'4x₁+2x₂>3.',true);
-  for(let i=0;i<4;i++){const e=epoch[i];appendSummary(root,`6.${i+1} Trainingsschritt`,`Berechne für Trainingstier ${i+1} Summe, Ausgabe und δ; aktualisiere Gewichte und Schwelle.`,`x₁=${e.row.x1}, x₂=${e.row.x2}, t=${e.row.target}`,`a=${e.sum}, f(a)=${e.output}, δ=${e.delta}; danach w₁=${e.w1}, w₂=${e.w2}, θ=${e.threshold}.`,true);}
+  const complete=REQUIRED.every(id=>checked[id]);
+  appendSummary(root,'1 Signalweg','Verfolge den Signalweg vom Eingang bis zur Ausgabe.',state.signalObserved?'Signalweg vollständig angesehen.':`Schritt ${state.signalStep+1} von 7 angesehen.`,'a=6>3, Ausgabe 1 · ungefährlich.',checked.structure,complete);
+  appendSummary(root,'2 Hai berechnen','Berechne mit w₁=-1, w₂=2 und θ=3 die Klasse des Hais.',summaryInputs('#decision-form'),'a=-2<3, Ausgabe 0 · gefährlich.',checked.decide,complete);
+  appendSummary(root,'3 Fehlendes Feuer','Verändere Gewichte und Schwellenwert, bis alle vier Ausgaben stimmen.',summaryParameters('one'),'A/D=0 und B/C=1.',checked.one,complete);
+  appendSummary(root,'4 Unerwünschtes Feuer','Stelle das Neuron für die vier Soll-Ausgaben ein.',summaryParameters('two'),'A/D=0 und B/C=1.',checked.two,complete);
+  appendSummary(root,'5.1 Vier Ausgaben','Bestimme die vier Ausgaben des festen Neurons.',summaryRows(ROWS,readSelects('.three-row-select')),'A=0, D=0, B=1, C=1.',checked['three-rows'],complete);
+  appendSummary(root,'5.2 Grenzproben','Prüfe bei x₁=0,25 die drei x₂-Werte.',summaryRows(PROBES,readSelects('.three-probe-select')),'x₂=0,5/1/1,5 ergibt 0/0/1.',checked['three-probes'],complete);
+  appendSummary(root,'5.3 Feuerbedingung','Formuliere die strenge Feuerbedingung.',value('three-condition'),'4x₁+2x₂>3.',checked['three-condition'],complete);
+  for(let i=0;i<4;i++){const e=epoch[i];appendSummary(root,`6.${i+1} Trainingsschritt`,`Berechne für Trainingstier ${i+1} Summe, Ausgabe und δ; aktualisiere Gewichte und Schwelle.`,summaryInputs(`#epoch-body tr[data-row="${i}"]`),`a=${e.sum}, f(a)=${e.output}, δ=${e.delta}; danach w₁=${e.w1}, w₂=${e.w2}, θ=${e.threshold}.`,checked['learn-'+(i+1)],complete);}
+  appendSummary(root,'6.5 Kurz erklären',$('#learning-answer').closest('article').querySelector('p').textContent,value('learning-answer'),'',null,false);
+  for(let i=0;i<QUIZ.length;i++)appendSummary(root,`8.${i+1} Abschlussquiz`,$('#quiz-'+(i+1)+' legend').textContent,summaryChoices('quiz-'+(i+1)),summaryChoices('quiz-'+(i+1),QUIZ[i].solution),quizChecked[i],complete&&quizPassed);
+  if(!complete)return;
   const p=document.createElement('p');p.className='remember';p.textContent='Das Perzeptron gewichtet Eingaben, addiert sie und vergleicht streng mit der Schwelle. Beim Training vergleicht es Ausgabe und Sollwert; die Delta-Lernregel ändert nur bei Fehlern Gewichte und Schwelle.';root.append(p);
   const end=document.createElement('p');end.textContent='Nach vier Schritten: w₁=-3, w₂=4, θ=1; gelernte Gerade −3x₁+4x₂=1.';root.append(end);
 }
@@ -378,12 +389,13 @@ function setupSemantic(){
   return update;
 }
 function start() {
+  for(const suffix of ['52','52-summary'])document.querySelector('#solution-code-form-'+suffix).addEventListener('submit',event=>unlockSolution(event,'M7HR-DBX4','solution-download-link-'+suffix,'solution-code-message-'+suffix));
   buildTables();
   setupQuiz();
   const showSignal=setupStructure();
   setupEpoch();
   const updateCounter=setupSemantic();
-  fields=[...document.querySelectorAll('input,select,textarea')];
+  fields=[...document.querySelectorAll('input,select,textarea')].filter(el=>!el.closest('.solution-code-form'));
   setupTabs();setupNeurons();setupDecision();attachEvents();
   load();
   updateParameterTable('one');updateParameterTable('two');

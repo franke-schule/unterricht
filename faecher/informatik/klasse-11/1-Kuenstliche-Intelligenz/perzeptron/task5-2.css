@@ -1,4 +1,15 @@
 .task51 .tab-list { grid-template-columns: repeat(8, minmax(0, 1fr)); }
 .task51 .perceptron-hero h1 { font-size: 3.5rem; line-height: 1.1; }
+.task51 .decision-layout .decision-svg-mobile marker path { fill: #5d7889; }
+@media (min-width: 1000px) {
+  .task51 .decision-layout > .decision-figure { position: sticky; top: 1rem; }
+  .task51 .decision-layout .decision-svg { display: none; }
+  .task51 .decision-layout .decision-svg-mobile { display: block; width: 100%; height: auto; max-height: min(34rem, calc(100vh - 2rem)); margin: 0; border: 1px solid #b9d1df; border-radius: .85rem; background: #f9fcfe; font-family: inherit; }
+  .task51 .decision-layout .decision-svg-mobile text { font-size: 13px; }
+  .task51 .decision-layout .decision-svg-mobile .decision-input text:nth-of-type(2), .task51 .decision-layout .decision-svg-mobile [data-decision=class] { font-size: 10px; }
+  .task51 .decision-layout .decision-svg-mobile [data-decision=output] { font-size: 20px; }
+  .task51 .decision-layout .six-work { max-height: min(34rem, calc(100vh - 2rem)); }
+  .task51 .decision-layout .calc-steps { margin-top: 0; }
+}
 @media (max-width: 1050px) { .task51 .tab-list { grid-template-columns: repeat(4, minmax(0, 1fr)); } }
 @media (max-width: 600px) { .task51 .tab-list { grid-template-columns: repeat(2, minmax(0, 1fr)); } .task51 .perceptron-hero h1 { font-size: 2.25rem; } }

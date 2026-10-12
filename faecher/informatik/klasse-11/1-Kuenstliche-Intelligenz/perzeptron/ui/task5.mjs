@@ -194,6 +194,6 @@ function unlockSolution(event) {
     ? 'Code korrekt. Das Sicherungsblatt ist freigeschaltet.'
     : 'Der eingegebene Code ist nicht gültig.';
 }
-function setupSolution() { document.querySelector('#solution-code-form').addEventListener('submit', unlockSolution); }
+function setupSolution() { const form = document.querySelector('#solution-code-form'); if (form) form.addEventListener('submit', unlockSolution); }
 
 setupTabs(); setupDiscovery(); setupStructure(); setupDecision(); setupEpoch(); setupSemantic(); setupSimulator(); setupFast(); setupLimits(); setupQuiz(); setupReset(); setupSolution();

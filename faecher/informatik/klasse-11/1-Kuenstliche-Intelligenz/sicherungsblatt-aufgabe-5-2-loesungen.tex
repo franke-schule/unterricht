@@ -1,0 +1,184 @@
+\documentclass[11pt,a4paper]{article}
+
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage[ngerman]{babel}
+\usepackage{lmodern}
+\usepackage{amsmath,amssymb}
+\usepackage{booktabs,tabularx,array}
+\usepackage[table]{xcolor}
+\usepackage{tikz}
+\usetikzlibrary{arrows.meta,positioning,shapes.geometric,calc}
+\usepackage[most]{tcolorbox}
+\usepackage{enumitem}
+\usepackage{microtype}
+\usepackage{hyperref}
+\usepackage[a4paper,left=18mm,right=18mm,top=15mm,bottom=15mm,headheight=0pt]{geometry}
+
+\definecolor{navy}{HTML}{174A63}
+\definecolor{blue}{HTML}{2E7698}
+\definecolor{lightblue}{HTML}{EAF3F7}
+\definecolor{lightgray}{HTML}{F2F3F4}
+\definecolor{midgray}{HTML}{66727A}
+\definecolor{green}{HTML}{477A63}
+\definecolor{orange}{HTML}{B96A2B}
+
+\hypersetup{colorlinks=true,linkcolor=navy,urlcolor=blue,pdftitle={Das Perzeptron genauer betrachtet}}
+\setlength{\parindent}{0pt}
+\setlength{\parskip}{4pt}
+\setlist[itemize]{leftmargin=5mm,itemsep=1.5pt,topsep=2pt}
+\setlist[enumerate]{leftmargin=6mm,itemsep=2pt,topsep=2pt}
+\renewcommand{\familydefault}{\sfdefault}
+\pagestyle{empty}
+
+\newtcolorbox{definition}[1][]{enhanced,breakable,colback=lightblue,colframe=blue,
+  boxrule=0.8pt,arc=1.5mm,left=3mm,right=3mm,top=2mm,bottom=2mm,
+  fonttitle=\bfseries,title=Definition,#1}
+\newtcolorbox{merke}[1][]{enhanced,breakable,colback=lightgray,colframe=navy,
+  boxrule=0.9pt,arc=1.5mm,left=3mm,right=3mm,top=2mm,bottom=2mm,
+  fonttitle=\bfseries,title=Merke,#1}
+\newtcolorbox{beispiel}[1][]{enhanced,breakable,colback=white,colframe=midgray,
+  boxrule=0.7pt,arc=1.5mm,left=3mm,right=3mm,top=2mm,bottom=2mm,
+  fonttitle=\bfseries,title=Beispiel,#1}
+\newtcolorbox{ueberblick}[1][]{enhanced,breakable,colback=lightblue,colframe=navy,
+  boxrule=1.1pt,arc=1.5mm,left=3mm,right=3mm,top=2.5mm,bottom=2.5mm,
+  fonttitle=\bfseries,title=Überblick,#1}
+
+\newcommand{\fach}[1]{\textbf{\color{navy}#1}}
+\newcommand{\sectionline}[1]{%
+  \vspace{1mm}{\Large\bfseries\color{navy}#1}\par\vspace{1mm}%
+  {\color{blue}\rule{\linewidth}{0.8pt}}\vspace{1mm}}
+\newcommand{\sheettitle}[2]{%
+  \begin{tcolorbox}[colback=navy,colframe=navy,arc=2mm,boxrule=0pt,left=5mm,right=5mm,top=2.5mm,bottom=2.5mm]
+    {\color{white}\fontsize{20}{24}\selectfont\bfseries #1}\par
+    \vspace{0.5mm}{\color{white}\large #2}
+  \end{tcolorbox}}
+
+\begin{document}
+
+\sheettitle{Das Perzeptron genauer betrachtet}{Künstliche Intelligenz · Sicherungsblatt zu Aufgabe 5.2 · Informatik 11}
+
+\sectionline{1. So rechnet das Perzeptron}
+\begin{center}
+\begin{tikzpicture}[node distance=3mm,every node/.style={align=center},
+ block/.style={draw=blue,fill=lightblue,rounded corners=1mm,minimum width=22mm,minimum height=11mm},
+ flow/.style={->,thick,navy}]
+\node[block] (inputs) {Eingaben\\$x_1,x_2$};
+\node[block,right=of inputs] (weights) {Gewichte\\$w_1,w_2$};
+\node[block,right=of weights] (products) {Produkte\\$w_1x_1,\ w_2x_2$};
+\node[block,right=of products] (sum) {Summe\\$a$};
+\node[block,right=of sum] (compare) {Vergleich\\$a>\theta$};
+\node[block,right=of compare] (output) {Ausgabe\\$f(a)$};
+\draw[flow] (inputs)--(weights); \draw[flow] (weights)--(products); \draw[flow] (products)--(sum);
+\draw[flow] (sum)--(compare); \draw[flow] (compare)--(output);
+\end{tikzpicture}
+\end{center}
+\noindent\begin{minipage}[t]{0.49\linewidth}\centering
+\textbf{Hase $(2|4)$}\\$-1\cdot2=-2,\quad 2\cdot4=8$\\$-2+8=6>3\ \longrightarrow 1$\\ungefährlich
+\end{minipage}\hfill
+\begin{minipage}[t]{0.49\linewidth}\centering
+\textbf{Hai $(4|1)$}\\$-1\cdot4=-4,\quad 2\cdot1=2$\\$-4+2=-2<3\ \longrightarrow 0$\\gefährlich
+\end{minipage}
+\begin{center}\small Feste Werte in beiden Spuren: $w_1=-1$, $w_2=2$, $\theta=3$.\end{center}
+\begin{merke}
+Erst Summe und Schwelle bestimmen die Ausgabe; bei Gleichheit 0.
+\end{merke}
+
+\sectionline{2. Einfache 0/1-Eingaben}
+\begin{minipage}[t]{0.64\linewidth}\vspace{0pt}
+\textbf{Eine mögliche Einstellung:} $w_1=2,\ w_2=0,\ s=1$\\[-1mm]
+\begin{center}\renewcommand{\arraystretch}{1.06}
+\begin{tabular}{@{}c c c c@{}}
+\toprule
+Eingabe & Soll & Summe & Ist \\
+\midrule
+A $(0|0)$ & 0 & 0 & 0 \\
+D $(0|1)$ & 0 & 0 & 0 \\
+B $(1|0)$ & 1 & 2 & 1 \\
+C $(1|1)$ & 1 & 2 & 1 \\
+\bottomrule
+\end{tabular}
+\end{center}\end{minipage}\hfill
+\begin{minipage}[t]{0.32\linewidth}\vspace{0pt}
+\begin{tikzpicture}[font=\small]
+\node[draw=orange,fill=lightgray,rounded corners=1mm,align=center,text width=48mm,inner sep=3mm] {
+\begin{tabular}{c}
+\textbf{Grenzfall}\\[1mm]$(0|0):\quad a=0$\\[1mm]Gewichte wirken nicht.\\$s<0\ \Longrightarrow\ 0>s\ \Longrightarrow 1$\\Unerwünschtes Feuern
+\end{tabular}};
+\end{tikzpicture}\\[1mm]
+\textbf{Hier: 1 = feuert, keine Tierklasse.}
+\end{minipage}
+
+\sectionline{3. Wann feuert es?}
+\begin{minipage}[t]{0.43\linewidth}\vspace{0pt}
+\textbf{Fest:} $w_1=4,\ w_2=2,\ s=3$\\$4x_1+2x_2>3$
+\begin{center}\renewcommand{\arraystretch}{1.05}
+\begin{tabular}{@{}c c c c@{}}
+\toprule
+ & Eingabe & $a$ & Ausgabe \\
+\midrule
+A & $(0|0)$ & 0 & 0 \\
+D & $(0|1)$ & 2 & 0 \\
+B & $(1|0)$ & 4 & 1 \\
+C & $(1|1)$ & 6 & 1 \\
+\bottomrule
+\end{tabular}
+\end{center}\end{minipage}\hfill
+\begin{minipage}[t]{0.54\linewidth}\vspace{0pt}
+\begin{center}\textbf{Grenzprobe bei $x_1=0{,}25$}\end{center}
+\begin{tikzpicture}[x=24mm,y=1cm,font=\small]
+\draw[->,thick,navy] (0,0)--(3.6,0);
+\foreach \x in {.5,1,1.5} \draw[blue,thick] (\x,-.12)--(\x,.12);
+\node[below=4pt,align=center] at (.5,0) {$x_2=0{,}5$};
+\node[below=17pt,align=center] at (1,0) {$x_2=1$};
+\node[below=4pt,align=center] at (1.5,0) {$x_2=1{,}5$};
+\node[above=4pt,align=center] at (.5,0) {$a=2$\\$\to0$};
+\node[orange,above=15mm,align=center] at (1,0) {$a=s=3$\\Gleichheit: 0};
+\node[above=4pt,align=center] at (1.5,0) {$a=4$\\$\to1$};
+\end{tikzpicture}
+\end{minipage}
+\begin{center}\begin{merke}Das Perzeptron feuert nur bei $a>s$.\end{merke}\end{center}
+
+\clearpage
+\sheettitle{Das Perzeptron genauer betrachtet}{Künstliche Intelligenz · Sicherungsblatt zu Aufgabe 5.2 · Informatik 11}
+\sectionline{4. Erste Epoche der Delta-Lernregel}
+\begin{center}
+\begin{tikzpicture}[node distance=6mm,every node/.style={align=center},update/.style={draw=blue,fill=lightblue,rounded corners=1mm,minimum height=12mm,minimum width=48mm}]
+\node[update] (delta) {$\delta=t-f(a)$\\Soll minus Ausgabe};
+\node[update,right=of delta] (weights) {$w_i(\mathrm{alt})+\delta\alpha x_i$\\$\longrightarrow w_i(\mathrm{neu})$};
+\node[update,right=of weights] (threshold) {$\theta(\mathrm{alt})-\delta\alpha$\\$\longrightarrow\theta(\mathrm{neu})$};
+\draw[->,thick,navy] (delta)--(weights); \draw[->,thick,navy] (weights)--(threshold);
+\end{tikzpicture}
+\end{center}
+\begin{center}\begin{tcolorbox}[colback=lightgray,colframe=navy,boxrule=.8pt,arc=1.5mm,width=.8\linewidth]
+Start: $w_1=1,\ w_2=1,\ \theta=1,\ \alpha=1$\end{tcolorbox}\end{center}
+\begin{center}
+\begin{tikzpicture}[node distance=17mm,every node/.style={circle,draw=blue,fill=lightblue,minimum size=8mm,font=\bfseries}]
+\node (s1) {1}; \node[right=of s1] (s2) {2}; \node[right=of s2] (s3) {3}; \node[right=of s3] (s4) {4};
+\draw[->,thick,navy] (s1)--(s2); \draw[->,thick,navy] (s2)--(s3); \draw[->,thick,navy] (s3)--(s4);
+\end{tikzpicture}
+\end{center}
+\begin{center}
+\renewcommand{\arraystretch}{1.8}
+\begin{tabularx}{\linewidth}{@{}c c c c c c c@{}}
+\toprule
+Schritt & $(x_1,x_2;t)$ & \shortstack{vorher\\$(w_1,w_2,\theta)$} & $a$ & $f(a)$ & $\delta$ & \shortstack{nachher\\$(w_1,w_2,\theta)$} \\
+\midrule
+1 & $(2,2;1)$ & $(1,1,1)$ & 4 & 1 & 0 & $(1,1,1)$ \\
+2 & $(4,1;0)$ & $(1,1,1)$ & 5 & 1 & $-1$ & $(-3,0,2)$ \\
+3 & $(6,2;0)$ & $(-3,0,2)$ & $-18$ & 0 & 0 & $(-3,0,2)$ \\
+4 & $(0,4;1)$ & $(-3,0,2)$ & 0 & 0 & 1 & $(-3,4,1)$ \\
+\bottomrule
+\end{tabularx}
+\end{center}
+\begin{center}
+\begin{tcolorbox}[colback=lightblue,colframe=navy,boxrule=1pt,arc=1.5mm,width=.9\linewidth]
+\Large $w_1=-3,\ w_2=4,\ \theta=1$ \quad $\longrightarrow$ \quad
+\large gelernte Grenze: $-3x_1+4x_2=1$
+\end{tcolorbox}
+\end{center}
+\begin{merke}
+Bei $\delta=0$ bleibt alles gleich; sonst speichert das Perzeptron neue Gewichte und eine neue Schwelle.
+\end{merke}
+
+\end{document}

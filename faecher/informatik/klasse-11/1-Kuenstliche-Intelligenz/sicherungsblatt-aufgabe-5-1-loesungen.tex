@@ -1,0 +1,165 @@
+\documentclass[11pt,a4paper]{article}
+
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage[ngerman]{babel}
+\usepackage{lmodern}
+\usepackage{amsmath,amssymb}
+\usepackage{booktabs,tabularx,array}
+\usepackage[table]{xcolor}
+\usepackage{tikz}
+\usetikzlibrary{arrows.meta,positioning,shapes.geometric,calc}
+\usepackage[most]{tcolorbox}
+\usepackage{enumitem}
+\usepackage{microtype}
+\usepackage{hyperref}
+\usepackage[a4paper,left=18mm,right=18mm,top=15mm,bottom=15mm,headheight=0pt]{geometry}
+
+\definecolor{navy}{HTML}{174A63}
+\definecolor{blue}{HTML}{2E7698}
+\definecolor{lightblue}{HTML}{EAF3F7}
+\definecolor{lightgray}{HTML}{F2F3F4}
+\definecolor{midgray}{HTML}{66727A}
+\definecolor{green}{HTML}{477A63}
+\definecolor{orange}{HTML}{B96A2B}
+
+\hypersetup{colorlinks=true,linkcolor=navy,urlcolor=blue,pdftitle={Das Perzeptron - grafisch}}
+\setlength{\parindent}{0pt}
+\setlength{\parskip}{4pt}
+\setlist[itemize]{leftmargin=5mm,itemsep=1.5pt,topsep=2pt}
+\setlist[enumerate]{leftmargin=6mm,itemsep=2pt,topsep=2pt}
+\renewcommand{\familydefault}{\sfdefault}
+\pagestyle{empty}
+
+\newtcolorbox{definition}[1][]{enhanced,breakable,colback=lightblue,colframe=blue,
+  boxrule=0.8pt,arc=1.5mm,left=3mm,right=3mm,top=2mm,bottom=2mm,
+  fonttitle=\bfseries,title=Definition,#1}
+\newtcolorbox{merke}[1][]{enhanced,breakable,colback=lightgray,colframe=navy,
+  boxrule=0.9pt,arc=1.5mm,left=3mm,right=3mm,top=2mm,bottom=2mm,
+  fonttitle=\bfseries,title=Merke,#1}
+\newtcolorbox{beispiel}[1][]{enhanced,breakable,colback=white,colframe=midgray,
+  boxrule=0.7pt,arc=1.5mm,left=3mm,right=3mm,top=2mm,bottom=2mm,
+  fonttitle=\bfseries,title=Beispiel,#1}
+\newtcolorbox{ueberblick}[1][]{enhanced,breakable,colback=lightblue,colframe=navy,
+  boxrule=1.1pt,arc=1.5mm,left=3mm,right=3mm,top=2.5mm,bottom=2.5mm,
+  fonttitle=\bfseries,title=Überblick,#1}
+
+\newcommand{\fach}[1]{\textbf{\color{navy}#1}}
+\newcommand{\sectionline}[1]{%
+  \vspace{0.3mm}{\large\bfseries\color{navy}#1}\par\vspace{0.5mm}%
+  {\color{blue}\rule{\linewidth}{0.7pt}}\vspace{0.5mm}}
+\newcommand{\sheettitle}[2]{%
+  \begin{tcolorbox}[colback=navy,colframe=navy,arc=2mm,boxrule=0pt,left=5mm,right=5mm,top=2.5mm,bottom=2.5mm]
+    {\color{white}\fontsize{20}{24}\selectfont\bfseries #1}\par
+    \vspace{0.5mm}{\color{white}\large #2}
+  \end{tcolorbox}}
+
+\begin{document}
+
+\sheettitle{Das Perzeptron - grafisch}{Künstliche Intelligenz · Sicherungsblatt zu Aufgabe 5.1 · Informatik 11}
+
+\sectionline{1. Tierpunkte und Trenngerade}
+\begin{center}
+\begin{tikzpicture}[x=8.2mm,y=6.2mm,font=\small,>=Stealth]
+  \begin{scope}
+  \clip (0,0) rectangle (7,5);
+  \fill[lightblue] (0,0.25)--(0,6)--(7,6)--(7,5.5)--cycle;
+  \end{scope}
+  \draw[step=1,lightgray,very thin] (0,0) grid (7,5);
+  \draw[->,thick,navy] (0,0) -- (7.35,0) node[right] {$x_1$: Zahnlänge};
+  \draw[->,thick,navy] (0,0) -- (0,5.35) node[above] {$x_2$: Augengröße};
+  \foreach \x in {0,...,7} \draw (\x,0.07)--(\x,-0.07) node[below=2pt] {\x};
+  \foreach \y in {1,...,5} \draw (0.07,\y)--(-0.07,\y) node[left=2pt] {\y};
+  \draw[very thick,blue] (0,0.25)--(6.33,5) node[above right] {$-3x_1+4x_2=1$};
+  \foreach \x/\y/\label in {0/4/U1,2/2/U2} {
+    \draw[green!80!black,fill=green!15] (\x,\y) circle (2.6pt);
+    \node[above right,font=\small] at (\x,\y) {\label};
+  }
+  \foreach \x/\y/\label in {4/1/G1,6/2/G2} {
+    \node[diamond,draw=orange,fill=orange!18,aspect=1,inner sep=2.2pt] at (\x,\y) {};
+    \node[below right,font=\small] at (\x,\y) {\label};
+  }
+  \draw[green!80!black,fill=green!15] (2,4) circle (2.6pt);
+  \node[above right,font=\small] at (2,4) {Hase};
+  \node[diamond,draw=orange,fill=orange!18,aspect=1,inner sep=2.2pt] at (5,3) {};
+  \node[below right,font=\small] at (5,3) {Fuchs};
+  \node[navy,fill=white,inner sep=2pt] at (5.4,4.3) {$a>1$: Ausgabe 1};
+  \node[navy,fill=white,inner sep=1pt] at (4.4,-.95) {$a\leq1$: Ausgabe 0};
+\end{tikzpicture}
+\end{center}
+\small \textcolor{green!70!black}{Kreise:} U1 $(0|4)$, U2 $(2|2)$, Soll 1 / ungefährlich \qquad
+\textcolor{orange}{Rauten:} G1 $(4|1)$, G2 $(6|2)$, Soll 0 / gefährlich
+
+\sectionline{2. Grenze oder Bereich?}
+\begin{center}
+\begin{tikzpicture}[x=31mm,y=19mm,font=\small]
+  \fill[lightblue] (-.35,1.75)--(.8,1.75)--(.8,2.4)--(-.35,2.4)--cycle;
+  \draw[->,navy] (0,.72)--(0,2.48) node[above] {$x_2$ bei $x_1=2$};
+  \foreach \y/\lab in {1/1,1.75/1{,}75,2/2} {\draw (.06,\y)--(-.06,\y) node[left=3pt] {\lab};}
+  \draw[thick,blue] (.08,1.75)--(.8,1.75);
+  \draw[navy,fill=white] (0,1) circle (2.6pt);
+  \draw[navy,fill=white] (0,1.75) circle (2.6pt);
+  \draw[navy,fill=white] (0,2) circle (2.6pt);
+  \node[anchor=west] at (1,2.2) {$U2$: $x_2=2$, $a=2\to1$};
+  \node[anchor=west] at (1,1.75) {$T2$: $x_2=1{,}75$, $a=1\to0$};
+  \node[anchor=west] at (1,1) {$T1$: $x_2=1$, $a=-2\to0$};
+  \node[blue,anchor=west] at (1,2.48) {$a=1$: Grenze};
+\end{tikzpicture}
+\end{center}
+\begin{merke}
+Gleichung = Grenze; strenge Ungleichung = Feuerseite; auf der Grenze Ausgabe 0.
+\end{merke}
+
+\sectionline{3. Ungleichung verbessern}
+\begin{center}
+\begin{tikzpicture}[x=6.8mm,y=3.8mm,font=\scriptsize]
+  \begin{scope}
+  \clip (0,0) rectangle (6,4);
+  \fill[lightblue] (0,.25)--(0,5)--(6,5)--(6,6.25)--cycle;
+  \end{scope}
+  \draw[step=1,lightgray,very thin] (0,0) grid (6,4);
+  \draw[->,navy] (0,0)--(6.4,0); \draw[->,navy] (0,0)--(0,4.5);
+  \draw[thick,orange] (0,.25)--(3.75,4);
+  \foreach \x/\y in {0/4,2/2} \draw[green!80!black,fill=green!15] (\x,\y) circle (2.4pt);
+  \foreach \x/\y in {4/1,6/2} \node[diamond,draw=orange,fill=orange!18,aspect=1,inner sep=1.8pt] at (\x,\y) {};
+  \node[orange,fill=white,inner sep=1pt] at (2.0,3.6) {$y>x+0{,}25$};
+  \node[font=\bfseries] at (3,5.2) {Startentwurf};
+\end{tikzpicture}
+\quad
+\begin{tikzpicture}[x=6.8mm,y=3.8mm,font=\scriptsize]
+  \begin{scope}
+  \clip (0,0) rectangle (6,4);
+  \fill[lightblue] (0,.5)--(0,5)--(6,5)--(6,3.5)--cycle;
+  \end{scope}
+  \draw[step=1,lightgray,very thin] (0,0) grid (6,4);
+  \draw[->,navy] (0,0)--(6.4,0); \draw[->,navy] (0,0)--(0,4.5);
+  \draw[thick,blue] (0,.5)--(6,3.5);
+  \foreach \x/\y in {0/4,2/2} \draw[green!80!black,fill=green!15] (\x,\y) circle (2.4pt);
+  \foreach \x/\y in {4/1,6/2} \node[diamond,draw=orange,fill=orange!18,aspect=1,inner sep=1.8pt] at (\x,\y) {};
+  \node[navy,fill=white,inner sep=1pt] at (3.9,3.5) {$y>0{,}5x+0{,}5$};
+  \node[font=\bfseries] at (3,5.2) {Mögliche Verbesserung};
+\end{tikzpicture}
+\end{center}
+\begin{center}\textbf{U2 im Startentwurf:} $2>2{,}25$ falsch \qquad 3/4 $\longrightarrow$ 4/4 richtig\end{center}
+\begin{center}\small
+\begin{tabular}{@{}c c c c@{}}\toprule
+U1 & U2 & G1 & G2 \\
+$4>0{,}5\to1$ & $2>1{,}5\to1$ & $1>2{,}5$ falsch $\to0$ & $2>3{,}5$ falsch $\to0$ \\
+\bottomrule\end{tabular}
+\end{center}
+
+\sectionline{4. Von der Geraden zum Neuron}
+\begin{center}
+\begin{tikzpicture}[node distance=4mm, every node/.style={align=center}, station/.style={draw=blue,fill=lightblue,rounded corners=1mm,minimum width=32mm,minimum height=10mm}]
+\node[station] (line) {$y=0{,}5x+0{,}5$\\Gerade};
+\node[station,right=of line] (side) {$y>0{,}5x+0{,}5$\\Feuerseite};
+\node[station,right=of side] (input) {$-x_1+2x_2>1$\\Eingangsnotation};
+\node[station,right=of input] (params) {$w_1=-1,\ w_2=2,\ s=1$\\Parameter};
+\draw[->,thick,navy] (line)--(side); \draw[->,thick,navy] (side)--(input); \draw[->,thick,navy] (input)--(params);
+\end{tikzpicture}
+\end{center}
+\begin{center}\fach{Kontrolle:} U1/U2 $\to 1$ \qquad G1/G2 $\to 0$ \qquad
+\small Gemeinsames positives Vielfaches bleibt gleichwertig.\end{center}
+\begin{center}\textbf{Merke:} Gewichte und Schwelle beschreiben dieselbe Feuerseite wie die strenge Ungleichung.\end{center}
+
+\end{document}

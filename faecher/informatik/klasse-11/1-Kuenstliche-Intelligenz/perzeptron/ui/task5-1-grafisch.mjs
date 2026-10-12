@@ -1,5 +1,6 @@
 import {calculate,normaliseNumber} from '../logic/perceptron.mjs';
 import {parseLinearRelation as parse,equivalent,sameBoundary,countMatching} from '../logic/linear-inequality.mjs';
+import {unlockSolution} from '../../../../klasse-10/1-Datenbanken/tab-navigation.mjs';
 
 const KEY='informatik11-perzeptron-aufgabe5-1-grafisch-v1';
 const IDS=['discover','four','five','six','seven','eight'];
@@ -458,9 +459,10 @@ function setupDiscovery(){
   $('#check-discover').addEventListener('click',()=>{const chosen=[...$('#discover-options').querySelectorAll('input:checked')].map(el=>el.value);if(sameSet(chosen,['x1','x2','safe'])){showFeedback('discover','Korrekt. Merkmalswerte werden zu Koordinaten; der Hase liegt bei (2|4) auf der ungefährlichen Seite der Trenngeraden.','success');mark('discover-mc',true);}else showFeedback('discover',chosen.some(v=>['x1','x2','safe'].includes(v))?'Teilweise korrekt. Prüfe Achsen und Hasenklasse.':'Noch nicht korrekt. Lies Achsen und beschriftete Bereiche ab.',chosen.some(v=>['x1','x2','safe'].includes(v))?'partial':'error');});
 }
 function start() {
+  for(const suffix of ['51','51-summary'])document.querySelector('#solution-code-form-'+suffix).addEventListener('submit',event=>unlockSolution(event,'M5NP-DQX6','solution-download-link-'+suffix,'solution-code-message-'+suffix));
   buildTables();
   setupQuiz();
-  fields=[...document.querySelectorAll('input,select,textarea')];
+  fields=[...document.querySelectorAll('input,select,textarea')].filter(el=>!el.closest('.solution-code-form'));
   setupTabs();setupStaticPlots();setupFourQuiz();attachEvents();setupDiscovery();
   load();
   renderFourMode();renderDiscovery();

@@ -10,7 +10,7 @@
     <link rel="stylesheet" href="entscheidungbaeume/task4.css?v=20261008c">
     <link rel="stylesheet" href="perzeptron/task5.css?v=20261010-tabs">
     <script src="../../quiz-fragen-pruefen.js?v=20261006b"></script>
-    <script type="module" src="perzeptron/ui/task5.mjs?v=20261011-strict"></script>
+    <script type="module" src="perzeptron/ui/task5.mjs?v=20261012-solution-guard"></script>
   </head>
   <body class="perceptron-page">
     <div class="site-backdrop" aria-hidden="true"></div>
@@ -36,7 +36,7 @@
         <button id="tab-simulator" role="tab" type="button" aria-selected="false" aria-controls="simulator" data-tab="simulator" tabindex="-1">5 Simulator</button>
         <button id="tab-fast" role="tab" type="button" aria-selected="false" aria-controls="fast" data-tab="fast" tabindex="-1">6 Für die Schnellen</button>
         <button id="tab-limits" role="tab" type="button" aria-selected="false" aria-controls="limits" data-tab="limits" tabindex="-1">7 Grenzen</button>
-        <button id="tab-summary" role="tab" type="button" aria-selected="false" aria-controls="summary" data-tab="summary" tabindex="-1">8 Zusammen&shy;fassung</button>
+        <button id="tab-summary" role="tab" type="button" aria-selected="false" aria-controls="summary" data-tab="summary" tabindex="-1">8 Abschlussquiz</button>
       </nav>
 
       <section id="discover" class="step-panel" role="tabpanel" aria-labelledby="tab-discover" data-panel="discover">
@@ -174,28 +174,12 @@
       </section>
 
       <section id="summary" class="step-panel" role="tabpanel" aria-labelledby="tab-summary" data-panel="summary" hidden>
-        <p class="kicker">Zusammenfassung</p><h2>Das Wichtigste sichern</h2><ul><li>a = w<sub>1</sub> · x<sub>1</sub> + w<sub>2</sub> · x<sub>2</sub> fasst die gewichteten Eingaben zusammen.</li><li>f(a) liefert 1 bei a &gt; θ, sonst 0. Bei Gleichheit ist die Ausgabe 0.</li><li>δ = t − f(a) steuert die Änderung der Gewichte und des Schwellenwerts.</li><li>Ein Perzeptron kann nur linear separierbare Daten vollständig trennen.</li><li>Eine Trefferquote auf Trainingsdaten beschreibt noch nicht die Leistung bei unbekannten Daten.</li></ul>
-        <section id="final-quiz" aria-labelledby="quiz-title"><h3 id="quiz-title">Abschlussquiz</h3><p id="quiz-progress">0 von 6 Fragen vollständig richtig</p><form id="quiz-form"><div id="quiz-questions"></div><button class="primary-button" type="submit">Quiz auswerten</button></form><div id="quiz-feedback" class="feedback" role="status" aria-live="polite" hidden></div><div id="quiz-summary" class="remember" hidden></div></section>
-        <section class="solution-download" aria-labelledby="solution-download-title">
-          <h2 id="solution-download-title">Sicherungsblatt zu Aufgabe 5</h2>
-          <details class="solution-reveal">
-            <summary>Sicherungsblatt anzeigen</summary>
-            <form id="solution-code-form" class="solution-code-form">
-              <label for="solution-code">Lehrercode eingeben</label>
-              <div class="solution-code-controls">
-                <input id="solution-code" name="solution-code" type="text"
-                  maxlength="9" autocomplete="off" autocapitalize="characters"
-                  spellcheck="false" required>
-                <button type="submit">Code prüfen</button>
-              </div>
-              <p id="solution-code-message" class="solution-code-message"
-                aria-live="polite"></p>
-              <a id="solution-download-link" class="download-button"
-                href="sicherungsblatt-aufgabe-5-loesungen.pdf" download hidden>
-                &#8595; Sicherungsblatt herunterladen
-              </a>
-            </form>
-          </details>
+        <p class="kicker">Wissen überprüfen</p><h2 id="quiz-title">Abschlussquiz</h2>
+        <section id="final-quiz" aria-labelledby="quiz-title"><p id="quiz-progress">0 von 6 Fragen vollständig richtig</p><form id="quiz-form"><div id="quiz-questions"></div><button class="primary-button" type="submit">Quiz auswerten</button></form><div id="quiz-feedback" class="feedback" role="status" aria-live="polite" hidden></div><div id="quiz-summary" class="remember" hidden></div></section>
+        <section class="solution-download" aria-label="Sicherungsblätter zu Aufgabe 5">
+          <h2>Sicherungsblätter zu Aufgabe 5</h2>
+          <p><a href="aufgabe5-1-grafisch.html">Sicherungsblatt zu Aufgabe 5.1</a></p>
+          <p><a href="aufgabe5-2.html">Sicherungsblatt zu Aufgabe 5.2</a></p>
         </section>
         <button id="reset-progress" class="secondary-button" type="button">Bearbeitungsstand zurücksetzen</button>
       </section>

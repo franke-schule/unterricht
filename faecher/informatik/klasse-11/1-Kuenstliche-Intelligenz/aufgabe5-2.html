@@ -8,10 +8,10 @@
 <link rel="stylesheet" href="../../../../styles.css?v=20260707">
 <link rel="stylesheet" href="perzeptron/task5.css?v=20261010-tabs">
 <link rel="stylesheet" href="perzeptron/task5-1.css?v=20261012-summary-scale">
-<link rel="stylesheet" href="perzeptron/task5-2.css?v=2">
+<link rel="stylesheet" href="perzeptron/task5-2.css?v=3">
 <script src="../../quiz-fragen-pruefen.js?v=20261006b">
 </script>
-<script type="module" src="perzeptron/ui/task5-2.mjs?v=1">
+<script type="module" src="perzeptron/ui/task5-2.mjs?v=20261012-student-summary">
 </script>
 </head>
 <body class="perceptron-page task51"><div class="site-backdrop" aria-hidden="true"></div>
@@ -185,6 +185,8 @@
 <p>
 <strong>Arbeitsauftrag:</strong> Ein Hai hat die Merkmalswerte x<sub>1</sub> = 4 und x<sub>2</sub> = 1. <strong>Berechne</strong> mit w<sub>1</sub> = −1, w<sub>2</sub> = 2 und θ = 3 die Klasse des Hais – Schritt für Schritt von 1 bis 6.</p>
         <p class="math">a = w<sub>1</sub> · x<sub>1</sub> + w<sub>2</sub> · x<sub>2</sub>; f(a) = 1 bei a &gt; θ, sonst 0</p>
+        <div class="six-layout decision-layout">
+        <div class="decision-figure">
         <svg class="decision-svg" viewBox="0 0 900 310" role="img" aria-labelledby="decision-svg-title decision-svg-description">
 <title id="decision-svg-title">Perzeptron für die Klassifikation des Hais</title>
 <desc id="decision-svg-description">Die Eingaben x eins gleich vier und x zwei gleich eins führen über Pfeile mit den Gewichten minus eins und zwei in einen gemeinsamen Kreis. Dort werden die gewichtete Summe und die Treppenfunktion dargestellt. Der Schwellenwert Theta gleich drei führt von unten in diesen Kreis. Rechts steht die zunächst unbekannte Ausgabe.</desc>
@@ -245,9 +247,9 @@
 <text x="183" y="72">Augengröße</text>
 </g>
 <line x1="79" y1="93" x2="101" y2="123"/>
-<text class="decision-weight" x="65" y="116">w₁ = −1</text>
+<text class="decision-weight" x="45" y="116">w₁ = −1</text>
 <line x1="166" y1="97" x2="153" y2="119"/>
-<text class="decision-weight" x="180" y="116">w₂ = 2</text>
+<text class="decision-weight" x="200" y="116">w₂ = 2</text>
 <g class="decision-core">
 <circle cx="128" cy="187" r="70"/>
 <line x1="128" y1="117" x2="128" y2="257"/>
@@ -267,6 +269,8 @@
 <text data-decision="class" x="282" y="213">offen</text>
 </g>
 </svg>
+        </div>
+        <div class="six-work" tabindex="0" role="region" aria-label="Rechenschritte und Hilfen für den Hai">
         <ol class="calc-steps" id="decision-form" aria-label="Rechenschritte für den Hai in fester Reihenfolge">
           <li>
 <span class="calc-step-number" aria-hidden="true">1</span>
@@ -336,6 +340,8 @@
 <summary>Hilfe 3: Teilergebnis</summary>
 <p>Die Beiträge sind −4 und 2. Damit ist a = −2.</p>
 </details>
+</div>
+</div>
 <div class="flow-navigation" data-flow="decide">
 </div>
       </section>
@@ -633,6 +639,21 @@
 <h2 tabindex="-1">7 Zusammenfassung</h2>
 <div id="summary" aria-live="polite">
 </div>
+<section class="solution-download" aria-labelledby="solution-download-title-52-summary">
+<h2 id="solution-download-title-52-summary">Sicherungsblatt zu Aufgabe 5.2</h2>
+<details class="solution-reveal">
+<summary>Sicherungsblatt anzeigen</summary>
+<form id="solution-code-form-52-summary" class="solution-code-form">
+<label for="solution-code-52-summary">Lehrercode eingeben</label>
+<div class="solution-code-controls">
+<input id="solution-code-52-summary" name="solution-code" type="text" maxlength="9" autocomplete="off" autocapitalize="characters" spellcheck="false" required>
+<button class="secondary-button" type="submit">Code prüfen</button>
+</div>
+<p id="solution-code-message-52-summary" class="solution-code-message" aria-live="polite"></p>
+<a id="solution-download-link-52-summary" class="download-button" href="sicherungsblatt-aufgabe-5-2-loesungen.pdf" download hidden>&#8595; Sicherungsblatt herunterladen</a>
+</form>
+</details>
+</section>
 <div class="flow-navigation">
 </div>
 </section>
@@ -647,6 +668,21 @@
 <div id="quiz-results" hidden>
 </div>
 </form>
+<section class="solution-download" aria-labelledby="solution-download-title-52">
+<h2 id="solution-download-title-52">Sicherungsblatt zu Aufgabe 5.2</h2>
+<details class="solution-reveal">
+<summary>Sicherungsblatt anzeigen</summary>
+<form id="solution-code-form-52" class="solution-code-form">
+<label for="solution-code-52">Lehrercode eingeben</label>
+<div class="solution-code-controls">
+<input id="solution-code-52" name="solution-code" type="text" maxlength="9" autocomplete="off" autocapitalize="characters" spellcheck="false" required>
+<button class="secondary-button" type="submit">Code prüfen</button>
+</div>
+<p id="solution-code-message-52" class="solution-code-message" aria-live="polite"></p>
+<a id="solution-download-link-52" class="download-button" href="sicherungsblatt-aufgabe-5-2-loesungen.pdf" download hidden>&#8595; Sicherungsblatt herunterladen</a>
+</form>
+</details>
+</section>
 </section>
 <section class="source-note card" aria-label="Quellen">
 <p>Quellen: <a href="https://inf-schule.de/ki/menueansicht/ki_erkunden/neuronen_knn/einzelneNeuronen/neuronBestimmen">2 – Neuron bestimmen</a> (Michael Krauß, Heiko Jochum), <a href="https://inf-schule.de/ki/menueansicht/ki_erkunden/neuronen_knn/einzelneNeuronen/neuron2trennlinie">3 – Neuron → Trennlinie</a> und <a href="https://inf-schule.de/ki/menueansicht/ki_erkunden/neuronen_knn/einzelneNeuronen/trennlinie2neuron">4 – Trennlinie → Neuron</a> (Heiko Jochum), <a href="https://creativecommons.org/licenses/by-sa/4.0/deed.de">CC BY-SA 4.0</a>; für dieses Lernmodul bearbeitet und interaktiv umgesetzt.</p>
