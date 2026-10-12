@@ -1,0 +1,657 @@
+<!doctype html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="robots" content="noindex,nofollow">
+<title>Das Perzeptron genauer betrachtet</title>
+<link rel="stylesheet" href="../../../../styles.css?v=20260707">
+<link rel="stylesheet" href="perzeptron/task5.css?v=20261010-tabs">
+<link rel="stylesheet" href="perzeptron/task5-1.css?v=20261012-summary-scale">
+<link rel="stylesheet" href="perzeptron/task5-2.css?v=2">
+<script src="../../quiz-fragen-pruefen.js?v=20261006b">
+</script>
+<script type="module" src="perzeptron/ui/task5-2.mjs?v=1">
+</script>
+</head>
+<body class="perceptron-page task51"><div class="site-backdrop" aria-hidden="true"></div>
+<main class="page-shell">
+<nav class="topbar" aria-label="Navigation">
+<a class="back-link" href="../index.html">Zur Aufgabenübersicht</a>
+<a class="back-link" href="../../../../index.html">Startseite</a>
+</nav>
+<header class="perceptron-hero">
+<p class="perceptron-eyebrow">Künstliche Intelligenz · Klassifikation</p>
+<h1>Das Perzeptron genauer betrachtet</h1>
+<p class="task-number">
+<strong>Aufgabe 5.2</strong>
+</p>
+<p>Im ersten Modul hast du Tiere anhand einer Trennlinie eingeordnet. Jetzt verfolgst du die Rechnung des Perzeptrons und untersuchst, wie es seine Zahlen nach Fehlern ändert.</p>
+</header>
+<p id="save-status" role="status" aria-live="polite">Dein Bearbeitungsstand wird in diesem Browser gespeichert.</p>
+<p id="progress" role="status" aria-live="polite">
+</p>
+<nav class="tab-list" role="tablist" aria-label="Lernschritte zum Perzeptron">
+<button id="tab-structure" role="tab" data-tab="structure" aria-controls="structure" aria-selected="true">1 So rechnet das Perzeptron</button>
+<button id="tab-decide" role="tab" data-tab="decide" aria-controls="decide" aria-selected="false" tabindex="-1">2 Selbst rechnen</button>
+<button id="tab-one" role="tab" data-tab="one" aria-controls="one" aria-selected="false" tabindex="-1">3 Fehlendes Feuer</button>
+<button id="tab-two" role="tab" data-tab="two" aria-controls="two" aria-selected="false" tabindex="-1">4 Unerwünschtes Feuer</button>
+<button id="tab-three" role="tab" data-tab="three" aria-controls="three" aria-selected="false" tabindex="-1">5 Wann feuert es?</button>
+<button id="tab-learn" role="tab" data-tab="learn" aria-controls="learn" aria-selected="false" tabindex="-1">6 Delta-Lernregel</button>
+<button id="tab-seven" role="tab" data-tab="seven" aria-controls="seven" aria-selected="false" tabindex="-1">7 Zusammenfassung</button>
+<button id="tab-eight" role="tab" data-tab="eight" aria-controls="eight" aria-selected="false" tabindex="-1">8 Abschlussquiz</button>
+</nav>
+<section id="structure" class="step-panel" role="tabpanel" aria-labelledby="tab-structure" data-panel="structure" hidden>
+        <p class="kicker">So rechnet das Perzeptron</p>
+<h2>1 So rechnet das Perzeptron</h2>
+<p><strong>Arbeitsauftrag:</strong> <strong>Klicke</strong> auf Weiter und <strong>verfolge</strong> den Signalweg vom Eingang bis zur Ausgabe. <strong>Achte</strong> darauf, welche Zahl weitergegeben oder neu berechnet wird.</p>
+        <article class="remember">
+<p>Ein Perzeptron multipliziert Eingaben mit Gewichten, addiert die Ergebnisse und vergleicht die Summe mit einem Schwellenwert.</p>
+</article>
+        <figure class="perceptron-diagram">
+          <svg viewBox="0 0 820 260" role="img" aria-labelledby="perceptron-diagram-title perceptron-diagram-description">
+            <title id="perceptron-diagram-title">Aufbau eines Perzeptrons</title>
+            <desc id="perceptron-diagram-description">Links stehen die Eingabe x eins und die Eingabe x zwei. Von jeder Eingabe führt ein Pfeil in einen großen Kreis; am oberen Pfeil steht Gewicht w eins, am unteren Gewicht w zwei. Der Kreis ist mit Berechnung im Perzeptron beschriftet. Von dort führt ein Pfeil nach rechts zur Ausgabe.</desc>
+            <defs>
+<marker id="perceptron-diagram-arrowhead" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto">
+<path d="M0,0 L8,4 L0,8 z">
+</path>
+</marker>
+</defs>
+            <g class="diagram-input">
+<rect x="10" y="20" width="150" height="76" rx="14">
+</rect>
+<text x="85" y="50">Eingabe</text>
+<text class="diagram-symbol" x="85" y="82">x₁</text>
+</g>
+            <g class="diagram-input">
+<rect x="10" y="164" width="150" height="76" rx="14">
+</rect>
+<text x="85" y="194">Eingabe</text>
+<text class="diagram-symbol" x="85" y="226">x₂</text>
+</g>
+            <line x1="160" y1="58" x2="354" y2="103">
+</line>
+<text class="diagram-weight" x="262" y="62">Gewicht w₁</text>
+            <line x1="160" y1="202" x2="354" y2="157">
+</line>
+<text class="diagram-weight" x="262" y="218">Gewicht w₂</text>
+            <g class="diagram-core">
+<circle cx="470" cy="130" r="115">
+</circle>
+<text x="470" y="124">Berechnung</text>
+<text x="470" y="152">im Perzeptron</text>
+</g>
+            <line x1="585" y1="130" x2="636" y2="130">
+</line>
+            <g class="diagram-output">
+<rect x="640" y="95" width="170" height="70" rx="35">
+</rect>
+<text x="725" y="137">Ausgabe</text>
+</g>
+          </svg>
+        </figure>
+        <div class="geometry-layout signal-layout">
+        <div class="signal-flow-region" role="region" aria-label="Signalfluss eines Perzeptrons für den Hasen" tabindex="0">
+          <div class="signal-flow">
+            <svg class="signal-arrows" viewBox="0 0 1000 380" preserveAspectRatio="none" aria-hidden="true">
+<defs>
+<marker id="signal-arrowhead" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto">
+<path d="M0,0 L8,4 L0,8 z">
+</path>
+</marker>
+</defs>
+<line data-signal-arrow="inputs weights" x1="160" y1="135" x2="180" y2="135">
+</line>
+<line data-signal-arrow="weights products" x1="300" y1="135" x2="320" y2="135">
+</line>
+<line data-signal-arrow="products sum" x1="460" y1="135" x2="480" y2="135">
+</line>
+<line data-signal-arrow="sum activation" x1="600" y1="135" x2="620" y2="135">
+</line>
+<line data-signal-arrow="comparison activation" x1="710" y1="250" x2="710" y2="180">
+</line>
+<line data-signal-arrow="activation output" x1="780" y1="135" x2="830" y2="135">
+</line>
+</svg>
+            <article class="signal-node" data-signal="inputs">
+<h3>Eingaben</h3>
+<p>x₁ = 2<br>Zahnlänge<br>x₂ = 4<br>Augengröße</p>
+</article>
+<article class="signal-node" data-signal="weights">
+<h3>Gewichte</h3>
+<p>w₁ = −1<br>w₂ = 2</p>
+</article>
+<article class="signal-node" data-signal="products">
+<h3>Produkte</h3>
+<p>(−1) · 2 = −2<br>2 · 4 = 8</p>
+</article>
+<article class="signal-node" data-signal="sum">
+<h3>Σ</h3>
+<p>a = −2 + 8<br>= 6</p>
+</article>
+<article class="signal-node" data-signal="comparison">
+<h3>θ = 3</h3>
+<p>6 &gt; 3</p>
+</article>
+<article class="signal-node" data-signal="activation">
+<h3>Treppen&shy;funktion</h3>
+<p>f(a) = 1 bei<br>a &gt; θ, sonst 0</p>
+</article>
+<article class="signal-node" data-signal="output">
+<h3>Ausgabe</h3>
+<p>
+<strong>1</strong>
+<br>ungefährlich</p>
+</article>
+          </div>
+        </div>
+        <div class="geometry-side">
+          <div class="explanation-stepper" aria-label="Rechenschritte des Perzeptrons">
+            <p id="signal-step-status" class="step-status" aria-live="polite">
+</p>
+            <div class="stepper-actions">
+<button type="button" id="next-signal-step" class="primary-button">Weiter</button>
+</div>
+          </div>
+        </div>
+        </div>
+        <p class="data-boundary">
+<strong>Trennungshinweis:</strong> Das Zahlenbeispiel verwendet andere Gewichte als die Trenngerade in Aufgabe 5.1. Es zeigt denselben Rechenweg, aber nicht dieselbe gelernte Gerade.</p>
+        <details>
+<summary>Vertiefung: mehrere Eingaben</summary>
+<p class="math">Für n Eingaben gilt: a = w₁x₁ + w₂x₂ + … + wₙxₙ = Σ wᵢxᵢ.</p>
+</details>
+        <details>
+<summary>Hilfe 1: Informationsweg</summary>
+<p>Folge den Pfeilen von links nach rechts. Beginne bei x₁ = 2 und x₂ = 4.</p>
+</details>
+<details>
+<summary>Hilfe 2: Produkte</summary>
+<p>Berechne zuerst die Produkte an den beiden Verbindungen und addiere sie danach.</p>
+</details>
+<details>
+<summary>Hilfe 3: Ergebnis</summary>
+<p>Die Produkte sind −2 und 8; daraus folgt a = 6, und 6 &gt; 3 liefert die Ausgabe 1.</p>
+</details>
+        <div class="flow-navigation" data-flow="structure">
+</div>
+      </section>
+
+      
+<section id="decide" class="step-panel" role="tabpanel" aria-labelledby="tab-decide" data-panel="decide" hidden>
+        <p class="kicker">Selbst rechnen</p>
+<h2>2 Selbst rechnen</h2>
+<p>
+<strong>Arbeitsauftrag:</strong> Ein Hai hat die Merkmalswerte x<sub>1</sub> = 4 und x<sub>2</sub> = 1. <strong>Berechne</strong> mit w<sub>1</sub> = −1, w<sub>2</sub> = 2 und θ = 3 die Klasse des Hais – Schritt für Schritt von 1 bis 6.</p>
+        <p class="math">a = w<sub>1</sub> · x<sub>1</sub> + w<sub>2</sub> · x<sub>2</sub>; f(a) = 1 bei a &gt; θ, sonst 0</p>
+        <svg class="decision-svg" viewBox="0 0 900 310" role="img" aria-labelledby="decision-svg-title decision-svg-description">
+<title id="decision-svg-title">Perzeptron für die Klassifikation des Hais</title>
+<desc id="decision-svg-description">Die Eingaben x eins gleich vier und x zwei gleich eins führen über Pfeile mit den Gewichten minus eins und zwei in einen gemeinsamen Kreis. Dort werden die gewichtete Summe und die Treppenfunktion dargestellt. Der Schwellenwert Theta gleich drei führt von unten in diesen Kreis. Rechts steht die zunächst unbekannte Ausgabe.</desc>
+<defs>
+<marker id="decision-arrowhead" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto">
+<path d="M0,0 L8,4 L0,8 z"/>
+</marker>
+</defs>
+<g class="decision-input">
+<circle cx="90" cy="78" r="45"/>
+<text x="90" y="72">x₁ = 4</text>
+<text x="90" y="94">Zahnlänge</text>
+</g>
+<g class="decision-input">
+<circle cx="90" cy="205" r="45"/>
+<text x="90" y="199">x₂ = 1</text>
+<text x="90" y="221">Augengröße</text>
+</g>
+<line x1="131" y1="96" x2="353" y2="133"/>
+<text class="decision-weight" x="225" y="98">w₁ = −1</text>
+<line x1="132" y1="190" x2="353" y2="153"/>
+<text class="decision-weight" x="225" y="205">w₂ = 2</text>
+<g class="decision-core">
+<circle cx="445" cy="143" r="92"/>
+<line x1="445" y1="52" x2="445" y2="234"/>
+<text x="400" y="119">Σ</text>
+<text data-decision="sum" x="400" y="149">a = ?</text>
+<text x="490" y="116">Treppen-</text>
+<text x="490" y="139">funktion</text>
+<text data-decision="comparison" x="490" y="168">a ? θ</text>
+</g>
+<line x1="445" y1="290" x2="445" y2="237"/>
+<text class="decision-threshold" x="445" y="306">θ = 3</text>
+<line x1="538" y1="143" x2="695" y2="143"/>
+<g class="decision-output">
+<rect x="698" y="88" width="176" height="110" rx="55"/>
+<text x="786" y="119">Ausgabe</text>
+<text data-decision="output" x="786" y="151">?</text>
+<text data-decision="class" x="786" y="177">noch unbekannt</text>
+</g>
+</svg>
+        <svg class="decision-svg-mobile" viewBox="0 0 330 340" role="img" aria-labelledby="decision-mobile-title decision-mobile-description">
+<title id="decision-mobile-title">Perzeptron für den Hai in kompakter Anordnung</title>
+<desc id="decision-mobile-description">Die beiden Eingaben führen von oben mit ihren Gewichten in den Kreis für Summe und Treppenfunktion. Theta gleich drei führt von unten hinein; die Ausgabe steht rechts.</desc>
+<defs>
+<marker id="decision-mobile-arrowhead" markerWidth="7" markerHeight="7" refX="6" refY="3.5" orient="auto">
+<path d="M0,0 L7,3.5 L0,7 z"/>
+</marker>
+</defs>
+<g class="decision-input">
+<circle cx="55" cy="58" r="42"/>
+<text x="55" y="53">x₁ = 4</text>
+<text x="55" y="72">Zahnlänge</text>
+</g>
+<g class="decision-input">
+<circle cx="183" cy="58" r="42"/>
+<text x="183" y="53">x₂ = 1</text>
+<text x="183" y="72">Augengröße</text>
+</g>
+<line x1="79" y1="93" x2="101" y2="123"/>
+<text class="decision-weight" x="65" y="116">w₁ = −1</text>
+<line x1="166" y1="97" x2="153" y2="119"/>
+<text class="decision-weight" x="180" y="116">w₂ = 2</text>
+<g class="decision-core">
+<circle cx="128" cy="187" r="70"/>
+<line x1="128" y1="117" x2="128" y2="257"/>
+<text x="95" y="169">Σ</text>
+<text data-decision="sum" x="95" y="194">a = ?</text>
+<text x="161" y="163">Treppen-</text>
+<text x="161" y="184">funktion</text>
+<text data-decision="comparison" x="161" y="208">a ? θ</text>
+</g>
+<line x1="128" y1="319" x2="128" y2="260"/>
+<text class="decision-threshold" x="128" y="335">θ = 3</text>
+<line x1="199" y1="187" x2="237" y2="187"/>
+<g class="decision-output">
+<rect x="240" y="143" width="84" height="88" rx="42"/>
+<text x="282" y="169">Ausgabe</text>
+<text data-decision="output" x="282" y="194">?</text>
+<text data-decision="class" x="282" y="213">offen</text>
+</g>
+</svg>
+        <ol class="calc-steps" id="decision-form" aria-label="Rechenschritte für den Hai in fester Reihenfolge">
+          <li>
+<span class="calc-step-number" aria-hidden="true">1</span>
+<label for="decision-product1">
+<span class="sr-only">Schritt 1: </span>Eingabe x<sub>1</sub> gewichten: <span class="calc-term">w<sub>1</sub> · x<sub>1</sub> =</span>
+</label>
+<input id="decision-product1" data-answer="product1" inputmode="decimal" autocomplete="off">
+</li>
+          <li>
+<span class="calc-step-number" aria-hidden="true">2</span>
+<label for="decision-product2">
+<span class="sr-only">Schritt 2: </span>Eingabe x<sub>2</sub> gewichten: <span class="calc-term">w<sub>2</sub> · x<sub>2</sub> =</span>
+</label>
+<input id="decision-product2" data-answer="product2" inputmode="decimal" autocomplete="off">
+</li>
+          <li>
+<span class="calc-step-number" aria-hidden="true">3</span>
+<label for="decision-sum">
+<span class="sr-only">Schritt 3: </span>Ergebnisse aus 1 und 2 addieren: <span class="calc-term">a =</span>
+</label>
+<input id="decision-sum" data-answer="sum" inputmode="decimal" autocomplete="off">
+</li>
+          <li>
+<span class="calc-step-number" aria-hidden="true">4</span>
+<label for="decision-comparison">
+<span class="sr-only">Schritt 4: </span>a mit dem Schwellenwert θ = 3 vergleichen:</label>
+<select id="decision-comparison" data-answer="comparison">
+<option value="">Bitte wählen</option>
+<option value="gt">a &gt; θ</option>
+<option value="le">a ≤ θ</option>
+</select>
+</li>
+          <li>
+<span class="calc-step-number" aria-hidden="true">5</span>
+<label for="decision-output">
+<span class="sr-only">Schritt 5: </span>Ausgabe der Treppenfunktion: <span class="calc-term">f(a) =</span>
+</label>
+<select id="decision-output" data-answer="output">
+<option value="">Bitte wählen</option>
+<option value="0">0</option>
+<option value="1">1</option>
+</select>
+</li>
+          <li>
+<span class="calc-step-number" aria-hidden="true">6</span>
+<label for="decision-class">
+<span class="sr-only">Schritt 6: </span>Ausgabe als Klasse deuten: Der Hai ist …</label>
+<select id="decision-class" data-answer="class">
+<option value="">Bitte wählen</option>
+<option value="safe">ungefährlich</option>
+<option value="danger">gefährlich</option>
+</select>
+</li>
+        </ol>
+<button id="check-decision" class="primary-button" type="button">Rechnung überprüfen</button>
+<div id="decision-feedback" class="feedback" role="status" aria-live="polite" hidden>
+</div>
+        <details>
+<summary>Hilfe 1: getrennt rechnen</summary>
+<p>Berechne die beiden Produkte getrennt. Achte beim ersten Gewicht auf das Minuszeichen.</p>
+</details>
+<details>
+<summary>Hilfe 2: vergleichen</summary>
+<p>Addiere −1 · 4 und 2 · 1. Vergleiche anschließend mit 3.</p>
+</details>
+<details>
+<summary>Hilfe 3: Teilergebnis</summary>
+<p>Die Beiträge sind −4 und 2. Damit ist a = −2.</p>
+</details>
+<div class="flow-navigation" data-flow="decide">
+</div>
+      </section>
+
+      
+<section id="one" class="step-panel" role="tabpanel" data-panel="one" aria-labelledby="tab-one" hidden>
+<h2 tabindex="-1">3 Fehlendes Feuer</h2>
+<p>Für die nächsten drei Reiter nutzen wir einfache 0/1-Eingaben statt Zahnlänge und Augengröße. So siehst du den Einfluss von Gewichten und Schwelle direkt; Ausgabe 1 heißt hier nur „feuert“.</p><p>s und θ sind zwei Schreibweisen für denselben Schwellenwert. Ausgabe 1 entsteht nur, wenn die gewichtete Summe größer als dieser Wert ist; bei Gleichheit bleibt die Ausgabe 0.</p>
+<p>
+<strong>Verändere</strong> Gewichte und Schwellenwert so, dass das Perzeptron bei allen vier Eingaben die gewünschte Ausgabe liefert. <strong>Prüfe</strong> deine Einstellung.</p>
+<div class="formula-card" aria-label="Vorgehen zur Berechnung der Ausgabe">
+<p>
+<strong>So berechnest du die Ausgabe:</strong>
+</p>
+<p>
+<strong>1. Gewichten:</strong> Multipliziere die Eingaben x₁ und x₂ mit ihren Gewichten: w₁·x₁ und w₂·x₂.</p>
+<p>
+<strong>2. Addieren:</strong> Bilde die gewichtete Summe a = w₁·x₁ + w₂·x₂.</p>
+<p>
+<strong>3. Vergleichen:</strong> Ist a &gt; s, feuert das Perzeptron und die Ausgabe ist 1. Sonst ist die Ausgabe 0 – auch bei a = s.</p>
+</div>
+<div class="neuron-task-layout">
+<div id="one-neuron" class="neuron-diagram">
+</div>
+<div class="neuron-task-work">
+<p class="input-choice-hint">Mit „Einsetzen“ wechseln die Eingaben x₁ und x₂ im Perzeptron zur gewählten Zeile.</p>
+<div class="table-scroll">
+<table>
+<thead>
+<tr>
+<th>Eingaben einsetzen</th>
+<th>x₁</th>
+<th>x₂</th>
+<th>gewichtete Summe a</th>
+<th>Soll-Ausgabe</th>
+<th>berechnete Ausgabe</th>
+</tr>
+</thead>
+<tbody id="one-table">
+</tbody>
+</table>
+</div>
+<button id="check-one" class="primary-button" type="button">Einstellung prüfen</button>
+<p id="feedback-one" class="feedback" role="status" aria-live="polite" hidden>
+</p>
+<div class="helps">
+<details>
+<summary>Hilfe 1</summary>
+<p>Sieh auf die Zeilen, in denen Ausgabe 1 erwartet wird, das Perzeptron aber noch 0 liefert.</p>
+</details>
+<details>
+<summary>Hilfe 2</summary>
+<p>Ein größerer Beitrag eines positiven aktiven Eingangs kann die Summe erhöhen. Eine kleinere Schwelle kann das Feuern ebenfalls ermöglichen.</p>
+</details>
+<details>
+<summary>Hilfe 3</summary>
+<p>Bei (1;0) wirkt nur w₁. Wähle w₁ größer als s und prüfe anschließend besonders (0;0) und (0;1).</p>
+</details>
+</div>
+</div>
+</div>
+<div class="flow-navigation">
+</div>
+</section>
+
+
+<section id="two" class="step-panel" role="tabpanel" data-panel="two" aria-labelledby="tab-two" hidden>
+<h2 tabindex="-1">4 Unerwünschtes Feuer</h2>
+<p>
+<strong>Verändere</strong> die Einstellung so, dass das Perzeptron bei den ersten beiden Eingaben nicht feuert und bei den letzten beiden feuert. <strong>Prüfe</strong> anschließend alle Zeilen.</p>
+<div class="neuron-task-layout">
+<div id="two-neuron" class="neuron-diagram">
+</div>
+<div class="neuron-task-work">
+<p class="input-choice-hint">Mit „Einsetzen“ wechseln die Eingaben x₁ und x₂ im Perzeptron zur gewählten Zeile.</p>
+<div class="table-scroll">
+<table>
+<thead>
+<tr>
+<th>Eingaben einsetzen</th>
+<th>x₁</th>
+<th>x₂</th>
+<th>gewichtete Summe a</th>
+<th>Soll-Ausgabe</th>
+<th>berechnete Ausgabe</th>
+</tr>
+</thead>
+<tbody id="two-table">
+</tbody>
+</table>
+</div>
+<button id="check-two" class="primary-button" type="button">Einstellung prüfen</button>
+<p id="feedback-two" class="feedback" role="status" aria-live="polite" hidden>
+</p>
+<div class="helps">
+<details>
+<summary>Hilfe 1</summary>
+<p>Untersuche zuerst, warum das Perzeptron schon bei (0;0) feuert.</p>
+</details>
+<details>
+<summary>Hilfe 2</summary>
+<p>Bei (0;0) tragen die Gewichte nichts zur Summe bei. Nur der Vergleich von 0 mit s entscheidet.</p>
+</details>
+<details>
+<summary>Hilfe 3</summary>
+<p>Wähle s so, dass 0 nicht größer als s ist. Prüfe danach, ob bei (1;0) trotzdem Ausgabe 1 entsteht; passe bei Bedarf w₁ an.</p>
+</details>
+</div>
+</div>
+</div>
+<div class="flow-navigation">
+</div>
+</section>
+
+
+<section id="three" class="step-panel" role="tabpanel" data-panel="three" aria-labelledby="tab-three" hidden>
+<h2 tabindex="-1">5 Wann feuert es?</h2>
+<p>
+<strong>Bestimme</strong> die vier Ausgaben des Neurons. <strong>Untersuche</strong> danach, für welche Werte von x₂ es bei x₁ = 0,25 feuert.</p>
+<div class="neuron-task-layout">
+<div id="three-neuron" class="neuron-diagram">
+</div>
+<div class="neuron-task-work">
+<button id="reset-three-neuron" class="secondary-button" type="button">Neuron zurücksetzen</button>
+<p class="input-choice-hint">Mit „Einsetzen“ wechseln die Eingaben x₁ und x₂ im Perzeptron zur gewählten Zeile.</p>
+<div class="table-scroll">
+<table class="three-answer-table">
+<thead>
+<tr>
+<th>Eingaben einsetzen</th>
+<th>Punkt</th>
+<th class="coordinate-column">x₁</th>
+<th class="coordinate-column">x₂</th>
+<th>Ausgabe 0/1</th>
+</tr>
+</thead>
+<tbody id="three-table">
+</tbody>
+</table>
+</div>
+<button id="check-three-rows" class="primary-button" type="button">Vier Ausgaben prüfen</button>
+<p id="feedback-three-rows" class="feedback" role="status" aria-live="polite" hidden>
+</p>
+<div id="three-probes" hidden>
+<div class="table-scroll">
+<table class="three-answer-table">
+<thead>
+<tr>
+<th>Eingaben einsetzen</th>
+<th class="coordinate-column">x₁</th>
+<th class="coordinate-column">x₂</th>
+<th>Ausgabe 0/1</th>
+</tr>
+</thead>
+<tbody id="three-probe-table">
+</tbody>
+</table>
+</div>
+<button id="check-three-probes" class="primary-button" type="button">Grenzproben prüfen</button>
+<p id="feedback-three-probes" class="feedback" role="status" aria-live="polite" hidden>
+</p>
+</div>
+<div class="helps">
+<details>
+<summary>Hilfe 1</summary>
+<p>Berechne für jede Zeile zuerst a.</p>
+</details>
+<details>
+<summary>Hilfe 2</summary>
+<p>Vergleiche a mit 3; Gleichheit reicht nicht zum Feuern.</p>
+</details>
+<details>
+<summary>Hilfe 3</summary>
+<p>Bei x₁ = 0,25 ist der Beitrag von w₁·x₁ gleich 1. Vergleiche 1+2·x₂ mit 3.</p>
+</details>
+</div>
+<div id="three-formula" hidden>
+<p>
+<strong>Formuliere</strong> eine Ungleichung für alle Eingaben, bei denen das Perzeptron feuert.</p>
+<label for="three-condition">Feuer-Ungleichung in Eingangsnotation</label>
+<input id="three-condition" type="text" autocomplete="off" spellcheck="false">
+<p class="syntax-help">Erlaubt sind x, y oder x1, x2, Zahlen mit Punkt oder Komma, +, −, *, Klammern und ein Vergleichszeichen. Beispiel für die Schreibweise: x + y &gt; 1.</p>
+<button id="check-three-condition" class="primary-button" type="button">Feuerbedingung prüfen</button>
+<p id="feedback-three-condition" class="feedback" role="status" aria-live="polite" hidden>
+</p>
+<div class="helps">
+<details>
+<summary>Hilfe 1</summary>
+<p>Schreibe die Bedingung für Ausgabe 1 mit a und s auf.</p>
+</details>
+<details>
+<summary>Hilfe 2</summary>
+<p>Ersetze a durch die beiden gewichteten Eingänge.</p>
+</details>
+<details>
+<summary>Hilfe 3</summary>
+<p>Setze w₁=4, w₂=2 und s=3 in die allgemeine Bedingung ein.</p>
+</details>
+</div>
+</div>
+</div>
+</div>
+<div class="flow-navigation">
+</div>
+</section>
+
+
+<section id="learn" class="step-panel" role="tabpanel" aria-labelledby="tab-learn" data-panel="learn" hidden>
+        <p class="kicker">Lernen</p>
+<h2>6 Delta-Lernregel</h2>
+<p><strong>Berechne</strong> für jedes Trainingstier Summe, Ausgabe und Fehler δ. Wende danach die Delta-Lernregel auf Gewichte und Schwelle an und erkläre kurz, was beim Training gespeichert wird.</p><p>Ist die Ausgabe richtig, bleiben die Zahlen gleich. Ist sie falsch, entscheidet δ = t − f(a) über Richtung und Größe der Änderung.</p>
+        <div class="formula-grid">
+<article class="formula-card">
+<p class="math">δ = t − f(a)</p>
+<p>δ beschreibt die Abweichung zwischen Zielwert und Ausgabe.</p>
+</article>
+<article class="formula-card">
+<p class="math">w<sub>i</sub> neu = w<sub>i</sub> alt + δ · α · x<sub>i</sub>
+</p>
+<p class="math">θ neu = θ alt − δ · α</p>
+</article>
+</div>
+        <p>Start: w<sub>1</sub> = 1, w<sub>2</sub> = 1, θ = 1, α = 1. Bearbeite die Daten in der vorgegebenen Reihenfolge.</p>
+        <form id="epoch-form" novalidate>
+<div class="table-scroll" role="region" tabindex="0" aria-label="Erste Trainingsepoche: Tabelle mit Trainingsdaten, Parametern und Berechnung">
+<table>
+<caption>Erste Trainingsepoche</caption>
+<thead>
+<tr>
+<th rowspan="2" scope="col">Schritt</th>
+<th colspan="3" scope="colgroup">Trainingsdaten</th>
+<th colspan="3" scope="colgroup">Parameter vorher</th>
+<th colspan="3" scope="colgroup">Berechnung</th>
+<th colspan="3" scope="colgroup">Parameter nachher</th>
+<th rowspan="2" scope="col">Kontrolle</th>
+</tr>
+<tr>
+<th scope="col">x<sub>1</sub>
+</th>
+<th scope="col">x<sub>2</sub>
+</th>
+<th scope="col">t</th>
+<th scope="col">w<sub>1</sub>
+</th>
+<th scope="col">w<sub>2</sub>
+</th>
+<th scope="col">θ</th>
+<th scope="col">a</th>
+<th scope="col">f(a)</th>
+<th scope="col">δ</th>
+<th scope="col">w<sub>1</sub>
+</th>
+<th scope="col">w<sub>2</sub>
+</th>
+<th scope="col">θ</th>
+</tr>
+</thead>
+<tbody id="epoch-body">
+</tbody>
+</table>
+</div>
+</form>
+<div id="epoch-feedback" class="feedback" role="status" aria-live="polite" hidden>
+</div>
+        <details>
+<summary>Hilfe 1: a berechnen</summary>
+<p>Nutze für jede Zeile die Parameter vom Ende der vorherigen Zeile.</p>
+</details>
+<details>
+<summary>Hilfe 2: δ bestimmen</summary>
+<p>Berechne erst a und f(a), dann δ = t − f(a).</p>
+</details>
+<details>
+<summary>Hilfe 3: Regel einsetzen</summary>
+<p>Bei δ=0 bleibt alles gleich. Bei α=1 ist die Änderung eines Gewichts δ mal der jeweilige Eingangswert.</p>
+</details>
+        <article class="card">
+<h3>Kurz erklären</h3>
+<p>Erkläre, was das Perzeptron beim Training verändert und wo das Gelernte gespeichert ist.</p>
+<label for="learning-answer">Deine Erklärung<textarea id="learning-answer" maxlength="600" rows="5" placeholder="Beim Training …">
+</textarea>
+</label>
+<p class="counter" id="learning-counter">0 von 600 Zeichen</p>
+<p class="privacy">
+<strong>Hinweis:</strong> Gib keine personenbezogenen Informationen ein. Deine Antwort wird zur automatischen Auswertung an den Skriptserver und dort an ein KI-System übertragen.</p>
+<button id="check-learning-answer" class="primary-button" type="button">Antwort überprüfen</button>
+<div id="learning-feedback" class="feedback" role="status" aria-live="polite" hidden>
+</div>
+</article>
+        <div class="flow-navigation" data-flow="learn">
+</div>
+      </section>
+
+      <section id="seven" class="step-panel" role="tabpanel" data-panel="seven" aria-labelledby="tab-seven" hidden>
+<h2 tabindex="-1">7 Zusammenfassung</h2>
+<div id="summary" aria-live="polite">
+</div>
+<div class="flow-navigation">
+</div>
+</section>
+<section id="eight" class="step-panel" role="tabpanel" data-panel="eight" aria-labelledby="tab-eight" hidden>
+<h2 tabindex="-1">8 Abschlussquiz</h2>
+<form id="final-quiz">
+<div id="quiz-questions">
+</div>
+<button id="check-all-quiz" class="primary-button" type="submit">Quiz auswerten</button>
+<p id="quiz-feedback" class="feedback" role="status" aria-live="polite" hidden>
+</p>
+<div id="quiz-results" hidden>
+</div>
+</form>
+</section>
+<section class="source-note card" aria-label="Quellen">
+<p>Quellen: <a href="https://inf-schule.de/ki/menueansicht/ki_erkunden/neuronen_knn/einzelneNeuronen/neuronBestimmen">2 – Neuron bestimmen</a> (Michael Krauß, Heiko Jochum), <a href="https://inf-schule.de/ki/menueansicht/ki_erkunden/neuronen_knn/einzelneNeuronen/neuron2trennlinie">3 – Neuron → Trennlinie</a> und <a href="https://inf-schule.de/ki/menueansicht/ki_erkunden/neuronen_knn/einzelneNeuronen/trennlinie2neuron">4 – Trennlinie → Neuron</a> (Heiko Jochum), <a href="https://creativecommons.org/licenses/by-sa/4.0/deed.de">CC BY-SA 4.0</a>; für dieses Lernmodul bearbeitet und interaktiv umgesetzt.</p>
+</section>
+<button id="reset-module" class="secondary-button" type="button">Modul neu beginnen</button>
+</main>
+</body>
+</html>

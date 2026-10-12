@@ -1,0 +1,4 @@
+.task51 .tab-list { grid-template-columns: repeat(8, minmax(0, 1fr)); }
+.task51 .perceptron-hero h1 { font-size: 3.5rem; line-height: 1.1; }
+@media (max-width: 1050px) { .task51 .tab-list { grid-template-columns: repeat(4, minmax(0, 1fr)); } }
+@media (max-width: 600px) { .task51 .tab-list { grid-template-columns: repeat(2, minmax(0, 1fr)); } .task51 .perceptron-hero h1 { font-size: 2.25rem; } }

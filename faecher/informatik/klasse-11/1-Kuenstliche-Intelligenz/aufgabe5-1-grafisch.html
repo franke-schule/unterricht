@@ -1,0 +1,550 @@
+<!doctype html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="robots" content="noindex,nofollow">
+<title>Das Perzeptron - grafisch</title>
+<link rel="stylesheet" href="../../../../styles.css?v=20260707">
+<link rel="stylesheet" href="perzeptron/task5.css?v=20261010-tabs">
+<link rel="stylesheet" href="perzeptron/task5-1.css?v=20261012-summary-scale">
+<link rel="stylesheet" href="perzeptron/task5-1-grafisch.css?v=2">
+<script src="../../quiz-fragen-pruefen.js?v=20261006b">
+</script>
+<script type="module" src="perzeptron/ui/task5-1-grafisch.mjs?v=1">
+</script>
+</head>
+<body class="perceptron-page task51"><div class="site-backdrop" aria-hidden="true"></div>
+<main class="page-shell">
+<nav class="topbar" aria-label="Navigation">
+<a class="back-link" href="../index.html">Zur Aufgabenübersicht</a>
+<a class="back-link" href="../../../../index.html">Startseite</a>
+</nav>
+<header class="perceptron-hero">
+<p class="perceptron-eyebrow">Künstliche Intelligenz · Klassifikation</p>
+<h1>Das Perzeptron - grafisch</h1>
+<p class="task-number">
+<strong>Aufgabe 5.1</strong>
+</p>
+<p>Untersuche an Tiermerkmalen, wie eine Trennlinie zur Entscheidung des Perzeptrons wird.</p>
+</header>
+<p id="save-status" role="status" aria-live="polite">Dein Bearbeitungsstand wird in diesem Browser gespeichert.</p>
+<p id="progress" role="status" aria-live="polite">
+</p>
+<nav class="tab-list" role="tablist" aria-label="Lernschritte zum Perzeptron">
+<button id="tab-discover" role="tab" data-tab="discover" aria-controls="discover" aria-selected="true">1 Vom Tier zur Entscheidung</button>
+<button id="tab-four" role="tab" data-tab="four" aria-controls="four" aria-selected="false" tabindex="-1">2 Grenze oder Bereich?</button>
+<button id="tab-five" role="tab" data-tab="five" aria-controls="five" aria-selected="false" tabindex="-1">3 Ungleichung verbessern und testen</button>
+<button id="tab-six" role="tab" data-tab="six" aria-controls="six" aria-selected="false" tabindex="-1">4 Von der Trennlinie zum Neuron</button>
+<button id="tab-seven" role="tab" data-tab="seven" aria-controls="seven" aria-selected="false" tabindex="-1">5 Zusammenfassung</button>
+<button id="tab-eight" role="tab" data-tab="eight" aria-controls="eight" aria-selected="false" tabindex="-1">6 Abschlussquiz</button>
+</nav>
+<section id="discover" class="step-panel" role="tabpanel" aria-labelledby="tab-discover" data-panel="discover">
+        <p class="kicker">Vom Tier zur Entscheidung</p>
+<h2 tabindex="-1">1 Vom Tier zur Entscheidung</h2>
+<p><strong>Arbeitsauftrag:</strong> <strong>Klicke</strong> auf Weiter und <strong>ordne</strong> zuerst den Hasen, dann den Fuchs Schritt für Schritt ein.</p>
+        <div class="geometry-layout">
+        <figure class="geometry-figure">
+          <svg class="geometry-plot" viewBox="0 0 800 460" role="img" aria-labelledby="geometry-title geometry-description">
+            <title id="geometry-title">Trainingspunkte, Trenngerade, Hase und Fuchs im Koordinatensystem</title>
+            <desc id="geometry-description">Die x-Achse zeigt die Zahnlänge, die y-Achse die Augengröße. Die Kreise U eins bei null, vier und U zwei bei zwei, zwei liegen im ungefährlichen Bereich. Die Dreiecke G eins bei vier, eins und G zwei bei sechs, zwei liegen im gefährlichen Bereich. Der hervorgehobene Hase bei zwei, vier liegt im ungefährlichen Bereich oberhalb der Trenngeraden. Den Fuchs setzt du selbst ein.</desc>
+            <defs>
+<marker id="axis-arrow" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto">
+<path d="M0,0 L8,4 L0,8 z"/>
+</marker>
+<pattern id="safe-pattern" width="10" height="10" patternUnits="userSpaceOnUse" patternTransform="rotate(45)">
+<line x1="0" y1="0" x2="0" y2="10" stroke="#287b61" stroke-width="2"/>
+</pattern>
+<pattern id="danger-pattern" width="10" height="10" patternUnits="userSpaceOnUse">
+<circle cx="3" cy="3" r="1.4" fill="#af3f47"/>
+</pattern>
+</defs>
+            <polygon points="90,90 685,90 90,375" class="geometry-area safe-area" data-geometry="area">
+</polygon>
+<polygon points="90,375 685,90 685,390 90,390" class="geometry-area danger-area" data-geometry="area">
+</polygon>
+            <g class="geometry-grid" aria-hidden="true">
+<line x1="90" y1="390" x2="685" y2="390">
+</line>
+<line x1="90" y1="330" x2="685" y2="330">
+</line>
+<line x1="90" y1="270" x2="685" y2="270">
+</line>
+<line x1="90" y1="210" x2="685" y2="210">
+</line>
+<line x1="90" y1="150" x2="685" y2="150">
+</line>
+<line x1="90" y1="90" x2="685" y2="90">
+</line>
+</g>
+            <g class="geometry-axes" data-geometry="axes" aria-hidden="true">
+<line x1="90" y1="390" x2="705" y2="390" marker-end="url(#axis-arrow)">
+</line>
+<line x1="90" y1="410" x2="90" y2="70" marker-end="url(#axis-arrow)">
+</line>
+</g>
+            <g class="geometry-ticks" aria-hidden="true">
+<text x="84" y="408">0</text>
+<text x="169" y="408">1</text>
+<text x="254" y="408">2</text>
+<text x="339" y="408">3</text>
+<text x="424" y="408">4</text>
+<text x="509" y="408">5</text>
+<text x="594" y="408">6</text>
+<text x="679" y="408">7</text>
+<text x="65" y="394">0</text>
+<text x="65" y="334">1</text>
+<text x="65" y="274">2</text>
+<text x="65" y="214">3</text>
+<text x="65" y="154">4</text>
+<text x="65" y="94">5</text>
+</g>
+            <text class="axis-label" x="355" y="445">x₁: Zahnlänge</text>
+<text class="axis-label" transform="rotate(-90 25 240)" x="25" y="240">x₂: Augengröße</text>
+            <text class="area-label" x="250" y="120">ungefährlich</text>
+<text class="area-label" x="500" y="360">gefährlich</text>
+            <line class="boundary-line" data-geometry="line" x1="90" y1="375" x2="628" y2="90">
+</line>
+<text class="line-label" data-geometry="line" x="405" y="176">Trenngerade</text>
+            <g data-geometry="points">
+<circle class="safe-point" cx="90" cy="150" r="10">
+</circle>
+<text x="104" y="145">U1 (0|4)</text>
+<circle class="safe-point" cx="260" cy="270" r="10">
+</circle>
+<text x="274" y="265">U2 (2|2)</text>
+<path class="danger-point" d="M430 317 l-12 22 h24 z">
+</path>
+<text x="445" y="330">G1 (4|1)</text>
+<path class="danger-point" d="M600 257 l-12 22 h24 z">
+</path>
+<text x="615" y="252">G2 (6|2)</text>
+</g>
+            <g data-geometry="hare" id="hare-marker" hidden>
+<path class="hare-point" d="M260 132 l6 12 14 2 -10 10 3 14 -13 -7 -13 7 3 -14 -10 -10 14 -2 z">
+</path>
+<circle class="hare-ring" cx="260" cy="150" r="22">
+</circle>
+<text class="hare-label" x="285" y="151">Hase (2|4)</text>
+</g>
+            <g data-geometry="fox" id="fox-marker" hidden>
+<path class="fox-point" d="M0 -14 L12 0 L0 14 L-12 0 Z">
+</path>
+<circle class="fox-ring" cx="0" cy="0" r="21">
+</circle>
+<text class="fox-label" id="fox-label" x="25" y="5">Fuchs</text>
+</g>
+          </svg>
+        </figure>
+        <div class="geometry-side">
+          <div class="explanation-stepper" aria-label="Schritte zur Einordnung von Hase und Fuchs">
+            <p id="geometry-step-status" class="step-status" aria-live="polite">
+</p>
+            <div class="stepper-actions">
+<button type="button" id="next-geometry-step" class="primary-button">Weiter</button>
+</div>
+          </div>
+          <div class="fox-task" id="fox-task" hidden>
+<div class="fox-controls">
+<label for="fox-x">Zahnlänge (x₁)<select id="fox-x">
+<option value="">–</option>
+<option value="0">0</option>
+<option value="1">1</option>
+<option value="2">2</option>
+<option value="3">3</option>
+<option value="4">4</option>
+<option value="5">5</option>
+<option value="6">6</option>
+<option value="7">7</option>
+</select>
+</label>
+<label for="fox-y">Augengröße (x₂)<select id="fox-y">
+<option value="">–</option>
+<option value="0">0</option>
+<option value="1">1</option>
+<option value="2">2</option>
+<option value="3">3</option>
+<option value="4">4</option>
+<option value="5">5</option>
+</select>
+</label>
+</div>
+<fieldset id="fox-class" hidden>
+<legend>Welche Klasse hat der Fuchs?</legend>
+<label>
+<input type="radio" name="fox-class" value="danger">gefährlich – Ausgabe 0</label>
+<label>
+<input type="radio" name="fox-class" value="safe">nicht gefährlich – Ausgabe 1</label>
+</fieldset>
+<button id="check-fox" class="primary-button" type="button" hidden>Fuchs überprüfen</button>
+<div id="fox-feedback" class="feedback" role="status" aria-live="polite" hidden>
+</div>
+</div>
+        </div>
+        </div>
+        <p class="formula-card" data-geometry="line">
+<strong>Eine solche Grenzlinie heißt Trenngerade.</strong> Die hier gezeichnete Gerade −3x₁ + 4x₂ = 1 trennt die vier Trainingspunkte korrekt.</p>
+        <fieldset id="discover-options">
+<legend>Welche Aussagen stimmen?</legend>
+<label>
+<input type="checkbox" value="x1">Die Zahnlänge wird auf der x-Achse abgetragen.</label>
+<label>
+<input type="checkbox" value="x2">Die Augengröße wird auf der y-Achse abgetragen.</label>
+<label>
+<input type="checkbox" value="safe">Der Hase liegt im Bereich „ungefährlich“.</label>
+<label>
+<input type="checkbox" value="color">Nur die Farbe eines Punktes verrät seine Klasse.</label>
+</fieldset>
+<button id="check-discover" class="primary-button" type="button">Aussagen überprüfen</button>
+<div id="discover-feedback" class="feedback" role="status" aria-live="polite" hidden>
+</div>
+        <details>
+<summary>Hilfe 1: Achsen ablesen</summary>
+<p>Die Zahnlänge steht auf der x-Achse, die Augengröße auf der y-Achse.</p>
+</details>
+<details>
+<summary>Hilfe 2: Punkt prüfen</summary>
+<p>Trage den Hasen bei x₁ = 2 und x₂ = 4 ein und vergleiche seine Lage mit der Grenzlinie.</p>
+</details>
+<details>
+<summary>Hilfe 3: Einordnung</summary>
+<p>Der Hase liegt oberhalb der Grenzlinie im Bereich „ungefährlich“.</p>
+</details>
+        <div class="flow-navigation" data-flow="discover">
+</div>
+      </section>
+
+      
+<section id="four" class="step-panel" role="tabpanel" data-panel="four" aria-labelledby="tab-four" hidden>
+<h2 tabindex="-1">2 Grenze oder Bereich?</h2>
+<p>
+<strong>Klicke</strong> zuerst auf „Geradengleichung“ und dann auf „Ungleichung“. Vergleiche T1, T2 und U2: Welche Punkte liegen auf der Linie, welche auf der Seite mit Ausgabe 1?</p>
+<div class="four-comparison">
+<figure class="geometry-figure">
+<svg id="four-plot" class="geometry-plot" viewBox="0 0 720 460" role="img" aria-label="Koordinatensystem mit drei auswählbaren Punkten unterhalb, auf und oberhalb der Grenze; x ist x₁ und y ist x₂.">
+</svg>
+<figcaption>Wähle einen Punkt und vergleiche Summe, Schwellenwert und Ausgabe.</figcaption>
+</figure>
+<div class="four-comparison-work" tabindex="0" role="region" aria-label="Punktvergleich und MC-Fragen, scrollbar auf breiten Bildschirmen">
+<div class="action-row four-mode-actions">
+<button id="four-show-line" class="secondary-button" type="button" aria-pressed="false">Geradengleichung</button>
+<button id="four-show-half" class="secondary-button" type="button" aria-pressed="false">Ungleichung</button>
+</div>
+<p id="four-display" class="four-display" role="status" aria-live="polite" hidden>
+</p>
+<div id="four-points" class="point-actions">
+</div>
+<div id="four-point-detail" class="point-calculation">
+</div>
+<p id="four-point-status" class="visually-hidden" role="status" aria-live="polite">
+</p>
+<p>Kreuze bei jeder Frage alle richtigen Aussagen an.</p>
+<div id="four-quiz">
+<fieldset id="four-quiz-1" class="quiz-question">
+<legend>1. Was beschreibt −3x₁ + 4x₂ = 1?</legend>
+<label>
+<input type="checkbox" value="A">Die Trennlinie zwischen den Bereichen.</label>
+<label>
+<input type="checkbox" value="B">Testtier T2 (2|1,75) liegt auf ihr.</label>
+<label>
+<input type="checkbox" value="C">Alle Tiere mit Ausgabe 1.</label>
+<label>
+<input type="checkbox" value="D">Jeder Punkt auf ihr hat Ausgabe 1.</label>
+</fieldset>
+<fieldset id="four-quiz-2" class="quiz-question">
+<legend>2. Was beschreibt −3x₁ + 4x₂ &gt; 1?</legend>
+<label>
+<input type="checkbox" value="A">Die Seite mit Ausgabe 1.</label>
+<label>
+<input type="checkbox" value="B">U2 (2|2) gehört dazu.</label>
+<label>
+<input type="checkbox" value="C">T2 (2|1,75) gehört dazu.</label>
+<label>
+<input type="checkbox" value="D">Nur die Punkte der Trennlinie.</label>
+</fieldset>
+<fieldset id="four-quiz-3" class="quiz-question">
+<legend>3. Was gilt für die drei Vergleichspunkte?</legend>
+<label>
+<input type="checkbox" value="A">T1 und T2 erhalten Ausgabe 0.</label>
+<label>
+<input type="checkbox" value="B">U2 erhält Ausgabe 1.</label>
+<label>
+<input type="checkbox" value="C">T2 feuert wegen der Gleichheit.</label>
+<label>
+<input type="checkbox" value="D">T1 und U2 liegen auf derselben Seite der Linie.</label>
+</fieldset>
+</div>
+<div class="helps">
+<details>
+<summary>Hilfe 1</summary>
+<p>Wähle T2 und vergleiche seine Summe mit der Schwelle 1.</p>
+</details>
+<details>
+<summary>Hilfe 2</summary>
+<p>Eine Gleichung beschreibt die Linie; die Ungleichung wählt eine Seite aus.</p>
+</details>
+<details>
+<summary>Hilfe 3</summary>
+<p>T1 ergibt −2, T2 ergibt genau 1 und U2 ergibt 2. Nur bei einem Wert größer als 1 entsteht Ausgabe 1.</p>
+</details>
+</div>
+<p id="four-remember" class="remember" hidden>Eine Gleichung beschreibt die Trennlinie. Eine strenge Ungleichung beschreibt eine offene Halbebene. Bei −3x₁ + 4x₂ &gt; 1 ist die Seite mit Ausgabe 1 ungefährlich; auf der Linie bleibt die Ausgabe 0.</p>
+</div>
+</div>
+<div class="flow-navigation">
+</div>
+</section>
+
+
+<section id="five" class="step-panel" role="tabpanel" data-panel="five" aria-labelledby="tab-five" hidden>
+<h2 tabindex="-1">3 Ungleichung verbessern und testen</h2>
+<div class="five-layout">
+<div class="five-work">
+<h3>3 · Ungleichung verbessern</h3>
+<p>
+<strong>Verbessere</strong> die vorgegebene Ungleichung, bis U1 und U2 die Ausgabe 1 sowie G1 und G2 die Ausgabe 0 erhalten. Stelle deinen Entwurf dar und prüfe alle vier Tiere.</p>
+<p>Die Trennlinie darf anders liegen als in Reiter 2. Entscheidend sind alle vier Sollklassen.</p>
+<label for="five-a">Deine verbesserte Ungleichung</label>
+<input id="five-a" type="text" value="y &gt; x + 0,25" autocomplete="off" spellcheck="false">
+<p class="syntax-help">Erlaubt sind x, y oder x1, x2, Zahlen mit Punkt oder Komma, +, −, *, Klammern und ein Vergleichszeichen. Beispiel für die Schreibweise: x + y &gt; 1.</p>
+<div class="action-row">
+<button id="check-five-a" class="primary-button" type="button">Ungleichung prüfen</button>
+</div>
+<p id="feedback-five-a" class="feedback" role="status" aria-live="polite" hidden>
+</p>
+<div id="rows-five-a" class="result-rows" hidden>
+</div>
+<div class="helps">
+<details>
+<summary>Hilfe 1</summary>
+<p>Prüfe U2 (2|2); dieser Punkt muss auf der Seite mit Ausgabe 1 liegen.</p>
+</details>
+<details>
+<summary>Hilfe 2</summary>
+<p>Im Startentwurf ist 2 &gt; 2,25 falsch. Verändere die Gerade, ohne G1 und G2 auf die feuernde Seite zu holen.</p>
+</details>
+<details>
+<summary>Hilfe 3</summary>
+<p>Eine mögliche Verbesserung ist y &gt; 0,5x + 0,5. Prüfe damit alle vier Punkte.</p>
+</details>
+</div>
+</div>
+<figure class="geometry-figure five-figure ggb-scale-51">
+<div id="ggb-51" role="img" aria-label="Koordinatensystem mit U1 und U2 als grünen Kreisen für Soll-Ausgabe 1 sowie G1 und G2 als roten Rauten für Soll-Ausgabe 0. Die aktuelle Eingabe zeigt die offene Feuerhalbebene und eine gestrichelte Grenze.">
+</div>
+<figcaption>
+<strong>Soll-Klassen:</strong> U1 (0|4) und U2 (2|2): grüner Kreis · Ausgabe 1. G1 (4|1) und G2 (6|2): rote Raute · Ausgabe 0. <strong>Zeichnung:</strong> transparente Fläche = Ausgabe 1; gestrichelte Grenze = Ausgabe 0.</figcaption>
+<p id="ggb-status" role="status" aria-live="polite">Die Grafik wird geladen.</p>
+</figure>
+</div>
+<div class="flow-navigation">
+</div>
+</section>
+
+
+<section id="six" class="step-panel" role="tabpanel" data-panel="six" aria-labelledby="tab-six" hidden>
+<h2 tabindex="-1">4 Von der Trennlinie zum Neuron</h2>
+<p>
+<strong>Bestimme</strong> aus der gezeichneten Trennlinie die Feuer-Ungleichung. Leite daraus Gewichte und Schwellenwert ab und prüfe die vier Trainingstiere.</p>
+<div class="six-layout">
+<figure class="geometry-figure">
+<svg id="six-plot" class="geometry-plot" viewBox="0 0 720 460" role="img" aria-label="Tierdiagramm mit einer gestrichelten Geraden durch (0|0,5) und (2|1,5), U1/U2 mit Ausgabe 1 und G1/G2 mit Ausgabe 0. Keine Gleichung eingeblendet.">
+</svg>
+<figcaption>Rote Raute: G1/G2, Soll-Ausgabe 0 · Grüner Kreis: U1/U2, Soll-Ausgabe 1 · Gestrichelte Gerade: Grenze.</figcaption>
+</figure>
+<div class="six-work" tabindex="0" role="region" aria-label="Aufgaben 4.1 bis 4.E, scrollbar auf breiten Bildschirmen">
+<div class="part">
+<h3>4.1 Gerade</h3>
+<p>
+<strong>Bestimme</strong> die Gleichung der gezeichneten Trennlinie.</p>
+<label for="six-line">Geradengleichung</label>
+<input id="six-line" type="text" autocomplete="off" spellcheck="false">
+<p class="syntax-help">Erlaubt sind x, y oder x1, x2, Zahlen mit Punkt oder Komma, +, −, *, Klammern und ein Gleichheitszeichen. Beispiel für die Schreibweise: y = x + 1.</p>
+<button id="check-six-line" class="primary-button" type="button">Gerade prüfen</button>
+<p id="feedback-six-line" class="feedback" role="status" aria-live="polite" hidden>
+</p>
+<div class="helps">
+<details>
+<summary>Hilfe 1</summary>
+<p>Suche zwei gut ablesbare Punkte auf der Geraden.</p>
+</details>
+<details>
+<summary>Hilfe 2</summary>
+<p>Lies den Achsenabschnitt bei x=0 ab und nutze einen zweiten Geradenpunkt für die Steigung.</p>
+</details>
+<details>
+<summary>Hilfe 3</summary>
+<p>Die Gerade geht durch (0|0,5) und (2|1,5); pro 2 Einheiten nach rechts steigt sie um 1.</p>
+</details>
+</div>
+</div>
+<div class="part">
+<h3>4.2 Feuer-Ungleichung</h3>
+<p>
+<strong>Beschreibe</strong> die Seite mit Ausgabe 1 durch eine strenge Ungleichung.</p>
+<label for="six-diagram">Feuer-Ungleichung in x-y-Notation</label>
+<input id="six-diagram" type="text" autocomplete="off" spellcheck="false">
+<button id="check-six-diagram" class="primary-button" type="button">Feuerseite prüfen</button>
+<p id="feedback-six-diagram" class="feedback" role="status" aria-live="polite" hidden>
+</p>
+<div class="helps">
+<details>
+<summary>Hilfe 1</summary>
+<p>Prüfe, auf welcher Seite U2 und G1 liegen.</p>
+</details>
+<details>
+<summary>Hilfe 2</summary>
+<p>Bei x=2 liegt die Gerade bei y=1,5; U2 liegt darüber.</p>
+</details>
+<details>
+<summary>Hilfe 3</summary>
+<p>Die Tiere mit Ausgabe 1 liegen oberhalb; nutze ein strenges &gt;.</p>
+</details>
+</div>
+</div>
+<div class="part">
+<h3>4.3 Eingangsnotation</h3>
+<p>
+<strong>Ersetze</strong> x und y durch x₁ und x₂ und <strong>forme</strong> die Bedingung zur Neuronform um.</p>
+<label for="six-input">Feuer-Ungleichung in Eingangsnotation</label>
+<input id="six-input" type="text" autocomplete="off" spellcheck="false">
+<button id="check-six-input" class="primary-button" type="button">Eingangsnotation prüfen</button>
+<p id="feedback-six-input" class="feedback" role="status" aria-live="polite" hidden>
+</p>
+<div class="helps">
+<details>
+<summary>Hilfe 1</summary>
+<p>Im Diagramm ist x der Eingang x₁, y der Eingang x₂.</p>
+</details>
+<details>
+<summary>Hilfe 2</summary>
+<p>Bringe die Terme mit beiden Eingängen auf eine Seite.</p>
+</details>
+<details>
+<summary>Hilfe 3</summary>
+<p>Aus x₂ &gt; 0,5x₁ + 0,5 folgt nach Multiplikation mit 2: -x₁ + 2x₂ &gt; 1.</p>
+</details>
+</div>
+</div>
+<div class="part">
+<h3>4.4 Gewichte und Schwellenwert</h3>
+<p>
+<strong>Lies</strong> passende Werte für w₁, w₂ und s ab.</p>
+<div class="input-grid">
+<label>w₁<input id="six-w1" type="number" step="any">
+</label>
+<label>w₂<input id="six-w2" type="number" step="any">
+</label>
+<label>s<input id="six-s" type="number" step="any">
+</label>
+</div>
+<button id="check-six-parameters" class="primary-button" type="button">Parameter prüfen</button>
+<p id="feedback-six-parameters" class="feedback" role="status" aria-live="polite" hidden>
+</p>
+<div class="helps">
+<details>
+<summary>Hilfe 1</summary>
+<p>Vergleiche deine Eingangs-Ungleichung mit w₁·x₁+w₂·x₂&gt;s.</p>
+</details>
+<details>
+<summary>Hilfe 2</summary>
+<p>Die Zahlen vor x₁ und x₂ sind die Gewichte, die rechte Seite ist s.</p>
+</details>
+<details>
+<summary>Hilfe 3</summary>
+<p>Zur Form -x₁ + 2x₂ &gt; 1 gehören w₁=-1, w₂=2 und s=1.</p>
+</details>
+</div>
+</div>
+<div class="part">
+<h3>4.5 Kontrolle an vier Punkten</h3>
+<p>
+<strong>Berechne</strong> die Ausgabe für U1, U2, G1 und G2.</p>
+<div class="table-scroll">
+<table>
+<thead>
+<tr>
+<th>Tier</th>
+<th>x₁</th>
+<th>x₂</th>
+<th>Ausgabe</th>
+</tr>
+</thead>
+<tbody id="six-table">
+</tbody>
+</table>
+</div>
+<button id="check-six-rows" class="primary-button" type="button">Vier Punkte prüfen</button>
+<p id="feedback-six-rows" class="feedback" role="status" aria-live="polite" hidden>
+</p>
+<div class="helps">
+<details>
+<summary>Hilfe 1</summary>
+<p>Setze die Koordinaten jedes Punkts als x₁ und x₂ ein.</p>
+</details>
+<details>
+<summary>Hilfe 2</summary>
+<p>Berechne a und vergleiche streng mit s.</p>
+</details>
+<details>
+<summary>Hilfe 3</summary>
+<p>Bei U2 ist a=2&gt;1; bei G1 ist a=-2&lt;1.</p>
+</details>
+</div>
+</div>
+<div class="part">
+<h3>4.E Expertenaufgabe (freiwillig)</h3>
+<p>
+<strong>Vertausche</strong> außerhalb der Trennlinie die feuernde und die nicht feuernde Seite. <strong>Forme</strong> die neue Bedingung so um, dass wieder ein &gt;-Zeichen zwischen Summe und Schwellenwert steht.</p>
+<label for="six-expert">Neue strenge Ungleichung in Eingangsnotation</label>
+<input id="six-expert" type="text" autocomplete="off" spellcheck="false">
+<button id="check-six-expert" class="primary-button" type="button">Expertenbedingung prüfen</button>
+<p id="feedback-six-expert" class="feedback" role="status" aria-live="polite" hidden>
+</p>
+<div class="helps">
+<details>
+<summary>Hilfe 1</summary>
+<p>Schreibe zuerst die Bedingung für die andere Seite mit &lt;.</p>
+</details>
+<details>
+<summary>Hilfe 2</summary>
+<p>Beim Multiplizieren einer Ungleichung mit −1 kehrt sich das Zeichen um.</p>
+</details>
+<details>
+<summary>Hilfe 3</summary>
+<p>Aus -x₁+2x₂&lt;1 wird x₁-2x₂&gt;-1; prüfe zusätzlich einen Grenzpunkt.</p>
+</details>
+</div>
+</div>
+</div>
+<div class="flow-navigation">
+</div>
+</section>
+
+<section id="seven" class="step-panel" role="tabpanel" data-panel="seven" aria-labelledby="tab-seven" hidden>
+<h2 tabindex="-1">5 Zusammenfassung</h2>
+<div id="summary" aria-live="polite">
+</div>
+<div class="flow-navigation">
+</div>
+</section>
+<section id="eight" class="step-panel" role="tabpanel" data-panel="eight" aria-labelledby="tab-eight" hidden>
+<h2 tabindex="-1">6 Abschlussquiz</h2>
+<form id="final-quiz">
+<div id="quiz-questions">
+</div>
+<button id="check-all-quiz" class="primary-button" type="submit">Quiz auswerten</button>
+<p id="quiz-feedback" class="feedback" role="status" aria-live="polite" hidden>
+</p>
+<div id="quiz-results" hidden>
+</div>
+</form>
+</section>
+<section class="source-note card" aria-label="Quellen">
+<p>Quellen: <a href="https://inf-schule.de/ki/menueansicht/ki_erkunden/neuronen_knn/einzelneNeuronen/neuronBestimmen">2 – Neuron bestimmen</a> (Michael Krauß, Heiko Jochum), <a href="https://inf-schule.de/ki/menueansicht/ki_erkunden/neuronen_knn/einzelneNeuronen/neuron2trennlinie">3 – Neuron → Trennlinie</a> und <a href="https://inf-schule.de/ki/menueansicht/ki_erkunden/neuronen_knn/einzelneNeuronen/trennlinie2neuron">4 – Trennlinie → Neuron</a> (Heiko Jochum), <a href="https://creativecommons.org/licenses/by-sa/4.0/deed.de">CC BY-SA 4.0</a>; für dieses Lernmodul bearbeitet und interaktiv umgesetzt.</p>
+<p>Grafik mit <a href="https://geogebra.github.io/docs/reference/en/GeoGebra_Apps_Embedding/">GeoGebra</a> eingebettet.</p>
+</section>
+<button id="reset-module" class="secondary-button" type="button">Modul neu beginnen</button>
+</main>
+</body>
+</html>
