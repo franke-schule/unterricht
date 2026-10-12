@@ -22,6 +22,14 @@ Keine Produktdateien außerhalb dieser drei Dateien wurden bearbeitet. Die urspr
 
 Die Bedienung wurde im automatisierten Chrome geprüft; eine Prüfung an tatsächlicher Smartphone-/Tablet-Hardware fand nicht statt.
 
+## Nachtrag: Laptop-Anordnung und Eingabenauswahl
+
+Auf weiteren Nutzerwunsch stehen ab 1000 CSS-Pixeln Breite in Reiter 1–3 das kompakte Perzeptron links und die Tabellen, Antwortfelder, Hilfen und Prüfbuttons rechts. Das Perzeptron bleibt beim Scrollen sichtbar, auch während der Grenzproben und der Formeleingabe in Reiter 3. Auf kleineren Bildschirmen bleiben beide Bereiche untereinander. Die bestehenden SVG-Verbindungen wurden für die kompakte Anordnung von verdeckten Knotenmittelpunkten aus geführt.
+
+Die bisherige Auswahl „Punkt/A … anzeigen“ heißt jetzt „Einsetzen“ beziehungsweise „A einsetzen“. Die Tabellenüberschrift „Eingaben einsetzen“, ein kurzer Hinweis und vollständige zugängliche Buttonnamen erklären, dass die Werte x₁ und x₂ in das Perzeptron eingesetzt werden. Auswahl, Berechnung und Speicherlogik bleiben dieselben.
+
+Der gezielte lokale Browsercheck `tmp/perzeptron-51-side-layout-check.cjs` besteht bei 1280×800, 1366×768, 1024×768 und 390×844: passende Anordnung ohne Seitenüberlauf, richtige Eingabenauswahl, alle drei Prüfungen in Reiter 3 und Wiederherstellung nach Reload. Auf den drei Laptopgrößen sind sowohl das gesamte Perzeptron als auch das Formel-Eingabefeld gleichzeitig im sichtbaren Bereich. Syntaxprüfung und auftragsbezogenes `git diff --check` sind fehlerfrei. Die Bilder `tmp/perzeptron-51-side-{one,two,three}.png`, `tmp/perzeptron-51-side-formula.png` und `tmp/perzeptron-51-side-one-diagram.png` wurden visuell geprüft. Diese lokale Layout- und Textanpassung wurde direkt umgesetzt, entsprechend der Ausnahme für kleine Änderungen in AGENTS.md.
+
 ## Korrekturrunde nach Endabnahme 1
 
 - Beim ersten `+`/`−`-Klick aus dem sichtbaren Aufgabenneuron startet die Erkundung nun bei `(4;2;3)` und führt genau diesen Schritt aus. Nur „Erkundung fortsetzen“ lädt gespeicherte Erkundungswerte. Geprüft wurden `4 → − → 3,5 → zurück → 4 → + → 4,5`, das ausdrückliche Fortsetzen sowie ein früherer Erkundungswert am oberen Limit `w₁=6`: Der nächste direkte `+`-Klick vom sichtbaren Wert 4 ergibt 4,5. Vergleich/Ausgabe bleiben bei Rückkehr auf `(4;2;3)` ungeprüft als `?` verdeckt, auch nach Reload; die Prüfbuttons bleiben im Erkundungsmodus gesperrt.
