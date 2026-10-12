@@ -24,6 +24,14 @@
 .task51 .summary-item { margin:.8rem 0; padding:.8rem; border:1px solid #b9d1df; border-radius:.7rem; background:#f9fcfe; }
 .task51 .summary-item h3 { margin:0 0 .4rem; }
 .task51 .summary-item p { margin:.35rem 0; overflow-wrap:anywhere; }
+.task51 .summary-section .prompt { margin:0 0 .75rem; color:#4f6878; font-size:.88rem; }
+.task51 .summary-grid { display:grid; grid-template-columns:minmax(170px,.45fr) 1fr; gap:7px 14px; margin:0; text-align:left; }
+.task51 .summary-grid dt { color:#4f6878; font-weight:700; }
+.task51 .summary-grid dd { min-width:0; margin:0; overflow-wrap:anywhere; white-space:pre-line; }
+.task51 .summary-result { display:inline-flex; align-items:center; padding:3px 8px; border-radius:999px; font-weight:800; font-size:.76rem; }
+.task51 .summary-result.complete { color:#14513c; background:#e7f6ef; }
+.task51 .summary-result.open { color:#80530d; background:#fff1d8; }
+@media (max-width:600px) { .task51 .summary-grid { grid-template-columns:1fr; }.task51 .summary-grid dt { margin-top:5px; } }
 .task51 .quiz-question { min-width:0; }
 .task51 .quiz-question legend { font-weight:700; }
 .task51 #quiz-results { margin-top:1rem; padding:1rem; border:1px solid #287b61; border-radius:.75rem; background:#e7f6ef; }
@@ -107,7 +115,10 @@
 .task51 #four-quiz label { align-items:center; justify-content:flex-start; }
 .task51 .four-mode-actions button[aria-pressed="true"] { border-color:#bd8900; background:#fff8df; }
 .task51 .four-display { min-height:3.5rem; padding:.55rem .7rem; border:1px solid #b9d1df; border-radius:.5rem; background:#f9fcfe; }
-.task51 #four-legacy p { overflow-wrap:anywhere; user-select:text; }
+@media (min-width:901px) {
+  .task51 .four-comparison > .geometry-figure { position:sticky; top:1rem; }
+  .task51 .four-comparison-work { position:sticky; top:1rem; max-height:calc(100vh - 2rem); overflow-y:auto; scrollbar-gutter:stable; padding:0 .35rem .5rem .05rem; }
+}
 .task51 .six-layout > * { min-width:0; }
 @media (min-width:1000px) {
   .task51 .six-layout { display:grid; grid-template-columns:minmax(0,1.05fr) minmax(0,1fr); gap:1.2rem; align-items:start; }
@@ -118,5 +129,6 @@
 }
 @media (max-width:999px) { .task51 .six-work { overflow:visible; max-height:none; } }
 .task51 #four-plot .four-fire-half { fill:#287b61; fill-opacity:.22; stroke:none; }
-.task51 .three-check-reset { margin:.5rem 0; padding:.65rem .75rem; border:1px solid #b9d1df; border-radius:.6rem; background:#f9fcfe; }
-.task51 .three-check-reset p { margin:0 0 .5rem; }
+.task51 #three .three-answer-table { table-layout:fixed; }
+.task51 #three .three-answer-table th.coordinate-column { width:3.3rem; }
+.task51 #three .neuron-fixed-value { display:flex; min-width:6rem; width:auto; min-height:3rem; gap:.2rem; padding:.35rem .6rem; }

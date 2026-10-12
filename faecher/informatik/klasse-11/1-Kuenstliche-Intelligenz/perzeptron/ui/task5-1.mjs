@@ -1,5 +1,5 @@
 import {calculate,normaliseNumber} from '../logic/perceptron.mjs';
-import {parseLinearRelation as parse,equivalent,sameBoundary,classify,countMatching,STRICT_MESSAGE,EQUALITY_MESSAGE,DEGENERATE_MESSAGE} from '../logic/linear-inequality.mjs';
+import {parseLinearRelation as parse,equivalent,classify,countMatching,STRICT_MESSAGE,EQUALITY_MESSAGE,DEGENERATE_MESSAGE} from '../logic/linear-inequality.mjs';
 
 const KEY='informatik11-perzeptron-aufgabe5-1-v1';
 const IDS=['one','two','three','four','five','six','seven','eight'];
@@ -8,26 +8,27 @@ const SIX_ROWS=[{x:0,y:1,target:0},{x:.5,y:0,target:0},{x:1,y:.5,target:1},{x:1,
 const TARGET=parse('4x1+2x2>3');
 const FIXED={w1:4,w2:2,s:3};
 const START={one:{w1:1.5,w2:-2.5,s:3.9},two:{w1:3,w2:2.5,s:-.5}};
-const LIMITS={one:{w1:[-4,3.5,.5],w2:[-4,3.5,.5],s:[-4,4,.1]},two:{w1:[-4,4,.5],w2:[-4,4,.5],s:[-4,2.1,.1]},three:{w1:[-6,6,.5],w2:[-6,6,.5],s:[-6,6,.1]}};
+const LIMITS={one:{w1:[-4,3.5,.5],w2:[-4,3.5,.5],s:[-4,4,.1]},two:{w1:[-4,4,.5],w2:[-4,4,.5],s:[-4,2.1,.1]}};
 const PROBES=[.5,1,1.5].map((y,i)=>({name:['unten','Grenze','oben'][i],x:.25,y}));
 const SIX_TARGET=parse('2x1+x2>2');
 const SIX_REVERSE=parse('-2x1-x2>-2');
-const FLAGS=['one','two','three-rows','three-probes','three-condition','four-mc-1','four-mc-2','four-mc-3','five-a','five-b','six-line','six-diagram','six-input','six-parameters','six-rows','six-expert'];
-const REQUIRED=FLAGS.filter(id=>id!=='six-expert'&&id!=='five-b');
+const FLAGS=['one','two','three-rows','three-probes','three-condition','four-mc-1','four-mc-2','four-mc-3','five-a','six-line','six-diagram','six-input','six-parameters','six-rows','six-expert'];
+const REQUIRED=FLAGS.filter(id=>id!=='six-expert');
 const $=selector=>document.querySelector(selector);
 const value=id=>$('#'+id).value;
 const fmt=n=>Number.isInteger(n)?String(n):String(Math.round(n*1e9)/1e9).replace('.',',');
 const simple=txt=>String(txt).replaceAll('−','-').replaceAll('₁','1').replaceAll('₂','2');
 let checked=Object.fromEntries(FLAGS.map(id=>[id,false]));
-let drawn={a:'',b:''};
-let helper=false,active='one',quizPassed=false,ggb=null,ggbPending=false,ggbFailed=false,ggbTimer=null,ggbScriptPromise=null,shownPart=null;
-let quizControl=null,fourQuizControl=null,fourMode='none',sixScrollTop=0,scrollTimer=null,legacyFour={};
+let drawn={a:''};
+let helper=false,active='one',quizPassed=false,ggb=null,ggbPending=false,ggbFailed=false,ggbTimer=null,ggbScriptPromise=null;
+let quizControl=null,fourQuizControl=null,fourMode='none',sixScrollTop=0,scrollTimer=null;
+let quizChecked=Array(6).fill(false);
 let fields=[];
 const helpDetails=[...document.querySelectorAll('.helps details')];
 let defaults={};
 let model={one:{...START.one},two:{...START.two}};
 let selectedRows={one:0,two:0,three:'row-0'};
-let threeMode='task',explore={...FIXED},exploreUsed=false,fourPoint=null;
+let fourPoint=null;
 
 function feedbackElement(id) { return $('#feedback-'+id)||$('#'+id+'-feedback'); }
 function showFeedback(id,text,level='error') { const el=feedbackElement(id); el.hidden=false; el.textContent=text; el.className='feedback '+level; }
@@ -43,7 +44,6 @@ function rowOutputs(rows,params) { return rows.map(row=>({...row,...calculate({x
 function selected(select) { return select.value===''?null:Number(select.value); }
 function readSelects(selector) { return [...document.querySelectorAll(selector)].map(selected); }
 function countAnswers(values,expected) { return values.filter((n,i)=>n===expected[i]).length; }
-function allCore() { return REQUIRED.every(id=>checked[id]); }
 function updateProgress() {
   const n=REQUIRED.filter(id=>checked[id]).length;
   $('#progress').textContent=`${n} von ${REQUIRED.length} Kern-Teilaufgaben richtig geprüft.`;
@@ -52,7 +52,7 @@ function updateProgress() {
 function save() {
   try {
     const controls=Object.fromEntries(fields.map(el=>[fieldKey(el),el.type==='checkbox'||el.type==='radio'?el.checked:el.value]));
-    localStorage.setItem(KEY,JSON.stringify({version:1,controls,checked,drawn,helper,active,quizPassed,shownPart,helps:helpDetails.map(el=>el.open),parameters:model,selectedRows,threeMode,explore,exploreUsed,fourPoint,fourMode,sixScrollTop,lernwegSchema:1,legacyFour}));
+    localStorage.setItem(KEY,JSON.stringify({version:1,controls,checked,drawn,helper,active,quizPassed,quizChecked,helps:helpDetails.map(el=>el.open),parameters:model,selectedRows,fourPoint,fourMode,sixScrollTop,lernwegSchema:1,fiveSchema:2}));
   } catch { $('#save-status').textContent='Der Bearbeitungsstand konnte nicht lokal gespeichert werden.'; }
 }
 function fieldKey(el) { return el.id || `${el.closest('fieldset')?.id||el.name}:${el.value}`; }
@@ -74,9 +74,6 @@ function load() {
     const old={};for(const key of ['w1','w2','s'])old[key]=normaliseNumber(data.controls[`${prefix}-${key}`]);
     model[prefix]=restoreParameters(data.parameters?.[prefix],prefix)||restoreParameters(old,prefix)||{...START[prefix]};
   }
-  explore=restoreParameters(data.explore,'three')||{...FIXED};
-  exploreUsed=data.exploreUsed===true;
-  threeMode=data.threeMode==='explore'?'explore':'task';
   if(data.selectedRows&&typeof data.selectedRows==='object') {
     for(const prefix of ['one','two']) if(Number.isInteger(data.selectedRows[prefix])&&data.selectedRows[prefix]>=0&&data.selectedRows[prefix]<ROWS.length)selectedRows[prefix]=data.selectedRows[prefix];
     if(/^row-[0-3]$/.test(data.selectedRows.three)||(['probe-0','probe-1','probe-2'].includes(data.selectedRows.three)&&data.checked?.['three-rows']===true))selectedRows.three=data.selectedRows.three;
@@ -84,23 +81,17 @@ function load() {
   if(Number.isInteger(data.fourPoint)&&data.fourPoint>=0&&data.fourPoint<3)fourPoint=data.fourPoint;
   if(['none','line','half'].includes(data.fourMode))fourMode=data.fourMode;
   if(Number.isFinite(data.sixScrollTop)&&data.sixScrollTop>=0)sixScrollTop=data.sixScrollTop;
-  legacyFour={};
-  if(data.legacyFour&&typeof data.legacyFour==='object')for(const key of ['four-inequality','four-line','four-compare:yes','four-compare:no'])if(validSaved(data.legacyFour[key])||typeof data.legacyFour[key]==='boolean')legacyFour[key]=data.legacyFour[key];
-  for(const name of ['four-inequality','four-line'])if(validSaved(data.controls[name])&&data.controls[name].trim())legacyFour[name]=data.controls[name];
-  for(const name of ['four-compare:yes','four-compare:no'])if(typeof data.controls[name]==='boolean')legacyFour[name]=data.controls[name];
-  if(Array.isArray(data.helps)) helpDetails.forEach((el,i)=>{if(typeof data.helps[i]==='boolean') el.open=data.helps[i];});
-  if(data.drawn&&typeof data.drawn==='object') for(const part of ['a','b']) if(validSaved(data.drawn[part])&&parse(data.drawn[part]).ok&&data.drawn[part]===value('five-'+part)) drawn[part]=data.drawn[part];
+  if(Array.isArray(data.helps)) helpDetails.forEach((el,i)=>{const index=data.fiveSchema!==2&&el.closest('#six')?i+3:i;if(typeof data.helps[index]==='boolean') el.open=data.helps[index];});
+  if(validSaved(data.drawn?.a)&&parse(data.drawn.a).ok&&data.drawn.a===value('five-a')) drawn.a=data.drawn.a;
   helper=data.helper===true;
-  if(['a','b'].includes(data.shownPart)) shownPart=data.shownPart;
   if(IDS.includes(data.active)) active=data.active;
   // Gespeicherte Prüfzeichen gelten nur zusammen mit erneut geprüften aktuellen Antworten.
   if(data.checked&&typeof data.checked==='object') for(const id of FLAGS) if(data.checked[id]===true&&(!id.startsWith('four-mc-')||data.lernwegSchema===1)) {
-    if(id==='five-b'&&data.lernwegSchema===1&&drawn.b===value('five-b')&&countMatching(parse(drawn.b),ROWS).count===4)checked[id]=true;
-    else if(validateFlag(id))checked[id]=true;
+    if(validateFlag(id))checked[id]=true;
   }
   if(selectedRows.three.startsWith('probe')&&!checked['three-rows'])selectedRows.three='row-0';
   quizPassed=data.quizPassed===true&&quizChoicesCorrect();
-  renderLegacyFour();
+  quizChecked=QUIZ.map((_,i)=>(quizPassed||data.quizChecked?.[i]===true)&&quizQuestionCorrect(i));
   $('#save-status').textContent='Dein Bearbeitungsstand wurde wiederhergestellt.';
 }
 function validateFlag(id) {
@@ -110,7 +101,6 @@ function validateFlag(id) {
   if(id==='three-condition') return equivalent(parse(value('three-condition'),{variables:'input'}),TARGET);
   if(id.startsWith('four-mc-')) return fourChoicesCorrect(Number(id.at(-1)));
   if(id==='five-a') return drawn.a===value('five-a')&&countMatching(parse(drawn.a),ROWS).count===4;
-  if(id==='five-b') return checked['five-a']&&drawn.b===value('five-b')&&countMatching(parse(drawn.b),ROWS).count===4&&!sameBoundary(parse(drawn.a),parse(drawn.b));
   if(id==='six-line') return equivalent(parse(value('six-line'),{kind:'Gleichung',variables:'diagram'}),parse('y=-2x+2',{kind:'Gleichung'}),{line:true});
   if(id==='six-diagram') return equivalent(parse(value('six-diagram'),{variables:'diagram'}),SIX_TARGET);
   if(id==='six-input') return equivalent(parse(value('six-input'),{variables:'input'}),SIX_TARGET);
@@ -153,16 +143,16 @@ function buildTables() {
   $('#six-table').innerHTML=SIX_ROWS.map((row,i)=>`<tr><td>${fmt(row.x)}</td><td>${fmt(row.y)}</td><td>${select('six-row-'+i,'six-row-select',`Ausgabe bei (${fmt(row.x)};${fmt(row.y)})`)}</td></tr>`).join('');
 }
 function neuronMarkup(prefix) {
-  const controls=key=>`<div class="neuron-control" data-control="${key}"><span class="neuron-control-label">${key==='s'?'s':'w'+(key==='w1'?'₁':'₂')} =</span><button type="button" data-adjust="${key}:-1" aria-label="${key==='s'?'Schwellenwert s':'Gewicht w'+(key==='w1'?'₁':'₂')} verringern">−</button><output data-value="${key}"></output><button type="button" data-adjust="${key}:1" aria-label="${key==='s'?'Schwellenwert s':'Gewicht w'+(key==='w1'?'₁':'₂')} erhöhen">+</button></div>`;
+  const controls=key=>prefix==='three'?`<div class="neuron-control neuron-fixed-value" data-control="${key}"><span class="neuron-control-label">${key==='s'?'s':'w'+(key==='w1'?'₁':'₂')} =</span><output data-value="${key}"></output></div>`:`<div class="neuron-control" data-control="${key}"><span class="neuron-control-label">${key==='s'?'s':'w'+(key==='w1'?'₁':'₂')} =</span><button type="button" data-adjust="${key}:-1" aria-label="${key==='s'?'Schwellenwert s':'Gewicht w'+(key==='w1'?'₁':'₂')} verringern">−</button><output data-value="${key}"></output><button type="button" data-adjust="${key}:1" aria-label="${key==='s'?'Schwellenwert s':'Gewicht w'+(key==='w1'?'₁':'₂')} erhöhen">+</button></div>`;
   return `<figure class="neuron-figure"><div class="neuron-stage"><svg class="neuron-wires neuron-wires-desktop" viewBox="0 0 900 310" preserveAspectRatio="none" aria-hidden="true"><path d="M90 77.5 L288 77.5 L558 155 M90 232.5 L288 232.5 L558 155 M558 155 L792 155 M558 272.8 L558 155"/></svg><svg class="neuron-wires neuron-wires-mobile" viewBox="0 0 360 600" preserveAspectRatio="none" aria-hidden="true"><path d="M82 54 L82 180 M278 54 L278 180 M82 180 L180 324 M278 180 L180 324 M180 324 L180 528 M79 432 L180 324"/></svg><svg class="neuron-wires neuron-wires-narrow" viewBox="0 0 360 600" preserveAspectRatio="none" aria-hidden="true"><path d="M82 54 L82 180 M278 54 L278 180 M82 180 L180 324 M278 180 L180 324 M180 324 L180 528 M79 432 L180 324"/></svg><div class="neuron-input neuron-input-one" data-x1>x₁ = 0</div><div class="neuron-input neuron-input-two" data-x2>x₂ = 0</div><div class="neuron-weight neuron-weight-one">${controls('w1')}</div><div class="neuron-weight neuron-weight-two">${controls('w2')}</div><div class="neuron-core"><strong>Σ</strong><span data-sum>a = 0</span><span data-compare>a ? s</span></div><div class="neuron-threshold">${controls('s')}</div><div class="neuron-output" data-output>Ausgabe ?</div></div><figcaption><span data-input-status></span> <strong data-fire-status></strong></figcaption></figure>${prefix==='three'?'<div class="neuron-mode"><strong id="three-mode-label"></strong><p id="three-mode-explain"></p></div>':''}`;
 }
 function currentThreeRow() {const [kind,index]=selectedRows.three.split('-');return kind==='probe'?PROBES[Number(index)]:ROWS[Number(index)];}
 function renderNeuron(prefix) {
   const root=$('#'+prefix+'-neuron');if(!root||!root.firstElementChild)return;
-  const p=prefix==='three'?(threeMode==='task'?FIXED:explore):model[prefix];
+  const p=prefix==='three'?FIXED:model[prefix];
   const row=prefix==='three'?currentThreeRow():ROWS[selectedRows[prefix]];
   const result=calculate({x1:row.x,x2:row.y,w1:p.w1,w2:p.w2,threshold:p.s});
-  const concealed=prefix==='three'&&p.w1===4&&p.w2===2&&p.s===3&&!checked[selectedRows.three.startsWith('probe')?'three-probes':'three-rows'];
+  const concealed=prefix==='three'&&!checked[selectedRows.three.startsWith('probe')?'three-probes':'three-rows'];
   root.querySelector('[data-x1]').textContent=`x₁ = ${fmt(row.x)}`;
   root.querySelector('[data-x2]').textContent=`x₂ = ${fmt(row.y)}`;
   root.querySelector('[data-sum]').textContent=`a = ${fmt(result.sum)}`;
@@ -170,43 +160,32 @@ function renderNeuron(prefix) {
   const status=concealed?'Ausgabe ? · erst selbst bestimmen':`${result.output?'● Feuert · Ausgabe 1':'○ Feuert nicht · Ausgabe 0'}`;
   const output=root.querySelector('[data-output]');output.textContent=concealed?'Ausgabe ?':status;output.className='neuron-output '+(concealed?'is-unknown':result.output?'is-firing':'is-quiet');
   root.querySelector('[data-input-status]').textContent=`${prefix==='three'&&selectedRows.three.startsWith('row')?row.name+' ':''}Eingabe (${fmt(row.x)};${fmt(row.y)}): a = ${fmt(result.sum)}; ${concealed?'a ? s':`${fmt(result.sum)} ${result.sum>p.s?'>':'≤'} ${fmt(p.s)}`}.`;
-  root.querySelector('[data-fire-status]').textContent=prefix==='three'&&threeMode==='explore'&&!concealed?`Erkundungsausgabe: ${status}`:status;
+  root.querySelector('[data-fire-status]').textContent=status;
   for(const key of ['w1','w2','s']) {
     root.querySelector(`[data-value="${key}"]`).textContent=fmt(p[key]);
-    for(const direction of [-1,1])root.querySelector(`[data-adjust="${key}:${direction}"]`).disabled=direction<0?p[key]<=LIMITS[prefix][key][0]:p[key]>=LIMITS[prefix][key][1];
+    if(prefix!=='three')for(const direction of [-1,1])root.querySelector(`[data-adjust="${key}:${direction}"]`).disabled=direction<0?p[key]<=LIMITS[prefix][key][0]:p[key]>=LIMITS[prefix][key][1];
   }
   if(prefix==='three') {
     document.querySelectorAll('#three-table [data-row],#three-probe-table [data-row]').forEach(button=>{const on=button.dataset.row===selectedRows.three;button.setAttribute('aria-current',String(on));button.closest('tr').classList.toggle('is-selected',on);});
-    $('#three-mode-label').textContent=threeMode==='task'?'Aufgabenneuron · w₁ = 4 · w₂ = 2 · s = 3':'Erkundung · veränderbares Neuron';
-    $('#three-mode-explain').textContent=threeMode==='task'?'Deine Antworten werden für dieses Aufgabenneuron geprüft.':'';
-    document.querySelectorAll('.three-check-reset').forEach((el,i)=>{el.hidden=threeMode==='task'&&i!==0;el.querySelector('p').hidden=threeMode==='task';el.querySelector('button').disabled=threeMode==='task';});
-    for(const id of ['three-rows','three-probes','three-condition'])$('#check-'+id).disabled=threeMode==='explore';
+    $('#three-mode-label').textContent='Aufgabenneuron · w₁ = 4 · w₂ = 2 · s = 3';
+    $('#three-mode-explain').textContent='Die Gewichte und der Schwellenwert sind fest vorgegeben.';
   } else $('#'+prefix+'-table').querySelectorAll('[data-row]').forEach((button,i)=>{const on=selectedRows[prefix]===i;button.setAttribute('aria-current',String(on));button.closest('tr').classList.toggle('is-selected',on);});
 }
 function changeParameter(prefix,key,direction) {
-  if(prefix==='three'&&threeMode==='task') { explore={...FIXED};threeMode='explore'; }
-  const p=prefix==='three'?explore:model[prefix];
+  const p=model[prefix];if(!p)return;
   const next=nextParameter(p[key],LIMITS[prefix][key],direction);
   if(next===p[key])return;
-  p[key]=next;if(prefix==='three')exploreUsed=true;
-  else {checked[prefix]=false;clearFeedback(prefix);updateParameterTable(prefix);updateProgress();}
+  p[key]=next;checked[prefix]=false;clearFeedback(prefix);updateParameterTable(prefix);updateProgress();
   renderNeuron(prefix);save();
 }
 function chooseRow(prefix,choice) {selectedRows[prefix]=choice;renderNeuron(prefix);save();}
 function setupNeurons() {
   for(const prefix of ['one','two','three']) {
     const root=$('#'+prefix+'-neuron');root.innerHTML=neuronMarkup(prefix);
-    root.addEventListener('click',event=>{const button=event.target.closest('[data-adjust]');if(!button)return;const [key,direction]=button.dataset.adjust.split(':');changeParameter(prefix,key,Number(direction));});
+    if(prefix!=='three')root.addEventListener('click',event=>{const button=event.target.closest('[data-adjust]');if(!button)return;const [key,direction]=button.dataset.adjust.split(':');changeParameter(prefix,key,Number(direction));});
     document.querySelectorAll(`#${prefix}-table [data-row]`).forEach(button=>button.addEventListener('click',()=>chooseRow(prefix,prefix==='three'?button.dataset.row:Number(button.dataset.row))));
   }
   document.querySelectorAll('#three-probe-table [data-row]').forEach(button=>button.addEventListener('click',()=>chooseRow('three',button.dataset.row)));
-  for(const id of ['three-rows','three-probes','three-condition']) {
-    const reset=document.createElement('div');reset.className='three-check-reset';reset.hidden=true;
-    const warning=document.createElement('p');warning.textContent='Du veränderst gerade das Neuron. Setze es auf (4;2;3) zurück, um deine Antworten zu prüfen.';
-    const button=document.createElement('button');button.type='button';button.className='secondary-button';button.textContent='Neuron zurücksetzen';
-    button.addEventListener('click',()=>{threeMode='task';explore={...FIXED};renderNeuron('three');save();});
-    reset.append(warning,button);$('#check-'+id).after(reset);
-  }
 }
 function updateParameterTable(prefix) {
   const p=parameters(prefix),rows=p?rowOutputs(ROWS,p):null;
@@ -257,14 +236,6 @@ function setupFourQuiz() {
   for(let i=1;i<=3;i++)$('#four-quiz-'+i).querySelectorAll('input').forEach(el=>el.addEventListener('change',()=>{checked['four-mc-'+i]=false;renderFourRemember();save();updateProgress();}));
 }
 function renderFourRemember() {$('#four-remember').hidden=![1,2,3].every(i=>checked['four-mc-'+i]);}
-function renderLegacyFour() {
-  const oldI=validSaved(legacyFour['four-inequality'])?legacyFour['four-inequality']:'';
-  const oldL=validSaved(legacyFour['four-line'])?legacyFour['four-line']:'';
-  $('#four-legacy').hidden=!(oldI||oldL||legacyFour['four-compare:yes']||legacyFour['four-compare:no']);
-  $('#four-legacy-inequality').textContent=oldI?'Frühere Ungleichung: '+oldI:'';
-  $('#four-legacy-line').textContent=oldL?'Frühere Geradengleichung: '+oldL:'';
-  if(legacyFour['four-compare:yes']||legacyFour['four-compare:no'])$('#four-legacy-line').textContent+=(oldL?' · ':'')+'Frühere Ja/Nein-Wahl: '+(legacyFour['four-compare:yes']?'Ja':'Nein');
-}
 function setFourMode(mode) {fourMode=mode;renderFourMode();save();}
 function renderFourMode() {
   $('#four-show-line').setAttribute('aria-pressed',String(fourMode==='line'));
@@ -284,18 +255,18 @@ function svgPoint(x,y,target,label,px,py,index=null) {
   if(index===null)return `${shape}<text x="${X+14}" y="${Y-12}">${label}</text>`;
   return `<g class="four-svg-point" data-point="${index}" role="button" tabindex="0" aria-label="Punkt (0,25;${fmt(y)}) anzeigen"><circle class="four-point-hit" cx="${X}" cy="${Y}" r="80"/><circle class="four-point-ring" cx="${X}" cy="${Y}" r="24"/>${shape}<text x="${X+14}" y="${Y-12}" aria-hidden="true">${label}</text></g>`;
 }
-function renderSvg(id,{line,points,ymax=2.5,showLine=true,half=false}) {
-  const svg=$('#'+id),px=x=>80+(x+.25)*380,py=y=>385-(y+.25)*120;
-  const grid=Array.from({length:4},(_,i)=>`<line x1="80" y1="${py(i)}" x2="680" y2="${py(i)}"/><line x1="${px(i*.5)}" y1="55" x2="${px(i*.5)}" y2="385"/>`).join('');
+function renderSvg(id,{line,points,showLine=true,half=false,equalUnits=false}) {
+  const svg=$('#'+id),right=equalUnits?410:680,px=x=>80+(x+.25)*(equalUnits?140:380),py=y=>385-(y+.25)*(equalUnits?140:120);
+  const grid=Array.from({length:equalUnits?5:4},(_,i)=>`<line x1="80" y1="${py(equalUnits?i*.5:i)}" x2="${right}" y2="${py(equalUnits?i*.5:i)}"/><line x1="${px(i*.5)}" y1="55" x2="${px(i*.5)}" y2="385"/>`).join('');
   const marks=points.map((p,i)=>svgPoint(p.x,p.y,p.target,p.name,px,py,id==='four-plot'?i:null)).join('');
   const halfArea=half?`<polygon class="four-fire-half" points="80,55 680,55 680,${py(-1)} ${px(-.25)},${py(2)}"/>`:'';
-  svg.innerHTML=`${halfArea}<g class="geometry-grid">${grid}</g><g class="geometry-axes"><line x1="${px(0)}" y1="${py(0)}" x2="680" y2="${py(0)}"/><line x1="${px(0)}" y1="${py(0)}" x2="${px(0)}" y2="55"/></g>${showLine?`<line class="boundary-line" x1="${px(line[0][0])}" y1="${py(line[0][1])}" x2="${px(line[1][0])}" y2="${py(line[1][1])}"/>`:""}<g class="geometry-ticks"><text x="${px(0)-5}" y="${py(0)+22}">0</text><text x="${px(1)-5}" y="${py(0)+22}">1</text><text x="${px(0)-28}" y="${py(1)+5}">1</text><text x="${px(0)-28}" y="${py(2)+5}">2</text></g><text class="axis-label" x="565" y="435">x = x₁</text><text class="axis-label" x="12" y="80">y = x₂</text>${marks}`;
+  svg.innerHTML=`${halfArea}<g class="geometry-grid">${grid}</g><g class="geometry-axes"><line x1="${px(0)}" y1="${py(0)}" x2="${right}" y2="${py(0)}"/><line x1="${px(0)}" y1="${py(0)}" x2="${px(0)}" y2="55"/></g>${showLine?`<line class="boundary-line" x1="${px(line[0][0])}" y1="${py(line[0][1])}" x2="${px(line[1][0])}" y2="${py(line[1][1])}"/>`:""}<g class="geometry-ticks"><text x="${px(0)-5}" y="${py(0)+22}">0</text><text x="${px(1)-5}" y="${py(0)+22}">1</text><text x="${px(0)-28}" y="${py(1)+5}">1</text><text x="${px(0)-28}" y="${py(2)+5}">2</text></g><text class="axis-label" x="${equalUnits?300:565}" y="435">x = x₁</text><text class="axis-label" x="12" y="${equalUnits?30:80}">y = x₂</text>${marks}`;
 }
 function setupStaticPlots() {
   renderFourPlot();
   $('#four-show-line').addEventListener('click',()=>setFourMode('line'));
   $('#four-show-half').addEventListener('click',()=>setFourMode('half'));
-  renderSvg('six-plot',{line:[[0,2],[1,0]],points:SIX_ROWS.map((row,i)=>({...row,name:['P₁','P₂','P₃','P₄'][i]}))});
+  renderSvg('six-plot',{line:[[0,2],[1,0]],equalUnits:true,points:SIX_ROWS.map((row,i)=>({...row,name:['P₁','P₂','P₃','P₄'][i]}))});
   PROBES.forEach((row,i)=>{const button=document.createElement('button');button.type='button';button.className='secondary-button';button.textContent=`Punkt (0,25;${fmt(row.y)})`;button.dataset.point=String(i);button.addEventListener('click',()=>chooseFourPoint(i));$('#four-points').append(button);});
   $('#four-plot').addEventListener('click',event=>{const point=event.target.closest('[data-point]');if(!point)return;const svg=$('#four-plot'),position=svg.createSVGPoint();position.x=event.clientX;position.y=event.clientY;const local=position.matrixTransform(svg.getScreenCTM().inverse());const centers=PROBES.map(row=>385-(row.y+.25)*120);chooseFourPoint(centers.reduce((best,y,i)=>Math.abs(y-local.y)<Math.abs(centers[best]-local.y)?i:best,0));});
   $('#four-plot').addEventListener('keydown',event=>{const point=event.target.closest('[data-point]');if(point&&(event.key==='Enter'||event.key===' ')){event.preventDefault();chooseFourPoint(Number(point.dataset.point));}});
@@ -369,7 +340,7 @@ function removeDrawing() {
   if(!ggb)return;
   for(const name of ['FeuerFlaeche','FeuerGrenze']) ggb.deleteObject(name);
 }
-function renderGeo(part,relation) {
+function renderGeo(relation) {
   if(!ggb||!relation.ok) return false;
   removeDrawing();
   const term=geoCommand(relation);
@@ -379,12 +350,17 @@ function renderGeo(part,relation) {
   ggb.setColor('FeuerFlaeche',40,123,97);ggb.setFilling('FeuerFlaeche',.2);ggb.setLineStyle('FeuerFlaeche',2);
   ggb.setColor('FeuerGrenze',18,50,74);ggb.setLineStyle('FeuerGrenze',2);ggb.setLineThickness('FeuerGrenze',5);
   ggb.setLabelVisible('FeuerFlaeche',false);ggb.setLabelVisible('FeuerGrenze',false);
-  ggb.setVisible('Vergleichslinie',helper&&part==='a');
-  drawn[part]=value('five-'+part);shownPart=part;
-  const other=part==='a'?'b':'a';
-  clearFeedback('five-'+other);$('#rows-five-'+other).hidden=true;
-  geoStatus('Aktuelle Zeichnung für 5'+part+': transparente Fläche = Ausgabe 1, gestrichelte Grenze = Ausgabe 0.');
+  ggb.setVisible('Vergleichslinie',helper&&checked['five-a']);
+  drawn.a=value('five-a');
+  geoStatus('Aktuelle Zeichnung für Aufgabe 5: transparente Fläche = Ausgabe 1, gestrichelte Grenze = Ausgabe 0.');
   save();return true;
+}
+function updateFiveDrawing() {
+  if(!ggb)return;
+  const relation=parse(value('five-a'));
+  drawn.a='';
+  if(!relation.ok){removeDrawing();geoStatus('Noch keine gültige Zeichnung: '+relation.message);save();return;}
+  renderGeo(relation);
 }
 function configureGeo(api) {
   clearTimeout(ggbTimer);ggb=api;ggbPending=false;ggbFailed=false;
@@ -398,14 +374,13 @@ function configureGeo(api) {
     api.setColor(row.name,...(row.target?[40,123,97]:[175,63,71]));
     api.setPointStyle(row.name,row.target?0:5);api.setPointSize(row.name,8);api.setFixed(row.name,true,false);
   }
-  for(const part of ['a','b']){ $('#draw-five-'+part).disabled=false;$('#check-five-'+part).disabled=false; }
-  geoStatus('Grafik bereit. Gib eine Ungleichung ein und wähle Darstellen oder Ungleichung prüfen.');
-  if(shownPart&&drawn[shownPart]===value('five-'+shownPart)) renderGeo(shownPart,parse(drawn[shownPart]));
+  $('#check-five-a').disabled=false;
+  updateFiveDrawing();
 }
 function geoFailure() {
   clearTimeout(ggbTimer);ggbPending=false;ggbFailed=true;
   geoStatus('Die Grafik konnte nicht geladen werden. Lade die Seite erneut; deine Eingaben bleiben gespeichert.');
-  for(const part of ['a','b']) {$('#draw-five-'+part).disabled=false;$('#check-five-'+part).disabled=false;}
+  $('#check-five-a').disabled=false;
 }
 function loadGeoScript() {
   if(typeof window.GGBApplet==='function') return Promise.resolve();
@@ -426,69 +401,58 @@ async function initGeoGebra() {
     applet.inject('ggb-51');
   } catch {geoFailure();}
 }
-function drawFive(part,check=false) {
-  const id='five-'+part,relation=parse(value(id));
+function checkFive() {
+  const id='five-a',relation=parse(value(id));
   if(!ggb){showFeedback(id,'Die Grafik konnte nicht geladen werden. Lade die Seite erneut; deine Eingaben bleiben gespeichert.');return;}
-  if(!relation.ok) {drawn[part]='';shownPart=null;removeDrawing();geoStatus('Die frühere Zeichnung ist veraltet.');showFeedback(id,relation.message);save();return;}
-  if(!renderGeo(part,relation)){showFeedback(id,'Dein neuer Entwurf ist noch nicht gültig dargestellt. Korrigiere die Eingabe; die alte Zeichnung wird nicht als aktuelle Antwort geprüft.');return;}
-  if(!check) {clearFeedback(id);$('#rows-'+id).hidden=true;return;}
+  if(!relation.ok) {drawn.a='';removeDrawing();geoStatus('Noch keine gültige Zeichnung: '+relation.message);showFeedback(id,relation.message);save();return;}
+  if(!renderGeo(relation)){showFeedback(id,'Dein neuer Entwurf ist noch nicht gültig dargestellt. Korrigiere die Eingabe; die alte Zeichnung wird nicht als aktuelle Antwort geprüft.');return;}
   const {count,details}=countMatching(relation,ROWS);
   const rows=$('#rows-'+id);rows.hidden=false;rows.replaceChildren();
   const status=document.createElement('p');status.textContent=`${count} von 4 Punktklassen passen.`;rows.append(status);
   for(const row of details){const p=document.createElement('p');p.textContent=`${row.name} (${fmt(row.x)};${fmt(row.y)}): Soll-Ausgabe ${row.target}, berechnete Ausgabe ${row.output} ${row.output===row.target?'✓':'✗'}`;rows.append(p);}
-  if(part==='a'){
-    if(count===4){showFeedback(id,'Korrekt. Deine strenge Ungleichung trennt alle vier Punkte passend: A und D erhalten 0, B und C erhalten 1. Deine Grenze darf anders liegen als die des Neurons aus Reiter 3.','success');mark(id,true);$('#five-helper').hidden=false;refreshFiveB();}
-    else if(count===0)showFeedback(id,'Noch nicht korrekt. Prüfe B (1;0) als Punkt mit Soll-Ausgabe 1 und A (0;0) als Punkt mit Soll-Ausgabe 0.');
-    else {const bad=details.find(row=>row.output!==row.target);showFeedback(id,`Teilweise korrekt: ${count} von 4 Punktklassen passen. Bei ${bad.name} (${fmt(bad.x)};${fmt(bad.y)}) erwartet die Tabelle ${bad.target}, deine Ungleichung liefert ${bad.output}. Ändere Grenze oder Feuerseite und prüfe erneut.`,'partial');}
-  } else {
-    if(!checked['five-a'])showFeedback(id,'Prüfe zuerst deine Verbesserung in 5a; erst dann können wir die beiden Trennlinien vergleichen.');
-    else if(count===4&&!sameBoundary(parse(drawn.a),relation)){showFeedback(id,'Korrekt. Deine zweite Trennlinie ist anders und trennt ebenfalls alle vier Punkte passend.','success');mark(id,true);}
-    else if(count===4)showFeedback(id,'Teilweise korrekt. Die Punktklassen stimmen, aber wähle für 5b eine andere Trennlinie als in 5a.','partial');
-    else if(count===0)showFeedback(id,'Noch nicht korrekt. Vergleiche einen Punkt mit Soll-Ausgabe 1 und einen mit Soll-Ausgabe 0.');
-    else {const bad=details.find(row=>row.output!==row.target);showFeedback(id,`Teilweise korrekt: ${count} von 4 Punktklassen passen. Gegenpunkt ${bad.name} (${fmt(bad.x)};${fmt(bad.y)}): erwartet ${bad.target}, berechnet ${bad.output}.`,'partial');}
-  }
+  if(count===4){showFeedback(id,'Korrekt. Deine strenge Ungleichung trennt alle vier Punkte passend: A und D erhalten 0, B und C erhalten 1. Deine Grenze darf anders liegen als die des Neurons aus Reiter 3.','success');mark(id,true);$('#five-helper').hidden=false;}
+  else if(count===0)showFeedback(id,'Noch nicht korrekt. Prüfe B (1;0) als Punkt mit Soll-Ausgabe 1 und A (0;0) als Punkt mit Soll-Ausgabe 0.');
+  else {const bad=details.find(row=>row.output!==row.target);showFeedback(id,`Teilweise korrekt: ${count} von 4 Punktklassen passen. Bei ${bad.name} (${fmt(bad.x)};${fmt(bad.y)}) erwartet die Tabelle ${bad.target}, deine Ungleichung liefert ${bad.output}. Ändere Grenze oder Feuerseite und prüfe erneut.`,'partial');}
 }
-function refreshFiveB() {if(checked['five-b']&&!validateFlag('five-b')){checked['five-b']=false;clearFeedback('five-b');updateProgress();save();}}
-function fiveBComplete() {return checked['five-b']&&validateFlag('five-b');}
-function toggleHelper() {helper=!helper;if(ggb)ggb.setVisible('Vergleichslinie',helper&&shownPart==='a');$('#toggle-helper').textContent=helper?'Hilfslinie x = 0,25 ausblenden':'Hilfslinie x = 0,25 zeigen';save();}
+function toggleHelper() {helper=!helper;if(ggb)ggb.setVisible('Vergleichslinie',helper&&checked['five-a']);$('#toggle-helper').textContent=helper?'Hilfslinie x = 0,25 ausblenden':'Hilfslinie x = 0,25 zeigen';save();}
 
-function appendSummary(parent,title,auftrag,ergebnis) {
-  const article=document.createElement('article');article.className='summary-item';
-  const heading=document.createElement('h3');heading.textContent=title;
-  const work=document.createElement('p');work.textContent=auftrag;
-  const answer=document.createElement('p');answer.textContent=ergebnis;
-  article.append(heading,work,answer);parent.append(article);
+function appendSummary(parent,title,auftrag,antwort,ergebnis,complete=false) {
+  const article=document.createElement('article');article.className='summary-item summary-section';
+  const heading=document.createElement('h3');heading.textContent=title+' ';
+  const badge=document.createElement('span');badge.className='summary-result '+(complete?'complete':'open');badge.textContent=complete?'✓ richtig geprüft':'noch offen';heading.append(badge);
+  const prompt=document.createElement('p');prompt.className='prompt';prompt.textContent=auftrag;
+  const list=document.createElement('dl');list.className='summary-grid';
+  const add=(term,text)=>{const dt=document.createElement('dt'),dd=document.createElement('dd');dt.textContent=term;dd.textContent=text;list.append(dt,dd);};
+  add('Deine Antwort',antwort||'Noch keine Eingabe');
+  if(complete)add('Richtiges Ergebnis',ergebnis);
+  article.append(heading,prompt,list);parent.append(article);
+}
+function summaryRows(rows,answers) {
+  return rows.map((row,i)=>`${row.name?row.name+' ':''}(${fmt(row.x)};${fmt(row.y)}): Ausgabe ${answers[i]===null?'noch nicht gewählt':answers[i]}`).join('\n');
+}
+function summaryChoices(id,values=null) {
+  return [...$('#'+id).querySelectorAll('label')].filter(label=>{const input=label.querySelector('input');return input&&(values?values.includes(input.value):input.checked);}).map(label=>label.textContent.trim()).join('\n')||'Noch keine Auswahl';
+}
+function summaryParameters(prefix) {
+  if(prefix==='one'||prefix==='two'){const p=model[prefix];return `w₁ = ${fmt(p.w1)}, w₂ = ${fmt(p.w2)}, s = ${fmt(p.s)}\n${summaryRows(ROWS,rowOutputs(ROWS,p).map(row=>row.output))}`;}
+  return ['w1','w2','s'].map((key,i)=>`${['w₁','w₂','s'][i]} = ${value(prefix+'-'+key).trim()||'noch nicht eingegeben'}`).join(', ');
 }
 function renderSummary() {
   const root=$('#summary');if(!root)return;root.replaceChildren();
-  if(!allCore()) {
-    for(const [index,title,ids,description] of [
-      [1,'Fehlendes Feuer',['one'],''],[2,'Unerwünschtes Feuer',['two'],''],
-      [3,'Wann feuert es?',['three-rows','three-probes','three-condition'],''],
-      [4,'Grenze oder Bereich?',['four-mc-1','four-mc-2','four-mc-3'],' – drei Fragen zur Geraden und Feuerseite'],
-      [5,'Ungleichung verbessern und testen',['five-a'],' – vier Punkte richtig getrennt'],
-      [6,'Von der Trennlinie zum Neuron',['six-line','six-diagram','six-input','six-parameters','six-rows'],'']]) {
-      const p=document.createElement('p');p.textContent=`${index} ${title}: ${ids.every(name=>checked[name])?'bearbeitet':'offen'}${description}`;root.append(p);
-    }
-    const optional=document.createElement('p');optional.textContent=`5b Freiwillige zweite Trennung: ${fiveBComplete()?'bearbeitet':'offen'}`;root.append(optional);
-    return;
-  }
-  const p1=parameters('one'),p2=parameters('two'),p6=parameters('six');
-  appendSummary(root,'1 Fehlendes Feuer','Verändere Gewichte und Schwellenwert so, dass das Perzeptron bei allen vier Eingaben die gewünschte Ausgabe liefert. Prüfe deine Einstellung.',`w₁=${fmt(p1.w1)}, w₂=${fmt(p1.w2)}, s=${fmt(p1.s)}; Ausgaben in Zeilenfolge 0, 0, 1, 1.`);
-  appendSummary(root,'2 Unerwünschtes Feuer','Verändere die Einstellung so, dass das Perzeptron bei den ersten beiden Eingaben nicht feuert und bei den letzten beiden feuert. Prüfe anschließend alle Zeilen.',`w₁=${fmt(p2.w1)}, w₂=${fmt(p2.w2)}, s=${fmt(p2.s)}; Ausgaben in Zeilenfolge 0, 0, 1, 1.`);
-  appendSummary(root,'3.1 Vier Ausgaben und Grenzproben','Bestimme die vier Ausgaben des Neurons. Untersuche danach, für welche Werte von x₂ es bei x₁ = 0,25 feuert.','A=0, D=0, B=1, C=1; bei x₂ = 0,5 / 1 / 1,5 sind die Ausgaben 0 / 0 / 1.');
-  appendSummary(root,'3.2 Feuerbedingung','Formuliere eine Ungleichung für alle Eingaben, bei denen das Perzeptron feuert.',value('three-condition'));
-  appendSummary(root,'4.1 Gerade erkennen','Was zeigt die Geradengleichung y = −2x + 1,5?','Die Gleichung beschreibt die Trennlinie. (0,25;1) liegt auf ihr und hat Ausgabe 0.');
-  appendSummary(root,'4.2 Feuerseite erkennen','Was zeigt die Ungleichung y > −2x + 1,5?','Sie beschreibt die offene Feuerhalbebene oberhalb der Geraden. (0,25;1,5) liegt darin; (0,25;1) nicht.');
-  appendSummary(root,'4.3 Klassifikation begründen','Warum braucht das Perzeptron für die Klassifikation eine Ungleichung?','Die Ungleichung legt die feuernde Seite fest. Auf der Grenze gilt a = s und damit Ausgabe 0.');
-  appendSummary(root,'5a Ungleichung verbessern','Verbessere die vorgegebene Ungleichung, bis B und C die Ausgabe 1 und A und D die Ausgabe 0 erhalten. Stelle deinen Entwurf dar und prüfe alle vier Punkte.',`${drawn.a} trennt A/D=0 und B/C=1. Eine andere Grenze als beim Neuron aus Reiter 3 ist erlaubt.`);
-  if(fiveBComplete())appendSummary(root,'5b Zweite Trennung (freiwillig; nur wenn richtig geprüft)','Finde eine weitere strenge lineare Ungleichung mit einer anderen Trennlinie, die dieselben vier Punktklassen ergibt. Stelle sie dar und prüfe sie.',`${drawn.b} trennt A/D=0 und B/C=1 mit einer anderen Grenze als in 5a.`);
-  appendSummary(root,'6.1 Gerade','Bestimme die Gleichung der eingezeichneten Trennlinie.',value('six-line'));
-  appendSummary(root,'6.2 Feuer-Ungleichung','Beschreibe die Seite mit Soll-Ausgabe 1 durch eine strenge Ungleichung.',value('six-diagram'));
-  appendSummary(root,'6.3 Eingangsnotation','Ersetze x und y durch x₁ und x₂ und forme die Bedingung zur Neuronform um.',value('six-input'));
-  appendSummary(root,'6.4 Parameter','Lies passende Werte für w₁, w₂ und s aus deiner Bedingung ab.',`w₁=${fmt(p6.w1)}, w₂=${fmt(p6.w2)}, s=${fmt(p6.s)}.`);
-  appendSummary(root,'6.5 Kontrolle','Berechne die Ausgaben deines Neurons für alle vier Punkte.','Ausgaben in Zeilenfolge 0, 0, 1, 1.');
-  if(checked['six-expert'])appendSummary(root,'6.E Expertenaufgabe','Vertausche außerhalb der Trennlinie die feuernde und die nicht feuernde Seite. Forme die neue Bedingung so um, dass wieder ein >-Zeichen zwischen Summe und Schwellenwert steht.',`${value('six-expert')}; auf der Grenze liefern beide strengen Neuronen Ausgabe 0.`);
+  appendSummary(root,'1 Fehlendes Feuer','Verändere Gewichte und Schwellenwert so, dass das Perzeptron bei allen vier Eingaben die gewünschte Ausgabe liefert. Prüfe deine Einstellung.',summaryParameters('one'),'Alle vier Ausgaben stimmen: A = 0, D = 0, B = 1, C = 1.',checked.one);
+  appendSummary(root,'2 Unerwünschtes Feuer','Verändere die Einstellung so, dass das Perzeptron bei den ersten beiden Eingaben nicht feuert und bei den letzten beiden feuert. Prüfe anschließend alle Zeilen.',summaryParameters('two'),'Alle vier Ausgaben stimmen: A = 0, D = 0, B = 1, C = 1.',checked.two);
+  appendSummary(root,'3.1 Vier Ausgaben','Bestimme die vier Ausgaben des Neurons.',summaryRows(ROWS,readSelects('.three-row-select')),'A = 0, D = 0, B = 1, C = 1.',checked['three-rows']);
+  appendSummary(root,'3.2 Grenzproben','Untersuche, für welche Werte von x₂ das Neuron bei x₁ = 0,25 feuert.',summaryRows(PROBES,readSelects('.three-probe-select')),'Bei x₂ = 0,5 / 1 / 1,5 sind die Ausgaben 0 / 0 / 1.',checked['three-probes']);
+  appendSummary(root,'3.3 Feuerbedingung','Formuliere eine Ungleichung für alle Eingaben, bei denen das Perzeptron feuert.',value('three-condition'),'4x₁ + 2x₂ > 3; gleichwertige strenge Ungleichungen sind möglich.',checked['three-condition']);
+  for(let i=1;i<=3;i++)appendSummary(root,`4.${i} Grenze oder Bereich?`,$('#four-quiz-'+i+' legend').textContent,summaryChoices('four-quiz-'+i),summaryChoices('four-quiz-'+i,FOUR_QUIZ[i-1].solution),checked['four-mc-'+i]);
+  appendSummary(root,'5 Ungleichung verbessern','Verbessere die vorgegebene Ungleichung, bis B und C die Ausgabe 1 und A und D die Ausgabe 0 erhalten. Die Grafik zeigt deine Eingabe automatisch; prüfe alle vier Punkte.',value('five-a'),'Deine Ungleichung trennt A/D = 0 und B/C = 1. Eine andere Grenze als beim Neuron aus Reiter 3 ist erlaubt.',checked['five-a']);
+  appendSummary(root,'6.1 Gerade','Bestimme die Gleichung der eingezeichneten Trennlinie.',value('six-line'),'y = −2x + 2; gleichwertige Geradengleichungen sind möglich.',checked['six-line']);
+  appendSummary(root,'6.2 Feuer-Ungleichung','Beschreibe die Seite mit Soll-Ausgabe 1 durch eine strenge Ungleichung.',value('six-diagram'),'y > −2x + 2; gleichwertige strenge Ungleichungen sind möglich.',checked['six-diagram']);
+  appendSummary(root,'6.3 Eingangsnotation','Ersetze x und y durch x₁ und x₂ und forme die Bedingung zur Neuronform um.',value('six-input'),'2x₁ + x₂ > 2; gleichwertige strenge Ungleichungen sind möglich.',checked['six-input']);
+  appendSummary(root,'6.4 Parameter','Lies passende Werte für w₁, w₂ und s aus deiner Bedingung ab.',summaryParameters('six'),'Zum Beispiel w₁ = 2, w₂ = 1 und s = 2. Gemeinsame positive Vielfache sind ebenfalls möglich.',checked['six-parameters']);
+  appendSummary(root,'6.5 Kontrolle','Berechne die Ausgaben deines Neurons für alle vier Punkte.',summaryRows(SIX_ROWS,readSelects('.six-row-select')),'Ausgaben in Zeilenfolge 0, 0, 1, 1.',checked['six-rows']);
+  appendSummary(root,'6.E Expertenaufgabe (freiwillig)','Vertausche außerhalb der Trennlinie die feuernde und die nicht feuernde Seite. Forme die neue Bedingung so um, dass wieder ein >-Zeichen zwischen Summe und Schwellenwert steht.',value('six-expert'),'−2x₁ − x₂ > −2; auf der Grenze liefern beide strengen Neuronen Ausgabe 0.',checked['six-expert']);
+  for(let i=1;i<=QUIZ.length;i++)appendSummary(root,`8.${i} Abschlussquiz`,$('#quiz-'+i+' legend').textContent,summaryChoices('quiz-'+i),summaryChoices('quiz-'+i,QUIZ[i-1].solution),quizChecked[i-1]);
 }
 
 const QUIZ=[
@@ -499,7 +463,8 @@ const QUIZ=[
   {solution:['simple','scaled'],hint:'Positive Faktoren erhalten die Richtung. Bei Multiplikation mit einer negativen Zahl kehrt das Zeichen um.'},
   {solution:['simple','scaled'],hint:'Vergleiche die drei Parameter als gemeinsames positives Vielfaches und prüfe den Grenzfall.'},
 ];
-function quizChoicesCorrect() {return QUIZ.every((question,i)=>{const chosen=[...document.querySelectorAll(`#quiz-${i+1} input:checked`)].map(el=>el.value);return chosen.length===question.solution.length&&chosen.every(v=>question.solution.includes(v));});}
+function quizQuestionCorrect(i) {const chosen=[...document.querySelectorAll(`#quiz-${i+1} input:checked`)].map(el=>el.value),question=QUIZ[i];return chosen.length===question.solution.length&&chosen.every(v=>question.solution.includes(v));}
+function quizChoicesCorrect() {return QUIZ.every((_,i)=>quizQuestionCorrect(i));}
 function showQuizResults() {
   const root=$('#quiz-results');root.replaceChildren();
   for(let i=0;i<QUIZ.length;i++) {
@@ -511,23 +476,24 @@ function showQuizResults() {
 }
 function finishQuiz() {
   if(!quizChoicesCorrect())return;
-  quizPassed=true;showFeedback('quiz','Korrekt. Alle sechs Fragen sind vollständig richtig beantwortet.','success');showQuizResults();save();
+  quizPassed=true;quizChecked.fill(true);showFeedback('quiz','Korrekt. Alle sechs Fragen sind vollständig richtig beantwortet.','success');showQuizResults();save();renderSummary();
 }
 function setupQuiz() {
-  quizControl=window.addQuizQuestionChecks?.({questions:QUIZ.map((question,i)=>({fieldset:$('#quiz-'+(i+1)),...question})),buttonClass:'primary-button',feedbackClass:'feedback',levels:{high:'success',medium:'partial',low:'error'},onAllCorrect:finishQuiz});
+  quizControl=window.addQuizQuestionChecks?.({questions:QUIZ.map((question,i)=>({fieldset:$('#quiz-'+(i+1)),number:i+1,...question})),buttonClass:'primary-button',feedbackClass:'feedback',levels:{high:'success',medium:'partial',low:'error'},onCheck:(question,result)=>{quizChecked[question.number-1]=result==='correct';save();renderSummary();},onAllCorrect:finishQuiz});
   $('#final-quiz').addEventListener('submit',event=>{event.preventDefault();const correct=quizControl?.checkAll()||0;if(correct===QUIZ.length)finishQuiz();else showFeedback('quiz',`Noch nicht korrekt. ${correct} von ${QUIZ.length} Fragen sind vollständig richtig.`);});
-  document.querySelectorAll('#final-quiz input').forEach(el=>el.addEventListener('change',()=>{quizPassed=false;$('#quiz-results').hidden=true;clearFeedback('quiz');save();}));
+  document.querySelectorAll('#final-quiz input').forEach(el=>el.addEventListener('change',()=>{quizPassed=false;quizChecked[Number(el.closest('fieldset').id.split('-')[1])-1]=false;$('#quiz-results').hidden=true;clearFeedback('quiz');save();renderSummary();}));
 }
 function resetModule() {
   clearTimeout(scrollTimer);
   fields.forEach(el=>{if(el.type==='checkbox'||el.type==='radio')el.checked=false;else el.value=defaults[el.id]??'';});
-  helpDetails.forEach(el=>el.open=false);checked=Object.fromEntries(FLAGS.map(id=>[id,false]));drawn={a:'',b:''};helper=false;shownPart=null;quizPassed=false;
+  helpDetails.forEach(el=>el.open=false);checked=Object.fromEntries(FLAGS.map(id=>[id,false]));drawn={a:''};helper=false;quizPassed=false;quizChecked.fill(false);
   removeDrawing();if(ggb)ggb.setVisible('Vergleichslinie',false);
   document.querySelectorAll('.feedback').forEach(el=>{el.hidden=true;el.textContent='';});
-  for(const id of ['rows-five-a','rows-five-b','five-helper','four-remember','three-probes','three-formula','quiz-results','four-legacy']) $('#'+id).hidden=true;
+  for(const id of ['rows-five-a','five-helper','four-remember','three-probes','three-formula','quiz-results']) $('#'+id).hidden=true;
   $('#toggle-helper').textContent='Hilfslinie x = 0,25 zeigen';
-  model={one:{...START.one},two:{...START.two}};selectedRows={one:0,two:0,three:'row-0'};threeMode='task';explore={...FIXED};exploreUsed=false;fourPoint=null;
-  fourMode='none';sixScrollTop=0;legacyFour={};$('#six .six-work').scrollTop=0;
+  model={one:{...START.one},two:{...START.two}};selectedRows={one:0,two:0,three:'row-0'};fourPoint=null;
+  fourMode='none';sixScrollTop=0;$('#six .six-work').scrollTop=0;
+  updateFiveDrawing();
   updateParameterTable('one');updateParameterTable('two');for(const prefix of ['one','two','three'])renderNeuron(prefix);renderFourMode();showStep('one');
   try{localStorage.removeItem(KEY);$('#save-status').textContent='Das Modul wurde neu begonnen.';}catch{$('#save-status').textContent='Das Modul wurde neu begonnen; der Browser konnte den gespeicherten Stand nicht löschen.';}
 }
@@ -539,11 +505,8 @@ function attachEvents() {
   for(const cls of ['three-row-select','three-probe-select','six-row-select'])document.querySelectorAll('.'+cls).forEach(el=>el.addEventListener('change',()=>invalidate(cls==='three-row-select'?'three-rows':cls==='three-probe-select'?'three-probes':'six-rows')));
   for(const id of ['three-condition','six-line','six-diagram','six-input','six-expert'])$('#'+id).addEventListener('input',()=>invalidate(id));
   for(const suffix of ['w1','w2','s'])$('#six-'+suffix).addEventListener('input',()=>{invalidate('six-parameters');invalidate('six-rows');});
-  for(const part of ['a','b']) {
-    $('#five-'+part).addEventListener('input',()=>{invalidate('five-'+part);if(part==='a'){$('#five-helper').hidden=true;updateProgress();}drawn[part]='';if(shownPart===part){shownPart=null;removeDrawing();geoStatus('Die frühere Zeichnung ist veraltet.');}$('#rows-five-'+part).hidden=true;save();});
-    $('#draw-five-'+part).addEventListener('click',()=>drawFive(part,false));
-    $('#check-five-'+part).addEventListener('click',()=>drawFive(part,true));
-  }
+  $('#five-a').addEventListener('input',()=>{invalidate('five-a');$('#five-helper').hidden=true;$('#rows-five-a').hidden=true;drawn.a='';if(ggb)ggb.setVisible('Vergleichslinie',false);updateFiveDrawing();save();});
+  $('#check-five-a').addEventListener('click',checkFive);
   $('#toggle-helper').addEventListener('click',toggleHelper);
   for(const [id,handler] of Object.entries({'three-rows':checkThreeRows,'three-probes':checkThreeProbes,'three-condition':checkThreeCondition,'six-line':checkSixLine,'six-diagram':checkSixDiagram,'six-input':checkSixInput,'six-parameters':checkSixParameters,'six-rows':checkSixRows,'six-expert':checkSixExpert}))$('#check-'+id).addEventListener('click',handler);
   helpDetails.forEach(el=>el.addEventListener('toggle',save));
