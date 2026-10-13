@@ -10,12 +10,14 @@
 \usepackage{array}
 \usepackage{microtype}
 \usepackage[most]{tcolorbox}
+\usepackage{tikz}
+\usetikzlibrary{arrows.meta}
 
 \pagestyle{empty}
 \setlength{\parindent}{0pt}
 \setlength{\parskip}{0pt}
 \renewcommand{\familydefault}{\sfdefault}
-\renewcommand{\arraystretch}{1.16}
+\renewcommand{\arraystretch}{1.10}
 
 \definecolor{Navy}{HTML}{17324D}
 \definecolor{Blue}{HTML}{3B6EA5}
@@ -26,40 +28,151 @@
 \definecolor{Muted}{HTML}{617080}
 \definecolor{Line}{HTML}{D8E1E8}
 \definecolor{CodeBg}{HTML}{F5F7F9}
+\definecolor{KeyBg}{HTML}{FFF3D6}
+\definecolor{KeyLine}{HTML}{B87810}
 
 \color{Ink}
 \newcommand{\sectiontitle}[1]{%
-  \vspace{2.3mm}{\color{Blue}\bfseries\large #1}\par
+  \vspace{1.5mm}{\color{Blue}\bfseries\large #1}\par
   \vspace{0.7mm}{\color{Blue}\rule{\linewidth}{0.7pt}}\par\vspace{1.2mm}}
-\newcommand{\schema}[1]{\colorbox{CodeBg}{\parbox{\dimexpr\linewidth-2\fboxsep\relax}{\ttfamily\small #1}}}
+\newcommand{\dbtablename}[1]{{\small\bfseries\color{Blue}\texttt{#1}}\par\vspace{1mm}}
 
 \begin{document}
 \colorbox{Navy}{\parbox{\dimexpr\linewidth-2\fboxsep\relax}{%
   \vspace{3mm}\color{white}\begin{tabularx}{\linewidth}{@{}Xr@{}}
   {\small\bfseries INFORMATIK · KLASSE 10} & \colorbox{Gold}{\color{Navy}\small\bfseries\strut LÖSUNGEN}\end{tabularx}
-  \vspace{2.4mm}{\fontsize{18}{21}\selectfont\bfseries Aufgabe 8 -- n:m-Beziehungen und Beziehungstabellen}\par
-  \vspace{0.8mm}{\large Sicherungsblatt}\vspace{2.8mm}}}
-\vspace{2.5mm}
-\colorbox{Sky}{\parbox{\dimexpr\linewidth-2\fboxsep\relax}{\vspace{1.6mm}
-\textcolor{Blue}{\bfseries Ziel:} Du erkennst n:m-Beziehungen und erklärst ihre Umsetzung mit einer Beziehungstabelle.\vspace{1.6mm}}}
+  \vspace{2.4mm}{\fontsize{18}{21}\selectfont\bfseries Aufgabe 8 -- n:m-Beziehungen}\par
+  \vspace{0.8mm}{\large Sicherungsblatt · Beziehungstabellen}\vspace{2.8mm}}}
 
-\sectiontitle{1 · Song und Playlist}
-{\small Gaslighter gehört zu Good Oldies und Fussballhits. In Fussballhits stehen Gaslighter, Wavin‘ Flag und ’54, ’74, ’90, 2006. Die fünf Zeilen von \texttt{Song\_in\_Playlist} zeigen Zuordnungen in beide Richtungen.}\par\vspace{1mm}
-{\centering\bfseries\textcolor{Blue}{Song \quad n \;\rule{32mm}{0.7pt}\; m \quad Playlist}\par}
+\sectiontitle{1 · Song und Playlist: viele auf beiden Seiten}
+{\centering\bfseries\textcolor{Blue}{Song \quad n \;\rule{30mm}{0.7pt}\; m \quad Playlist}\par}
 \vspace{1mm}
-{\small Die Schreibweisen n:m und m:n sind gleichbedeutend. n und m stehen für voneinander unabhängige Anzahlen.}\par
-\sectiontitle{2 · Die Beziehungstabelle}
-\schema{Song\_in\_Playlist(song\_id[Song]: int, playlist\_id[Playlist]: int)}\par\vspace{1mm}
-{\small \texttt{song\_id} verweist auf \texttt{Song.id}; \texttt{playlist\_id} auf \texttt{Playlist.id}. Die zusätzliche Zeile für Gaslighter in Fussballhits lautet \texttt{(1, 2)}. Jede Zuordnung steht in einer eigenen Zeile.}\par\vspace{1mm}
-{\centering\bfseries\textcolor{Blue}{Song \quad 1 -- n \quad Song\_in\_Playlist \quad n -- 1 \quad Playlist}\par}
-\sectiontitle{3 · Schüler und AG}
-{\small Lina besucht Robotik und Theater; Theater besuchen Lina und Mia. Bens Anmeldung beim Chor ergänzt in \texttt{teilnahme} die Zeile \texttt{(schueler\_id = 2, ag\_id = 3)}. Ein einzelner Fremdschlüssel und eine Liste von ids in einer Zelle können mehrere Zuordnungen nicht sauber speichern.}\par
-\sectiontitle{4 · InstaHub}
-{\small Die Zeile \texttt{likes(18, 14)} bedeutet: Benutzer 18 hat Foto 14 geliked. \texttt{photos.user\_id} bezeichnet dagegen, wer ein Foto hochgeladen hat; \texttt{likes.user\_id} bezeichnet, wer es geliked hat. In \texttt{follows} steht bei \texttt{follower\_id}, wer folgt, und bei \texttt{following\_id}, wem gefolgt wird. Gegenseitiges Folgen benötigt zwei Zeilen.}\par\vspace{1mm}
+{\centering\small n:m = m:n \quad · \quad n und m: unabhängige Anzahlen\par}
+\vspace{2mm}
+% Tabellenausschnitte und Schlüssel-Pfeile wie im Sicherungsblatt zu Aufgabe 7.
+{\centering\begingroup
+\setlength{\tabcolsep}{1.7mm}
+\begin{tikzpicture}[>=Latex,
+  dbtable/.style={anchor=north west,inner sep=0pt,outer sep=0pt,font=\small\ttfamily},
+  tablename/.style={anchor=south,font=\small\bfseries\ttfamily,text=Blue}]
+  \node[dbtable] (song) at (0,0) {%
+    \begin{tabular}{|>{\columncolor{KeyBg}}c|l|}\hline
+      \textbf{\shortstack{id\\[-1pt]{\scriptsize PK}}} & \cellcolor{Sky}\textbf{titel}\\\hline
+      \textbf{1} & \textbf{Gaslighter}\\\hline
+      2 & Wavin‘ Flag\\\hline
+      3 & Try\\\hline
+      4 & ’54, ’74, ’90, 2006\\\hline
+    \end{tabular}};
+  \node[dbtable] (mapping) at (65mm,0) {%
+    \begin{tabular}{|>{\columncolor{KeyBg}}c|>{\columncolor{Sky}}c|}\hline
+      \textbf{\shortstack{song\_id\\[-1pt]{\scriptsize FK}}} & \textbf{\shortstack{playlist\_id\\[-1pt]{\scriptsize FK}}}\\\hline
+      \textbf{1} & 1\\\hline
+      2 & 2\\\hline
+      3 & 1\\\hline
+      4 & 2\\\hline
+      \rowcolor{Mint}\textbf{1} & \textbf{2}\\\hline
+    \end{tabular}};
+  \node[dbtable] (playlist) at (133mm,0) {%
+    \begin{tabular}{|>{\columncolor{Sky}}c|l|}\hline
+      \textbf{\shortstack{id\\[-1pt]{\scriptsize PK}}} & \textbf{\cellcolor{Sky}titel}\\\hline
+      1 & Good Oldies\\\hline
+      2 & Fussballhits\\\hline
+    \end{tabular}};
+  \node[tablename] at ([yshift=9mm]song.north) {Song};
+  \node[tablename] at ([yshift=9mm]mapping.north) {Song\_in\_Playlist};
+  \node[tablename] at ([yshift=9mm]playlist.north) {Playlist};
+  \draw[->,KeyLine,line width=.9pt]
+    ([xshift=9.5mm]mapping.north west) -- ++(0,5mm)
+    -| ([xshift=4.5mm]song.north west);
+  \draw[->,Blue,line width=.9pt]
+    ([xshift=-13mm]mapping.north east) -- ++(0,5mm)
+    -| ([xshift=4.5mm]playlist.north west);
+\end{tikzpicture}\par\endgroup}
+\vspace{1mm}
+{\small\textbf{Neue Zeile (1, 2):} Gaslighter gehört zusätzlich zu Fussballhits.}\par
+\vspace{1mm}
+{\centering\small\bfseries\color{Blue}Song \quad 1 -- n \quad Song\_in\_Playlist \quad n -- 1 \quad Playlist\par}
+\vspace{1mm}
+{\footnotesize PK = Primärschlüssel · FK = Fremdschlüssel · Pfeil: FK verweist auf PK.}\par
+
+\sectiontitle{2 · Schüler und AG: eine Zeile pro Anmeldung}
+\begin{minipage}[t]{.25\linewidth}
+\dbtablename{schueler}
+{\small\begin{tabular}{|c|l|}\hline
+\rowcolor{Sky}\textbf{id} & \textbf{name}\\\hline
+1 & Lina\\\hline
+2 & Ben\\\hline
+3 & Mia\\\hline
+\end{tabular}}
+\end{minipage}\hfill
+\begin{minipage}[t]{.40\linewidth}
+\dbtablename{teilnahme (Beziehungstabelle)}
+{\small\ttfamily\begin{tabular}{|c|c|}\hline
+\rowcolor{Sky}\textbf{schueler\_id} & \textbf{ag\_id}\\\hline
+1 & 1\\\hline
+1 & 2\\\hline
+2 & 1\\\hline
+3 & 2\\\hline
+3 & 3\\\hline
+\rowcolor{Mint}\textbf{2} & \textbf{3}\\\hline
+\end{tabular}}
+\end{minipage}\hfill
+\begin{minipage}[t]{.24\linewidth}
+\dbtablename{ag}
+{\small\begin{tabular}{|c|l|}\hline
+\rowcolor{Sky}\textbf{id} & \textbf{name}\\\hline
+1 & Robotik\\\hline
+2 & Theater\\\hline
+3 & Chor\\\hline
+\end{tabular}}
+\end{minipage}
+\vspace{1.4mm}\par
+{\small Lina $\rightarrow$ Robotik + Theater \quad · \quad Theater $\rightarrow$ Lina + Mia}\par
+{\small\textbf{Neue Zeile (2, 3):} Ben $\rightarrow$ Chor}\par
+
+\begin{minipage}[t]{.485\linewidth}
+\sectiontitle{3 · Likes: Upload $\neq$ Like}
+\begin{minipage}[t]{.43\linewidth}
+\dbtablename{photos (Auszug)}
+{\small\ttfamily\begin{tabular}{|c|c|}\hline
+\rowcolor{Sky}\textbf{id} & \textbf{user\_id}\\\hline
+14 & 4\\\hline
+\end{tabular}}
+\end{minipage}\hfill
+\begin{minipage}[t]{.53\linewidth}
+\dbtablename{likes}
+{\small\ttfamily\begin{tabular}{|c|c|}\hline
+\rowcolor{Sky}\textbf{user\_id} & \textbf{photo\_id}\\\hline
+15 & 12\\\hline
+15 & 14\\\hline
+\rowcolor{Mint}18 & 14\\\hline
+\end{tabular}}
+\end{minipage}
+\vspace{1.4mm}\par
+{\small Foto 14: Upload von \textbf{4}, Likes von \textbf{15 und 18}.}\par
+{\footnotesize\texttt{users} 1 -- n \texttt{likes} n -- 1 \texttt{photos}}
+\end{minipage}\hfill
+\begin{minipage}[t]{.485\linewidth}
+\sectiontitle{4 · Follows: Richtung beachten}
+\dbtablename{follows}
+{\small\ttfamily\begin{tabular}{|c|c|c|}\hline
+\rowcolor{Sky}\textbf{id} & \textbf{follower\_id} & \textbf{following\_id}\\\hline
+1 & 117 & 1\\\hline
+2 & 1 & 117\\\hline
+947 & 138 & 52\\\hline
+\end{tabular}}
+\vspace{1.4mm}\par
+{\small\texttt{follower\_id} $\rightarrow$ \texttt{following\_id}}\par
+{\small\textbf{wer folgt} $\rightarrow$ \textbf{wem gefolgt wird}}\par
+{\small 117 $\rightarrow$ 1 \quad + \quad 1 $\rightarrow$ 117: gegenseitig}\par
+{\footnotesize Beide Fremdschlüssel verweisen auf \texttt{users}.}
+\end{minipage}
+\vspace{2mm}\par
 \begin{tcolorbox}[colback=Mint,colframe=Blue,arc=2mm,boxrule=.8pt,left=3mm,right=3mm,top=1.7mm,bottom=1.7mm]
 \textbf{Merksatz}\par\smallskip
-Eine n:m-Beziehung wird durch eine Beziehungstabelle umgesetzt. Jede Zeile verbindet über zwei Fremdschlüssel genau einen Datensatz der einen Tabelle mit genau einem Datensatz der anderen Tabelle.\par\smallskip
-Eine Beziehungstabelle heißt auch Hilfstabelle.
+{\small Eine n:m-Beziehung wird durch eine Beziehungstabelle umgesetzt. Jede Zeile verbindet über zwei Fremdschlüssel genau einen Datensatz der einen Tabelle mit genau einem Datensatz der anderen Tabelle.}\par\smallskip
+{\small\bfseries Eine Zeile = eine Zuordnung · Eine Zelle = eine id}\par
+{\footnotesize Beziehungstabelle = Hilfstabelle}
 \end{tcolorbox}
 
 \vfill{\color{Line}\rule{\linewidth}{.5pt}}\par\vspace{1.5mm}

@@ -20,7 +20,7 @@ ok 3 - apps-script\\tests\\aufgabe5-client.test.js
   duration_ms: 197.6056
   type: 'test'
   ...
-# Rubrik für Aufgabe 5 erkennt vollständige und unvollständige Erklärungen.
+# Gemeinsame Perzeptron-Lernrubrik erkennt vollständige und unvollständige Erklärungen.
 # Subtest: apps-script\\tests\\aufgabe5-perzeptron-rules.test.js
 ok 4 - apps-script\\tests\\aufgabe5-perzeptron-rules.test.js
   ---

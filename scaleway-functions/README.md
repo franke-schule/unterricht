@@ -1,11 +1,19 @@
 # Scaleway-Testserver für die Unterrichtswebsite
 
 Stand 13.10.2026: Der Healthcheck der bereitgestellten Function meldet 69
-Aufgaben, die lokale `apps-script/Tasks.gs` enthält 67. Vor einem erneuten
+Aufgaben, die lokale `apps-script/Tasks.gs` enthielt vor der Bereinigung 67
+und enthält jetzt 64. Die drei nicht mehr verwendeten Quizaufgaben wurden
+aus der gemeinsamen Serverquelle entfernt. Vor einem erneuten
 Codeupload müssen die beiden zusätzlich bereitgestellten Aufgaben mit der
 aktuellen Serverquelle abgeglichen werden. Ein Paket aus dem lokalen Stand
 würde diese Aufgaben sonst entfernen. Die Bewertungsroute `11-5-1` wird
 weiterhin von Modul 5.2 verwendet und muss erhalten bleiben.
+
+Die drei entfernten Quizkennungen sind auf dem laufenden Server noch registriert:
+Leere Prüfanfragen wurden jeweils mit `INPUT_TOO_SHORT` abgewiesen. Dabei wurde
+kein Modell aufgerufen. Die Bereinigung erfordert deshalb eine neue
+Function-Bereitstellung aus der zuvor abgeglichenen Quelle. Das neu gebaute
+lokale ZIP enthält 64 Aufgaben und wurde noch nicht hochgeladen.
 
 Dieser Server übernimmt Aufgaben, Prompts, Bewertungsregeln und Ergebnisformat
 aus `apps-script/`. Der Google-Server bleibt erhalten. Am 10.10.2026 wurden

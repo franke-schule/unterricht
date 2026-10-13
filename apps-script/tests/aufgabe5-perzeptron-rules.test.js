@@ -12,4 +12,4 @@ const complete = context.evaluatePerceptronLearningByRules_('Beim Training vergl
 assert.equal(complete.points, 4);
 const partial = context.evaluatePerceptronLearningByRules_('Die Gewichte werden verändert.', 4);
 assert.equal(partial.points < 4, true);
-console.log('Rubrik für Aufgabe 5 erkennt vollständige und unvollständige Erklärungen.');
+console.log('Gemeinsame Perzeptron-Lernrubrik erkennt vollständige und unvollständige Erklärungen.');
