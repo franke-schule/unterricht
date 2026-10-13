@@ -68,6 +68,8 @@ const CLOZE_SOLUTION = [
   "AND",
   "Verbund"
 ];
+// Die Kartenreihenfolge verrät nicht die Reihenfolge der Lücken.
+CLOZE_TERMS.sort((left, right) => left.key.localeCompare(right.key, 'de'));
 const CLOZE_PARTS = [
   "Ohne Verknüpfungsbedingung entsteht das ",
   ". Der ",
@@ -425,8 +427,12 @@ function loadState() {
     });
     DESCRIBE_TASKS.forEach((task) => {
       const ai = saved.ai?.[task.id];
-      if (isPlainObject(ai) && Number.isFinite(ai.points) && typeof saved.aiText?.[task.id] === "string") {
-        fresh.ai[task.id] = ai;
+      if (isPlainObject(ai) && Number.isInteger(ai.points) && ai.points >= 0 && ai.points <= task.maxPoints
+          && ai.maxPoints === task.maxPoints && ['korrekt', 'teilweise korrekt', 'noch nicht korrekt'].includes(ai.status)
+          && typeof ai.feedback === 'string' && Array.isArray(ai.strengths) && ai.strengths.every((text) => typeof text === 'string')
+          && Array.isArray(ai.missing) && ai.missing.every((text) => typeof text === 'string')
+          && saved.aiText?.[task.id] === fresh.texts[task.id]) {
+        fresh.ai[task.id] = { points: ai.points, maxPoints: ai.maxPoints, status: ai.status, strengths: ai.strengths, missing: ai.missing, feedback: ai.feedback };
         fresh.aiText[task.id] = saved.aiText[task.id];
       }
       fresh.first.describe[task.id] = clampPoints(saved.first?.describe?.[task.id], task.maxPoints);
@@ -918,7 +924,7 @@ function taskScores() {
 
 function scoreText(task) {
   if (task.points === null) return "noch nicht geprüft";
-  return `${task.points} von ${task.max} ${task.unit}${task.note ? ` (${task.note})` : ""}`;
+  return `${task.points} von ${task.max} ${task.max === 1 ? 'Punkt' : task.unit}${task.note ? ` (${task.note})` : ""}`;
 }
 
 function updateProgress() {
@@ -927,7 +933,7 @@ function updateProgress() {
   document.getElementById("progress-label").textContent = `${tasks.filter((task) => task.done).length} von ${TASK_COUNT} Aufgaben geprüft`;
   document.getElementById("progress-points").textContent = `Wertung: ${points} von ${TOTAL_POINTS} Punkten`;
   tasks.forEach((task) => {
-    document.getElementById(`task${task.number}-points`).textContent = task.points === null ? `${task.max} ${task.unit === "Aspekten" ? "Aspekte" : "Punkte"}` : `Wertung: ${scoreText(task)}`;
+    document.getElementById(`task${task.number}-points`).textContent = task.points === null ? `${task.max} ${task.unit === "Aspekten" ? "Aspekte" : task.max === 1 ? "Punkt" : "Punkte"}` : `Wertung: ${scoreText(task)}`;
   });
   const list = element("ul", "evaluation-list");
   tasks.forEach((task) => {
@@ -1110,7 +1116,7 @@ function setupSqlTasks() {
   });
   document.getElementById('retry-sql').addEventListener('click', loadSqlDatabase);
   loadSqlDatabase();
-  window.addEventListener('pagehide', () => quizDatabase?.close(), { once: true });
+  window.addEventListener('pagehide', (event) => { if (!event.persisted) quizDatabase?.close(); });
 }
 
 export { SQL_TASKS, SQL_SCHEMAS, SQL_DATA, MC_QUESTIONS, TOTAL_POINTS };

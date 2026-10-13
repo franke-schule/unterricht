@@ -1,0 +1,76 @@
+Löschanleitung: Wiederholungsquiz Informatik 10 – Der Verbund
+==========================================================
+
+Zugehöriges Modul: faecher/informatik/klasse-10/1-Datenbanken/aufgabe7.html
+Anlagedatum: 2026-10-13
+Löschung ausschließlich auf Anweisung der verantwortlichen Lehrkraft.
+
+Neue Dateien
+------------
+faecher/informatik/klasse-10/1-Datenbanken/aufgabe7-quiz.html
+faecher/informatik/klasse-10/1-Datenbanken/aufgabe7-quiz.js
+faecher/informatik/klasse-10/1-Datenbanken/aufgabe7-quiz.css
+faecher/informatik/klasse-10/1-Datenbanken/aufgabe7-quiz-loeschen.txt
+faecher/informatik/klasse-10/1-Datenbanken/tests/aufgabe7-quiz.test.mjs
+../informatik-material/inf10/1-Datenbanken/Inf10-Aufgabe7-Quiz.svg
+
+Geänderte Dateien und genaue Stellen
+-----------------------------------
+apps-script/Tasks.gs: zusammenhängender Block mit dem Präfix inf10-a7-quiz-,
+  zwischen den Aufgaben inf10-a3-quiz-regal-beschreibung und inf9-dfd-zylinder-beschreibung.
+apps-script/Config.gs: Kommentarzeile inf10/1-Datenbanken/aufgabe7-quiz.html.
+apps-script/tests/code-routing.test.js: beide IDs in der Beschreibe-Aufgabenliste.
+scaleway-functions/tests/all-task-contracts.test.js: Titel und erwartete
+  Aufrufzahl von 67 auf 69 erhöht. Nach Entfernung der beiden Aufgaben um
+  zwei verringern; weitere zwischenzeitlich angelegte Aufgaben berücksichtigen.
+../informatik-material/inf10/1-Datenbanken/inf10-datenbanken.html:
+  neue Folie 9 „Quiz zu Aufgabe 7: Der Verbund“ direkt hinter Modulfolie 8;
+  die früheren Folien 9 bis 17 sind nun 10 bis 18 (id und aria-label).
+Generierte, nicht versionierte Dateien: scaleway-functions/evaluation-core.js
+  und source-manifest.json werden mit build-core.js neu erzeugt.
+
+Skriptserver-Aufgaben
+---------------------
+inf10-a7-quiz-kreuzprodukt-beschreibung (3 Punkte)
+  In InstaHub wird jedes Foto zunächst mit jeder Person kombiniert.
+  Beschreibe, warum dabei falsche Zuordnungen entstehen, welche Schlüssel
+  zusammengehören und wie eine WHERE-Bedingung die falschen Kombinationen entfernt.
+
+inf10-a7-quiz-and-beschreibung (3 Punkte)
+  Bei Song, Song_in_Playlist und Playlist soll jede Ergebniszeile den passenden
+  Song und die passende Playlist enthalten. Beschreibe, welche zwei Spaltenpaare
+  verglichen werden müssen, wie die Bedingungen verknüpft werden und warum OR
+  ungeeignet ist.
+
+Checkliste zur vollständigen Löschung
+-------------------------------------
+[ ] HTML, JS, CSS und Modultest mit git rm löschen; diese Anleitung zuletzt.
+[ ] Tasks.gs: alle Blöcke mit dem Präfix inf10-a7-quiz- entfernen.
+[ ] Config.gs: die Kommentarzeile zu aufgabe7-quiz.html entfernen.
+[ ] code-routing.test.js: beide IDs entfernen und Kommas prüfen.
+[ ] all-task-contracts.test.js: erwartete Aufrufzahl und Titel um zwei reduzieren.
+[ ] Präsentation: Quiz-Folie 9 entfernen. Alle nachfolgenden Folien wieder
+    um eins zurückzählen (id="folie-N" und „Folie N:“ im aria-label).
+[ ] ../informatik-material/inf10/1-Datenbanken/Inf10-Aufgabe7-Quiz.svg löschen.
+[ ] Kurzlink deaktivieren, falls die Lehrkraft später einen angelegt hat.
+    Bei der Erstellung wurde kein Kurzlink angelegt oder verwendet.
+[ ] In beiden Repositorys Restekontrolle durchführen:
+    git grep -nw "aufgabe7-quiz"
+    git grep -n "inf10-a7-quiz-"
+    Zusätzlich nach Inf10-Aufgabe7-Quiz suchen; in einem nicht versionierten
+    Präsentationsordner stattdessen rg verwenden.
+[ ] node scaleway-functions/build-core.js ausführen.
+[ ] node --test apps-script/tests/*.test.js
+    node --test faecher/informatik/klasse-10/1-Datenbanken/tests/*.test.mjs
+    node --test scaleway-functions/tests/*.test.js
+    git diff --check
+[ ] Skriptserver aktualisieren: Tasks.gs und Config.gs in Google Apps Script
+    übernehmen und unter Bereitstellen > Bereitstellungen verwalten > Bearbeiten
+    eine neue Version bereitstellen; die /exec-URL bleibt gleich.
+    Der aktuelle Client nutzt Scaleway: zusätzlich das mit
+    scaleway-functions/package.ps1 erzeugte Paket neu bereitstellen.
+[ ] Website und Präsentation neu hochladen, Änderungen committen.
+[ ] Zuletzt diese Löschanleitung mit git rm löschen.
+
+localStorage-Schlüssel: informatik10-datenbanken-aufgabe7-test-v1
+Der gespeicherte Stand darf in Schülerbrowsern zurückbleiben.
