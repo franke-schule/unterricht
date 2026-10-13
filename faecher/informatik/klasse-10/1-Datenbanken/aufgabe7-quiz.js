@@ -864,7 +864,7 @@ function checkDescription(task) {
 
 async function evaluateDescription(task, text) {
   try {
-    const result = await evaluateSemanticAnswer({ serverUrl: SCRIPT_SERVER_URL, taskId: task.taskId, answer: text.trim() });
+    const result = await evaluateSemanticAnswer({ serverUrl: SCRIPT_SERVER_URL, taskId: task.taskId, answer: text.trim(), expectedMaxPoints: task.maxPoints });
     const points = clampPoints(Number(result.points) || 0, task.maxPoints);
     state.ai[task.id] = {
       status: result.status || "noch nicht korrekt",
