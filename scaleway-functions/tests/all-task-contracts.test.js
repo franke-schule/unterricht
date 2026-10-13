@@ -4,7 +4,7 @@ const assert = require('node:assert/strict');
 const core = require('../evaluation-core');
 const { createHandler } = require('../handler');
 
-test('Alle 64 Aufgaben behalten ihre Kennung, den Eingabetyp und das Ergebnisformat', async () => {
+test('Alle Aufgaben behalten ihre Kennung, den Eingabetyp und das Ergebnisformat', async () => {
   let expectedTask;
   let modelCalls = 0;
   const handle = createHandler({ rateLimit: Infinity, env: {
@@ -34,5 +34,5 @@ test('Alle 64 Aufgaben behalten ihre Kennung, den Eingabetyp und das Ergebnisfor
     assert.ok(Array.isArray(payload.result.strengths) && Array.isArray(payload.result.missing));
     assert.equal(typeof payload.result.feedback, 'string');
   }
-  assert.equal(modelCalls, 64);
+  assert.equal(modelCalls, Object.keys(core.TASKS).length);
 });

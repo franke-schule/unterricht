@@ -1,0 +1,94 @@
+Wiederholungsquiz zu Aufgabe 5 – vollständige Löschung
+====================================================
+
+Quiz: Haftreibung als Zentripetalkraft, Physik 11, 1-Kreisbewegungen.
+Modul: aufgabe5.html und haftreibung-zentripetalkraft.mjs.
+Angelegt: 13.10.2026. Löschen nur auf Anweisung der Lehrkraft.
+Online: https://www.florian-franke.org/faecher/physik/klasse-11/1-Kreisbewegungen/aufgabe5-quiz.html
+Kurzlink: https://bycs.link/Phy11-wdh5
+
+Neue Dateien im Repository (alle unter faecher/physik/klasse-11/1-Kreisbewegungen/):
+  aufgabe5-quiz.html
+  aufgabe5-quiz.mjs
+  aufgabe5-quiz.css
+  aufgabe5-quiz-loeschen.txt (diese Anleitung)
+  Die gedruckte Abfrage abfrage-aufgabe-5-haftreibung*.tex/.pdf bleibt erhalten.
+
+Geänderte gemeinsame Dateien:
+  apps-script/Tasks.gs: drei zusammenhängende Blöcke mit Präfix ph11-a5-quiz-
+    direkt vor ph11-kreisbewegungen-zentripetalkraft-beschreibung.
+  apps-script/Config.gs: Kommentarzeile zu phy11/1-Kreisbewegungen/aufgabe5-quiz.html.
+  apps-script/tests/code-routing.test.js: drei IDs unmittelbar nach
+    ph11-a4-quiz-seil-beschreibung in der Beschreibe-Aufgabenliste.
+  scaleway-functions/tests/all-task-contracts.test.js: Aufgabenanzahl wird aus
+    TASKS ermittelt; diese allgemeine Verbesserung bleibt beim Löschen erhalten.
+  scaleway-functions/evaluation-core.js und source-manifest.json: generiert,
+    lokal nicht versioniert. Nach jeder Aufgabenänderung neu bauen.
+
+Präsentation außerhalb dieses Repositorys:
+  ../informatik-material/phy11/1-Kreisbewegungen/phy11-kreisbewegungen.html
+    Folie 9 (id="folie-9", aria-label="Folie 9: Quiz zu Aufgabe 5:
+    Haftreibung als Zentripetalkraft") unmittelbar nach der Modulfolie 8.
+    Die bisherigen Folien 9 und 10 sind jetzt 10 und 11.
+  ../informatik-material/phy11/1-Kreisbewegungen/Phy11-wdh5.svg
+    QR-Code zum obigen Kurzlink, außerdem eingebettet in der Quizfolie.
+  Die übrigen Modulfolien und ihre Lehrercodes bleiben erhalten.
+
+Skriptserver-Aufgaben (Punktzahl = Zahl der Aspekte):
+  ph11-a5-quiz-kurve-beschreibung (Quizaufgabe 4, 4 Punkte):
+    Ein Auto durchfährt eine ebene Kurve; beim Hammerwurf kreist die Kugel am gespannten Seil. Erkläre für beide Situationen, welche reale Kraft oder Kraftsumme die Zentripetalkraft liefert und wie sie die Bewegungsrichtung verändert.
+  ph11-a5-quiz-naesse-beschreibung (Quizaufgabe 5, 4 Punkte):
+    Nach einem Regenschauer ist in derselben ebenen Kurve die Haftreibungszahl kleiner. Begründe, warum dieselbe Geschwindigkeit nun zu hoch sein kann; gehe auf Haftreibungszahl, maximal mögliche Haftreibungskraft, benötigte Zentripetalkraft und eine passende Anpassung der Fahrt ein.
+  ph11-a5-quiz-masse-beschreibung (Quizaufgabe 6, 4 Punkte):
+    Behauptung: „Ein schwerer LKW kann leichter aus der Kurve fliegen als ein kleines Auto“. Bewerte die aufgestellte Behauptung aus physikalischer Sicht.
+
+Checkliste
+----------
+  [ ] Quizdateien löschen:
+      git rm faecher/physik/klasse-11/1-Kreisbewegungen/aufgabe5-quiz.html
+      git rm faecher/physik/klasse-11/1-Kreisbewegungen/aufgabe5-quiz.mjs
+      git rm faecher/physik/klasse-11/1-Kreisbewegungen/aufgabe5-quiz.css
+  [ ] Tasks.gs: alle drei vollständigen Blöcke ph11-a5-quiz- entfernen.
+  [ ] Config.gs: die Kommentarzeile zu aufgabe5-quiz.html entfernen.
+  [ ] code-routing.test.js: die drei IDs entfernen und Kommas prüfen.
+  [ ] Präsentation: die komplette oben bezeichnete Quiz-Section entfernen.
+      Alle nachfolgenden Folien um eins zurückzählen, sowohl id als auch
+      aria-label. Aktuell werden Folien 10 und 11 wieder zu 9 und 10.
+      Bei früheren Löschungen anhand des Folientitels statt der Nummer arbeiten.
+  [ ] Phy11-wdh5.svg neben der Präsentation löschen.
+  [ ] Kurzlink bycs.link/Phy11-wdh5 in der Kurzlinkverwaltung deaktivieren.
+  [ ] Generierten Scaleway-Kern und Paket neu bauen:
+      node scaleway-functions/build-core.js
+      ./scaleway-functions/package.ps1
+  [ ] Restekontrolle in beiden Materialverzeichnissen/Repositorys:
+      git grep -nw "aufgabe5-quiz"
+      git grep -n "ph11-a5-quiz-"
+      git grep -n "Phy11-wdh5"
+      In nicht versionierten Verzeichnissen zusätzlich rg verwenden.
+      Erlaubt sind nur noch Treffer in dieser Anleitung.
+  [ ] Tests ausführen:
+      node --test apps-script/tests/*.test.js
+      node --test scaleway-functions/tests/*.test.js
+      node --test faecher/physik/klasse-11/1-Kreisbewegungen/tests/*.mjs
+      git diff --check
+  [ ] Skriptserver aktualisieren: Die aktuelle Website nutzt Scaleway.
+      Vor dem Upload den laufenden Server mit der lokalen Quelle abgleichen
+      (siehe scaleway-functions/README.md, dort dokumentierte zusätzliche
+      Live-Aufgaben dürfen nicht unbeabsichtigt entfernt werden). Das neu
+      erzeugte ZIP bereitstellen und prüfen, dass die drei IDs entfernt sind.
+      Der Google-Server bleibt ebenfalls erhalten: Tasks.gs und Config.gs
+      dort übernehmen und eine neue Apps-Script-Version bereitstellen.
+  [ ] Website neu hochladen und Präsentation im Browser prüfen.
+  [ ] Änderungen im Unterrichtsrepository und ggf. Materialrepository committen.
+  [ ] Zuletzt diese Anleitung selbst löschen:
+      git rm faecher/physik/klasse-11/1-Kreisbewegungen/aufgabe5-quiz-loeschen.txt
+
+Gemeinsame Komponenten, Menüs und Sicherungsblatt wurden nicht verändert.
+Keine andere Quizdatei wird eingebunden. Die gemeinsamen Stylesheets,
+token-drag.mjs, physics-notation.mjs/.css und semantic-answer.mjs bleiben erhalten.
+
+localStorage-Schlüssel: physik11-kreisbewegungen-aufgabe5-test-v2
+Früherer Schlüssel: physik11-kreisbewegungen-aufgabe5-test-v1
+Die inhaltliche Revision nutzt einen neuen Schlüssel, damit alte Wertungen
+nicht auf geänderte Aufgaben übertragen werden. Beide Einträge dürfen bleiben.
+Er darf in den Browsern zurückbleiben; keine andere Seite liest ihn.

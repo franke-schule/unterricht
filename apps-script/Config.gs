@@ -14,6 +14,7 @@
  * - inf10/1-Datenbanken/aufgabe3-quiz.html (zwei Beschreibe-Aufgaben, nicht verlinkter Test)
  * - phy11/1-Kreisbewegungen/wdh2-quiz.html (eine Beschreibe-Aufgabe, nicht verlinkter Test)
  * - phy11/1-Kreisbewegungen/aufgabe3-quiz.html (drei Beschreibe-Aufgaben, nicht verlinkter Test)
+ * - phy11/1-Kreisbewegungen/aufgabe5-quiz.html (drei Beschreibe-/Begründe-Aufgaben, nicht verlinkter Test)
  * - phy11/1-Kreisbewegungen/aufgabe4-quiz.html (drei Beschreibe-Aufgaben, nicht verlinkter Test)
  * - phy11/1-Kreisbewegungen/aufgabe4-und-experiment-quiz.html (drei Beschreibe-/Begründe-Aufgaben, nicht verlinkter Test)
  * - inf11/1-Kuenstliche-Intelligenz/aufgabe3a-quiz.html (drei Beschreibe-Aufgaben, nicht verlinkter Test)
