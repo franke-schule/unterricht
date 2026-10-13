@@ -10,6 +10,8 @@
 \usepackage{array}
 \usepackage{microtype}
 \usepackage[most]{tcolorbox}
+\usepackage{tikz}
+\usetikzlibrary{arrows.meta}
 
 \pagestyle{empty}
 \setlength{\parindent}{0pt}
@@ -26,6 +28,8 @@
 \definecolor{Muted}{HTML}{617080}
 \definecolor{Line}{HTML}{D8E1E8}
 \definecolor{CodeBg}{HTML}{F5F7F9}
+\definecolor{KeyBg}{HTML}{FFF3D6}
+\definecolor{KeyLine}{HTML}{B87810}
 
 \color{Ink}
 \newcommand{\sectiontitle}[1]{%
@@ -67,8 +71,13 @@
 \rowcolor{Sky}Schritt & Bedingung & Zeilen\\
 Kreuzprodukt & 4 Songs · 4 Zuordnungen · 2 Playlists & 32\\
 Erste Verbindung & \texttt{Song.id = Song\_in\_Playlist.song\_id} & 8\\
+\end{tabularx}
+\begin{tcolorbox}[colback=Mint,colframe=Blue,arc=1.3mm,boxrule=.8pt,
+  left=2mm,right=2mm,top=1.2mm,bottom=1.2mm,before skip=0pt,after skip=0pt]
+\begin{tabularx}{\linewidth}{@{}>{\bfseries}p{38mm}X>{\raggedleft\arraybackslash\bfseries}p{18mm}@{}}
 Vollständiger Verbund & Zusätzlich \texttt{Playlist.id = Song\_in\_Playlist.playlist\_id} & 4\\
 \end{tabularx}
+\end{tcolorbox}
 \vspace{1.1mm}\par
 {\small\textbf{Warum nach der ersten Verbindung noch acht?} Jede passende Song-Zuordnung wird zunächst mit beiden Playlists kombiniert. Erst die zweite Bedingung wählt die zugehörige Playlist aus.}\par
 
@@ -85,6 +94,49 @@ WHERE Song.id = Song\_in\_Playlist.song\_id\par
 \textbf{Merksatz}\par\smallskip
 Beim Verbund werden aus dem Kreuzprodukt nur die Datensätze ausgewählt, deren zusammengehörige Primär- und Fremdschlüssel übereinstimmen. Sind mehrere Verknüpfungsbedingungen nötig, werden sie mit \texttt{AND} verbunden.
 \end{tcolorbox}
+
+\vspace{1.5mm}
+{\centering
+\begingroup
+\setlength{\tabcolsep}{1.8mm}
+\begin{tikzpicture}[>=Latex,
+  dbtable/.style={anchor=north west,inner sep=0pt,outer sep=0pt,font=\small\ttfamily},
+  tablename/.style={anchor=south,font=\small\bfseries\ttfamily,text=Blue}]
+  \node[dbtable] (song) at (0,0) {%
+    \begin{tabular}{|>{\columncolor{KeyBg}}c|l|}\hline
+      \textbf{\shortstack{id\\[-1pt]{\scriptsize PK}}} & \cellcolor{Sky}\textbf{titel}\\\hline
+      1 & Gaslighter\\\hline
+      2 & Wavin‘ Flag\\\hline
+      3 & Try\\\hline
+    \end{tabular}};
+  \node[dbtable] (mapping) at (62mm,0) {%
+    \begin{tabular}{|>{\columncolor{KeyBg}}c|>{\columncolor{Sky}}c|}\hline
+      \textbf{\shortstack{song\_id\\[-1pt]{\scriptsize FK}}} & \textbf{\shortstack{playlist\_id\\[-1pt]{\scriptsize FK}}}\\\hline
+      1 & 1\\\hline
+      2 & 2\\\hline
+      3 & 1\\\hline
+    \end{tabular}};
+  \node[dbtable] (playlist) at (130mm,0) {%
+    \begin{tabular}{|>{\columncolor{Sky}}c|l|}\hline
+      \textbf{\shortstack{id\\[-1pt]{\scriptsize PK}}} & \cellcolor{Sky}\textbf{titel}\\\hline
+      1 & Good Oldies\\\hline
+      2 & Fussballhits\\\hline
+    \end{tabular}};
+  \node[tablename] at ([yshift=9mm]song.north) {Song};
+  \node[tablename] at ([yshift=9mm]mapping.north) {Song\_in\_Playlist};
+  \node[tablename] at ([yshift=9mm]playlist.north) {Playlist};
+  % Die Pfeile beginnen und enden direkt an den passenden Schlüsselspalten.
+  \draw[->,KeyLine,line width=.9pt]
+    ([xshift=9.5mm]mapping.north west) -- ++(0,5mm)
+    -| ([xshift=4.5mm]song.north west);
+  \draw[->,Blue,line width=.9pt]
+    ([xshift=-13mm]mapping.north east) -- ++(0,5mm)
+    -| ([xshift=4.5mm]playlist.north west);
+\end{tikzpicture}\par
+\endgroup}
+\vspace{1mm}
+{\small\textbf{PK:} Primärschlüssel \quad \textbf{FK:} Fremdschlüssel \quad Pfeil: FK verweist auf PK.}\par
+{\small\textbf{Beispiel:} \texttt{song\_id = 3} gehört zu \textbf{Try}; \texttt{playlist\_id = 1} gehört zu \textbf{Good Oldies}.}\par
 
 \vfill{\color{Line}\rule{\linewidth}{.5pt}}\par\vspace{1.5mm}
 \begin{tabularx}{\linewidth}{@{}Xr@{}}{\small\color{Muted}Klasse 10 · Datenbanken} & {\small\color{Muted}Sicherungsblatt · Aufgabe 7}\end{tabularx}
