@@ -348,8 +348,6 @@ assert.equal(
   'inf10-db-a2-aufteilung',
   'inf10-a3-quiz-foto-beschreibung',
   'inf10-a3-quiz-regal-beschreibung',
-  'inf10-a7-quiz-kreuzprodukt-beschreibung',
-  'inf10-a7-quiz-and-beschreibung',
   'ph11-wdh2-quiz-crashtest-beschreibung',
   'ph11-a3-quiz-karussell-beschreibung',
   'ph11-a3-quiz-ursache-beschreibung',
