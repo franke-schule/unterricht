@@ -3,6 +3,29 @@
    auf .relation-types-page bzw. auf neue, additive Klassen. */
 
 .relation-types-page .step-tabs { grid-template-columns: repeat(9, minmax(88px, 1fr)); }
+.relation-types-page.nm-page .step-tabs { grid-template-columns: repeat(9, minmax(0, 1fr)); overflow-x: visible; }
+.relation-types-page.one-one-page .step-tabs { grid-template-columns: repeat(4, minmax(0, 1fr)); overflow-x: visible; }
+.relation-types-page.nm-page .step-tab,
+.relation-types-page.one-one-page .step-tab { min-width: 0; overflow-wrap: anywhere; }
+.relation-types-page.nm-page .table-excerpts { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+.relation-types-page.nm-page .mini-table-card { min-width: 0; overflow-x: auto; }
+.relation-types-page.nm-page .mini-table-card:focus-visible { outline: 3px solid #1663d5; outline-offset: 2px; }
+.song-fields { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 14px; margin: 12px 0; }
+.song-fields label { display: grid; gap: 5px; color: #274966; font-weight: 700; }
+.song-fields input, .nm-page .task-card select { min-width: 0; width: 100%; padding: 9px 10px; border: 1px solid #aec1d8; border-radius: 7px; background: white; color: #172033; font: inherit; }
+.nm-page .task-card select { max-width: 22rem; margin: 7px 0 14px; display: block; }
+.song-chain { display: flex; align-items: center; flex-wrap: wrap; gap: 8px; margin: 14px 0; }
+.song-chain input { width: 3rem; min-height: 44px; padding: 5px; border: 1px solid #aec1d8; border-radius: 7px; text-align: center; font: inherit; }
+.song-fields input:focus-visible, .song-chain input:focus-visible, .nm-page .task-card select:focus-visible { outline: 3px solid #1663d5; outline-offset: 2px; }
+@media (max-width: 850px) {
+  .relation-types-page.nm-page .step-tabs { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+  .relation-types-page.nm-page .table-excerpts { grid-template-columns: 1fr; }
+}
+@media (max-width: 500px) {
+  .relation-types-page.nm-page .step-tabs,
+  .relation-types-page.one-one-page .step-tabs { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .song-fields { grid-template-columns: 1fr; }
+}
 .relation-types-page .table-excerpts.three-up,
 .relation-types-page .r4-tables,
 #r4-tables,

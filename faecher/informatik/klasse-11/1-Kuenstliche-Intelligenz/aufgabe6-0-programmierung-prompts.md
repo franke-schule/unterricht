@@ -60,7 +60,7 @@ Konkrete Referenzen (Pfade relativ zum Repository):
 | Zweck | Referenz |
 | --- | --- |
 | Java-Klassen, Getter, Einbettung mehrerer Dateien und IDE-Dateizugriff | `faecher/informatik/klasse-11/1-Kuenstliche-Intelligenz/aufgabe6.html`, `perzeptron/ui/task6.mjs`, `perzeptron/task6.css` |
-| Gestaltung, Reiter, Hilfen, Zwischenstände und Abschlussübersicht | `faecher/informatik/klasse-11/1-Kuenstliche-Intelligenz/aufgabe5.html`, `perzeptron/ui/task5.mjs`, `perzeptron/task5.css` |
+| Gestaltung, Reiter, Hilfen, Zwischenstände und Abschlussübersicht | `faecher/informatik/klasse-11/1-Kuenstliche-Intelligenz/aufgabe5-2.html`, `perzeptron/ui/task5-2.mjs`, `perzeptron/task5.css` |
 | Klassenkarte, Parameter/Argument und Punktnotation | `faecher/informatik/klasse-10/2-Modellierung-und-Programmierung-Online-IDE/aufgabe6.html` |
 | Mehrere Java-Dateien und Einstieg in die IDE | `faecher/informatik/klasse-9/3-Modellierung-und-Programmierung-Online-IDE/aufgabe2.html` |
 | Abschlussquiz und nummerierte, umbrechende Reiter | `faecher/informatik/klasse-10/1-Datenbanken/aufgabe1.html#final-quiz` bis `aufgabe4.html`, Reiterlayout aus `aufgabe6.html` derselben Datenbankeinheit |

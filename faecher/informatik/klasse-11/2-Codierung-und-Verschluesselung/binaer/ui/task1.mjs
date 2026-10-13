@@ -528,7 +528,7 @@ function setupConvert() {
 
 /* ---------- Reiter 4: Animationen und Inspektor ---------- */
 
-// Schritt-Animation nach dem Muster von setupNextStepper (perzeptron/ui/task5.mjs).
+// Schritt-Animation mit einzelnen, nacheinander eingeblendeten Rechenschritten.
 function setupStepper({ buttonId, statusId, stateKey, steps, render }) {
   const button = $(buttonId);
   const status = $(statusId);

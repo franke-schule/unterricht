@@ -1,5 +1,12 @@
 # Scaleway-Testserver für die Unterrichtswebsite
 
+Stand 13.10.2026: Der Healthcheck der bereitgestellten Function meldet 69
+Aufgaben, die lokale `apps-script/Tasks.gs` enthält 67. Vor einem erneuten
+Codeupload müssen die beiden zusätzlich bereitgestellten Aufgaben mit der
+aktuellen Serverquelle abgeglichen werden. Ein Paket aus dem lokalen Stand
+würde diese Aufgaben sonst entfernen. Die Bewertungsroute `11-5-1` wird
+weiterhin von Modul 5.2 verwendet und muss erhalten bleiben.
+
 Dieser Server übernimmt Aufgaben, Prompts, Bewertungsregeln und Ergebnisformat
 aus `apps-script/`. Der Google-Server bleibt erhalten. Am 10.10.2026 wurden
 35 lokale Website-Dateien auf diesen Server umgestellt; noch nicht veröffentlicht.

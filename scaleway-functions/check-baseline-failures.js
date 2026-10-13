@@ -7,7 +7,6 @@ const repo = path.resolve(__dirname, '..');
 const log = JSON.parse(fs.readFileSync(path.join(__dirname, 'website-migration-log.json'), 'utf8'));
 const root = path.join(repo, 'tmp/scaleway-baseline-tests');
 const files = [
-  'faecher/informatik/klasse-11/1-Kuenstliche-Intelligenz/perzeptron/tests/task5-contract.test.mjs',
   'faecher/physik/klasse-11/1-Kreisbewegungen/tests/kraefte-bewegung-config.test.mjs',
   'faecher/physik/klasse-11/1-Kreisbewegungen/tests/zentripetalkraft-config.test.mjs'
 ];
@@ -32,10 +31,9 @@ for (const file of files) {
     output = String(error.stderr);
     assert.match(output, /AssertionError/);
   }
-  const reason = file.includes('task5-contract') ? 'CSV-Kopfzeile Zahnlaenge/Augengroesse statt Umlauten' :
-    file.includes('kraefte-bewegung') ? 'Veraltete Koordinatenprüfung der Sicherungsblatt-Grafik' :
+  const reason = file.includes('kraefte-bewegung') ? 'Veraltete Koordinatenprüfung der Sicherungsblatt-Grafik' :
       'Veralteter Filter der Eyebrow-Überschrift';
   result.push({ file, failedBeforeMigration: true, reason });
 }
 fs.writeFileSync(path.join(repo, 'tmp/scaleway-baseline-failures.json'), JSON.stringify(result, null, 2) + '\n');
-console.log('Alle drei Fehler mit dem unveränderten Ausgangsstand reproduziert; unabhängig von der Migration.');
+console.log('Beide Fehler mit dem unveränderten Ausgangsstand reproduziert; unabhängig von der Migration.');

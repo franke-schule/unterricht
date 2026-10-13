@@ -1,0 +1,97 @@
+\documentclass[10pt,a4paper]{article}
+
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage[ngerman]{babel}
+\usepackage[a4paper,margin=14mm]{geometry}
+\usepackage{lmodern}
+\usepackage[table]{xcolor}
+\usepackage{tabularx}
+\usepackage{array}
+\usepackage{microtype}
+\usepackage[most]{tcolorbox}
+
+\pagestyle{empty}
+\setlength{\parindent}{0pt}
+\setlength{\parskip}{0pt}
+\renewcommand{\familydefault}{\sfdefault}
+\renewcommand{\arraystretch}{1.16}
+
+\definecolor{Navy}{HTML}{17324D}
+\definecolor{Blue}{HTML}{3B6EA5}
+\definecolor{Sky}{HTML}{EAF3FA}
+\definecolor{Mint}{HTML}{E8F5EF}
+\definecolor{Gold}{HTML}{F3B33D}
+\definecolor{Ink}{HTML}{1E2935}
+\definecolor{Muted}{HTML}{617080}
+\definecolor{Line}{HTML}{D8E1E8}
+\definecolor{CodeBg}{HTML}{F5F7F9}
+
+\color{Ink}
+\newcommand{\sectiontitle}[1]{%
+  \vspace{2.3mm}{\color{Blue}\bfseries\large #1}\par
+  \vspace{0.7mm}{\color{Blue}\rule{\linewidth}{0.7pt}}\par\vspace{1.2mm}}
+\newcommand{\schema}[1]{\colorbox{CodeBg}{\parbox{\dimexpr\linewidth-2\fboxsep\relax}{\ttfamily\small #1}}}
+
+\begin{document}
+
+\colorbox{Navy}{\parbox{\dimexpr\linewidth-2\fboxsep\relax}{%
+  \vspace{3mm}\color{white}\begin{tabularx}{\linewidth}{@{}Xr@{}}
+  {\small\bfseries INFORMATIK · KLASSE 10} & \colorbox{Gold}{\color{Navy}\small\bfseries\strut LÖSUNGEN}\end{tabularx}
+  \vspace{2.4mm}{\fontsize{18}{21}\selectfont\bfseries Aufgabe 8 -- 1:1- und n:m-Beziehungen}\par
+  \vspace{0.8mm}{\large Sicherungsblatt}\vspace{2.8mm}}}
+
+\vspace{2.5mm}
+\colorbox{Sky}{\parbox{\dimexpr\linewidth-2\fboxsep\relax}{\vspace{1.6mm}
+\textcolor{Blue}{\bfseries Ziel:} Du erkennst 1:1- und n:m-Beziehungen und setzt sie mit Fremdschlüsseln und Hilfstabellen um.\vspace{1.6mm}}}
+
+\sectiontitle{1 · 1:1-Beziehung: Klasse und Klassenleiter}
+{\small\texttt{klasse.id = 1} (10a) gehört zu \texttt{klassenleiter.klasse\_id = 1} (KOH). Ebenso: 10b -- SEI und 10c -- BRA. Jede Klasse hat genau einen Klassenleiter; jeder Klassenleiter leitet genau eine Klasse.}\par\vspace{1.1mm}
+{\centering\bfseries\textcolor{Blue}{Klasse \quad 1 \;\rule{32mm}{0.7pt}\; 1 \quad Klassenleiter}\par}
+\vspace{1.2mm}
+\begin{minipage}[t]{0.48\linewidth}
+\textcolor{Blue}{\bfseries Möglichkeit A}\par\vspace{0.6mm}
+\schema{klasse (id: int, name: varchar(255))\par
+klassenleiter (id: int, kuerzel: varchar(255),\par\quad klasse\_id[klasse]: int)}
+\end{minipage}\hfill
+\begin{minipage}[t]{0.48\linewidth}
+\textcolor{Blue}{\bfseries Möglichkeit B}\par\vspace{0.6mm}
+\schema{klasse (id: int, name: varchar(255),\par\quad klassenleiter\_id[klassenleiter]: int)\par
+klassenleiter (id: int, kuerzel: varchar(255))}
+\end{minipage}
+\vspace{1.2mm}\par
+{\small\textbf{Merke:} Bei 1:1 kann der Fremdschlüssel in einer der beiden Tabellen stehen. Ein Fremdschlüssel genügt; er wird nicht in beide Tabellen eingetragen.}\par
+
+\sectiontitle{2 · n:m-Beziehung: Schüler und AG}
+{\small Lina besucht Robotik und Theater; die Theater-AG besuchen Lina und Mia. Ein einzelner Fremdschlüssel in \texttt{schueler} oder \texttt{ag} könnte die mehreren Zuordnungen nicht speichern.}\par\vspace{0.8mm}
+{\centering\bfseries\textcolor{Blue}{Schüler \quad n \;\rule{32mm}{0.7pt}\; m \quad AG}\par}
+\vspace{1mm}
+\begin{minipage}[t]{0.42\linewidth}
+\textcolor{Blue}{\bfseries Hilfstabelle}\par\vspace{0.6mm}
+\schema{teilnahme (\par\quad schueler\_id[schueler]: int\par\quad ag\_id[ag]: int\par)}
+\end{minipage}\hfill
+\begin{minipage}[t]{0.55\linewidth}
+\textcolor{Blue}{\bfseries Beispiele aus teilnahme}\par\vspace{0.6mm}
+{\small\ttfamily
+\begin{tabular}{|c|c|l|}\hline
+\rowcolor{Sky}schueler\_id & ag\_id & Zuordnung\\\hline
+1 & 1 & Lina -- Robotik\\
+1 & 2 & Lina -- Theater\\
+3 & 2 & Mia -- Theater\\\hline
+\end{tabular}}
+\end{minipage}
+\vspace{1.1mm}\par
+{\small\textbf{Merke:} Jede Zeile der Hilfstabelle enthält die Primärschlüssel beider Tabellen als Fremdschlüssel. Aus der n:m-Beziehung werden zwei 1:n-Beziehungen: \texttt{schueler} \textbf{1--n} \texttt{teilnahme} \textbf{n--1} \texttt{ag}. Eine neue Anmeldung (Ben im Chor) ergänzt eine Zeile mit \texttt{schueler\_id = 2} und \texttt{ag\_id = 3}.}\par
+
+\sectiontitle{3 · Hilfstabellen in InstaHub}
+{\small\begin{tabularx}{\linewidth}{@{}>{\ttfamily\bfseries\color{Blue}}p{24mm}X@{}}
+likes & \texttt{user\_id = 18, photo\_id = 14}: Benutzer 18 hat Foto 14 geliked. \texttt{photos.user\_id} nennt dagegen die Person, die das Foto hochgeladen hat.\\[1mm]
+follows & \texttt{follower\_id} bezeichnet, wer folgt; \texttt{following\_id}, wem gefolgt wird. Beide Fremdschlüssel verweisen auf \texttt{users}. Gegenseitiges Folgen braucht zwei Zeilen.\end{tabularx}}\par\vspace{1mm}
+\begin{tcolorbox}[colback=Mint,colframe=Blue,arc=2mm,boxrule=.8pt,left=3mm,right=3mm,top=1.7mm,bottom=1.7mm]
+\textbf{Merksatz}\par\smallskip
+Bei 1:1 steht der Fremdschlüssel in einer der beiden Tabellen. Bei n:m werden die Zuordnungen in einer Hilfstabelle mit zwei Fremdschlüsseln gespeichert.
+\end{tcolorbox}
+
+\vfill{\color{Line}\rule{\linewidth}{.5pt}}\par\vspace{1.5mm}
+\begin{tabularx}{\linewidth}{@{}Xr@{}}{\small\color{Muted}Klasse 10 · Datenbanken} & {\small\color{Muted}Sicherungsblatt · Aufgabe 8}\end{tabularx}
+\end{document}

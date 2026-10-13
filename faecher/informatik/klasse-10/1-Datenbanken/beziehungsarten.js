@@ -9,7 +9,8 @@ import {
   evaluateSchluesselSchlossAnswer, R4_CLOZES, r4ClozeGapIds, evaluateCloze, normalizeClozeAnswer,
 } from './beziehungsarten-daten.mjs?v=20260928a';
 
-const STORAGE_KEY = "informatik10-datenbanken-aufgabe8-v1";
+const STORAGE_KEY = "informatik10-datenbanken-aufgabe8-alt-v1";
+const LEGACY_STORAGE_KEY = "informatik10-datenbanken-aufgabe8-v1";
 const STEP_TITLES = ["1:1 entdecken", "1:1 umsetzen", "n:m entdecken", "Anmeldungen", "InstaHub", "likes", "follows", "Abschlussquiz"];
 const TAB_ITEMS = [...STEP_TITLES.map((label, index) => ({ id: index + 1, label })), { id: "summary", label: "Übersicht" }];
 
@@ -78,6 +79,7 @@ function emptyDefaultState() {
     currentStep: 1,
     completed: [],
     summaryUnlocked: false,
+    solutionUnlocks: { quiz: false, summary: false },
     solved: [],
     r1: { drag: { 1: "", 2: "", 3: "" }, f1a: "", f1b: "", klasse: "", klassenleiter: "" },
     r2: { schema: [], schluesselA: "", schluesselB: "", schemaTextA: "", schemaTextB: "" },
@@ -151,6 +153,7 @@ function sanitizeStateFields(saved) {
 
   return {
     currentStep, completed, summaryUnlocked, solved,
+    solutionUnlocks: { quiz: saved.solutionUnlocks?.quiz === true, summary: saved.solutionUnlocks?.summary === true },
     r1: {
       drag: r1Drag,
       f1a: sanitizeChoice(saved.r1?.f1a, R1_F1A_OPTIONS.map((o) => o.id)),
@@ -192,7 +195,7 @@ function sanitizeStateFields(saved) {
 }
 
 function loadState() {
-  try { return sanitizeState(JSON.parse(localStorage.getItem(STORAGE_KEY))); }
+  try { return sanitizeState(JSON.parse(localStorage.getItem(STORAGE_KEY) ?? localStorage.getItem(LEGACY_STORAGE_KEY))); }
   catch { return emptyDefaultState(); }
 }
 
@@ -889,7 +892,7 @@ function bindEvents() {
     onAllCorrect: () => document.getElementById("final-quiz").requestSubmit(),
   });
   document.getElementById("reset-module").addEventListener("click", () => {
-    if (window.confirm("Möchtest du alle Eingaben und den Fortschritt zurücksetzen?")) { localStorage.removeItem(STORAGE_KEY); window.location.reload(); }
+    if (window.confirm("Möchtest du alle Eingaben und den Fortschritt zurücksetzen?")) { try { localStorage.setItem(STORAGE_KEY, JSON.stringify(emptyDefaultState())); } catch {} window.location.reload(); }
   });
 
   // Radio-/Checkbox-Gruppen: Jede Änderung übernimmt den Wert sofort in den
@@ -969,10 +972,26 @@ function init() {
   renderR7Tables();
   renderR1DragDrop();
   restoreInputs();
+  document.getElementById("solution-download-link").hidden = !state.solutionUnlocks.quiz;
+  document.getElementById("solution-download-link-summary").hidden = !state.solutionUnlocks.summary;
   renderTabs();
   bindEvents();
   navigateTo(state.currentStep);
   updateNavigation();
 }
+
+function unlockSolution(event, expectedCode, downloadLinkId, messageId) {
+  event.preventDefault();
+  const entered = event.currentTarget.elements["solution-code"].value.toUpperCase().replace(/[^A-Z0-9]/g, "");
+  const expected = expectedCode.toUpperCase().replace(/[^A-Z0-9]/g, "");
+  const ok = entered === expected;
+  document.getElementById(downloadLinkId).hidden = !ok;
+  const message = document.getElementById(messageId);
+  message.className = `solution-code-message ${ok ? "" : "error"}`;
+  message.textContent = ok ? "Code korrekt. Das Sicherungsblatt ist freigeschaltet." : "Der eingegebene Code ist nicht gültig.";
+  state.solutionUnlocks[downloadLinkId.endsWith("-summary") ? "summary" : "quiz"] = ok;
+  saveState();
+}
+window.unlockSolution = unlockSolution;
 
 document.addEventListener("DOMContentLoaded", init);

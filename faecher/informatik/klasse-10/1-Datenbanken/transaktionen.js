@@ -8,9 +8,10 @@ import {
   TRANSAKTIONEN_QUIZ, evaluateQuizQuestion,
 } from './transaktionen-daten.mjs?v=20260926a';
 
-const STORAGE_KEY = "informatik10-datenbanken-aufgabe9-v1";
-const STEP_TITLES = ["Datenpflege", "Namen ändern", "Fotos löschen", "Foto einfügen", "Regeln", "Schule", "Abschlussquiz"];
-const TAB_ITEMS = [...STEP_TITLES.map((label, index) => ({ id: index + 1, label })), { id: "summary", label: "Auswertung" }];
+const STORAGE_KEY = "informatik10-datenbanken-aufgabe11-v1";
+const LEGACY_STORAGE_KEY = "informatik10-datenbanken-aufgabe9-v1";
+const STEP_TITLES = ["Datenpflege", "Namen ändern", "Fotos löschen", "Foto einfügen", "Regeln", "Schule", "Auswertung", "Abschlussquiz"];
+const TAB_ITEMS = STEP_TITLES.map((label, index) => ({ id: index + 1, label }));
 
 function unlockSolution(event, expectedCode, downloadLinkId, messageId) {
   event.preventDefault();
@@ -20,11 +21,15 @@ function unlockSolution(event, expectedCode, downloadLinkId, messageId) {
   const message = document.getElementById(messageId);
   if (enteredCode === normalizedExpectedCode) {
     downloadLink.hidden = false;
+    state.solutionUnlocks[downloadLinkId.endsWith("-summary") ? "summary" : "quiz"] = true;
+    saveState();
     message.className = "solution-code-message";
     message.textContent = "Code korrekt. Das Sicherungsblatt ist freigeschaltet.";
     return;
   }
   downloadLink.hidden = true;
+  state.solutionUnlocks[downloadLinkId.endsWith("-summary") ? "summary" : "quiz"] = false;
+  saveState();
   message.className = "solution-code-message error";
   message.textContent = "Der eingegebene Code ist nicht gültig.";
 }
@@ -37,7 +42,7 @@ const STEP_SUBTASKS = {
   4: ["s4-f4a", "s4-f4b"],
   5: ["s5-drag", "s5-f5b"],
   6: ["s6-drag", "s6-f6b"],
-  7: ["s7-quiz"],
+  8: ["s7-quiz"],
 };
 const ALL_SUBTASK_IDS = Object.values(STEP_SUBTASKS).flat();
 
@@ -172,6 +177,7 @@ function emptyDefaultState() {
     currentStep: 1,
     completed: [],
     summaryUnlocked: false,
+    solutionUnlocks: { quiz: false, summary: false },
     solved: [],
     s1: { drag: { 1: "", 2: "", 3: "", 4: "" }, f1b: [] },
     s2: { executed: false, f2a: "", f2b: [] },
@@ -210,13 +216,14 @@ function sanitizeState(saved) {
   if (!saved || typeof saved !== "object") return fresh;
   const solved = Array.isArray(saved.solved) ? saved.solved.filter((id) => ALL_SUBTASK_IDS.includes(id)) : [];
   const summaryUnlocked = saved.summaryUnlocked === true;
-  const completed = Array.isArray(saved.completed) ? saved.completed.filter((step) => Number.isInteger(step) && step >= 1 && step <= 7) : [];
+  const solutionUnlocks = { quiz: saved.solutionUnlocks?.quiz === true, summary: saved.solutionUnlocks?.summary === true };
+  const completed = Array.isArray(saved.completed) ? saved.completed.filter((step) => Number.isInteger(step) && step >= 1 && step <= 8).map((step) => step === 7 ? 8 : step) : [];
   let currentStep = saved.currentStep;
-  if (currentStep === "summary") { if (!summaryUnlocked) currentStep = 1; }
-  else if (!(Number.isInteger(currentStep) && currentStep >= 1 && currentStep <= 7)) currentStep = 1;
+  if (currentStep === "summary") currentStep = summaryUnlocked ? 7 : 1;
+  else if (!(Number.isInteger(currentStep) && currentStep >= 1 && currentStep <= 8)) currentStep = 1;
 
   return {
-    currentStep, completed, summaryUnlocked, solved,
+    currentStep, completed, summaryUnlocked, solved, solutionUnlocks,
     s1: {
       drag: sanitizeDragState(saved.s1?.drag, [1, 2, 3, 4], S1_COMMANDS),
       f1b: sanitizeArray(saved.s1?.f1b, S1_F1B_OPTIONS.map((o) => o.id)),
@@ -249,7 +256,13 @@ function sanitizeState(saved) {
 }
 
 function loadState() {
-  try { return sanitizeState(JSON.parse(localStorage.getItem(STORAGE_KEY))); }
+  try {
+    const current = localStorage.getItem(STORAGE_KEY);
+    const legacy = current === null ? localStorage.getItem(LEGACY_STORAGE_KEY) : null;
+    const parsed = JSON.parse(current ?? legacy);
+    if (legacy !== null && parsed && typeof parsed === "object" && parsed.currentStep === 7) parsed.currentStep = parsed.summaryUnlocked ? 7 : 8;
+    return sanitizeState(parsed);
+  }
   catch { return emptyDefaultState(); }
 }
 
@@ -751,22 +764,22 @@ function checkQuiz(event) {
   const results = TRANSAKTIONEN_QUIZ.map((question) => evaluateQuizQuestion(question, state.s7[question.id]));
   const correctCount = results.filter(Boolean).length;
   if (correctCount === TRANSAKTIONEN_QUIZ.length) {
-    setFeedback("step7", "success", "Richtig: Alle sechs Fragen stimmen. Die Auswertung ist jetzt freigeschaltet.");
+    setFeedback("step8", "success", "Richtig: Alle sechs Fragen stimmen. Die Auswertung ist jetzt freigeschaltet.");
     state.summaryUnlocked = true;
     markSolved("s7-quiz");
     saveState();
-    setTimeout(() => navigateTo("summary"), 300);
+    setTimeout(() => navigateTo(7), 300);
     return;
   }
   const anyEmpty = TRANSAKTIONEN_QUIZ.some((question) => !state.s7[question.id].length);
-  if (anyEmpty) { setFeedback("step7", "hint", "Noch nicht korrekt: Beantworte alle sechs Fragen. Bei manchen Fragen sind mehrere Antworten richtig."); return; }
+  if (anyEmpty) { setFeedback("step8", "hint", "Noch nicht korrekt: Beantworte alle sechs Fragen. Bei manchen Fragen sind mehrere Antworten richtig."); return; }
   if (correctCount >= 1) {
     const wrongNumbers = results.map((ok, index) => (ok ? null : index + 1)).filter(Boolean);
     const firstWrong = wrongNumbers[0];
-    setFeedback("step7", "partial", `Teilweise korrekt: ${correctCount} von 6 Fragen sind vollständig richtig. Prüfe noch Frage ${wrongNumbers.join(", ")}. Tipp zu Frage ${firstWrong}: ${TRANSAKTIONEN_QUIZ[firstWrong - 1].hint}`);
+    setFeedback("step8", "partial", `Teilweise korrekt: ${correctCount} von 6 Fragen sind vollständig richtig. Prüfe noch Frage ${wrongNumbers.join(", ")}. Tipp zu Frage ${firstWrong}: ${TRANSAKTIONEN_QUIZ[firstWrong - 1].hint}`);
     return;
   }
-  setFeedback("step7", "hint", `Noch nicht korrekt: Keine Frage ist vollständig richtig. Tipp zu Frage 1: ${TRANSAKTIONEN_QUIZ[0].hint}`);
+  setFeedback("step8", "hint", `Noch nicht korrekt: Keine Frage ist vollständig richtig. Tipp zu Frage 1: ${TRANSAKTIONEN_QUIZ[0].hint}`);
 }
 
 // ---------------------------------------------------------------------------
@@ -776,32 +789,32 @@ function renderTabs() {
   const tabs = document.getElementById("step-tabs");
   tabs.innerHTML = STEP_TITLES.map((title, index) => {
     const step = index + 1;
-    return `<button id="tab-${step}" class="step-tab ${state.completed.includes(step) ? "is-complete" : ""}" type="button" role="tab" aria-controls="step-${step}" aria-selected="${state.currentStep === step}" data-step="${step}"><span>${step}</span><small>${title}</small></button>`;
-  }).join("") + `<button id="tab-summary" class="step-tab" type="button" role="tab" aria-controls="step-summary" aria-selected="${state.currentStep === "summary"}" data-step="summary" ${state.summaryUnlocked ? "" : "hidden"}><span>${STEP_TITLES.length + 1}</span><small>Auswertung</small></button>`;
-  tabs.querySelectorAll("button").forEach((button) => button.addEventListener("click", () => navigateTo(button.dataset.step === "summary" ? "summary" : Number(button.dataset.step))));
+    return `<button id="tab-${step}" class="step-tab ${state.completed.includes(step) ? "is-complete" : ""}" type="button" role="tab" aria-controls="step-${step}" aria-selected="${state.currentStep === step}" data-step="${step}" ${step === 7 && !state.summaryUnlocked ? "hidden" : ""}><span>${step}</span><small>${title}</small></button>`;
+  }).join("");
+  tabs.querySelectorAll("button").forEach((button) => button.addEventListener("click", () => navigateTo(Number(button.dataset.step))));
   enableTabKeyboardNavigation(tabs);
   syncTabSemantics(tabs, state.currentStep);
 }
 function navigateTo(step, { focusContent = false } = {}) {
-  if (step === "summary" && !state.summaryUnlocked) return;
+  if (step === 7 && !state.summaryUnlocked) return;
   document.querySelectorAll(".step-panel").forEach((panel) => { panel.hidden = panel.id !== `step-${step}`; });
   state.currentStep = step;
   saveState();
   renderTabs();
   updateNavigation();
-  if (step === "summary") renderSummary();
+  if (step === 7) renderSummary();
   const panel = document.getElementById(`step-${step}`);
   syncTabSemantics(document.getElementById("step-tabs"), state.currentStep);
   if (focusContent) focusTabPanelStart(panel);
   else window.scrollTo({ top: 0, behavior: "smooth" });
 }
 function updateNavigation() {
-  const percent = Math.round((state.completed.filter((step) => step >= 1 && step <= 7).length / 7) * 100);
+  const percent = Math.round((state.completed.filter((step) => step >= 1 && step <= 8).length / 8) * 100);
   document.getElementById("progress-bar").style.width = `${percent}%`;
   document.getElementById("progress-percent").textContent = `${percent} % bearbeitet`;
-  document.getElementById("progress-label").textContent = state.currentStep === "summary" ? "Abschlussübersicht" : `Schritt ${state.currentStep} von 7`;
+  document.getElementById("progress-label").textContent = `Schritt ${state.currentStep} von 8`;
   const panel = document.getElementById(`step-${state.currentStep}`);
-  if (panel) renderTabFlowNavigation(panel, { items: TAB_ITEMS, currentId: state.currentStep, onNavigate: navigateTo, isEnabled: (id) => (id === "summary" ? state.summaryUnlocked : true) });
+  if (panel) renderTabFlowNavigation(panel, { items: TAB_ITEMS, currentId: state.currentStep, onNavigate: navigateTo, isEnabled: (id) => (id === 7 ? state.summaryUnlocked : true) });
 }
 function renderSummary() {
   const entries = [
@@ -811,7 +824,7 @@ function renderSummary() {
     ["4. Foto einfügen", "Führe das INSERT ohne name und username aus. Wem gehört das Foto?", "Niemandem: name und username sind NULL. Auch ein Benutzer ohne Foto ließe sich nur mit leeren Zellen speichern: INSERT-Anomalie."],
     ["5. Regeln", "Warum lehnt das Datenbanksystem die Anweisungen A, B und C ab?", "A: id 1001 ist schon vergeben (Entitätsintegrität). B: »Sommer 2008« ist kein Datum (Wertebereichsintegrität). C: Einen Benutzer 999 gibt es nicht (referentielle Integrität)."],
     ["6. Schule", "Gegen welche Integritätsbedingung verstößt jede Anweisung?", "1: Entitätsintegrität, 2: wird ausgeführt, 3: referentielle Integrität, 4: Wertebereichsintegrität. Anweisung 3 würde eine Anmeldung für eine AG speichern, die es nicht gibt."],
-    ["7. Abschlussquiz", "Sichere Datenpflege, Anomalien und Integritätsbedingungen.", "Alle sechs Fragen richtig beantwortet."],
+    ["8. Abschlussquiz", "Sichere Datenpflege, Anomalien und Integritätsbedingungen.", "Alle sechs Fragen richtig beantwortet."],
   ];
   document.getElementById("answer-summary").innerHTML = entries.map(([title, prompt, result]) => `<section class="summary-section"><h3>${title}</h3><p class="prompt">${prompt}</p><dl class="summary-grid"><dt>Richtiges Ergebnis</dt><dd>${result}</dd></dl></section>`).join("");
 }
@@ -866,7 +879,7 @@ function bindEvents() {
   });
   document.getElementById("print-summary").addEventListener("click", () => window.print());
   document.getElementById("reset-module").addEventListener("click", () => {
-    if (window.confirm("Möchtest du alle Eingaben und den Fortschritt zurücksetzen?")) { localStorage.removeItem(STORAGE_KEY); window.location.reload(); }
+    if (window.confirm("Möchtest du alle Eingaben und den Fortschritt zurücksetzen?")) { try { localStorage.setItem(STORAGE_KEY, JSON.stringify(emptyDefaultState())); } catch {} window.location.reload(); }
   });
 
   // Radio-/Checkbox-Gruppen: Jede Änderung übernimmt den Wert sofort in den
@@ -897,7 +910,7 @@ function bindEvents() {
   bindCheckboxGroup("s5-f5b", (v) => { state.s5.f5b = v; }, "s5-f5b");
   bindRadioGroup("s6-f6b", (v) => { state.s6.f6b = v; }, "s6-f6b");
   TRANSAKTIONEN_QUIZ.forEach((question, index) => {
-    bindCheckboxGroup(`quiz-q${index + 1}`, (v) => { state.s7[question.id] = v; }, "step7");
+    bindCheckboxGroup(`quiz-q${index + 1}`, (v) => { state.s7[question.id] = v; }, "step8");
   });
 }
 
@@ -911,6 +924,8 @@ function init() {
   renderS6Tables();
   renderDragDrop(s6Instance);
   restoreInputs();
+  document.getElementById("solution-download-link").hidden = !state.solutionUnlocks.quiz;
+  document.getElementById("solution-download-link-summary").hidden = !state.solutionUnlocks.summary;
   renderTabs();
   bindEvents();
   navigateTo(state.currentStep);

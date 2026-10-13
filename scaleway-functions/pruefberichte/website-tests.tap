@@ -1,4 +1,5 @@
 TAP version 13
+# Historischer Bericht; entfernter Test bereinigt, Laufzeit des ursprünglichen Laufs.
 # Alle Tests für beziehungsarten.test.mjs sind gruen.
 # Subtest: faecher\\informatik\\klasse-10\\1-Datenbanken\\tests\\beziehungsarten.test.mjs
 ok 1 - faecher\\informatik\\klasse-10\\1-Datenbanken\\tests\\beziehungsarten.test.mjs
@@ -117,223 +118,223 @@ ok 18 - Nur die Easy-Speicherung wird durch Datensatzversion 2 invalidiert
   type: 'test'
   ...
 # Subtest: Auswertung deckt vollständig, teilweise und komplett falsch ab
-ok 19 - Auswertung deckt vollständig, teilweise und komplett falsch ab
+ok 18 - Auswertung deckt vollständig, teilweise und komplett falsch ab
   ---
   duration_ms: 1.292
   type: 'test'
   ...
 # Subtest: Auch die fortgeschrittenen Trainingsdaten lassen sich vollständig trennen
-ok 20 - Auch die fortgeschrittenen Trainingsdaten lassen sich vollständig trennen
+ok 19 - Auch die fortgeschrittenen Trainingsdaten lassen sich vollständig trennen
   ---
   duration_ms: 0.9399
   type: 'test'
   ...
 # Subtest: Testdaten besitzen die geforderten Größen und Klassenverteilungen
-ok 21 - Testdaten besitzen die geforderten Größen und Klassenverteilungen
+ok 20 - Testdaten besitzen die geforderten Größen und Klassenverteilungen
   ---
   duration_ms: 12.5844
   type: 'test'
   ...
 # Subtest: Testdaten überschneiden sich nicht mit Trainingsdaten derselben Variante
-ok 22 - Testdaten überschneiden sich nicht mit Trainingsdaten derselben Variante
+ok 21 - Testdaten überschneiden sich nicht mit Trainingsdaten derselben Variante
   ---
   duration_ms: 22.0123
   type: 'test'
   ...
 # Subtest: Konfusionsmatrix bildet TP, FP, FN und TN korrekt ab
-ok 23 - Konfusionsmatrix bildet TP, FP, FN und TN korrekt ab
+ok 22 - Konfusionsmatrix bildet TP, FP, FN und TN korrekt ab
   ---
   duration_ms: 0.9169
   type: 'test'
   ...
 # Subtest: Ein Testdatum wird höchstens einmal aufgenommen
-ok 24 - Ein Testdatum wird höchstens einmal aufgenommen
+ok 23 - Ein Testdatum wird höchstens einmal aufgenommen
   ---
   duration_ms: 0.4776
   type: 'test'
   ...
 # Subtest: Beide Vergleichsbäume erreichen 12 von 12 Trainingsdaten
-ok 25 - Beide Vergleichsbäume erreichen 12 von 12 Trainingsdaten
+ok 24 - Beide Vergleichsbäume erreichen 12 von 12 Trainingsdaten
   ---
   duration_ms: 1.3337
   type: 'test'
   ...
 # Subtest: Vergleichsbäume behalten die unterschiedliche Reihenfolge ihrer ersten Merkmale
-ok 26 - Vergleichsbäume behalten die unterschiedliche Reihenfolge ihrer ersten Merkmale
+ok 25 - Vergleichsbäume behalten die unterschiedliche Reihenfolge ihrer ersten Merkmale
   ---
   duration_ms: 0.2855
   type: 'test'
   ...
 # Subtest: Äffchen 03 enthält die im Training unbekannte Kombination aus X-Augen und sichtbaren Zähnen
-ok 27 - Äffchen 03 enthält die im Training unbekannte Kombination aus X-Augen und sichtbaren Zähnen
+ok 26 - Äffchen 03 enthält die im Training unbekannte Kombination aus X-Augen und sichtbaren Zähnen
   ---
   duration_ms: 0.5281
   type: 'test'
   ...
 # Subtest: Originaler Easy-Zweimerkmal-Baum klassifiziert 8 von 8 Testaffen korrekt
-ok 28 - Originaler Easy-Zweimerkmal-Baum klassifiziert 8 von 8 Testaffen korrekt
+ok 27 - Originaler Easy-Zweimerkmal-Baum klassifiziert 8 von 8 Testaffen korrekt
   ---
   duration_ms: 9.0395
   type: 'test'
   ...
 # Subtest: Baum A erreicht 8/8, Baum B 7/8 und nur Äffchen 03 unterscheidet sich
-ok 29 - Baum A erreicht 8/8, Baum B 7/8 und nur Äffchen 03 unterscheidet sich
+ok 28 - Baum A erreicht 8/8, Baum B 7/8 und nur Äffchen 03 unterscheidet sich
   ---
   duration_ms: 1.1512
   type: 'test'
   ...
 # Subtest: Fischdatensatz enthält die geforderten neun gelabelten Trainingsdaten
-ok 30 - Fischdatensatz enthält die geforderten neun gelabelten Trainingsdaten
+ok 29 - Fischdatensatz enthält die geforderten neun gelabelten Trainingsdaten
   ---
   duration_ms: 4.0265
   type: 'test'
   ...
 # Subtest: erste vier Splits liefern die geforderten Fehler und Informationsgewinne
-ok 31 - erste vier Splits liefern die geforderten Fehler und Informationsgewinne
+ok 30 - erste vier Splits liefern die geforderten Fehler und Informationsgewinne
   ---
   duration_ms: 1.2506
   type: 'test'
   ...
 # Subtest: blaue Teilmenge erkennt Gleichstand und orange Teilmenge Bauchfarbe
-ok 32 - blaue Teilmenge erkennt Gleichstand und orange Teilmenge Bauchfarbe
+ok 31 - blaue Teilmenge erkennt Gleichstand und orange Teilmenge Bauchfarbe
   ---
   duration_ms: 1.416
   type: 'test'
   ...
 # Subtest: letzter Split Blau/Punkte wird durch Bauchfarbe fehlerfrei
-ok 33 - letzter Split Blau/Punkte wird durch Bauchfarbe fehlerfrei
+ok 32 - letzter Split Blau/Punkte wird durch Bauchfarbe fehlerfrei
   ---
   duration_ms: 0.7697
   type: 'test'
   ...
 # Subtest: Referenzbaum und fachlich äquivalenter Gleichstandsbaum werden logisch erkannt
-ok 34 - Referenzbaum und fachlich äquivalenter Gleichstandsbaum werden logisch erkannt
+ok 33 - Referenzbaum und fachlich äquivalenter Gleichstandsbaum werden logisch erkannt
   ---
   duration_ms: 23.9664
   type: 'test'
   ...
 # Subtest: Zahleneingaben und Entropieformeln behandeln typische Eingaben robust
-ok 35 - Zahleneingaben und Entropieformeln behandeln typische Eingaben robust
+ok 34 - Zahleneingaben und Entropieformeln behandeln typische Eingaben robust
   ---
   duration_ms: 3.247
   type: 'test'
   ...
 # Subtest: Abschlussquiz des Pflichtteils nutzt Mehrfachauswahl ohne Entropie
-ok 36 - Abschlussquiz des Pflichtteils nutzt Mehrfachauswahl ohne Entropie
+ok 35 - Abschlussquiz des Pflichtteils nutzt Mehrfachauswahl ohne Entropie
   ---
   duration_ms: 1.4792
   type: 'test'
   ...
 # Subtest: Entropiequiz enthält vier eindeutig auswertbare Fragen
-ok 37 - Entropiequiz enthält vier eindeutig auswertbare Fragen
+ok 36 - Entropiequiz enthält vier eindeutig auswertbare Fragen
   ---
   duration_ms: 0.4996
   type: 'test'
   ...
 # Subtest: Aufgabe 3 ist verlinkt und nutzt die vorhandene semantische Aufgaben-ID
-ok 38 - Aufgabe 3 ist verlinkt und nutzt die vorhandene semantische Aufgaben-ID
+ok 37 - Aufgabe 3 ist verlinkt und nutzt die vorhandene semantische Aufgaben-ID
   ---
   duration_ms: 59.0966
   type: 'test'
   ...
 # Subtest: Aufgabenseite besitzt eindeutige IDs, gültige lokale Links und responsive Breakpoints
-ok 39 - Aufgabenseite besitzt eindeutige IDs, gültige lokale Links und responsive Breakpoints
+ok 38 - Aufgabenseite besitzt eindeutige IDs, gültige lokale Links und responsive Breakpoints
   ---
   duration_ms: 8.7794
   type: 'test'
   ...
 # Subtest: Fisch-Testdaten sind unabhängig von den neun Trainingsdaten
-ok 40 - Fisch-Testdaten sind unabhängig von den neun Trainingsdaten
+ok 39 - Fisch-Testdaten sind unabhängig von den neun Trainingsdaten
   ---
   duration_ms: 3.481
   type: 'test'
   ...
 # Subtest: Referenzbaum liefert die fachlich korrekte Konfusionsmatrix und Genauigkeit
-ok 41 - Referenzbaum liefert die fachlich korrekte Konfusionsmatrix und Genauigkeit
+ok 40 - Referenzbaum liefert die fachlich korrekte Konfusionsmatrix und Genauigkeit
   ---
   duration_ms: 1.1812
   type: 'test'
   ...
 # Subtest: Quiz besitzt mindestens zwei richtige Antworten pro eindeutiger Frage
-ok 42 - Quiz besitzt mindestens zwei richtige Antworten pro eindeutiger Frage
+ok 41 - Quiz besitzt mindestens zwei richtige Antworten pro eindeutiger Frage
   ---
   duration_ms: 0.7039
   type: 'test'
   ...
 # Subtest: Aufgabe 3b ist registriert und verwendet Reiter, Matrix und Checkbox-Quiz
-ok 43 - Aufgabe 3b ist registriert und verwendet Reiter, Matrix und Checkbox-Quiz
+ok 42 - Aufgabe 3b ist registriert und verwendet Reiter, Matrix und Checkbox-Quiz
   ---
   duration_ms: 74.8174
   type: 'test'
   ...
 # Subtest: Baumtiefen liefern die erwarteten Tabellenwerte
-ok 44 - Baumtiefen liefern die erwarteten Tabellenwerte
+ok 43 - Baumtiefen liefern die erwarteten Tabellenwerte
   ---
   duration_ms: 3.4929
   type: 'test'
   ...
 # Subtest: Tabellenprüfung akzeptiert Zahlen und typische Prozentschreibweisen
-ok 45 - Tabellenprüfung akzeptiert Zahlen und typische Prozentschreibweisen
+ok 44 - Tabellenprüfung akzeptiert Zahlen und typische Prozentschreibweisen
   ---
   duration_ms: 0.5863
   type: 'test'
   ...
 # Subtest: Aufgabe 4 bindet Tabs, Material und Skriptserver passend ein
-ok 46 - Aufgabe 4 bindet Tabs, Material und Skriptserver passend ein
+ok 45 - Aufgabe 4 bindet Tabs, Material und Skriptserver passend ein
   ---
   duration_ms: 58.2553
   type: 'test'
   ...
 # Subtest: UI initialisiert und bleibt bedienbar ohne gespeicherten Stand
-ok 47 - UI initialisiert und bleibt bedienbar ohne gespeicherten Stand
+ok 46 - UI initialisiert und bleibt bedienbar ohne gespeicherten Stand
   ---
   duration_ms: 11.4913
   type: 'test'
   ...
 # Subtest: UI initialisiert und bleibt bedienbar mit älterem Stand ohne Quizfelder
-ok 48 - UI initialisiert und bleibt bedienbar mit älterem Stand ohne Quizfelder
+ok 47 - UI initialisiert und bleibt bedienbar mit älterem Stand ohne Quizfelder
   ---
   duration_ms: 6.7633
   type: 'test'
   ...
 # Subtest: UI initialisiert und bleibt bedienbar mit gespeichertem Quizstand
-ok 49 - UI initialisiert und bleibt bedienbar mit gespeichertem Quizstand
+ok 48 - UI initialisiert und bleibt bedienbar mit gespeichertem Quizstand
   ---
   duration_ms: 11.9802
   type: 'test'
   ...
 # Subtest: UI initialisiert und bleibt bedienbar mit beschädigtem JSON
-ok 50 - UI initialisiert und bleibt bedienbar mit beschädigtem JSON
+ok 49 - UI initialisiert und bleibt bedienbar mit beschädigtem JSON
   ---
   duration_ms: 5.823
   type: 'test'
   ...
 # Subtest: UI initialisiert und bleibt bedienbar mit ungültigem Array
-ok 51 - UI initialisiert und bleibt bedienbar mit ungültigem Array
+ok 50 - UI initialisiert und bleibt bedienbar mit ungültigem Array
   ---
   duration_ms: 5.7336
   type: 'test'
   ...
 # Subtest: UI initialisiert und bleibt bedienbar mit gesperrtem Speicher
-ok 52 - UI initialisiert und bleibt bedienbar mit gesperrtem Speicher
+ok 51 - UI initialisiert und bleibt bedienbar mit gesperrtem Speicher
   ---
   duration_ms: 7.1885
   type: 'test'
   ...
 # Subtest: Eine Kante beginnt an der Parent-Unterkante und endet an der Child-Oberkante
-ok 53 - Eine Kante beginnt an der Parent-Unterkante und endet an der Child-Oberkante
+ok 52 - Eine Kante beginnt an der Parent-Unterkante und endet an der Child-Oberkante
   ---
   duration_ms: 25.0745
   type: 'test'
   ...
 # Subtest: Zwei Child-Kanten verwenden denselben lückenlosen Parent- und Split-Anker
-ok 54 - Zwei Child-Kanten verwenden denselben lückenlosen Parent- und Split-Anker
+ok 53 - Zwei Child-Kanten verwenden denselben lückenlosen Parent- und Split-Anker
   ---
   duration_ms: 0.6661
   type: 'test'
   ...
 # Subtest: Dynamische und unterschiedlich große Knoten bestimmen ihre Anker selbst
-ok 55 - Dynamische und unterschiedlich große Knoten bestimmen ihre Anker selbst
+ok 54 - Dynamische und unterschiedlich große Knoten bestimmen ihre Anker selbst
   ---
   duration_ms: 2.0202
   type: 'test'
@@ -352,61 +353,30 @@ ok 17 - faecher\\informatik\\klasse-11\\1-Kuenstliche-Intelligenz\\perzeptron\\t
   duration_ms: 358.4725
   type: 'test'
   ...
-# node:internal/modules/run_main:107
-#     triggerUncaughtException(
-#     ^
-# AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
-# + actual - expected
-# + 'Zahnlaenge;Augengroesse;Label\\r\\n2;2;1\\r\\n4;1;0\\r\\n6;2;0\\r\\n0;4;1\\r\\n'
-# - 'Zahnlänge;Augengröße;Label\\r\\n2;2;1\\r\\n4;1;0\\r\\n6;2;0\\r\\n0;4;1\\r\\n'
-#     at file:///C:/Users/ffran/Documents/git/unterricht/faecher/informatik/klasse-11/1-Kuenstliche-Intelligenz/perzeptron/tests/task5-contract.test.mjs:59:8
-#     at ModuleJob.run (node:internal/modules/esm/module_job:439:25)
-#     at async node:internal/modules/esm/loader:643:26
-#     at async asyncRunEntryPointWithESMLoader (node:internal/modules/run_main:101:5) {
-#   generatedMessage: true,
-#   code: 'ERR_ASSERTION',
-#   actual: 'Zahnlaenge;Augengroesse;Label\\r\\n2;2;1\\r\\n4;1;0\\r\\n6;2;0\\r\\n0;4;1\\r\\n',
-#   expected: 'Zahnlänge;Augengröße;Label\\r\\n2;2;1\\r\\n4;1;0\\r\\n6;2;0\\r\\n0;4;1\\r\\n',
-#   operator: 'strictEqual',
-#   diff: 'simple'
-# }
-# Node.js v24.18.0
-# Subtest: faecher\\informatik\\klasse-11\\1-Kuenstliche-Intelligenz\\perzeptron\\tests\\task5-contract.test.mjs
-not ok 18 - faecher\\informatik\\klasse-11\\1-Kuenstliche-Intelligenz\\perzeptron\\tests\\task5-contract.test.mjs
-  ---
-  duration_ms: 404.5765
-  type: 'test'
-  location: 'C:\\Users\\ffran\\Documents\\git\\unterricht\\faecher\\informatik\\klasse-11\\1-Kuenstliche-Intelligenz\\perzeptron\\tests\\task5-contract.test.mjs:1:1'
-  failureType: 'testCodeFailure'
-  exitCode: 1
-  signal: ~
-  error: 'test failed'
-  code: 'ERR_TEST_FAILURE'
-  ...
 # Nummerierung, Einzelprüfungen, Fachbegriffe und Mehrfachauswahl sind abgesichert.
 # Subtest: faecher\\physik\\klasse-11\\1-Kreisbewegungen\\tests\\bewegung-koerpern-config.test.mjs
-ok 19 - faecher\\physik\\klasse-11\\1-Kreisbewegungen\\tests\\bewegung-koerpern-config.test.mjs
+ok 18 - faecher\\physik\\klasse-11\\1-Kreisbewegungen\\tests\\bewegung-koerpern-config.test.mjs
   ---
   duration_ms: 448.4576
   type: 'test'
   ...
 # Winkelverlauf, Umlaufzeit, sichere Formelmischung, Bahngeschwindigkeit und orthogonale Kreisvektoren sind numerisch geprüft.
 # Subtest: faecher\\physik\\klasse-11\\1-Kreisbewegungen\\tests\\circle-kinematics.test.mjs
-ok 20 - faecher\\physik\\klasse-11\\1-Kreisbewegungen\\tests\\circle-kinematics.test.mjs
+ok 19 - faecher\\physik\\klasse-11\\1-Kreisbewegungen\\tests\\circle-kinematics.test.mjs
   ---
   duration_ms: 258.4806
   type: 'test'
   ...
 # Haftreibungskraft: sechs Reiter, Bilder, getrennte Prüfungen, Zahleneingaben, Quiz und Downloads sind konfiguriert.
 # Subtest: faecher\\physik\\klasse-11\\1-Kreisbewegungen\\tests\\haftreibung-zentripetalkraft-config.test.mjs
-ok 21 - faecher\\physik\\klasse-11\\1-Kreisbewegungen\\tests\\haftreibung-zentripetalkraft-config.test.mjs
+ok 20 - faecher\\physik\\klasse-11\\1-Kreisbewegungen\\tests\\haftreibung-zentripetalkraft-config.test.mjs
   ---
   duration_ms: 358.8608
   type: 'test'
   ...
 # Kettenkarussell: Geometrie, Rückmeldelogik, Quiz, HTML und Begleitdateien sind konsistent konfiguriert.
 # Subtest: faecher\\physik\\klasse-11\\1-Kreisbewegungen\\tests\\kettenkarussell-config.test.mjs
-ok 22 - faecher\\physik\\klasse-11\\1-Kreisbewegungen\\tests\\kettenkarussell-config.test.mjs
+ok 21 - faecher\\physik\\klasse-11\\1-Kreisbewegungen\\tests\\kettenkarussell-config.test.mjs
   ---
   duration_ms: 381.6283
   type: 'test'
@@ -757,7 +727,7 @@ ok 22 - faecher\\physik\\klasse-11\\1-Kreisbewegungen\\tests\\kettenkarussell-co
 # }
 # Node.js v24.18.0
 # Subtest: faecher\\physik\\klasse-11\\1-Kreisbewegungen\\tests\\kraefte-bewegung-config.test.mjs
-not ok 23 - faecher\\physik\\klasse-11\\1-Kreisbewegungen\\tests\\kraefte-bewegung-config.test.mjs
+not ok 22 - faecher\\physik\\klasse-11\\1-Kreisbewegungen\\tests\\kraefte-bewegung-config.test.mjs
   ---
   duration_ms: 413.6062
   type: 'test'
@@ -770,42 +740,42 @@ not ok 23 - faecher\\physik\\klasse-11\\1-Kreisbewegungen\\tests\\kraefte-bewegu
   ...
 # Einheiten stehen als Bruch, Indizes sind tiefgestellt und beides kommt aus der gemeinsamen Komponente.
 # Subtest: faecher\\physik\\klasse-11\\1-Kreisbewegungen\\tests\\physics-notation.test.mjs
-ok 24 - faecher\\physik\\klasse-11\\1-Kreisbewegungen\\tests\\physics-notation.test.mjs
+ok 23 - faecher\\physik\\klasse-11\\1-Kreisbewegungen\\tests\\physics-notation.test.mjs
   ---
   duration_ms: 422.6024
   type: 'test'
   ...
 # Bei einem Skriptserverfehler bleiben Antwort und erneute Prüfung erhalten; die sichere Hervorhebung wird genutzt.
 # Subtest: faecher\\physik\\klasse-11\\1-Kreisbewegungen\\tests\\physics-semantic-task-error.test.mjs
-ok 25 - faecher\\physik\\klasse-11\\1-Kreisbewegungen\\tests\\physics-semantic-task-error.test.mjs
+ok 24 - faecher\\physik\\klasse-11\\1-Kreisbewegungen\\tests\\physics-semantic-task-error.test.mjs
   ---
   duration_ms: 312.8497
   type: 'test'
   ...
 # Das Physikmanifest bündelt Index-, Koordinatensystem- und Ziffernregeln und ist zentral verlinkt.
 # Subtest: faecher\\physik\\klasse-11\\1-Kreisbewegungen\\tests\\physik-manifest.test.mjs
-ok 26 - faecher\\physik\\klasse-11\\1-Kreisbewegungen\\tests\\physik-manifest.test.mjs
+ok 25 - faecher\\physik\\klasse-11\\1-Kreisbewegungen\\tests\\physik-manifest.test.mjs
   ---
   duration_ms: 341.6357
   type: 'test'
   ...
 # Die Vektorraster-Hilfsfunktionen begrenzen Endpunkte, überspringen den festen Ursprung und liefern Hitbox-Sektoren.
 # Subtest: faecher\\physik\\klasse-11\\1-Kreisbewegungen\\tests\\point-vector-grid.test.mjs
-ok 27 - faecher\\physik\\klasse-11\\1-Kreisbewegungen\\tests\\point-vector-grid.test.mjs
+ok 26 - faecher\\physik\\klasse-11\\1-Kreisbewegungen\\tests\\point-vector-grid.test.mjs
   ---
   duration_ms: 261.9354
   type: 'test'
   ...
 # Übungen zur Zentripetalkraft: Rückmeldelogik, Zuordnungen, Quiz, HTML und Menü sind konsistent konfiguriert.
 # Subtest: faecher\\physik\\klasse-11\\1-Kreisbewegungen\\tests\\uebungen-zentripetalkraft-config.test.mjs
-ok 28 - faecher\\physik\\klasse-11\\1-Kreisbewegungen\\tests\\uebungen-zentripetalkraft-config.test.mjs
+ok 27 - faecher\\physik\\klasse-11\\1-Kreisbewegungen\\tests\\uebungen-zentripetalkraft-config.test.mjs
   ---
   duration_ms: 304.744
   type: 'test'
   ...
 # Kreisbewegungsmodul:Formeln, Lückentext, Freitextfeedback und responsive Animationen sind konfiguriert.
 # Subtest: faecher\\physik\\klasse-11\\1-Kreisbewegungen\\tests\\winkelgeschwindigkeit-kreisbewegung-config.test.mjs
-ok 29 - faecher\\physik\\klasse-11\\1-Kreisbewegungen\\tests\\winkelgeschwindigkeit-kreisbewegung-config.test.mjs
+ok 28 - faecher\\physik\\klasse-11\\1-Kreisbewegungen\\tests\\winkelgeschwindigkeit-kreisbewegung-config.test.mjs
   ---
   duration_ms: 287.4565
   type: 'test'
@@ -850,7 +820,7 @@ ok 29 - faecher\\physik\\klasse-11\\1-Kreisbewegungen\\tests\\winkelgeschwindigk
 # }
 # Node.js v24.18.0
 # Subtest: faecher\\physik\\klasse-11\\1-Kreisbewegungen\\tests\\zentripetalkraft-config.test.mjs
-not ok 30 - faecher\\physik\\klasse-11\\1-Kreisbewegungen\\tests\\zentripetalkraft-config.test.mjs
+not ok 29 - faecher\\physik\\klasse-11\\1-Kreisbewegungen\\tests\\zentripetalkraft-config.test.mjs
   ---
   duration_ms: 240.4414
   type: 'test'
@@ -861,11 +831,11 @@ not ok 30 - faecher\\physik\\klasse-11\\1-Kreisbewegungen\\tests\\zentripetalkra
   error: 'test failed'
   code: 'ERR_TEST_FAILURE'
   ...
-1..70
-# tests 70
+1..69
+# tests 69
 # suites 0
 # pass 67
-# fail 3
+# fail 2
 # cancelled 0
 # skipped 0
 # todo 0

@@ -28,7 +28,7 @@ LEHRPLANBEZUG
 „erläutern die Funktionsweise/Idee eines ausgewählten Algorithmus maschinellen Lernens (k-nächste-Nachbarn) allgemein und an konkreten Beispielen“.
 
 VORWISSEN DER KLASSE (anknüpfen, nicht neu einführen)
-Überwachtes Lernen, Label, Trainings- und Testdaten (Aufgaben 0–3c); Hyperparameter am Beispiel Baumtiefe (Aufgabe 4); Merkmale werden zu Punkten im Koordinatensystem (Aufgabe 5, Reiter 1); Satz des Pythagoras aus Mathematik.
+Überwachtes Lernen, Label, Trainings- und Testdaten (Aufgaben 0–3c); Hyperparameter am Beispiel Baumtiefe (Aufgabe 4); Merkmale werden zu Punkten im Koordinatensystem (Aufgabe 5.1, Reiter 1); Satz des Pythagoras aus Mathematik.
 
 DURCHGÄNGIGER KONTEXT: SCHULSHIRTS
 Klassen S, M, L; x = Körpergröße in cm, y = Brustumfang in cm. Trainingsdaten aus dem Heft (S. 22):
@@ -48,7 +48,7 @@ REITERSTRUKTUR (verbindlich, kompakt halten)
 4. „Manhattan-Metrik“
    Stadtplan-Gitter wie im Heft. Die SuS berechnen den Manhattan-Abstand für ein Paar. Danach ein Vergleich an einem Beispiel, in dem der nächste Nachbar vom Abstandsmaß abhängt: P(0|0), A(3|3), B(5|0). Euklidisch ist A näher (≈ 4,24 gegenüber 5), nach Manhattan B (5 gegenüber 6). Multiple Choice „Welche Aussagen stimmen?“ mit eigenem Prüfen-Button, u. a. „Der Manhattan-Abstand ist nie kleiner als der euklidische Abstand“ (richtig) und „Der Manhattan-Abstand ist kürzer, weil er den Straßen folgt“ (Fehlvorstellung).
 5. „Schulshirts klassifizieren“ (anwenden)
-   Eine Tabelle der 15 Trainingsdaten mit Abstandsspalte zu einem neuen Datenpunkt, den der Planer festlegt: Unter den 5 nächsten Nachbarn kommen mindestens zwei Klassen vor, damit wirklich ausgezählt werden muss. Zwei Abstände sind leer und werden von den SuS euklidisch berechnet, die übrigen sind vorgegeben. Die SuS markieren die k = 5 nächsten Nachbarn durch Antippen der Zeilen und bestimmen die Shirtgröße. Abschluss des Reiters ist eine Beschreibe-Aufgabe über die vorhandene KI-Auswertung (Skriptserver, wie in Aufgabe 4/5): „**Erläutere** an diesem Beispiel, wie der KNN-Algorithmus die Shirtgröße bestimmt.“
+   Eine Tabelle der 15 Trainingsdaten mit Abstandsspalte zu einem neuen Datenpunkt, den der Planer festlegt: Unter den 5 nächsten Nachbarn kommen mindestens zwei Klassen vor, damit wirklich ausgezählt werden muss. Zwei Abstände sind leer und werden von den SuS euklidisch berechnet, die übrigen sind vorgegeben. Die SuS markieren die k = 5 nächsten Nachbarn durch Antippen der Zeilen und bestimmen die Shirtgröße. Abschluss des Reiters ist eine Beschreibe-Aufgabe über die vorhandene KI-Auswertung (Skriptserver, wie in Aufgabe 4/5.2.2): „**Erläutere** an diesem Beispiel, wie der KNN-Algorithmus die Shirtgröße bestimmt.“
 6. „Abschlussquiz“
    Nach AGENTS.md und manifest-quizaufgaben.txt, 5–6 Fragen nur zu den Reitern 1–5.
 
@@ -58,7 +58,7 @@ Validierungsdaten, systematische Wahl des „besten“ k, zu kleines/zu großes 
 KEIN Sicherungsblatt und KEIN Wiederholungs-Quiz (nicht beauftragt).
 
 WIEDERVERWENDUNG (Planer prüft und legt konkret fest)
-Seitengerüst, Reiter, gestufte Hilfen, Speicherung der Zwischenstände und semantische Auswertung aus aufgabe5.html, perzeptron/ui/task5.mjs und perzeptron/ui/semantic-answer.mjs; SVG-Koordinatensystem aus Aufgabe 5, Reiter 1; Drag-and-Drop nach setupCloze in was-ist-ki/ui/task0.mjs; Abschlussquiz nach Informatik 10, Datenbanken (#final-quiz). Menüeintrag in faecher/informatik/klasse-11/index.html hinter Aufgabe 6.1, Rücklink „Zu Aufgabe 6.1“.
+Seitengerüst, Reiter, gestufte Hilfen, Speicherung der Zwischenstände und semantische Auswertung aus aufgabe5-1-grafisch.html, perzeptron/ui/task5-1-grafisch.mjs und perzeptron/ui/semantic-answer.mjs; SVG-Koordinatensystem aus Aufgabe 5.1, Reiter 1; Drag-and-Drop nach setupCloze in was-ist-ki/ui/task0.mjs; Abschlussquiz nach Informatik 10, Datenbanken (#final-quiz). Menüeintrag in faecher/informatik/klasse-11/index.html hinter Aufgabe 6.1, Rücklink „Zu Aufgabe 6.1“.
 
 PROJEKTVORGABEN, DIE NICHT IN DEN MANIFESTEN STEHEN
 - Reiter sind jederzeit frei wechselbar, ohne Freischaltlogik. Jeder Reiter endet mit einem Weiter-Button.

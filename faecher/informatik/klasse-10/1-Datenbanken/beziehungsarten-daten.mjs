@@ -481,3 +481,51 @@ export function evaluateQuizQuestion(question, selected) {
   const correct = correctQuizOptionIds(question);
   return correct.length === selected.length && correct.every((id) => selected.includes(id));
 }
+
+export const BEZIEHUNGSARTEN_QUIZ_8 = Object.freeze([
+  Object.freeze({ id: 'song-playlist', prompt: 'Was zeigen Song und Playlist in diesem Beispiel?', options: Object.freeze([
+      Object.freeze({ id: '1', text: 'Gaslighter gehört zu Good Oldies und Fussballhits.', correct: true }),
+      Object.freeze({ id: '2', text: 'Fussballhits enthält mehrere Songs.', correct: true }),
+      Object.freeze({ id: '3', text: 'Jeder Song darf nur in einer Playlist stehen.', correct: false }),
+      Object.freeze({ id: '4', text: 'n und m müssen dieselbe Anzahl bedeuten.', correct: false })
+    ]), hint: 'Lies die fünf Zeilen in Song_in_Playlist in beide Richtungen.' }),
+  Object.freeze({ id: 'schueler-ag', prompt: 'Was zeigt die Beziehung zwischen Schüler und AG?', options: Object.freeze([
+      Object.freeze({ id: '1', text: 'Lina besucht Robotik und Theater.', correct: true }),
+      Object.freeze({ id: '2', text: 'Die Theater-AG wird von Lina und Mia besucht.', correct: true }),
+      Object.freeze({ id: '3', text: 'Ein Schüler kann genau eine AG besuchen.', correct: false }),
+      Object.freeze({ id: '4', text: 'In teilnahme steht eine Liste aller AG-ids in einer Zelle.', correct: false })
+    ]), hint: 'Suche Linas schueler_id und die ag_id von Theater in teilnahme.' }),
+  ...BEZIEHUNGSARTEN_QUIZ.slice(1).map((question) => question.id === "q2-hilfstabelle"
+    ? Object.freeze({ ...question, options: Object.freeze(question.options.map((option) =>
+      option.id === "zusatzspalten-erlaubt"
+        ? Object.freeze({ id: "eine-zeile-je-zuordnung", text: "Für jede Zuordnung steht eine eigene Zeile in der Beziehungstabelle.", correct: true })
+        : option)) })
+    : question)
+]);
+
+export const BEZIEHUNGSARTEN_QUIZ_10 = Object.freeze([
+  Object.freeze({ id: 'schule', prompt: 'Welche Aussagen gelten im Schulbeispiel?', options: Object.freeze([
+      Object.freeze({ id: '1', text: 'Jede Klasse hat genau einen Klassenleiter.', correct: true }),
+      Object.freeze({ id: '2', text: 'Jeder Klassenleiter leitet genau eine Klasse.', correct: true }),
+      Object.freeze({ id: '3', text: 'Eine Klasse kann in diesem Beispiel mehrere Klassenleiter haben.', correct: false }),
+      Object.freeze({ id: '4', text: 'Die Zahlen im Diagramm sind n und m.', correct: false })
+    ]), hint: 'Lies die Annahme und die Zuordnung in beide Richtungen.' }),
+  Object.freeze({ id: 'speichern', prompt: 'Was gilt beim Speichern der 1:1-Zuordnung?', options: Object.freeze([
+      Object.freeze({ id: '1', text: 'Ein Fremdschlüssel kann in klasse stehen.', correct: true }),
+      Object.freeze({ id: '2', text: 'Er kann stattdessen in klassenleiter stehen.', correct: true }),
+      Object.freeze({ id: '3', text: 'Er muss gleichzeitig in beiden Tabellen stehen.', correct: false }),
+      Object.freeze({ id: '4', text: 'Der Fremdschlüssel allein garantiert, dass jeder Partner nur einmal zugeordnet wird.', correct: false })
+    ]), hint: 'Ein Speicherort genügt; prüfe die zusätzliche Eindeutigkeit.' }),
+  Object.freeze({ id: 'schliessanlage', prompt: 'Was gilt für Schlüssel und Schloss in dieser Schließanlage?', options: Object.freeze([
+      Object.freeze({ id: '1', text: 'Jeder Schlüssel öffnet genau ein Schloss.', correct: true }),
+      Object.freeze({ id: '2', text: 'Zu jedem Schloss gehört genau ein Schlüssel.', correct: true }),
+      Object.freeze({ id: '3', text: 'Ein Schloss kann hier beliebig viele Schlüssel haben.', correct: false }),
+      Object.freeze({ id: '4', text: 'Die Zuordnung ist n:m.', correct: false })
+    ]), hint: 'Die Schließanlage ist im Aufgabentext eindeutig festgelegt.' }),
+  Object.freeze({ id: 'eindeutigkeit', prompt: 'Warum genügt ein Fremdschlüssel allein nicht als Beweis für 1:1?', options: Object.freeze([
+      Object.freeze({ id: '1', text: 'Mehrere Zeilen könnten denselben Fremdschlüsselwert enthalten.', correct: true }),
+      Object.freeze({ id: '2', text: 'Die eindeutige Zuordnung muss zusätzlich gelten.', correct: true }),
+      Object.freeze({ id: '3', text: 'Ein Fremdschlüssel kann nie auf eine andere Tabelle zeigen.', correct: false }),
+      Object.freeze({ id: '4', text: 'Bei 1:1 braucht man immer zwei Fremdschlüssel.', correct: false })
+    ]), hint: 'Stell dir zwei Klassenleiter mit derselben klasse_id vor.' })
+]);

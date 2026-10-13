@@ -179,7 +179,7 @@ assert.equal(customInsert.at(-1).url, null, 'Fehlende Spalten werden bei INSERT 
 // ---------------------------------------------------------------------------
 // Vertraege: HTML und JS
 // ---------------------------------------------------------------------------
-const html = await readFile(resolve(databaseFolder, 'aufgabe9.html'), 'utf8');
+const html = await readFile(resolve(databaseFolder, 'aufgabe11.html'), 'utf8');
 const js = await readFile(resolve(databaseFolder, 'transaktionen.js'), 'utf8');
 const klasse10Index = await readFile(resolve(databaseFolder, '..', 'index.html'), 'utf8');
 
@@ -187,21 +187,21 @@ assert.match(html, /href="\.\.\/index\.html">Zur Aufgabenübersicht<\/a>/, 'Rüc
 assert.match(html, /href="\.\.\/\.\.\/\.\.\/\.\.\/index\.html">Startseite<\/a>/, 'Rücklink zur Startseite fehlt.');
 assert.match(html, /id="final-quiz"/, 'Das Abschlussquiz-Formular mit id="final-quiz" fehlt.');
 assert.equal((html.match(/class="solution-download"/g) ?? []).length, 2, 'Das Sicherungsblatt muss im Quiz und in der Auswertung erreichbar sein.');
-assert.equal((html.match(/href="sicherungsblatt-aufgabe-9-loesungen\.pdf" download hidden/g) ?? []).length, 2, 'Beide Downloadlinks müssen anfangs verborgen sein.');
-assert.equal((html.match(/M4NP-X3J6/g) ?? []).length, 2, 'Beide Formulare müssen denselben Lehrercode verwenden.');
+assert.equal((html.match(/href="sicherungsblatt-aufgabe-11-loesungen\.pdf" download hidden/g) ?? []).length, 2, 'Beide Downloadlinks müssen anfangs verborgen sein.');
+assert.equal((html.match(/M7QV-X3L5/g) ?? []).length, 2, 'Beide Formulare müssen denselben Lehrercode verwenden.');
 assert.match(html, /id="solution-code-summary" name="solution-code"/, 'Die Auswertung benötigt ein eigenes Eingabefeld mit dem gemeinsamen Formularnamen.');
 assert.doesNotMatch(html, /<select/i, 'Aufgabe 9 darf keine <select>-Elemente verwenden.');
 assert.doesNotMatch(js, /<select/i, 'transaktionen.js darf keine <select>-Elemente erzeugen.');
 assert.match(js, /window\.unlockSolution = unlockSolution;/, 'Die vorhandene Lehrercode-Freigabe muss in Aufgabe 9 verfügbar sein.');
 assert.match(html, /<h1>Transaktionen und Integrität<\/h1>/, 'Die H1 muss exakt "Transaktionen und Integrität" lauten.');
-assert.match(html, /transaktionen\.css\?v=\d+[a-z]?/, 'transaktionen.css wird mit Cache-Buster eingebunden.');
-assert.match(html, /transaktionen\.js\?v=\d+[a-z]?/, 'transaktionen.js wird mit Cache-Buster eingebunden.');
-assert.doesNotMatch(html, /class="[^"]*\brelation-types-page\b/, 'aufgabe9.html darf die Klasse relation-types-page nicht verwenden (9-Spalten-Tab-Grid).');
+assert.match(html, /transaktionen\.css\?v=\d+[-a-z]*/, 'transaktionen.css wird mit Cache-Buster eingebunden.');
+assert.match(html, /transaktionen\.js\?v=\d+[-a-z]*/, 'transaktionen.js wird mit Cache-Buster eingebunden.');
+assert.doesNotMatch(html, /class="[^"]*\brelation-types-page\b/, 'aufgabe11.html darf die Klasse relation-types-page nicht verwenden (9-Spalten-Tab-Grid).');
 
-assert.match(js, /informatik10-datenbanken-aufgabe9-v1/, 'Der localStorage-Schlüssel fehlt oder ist falsch benannt.');
+assert.match(js, /informatik10-datenbanken-aufgabe11-v1/, 'Der localStorage-Schlüssel fehlt oder ist falsch benannt.');
 
-assert.match(klasse10Index, /1-Datenbanken\/aufgabe8\.html[\s\S]*1-Datenbanken\/aufgabe9\.html/, 'Aufgabe 9 muss im Menü nach Aufgabe 8 stehen.');
-assert.match(klasse10Index, /<strong>Aufgabe 9<\/strong>\s*<span>Transaktionen und Integrität<\/span>/, 'Der Menüeintrag für Aufgabe 9 fehlt oder ist falsch beschriftet.');
+assert.match(klasse10Index, /1-Datenbanken\/aufgabe8\.html[\s\S]*1-Datenbanken\/aufgabe11\.html/, 'Aufgabe 9 muss im Menü nach Aufgabe 8 stehen.');
+assert.match(klasse10Index, /<strong>Aufgabe 11<\/strong>\s*<span>Transaktionen und Integrität<\/span>/, 'Der Menüeintrag für Aufgabe 9 fehlt oder ist falsch beschriftet.');
 
 // ---------------------------------------------------------------------------
 // Begriffsdisziplin: Anomalie- und Integritätsbedingungsnamen duerfen in den
@@ -231,7 +231,7 @@ function extractStepHtml(source, step) {
   const startIndex = source.indexOf(startMarker);
   assert.ok(startIndex >= 0, `step-${step} nicht gefunden.`);
   const sectionStart = source.lastIndexOf('<section', startIndex);
-  const nextMarker = step === 7 ? 'id="step-summary"' : `id="step-${step + 1}"`;
+  const nextMarker = step === 7 ? 'id="step-8"' : `id="step-${step + 1}"`;
   const nextIndex = source.indexOf(nextMarker);
   const nextSectionStart = source.lastIndexOf('<section', nextIndex);
   return source.slice(sectionStart, nextSectionStart);

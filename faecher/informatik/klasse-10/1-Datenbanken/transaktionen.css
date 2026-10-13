@@ -1,8 +1,17 @@
-/* Aufgabe 9 – additive Ergänzungen zu redundanzen.css, tabellenschema.css,
+/* Aufgabe 11 – additive Ergänzungen zu redundanzen.css, tabellenschema.css,
    beziehungen.css und beziehungsarten.css. Keine Änderung an gemeinsamem
    CSS; alles hier ist scoped auf .transactions-page bzw. auf neue, additive
    Klassen. Absichtlich KEIN Import von relation-types-page-Regeln (9-Spalten-
    Tab-Grid) – die Seite bleibt bei den 8 Spalten aus redundanzen.css. */
+
+.transactions-page .step-tabs { grid-template-columns: repeat(8, minmax(0, 1fr)); overflow-x: visible; }
+.transactions-page .step-tab { min-width: 0; overflow-wrap: anywhere; }
+@media (max-width: 850px) {
+  .transactions-page .step-tabs { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+}
+@media (max-width: 500px) {
+  .transactions-page .step-tabs { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
 
 /* identisch zu sql-lab.css (Zeile 18); Präzedenz: grundlagen.css lädt sql-lab.css
    auf dieser Seite nicht, daher hier erneut definiert. */

@@ -63,11 +63,6 @@
       "afterSha256": "93b968792504b5a4b49b493de2e1f1fcd5df00689b910caa5a5d1f739f4df809"
     },
     {
-      "file": "faecher/informatik/klasse-11/1-Kuenstliche-Intelligenz/aufgabe5-quiz.mjs",
-      "beforeSha256": "9ed01ce324e32bcc5019117f7308945b3ea1cb3544816d9de4a311da044e2cb2",
-      "afterSha256": "4d535ec3d883dec4dc8f12b73069f45e895df295b7737144c0ac630ab46dcd31"
-    },
-    {
       "file": "faecher/informatik/klasse-11/1-Kuenstliche-Intelligenz/entscheidungbaeume/ui/task3.mjs",
       "beforeSha256": "a463d92aeadd6cd284706be1fc8459383e340b06b8a92fcf3b52cb5ad17dd0ee",
       "afterSha256": "62bf431ae399b2ae76db037fb887b219f1d6838402e0437b7766cb18eaba9d05"
@@ -86,11 +81,6 @@
       "file": "faecher/informatik/klasse-11/1-Kuenstliche-Intelligenz/knn/ui/task8.mjs",
       "beforeSha256": "32050e9f1691900f5b43ccb00ee80f6a27edc864debcb41eb04d67c1a6290928",
       "afterSha256": "6453cb65cafac56a2aead2d6d24e83efc1472128e37c1257045e1f1dc1ae2694"
-    },
-    {
-      "file": "faecher/informatik/klasse-11/1-Kuenstliche-Intelligenz/perzeptron/ui/task5.mjs",
-      "beforeSha256": "64a622b1489e41bca7f8c5d9e57b857f05a78a2dc46791243eeef0620079ee65",
-      "afterSha256": "65b41f67aafbde0d1895351ae6352610cd433b28a370e7b7bfae331904436449"
     },
     {
       "file": "faecher/informatik/klasse-11/1-Kuenstliche-Intelligenz/perzeptron/ui/task6.mjs",
@@ -236,11 +226,6 @@
       "fail": 3
     },
     "preExistingFailures": [
-      {
-        "file": "faecher/informatik/klasse-11/1-Kuenstliche-Intelligenz/perzeptron/tests/task5-contract.test.mjs",
-        "failedBeforeMigration": true,
-        "reason": "CSV-Kopfzeile Zahnlaenge/Augengroesse statt Umlauten"
-      },
       {
         "file": "faecher/physik/klasse-11/1-Kreisbewegungen/tests/kraefte-bewegung-config.test.mjs",
         "failedBeforeMigration": true,

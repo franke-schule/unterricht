@@ -174,7 +174,7 @@ assert.equal(evaluateQuizQuestion(multiQuestion, []), false, 'Keine Auswahl gilt
 // ---------------------------------------------------------------------------
 // Vertraege: HTML und JS
 // ---------------------------------------------------------------------------
-const html = await readFile(resolve(databaseFolder, 'aufgabe8.html'), 'utf8');
+const html = await readFile(resolve(databaseFolder, 'aufgabe8-alt.html'), 'utf8');
 const js = await readFile(resolve(databaseFolder, 'beziehungsarten.js'), 'utf8');
 const klasse10Index = await readFile(resolve(databaseFolder, '..', 'index.html'), 'utf8');
 
@@ -182,18 +182,18 @@ assert.match(html, /href="\.\.\/index\.html">Zur Aufgabenübersicht<\/a>/, 'Rüc
 assert.match(html, /href="\.\.\/\.\.\/\.\.\/\.\.\/index\.html">Startseite<\/a>/, 'Rücklink zur Startseite fehlt.');
 assert.match(html, /id="final-quiz"/, 'Das Abschlussquiz-Formular mit id="final-quiz" fehlt.');
 assert.equal((html.match(/class="solution-download"/g) || []).length, 2, 'Sicherungsblatt-Download muss im Quiz- und Übersichtsreiter stehen.');
-assert.match(html, /id="solution-download-link"[^>]*href="sicherungsblatt-aufgabe-8-loesungen\.pdf" download hidden/, 'Der Download im Quizreiter muss zunächst verborgen sein.');
-assert.match(html, /id="solution-download-link-summary"[^>]*href="sicherungsblatt-aufgabe-8-loesungen\.pdf" download hidden/, 'Der Download im Übersichtsreiter muss zunächst verborgen sein.');
+assert.match(html, /id="solution-download-link"[^>]*href="sicherungsblatt-aufgabe-8-alt-loesungen\.pdf" download hidden/, 'Der Download im Quizreiter muss zunächst verborgen sein.');
+assert.match(html, /id="solution-download-link-summary"[^>]*href="sicherungsblatt-aufgabe-8-alt-loesungen\.pdf" download hidden/, 'Der Download im Übersichtsreiter muss zunächst verborgen sein.');
 assert.equal((html.match(/unlockSolution\(event, 'M2LK-X6H9'/g) || []).length, 2, 'Beide Freigaben müssen denselben Lehrercode verwenden.');
 assert.doesNotMatch(html, /<select/i, 'Aufgabe 8 darf keine <select>-Elemente verwenden.');
-assert.match(html, /<h1>1:1- und n:m-Beziehungen<\/h1>/, 'Die H1 muss exakt "1:1- und n:m-Beziehungen" lauten.');
+assert.match(html, /<h1>1:1- und n:m-Beziehungen \(Archiv\)<\/h1>/, 'Die Archiv-H1 muss die alte Beziehungskombination benennen.');
 assert.match(html, /beziehungsarten\.css\?v=\d+[a-z]?/, 'beziehungsarten.css wird mit Cache-Buster eingebunden.');
-assert.match(html, /beziehungsarten\.js\?v=\d+[a-z]?/, 'beziehungsarten.js wird mit Cache-Buster eingebunden.');
+assert.match(html, /beziehungsarten\.js\?v=\d+[-a-z]*/, 'beziehungsarten.js wird mit Cache-Buster eingebunden.');
 
-assert.match(js, /informatik10-datenbanken-aufgabe8-v1/, 'Der localStorage-Schlüssel fehlt oder ist falsch benannt.');
+assert.match(js, /informatik10-datenbanken-aufgabe8-alt-v1/, 'Der localStorage-Schlüssel fehlt oder ist falsch benannt.');
 assert.doesNotMatch(js, /<select/i, 'beziehungsarten.js darf keine <select>-Elemente erzeugen.');
 
 assert.match(klasse10Index, /1-Datenbanken\/aufgabe7\.html[\s\S]*1-Datenbanken\/aufgabe8\.html/, 'Aufgabe 8 muss im Menü nach Aufgabe 7 stehen.');
-assert.match(klasse10Index, /<strong>Aufgabe 8<\/strong>\s*<span>1:1- und n:m-Beziehungen<\/span>/, 'Der Menüeintrag für Aufgabe 8 fehlt oder ist falsch beschriftet.');
+assert.match(klasse10Index, /<strong>Aufgabe 8<\/strong>\s*<span>n:m-Beziehungen und Beziehungstabellen<\/span>/, 'Der Menüeintrag für Aufgabe 8 fehlt oder ist falsch beschriftet.');
 
 console.log('Alle Tests für beziehungsarten.test.mjs sind gruen.');

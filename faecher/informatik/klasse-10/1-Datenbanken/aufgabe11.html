@@ -4,15 +4,15 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="robots" content="noindex, nofollow">
-    <title>Aufgabe 9 – Transaktionen und Integrität | Informatik 10</title>
+    <title>Aufgabe 11 – Transaktionen und Integrität | Informatik 10</title>
     <link rel="stylesheet" href="../../../../styles.css?v=20260825">
     <link rel="stylesheet" href="redundanzen.css?v=20261010-tabs">
     <link rel="stylesheet" href="tabellenschema.css?v=20260827">
     <link rel="stylesheet" href="beziehungen.css?v=20260826b">
     <link rel="stylesheet" href="beziehungsarten.css?v=20260926a">
-    <link rel="stylesheet" href="transaktionen.css?v=20260926a">
+    <link rel="stylesheet" href="transaktionen.css?v=20261013">
     <script src="../../quiz-fragen-pruefen.js?v=20261006b"></script>
-    <script type="module" src="transaktionen.js?v=20261010-tabs"></script>
+    <script type="module" src="transaktionen.js?v=20261013"></script>
   </head>
   <body class="redundancy-page relation-page transactions-page">
     <div class="site-backdrop" aria-hidden="true"></div>
@@ -25,7 +25,7 @@
       <header class="module-header">
         <div class="eyebrow"><span aria-hidden="true">◎</span> InstaHub-Datenbanklabor</div>
         <h1>Transaktionen und Integrität</h1>
-        <p class="module-task-number"><strong>Aufgabe 9</strong></p>
+        <p class="module-task-number"><strong>Aufgabe 11</strong></p>
         <p>Finde heraus, welche Fehler beim Einfügen, Ändern und Löschen von Daten entstehen können – und wie sich eine Datenbank davor schützt.</p>
       </header>
 
@@ -33,7 +33,7 @@
 
       <section id="learning-module">
         <div class="progress-card" aria-label="Bearbeitungsfortschritt">
-          <div class="progress-copy"><span id="progress-label">Schritt 1 von 7</span><strong id="progress-percent">0 % bearbeitet</strong></div>
+          <div class="progress-copy"><span id="progress-label">Schritt 1 von 8</span><strong id="progress-percent">0 % bearbeitet</strong></div>
           <div class="progress-track" aria-hidden="true"><span id="progress-bar"></span></div>
         </div>
         <nav id="step-tabs" class="step-tabs" aria-label="Lernschritte" role="tablist"></nav>
@@ -274,8 +274,38 @@ VALUES ('storage/photos/2/1480.webp', '#usa #florida #everglades')</code></pre>
         </section>
 
         <!-- Schritt 7: Abschlussquiz -->
-        <section id="step-7" class="step-panel" role="tabpanel" aria-labelledby="tab-7" hidden>
-          <div class="step-heading"><span class="step-number">7</span><div><p class="step-kicker">Sichern</p><h2>Abschlussquiz</h2></div></div>
+        <section id="step-7" class="step-panel summary-panel" role="tabpanel" aria-labelledby="tab-7" hidden>
+          <div class="step-heading"><span class="step-number complete">7</span><div><p class="step-kicker">Abschlussübersicht</p><h2>Transaktionen und Integrität auf einen Blick</h2></div></div>
+          <p class="summary-intro">Hier siehst du die Merksätze und die richtigen Ergebnisse aller sechs Lernschritte.</p>
+          <div class="summary-key-points">
+            <article><h3>Transaktionen</h3><code>INSERT · UPDATE · DELETE</code><p>Eine oder mehrere Datenbankoperationen, die Daten einfügen, ändern oder löschen. Danach müssen die Daten stimmig sein. CRUD: Create, Read, Update, Delete.</p></article>
+            <article><h3>Anomalien</h3><code>users_photos</code><p>UPDATE-Anomalie: Beim Ändern entstehen Inkonsistenzen. DELETE-Anomalie: Beim Löschen geht mehr verloren als gewollt. INSERT-Anomalie: Beim Einfügen fehlen relevante Informationen. Ursache: Redundanz.</p></article>
+            <article><h3>Integritätsbedingungen</h3><code>Primärschlüssel · Datentyp · Fremdschlüssel</code><p>Entitätsintegrität: Primärschlüssel eindeutig und nie NULL. Wertebereichsintegrität: Wert im festgelegten Wertebereich. Referentielle Integrität: Fremdschlüssel verweist auf einen existierenden Datensatz.</p></article>
+          </div>
+          <div id="answer-summary" class="answer-summary"></div>
+          <section class="solution-download" aria-labelledby="solution-download-title-summary">
+            <h2 id="solution-download-title-summary">Sicherungsblatt zu Aufgabe 11</h2>
+            <details class="solution-reveal">
+              <summary>Sicherungsblatt anzeigen</summary>
+              <form class="solution-code-form" onsubmit="unlockSolution(event, 'M7QV-X3L5', 'solution-download-link-summary', 'solution-code-message-summary')">
+                <label for="solution-code-summary">Lehrercode eingeben</label>
+                <div class="solution-code-controls">
+                  <input id="solution-code-summary" name="solution-code" type="text" maxlength="9" autocomplete="off" autocapitalize="characters" spellcheck="false" required>
+                  <button type="submit">Code prüfen</button>
+                </div>
+                <p id="solution-code-message-summary" class="solution-code-message" aria-live="polite"></p>
+                <a id="solution-download-link-summary" class="download-button" href="sicherungsblatt-aufgabe-11-loesungen.pdf" download hidden>&#8595; Sicherungsblatt herunterladen</a>
+              </form>
+            </details>
+          </section>
+          <div class="summary-actions">
+            <button id="print-summary" class="secondary-button" type="button">Auswertung drucken</button>
+            <button id="reset-module" class="danger-button" type="button">Alle Eingaben zurücksetzen</button>
+            <a class="secondary-button" href="../index.html">Zur Aufgabenübersicht</a>
+          </div>
+        </section>
+        <section id="step-8" class="step-panel" role="tabpanel" aria-labelledby="tab-8" hidden>
+          <div class="step-heading"><span class="step-number">8</span><div><p class="step-kicker">Sichern</p><h2>Abschlussquiz</h2></div></div>
           <div class="scenario-card"><p>Kreuze alle richtigen Antworten an. Bei manchen Fragen sind mehrere Antworten richtig.</p></div>
           <form id="final-quiz" class="final-quiz" novalidate>
             <fieldset><legend><span>1</span> Was gilt für die Datenpflege?</legend><div id="quiz-q1" class="choice-list"></div></fieldset>
@@ -285,56 +315,24 @@ VALUES ('storage/photos/2/1480.webp', '#usa #florida #everglades')</code></pre>
             <fieldset><legend><span>5</span> Welche Aussagen über Integritätsbedingungen stimmen?</legend><div id="quiz-q5" class="choice-list"></div></fieldset>
             <fieldset><legend><span>6</span> Was bedeutet Integrität einer Datenbank?</legend><div id="quiz-q6" class="choice-list"></div></fieldset>
             <div class="action-row"><button class="primary-button" type="submit">Quiz auswerten</button></div>
-            <p id="feedback-step7" class="feedback" aria-live="polite"></p>
+            <p id="feedback-step8" class="feedback" aria-live="polite"></p>
           </form>
           <section class="solution-download" aria-labelledby="solution-download-title">
-            <h2 id="solution-download-title">Sicherungsblatt zu Aufgabe 9</h2>
+            <h2 id="solution-download-title">Sicherungsblatt zu Aufgabe 11</h2>
             <details class="solution-reveal">
               <summary>Sicherungsblatt anzeigen</summary>
-              <form class="solution-code-form" onsubmit="unlockSolution(event, 'M4NP-X3J6', 'solution-download-link', 'solution-code-message')">
+              <form class="solution-code-form" onsubmit="unlockSolution(event, 'M7QV-X3L5', 'solution-download-link', 'solution-code-message')">
                 <label for="solution-code">Lehrercode eingeben</label>
                 <div class="solution-code-controls">
                   <input id="solution-code" name="solution-code" type="text" maxlength="9" autocomplete="off" autocapitalize="characters" spellcheck="false" required>
                   <button type="submit">Code prüfen</button>
                 </div>
                 <p id="solution-code-message" class="solution-code-message" aria-live="polite"></p>
-                <a id="solution-download-link" class="download-button" href="sicherungsblatt-aufgabe-9-loesungen.pdf" download hidden>&#8595; Sicherungsblatt herunterladen</a>
-              </form>
-            </details>
-          </section>
-        </section>
-
-        <!-- Übersicht -->
-        <section id="step-summary" class="step-panel summary-panel" role="tabpanel" aria-labelledby="tab-summary" hidden>
-          <div class="step-heading"><span class="step-number complete">✓</span><div><p class="step-kicker">Abschlussübersicht</p><h2>Transaktionen und Integrität auf einen Blick</h2></div></div>
-          <p class="summary-intro">Hier siehst du die Merksätze und die richtigen Ergebnisse aller sieben Lernschritte.</p>
-          <div class="summary-key-points">
-            <article><h3>Transaktionen</h3><code>INSERT · UPDATE · DELETE</code><p>Eine oder mehrere Datenbankoperationen, die Daten einfügen, ändern oder löschen. Danach müssen die Daten stimmig sein. CRUD: Create, Read, Update, Delete.</p></article>
-            <article><h3>Anomalien</h3><code>users_photos</code><p>UPDATE-Anomalie: Beim Ändern entstehen Inkonsistenzen. DELETE-Anomalie: Beim Löschen geht mehr verloren als gewollt. INSERT-Anomalie: Beim Einfügen fehlen relevante Informationen. Ursache: Redundanz.</p></article>
-            <article><h3>Integritätsbedingungen</h3><code>Primärschlüssel · Datentyp · Fremdschlüssel</code><p>Entitätsintegrität: Primärschlüssel eindeutig und nie NULL. Wertebereichsintegrität: Wert im festgelegten Wertebereich. Referentielle Integrität: Fremdschlüssel verweist auf einen existierenden Datensatz.</p></article>
-          </div>
-          <div id="answer-summary" class="answer-summary"></div>
-          <section class="solution-download" aria-labelledby="solution-download-title-summary">
-            <h2 id="solution-download-title-summary">Sicherungsblatt zu Aufgabe 9</h2>
-            <details class="solution-reveal">
-              <summary>Sicherungsblatt anzeigen</summary>
-              <form class="solution-code-form" onsubmit="unlockSolution(event, 'M4NP-X3J6', 'solution-download-link-summary', 'solution-code-message-summary')">
-                <label for="solution-code-summary">Lehrercode eingeben</label>
-                <div class="solution-code-controls">
-                  <input id="solution-code-summary" name="solution-code" type="text" maxlength="9" autocomplete="off" autocapitalize="characters" spellcheck="false" required>
-                  <button type="submit">Code prüfen</button>
-                </div>
-                <p id="solution-code-message-summary" class="solution-code-message" aria-live="polite"></p>
-                <a id="solution-download-link-summary" class="download-button" href="sicherungsblatt-aufgabe-9-loesungen.pdf" download hidden>&#8595; Sicherungsblatt herunterladen</a>
+                <a id="solution-download-link" class="download-button" href="sicherungsblatt-aufgabe-11-loesungen.pdf" download hidden>&#8595; Sicherungsblatt herunterladen</a>
               </form>
             </details>
           </section>
 
-          <div class="summary-actions">
-            <button id="print-summary" class="secondary-button" type="button">Auswertung drucken</button>
-            <button id="reset-module" class="danger-button" type="button">Alle Eingaben zurücksetzen</button>
-            <a class="secondary-button" href="../index.html">Zur Aufgabenübersicht</a>
-          </div>
         </section>
 
       </section>

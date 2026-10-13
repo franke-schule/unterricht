@@ -6,9 +6,10 @@
     "fail": 0
   },
   "website": {
-    "files": 30,
-    "tests": 70,
+    "files": 29,
+    "tests": 69,
     "pass": 67,
-    "fail": 3
-  }
+    "fail": 2
+  },
+  "note": "Historischer Prüfstand; entfernter Test aus der Zusammenfassung entfernt."
 }

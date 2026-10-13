@@ -223,12 +223,10 @@ Informatik 10, Online-IDE (Formular/iframe bzw. Code-Ergebnis):
 
 Informatik 11, Künstliche Intelligenz (JSONP):
   [lokal umgestellt] faecher/informatik/klasse-11/1-Kuenstliche-Intelligenz/aufgabe3a-quiz.mjs
-  [lokal umgestellt] faecher/informatik/klasse-11/1-Kuenstliche-Intelligenz/aufgabe5-quiz.mjs
   [lokal umgestellt] faecher/informatik/klasse-11/1-Kuenstliche-Intelligenz/entscheidungbaeume/ui/task3.mjs
   [lokal umgestellt] faecher/informatik/klasse-11/1-Kuenstliche-Intelligenz/entscheidungbaeume/ui/task4.mjs
   [lokal umgestellt] faecher/informatik/klasse-11/1-Kuenstliche-Intelligenz/knn/ui/task7.mjs
   [lokal umgestellt] faecher/informatik/klasse-11/1-Kuenstliche-Intelligenz/knn/ui/task8.mjs
-  [lokal umgestellt] faecher/informatik/klasse-11/1-Kuenstliche-Intelligenz/perzeptron/ui/task5.mjs
   [lokal umgestellt] faecher/informatik/klasse-11/1-Kuenstliche-Intelligenz/perzeptron/ui/task6.mjs
 
 Informatik 11, Codierung und Verschlüsselung (JSONP):
@@ -647,7 +645,6 @@ Automatische Prüfung:
   Buttonrücksetzung geprüft; Quader-Testdaten zusätzlich mechanisch geprüft.
 * Erweiterte bestehende Website-Tests: 67 von 70 erfolgreich. Drei Fehler
   mit dem unveränderten Ausgangsstand reproduziert, unabhängig vom Wechsel:
-  - Perzeptron task5-contract: CSV-Kopfzeile Zahnlaenge/Augengroesse statt Umlauten.
   - Physik kraefte-bewegung-config: veraltete Grafik-Koordinaten im Test.
   - Physik zentripetalkraft-config: veralteter Filter der Eyebrow-Überschrift.
   Diese fachfremden Tests/Materialien wurden nicht verändert.

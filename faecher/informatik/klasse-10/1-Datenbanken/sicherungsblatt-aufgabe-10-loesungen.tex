@@ -1,0 +1,75 @@
+\documentclass[10pt,a4paper]{article}
+
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage[ngerman]{babel}
+\usepackage[a4paper,margin=14mm]{geometry}
+\usepackage{lmodern}
+\usepackage[table]{xcolor}
+\usepackage{tabularx}
+\usepackage{array}
+\usepackage{microtype}
+\usepackage[most]{tcolorbox}
+
+\pagestyle{empty}
+\setlength{\parindent}{0pt}
+\setlength{\parskip}{0pt}
+\renewcommand{\familydefault}{\sfdefault}
+\renewcommand{\arraystretch}{1.16}
+
+\definecolor{Navy}{HTML}{17324D}
+\definecolor{Blue}{HTML}{3B6EA5}
+\definecolor{Sky}{HTML}{EAF3FA}
+\definecolor{Mint}{HTML}{E8F5EF}
+\definecolor{Gold}{HTML}{F3B33D}
+\definecolor{Ink}{HTML}{1E2935}
+\definecolor{Muted}{HTML}{617080}
+\definecolor{Line}{HTML}{D8E1E8}
+\definecolor{CodeBg}{HTML}{F5F7F9}
+
+\color{Ink}
+\newcommand{\sectiontitle}[1]{%
+  \vspace{2.3mm}{\color{Blue}\bfseries\large #1}\par
+  \vspace{0.7mm}{\color{Blue}\rule{\linewidth}{0.7pt}}\par\vspace{1.2mm}}
+\newcommand{\schema}[1]{\colorbox{CodeBg}{\parbox{\dimexpr\linewidth-2\fboxsep\relax}{\ttfamily\small #1}}}
+
+\begin{document}
+\colorbox{Navy}{\parbox{\dimexpr\linewidth-2\fboxsep\relax}{%
+  \vspace{3mm}\color{white}\begin{tabularx}{\linewidth}{@{}Xr@{}}
+  {\small\bfseries INFORMATIK · KLASSE 10} & \colorbox{Gold}{\color{Navy}\small\bfseries\strut LÖSUNGEN}\end{tabularx}
+  \vspace{2.4mm}{\fontsize{18}{21}\selectfont\bfseries Aufgabe 10 -- 1:1-Beziehungen}\par
+  \vspace{0.8mm}{\large Sicherungsblatt}\vspace{2.8mm}}}
+\vspace{2.5mm}
+\colorbox{Sky}{\parbox{\dimexpr\linewidth-2\fboxsep\relax}{\vspace{1.6mm}
+\textcolor{Blue}{\bfseries Ziel:} Du erkennst 1:1-Zuordnungen und erklärst den möglichen Speicherort des Fremdschlüssels.\vspace{1.6mm}}}
+
+\sectiontitle{1 · Klasse und Klassenleiter}
+{\small Für dieses Schulbeispiel gilt: Jede Klasse hat genau einen Klassenleiter, und jeder Klassenleiter leitet genau eine Klasse. Die Zuordnung lautet: 10a -- KOH, 10b -- SEI, 10c -- BRA.}\par\vspace{1mm}
+{\centering\bfseries\textcolor{Blue}{Klasse \quad 1 \;\rule{32mm}{0.7pt}\; 1 \quad Klassenleiter}\par}
+\vspace{1mm}
+{\small Ein Fremdschlüssel kann den Verweis in \texttt{klasse} oder in \texttt{klassenleiter} speichern. Schema C mit zwei Verweisen speichert die Verbindung doppelt und kann widersprüchlich werden.}\par
+\sectiontitle{2 · Schlüssel und Schloss}
+{\small Für diese Schließanlage gilt: Jeder Schlüssel öffnet genau ein Schloss, und zu jedem Schloss gehört genau ein Schlüssel.}\par\vspace{1mm}
+{\centering\bfseries\textcolor{Blue}{Schlüssel \quad 1 \;\rule{32mm}{0.7pt}\; 1 \quad Schloss}\par}
+\vspace{1.5mm}
+\begin{minipage}[t]{0.48\linewidth}
+\textcolor{Blue}{\bfseries Möglichkeit A}\par\vspace{0.6mm}
+\schema{schluessel (id: int, nummer: int,\par\quad besitzer: varchar(255),\par\quad schloss\_id[schloss]: int)\par
+schloss (id: int, ort: varchar(255))}
+\end{minipage}\hfill
+\begin{minipage}[t]{0.48\linewidth}
+\textcolor{Blue}{\bfseries Möglichkeit B}\par\vspace{0.6mm}
+\schema{schluessel (id: int, nummer: int,\par\quad besitzer: varchar(255))\par
+schloss (id: int, ort: varchar(255),\par\quad schluessel\_id[schluessel]: int)}
+\end{minipage}
+\par\vspace{1.2mm}
+\sectiontitle{3 · Eindeutigkeit}
+{\small Ein Fremdschlüssel speichert nur einen Verweis. Damit die Beziehung 1:1 bleibt, darf derselbe Partner nicht mehreren Zeilen zugeordnet werden. Diese Eindeutigkeit gilt in unseren Beispielen als Annahme.}\par\vspace{1mm}
+\begin{tcolorbox}[colback=Mint,colframe=Blue,arc=2mm,boxrule=.8pt,left=3mm,right=3mm,top=1.7mm,bottom=1.7mm]
+\textbf{Merksatz}\par\smallskip
+Bei einer 1:1-Beziehung gehört zu jedem Datensatz der einen Tabelle genau ein Datensatz der anderen Tabelle -- und umgekehrt. Der Fremdschlüssel kann in einer der beiden Tabellen stehen; die Zuordnung muss zusätzlich eindeutig sein.
+\end{tcolorbox}
+
+\vfill{\color{Line}\rule{\linewidth}{.5pt}}\par\vspace{1.5mm}
+\begin{tabularx}{\linewidth}{@{}Xr@{}}{\small\color{Muted}Klasse 10 · Datenbanken} & {\small\color{Muted}Sicherungsblatt · Aufgabe 10}\end{tabularx}
+\end{document}
