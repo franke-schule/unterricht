@@ -1,12 +1,13 @@
 import assert from "node:assert/strict";
 import fs from "node:fs";
+import vm from "node:vm";
 
 const html = fs.readFileSync(new URL("../aufgabe5.html", import.meta.url), "utf8");
 const source = fs.readFileSync(new URL("../haftreibung-zentripetalkraft.mjs", import.meta.url), "utf8");
 const css = fs.readFileSync(new URL("../haftreibung-zentripetalkraft.css", import.meta.url), "utf8");
 
 assert.match(html, /Aufgabe 5 – Die Haftreibungskraft als Zentripetalkraft/);
-assert.match(html, /haftreibung-zentripetalkraft\.mjs\?v=20260930b/);
+assert.match(html, /haftreibung-zentripetalkraft\.mjs\?v=20261013a/);
 assert.match(html, /haftreibung-zentripetalkraft\.css\?v=20260922b/);
 assert.equal((html.match(/data-physics-tab=/g) || []).length, 6);
 assert.equal((html.match(/data-physics-panel=/g) || []).length, 6);
@@ -62,6 +63,42 @@ for (const value of ["mps", "kmh", "mps2", "N"]) assert.equal((html.match(new Re
 for (const value of ["19.8", "71.3", "9.9", "35.7"]) assert.match(source, new RegExp(value.replace(".", "\\.")));
 assert.match(source, /replace\(",", "\."\)/);
 assert.match(source, /decimalPlaces\(raw\) === 1/);
+assert.match(html, /Bei nasser Straße sind auch zwei gültige Ziffern zulässig\./);
+
+// Tatsächlichen Klick-Handler prüfen: Rundung darf weder Einheit noch Genauigkeit umgehen.
+const elements = new Map();
+let lastFeedback;
+const speedContext = vm.createContext({
+  document: {
+    getElementById(id) {
+      if (!elements.has(id)) elements.set(id, { value: "", addEventListener(type, handler) { this[type] = handler; } });
+      return elements.get(id);
+    },
+  },
+  setFeedback(id, status, message) { lastFeedback = { id, status, message }; },
+});
+const speedSource = source.slice(source.indexOf("function numberValue(raw)"), source.indexOf("function renderQuizQuestion("));
+vm.runInContext(`${speedSource}\nsetupSpeedTask(speedTasks.wet); setupSpeedTask(speedTasks.ice);`, speedContext);
+function checkSpeed(task, raw, unit, expectedStatus) {
+  speedContext.document.getElementById(`${task}-speed-answer`).value = raw;
+  speedContext.document.getElementById(`${task}-speed-unit`).value = unit;
+  elements.get(`check-${task}-speed`).click();
+  assert.equal(lastFeedback.status, expectedStatus, `${task}: ${raw} ${unit}`);
+}
+checkSpeed("wet", "20", "mps", "success");
+assert.match(lastFeedback.message, /zwei gültige Ziffern/);
+checkSpeed("wet", "71", "kmh", "success");
+for (const raw of ["19,8", "19.8"]) checkSpeed("wet", raw, "mps", "success");
+checkSpeed("wet", "71,3", "kmh", "success");
+checkSpeed("wet", "20", "", "error");
+checkSpeed("wet", "20", "N", "partial");
+checkSpeed("wet", "20", "kmh", "partial");
+checkSpeed("wet", "20,0", "mps", "partial");
+checkSpeed("wet", "19,80", "mps", "partial");
+checkSpeed("wet", "21", "mps", "error");
+checkSpeed("ice", "9,9", "mps", "success");
+checkSpeed("ice", "35,7", "kmh", "success");
+checkSpeed("ice", "20", "mps", "error");
 
 assert.match(html, /<details><summary>Vollständiges Beispiel: trockene Straße<\/summary>/);
 assert.match(html, /22,1[\s\S]*79,7/);

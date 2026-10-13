@@ -1,5 +1,5 @@
 import {calculate,normaliseNumber} from '../logic/perceptron.mjs';
-import {parseLinearRelation as parse,equivalent,sameBoundary,countMatching} from '../logic/linear-inequality.mjs';
+import {parseLinearRelation as parse,equivalent,sameBoundary,countMatching} from '../logic/linear-inequality.mjs?v=20261013a';
 import {unlockSolution} from '../../../../klasse-10/1-Datenbanken/tab-navigation.mjs';
 
 const KEY='informatik11-perzeptron-aufgabe5-1-grafisch-v1';

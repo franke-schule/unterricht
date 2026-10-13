@@ -4,6 +4,17 @@ import {parseLinearRelation as parse,equivalent,sameBoundary,classify,countMatch
 const target=parse('4x1+2x2>3');
 const rows=[{x:0,y:0,target:0},{x:0,y:1,target:0},{x:1,y:0,target:1},{x:1,y:1,target:1}];
 
+test('4.1 akzeptiert Bruchzahlen wie die entsprechenden Dezimalzahlen',()=>{
+  const options={kind:'Gleichung',variables:'diagram'};
+  const line=parse('y=0,5x+0,5',options);
+  for(const text of ['y=1/2x+1/2','y=1/2*x+1/2','y=(1/2)x+(1/2)','y=1 / 2 x + 1 / 2','y=2/4x+2/4','y=-1/-2x+1/2','y=0.5x+0.5']) {
+    assert.equal(equivalent(parse(text,options),line,{line:true}),true,text);
+  }
+  assert.equal(equivalent(parse('y=1/3x+1/2',options),line,{line:true}),false);
+  assert.equal(equivalent(parse('y>1/2x+1/2'),parse('y>0,5x+0,5')),true);
+  for(const text of ['y=1/0x+1/2','y=0/0x+1/2','y=1/x+1/2','y=1/2/3x+1/2','y=1/2x+1/']) assert.equal(parse(text,options).ok,false,text);
+});
+
 test('äquivalente Schreibweisen und positive Skalierung',()=>{
   for(const text of ['y > -2x + 1,5','4*x + 2*y > 3','3 < 4x + 2y','-4x - 2y < -3','y + 2x > 1,5','8x1+4x2>6','2(x1+x2)+2x1>3']) assert.equal(equivalent(parse(text),target),true,text);
   assert.equal(equivalent(parse('-4x-2y>-3'),target),false);

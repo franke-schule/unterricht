@@ -351,12 +351,12 @@ function decimalPlaces(raw) {
 }
 
 const speedTasks = {
-  wet: { inputId: "wet-speed-answer", unitId: "wet-speed-unit", buttonId: "check-wet-speed", feedbackId: "wet-speed-feedback", exact: { mps: 19.809088823063014, kmh: 71.31271976302685 }, rounded: { mps: 19.8, kmh: 71.3 }, success: "Richtig. Zahlenwert, Einheit und die Anzahl der gültigen Ziffern stimmen. Auf nasser Straße gilt {{v_B,max}} = 19,8 {{m/s}} = 71,3 {{km/h}}." },
+  wet: { inputId: "wet-speed-answer", unitId: "wet-speed-unit", buttonId: "check-wet-speed", feedbackId: "wet-speed-feedback", exact: { mps: 19.809088823063014, kmh: 71.31271976302685 }, rounded: { mps: 19.8, kmh: 71.3 }, twoSignificantFigures: { mps: 20, kmh: 71 }, success: "Richtig. Zahlenwert, Einheit und die Anzahl der gültigen Ziffern stimmen. Auf nasser Straße gilt {{v_B,max}} = 19,8 {{m/s}} = 71,3 {{km/h}}.", roundedSuccess: "Richtig. Zahlenwert, Einheit und die Anzahl der gültigen Ziffern stimmen. Auf zwei gültige Ziffern gerundet beträgt die Maximalgeschwindigkeit auf nasser Straße 20 {{m/s}} beziehungsweise 71 {{km/h}}." },
   ice: { inputId: "ice-speed-answer", unitId: "ice-speed-unit", buttonId: "check-ice-speed", feedbackId: "ice-speed-feedback", exact: { mps: 9.904544411531507, kmh: 35.656359881513426 }, rounded: { mps: 9.9, kmh: 35.7 }, success: "Richtig. Zahlenwert, Einheit und die Anzahl der gültigen Ziffern stimmen. Auf vereister Straße gilt {{v_B,max}} = 9,9 {{m/s}} = 35,7 {{km/h}}." },
 };
 
 function matchesSpeed(value, task, unit) {
-  return Math.abs(value - task.rounded[unit]) <= 0.051 || Math.abs(value - task.exact[unit]) <= 0.025;
+  return value === task.twoSignificantFigures?.[unit] || Math.abs(value - task.rounded[unit]) <= 0.051 || Math.abs(value - task.exact[unit]) <= 0.025;
 }
 
 function setupSpeedTask(task) {
@@ -374,7 +374,8 @@ function setupSpeedTask(task) {
       return;
     }
     if (matchesSpeed(value, task, unit)) {
-      if (decimalPlaces(raw) === 1) setFeedback(task.feedbackId, "success", task.success);
+      if (value === task.twoSignificantFigures?.[unit] && decimalPlaces(raw) === 0) setFeedback(task.feedbackId, "success", task.roundedSuccess);
+      else if (Math.abs(value - task.rounded[unit]) <= 0.051 && decimalPlaces(raw) === 1) setFeedback(task.feedbackId, "success", task.success);
       else setFeedback(task.feedbackId, "partial", "Dein Rechenwert ist grundsätzlich passend. Runde das Endergebnis noch auf eine Nachkommastelle.");
       return;
     }

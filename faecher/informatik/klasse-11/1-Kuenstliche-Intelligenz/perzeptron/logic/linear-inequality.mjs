@@ -14,10 +14,15 @@ function tokenize(source) {
   while (i < input.length) {
     if (/\s/.test(input[i])) { i++; continue; }
     const rest = input.slice(i);
-    const number = /^(?:\d+(?:[.,]\d+)?|[.,]\d+)/.exec(rest);
+    const number = /^(?:\d+(?:[.,]\d+)?|[.,]\d+)(?:\s*\/\s*[+-]?(?:\d+(?:[.,]\d+)?|[.,]\d+))?/.exec(rest);
     const variable = /^(?:x1|x2|x|y)(?![a-z\d])/i.exec(rest);
     const comparison = /^(?:>=|<=|>|<|=)/.exec(rest);
-    if (number) { tokens.push({ type: 'number', value: Number(number[0].replace(',', '.')) }); i += number[0].length; }
+    if (number) {
+      const [numerator,denominator] = number[0].split('/').map(part => Number(part.trim().replace(',', '.')));
+      const value = denominator === undefined ? numerator : numerator / denominator;
+      if (!Number.isFinite(value)) throw new Error('syntax');
+      tokens.push({ type: 'number', value }); i += number[0].length;
+    }
     else if (variable) { tokens.push({ type: 'variable', value: variable[0].toLowerCase() }); i += variable[0].length; }
     else if (comparison) { tokens.push({ type: 'comparison', value: comparison[0] }); i += comparison[0].length; }
     else if ('+-*()'.includes(input[i])) { tokens.push({ type: input[i] }); i++; }
