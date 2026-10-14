@@ -147,6 +147,32 @@ Verbindlich ist `manifest-allgemein.txt` Abschnitt 4. Als Vorlage dient
 `faecher/physik/klasse-8/1-El-Strom/1-Atome-und-Ladungen/arbeitsblatt-1-atome-und-ladungen.tex`.
 
 
+## Abfragen und Tests für den Rest der Klasse in Phy8
+
+Alle gedruckten Phy8-Abfragen und die zugehörigen Tests liegen zentral unter
+`faecher/physik/klasse-8/Abfragen/`. Pro Stunde bzw. Abfragesatz wird ein
+gemeinsamer Themenordner mit fortlaufender Nummer verwendet.
+
+Für neue oder überarbeitete Abfrage-Test-Paare gilt das
+[Manifest für Abfragen und Tests in Phy8](faecher/physik/klasse-8/Abfragen/manifest-abfragen-tests-phy8.md).
+Es enthält die Referenzdateien, Operatoren- und Modellvorgaben, den gemeinsamen
+Aufbau von Abfrage und Test sowie die Erstellung der layoutgleichen
+Lösungsfassungen und die PDF-Prüfung. Sein Geltungsbereich ist ausschließlich
+Physik Klasse 8.
+
+## Abfragen in Phy11
+
+Alle gedruckten Phy11-Abfragen samt Lösungen liegen direkt unter
+`faecher/physik/klasse-11/Abfragen/`. Das Dateinamensschema lautet
+`Phy11-Lernmodul<X>-<Thema>`; `<X>` bezeichnet die Aufgabennummer des Lernmoduls.
+Weitere Fassungen erhalten einen Variantenzusatz, getrennte Lösungen den
+Zusatz `-loesungen`. LaTeX-Datei und PDF besitzen denselben Stamm.
+
+Für Ablage, Benennung und neue oder überarbeitete Abfragen gilt das
+[Manifest für Abfragen in Phy11](faecher/physik/klasse-11/Abfragen/manifest-abfragen-phy11.md).
+Es dokumentiert auch die vorhandene Variante mit Aufgaben und Lösungen im
+selben Dokument. Die Phy8-Vorgaben zu Abfrage-Test-Paaren gelten nur für Phy8.
+
 ## Übersichtsseiten
 
 Lernmodule sollen am Ende eine kompakte Übersicht bzw. Zusammenfassung besitzen,

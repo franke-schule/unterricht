@@ -1,0 +1,121 @@
+\documentclass[10pt,a4paper]{article}
+
+% Die Loesungsfassung unterscheidet sich ausschliesslich durch \solutiontrue.
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage[ngerman]{babel}
+\usepackage[a4paper,margin=14mm]{geometry}
+\usepackage{lmodern}
+\usepackage[table]{xcolor}
+\usepackage{tabularx}
+\usepackage{microtype}
+\usepackage{tikz}
+
+\newif\ifsolution
+\solutionfalse
+
+\pagestyle{empty}
+\setlength{\parindent}{0pt}
+\setlength{\parskip}{0pt}
+\renewcommand{\familydefault}{\sfdefault}
+
+\definecolor{Navy}{HTML}{17324D}
+\definecolor{Blue}{HTML}{3B6EA5}
+\definecolor{Gold}{HTML}{F3B33D}
+\definecolor{Ink}{HTML}{1E2935}
+\definecolor{Muted}{HTML}{617080}
+\definecolor{Line}{HTML}{D8E1E8}
+\color{Ink}
+
+\newcommand{\kopf}{%
+  \colorbox{Navy}{\parbox{\dimexpr\linewidth-2\fboxsep\relax}{%
+    \vspace{1.3mm}\color{white}
+    \begin{tabularx}{\linewidth}{@{}Xr@{}}
+      {\small\bfseries PHYSIK · KLASSE 8} &
+      \colorbox{Gold}{\color{Navy}\small\bfseries\strut\ifsolution LÖSUNGEN\else ABFRAGE\fi}
+    \end{tabularx}
+    \vspace{0.9mm}
+    {\fontsize{16}{19}\selectfont\bfseries Elektrischer Strom · Spannung messen}\par
+    \vspace{0.3mm}{\small Ampere und Milliampere · Förderbandmodell · Voltmeter}\vspace{1.1mm}
+  }}\par\vspace{2mm}}
+\newcommand{\frage}[2]{%
+  \vspace{0.8mm}{\color{Blue}\bfseries\large #1 · #2}\par
+  \vspace{0.4mm}{\color{Blue}\rule{\linewidth}{0.65pt}}\par\vspace{0.5mm}}
+\newcommand{\antwortfeld}[2]{%
+  \vspace{1mm}%
+  \begin{tikzpicture}[x=1mm,y=1mm]
+    \path[use as bounding box] (0,0) rectangle (181.5,-8*#1);
+    \ifsolution
+      \node[anchor=north west,text width=179mm,inner sep=0pt,align=left,
+        font=\small,text=Blue] at (0,-1) {#2};
+    \else
+      \foreach \i in {1,...,#1}{\draw[Line,line width=.55pt] (0,-8*\i) -- (181.5,-8*\i);}
+    \fi
+  \end{tikzpicture}\par}
+\newcommand{\spannungsschaltung}[2]{%
+  \begin{scope}[shift={(#1,#2)}]
+    \draw[Blue,line width=.85pt]
+      (0,-12)--(31,-12) (34,-12)--(72,-12)--(72,-28)--(40,-28)
+      (0,-12)--(0,-28)--(32,-28);
+    \draw[Blue,line width=.85pt] (31,-16)--(31,-8) (34,-14.5)--(34,-9.5);
+    \node[font=\scriptsize,text=Blue] at (28,-8) {$+$};
+    \node[font=\scriptsize,text=Blue] at (37,-8) {$-$};
+    \draw[Blue,line width=.85pt,fill=white] (36,-28) circle (4);
+    \draw[Blue,line width=.7pt] (33.2,-30.8)--(38.8,-25.2) (33.2,-25.2)--(38.8,-30.8);
+    \draw[Blue,line width=.85pt]
+      (16,-12)--(16,0)--(32,0) (40,0)--(56,0)--(56,-12)
+      (16,-28)--(16,-40)--(32,-40) (40,-40)--(56,-40)--(56,-28);
+    \draw[Blue,line width=.85pt,fill=white] (36,0) circle (4) (36,-40) circle (4);
+    \node[font=\small,text=Blue] at (36,0) {V};
+    \node[font=\small,text=Blue] at (36,-40) {V};
+    \foreach \x in {16,56}{\foreach \y in {-12,-28}{\fill[Blue] (\x,\y) circle (1);}}
+    \node[anchor=west,font=\small,text=Blue] at (78,-12) {Batterie};
+    \node[anchor=west,font=\small,text=Blue] at (78,-28) {Lampe};
+  \end{scope}}
+\newcommand{\karofeld}[2]{%
+  \vspace{0.5mm}%
+  \begin{tikzpicture}[x=1mm,y=1mm]
+    \path[use as bounding box] (0,0) rectangle (181.5,-#1);
+    \draw[step=5mm,Line!65,line width=.25pt] (0,-#1) grid (181.5,0);
+    \draw[Line,line width=.55pt] (0,0) rectangle (181.5,-#1);
+    \ifsolution #2\fi
+  \end{tikzpicture}\par}
+\newcommand{\umrechnungen}[6]{%
+  \begin{tikzpicture}[x=1mm,y=1mm]
+    \path[use as bounding box] (0,0) rectangle (181.5,-12);
+    \node[anchor=west,inner sep=0pt,text=\ifsolution Blue\else Ink\fi] at (0,-6)
+      {a) $#1=\ifsolution #2\else\rule{24mm}{.4pt}\fi\,\mathrm{#3}$};
+    \node[anchor=west,inner sep=0pt,text=\ifsolution Blue\else Ink\fi] at (91,-6)
+      {b) $#4=\ifsolution #5\else\rule{24mm}{.4pt}\fi\,\mathrm{#6}$};
+  \end{tikzpicture}\par}
+\newcommand{\fuss}{%
+  \vfill{\color{Line}\rule{\linewidth}{0.5pt}}\par\vspace{1mm}
+  \begin{tabularx}{\linewidth}{@{}Xr@{}}
+    {\small\color{Muted}Klasse 8 · Physik · Elektrischer Strom} &
+    {\small\color{Muted}\ifsolution Lösungen\else Abfrage\fi{} · Seite 1 von 1}
+  \end{tabularx}}
+
+\begin{document}
+\kopf
+
+\frage{1}{Ampere und Milliampere}
+\textbf{Rechne} die beiden Stromstärken in die jeweils angegebene Einheit um.\par
+\umrechnungen{350\,\mathrm{mA}}{0{,}35}{A}{0{,}08\,\mathrm{A}}{80}{mA}
+
+\frage{2}{Das Förderbandmodell}
+Das Förderbandmodell ist ein Modell für den elektrischen Stromkreis.\par
+a) \textbf{Beschreibe} den Weg einer Kugel im Förderbandmodell. Gehe auf das Förderband und das Drehkreuz ein.\par
+\antwortfeld{3}{Im Modell hebt das Förderband die Kugel vom unteren auf den oberen Teil der Bahn. Oben rollt sie zum Drehkreuz und treibt es beim Herabrollen an. Anschließend rollt sie auf dem unteren Teil der Bahn zum Förderband zurück; sie bleibt im Umlauf.}
+b) \textbf{Ordne} Förderband, Drehkreuz und Höhenunterschied den Bestandteilen bzw. der Größe des elektrischen Stromkreises zu, die sie im Modell darstellen.\par
+\antwortfeld{3}{Im Modell stellt das Förderband die Batterie dar, das Drehkreuz die Glühbirne und der Höhenunterschied die elektrische Spannung.}
+
+\frage{3}{Die Spannung messen}
+\textbf{Nenne} das Messgerät zur Messung der elektrischen Spannung. \textbf{Beschreibe}, wie es an das Bauteil angeschlossen wird, dessen Spannung gemessen werden soll.\par
+\antwortfeld{3}{Die elektrische Spannung wird mit einem Voltmeter (Spannungsmessgerät) gemessen. Das Voltmeter wird parallel zum Bauteil angeschlossen: Seine beiden Anschlüsse werden mit den beiden Anschlüssen des Bauteils verbunden.}
+
+\frage{4}{Der Schaltplan zur Spannungsmessung}
+\textbf{Skizziere} einen geschlossenen Stromkreis aus Batterie und Lampe. \textbf{Ergänze} zwei Spannungsmessgeräte, die gleichzeitig die Spannung an der Batterie und an der Lampe messen.\par
+\karofeld{55}{\spannungsschaltung{40}{-6}}
+
+\fuss
+\end{document}

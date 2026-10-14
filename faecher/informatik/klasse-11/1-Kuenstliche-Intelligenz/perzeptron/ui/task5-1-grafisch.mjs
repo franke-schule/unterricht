@@ -354,10 +354,10 @@ function renderSummary() {
   for(let i=1;i<=3;i++)appendSummary(root,`2.${i} Grenze oder Bereich?`,$('#four-quiz-'+i+' legend').textContent,summaryChoices('four-quiz-'+i),summaryChoices('four-quiz-'+i,FOUR_QUIZ[i-1].solution),true);
   appendSummary(root,'3 Ungleichung verbessern','Verbessere die vorgegebene Ungleichung, bis U1 und U2 die Ausgabe 1 sowie G1 und G2 die Ausgabe 0 erhalten. Stelle deinen Entwurf dar und prüfe alle vier Tiere.',value('five-a'),'U1/U2 = 1, G1/G2 = 0; zum Beispiel y > 0,5x + 0,5.',true);
   appendSummary(root,'4.1 Gerade','Bestimme die Gleichung der gezeichneten Trennlinie.',value('six-line'),'y = 0,5x + 0,5.',true);
-  appendSummary(root,'4.2 Feuer-Ungleichung','Beschreibe die Seite mit Ausgabe 1 durch eine strenge Ungleichung.',value('six-diagram'),'y > 0,5x + 0,5.',true);
-  appendSummary(root,'4.3 Eingangsnotation','Ersetze x und y durch x₁ und x₂ und forme die Bedingung zur Neuronform um.',value('six-input'),'-x₁ + 2x₂ > 1.',true);
-  appendSummary(root,'4.4 Gewichte und Schwelle','Lies passende Werte für w₁, w₂ und s ab.',summaryParameters('six'),'w₁=-1, w₂=2, s=1 oder gemeinsames positives Vielfaches.',true);
-  appendSummary(root,'4.5 Vier Ausgaben','Berechne die Ausgabe für U1, U2, G1 und G2.',summaryRows(SIX_ROWS,readSelects('.six-row-select')),'U1=1, U2=1, G1=0, G2=0.',true);
+  appendSummary(root,'4.2 Neuronen-Ungleichung · Schritt 1','Beschreibe zuerst die Seite mit Ausgabe 1 als Geradenungleichung.',value('six-diagram'),'y > 0,5x + 0,5.',true);
+  appendSummary(root,'4.2 Neuronen-Ungleichung · Schritt 2','Ersetze x und y durch x₁ und x₂ und forme die Bedingung zur Neuronform um.',value('six-input'),'-x₁ + 2x₂ > 1.',true);
+  appendSummary(root,'4.3 Gewichte und Schwelle','Lies passende Werte für w₁, w₂ und s ab.',summaryParameters('six'),'w₁=-1, w₂=2, s=1 oder gemeinsames positives Vielfaches.',true);
+  appendSummary(root,'4.4 Vier Ausgaben','Berechne die Ausgabe für U1, U2, G1 und G2.',summaryRows(SIX_ROWS,readSelects('.six-row-select')),'U1=1, U2=1, G1=0, G2=0.',true);
   const remember=document.createElement('p');remember.className='remember';remember.textContent='Eine lineare Grenze trennt die Merkmalswerte in zwei Bereiche. Die strenge Ungleichung wählt die Seite mit Ausgabe 1; Gewichte und Schwelle beschreiben dieselbe Entscheidung in Neuronform.';root.append(remember);
 }
 
@@ -431,10 +431,10 @@ function renderDiscovery(){
     const done=geometryStep>=0&&GEOMETRY_STEPS.slice(0,geometryStep).some(step=>step.targets.includes(key));
     el.classList.toggle('is-active',active);el.classList.toggle('is-complete',done);el.classList.toggle('is-dimmed',!active&&!done);
   });
-  $('#hare-marker').hidden=geometryStep<1;
+  $('#hare-marker').toggleAttribute('hidden',geometryStep<1);
   $('#fox-task').hidden=geometryStep<3;$('#fox-class').hidden=geometryStep<4;$('#check-fox').hidden=geometryStep<4;
   const placed=geometryStep>=3&&foxX!==null&&foxY!==null;
-  $('#fox-marker').hidden=!placed;
+  $('#fox-marker').toggleAttribute('hidden',!placed);
   if(placed){$('#fox-marker').setAttribute('transform',`translate(${90+foxX*85} ${390-foxY*60})`);$('#fox-label').textContent=`Fuchs (${foxX}|${foxY})`;}
   plot.classList.toggle('accepts-fox',geometryStep>=3);
   $('#fox-x').value=foxX===null?'':String(foxX);$('#fox-y').value=foxY===null?'':String(foxY);

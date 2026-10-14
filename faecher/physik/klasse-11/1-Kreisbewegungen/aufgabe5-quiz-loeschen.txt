@@ -12,7 +12,8 @@ Neue Dateien im Repository (alle unter faecher/physik/klasse-11/1-Kreisbewegunge
   aufgabe5-quiz.mjs
   aufgabe5-quiz.css
   aufgabe5-quiz-loeschen.txt (diese Anleitung)
-  Die gedruckte Abfrage abfrage-aufgabe-5-haftreibung*.tex/.pdf bleibt erhalten.
+  Die gedruckte Abfrage samt Lösungen bleibt erhalten:
+    ../Abfragen/Phy11-Lernmodul5-Haftreibungskraft-als-Zentripetalkraft*.tex/.pdf.
 
 Geänderte gemeinsame Dateien:
   apps-script/Tasks.gs: drei zusammenhängende Blöcke mit Präfix ph11-a5-quiz-

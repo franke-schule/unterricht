@@ -1,0 +1,140 @@
+\documentclass[10pt,a4paper]{article}
+
+% Die Loesungsfassung unterscheidet sich ausschliesslich durch \solutiontrue.
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage[ngerman]{babel}
+\usepackage[a4paper,margin=14mm]{geometry}
+\usepackage{lmodern}
+\usepackage[table]{xcolor}
+\usepackage{tabularx}
+\usepackage{microtype}
+\usepackage{amssymb}
+\usepackage{tikz}
+
+\newif\ifsolution
+\solutionfalse
+
+\pagestyle{empty}
+\setlength{\parindent}{0pt}
+\setlength{\parskip}{0pt}
+\renewcommand{\familydefault}{\sfdefault}
+
+\definecolor{Navy}{HTML}{17324D}
+\definecolor{Blue}{HTML}{3B6EA5}
+\definecolor{Gold}{HTML}{F3B33D}
+\definecolor{Ink}{HTML}{1E2935}
+\definecolor{Muted}{HTML}{617080}
+\definecolor{Line}{HTML}{D8E1E8}
+\color{Ink}
+
+\newcommand{\kopf}{%
+  \colorbox{Navy}{\parbox{\dimexpr\linewidth-2\fboxsep\relax}{%
+    \vspace{1.3mm}\color{white}
+    \begin{tabularx}{\linewidth}{@{}Xr@{}}
+      {\small\bfseries PHYSIK · KLASSE 8} &
+      \colorbox{Gold}{\color{Navy}\small\bfseries\strut\ifsolution LÖSUNGEN\else TEST\fi}
+    \end{tabularx}
+    \vspace{0.9mm}
+    {\fontsize{16}{19}\selectfont\bfseries Elektrischer Strom · Spannung messen}\par
+    \vspace{0.3mm}{\small Test zur Abfrage · Förderbandmodell und Spannungsmessung}\vspace{1.1mm}
+  }}\par\vspace{2mm}}
+\newcommand{\frage}[2]{%
+  \vspace{0.7mm}{\color{Blue}\bfseries\normalsize #1 · #2}\par
+  \vspace{0.2mm}{\color{Blue}\rule{\linewidth}{0.55pt}}\par\vspace{0.4mm}}
+\newcommand{\wahl}[2]{%
+  \noindent\ifsolution\ifnum#1=1 $\boxtimes$\else $\square$\fi\else $\square$\fi\enspace #2\par}
+\newcommand{\antwortfeld}[2]{%
+  \vspace{0.7mm}%
+  \begin{tikzpicture}[x=1mm,y=1mm]
+    \path[use as bounding box] (0,0) rectangle (181.5,-7*#1);
+    \ifsolution
+      \node[anchor=north west,text width=179mm,inner sep=0pt,align=left,
+        font=\small,text=Blue] at (0,-1) {#2};
+    \else
+      \foreach \i in {1,...,#1}{\draw[Line,line width=.55pt] (0,-7*\i) -- (181.5,-7*\i);}
+    \fi
+  \end{tikzpicture}\par}
+\newcommand{\spannungsschaltung}[2]{%
+  \begin{scope}[shift={(#1,#2)}]
+    \draw[Blue,line width=.85pt]
+      (0,0)--(31,0) (34,0)--(72,0)--(72,-12)--(39.5,-12)
+      (0,0)--(0,-12)--(32.5,-12);
+    \draw[Blue,line width=.85pt] (31,-3.5)--(31,3.5) (34,-2)--(34,2);
+    \node[font=\scriptsize,text=Blue] at (28,4) {$+$};
+    \node[font=\scriptsize,text=Blue] at (37,4) {$-$};
+    \draw[Blue,line width=.85pt,fill=white] (36,-12) circle (3.5);
+    \draw[Blue,line width=.7pt] (33.5,-14.5)--(38.5,-9.5) (33.5,-9.5)--(38.5,-14.5);
+    \draw[Blue,line width=.85pt]
+      (16,-12)--(16,-24)--(32.5,-24) (39.5,-24)--(56,-24)--(56,-12);
+    \draw[Blue,line width=.85pt,fill=white] (36,-24) circle (3.5);
+    \node[font=\small,text=Blue] at (36,-24) {V};
+    \foreach \x in {16,56}{\fill[Blue] (\x,-12) circle (1);}
+    \node[anchor=west,font=\small,text=Blue] at (78,0) {Batterie};
+    \node[anchor=west,font=\small,text=Blue] at (78,-12) {Glühbirne};
+  \end{scope}}
+\newcommand{\karofeld}[2]{%
+  \vspace{0.5mm}%
+  \begin{tikzpicture}[x=1mm,y=1mm]
+    \path[use as bounding box] (0,0) rectangle (181.5,-#1);
+    \draw[step=5mm,Line!65,line width=.25pt] (0,-#1) grid (181.5,0);
+    \draw[Line,line width=.55pt] (0,0) rectangle (181.5,-#1);
+    \ifsolution #2\fi
+  \end{tikzpicture}\par}
+\newcommand{\umrechnungen}[6]{%
+  \begin{tikzpicture}[x=1mm,y=1mm]
+    \path[use as bounding box] (0,0) rectangle (181.5,-8);
+    \node[anchor=west,inner sep=0pt,text=\ifsolution Blue\else Ink\fi] at (0,-4)
+      {a) $#1=\ifsolution #2\else\rule{24mm}{.4pt}\fi\,\mathrm{#3}$};
+    \node[anchor=west,inner sep=0pt,text=\ifsolution Blue\else Ink\fi] at (91,-4)
+      {b) $#4=\ifsolution #5\else\rule{24mm}{.4pt}\fi\,\mathrm{#6}$};
+  \end{tikzpicture}\par}
+\newcommand{\fuss}{%
+  \vfill{\color{Line}\rule{\linewidth}{0.5pt}}\par\vspace{1mm}
+  \begin{tabularx}{\linewidth}{@{}Xr@{}}
+    {\small\color{Muted}Klasse 8 · Physik · Elektrischer Strom} &
+    {\small\color{Muted}\ifsolution Lösungen\else Test\fi{} · Seite 1 von 1}
+  \end{tabularx}}
+
+\begin{document}
+\kopf
+\textbf{Untersuche} das Förderbandmodell als Modell für den elektrischen Stromkreis.\par
+
+\frage{1}{Ampere und Milliampere}
+\textbf{Rechne} die beiden Stromstärken in die jeweils angegebene Einheit um.\par
+\umrechnungen{240\,\mathrm{mA}}{0{,}24}{A}{0{,}06\,\mathrm{A}}{60}{mA}
+
+\frage{2}{Kreuze alle richtigen Zuordnungen im Förderbandmodell an.}
+\wahl{1}{Im Modell stellt das Förderband die Batterie dar.}
+\wahl{0}{Im Modell stellt das Drehkreuz die Batterie dar.}
+\wahl{0}{Im Modell stellt der Höhenunterschied die Stromstärke dar.}
+\wahl{1}{Im Modell stellt der Höhenunterschied die elektrische Spannung dar.}
+
+\frage{3}{Kreuze alle richtigen Aussagen zu Kugeln und Drehkreuz an.}
+\wahl{0}{Im Modell werden die Kugeln am Drehkreuz verbraucht.}
+\wahl{1}{Im Modell stellt das Drehkreuz die Glühbirne dar.}
+\wahl{1}{Im Modell kehren die Kugeln nach dem Drehkreuz zum Förderband zurück.}
+\wahl{0}{Im Modell erzeugt das Förderband ständig neue Kugeln.}
+
+\frage{4}{Kreuze alle richtigen Aussagen zum Spannungsmessgerät an.}
+\wahl{1}{Die elektrische Spannung wird mit einem Voltmeter gemessen.}
+\wahl{0}{Das Schaltzeichen des Voltmeters ist ein Kreis mit einem A.}
+\wahl{1}{Das Schaltzeichen des Voltmeters ist ein Kreis mit einem V.}
+\wahl{0}{Ein Amperemeter misst die elektrische Spannung.}
+
+\frage{5}{Kreuze alle richtigen Aussagen zum Anschluss des Voltmeters an.}
+\wahl{1}{Für die Spannung an der Lampe wird das Voltmeter parallel zur Lampe angeschlossen.}
+\wahl{0}{Für die Spannung an der Lampe wird das Voltmeter in Reihe zur Lampe eingebaut.}
+\wahl{0}{Ein einziger Anschluss des Voltmeters an die Lampe genügt zur Spannungsmessung.}
+\wahl{1}{Für die Spannung an der Batterie wird das Voltmeter mit beiden Batteriepolen verbunden.}
+
+\frage{6}{Die Kugel am Drehkreuz}
+\textbf{Beschreibe} im Förderbandmodell die Wirkung einer Kugel am Drehkreuz und ihren weiteren Weg. \textbf{Erkläre} den Bezug zu der Situation im elektrischen Stromkreis.\par
+\antwortfeld{4}{Im Modell treibt die Kugel das Drehkreuz an und rollt zum Förderband zurück. Die Kugeln stehen für Elektronen, das Drehkreuz für die Glühbirne. Die Elektronen geben Energie an die Glühbirne ab; diese wandelt elektrische Energie in Licht und Wärme um. Die Elektronen werden dabei nicht verbraucht und bewegen sich im geschlossenen Stromkreis weiter.}
+
+\frage{7}{Die Spannung an der Glühbirne messen}
+\textbf{Skizziere} einen geschlossenen Stromkreis aus Batterie und Lampe. Es soll die Spannung gemessen werden, die an der Glühbirne abfällt. \textbf{Ergänze} ein entsprechendes Messgerät.\par
+\karofeld{32}{\begin{scope}[scale=.85]\spannungsschaltung{47}{-6}\end{scope}}
+
+\fuss
+\end{document}

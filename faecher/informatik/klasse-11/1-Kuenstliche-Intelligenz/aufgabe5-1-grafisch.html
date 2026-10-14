@@ -8,10 +8,10 @@
 <link rel="stylesheet" href="../../../../styles.css?v=20260707">
 <link rel="stylesheet" href="perzeptron/task5.css?v=20261010-tabs">
 <link rel="stylesheet" href="perzeptron/task5-1.css?v=20261012-summary-scale">
-<link rel="stylesheet" href="perzeptron/task5-1-grafisch.css?v=2">
+<link rel="stylesheet" href="perzeptron/task5-1-grafisch.css?v=20261014-discovery">
 <script src="../../quiz-fragen-pruefen.js?v=20261006b">
 </script>
-<script type="module" src="perzeptron/ui/task5-1-grafisch.mjs?v=20261013a">
+<script type="module" src="perzeptron/ui/task5-1-grafisch.mjs?v=20261014-neuron-intro">
 </script>
 </head>
 <body class="perceptron-page task51"><div class="site-backdrop" aria-hidden="true"></div>
@@ -345,14 +345,30 @@
 <section id="six" class="step-panel" role="tabpanel" data-panel="six" aria-labelledby="tab-six" hidden>
 <h2 tabindex="-1">4 Von der Trennlinie zum Neuron</h2>
 <p>
-<strong>Bestimme</strong> aus der gezeichneten Trennlinie die Feuer-Ungleichung. Leite daraus Gewichte und Schwellenwert ab und prüfe die vier Trainingstiere.</p>
+<strong>Bestimme</strong> aus der gezeichneten Trennlinie die Neuronen-Ungleichung. Leite daraus Gewichte und Schwellenwert ab und prüfe die vier Trainingstiere.</p>
+<article class="formula-card" aria-labelledby="neuron-intro-title">
+<h3 id="neuron-intro-title">Von der Geraden zur Rechnung des Perzeptrons</h3>
+<p>Die Geradenungleichung zeigt, auf welcher Seite ein Punkt liegt. Das Perzeptron trifft dieselbe Entscheidung, indem es seine Eingaben mit Gewichten multipliziert, die Beiträge addiert und mit einem Schwellenwert vergleicht.</p>
+<p class="math">Neuronen-Ungleichung: x<sub>1</sub> · w<sub>1</sub> + x<sub>2</sub> · w<sub>2</sub> &gt; s</p>
+<p>x<sub>1</sub> und x<sub>2</sub> sind die Eingaben, w<sub>1</sub> und w<sub>2</sub> ihre Gewichte und s der Schwellenwert. Ist die Ungleichung erfüllt, ist die Ausgabe 1; sonst ist sie 0.</p>
+<p>Durch das Umformen lassen sich Gewichte und Schwellenwert direkt ablesen. So wird aus der gezeichneten Trennung eine Rechnung, die das Perzeptron für jede neue Eingabe ausführen kann.</p>
+<h4>Schritt für Schritt zur Neuronen-Ungleichung</h4>
+<p>Für die Seite oberhalb einer Geraden mit Steigung m und Achsenabschnitt b gilt:</p>
+<ol class="calc-steps" aria-label="Umformung der Geradenungleichung zur Neuronen-Ungleichung">
+<li><span class="calc-step-number" aria-hidden="true">1</span><span class="math">y &gt; m · x + b</span><span>Geradenungleichung</span></li>
+<li><span class="calc-step-number" aria-hidden="true">2</span><span class="math">x<sub>2</sub> &gt; m · x<sub>1</sub> + b</span><span>x = x<sub>1</sub> und y = x<sub>2</sub> einsetzen</span></li>
+<li><span class="calc-step-number" aria-hidden="true">3</span><span class="math">x<sub>2</sub> − m · x<sub>1</sub> &gt; b</span><span>m · x<sub>1</sub> auf beiden Seiten abziehen</span></li>
+<li><span class="calc-step-number" aria-hidden="true">4</span><span class="math">x<sub>1</sub> · (−m) + x<sub>2</sub> · 1 &gt; b</span><span>Beiträge umordnen und Gewichte sichtbar machen</span></li>
+</ol>
+<p class="remember">Eine passende Wahl ist w<sub>1</sub> = −m, w<sub>2</sub> = 1 und s = b. Die Neuronen-Ungleichung beschreibt dieselbe Grenze und dieselbe Seite mit Ausgabe 1.</p>
+</article>
 <div class="six-layout">
 <figure class="geometry-figure">
 <svg id="six-plot" class="geometry-plot" viewBox="0 0 720 460" role="img" aria-label="Tierdiagramm mit einer gestrichelten Geraden durch (0|0,5) und (2|1,5), U1/U2 mit Ausgabe 1 und G1/G2 mit Ausgabe 0. Keine Gleichung eingeblendet.">
 </svg>
 <figcaption>Rote Raute: G1/G2, Soll-Ausgabe 0 · Grüner Kreis: U1/U2, Soll-Ausgabe 1 · Gestrichelte Gerade: Grenze.</figcaption>
 </figure>
-<div class="six-work" tabindex="0" role="region" aria-label="Aufgaben 4.1 bis 4.E, scrollbar auf breiten Bildschirmen">
+<div class="six-work" tabindex="0" role="region" aria-label="Aufgaben 4.1 bis 4.4 und 4.E, scrollbar auf breiten Bildschirmen">
 <div class="part">
 <h3>4.1 Gerade</h3>
 <p>
@@ -379,12 +395,12 @@
 </div>
 </div>
 <div class="part">
-<h3>4.2 Feuer-Ungleichung</h3>
+<h3>4.2 Neuronen-Ungleichung</h3>
 <p>
-<strong>Beschreibe</strong> die Seite mit Ausgabe 1 durch eine strenge Ungleichung.</p>
-<label for="six-diagram">Feuer-Ungleichung in x-y-Notation</label>
+<strong>Beschreibe</strong> zuerst die Seite mit Ausgabe 1 als Geradenungleichung. <strong>Forme</strong> sie anschließend in die Neuronen-Ungleichung um.</p>
+<label for="six-diagram">Schritt 1: Geradenungleichung in x-y-Notation</label>
 <input id="six-diagram" type="text" autocomplete="off" spellcheck="false">
-<button id="check-six-diagram" class="primary-button" type="button">Feuerseite prüfen</button>
+<button id="check-six-diagram" class="primary-button" type="button">Geradenungleichung prüfen</button>
 <p id="feedback-six-diagram" class="feedback" role="status" aria-live="polite" hidden>
 </p>
 <div class="helps">
@@ -401,14 +417,12 @@
 <p>Die Tiere mit Ausgabe 1 liegen oberhalb; nutze ein strenges &gt;.</p>
 </details>
 </div>
-</div>
-<div class="part">
-<h3>4.3 Eingangsnotation</h3>
+<h4>Schritt 2: Zur Neuronenform umformen</h4>
 <p>
 <strong>Ersetze</strong> x und y durch x₁ und x₂ und <strong>forme</strong> die Bedingung zur Neuronform um.</p>
-<label for="six-input">Feuer-Ungleichung in Eingangsnotation</label>
+<label for="six-input">Neuronen-Ungleichung in Eingangsnotation</label>
 <input id="six-input" type="text" autocomplete="off" spellcheck="false">
-<button id="check-six-input" class="primary-button" type="button">Eingangsnotation prüfen</button>
+<button id="check-six-input" class="primary-button" type="button">Neuronen-Ungleichung prüfen</button>
 <p id="feedback-six-input" class="feedback" role="status" aria-live="polite" hidden>
 </p>
 <div class="helps">
@@ -427,7 +441,7 @@
 </div>
 </div>
 <div class="part">
-<h3>4.4 Gewichte und Schwellenwert</h3>
+<h3>4.3 Gewichte und Schwellenwert</h3>
 <p>
 <strong>Lies</strong> passende Werte für w₁, w₂ und s ab.</p>
 <div class="input-grid">
@@ -457,7 +471,7 @@
 </div>
 </div>
 <div class="part">
-<h3>4.5 Kontrolle an vier Punkten</h3>
+<h3>4.4 Kontrolle an vier Punkten</h3>
 <p>
 <strong>Berechne</strong> die Ausgabe für U1, U2, G1 und G2.</p>
 <div class="table-scroll">

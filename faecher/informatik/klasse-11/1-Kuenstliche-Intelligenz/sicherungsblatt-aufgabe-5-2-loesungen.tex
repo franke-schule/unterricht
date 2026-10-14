@@ -81,63 +81,53 @@
 \end{minipage}
 \begin{center}\small Feste Werte in beiden Spuren: $w_1=-1$, $w_2=2$, $\theta=3$.\end{center}
 \begin{merke}
-Erst Summe und Schwelle bestimmen die Ausgabe; bei Gleichheit 0.
+Erst Summe und Schwelle bestimmen die Ausgabe.
 \end{merke}
 
-\sectionline{2. Einfache 0/1-Eingaben}
-\begin{minipage}[t]{0.64\linewidth}\vspace{0pt}
-\textbf{Eine mögliche Einstellung:} $w_1=2,\ w_2=0,\ s=1$\\[-1mm]
-\begin{center}\renewcommand{\arraystretch}{1.06}
-\begin{tabular}{@{}c c c c@{}}
-\toprule
-Eingabe & Soll & Summe & Ist \\
-\midrule
-A $(0|0)$ & 0 & 0 & 0 \\
-D $(0|1)$ & 0 & 0 & 0 \\
-B $(1|0)$ & 1 & 2 & 1 \\
-C $(1|1)$ & 1 & 2 & 1 \\
-\bottomrule
-\end{tabular}
-\end{center}\end{minipage}\hfill
-\begin{minipage}[t]{0.32\linewidth}\vspace{0pt}
-\begin{tikzpicture}[font=\small]
-\node[draw=orange,fill=lightgray,rounded corners=1mm,align=center,text width=48mm,inner sep=3mm] {
-\begin{tabular}{c}
-\textbf{Grenzfall}\\[1mm]$(0|0):\quad a=0$\\[1mm]Gewichte wirken nicht.\\$s<0\ \Longrightarrow\ 0>s\ \Longrightarrow 1$\\Unerwünschtes Feuern
-\end{tabular}};
-\end{tikzpicture}\\[1mm]
-\textbf{Hier: 1 = feuert, keine Tierklasse.}
+\sectionline{2. Neuronen-Ungleichung}
+\noindent\begin{minipage}[c]{0.68\linewidth}\centering
+\begin{tikzpicture}[x=1mm,y=1mm,font=\small,every node/.style={align=center},
+ input/.style={draw=blue,fill=lightblue,rounded corners=2mm,minimum width=20mm,minimum height=13mm},
+ core/.style={circle,draw=blue,fill=lightblue,minimum size=40mm,inner sep=1mm},
+ output/.style={draw=green,fill=lightgray,rounded corners=4mm,minimum width=23mm,minimum height=16mm},
+ flow/.style={-{Latex[length=2.5mm]},thick,navy}]
+\node[input] (x1) at (10,15) {Eingabe\\$x_1$};
+\node[input] (x2) at (10,-15) {Eingabe\\$x_2$};
+\node[core] (neuron) at (60,0) {\textbf{Perzeptron}\\[1mm]$a=x_1w_1+x_2w_2$\\[1mm]Vergleich: $a>s$};
+\node[output] (output) at (105,0) {\textbf{Ausgabe}\\1 bei $a>s$\\sonst 0};
+\node[input,minimum width=40mm,minimum height=10mm] (threshold) at (60,-32) {Schwellenwert $s$ $(=\theta)$};
+\draw[flow] (x1.east) -- (neuron.160) node[midway,above=2mm] {Gewicht $w_1$};
+\draw[flow] (x2.east) -- (neuron.200) node[midway,below=2mm] {Gewicht $w_2$};
+\draw[flow] (threshold.north) -- (neuron.south);
+\draw[flow] (neuron.east) -- (output.west);
+\end{tikzpicture}
+\end{minipage}\hfill
+\begin{minipage}[c]{0.30\linewidth}
+\begin{ueberblick}[title=Neuronen-Ungleichung,left=1mm,right=1mm,fonttitle=\small\bfseries]
+\centering\small Ausgabe 1 entsteht, wenn
+\[
+x_1\cdot w_1+x_2\cdot w_2>s.
+\]
+\end{ueberblick}
 \end{minipage}
 
-\sectionline{3. Wann feuert es?}
-\begin{minipage}[t]{0.43\linewidth}\vspace{0pt}
-\textbf{Fest:} $w_1=4,\ w_2=2,\ s=3$\\$4x_1+2x_2>3$
-\begin{center}\renewcommand{\arraystretch}{1.05}
-\begin{tabular}{@{}c c c c@{}}
-\toprule
- & Eingabe & $a$ & Ausgabe \\
-\midrule
-A & $(0|0)$ & 0 & 0 \\
-D & $(0|1)$ & 2 & 0 \\
-B & $(1|0)$ & 4 & 1 \\
-C & $(1|1)$ & 6 & 1 \\
-\bottomrule
-\end{tabular}
-\end{center}\end{minipage}\hfill
-\begin{minipage}[t]{0.54\linewidth}\vspace{0pt}
-\begin{center}\textbf{Grenzprobe bei $x_1=0{,}25$}\end{center}
-\begin{tikzpicture}[x=24mm,y=1cm,font=\small]
-\draw[->,thick,navy] (0,0)--(3.6,0);
-\foreach \x in {.5,1,1.5} \draw[blue,thick] (\x,-.12)--(\x,.12);
-\node[below=4pt,align=center] at (.5,0) {$x_2=0{,}5$};
-\node[below=17pt,align=center] at (1,0) {$x_2=1$};
-\node[below=4pt,align=center] at (1.5,0) {$x_2=1{,}5$};
-\node[above=4pt,align=center] at (.5,0) {$a=2$\\$\to0$};
-\node[orange,above=15mm,align=center] at (1,0) {$a=s=3$\\Gleichheit: 0};
-\node[above=4pt,align=center] at (1.5,0) {$a=4$\\$\to1$};
-\end{tikzpicture}
-\end{minipage}
-\begin{center}\begin{merke}Das Perzeptron feuert nur bei $a>s$.\end{merke}\end{center}
+\sectionline{3. Von der Neuronen- zur Geradenungleichung}
+Für $w_2>0$ lässt sich die Neuronen-Ungleichung nach $x_2$ auflösen:
+\[
+\begin{aligned}
+x_1\cdot w_1+x_2\cdot w_2 &> s
+  &&\quad\text{Neuronen-Ungleichung}\\[1mm]
+x_2\cdot w_2 &> s-x_1\cdot w_1
+  &&\quad\text{$x_1\cdot w_1$ auf beiden Seiten abziehen}\\[1mm]
+x_2 &> \frac{s-x_1\cdot w_1}{w_2}
+  &&\quad\text{beide Seiten durch $w_2$ teilen}\\[1mm]
+x_2 &> -\frac{w_1}{w_2}\cdot x_1+\frac{s}{w_2}
+  &&\quad\text{Bruch aufteilen und umordnen}\\[1mm]
+y &> -\frac{w_1}{w_2}\cdot x_1+\frac{s}{w_2}
+  &&\quad\text{$y=x_2$: Geradenungleichung}
+\end{aligned}
+\]
+{\small Bei $w_2<0$ kehrt sich beim Teilen das Ungleichheitszeichen um; bei $w_2=0$ ist diese Umformung nicht möglich.}
 
 \clearpage
 \sheettitle{Das Perzeptron genauer betrachtet}{Künstliche Intelligenz · Sicherungsblatt zu Aufgabe 5.2 · Informatik 11}
