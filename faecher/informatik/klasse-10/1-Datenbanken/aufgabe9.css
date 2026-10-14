@@ -1,0 +1,14 @@
+.instahub-joins-page .step-tabs { grid-template-columns: repeat(6, minmax(0, 1fr)) !important; overflow-x: visible; }
+.instahub-joins-page .step-tab { min-width: 0; white-space: normal; overflow-wrap: anywhere; }
+.instahub-joins-page .step-panel, .instahub-joins-page .task-card { min-width: 0; }
+#summary-lock-reason[hidden] { display: none; }
+.instahub-joins-page .sql-schema-card { position: static; }
+.instahub-joins-page .sql-schema-card .schema-scroll { overflow-x: auto; }
+.instahub-joins-page .join-quiz label { display: block; margin: .45rem 0; }
+.instahub-joins-page .join-quiz fieldset { margin: 1rem 0; padding: 1rem; border: 1px solid #d7e4f3; border-radius: 10px; }
+.instahub-joins-page .join-quiz legend { font-weight: 800; color: #244d78; }
+.instahub-joins-page .join-quiz input { margin-right: .5rem; }
+.instahub-joins-page .join-summary-answer { white-space: pre-wrap; overflow-wrap: anywhere; }
+.instahub-joins-page .join-example .table-scroll { max-height: 20rem; }
+@media (max-width: 900px) { .instahub-joins-page .step-tabs { grid-template-columns: repeat(3, minmax(0, 1fr)) !important; } }
+@media (max-width: 520px) { .instahub-joins-page .step-tabs { grid-template-columns: repeat(2, minmax(0, 1fr)) !important; } }

@@ -69,13 +69,38 @@ function sql(id, number, prompt, referenceSql, options = {}) { return { type: 's
 function describe(id, number, prompt, statement, serverTaskId, options = {}) { return { type: 'describe', id, number, prompt, statement, serverTaskId, info: options.info || [] }; }
 function info() { return { type: 'info', id: 'aggregate-info' }; }
 
-class SqlWorker {
+export class SqlWorker {
   constructor() { this.nextId = 0; this.pending = new Map(); }
   async init(options = { mode: 'users-full' }) {
     this.worker = new Worker(new URL('../../../../include/lib/sql.js/worker.sql-wasm.js', import.meta.url));
     this.worker.onmessage = (event) => { const pending = this.pending.get(event.data.id); if (!pending) return; this.pending.delete(event.data.id); event.data.error ? pending.reject(new Error(event.data.error)) : pending.resolve(event.data); };
     this.worker.onerror = (event) => { this.pending.forEach(({ reject }) => reject(event.error || new Error('SQL-Worker nicht verfügbar.'))); this.pending.clear(); };
     await this.send({ action: 'open' });
+    if (options.mode === 'instahub-joins') {
+      const expected = {
+        users: ['id', 'name', 'username', 'email', 'email_verified_at', 'password', 'bio', 'gender', 'birthday', 'city', 'country', 'centimeters', 'avatar', 'role', 'is_active', 'remember_token', 'created_at', 'updated_at'],
+        photos: ['id', 'user_id', 'description', 'url', 'created_at', 'updated_at'],
+        follows: ['id', 'following_id', 'follower_id', 'created_at', 'updated_at'],
+        comments: ['id', 'user_id', 'photo_id', 'body', 'created_at', 'updated_at'],
+        likes: ['id', 'photo_id', 'user_id', 'created_at', 'updated_at'],
+        tags: ['id', 'photo_id', 'name', 'created_at', 'updated_at']
+      };
+      for (const [name, columns] of Object.entries(expected)) {
+        const filename = `${name}.csv`;
+        const response = await fetch(filename);
+        if (!response.ok) throw new Error(`${filename} konnte nicht geladen werden.`);
+        const [headers, ...rows] = parseDelimited(await response.text());
+        if (!headers || headers.length !== columns.length || headers.some((header, index) => header !== columns[index]) || rows.some((row) => row.length !== headers.length)) throw new Error(`${filename} hat ungültige Spalten oder Zeilen.`);
+        const numeric = new Set(['id', 'user_id', 'photo_id', 'following_id', 'follower_id', 'centimeters', 'is_active']);
+        const schema = headers.map((header) => `${quoteIdentifier(header)} ${numeric.has(header) ? 'INTEGER' : 'TEXT'}`).join(', ');
+        await this.send({ action: 'exec', sql: `CREATE TABLE ${quoteIdentifier(name)} (${schema})` });
+        for (let offset = 0; offset < rows.length; offset += 300) {
+          const statements = rows.slice(offset, offset + 300).map((row) => `INSERT INTO ${quoteIdentifier(name)} (${headers.map(quoteIdentifier).join(', ')}) VALUES (${headers.map((header, index) => sqlValue(row[index], header)).join(', ')})`);
+          await this.send({ action: 'exec', sql: `BEGIN;${statements.join(';')};COMMIT`, timeoutMs: 45000 });
+        }
+      }
+      return;
+    }
     if (options.mode === 'menu-cross-product') {
       const statements = MENU_TABLE_NAMES.flatMap((tableName) => {
         const rows = MENU_TABLES[tableName]; const headers = Object.keys(rows[0]);
@@ -105,7 +130,7 @@ class SqlWorker {
     data.forEach((row) => statements.push(`INSERT INTO users (${headers.map(quoteIdentifier).join(', ')}) VALUES (${headers.map((header, index) => sqlValue(row[index], header)).join(', ')})`));
     await this.send({ action: 'exec', sql: statements.join(';') });
   }
-  send(message) { return new Promise((resolve, reject) => { const id = `sql-${++this.nextId}`; const timeout = window.setTimeout(() => { if (!this.pending.delete(id)) return; reject(new Error('Der SQL-Worker antwortet nicht rechtzeitig.')); }, 15000); this.pending.set(id, { resolve: (value) => { window.clearTimeout(timeout); resolve(value); }, reject: (error) => { window.clearTimeout(timeout); reject(error); } }); try { this.worker.postMessage({ ...message, id }); } catch (error) { window.clearTimeout(timeout); this.pending.delete(id); reject(error); } }); }
+  send(message) { return new Promise((resolve, reject) => { const id = `sql-${++this.nextId}`; const timeout = window.setTimeout(() => { if (!this.pending.delete(id)) return; reject(new Error('Der SQL-Worker antwortet nicht rechtzeitig.')); }, message.timeoutMs || 15000); this.pending.set(id, { resolve: (value) => { window.clearTimeout(timeout); resolve(value); }, reject: (error) => { window.clearTimeout(timeout); reject(error); } }); try { this.worker.postMessage({ ...message, id }); } catch (error) { window.clearTimeout(timeout); this.pending.delete(id); reject(error); } }); }
   async exec(sqlText) { return normalizeRelation((await this.send({ action: 'exec', sql: sqlText })).results); }
   async execBirthdayProbe(sqlText, monthDay) {
     const probeSql = [
@@ -121,7 +146,7 @@ class SqlWorker {
   close() { if (this.worker) { this.send({ action: 'close' }).catch(() => {}); this.worker.terminate(); } }
 }
 function quoteIdentifier(name) { return `"${String(name).replaceAll('"', '""')}"`; }
-function sqlValue(value, header) { if (value === 'NULL' || value === undefined || value === null) return 'NULL'; if (['id', 'centimeters', 'is_active', 'preis', 'song_id', 'playlist_id'].includes(header) && /^-?\d+(?:\.\d+)?$/.test(value)) return value; return `'${String(value).replaceAll("'", "''")}'`; }
+function sqlValue(value, header) { if (value === 'NULL' || value === undefined || value === null) return 'NULL'; if (['id', 'user_id', 'photo_id', 'following_id', 'follower_id', 'centimeters', 'is_active', 'preis', 'song_id', 'playlist_id'].includes(header) && /^-?\d+(?:\.\d+)?$/.test(value)) return value; return `'${String(value).replaceAll("'", "''")}'`; }
 
 let database;
 let databaseReady = false;
@@ -160,7 +185,7 @@ function moveTabFocus(event, labels, index) {
   document.getElementById(`tab-${labels[nextIndex][0]}`)?.focus();
 }
 
-function schemaCard(schemas) {
+export function schemaCard(schemas) {
   const card = element('aside', 'scenario-card accent sql-schema-card'); card.setAttribute('aria-label', 'Tabellenschema der SQL-Übungsdaten');
   const scroll = element('div', 'schema-scroll'); scroll.tabIndex = 0; scroll.setAttribute('aria-label', 'Tabellenschemata horizontal scrollen');
   // Überschrift und Innenabstände gehören zur Wischfläche des gesamten Kastens.
@@ -247,7 +272,7 @@ function renderSqlTask(card, task) {
   const label = element('label', 'sql-label', 'Deine vollständige SQL-Anweisung'); label.htmlFor = `input-${task.id}`; const input = document.createElement('textarea'); input.id = label.htmlFor; input.className = 'sql-input'; input.spellcheck = false; input.placeholder = NEUTRAL_SQL_PLACEHOLDER; const hasSavedAnswer = Object.prototype.hasOwnProperty.call(state.answers, task.id); input.value = hasSavedAnswer ? state.answers[task.id] : task.initialSql; if (!hasSavedAnswer && task.initialSql) { state.answers[task.id] = task.initialSql; save(); } input.addEventListener('input', () => { state.answers[task.id] = input.value; delete state.feedback[task.id]; delete state.results[task.id]; save(); renderTaskFeedback(task, card); }); input.addEventListener('keydown', (event) => { if ((event.ctrlKey || event.metaKey) && event.key === 'Enter') { event.preventDefault(); runTask(task, card); } }); card.append(label, input);
   appendHints(card, task.hints); const actions = element('div', 'action-row'); const run = element('button', 'primary-button', 'Anfrage ausführen'); run.type = 'button'; run.disabled = !databaseReady; run.addEventListener('click', () => runTask(task, card, input, run)); actions.append(run); if (task.initialSql) { const reset = element('button', 'secondary-button', 'Ursprungsanweisung wiederherstellen'); reset.type = 'button'; reset.addEventListener('click', () => { input.value = task.initialSql; state.answers[task.id] = task.initialSql; delete state.feedback[task.id]; delete state.results[task.id]; save(); renderTaskFeedback(task, card); input.focus(); }); actions.append(reset); } actions.append(element('span', 'shortcut-hint', 'Strg/Cmd + Enter')); card.append(actions); renderTaskFeedback(task, card);
 }
-function appendHints(card, hints) { if (!hints.length) return; const box = element('div', 'help-stack'); hints.forEach((hint, index) => { const details = element('details'); details.append(element('summary', '', `Hilfe ${index + 1}`), element('p', '', hint)); box.append(details); }); card.append(box); }
+export function appendHints(card, hints) { if (!hints.length) return; const box = element('div', 'help-stack'); hints.forEach((hint, index) => { const details = element('details'); details.append(element('summary', '', `Hilfe ${index + 1}`), element('p', '', hint)); box.append(details); }); card.append(box); }
 async function runTask(task, card, input = card.querySelector('.sql-input'), button = card.querySelector('.primary-button')) {
   const sqlText = state.answers[task.id] || ''; const check = validateSelectStatement(sqlText);
   if (!check.ok) { state.feedback[task.id] = { level: 'hint', text: /Anführungszeichen/.test(check.message) ? 'Anführungszeichen: Prüfe, ob jeder Textwert vollständig eingeschlossen ist.' : check.message }; save(); renderTaskFeedback(task, card); return; }
@@ -275,7 +300,7 @@ function renderDescribeTask(card, task) {
   const label = element('label', 'sql-label', 'Deine Erklärung'); label.htmlFor = `input-${task.id}`; const input = document.createElement('textarea'); input.id = label.htmlFor; input.className = 'description-input'; input.maxLength = 1200; input.value = state.answers[task.id] || ''; input.addEventListener('input', () => { state.answers[task.id] = input.value; delete state.server[task.id]; save(); renderServerFeedback(task, card); }); card.append(label, input); const actions = element('div', 'action-row'); const button = element('button', 'primary-button', 'Erklärung prüfen'); button.type = 'button'; button.addEventListener('click', () => submitDescription(task, input, card)); actions.append(button); card.append(actions); renderServerFeedback(task, card);
 }
 function renderTaskFeedback(task, card) { card.querySelectorAll('.sql-feedback, .result-relation').forEach((node) => node.remove()); const feedback = state.feedback[task.id]; if (feedback) { const box = element('p', `feedback ${feedback.level} sql-feedback`, feedback.text); box.setAttribute('aria-live', 'polite'); card.append(box); } if (state.results[task.id]) card.append(renderRelation(state.results[task.id])); }
-function renderRelation(relation, options = {}) { const columns = options.columns || relation.columns; const formatValue = options.formatValue || ((value) => value === null ? 'NULL' : String(value)); const shell = element('section', `table-shell result-relation${options.columnGroups?.length ? ' has-column-groups' : ''}`); shell.setAttribute('aria-label', options.label || 'Ergebnisrelation der SQL-Anfrage'); shell.setAttribute('aria-live', 'polite'); const caption = element('div', 'table-caption'); caption.append(element('strong', '', options.title || 'Ergebnisrelation'), element('span', '', relation.values.length > 100 ? `100 von ${relation.values.length} Zeilen angezeigt` : `${relation.values.length} Zeile(n)`)); shell.append(caption); if (!relation.values.length) { shell.append(element('p', 'empty-result', 'Die Abfrage ist gültig, liefert aber keine Datensätze.')); return shell; } const scroll = element('div', 'table-scroll'); scroll.tabIndex = 0; scroll.setAttribute('aria-label', 'Ergebnisrelation horizontal und vertikal scrollen'); const table = element('table', `data-table${columns.length <= 3 ? ' compact' : ''}`); const cap = element('caption', 'visually-hidden', options.caption || 'Ergebnis deiner SQL-Abfrage'); table.append(cap); const head = document.createElement('thead'); if (options.columnGroups?.length) { options.columnGroups.forEach(({ columns: groupColumns }) => { const group = document.createElement('colgroup'); group.span = groupColumns.length; table.append(group); }); const groupRow = document.createElement('tr'); options.columnGroups.forEach(({ table: tableName, columns: groupColumns }) => { const th = element('th', 'relation-group-heading', tableName); th.colSpan = groupColumns.length; th.scope = 'colgroup'; groupRow.append(th); }); head.append(groupRow); } const row = document.createElement('tr'); columns.forEach((column) => { const th = element('th', '', column); th.scope = 'col'; row.append(th); }); head.append(row); const body = document.createElement('tbody'); relation.values.slice(0, 100).forEach((values) => { const tr = document.createElement('tr'); values.forEach((value, index) => tr.append(element('td', '', formatValue(value, index)))); body.append(tr); }); table.append(head, body); scroll.append(table); shell.append(scroll); return shell; }
+export function renderRelation(relation, options = {}) { const columns = options.columns || relation.columns; const formatValue = options.formatValue || ((value) => value === null ? 'NULL' : String(value)); const shell = element('section', `table-shell result-relation${options.columnGroups?.length ? ' has-column-groups' : ''}`); shell.setAttribute('aria-label', options.label || 'Ergebnisrelation der SQL-Anfrage'); shell.setAttribute('aria-live', 'polite'); const caption = element('div', 'table-caption'); caption.append(element('strong', '', options.title || 'Ergebnisrelation'), element('span', '', relation.values.length > 100 ? `100 von ${relation.values.length} Zeilen angezeigt` : `${relation.values.length} Zeile(n)`)); shell.append(caption); if (!relation.values.length) { shell.append(element('p', 'empty-result', 'Die Abfrage ist gültig, liefert aber keine Datensätze.')); return shell; } const scroll = element('div', 'table-scroll'); scroll.tabIndex = 0; scroll.setAttribute('aria-label', 'Ergebnisrelation horizontal und vertikal scrollen'); const table = element('table', `data-table${columns.length <= 3 ? ' compact' : ''}`); const cap = element('caption', 'visually-hidden', options.caption || 'Ergebnis deiner SQL-Abfrage'); table.append(cap); const head = document.createElement('thead'); if (options.columnGroups?.length) { options.columnGroups.forEach(({ columns: groupColumns }) => { const group = document.createElement('colgroup'); group.span = groupColumns.length; table.append(group); }); const groupRow = document.createElement('tr'); options.columnGroups.forEach(({ table: tableName, columns: groupColumns }) => { const th = element('th', 'relation-group-heading', tableName); th.colSpan = groupColumns.length; th.scope = 'colgroup'; groupRow.append(th); }); head.append(groupRow); } const row = document.createElement('tr'); columns.forEach((column) => { const th = element('th', '', column); th.scope = 'col'; row.append(th); }); head.append(row); const body = document.createElement('tbody'); relation.values.slice(0, 100).forEach((values) => { const tr = document.createElement('tr'); values.forEach((value, index) => tr.append(element('td', '', formatValue(value, index)))); body.append(tr); }); table.append(head, body); scroll.append(table); shell.append(scroll); return shell; }
 
 async function submitDescription(task, input, card) {
   const button = card.querySelector('.primary-button');
@@ -292,8 +317,8 @@ async function submitDescription(task, input, card) {
   finally { input.disabled = false; button.disabled = false; button.textContent = 'Erklärung erneut prüfen'; save(); renderServerFeedback(task, card); }
 }
 function appendEvaluationList(container, headingText, items, emptyText) { container.append(element('h4', '', headingText)); const list = document.createElement('ul'); (items.length ? items : [emptyText]).forEach((item) => list.append(element('li', '', item))); container.append(list); }
-function renderServerFeedback(task, card) {
-  card.querySelector('.server-feedback')?.remove(); const feedback = state.server[task.id]; if (!feedback) return;
+export function renderServerFeedback(task, card, providedFeedback = state.server[task.id]) {
+  card.querySelector('.server-feedback')?.remove(); const feedback = providedFeedback; if (!feedback) return;
   const box = element('section', `result server-feedback${feedback.level === 'loading' ? '' : ` ${feedback.level}`}`); box.setAttribute('aria-live', 'polite');
   if (Number.isFinite(feedback.points) && feedback.maxPoints > 0) {
     box.append(element('h3', '', `${feedback.points} von ${feedback.maxPoints} Punkten – ${feedback.status}`));
@@ -536,4 +561,4 @@ function renderQuizSolutions() {
 async function initSongVerbund() { restoreVerbundState(); renderVerbundModule(); const status = document.getElementById('data-status'); try { database = new SqlWorker(); await database.init({ mode: 'song-verbund' }); databaseReady = true; status.textContent = 'Die drei Song-Tabellen sind geladen. Du kannst SQL-Anfragen ausführen.'; status.className = 'feedback success'; status.setAttribute('aria-busy', 'false'); renderVerbundModule(); } catch (error) { status.textContent = 'Die Song-Tabellen konnten nicht geladen werden. Bitte lade die Seite neu.'; status.className = 'feedback error'; status.setAttribute('aria-busy', 'false'); console.error(error); } document.getElementById('reset-module').addEventListener('click', () => { if (window.confirm('Möchtest du alle Eingaben und den Fortschritt dieser Aufgabe zurücksetzen?')) { try { localStorage.removeItem(VERBUND_STORAGE_KEY); } catch { /* Ohne Speicher weiter nutzbar. */ } location.reload(); } }); window.addEventListener('beforeunload', () => database?.close()); }
 
 async function init() { restore(); render(); const status = document.getElementById('data-status'); try { database = new SqlWorker(); await database.init(); const response = await fetch('users.csv'); if (!response.ok) throw new Error('users.csv konnte nicht geladen werden.'); const [headers, ...rows] = parseDelimited(await response.text()); introRows = rows.slice(0, 4).map((row) => Object.fromEntries(headers.map((header, index) => [header, row[index]]))); databaseReady = true; status.textContent = 'Die Tabelle users ist geladen. Du kannst SQL-Anfragen ausführen.'; status.className = 'feedback success'; status.setAttribute('aria-busy', 'false'); render(); } catch (error) { status.textContent = 'Die Übungsdaten konnten nicht geladen werden. Bitte lade die Seite neu.'; status.className = 'feedback error'; status.setAttribute('aria-busy', 'false'); console.error(error); document.querySelectorAll('.sql-input, .sql-task button').forEach((node) => { if (node.classList.contains('primary-button') && !node.closest('.sql-intro')) node.disabled = true; }); } document.getElementById('reset-module').addEventListener('click', () => { if (window.confirm('Möchtest du alle SQL-Eingaben und den Fortschritt dieser Aufgabe zurücksetzen?')) { try { localStorage.removeItem(STORAGE_KEY); } catch { /* Ohne Speicher weiter nutzbar. */ } location.reload(); } }); window.addEventListener('beforeunload', () => database?.close()); }
-document.addEventListener('DOMContentLoaded', () => document.body.dataset.sqlModule === 'menu-cross-product' ? initMenuCrossProduct() : document.body.dataset.sqlModule === 'song-verbund' ? initSongVerbund() : init());
+document.addEventListener('DOMContentLoaded', () => { if (document.body.dataset.sqlModule === 'instahub-joins') return; document.body.dataset.sqlModule === 'menu-cross-product' ? initMenuCrossProduct() : document.body.dataset.sqlModule === 'song-verbund' ? initSongVerbund() : init(); });

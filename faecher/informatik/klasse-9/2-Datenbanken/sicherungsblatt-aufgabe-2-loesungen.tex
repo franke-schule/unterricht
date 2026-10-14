@@ -1,0 +1,102 @@
+\documentclass[10pt,a4paper]{article}
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage[ngerman]{babel}
+\usepackage[a4paper,margin=11mm,top=9mm,bottom=10mm]{geometry}
+\usepackage{lmodern,microtype,tabularx,array,booktabs}
+\usepackage[table]{xcolor}
+\usepackage{qrcode}
+\pagestyle{empty}\setlength{\parindent}{0pt}\setlength{\parskip}{2pt}
+\renewcommand{\arraystretch}{1.08}\setlength{\tabcolsep}{3.2pt}
+\definecolor{Navy}{HTML}{17324D}\definecolor{Blue}{HTML}{2F6FA7}
+\definecolor{Sky}{HTML}{EAF3FA}\definecolor{Mint}{HTML}{E8F5EF}
+\definecolor{Gold}{HTML}{F3B33D}\definecolor{Ink}{HTML}{1E2935}
+\definecolor{Muted}{HTML}{617080}\definecolor{CodeBg}{HTML}{F5F7F9}
+\definecolor{SelectRed}{HTML}{D9534F}\definecolor{FromBlue}{HTML}{3B6EA5}
+\color{Ink}
+\newcommand{\headblock}{\colorbox{Navy}{\parbox{\dimexpr\linewidth-2\fboxsep\relax}{\color{white}\vspace{2mm}\small\bfseries INFORMATIK · KLASSE 9\hfill\colorbox{Gold}{\color{Navy}\bfseries LÖSUNGEN}\par\vspace{1mm}{\fontsize{14}{16}\selectfont\bfseries Aufgabe 2 – Struktur und Anwendung\\von SQL-Abfragen}\par\small Sicherungsblatt\vspace{2mm}}}}
+\newcommand{\sectiontitle}[1]{{\color{Blue}\bfseries\normalsize #1}\par\vspace{.5mm}{\color{Blue}\rule{\linewidth}{.5pt}}\vspace{1mm}}
+\newcommand{\task}[2]{\textbf{#1.} #2\par}
+\newcommand{\sql}[1]{\colorbox{CodeBg}{\parbox{\dimexpr\linewidth-2\fboxsep\relax}{\ttfamily\small #1}}}
+\newcommand{\kw}[2]{\colorbox{#1}{\strut\textcolor{white}{\ttfamily\bfseries #2}}}
+\newcommand{\memo}[1]{\colorbox{Mint}{\parbox{\dimexpr\linewidth-2\fboxsep\relax}{\textbf{Merksatz:} #1}}}
+\newcommand{\smalltable}{\small}
+\begin{document}
+\headblock
+\vspace{1.5mm}
+\sectiontitle{Einführung in die Struktur und Anwendung von SQL-Abfragen}
+\textbf{Beispiel:} \kw{SelectRed}{SELECT Name}\quad \kw{FromBlue}{FROM Film}\qquad
+Die Abfrage stellt die Daten der Spalte \textbf{Name} aus der Tabelle \textbf{Film} in einer Ergebnistabelle dar.
+
+\raggedright
+\task{1}{\textbf{Beschreibe}, wie sich die Ergebnisse der abgebildeten Abfrage von der Ergebnistabelle der oben angegebenen Abfrage unterscheiden.}
+\hfill \kw{SelectRed}{SELECT Name}\quad \kw{FromBlue}{FROM Buch}\par
+\textcolor{Blue}{Die Namen stammen nun aus der Tabelle „Buch“.}
+\memo{Das Schlüsselwort \textbf{FROM} ist für die Auswahl der \textcolor{Blue}{\bfseries Tabelle} verantwortlich, aus der die Daten abgerufen werden sollen.}
+
+\task{2}{\textbf{Füge} einen weiteren roten Block hinzu und wähle Seiten aus. \textbf{Erläutere}, wie sich die Ergebnistabelle verändert.}
+\textcolor{Blue}{Die Ergebnistabelle besteht nun aus zwei Spalten.}\par
+Ergänze die vorformulierte Abfrage:\quad \kw{SelectRed}{SELECT Name, Seiten}\quad \kw{FromBlue}{FROM Buch}
+
+\task{3}{\textbf{Erkläre}, warum die abgebildete Abfrage keine Ergebnistabelle ausgibt.}
+\hfill \kw{SelectRed}{SELECT Seiten}\quad \kw{FromBlue}{FROM Film}\par
+\textcolor{Blue}{Die Spalte „Seiten“ ist kein Bestandteil der Tabelle „Film“.}
+\memo{Das Schlüsselwort \textbf{SELECT} bestimmt, welche \textcolor{Blue}{\bfseries vorhandenen Spalten} in der Ergebnistabelle enthalten sein sollen.}
+
+\task{4}{\textbf{Gib} eine Abfrage an, die den Namen und den Preis aller Filme zeigt, die nach 2014 veröffentlicht wurden.}
+\smalltable
+\begin{tabularx}{\linewidth}{@{}X r r r r@{}}\toprule
+\textbf{Name}&\textbf{Jahr}&\textbf{Preis}&\textbf{Länge}&\textbf{EAN}\\\midrule
+Forrest Gump&1994&7.99&142&4010884590517\\
+\rowcolor{Sky}König der Löwen&2019&12.99&118&8717418555689\\
+Frozen&2013&6.99&152&8717418505639\\Titanic&1997&8.99&195&4010232057068\\
+\rowcolor{Sky}Dune&2021&14.99&155&5051890328120\\König der Löwen&1994&9.99&88&8717418522742\\
+\rowcolor{Sky}Minions&2015&10.99&91&5053083026356\\Avatar&2009&13.99&162&4013575722600\\\bottomrule
+\end{tabularx}\par
+\sql{\kw{SelectRed}{SELECT Name, Preis}\quad\kw{FromBlue}{FROM Film}\quad\kw{SelectRed}{WHERE Jahr > 2014}}\par
+\textbf{Ergebnistabelle}
+\begin{center}\smalltable\begin{tabular}{@{}lr@{}}\toprule Name&Preis\\\midrule König der Löwen&12.99\\Dune&14.99\\Minions&10.99\\\bottomrule\end{tabular}\end{center}
+
+\memo{Das Schlüsselwort \textbf{WHERE} schränkt die Auswahl der \textcolor{Blue}{\bfseries Zeilen} der Ergebnistabelle anhand von \textcolor{Blue}{\bfseries Bedingungen} ein.}
+\sectiontitle{5 · Alle Informationen auswählen}
+\textbf{Formuliere} eine Abfrage, die alle Informationen aller Filme zeigt, die nach 2014 veröffentlicht wurden und kürzer als 100 Minuten sind.
+
+\sql{\kw{SelectRed}{SELECT *}\par\kw{FromBlue}{FROM Film}\par\kw{SelectRed}{WHERE Jahr > 2014 AND Länge < 100}}
+
+\vspace{2mm}\textbf{Ergebnistabelle}
+\begin{tabularx}{\linewidth}{@{}X r r r X@{}}\toprule Name&Jahr&Preis&Länge&EAN\\\midrule Minions&2015&10.99&91&5053083026356\\\bottomrule\end{tabularx}
+
+\vspace{2mm}\memo{SQL-Abfragen \textcolor{Blue}{\bfseries (durchsuchen und) filtern Daten in} Datenbanktabellen.}
+
+\vspace{1mm}\colorbox{Sky}{\parbox{\dimexpr\linewidth-2\fboxsep\relax}{\textbf{SQL-Blöcke:} SELECT (rot) wählt die Spalten. FROM (blau) wählt die Tabelle.}}
+\newpage
+\headblock\vspace{1.5mm}
+\sectiontitle{Weiterführende Aufgaben}
+
+\task{1}{Das Einwohnermeldeamt möchte die Namen und das Alter aller Einwohner erhalten, die blaue Augen haben. \textbf{Formuliere} eine passende Abfrage und \textbf{vervollständige} die Ergebnistabelle.}
+\begin{minipage}[t]{.51\linewidth}\sql{\kw{SelectRed}{SELECT Name, Alter}\par\kw{FromBlue}{FROM Einwohner}\par\kw{SelectRed}{WHERE Augenfarbe = 'Blau'}}\end{minipage}\hfill
+\begin{minipage}[t]{.46\linewidth}\smalltable\begin{tabularx}{\linewidth}{@{}Xr@{}}\toprule Name&Alter\\\midrule Sarah Müller&21\\Tim Schwarz&28\\Clara Weber&22\\\bottomrule\end{tabularx}\end{minipage}
+
+\task{2}{Es ist die folgende Ergebnistabelle gegeben.}
+\begin{center}\smalltable\begin{tabular}{@{}lrr@{}}\toprule Name&Preis&Kilokalorien\\\midrule Gemüsepfanne&8.5&420\\Fruchtsalat&4.5&158\\Quinoa-Salat&8.7&510\\Tofu-Stir-Fry&9&484\\\bottomrule\end{tabular}\end{center}
+\textbf{a) Gib} eine zielführende Abfrage an, die diese Ergebnistabelle liefert.\par
+\sql{\kw{SelectRed}{SELECT Name, Preis, Kilokalorien}\par\kw{FromBlue}{FROM Speise}\par\kw{SelectRed}{WHERE Vegan = TRUE}}
+\textbf{b) Leite} eine mögliche Motivation des Anwenders zum Stellen dieser Abfrage her.\par
+\textcolor{Blue}{Der Anwender interessiert sich für vegane Speisen.}
+
+\task{3}{Sophia möchte den Namen und die Länge aller Filme erhalten, die günstiger als 7€ oder nach dem Jahr 2019 erschienen sind. \textbf{Formuliere} eine Abfrage, die den Anforderungen entspricht.}
+\begin{minipage}[t]{.51\linewidth}\sql{\kw{SelectRed}{SELECT Name, Länge}\par\kw{FromBlue}{FROM Film}\par\kw{SelectRed}{WHERE Preis < 7 OR Jahr > 2019}}\end{minipage}\hfill
+\begin{minipage}[t]{.46\linewidth}\smalltable\begin{tabularx}{\linewidth}{@{}Xr@{}}\toprule Name&Länge\\\midrule Frozen&152\\Dune&155\\\bottomrule\end{tabularx}\end{minipage}
+
+\task{4}{Der Deutschlehrer Herr Schröder möchte sich aus der Datenbank alle verfügbaren Informationen aller Bücher ausgeben lassen, die von Franz Kafka geschrieben wurden.}
+\textbf{a) Gib} eine zur Ergebnistabelle gehörende Abfrage an.\par
+\begin{minipage}[t]{.39\linewidth}\sql{\kw{SelectRed}{SELECT *}\par\kw{FromBlue}{FROM Buch}\par\kw{SelectRed}{WHERE Autor = 'Franz Kafka'}}\end{minipage}\hfill
+\begin{minipage}[t]{.59\linewidth}\smalltable\begin{tabularx}{\linewidth}{@{}rXlrr@{}}\toprule ISBN&Name&Autor&Jahr&Seiten\\\midrule 9783938484777&Der Prozess&Franz Kafka&1925&251\\9783872915061&Die Verwandlung&Franz Kafka&1915&70\\9783453136410&Das Urteil&Franz Kafka&1912&110\\\bottomrule\end{tabularx}\end{minipage}
+
+\textbf{b) Formuliere} zwei verschiedene modifizierte WHERE-Teile der SQL-Abfrage, die die gleiche Ergebnistabelle liefern.\par
+\textcolor{Blue}{z.B. WHERE Jahr < 1926}\par
+\textcolor{Blue}{WHERE Autor = 'Franz Kafka' OR Seiten < 50}
+
+\vspace{2mm}\begin{minipage}[t]{.72\linewidth}\small\textbf{Hinweis zum Datenbestand:} Die beiden WHERE-Varianten liefern in den hier gezeigten Buchdaten dieselbe Ergebnistabelle.\par\vspace{2mm}\color{Muted}\hrule\vspace{1mm}Quelle und SQL-Anwendung: wichematik.education/app/sql-abfragen.html\par Klasse 9 · Informatik · Datenbanken · Sicherungsblatt Aufgabe 2\end{minipage}\hfill
+\begin{minipage}[t]{.22\linewidth}\centering\qrcode[height=20mm]{https://wichematik.education/app/sql-abfragen.html}\end{minipage}
+\end{document}
