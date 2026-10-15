@@ -17,7 +17,7 @@
 \setlength{\parindent}{0pt}
 \setlength{\parskip}{0pt}
 \renewcommand{\familydefault}{\sfdefault}
-\renewcommand{\arraystretch}{1.10}
+\renewcommand{\arraystretch}{1.08}
 
 \definecolor{Navy}{HTML}{17324D}
 \definecolor{Blue}{HTML}{3B6EA5}
@@ -33,168 +33,216 @@
 
 \color{Ink}
 \newcommand{\sectiontitle}[1]{%
-  \vspace{0.8mm}{\color{Blue}\bfseries\large #1}\par
-  \vspace{0.7mm}{\color{Blue}\rule{\linewidth}{0.7pt}}\par\vspace{0.5mm}}
-\newcommand{\dbtablename}[1]{{\small\bfseries\color{Blue}\texttt{#1}}\par\vspace{1mm}}
+  \vspace{0.7mm}{\color{Blue}\bfseries\large #1}\par
+  \vspace{0.5mm}{\color{Blue}\rule{\linewidth}{0.7pt}}\par\vspace{0.5mm}}
+\newcommand{\dbtablename}[1]{{\small\bfseries\color{Blue}\texttt{#1}}\par\vspace{0.6mm}}
+\newcommand{\sheetheader}[2]{%
+  \colorbox{Navy}{\parbox{\dimexpr\linewidth-2\fboxsep\relax}{%
+    \vspace{1.7mm}\color{white}\begin{tabularx}{\linewidth}{@{}Xr@{}}
+    {\small\bfseries INFORMATIK \textperiodcentered{} KLASSE 10} & \colorbox{Gold}{\color{Navy}\small\bfseries\strut LÖSUNGEN}\end{tabularx}
+    \vspace{1.8mm}{\fontsize{17}{20}\selectfont\bfseries #1}\par
+    \vspace{0.5mm}{\large #2}\vspace{1.7mm}}}\par}
+\newcommand{\sheetfooter}{%
+  \vfill{\color{Line}\rule{\linewidth}{.5pt}}\par\vspace{0.8mm}
+  \begin{tabularx}{\linewidth}{@{}Xr@{}}{\small\color{Muted}Klasse 10 \textperiodcentered{} Datenbanken} & {\small\color{Muted}Sicherungsblatt \textperiodcentered{} Aufgabe 8}\end{tabularx}}
+\newcommand{\keytag}[1]{{\scriptsize\bfseries #1}}
 
 \begin{document}
-\colorbox{Navy}{\parbox{\dimexpr\linewidth-2\fboxsep\relax}{%
-  \vspace{2mm}\color{white}\begin{tabularx}{\linewidth}{@{}Xr@{}}
-  {\small\bfseries INFORMATIK \textperiodcentered{} KLASSE 10} & \colorbox{Gold}{\color{Navy}\small\bfseries\strut LÖSUNGEN}\end{tabularx}
-  \vspace{2.4mm}{\fontsize{18}{21}\selectfont\bfseries Aufgabe 8 -- n:m-Beziehungen}\par
-  \vspace{0.8mm}{\large Sicherungsblatt \textperiodcentered{} Beziehungstabellen}\vspace{2mm}}}
+
+% Seite 1: bekannte Beispiele und der Merksatz.
+\sheetheader{Aufgabe 8 -- n:m-Beziehungen}{Sicherungsblatt \textperiodcentered{} Beziehungstabellen}
 
 \sectiontitle{1 \textperiodcentered{} Song und Playlist: viele auf beiden Seiten}
-\begin{minipage}{.60\linewidth}
+\begin{minipage}[c]{.55\linewidth}
 \centering
 \begin{tikzpicture}[
-  classcard/.style={draw=Blue,line width=.8pt,minimum width=32mm,minimum height=16mm,inner sep=0pt}
-]
+  classcard/.style={draw=Blue,line width=.8pt,minimum width=31mm,minimum height=14mm,inner sep=0pt},
+  every node/.style={outer sep=0pt}]
   \node[classcard] (songclass) {};
-  \node[classcard,right=38mm of songclass] (playlistclass) {};
-  \draw[Blue,line width=.8pt]
-    ([yshift=-6mm]songclass.north west) -- ([yshift=-6mm]songclass.north east);
-  \draw[Blue,line width=.8pt]
-    ([yshift=-6mm]playlistclass.north west) -- ([yshift=-6mm]playlistclass.north east);
+  \node[classcard,right=34mm of songclass] (playlistclass) {};
+  \draw[Blue,line width=.8pt] ([yshift=-5mm]songclass.north west) -- ([yshift=-5mm]songclass.north east);
+  \draw[Blue,line width=.8pt] ([yshift=-5mm]playlistclass.north west) -- ([yshift=-5mm]playlistclass.north east);
   \draw[Blue,line width=.8pt] (songclass.east) -- (playlistclass.west);
-  \node[font=\bfseries\ttfamily] at ([yshift=-3mm]songclass.north) {Song};
-  \node[font=\bfseries\ttfamily] at ([yshift=-3mm]playlistclass.north) {Playlist};
-  \node[font=\large\bfseries,above right=1mm and 3mm of songclass.east] {n};
-  \node[font=\large\bfseries,above left=1mm and 3mm of playlistclass.west] {m};
+  \node[font=\bfseries\ttfamily] at ([yshift=-2.5mm]songclass.north) {Song};
+  \node[font=\bfseries\ttfamily] at ([yshift=-2.5mm]playlistclass.north) {Playlist};
+  \node[font=\large\bfseries,above right=0mm and 2mm of songclass.east] {n};
+  \node[font=\large\bfseries,above left=0mm and 2mm of playlistclass.west] {m};
 \end{tikzpicture}
 \end{minipage}\hfill
-\begin{minipage}{.37\linewidth}
+\begin{minipage}[c]{.43\linewidth}
 {\small\bfseries\color{Blue}Klassendiagramm}\par\smallskip
 {\small Ein Song kann in mehreren Playlists stehen; eine Playlist kann mehrere Songs enthalten.}\par\smallskip
-{\footnotesize n:m = m:n; unabhängige Anzahlen}
+{\small n:m = m:n; die Anzahlen sind unabhängig.}
 \end{minipage}\par
-\vspace{2mm}
-% Tabellenausschnitte und Schlüssel-Pfeile wie im Sicherungsblatt zu Aufgabe 7.
+\vspace{1mm}
 {\centering\begingroup
-\setlength{\tabcolsep}{1.7mm}
+\setlength{\tabcolsep}{1.4mm}
 \begin{tikzpicture}[>=Latex,
   dbtable/.style={anchor=north west,inner sep=0pt,outer sep=0pt,font=\small\ttfamily},
   tablename/.style={anchor=south,font=\small\bfseries\ttfamily,text=Blue}]
   \node[dbtable] (song) at (0,0) {%
     \begin{tabular}{|>{\columncolor{KeyBg}}c|l|}\hline
-      \textbf{\shortstack{id\\[-1pt]{\scriptsize PK}}} & \cellcolor{Sky}\textbf{titel}\\\hline
-      \textbf{1} & \textbf{Gaslighter}\\\hline
+      \textbf{\shortstack{id\\[-1pt]{\scriptsize PS}}} & \cellcolor{Sky}\textbf{titel}\\\hline
+      1 & Gaslighter\\\hline
       2 & Wavin\textquoteleft{} Flag\\\hline
       3 & Try\\\hline
       4 & \textquoteright{}54, \textquoteright{}74, \textquoteright{}90, 2006\\\hline
     \end{tabular}};
-  \node[dbtable] (mapping) at (65mm,0) {%
+  \node[dbtable] (mapping) at (61mm,0) {%
     \begin{tabular}{|>{\columncolor{KeyBg}}c|>{\columncolor{Sky}}c|}\hline
-      \textbf{\shortstack{song\_id\\[-1pt]{\scriptsize FK}}} & \textbf{\shortstack{playlist\_id\\[-1pt]{\scriptsize FK}}}\\\hline
-      \textbf{1} & 1\\\hline
-      2 & 2\\\hline
-      3 & 1\\\hline
-      4 & 2\\\hline
+      \textbf{\shortstack{song\_id\\[-1pt]{\scriptsize FS}}} & \textbf{\shortstack{playlist\_id\\[-1pt]{\scriptsize FS}}}\\\hline
+      1 & 1\\\hline 2 & 2\\\hline 3 & 1\\\hline 4 & 2\\\hline
       \rowcolor{Mint}\textbf{1} & \textbf{2}\\\hline
     \end{tabular}};
-  \node[dbtable] (playlist) at (133mm,0) {%
+  \node[dbtable] (playlist) at (127mm,0) {%
     \begin{tabular}{|>{\columncolor{Sky}}c|l|}\hline
-      \textbf{\shortstack{id\\[-1pt]{\scriptsize PK}}} & \textbf{\cellcolor{Sky}titel}\\\hline
+      \textbf{\shortstack{id\\[-1pt]{\scriptsize PS}}} & \cellcolor{Sky}\textbf{titel}\\\hline
       1 & Good Oldies\\\hline
       2 & Fussballhits\\\hline
     \end{tabular}};
-  \node[tablename] at ([yshift=7mm]song.north) {Song};
-  \node[tablename] at ([yshift=7mm]mapping.north) {Song\_in\_Playlist};
-  \node[tablename] at ([yshift=7mm]playlist.north) {Playlist};
-  \draw[->,KeyLine,line width=.9pt]
-    ([xshift=9.5mm]mapping.north west) -- ++(0,5mm)
-    -| ([xshift=4.5mm]song.north west);
-  \draw[->,Blue,line width=.9pt]
-    ([xshift=-13mm]mapping.north east) -- ++(0,5mm)
-    -| ([xshift=4.5mm]playlist.north west);
+  \node[tablename] at ([yshift=5mm]song.north) {Song};
+  \node[tablename] at ([yshift=5mm]mapping.north) {Song\_in\_Playlist};
+  \node[tablename] at ([yshift=5mm]playlist.north) {Playlist};
+  \draw[->,KeyLine,line width=.8pt] ([xshift=8.5mm]mapping.north west) -- ++(0,4mm) -| ([xshift=4mm]song.north west);
+  \draw[->,Blue,line width=.8pt] ([xshift=-12mm]mapping.north east) -- ++(0,4mm) -| ([xshift=4mm]playlist.north west);
 \end{tikzpicture}\par\endgroup}
-\vspace{1mm}
-{\small\textbf{Neue Zeile (1, 2):} Gaslighter gehört zusätzlich zu Fussballhits.}\par
-\vspace{1mm}
-{\centering\small\bfseries\color{Blue}Song \quad 1 -- n \quad Song\_in\_Playlist \quad n -- 1 \quad Playlist\par}
-\vspace{1mm}
-{\footnotesize PK = Primärschlüssel \textperiodcentered{} FK = Fremdschlüssel \textperiodcentered{} Pfeil: FK verweist auf PK.}\par
 
 \sectiontitle{2 \textperiodcentered{} Schüler und AG: eine Zeile pro Anmeldung}
-\begin{minipage}[t]{.25\linewidth}
+\begin{minipage}[t]{.29\linewidth}
 \dbtablename{schueler}
-{\small\begin{tabular}{|c|l|}\hline
-\rowcolor{Sky}\textbf{id} & \textbf{name}\\\hline
-1 & Lina\\\hline
-2 & Ben\\\hline
-3 & Mia\\\hline
+{\small\begin{tabular}{|>{\columncolor{KeyBg}}c|l|}\hline
+\rowcolor{Sky}\textbf{\shortstack{id\\[-1pt]{\scriptsize PS}}} & \textbf{name}\\\hline
+1 & Lina\\\hline 2 & Ben\\\hline 3 & Mia\\\hline
 \end{tabular}}
 \end{minipage}\hfill
-\begin{minipage}[t]{.40\linewidth}
+\begin{minipage}[t]{.39\linewidth}
 \dbtablename{teilnahme (Beziehungstabelle)}
-{\small\ttfamily\begin{tabular}{|c|c|}\hline
-\rowcolor{Sky}\textbf{schueler\_id} & \textbf{ag\_id}\\\hline
-1 & 1\\\hline
-1 & 2\\\hline
-2 & 1\\\hline
-3 & 2\\\hline
-3 & 3\\\hline
+{\small\ttfamily\begin{tabular}{|>{\columncolor{KeyBg}}c|>{\columncolor{Sky}}c|}\hline
+\textbf{\shortstack{schueler\_id\\[-1pt]{\scriptsize FS}}} & \textbf{\shortstack{ag\_id\\[-1pt]{\scriptsize FS}}}\\\hline
+1 & 1\\\hline 1 & 2\\\hline 2 & 1\\\hline 3 & 2\\\hline 3 & 3\\\hline
 \rowcolor{Mint}\textbf{2} & \textbf{3}\\\hline
 \end{tabular}}
 \end{minipage}\hfill
-\begin{minipage}[t]{.24\linewidth}
+\begin{minipage}[t]{.25\linewidth}
 \dbtablename{ag}
-{\small\begin{tabular}{|c|l|}\hline
-\rowcolor{Sky}\textbf{id} & \textbf{name}\\\hline
-1 & Robotik\\\hline
-2 & Theater\\\hline
-3 & Chor\\\hline
+{\small\begin{tabular}{|>{\columncolor{KeyBg}}c|l|}\hline
+\rowcolor{Sky}\textbf{\shortstack{id\\[-1pt]{\scriptsize PS}}} & \textbf{name}\\\hline
+1 & Robotik\\\hline 2 & Theater\\\hline 3 & Chor\\\hline
 \end{tabular}}
-\end{minipage}
-\vspace{1.4mm}\par
-{\small Lina $\rightarrow$ Robotik + Theater \quad \textperiodcentered{} \quad Theater $\rightarrow$ Lina + Mia}\par
-{\small\textbf{Neue Zeile (2, 3):} Ben $\rightarrow$ Chor}\par
+\end{minipage}\par
 
-\begin{minipage}[t]{.485\linewidth}
 \sectiontitle{3 \textperiodcentered{} Likes: Upload $\neq$ Like}
-\begin{minipage}[t]{.43\linewidth}
+\begingroup\setlength{\tabcolsep}{1mm}\small
+\begin{tabularx}{\linewidth}{@{}>{\raggedright\arraybackslash}p{.24\linewidth}@{\hspace{2mm}}>{\raggedright\arraybackslash}X@{\hspace{2mm}}>{\raggedright\arraybackslash}p{.23\linewidth}@{}}
+\dbtablename{users}
+{\ttfamily\begin{tabular}{|>{\columncolor{KeyBg}}c|l|}\hline
+\rowcolor{Sky}\textbf{\shortstack{id\\[-1pt]{\scriptsize PS}}} & \textbf{username}\\\hline
+3 & bergcoder\\\hline 4 & koch\_kicker\\\hline 15 & reisewut\_emil\\\hline 18 & gamewut\_jonas\\\hline
+\end{tabular}}
+&
 \dbtablename{photos (Auszug)}
-{\small\ttfamily\begin{tabular}{|c|c|}\hline
-\rowcolor{Sky}\textbf{id} & \textbf{user\_id}\\\hline
-14 & 4\\\hline
-\end{tabular}}
-\end{minipage}\hfill
-\begin{minipage}[t]{.53\linewidth}
+{\ttfamily\begin{tabularx}{\linewidth}{|>{\columncolor{KeyBg}}c|>{\raggedright\arraybackslash}X|}\hline
+\rowcolor{Sky}\textbf{\shortstack{id\\[-1pt]{\scriptsize PS}}} & \textbf{description}\\\hline
+12 & Bin gerade am Debuggen mitten im Wald - das ist wahre \#Codel \ldots\\\hline
+14 & Ein neues Rezept ausprobiert! \ldots\\\hline
+\end{tabularx}}
+&
 \dbtablename{likes}
-{\small\ttfamily\begin{tabular}{|c|c|}\hline
-\rowcolor{Sky}\textbf{user\_id} & \textbf{photo\_id}\\\hline
-15 & 12\\\hline
-15 & 14\\\hline
-\rowcolor{Mint}18 & 14\\\hline
+{\ttfamily\begin{tabular}{|>{\columncolor{KeyBg}}c|>{\columncolor{Sky}}c|}\hline
+\textbf{\shortstack{user\_id\\[-1pt]{\scriptsize FS}}} & \textbf{\shortstack{photo\_id\\[-1pt]{\scriptsize FS}}}\\\hline
+15 & 12\\\hline 15 & 14\\\hline 18 & 14\\\hline
 \end{tabular}}
-\end{minipage}
-\vspace{1.4mm}\par
-{\small Foto 14: Upload von \textbf{4}, Likes von \textbf{15 und 18}.}\par
-{\footnotesize\texttt{users} 1 -- n \texttt{likes} n -- 1 \texttt{photos}}
-\end{minipage}\hfill
-\begin{minipage}[t]{.485\linewidth}
-\sectiontitle{4 \textperiodcentered{} Follows: Richtung beachten}
-\dbtablename{follows}
-{\small\ttfamily\begin{tabular}{|c|c|c|}\hline
-\rowcolor{Sky}\textbf{id} & \textbf{follower\_id} & \textbf{following\_id}\\\hline
-1 & 117 & 1\\\hline
-2 & 1 & 117\\\hline
-947 & 138 & 52\\\hline
-\end{tabular}}
-\vspace{1.4mm}\par
-{\small\texttt{follower\_id} $\rightarrow$ \texttt{following\_id}}\par
-{\small\textbf{wer folgt} $\rightarrow$ \textbf{wem gefolgt wird}}\par
-{\small 117 $\rightarrow$ 1 \quad + \quad 1 $\rightarrow$ 117: gegenseitig}\par
-{\footnotesize Beide Fremdschlüssel verweisen auf \texttt{users}.}
-\end{minipage}
-\vspace{2mm}\par
-\begin{tcolorbox}[colback=Mint,colframe=Blue,arc=2mm,boxrule=.8pt,left=3mm,right=3mm,top=1.7mm,bottom=1.7mm]
+\end{tabularx}\endgroup
+
+\vspace{1mm}
+\begin{tcolorbox}[colback=Mint,colframe=Blue,arc=2mm,boxrule=.8pt,left=3mm,right=3mm,top=1.3mm,bottom=1.3mm]
 \textbf{Merksatz}\par\smallskip
 {\small Eine n:m-Beziehung wird durch eine Beziehungstabelle umgesetzt. Jede Zeile verbindet über zwei Fremdschlüssel genau einen Datensatz der einen Tabelle mit genau einem Datensatz der anderen Tabelle.}\par\smallskip
-{\small\bfseries Eine Zeile = eine Zuordnung \textperiodcentered{} Eine Zelle = eine id}\par
-{\footnotesize Beziehungstabelle = Hilfstabelle}
+{\small\bfseries Eine Zeile = eine Zuordnung \textperiodcentered{} Eine Zelle = eine ID}
 \end{tcolorbox}
 
-\vfill{\color{Line}\rule{\linewidth}{.5pt}}\par\vspace{1mm}
-\begin{tabularx}{\linewidth}{@{}Xr@{}}{\small\color{Muted}Klasse 10 \textperiodcentered{} Datenbanken} & {\small\color{Muted}Sicherungsblatt \textperiodcentered{} Aufgabe 8}\end{tabularx}
+\sheetfooter
+\newpage
+
+% Seite 2: zwei gleich aufgebaute Vergleichsbereiche.
+\sheetheader{Upload und Like im Vergleich}{Sicherungsblatt \textperiodcentered{} Aufgabe 8}
+\begin{tcolorbox}[colback=Sky,colframe=Line,arc=1mm,boxrule=.5pt,left=2mm,right=2mm,top=1mm,bottom=1mm]
+{\small\textbf{PS} = Primärschlüssel \textperiodcentered{} \textbf{FS} = Fremdschlüssel \textperiodcentered{} Pfeil: FS verweist auf PS.}
+\end{tcolorbox}
+
+\sectiontitle{Upload (1:n): eine Person kann mehrere Fotos hochladen}
+\begin{center}\begin{tikzpicture}[>=Latex,classcard/.style={draw=Blue,line width=.8pt,minimum width=35mm,minimum height=11mm,inner sep=1mm,align=center,font=\small\ttfamily}]
+  \node[classcard] (usersup) {users}; \node[classcard,right=45mm of usersup] (photosup) {photos};
+  \draw[Blue,line width=.8pt] (usersup.east) -- node[above,font=\bfseries]{1} node[below,font=\small]{kann hochladen} node[above,near end,font=\bfseries]{n} (photosup.west);
+\end{tikzpicture}\end{center}
+\vspace{-1mm}
+\begin{center}\begin{tikzpicture}[>=Latex,
+  snip/.style={anchor=north west,inner sep=0pt,outer sep=0pt,font=\small\ttfamily},
+  nametag/.style={anchor=south,font=\small\bfseries\ttfamily,text=Blue}]
+  \node[snip] (usersn) at (0,0) {%
+    \begin{tabular}{|>{\columncolor{KeyBg}}c|l|}\hline
+    \rowcolor{Sky}\textbf{\shortstack{id\\[-1pt]{\scriptsize PS}}} & \textbf{username}\\\hline
+    3 & bergcoder\\\hline 4 & koch\_kicker\\\hline
+    \end{tabular}};
+  \node[snip] (photosn) at (62mm,0) {%
+    \begin{tabular}{|c|>{\columncolor{KeyBg}}c|p{78mm}|}\hline
+    \rowcolor{Sky}\textbf{\shortstack{id\\[-1pt]{\scriptsize PS}}} & \textbf{\shortstack{user\_id\\[-1pt]{\scriptsize FS}}} & \textbf{description}\\\hline
+    11 & 3 & Heute \textnormal{draußen} im Wald programmiert \ldots\\\hline
+    12 & 3 & Bin gerade am Debuggen mitten im Wald - das ist wahre \#Codel \ldots\\\hline
+    14 & 4 & Ein neues Rezept ausprobiert! \ldots\\\hline
+    \end{tabular}};
+  \node[nametag] at ([yshift=3mm]usersn.north) {users};
+  \node[nametag] at ([yshift=3mm]photosn.north) {photos (Auszug)};
+  \draw[->,KeyLine,line width=.9pt] ([xshift=19mm]photosn.north west) -- ++(0,2mm) -| ([xshift=4mm]usersn.north west);
+\end{tikzpicture}\end{center}
+\vspace{-1mm}
+{\small\ttfamily users (id: int, username: varchar(255), \ldots)}\par
+{\small\ttfamily photos (id: int, user\_id[users]: int, description: varchar(255), \ldots)}\par
+\vspace{.5mm}{\small Ein Benutzer kann mehrere Fotos hochladen. Jedes Foto hat genau eine hochladende Person; ihre ID steht in photos.user\_id.}
+
+\sectiontitle{Likes (n:m): Personen und Fotos stehen in einer n:m-Beziehung}
+\begin{center}\begin{tikzpicture}[>=Latex,classcard/.style={draw=Blue,line width=.8pt,minimum width=31mm,minimum height=10mm,inner sep=1mm,align=center,font=\small\ttfamily}]
+  \node[classcard] (userslike) {users}; \node[classcard,right=39mm of userslike] (photoslike) {photos};
+  \draw[Blue,line width=.8pt] (userslike.east) -- node[above,font=\bfseries]{n} node[below,font=\small]{kann liken} node[above,near end,font=\bfseries]{m} (photoslike.west);
+\end{tikzpicture}\end{center}
+\vspace{-1mm}
+{\centering{\small\ttfamily users \quad 1 -- n \quad likes \quad n -- 1 \quad photos}\par}
+\vspace{.5mm}
+\begin{center}\begin{tikzpicture}[>=Latex,
+  snip/.style={anchor=north west,inner sep=0pt,outer sep=0pt,font=\small\ttfamily},
+  nametag/.style={anchor=south,font=\small\bfseries\ttfamily,text=Blue}]
+  \node[snip] (userlike) at (0,0) {%
+    \begin{tabular}{|>{\columncolor{KeyBg}}c|l|}\hline
+    \rowcolor{Sky}\textbf{\shortstack{id\\[-1pt]{\scriptsize PS}}} & \textbf{username}\\\hline
+    15 & reisewut\_emil\\\hline 18 & gamewut\_jonas\\\hline
+    \end{tabular}};
+  \node[snip] (likesn) at (49mm,0) {%
+    \begin{tabular}{|>{\columncolor{KeyBg}}c|>{\columncolor{Sky}}c|}\hline
+    \rowcolor{Sky}\textbf{\shortstack{user\_id\\[-1pt]{\scriptsize FS}}} & \textbf{\shortstack{photo\_id\\[-1pt]{\scriptsize FS}}}\\\hline
+    15 & 12\\\hline 15 & 14\\\hline 18 & 14\\\hline
+    \end{tabular}};
+  \node[snip] (photolike) at (103mm,0) {%
+    \begin{tabular}{|>{\columncolor{KeyBg}}c|p{41mm}|}\hline
+    \rowcolor{Sky}\textbf{\shortstack{id\\[-1pt]{\scriptsize PS}}} & \textbf{description}\\\hline
+    12 & Bin gerade am Debuggen mitten im Wald - das ist wahre \#Codel \ldots\\\hline
+    14 & Ein neues Rezept ausprobiert! \ldots\\\hline
+    \end{tabular}};
+  \node[nametag] at ([yshift=3mm]userlike.north) {users};
+  \node[nametag] at ([yshift=3mm]likesn.north) {likes};
+  \node[nametag] at ([yshift=3mm]photolike.north) {photos};
+  \draw[->,KeyLine,line width=.9pt] ([xshift=4mm]likesn.north west) -- ++(0,2mm) -| ([xshift=4mm]userlike.north west);
+  \draw[->,Blue,line width=.9pt] ([xshift=-4mm]likesn.north east) -- ++(0,2mm) -| ([xshift=4mm]photolike.north west);
+\end{tikzpicture}\end{center}
+\vspace{-1mm}
+{\small\ttfamily users (id: int, username: varchar(255), \ldots)}\par
+{\small\ttfamily likes (id: int, user\_id[users]: int, photo\_id[photos]: int, \ldots)}\par
+{\small\ttfamily photos (id: int, description: varchar(255), \ldots)}\par
+\vspace{.5mm}{\small Ein Benutzer kann mehrere Fotos liken; ein Foto kann Likes von mehreren Benutzern erhalten. Die likende Person steht in likes.user\_id, das gelikte Foto in likes.photo\_id.}
+
+\vspace{1mm}
+\begin{tcolorbox}[colback=Mint,colframe=Blue,arc=1.5mm,boxrule=.7pt,left=2mm,right=2mm,top=1mm,bottom=1mm]
+{\small\bfseries Upload: ein FS in photos. Likes: zwei FS in der Beziehungstabelle likes.}
+\end{tcolorbox}
+
+\sheetfooter
 \end{document}

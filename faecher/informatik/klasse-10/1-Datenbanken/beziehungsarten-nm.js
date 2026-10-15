@@ -13,26 +13,28 @@ function renderSongTables(){
  miniTableCard("Song_in_Playlist",["song_id","playlist_id"],SONG_ROWS.Song_in_Playlist.map(r=>[r.song_id,r.playlist_id]))+
  miniTableCard("Playlist",["id","titel"],SONG_ROWS.Playlist.map(p=>[p.id,p.titel]));
 }
-const compact=s=>String(s).toLocaleLowerCase("de").replace(/[’‘']/g,"").replace(/[^a-z0-9äöüß]+/g," ").trim();
-function exactNames(text,words){
-  let remaining=` ${compact(text)} `;
-  for(const word of [...words].sort((a,b)=>b.length-a.length)){
-    const normalized=` ${compact(word)} `;
-    if(!remaining.includes(normalized))return false;
-    remaining=remaining.replace(normalized," ");
-  }
-  return remaining.replace(/\bund\b/g,"").trim()==="";
+const SONG_PLAYLIST_OPTIONS = [
+ ...SONG_ROWS.Playlist.map(p => ({id:String(p.id),label:p.titel,correct:SONG_ROWS.Song_in_Playlist.some(r=>r.song_id===1&&r.playlist_id===p.id)})),
+ {id:"none",label:"Keine der Playlists"}
+];
+const PLAYLIST_SONG_OPTIONS = SONG_ROWS.Song.map(s => ({id:String(s.id),label:s.titel,correct:SONG_ROWS.Song_in_Playlist.some(r=>r.playlist_id===2&&r.song_id===s.id)}));
+function sanitizeSongChoices(value, options) {
+ if(Array.isArray(value)) return sanitizeArray(value,options.map(o=>o.id));
+ // Vorherige Freitextantworten in die passenden Auswahlkaestchen uebernehmen.
+ if(typeof value!=="string") return [];
+ const compact=s=>String(s).toLocaleLowerCase("de").replace(/[’‘']/g,"").replace(/[^a-z0-9äöüß]+/g," ").trim();
+ const text=` ${compact(value)} `;
+ return options.filter(o=>text.includes(` ${compact(o.label)} `)).map(o=>o.id);
 }
 function syncSongReveal(){
- document.getElementById("song-reveal").hidden=!(isSolved("song-observation")&&isSolved("song-cardinality"));
+ document.getElementById("song-reveal").hidden=!["song-playlists","playlist-songs","song-cardinality"].every(isSolved);
 }
-function checkSongObservation(){
- const a=state.song.playlists,b=state.song.songs;
-  const aok=exactNames(a,["Good Oldies","Fussballhits"]);
-  const bok=exactNames(b,["Gaslighter","Wavin Flag","54 74 90 2006"]);
- const kind=aok&&bok?"success":aok||bok?"partial":"hint";
- const msg=kind==="success"?"Richtig: Gaslighter steht in Good Oldies und Fussballhits. Fussballhits enthält Gaslighter, Wavin‘ Flag und ’54, ’74, ’90, 2006.":kind==="partial"?"Teilweise korrekt: Eine Richtung stimmt. Prüfe für die andere Richtung alle Zeilen mit derselben song_id beziehungsweise playlist_id.":"Noch nicht korrekt: Vergleiche erst die ids in Song und Playlist mit den beiden Fremdschlüsseln in Song_in_Playlist.";
- setFeedback("song-observation",kind,msg);if(aok&&bok){markSolved("song-observation");syncSongReveal();}
+function checkSongChoices(id,key,options,hint,success) {
+ state.song[key]=selectedValues(id); saveState();
+ const selected=state.song[key],correct=options.filter(o=>o.correct).map(o=>o.id);
+ const ok=sameSet(selected,correct),partial=selected.some(value=>correct.includes(value));
+ setFeedback(id,ok?"success":partial?"partial":"hint",ok?success:`${partial?"Teilweise korrekt:":"Noch nicht korrekt:"} ${hint}`);
+ if(ok){markSolved(id);syncSongReveal();}
 }
 function checkSongCardinality(){
  const a=normalizeCardinality(state.song.cardA),b=normalizeCardinality(state.song.cardB);
@@ -41,22 +43,6 @@ function checkSongCardinality(){
  const kind=ok?"success":count?"partial":"hint";
  setFeedback("song-cardinality",kind,ok?"Richtig: Song und Playlist sind auf beiden Seiten mit vielen Datensätzen verbunden.":count?"Teilweise korrekt: Eine Seite ist richtig. Prüfe die andere Richtung an Gaslighter oder Fussballhits.":"Noch nicht korrekt: In beiden Richtungen gibt es mehr als einen passenden Datensatz.");
  if(ok){markSolved("song-cardinality");syncSongReveal();}
-}
-function checkSongFk(){
- const a=state.song.songFk==="Song.id",b=state.song.playlistFk==="Playlist.id";
- setFeedback("song-fk",a&&b?"success":a||b?"partial":"hint",a&&b?"Richtig: song_id verweist auf Song.id, playlist_id auf Playlist.id.":a||b?"Teilweise korrekt: Ein Verweis stimmt. Prüfe den zweiten Fremdschlüssel.":"Noch nicht korrekt: Vergleiche die Spaltennamen mit den Primärschlüsseln der beiden Tabellen.");
- if(a&&b)markSolved("song-fk");
-}
-function checkSongRow(){
- const a=state.song.newSong.trim()==="1",b=state.song.newPlaylist.trim()==="2";
- setFeedback("song-row",a&&b?"success":a||b?"partial":"hint",a&&b?"Richtig: Die neue Zeile lautet song_id 1, playlist_id 2.":a||b?"Teilweise korrekt: Eine id stimmt. Lies die andere in Song oder Playlist ab.":"Noch nicht korrekt: Trage zwei einzelne ids in eine neue Zeile ein; schreibe keine Liste in eine Zelle.");
- if(a&&b)markSolved("song-row");
-}
-function checkSongChain(){
- const v=["chainSong","chainLeft","chainRight","chainPlaylist"].map(k=>normalizeCardinality(state.song[k]));
- const left=v[0]==="1"&&v[1]==="n",right=v[2]==="n"&&v[3]==="1";
- setFeedback("song-chain",left&&right?"success":left||right?"partial":"hint",left&&right?"Richtig: Song 1 — n Song_in_Playlist n — 1 Playlist. So werden aus der n:m-Beziehung zwei 1:n-Beziehungen.":left||right?"Teilweise korrekt: Eine Verbindung stimmt. Prüfe auf der anderen Seite, wie viele Zuordnungszeilen zu einem Song oder einer Playlist gehören können.":"Noch nicht korrekt: Jede Zeile der Beziehungstabelle verweist auf genau einen Song und genau eine Playlist.");
- if(left&&right){markSolved("song-chain");document.getElementById("song-merken").hidden=false;}
 }
 const R3_F3A_OPTIONS = [
   { id: "multi", label: "1, 2" },
@@ -92,18 +78,18 @@ const R7_F7B_OPTIONS = [
 ];
 
 const STORAGE_KEY="informatik10-datenbanken-aufgabe8-nm-v1";
-const STEP_TITLES=["Songs und Playlists","Beziehungstabelle","Lina besucht zwei AGs","Anmeldungen","InstaHub","likes","follows","Übersicht","Abschlussquiz"];
-const SUMMARY_STEP=8,QUIZ_STEP=9,QUIZ=BEZIEHUNGSARTEN_QUIZ_8,QUIZ_SOLVED="r9-quiz";
+const STEP_TITLES=["Songs und Playlists","Lina besucht zwei AGs","Anmeldungen","InstaHub","likes","follows","Übersicht","Abschlussquiz"];
+const SUMMARY_STEP=7,QUIZ_STEP=8,QUIZ=BEZIEHUNGSARTEN_QUIZ_8,QUIZ_SOLVED="r9-quiz";
 const QUIZ_SUCCESS="Richtig: Alle sechs Fragen stimmen. Die Übersicht ist jetzt verfügbar.";
-const STEP_SUBTASKS={1:["song-observation","song-cardinality"],2:["song-fk","song-row","song-chain"],
-  3:["r3-f3a","r3-f3b","r3-cardinality"],4:["r4-f4a","r4-f4b","r4-f4c"],
-  5:["r5-cardinality"],6:["r6-f6a","r6-f6b","r6-cardinality"],7:["r7-f7a","r7-f7b"],9:["r9-quiz"]};
+const STEP_SUBTASKS={1:["song-playlists","playlist-songs","song-cardinality"],
+  2:["r3-f3a","r3-f3b","r3-cardinality"],3:["r4-f4a","r4-f4b","r4-f4c"],
+  4:["r5-cardinality"],5:["r6-f6a","r6-f6b","r6-cardinality"],6:["r7-f7a","r7-f7b"],8:["r9-quiz"]};
 const ALL_SUBTASK_IDS=Object.values(STEP_SUBTASKS).flat();
 const R4_CLOZE_IDS=Object.keys(R4_CLOZES);
 function emptyCloze(id){return Object.fromEntries(r4ClozeGapIds(id).map(gap=>[gap,""]));}
 function emptyDefaultState(){return {
- currentStep:1,completed:[],summaryUnlocked:false,solved:[],download:{quiz:false,summary:false},
- song:{playlists:"",songs:"",cardA:"",cardB:"",songFk:"",playlistFk:"",newSong:"",newPlaylist:"",chainSong:"",chainLeft:"",chainRight:"",chainPlaylist:""},
+ schemaVersion:2,currentStep:1,completed:[],summaryUnlocked:false,solved:[],download:{quiz:false,summary:false},
+ song:{playlists:[],songs:[],cardA:"",cardB:""},
  r3:{f3a:"",f3b:"",schueler:"",ag:""},
  r4:Object.fromEntries(R4_CLOZE_IDS.map(id=>[id,emptyCloze(id)])),
  r5:{folgenA:"",folgenB:"",kommentierenA:"",kommentierenB:"",likenA:"",likenB:""},
@@ -113,13 +99,19 @@ function emptyDefaultState(){return {
 };}
 function sanitizeState(raw){
  const s=emptyDefaultState(); if(!raw||typeof raw!=="object")return s;
- s.currentStep=Number.isInteger(raw.currentStep)&&raw.currentStep>=1&&raw.currentStep<=9?raw.currentStep:1;
+ const previousStep=Number.isInteger(raw.currentStep)&&raw.currentStep>=1&&raw.currentStep<=(raw.schemaVersion===2?8:9)?raw.currentStep:1;
+ s.currentStep=raw.schemaVersion===2?previousStep:previousStep>2?previousStep-1:1;
  s.summaryUnlocked=raw.summaryUnlocked===true;
- if(s.currentStep===8&&!s.summaryUnlocked)s.currentStep=1;
+ if(s.currentStep===SUMMARY_STEP&&!s.summaryUnlocked)s.currentStep=1;
  s.solved=sanitizeArray(raw.solved,ALL_SUBTASK_IDS);
- s.completed=sanitizeArray(raw.completed,[1,2,3,4,5,6,7,9]).filter(n=>STEP_SUBTASKS[n].every(id=>s.solved.includes(id)));
  s.download={quiz:raw.download?.quiz===true,summary:raw.download?.summary===true};
- for(const key of Object.keys(s.song))s.song[key]=sanitizeText(raw.song?.[key],160);
+ s.song={playlists:sanitizeSongChoices(raw.song?.playlists,SONG_PLAYLIST_OPTIONS),songs:sanitizeSongChoices(raw.song?.songs,PLAYLIST_SONG_OPTIONS),cardA:sanitizeCardinalityInput(raw.song?.cardA),cardB:sanitizeCardinalityInput(raw.song?.cardB)};
+ if(raw.schemaVersion!==2&&Array.isArray(raw.solved)&&raw.solved.includes("song-observation")) {
+  for(const [id,key,options] of [["song-playlists","playlists",SONG_PLAYLIST_OPTIONS],["playlist-songs","songs",PLAYLIST_SONG_OPTIONS]]) {
+   if(sameSet(s.song[key],options.filter(o=>o.correct).map(o=>o.id)))s.solved.push(id);
+  }
+ }
+ s.completed=Object.keys(STEP_SUBTASKS).map(Number).filter(n=>STEP_SUBTASKS[n].every(id=>s.solved.includes(id)));
  s.r3={f3a:sanitizeChoice(raw.r3?.f3a,R3_F3A_OPTIONS.map(o=>o.id)),f3b:sanitizeChoice(raw.r3?.f3b,R3_F3B_OPTIONS.map(o=>o.id)),schueler:sanitizeCardinalityInput(raw.r3?.schueler),ag:sanitizeCardinalityInput(raw.r3?.ag)};
  for(const id of R4_CLOZE_IDS)for(const gap of r4ClozeGapIds(id))s.r4[id][gap]=sanitizeText(raw.r4?.[id]?.[gap],40);
  for(const key of Object.keys(s.r5))s.r5[key]=sanitizeCardinalityInput(raw.r5?.[key]);
@@ -508,7 +500,7 @@ function navigateTo(step,{focusContent=false}={}) {
   if(focusContent) focusTabPanelStart(panel); else window.scrollTo({top:0,behavior:"smooth"});
 }
 function updateNavigation() {
-  const percent=Math.round(state.completed.filter(n=>n>=1&&n<=QUIZ_STEP).length/QUIZ_STEP*100);
+  const percent=Math.round(state.completed.length/Object.keys(STEP_SUBTASKS).length*100);
   document.getElementById("progress-bar").style.width=`${percent}%`;
   document.getElementById("progress-percent").textContent=`${percent} % bearbeitet`;
   document.getElementById("progress-label").textContent=`Schritt ${state.currentStep} von ${QUIZ_STEP}`;
@@ -541,22 +533,22 @@ function bindReset() {
 }
 function renderSummary(){
  const entries=[
- ["1. Songs und Playlists","Nenne Playlists von Gaslighter und Songs in Fussballhits; trage die Kardinalitäten ein.","Gaslighter: Good Oldies und Fussballhits; Fussballhits: Gaslighter, Wavin‘ Flag, ’54, ’74, ’90, 2006. Song n — m Playlist."],
- ["2. Beziehungstabelle","Ordne die Fremdschlüssel zu, ergänze die neue Zeile und die beiden Verbindungen.","Song_in_Playlist: song_id → Song.id; playlist_id → Playlist.id; neue Zeile (1, 2); Song 1 — n Song_in_Playlist n — 1 Playlist."],
- ["3. Lina besucht zwei AGs","Prüfe den Fremdschlüsselversuch und ergänze die Kardinalitäten.","Ein einzelner Fremdschlüssel kann Linas zwei AGs nicht speichern; Schüler n — m AG."],
- ["4. Anmeldungen","Lies die Zuordnungen in teilnahme und trage Bens Chor-Anmeldung ein.","Lina: Robotik und Theater; Theater: Lina und Mia; Ben im Chor: teilnahme(2, 3). Lina (id 1): ag_id 1 und 2, also Robotik und Theater. Theater (id 2): schueler_id 1 und 3, also Lina und Mia. Bens Chor-Anmeldung ist eine neue Zeile in teilnahme mit schueler_id 2 und ag_id 3."],
- ["5. InstaHub","Ergänze die Kardinalitäten für liken, kommentieren und folgen.","users n — m photos (liken, kommentieren); users n — m users (folgen)."],
- ["6. likes","Lies Likes und ihre Umsetzung.","likes(18, 14): Benutzer 18 hat Foto 14 geliked; users 1 — n likes n — 1 photos. reisewut_emil hat die Fotos 12 und 14 geliked; Foto 14 gefällt reisewut_emil und gamewut_jonas."],
- ["7. follows","Lies die Richtung und das gegenseitige Folgen.","follows: follower_id = wer folgt, following_id = wem gefolgt wird; gegenseitiges Folgen benötigt zwei Zeilen. Zeile 947: wanderriese_taro folgt oekosmasher."],
- ["9. Abschlussquiz","Sichere die Beziehungen.","Alle sechs Fragen richtig beantwortet."]
+ ["1. Songs und Playlists","Kreuze alle Playlists von Gaslighter und alle Songs in Fussballhits an; trage die Kardinalitäten ein.","Gaslighter: Good Oldies und Fussballhits; Fussballhits: Gaslighter, Wavin‘ Flag, ’54, ’74, ’90, 2006. Song n — m Playlist."],
+ ["2. Lina besucht zwei AGs","Prüfe den Fremdschlüsselversuch und ergänze die Kardinalitäten.","Ein einzelner Fremdschlüssel kann Linas zwei AGs nicht speichern; Schüler n — m AG."],
+ ["3. Anmeldungen","Lies die Zuordnungen in teilnahme und trage Bens Chor-Anmeldung ein.","Lina: Robotik und Theater; Theater: Lina und Mia; Ben im Chor: teilnahme(2, 3). Lina (id 1): ag_id 1 und 2, also Robotik und Theater. Theater (id 2): schueler_id 1 und 3, also Lina und Mia. Bens Chor-Anmeldung ist eine neue Zeile in teilnahme mit schueler_id 2 und ag_id 3."],
+ ["4. InstaHub","Ergänze die Kardinalitäten für liken, kommentieren und folgen.","users n — m photos (liken, kommentieren); users n — m users (folgen)."],
+ ["5. likes","Lies Likes und ihre Umsetzung.","likes(18, 14): Benutzer 18 hat Foto 14 geliked; users 1 — n likes n — 1 photos. reisewut_emil hat die Fotos 12 und 14 geliked; Foto 14 gefällt reisewut_emil und gamewut_jonas."],
+ ["6. follows","Lies die Richtung und das gegenseitige Folgen.","follows: follower_id = wer folgt, following_id = wem gefolgt wird; gegenseitiges Folgen benötigt zwei Zeilen. Zeile 947: wanderriese_taro folgt oekosmasher."],
+ ["8. Abschlussquiz","Sichere die Beziehungen.","Alle sechs Fragen richtig beantwortet."]
  ];
  document.getElementById("answer-summary").innerHTML=entries.map(([title,prompt,result])=>`<section class="summary-section"><h3>${title}</h3><p class="prompt">${prompt}</p><dl class="summary-grid"><dt>Richtiges Ergebnis</dt><dd>${result}</dd></dl></section>`).join("");
 }
 function restoreInputs(){
- const fields={ "song-playlists":"playlists","playlist-songs":"songs","song-cardinality":"cardA","playlist-cardinality":"cardB","song-fk":"songFk","playlist-fk":"playlistFk","new-song-id":"newSong","new-playlist-id":"newPlaylist","chain-song":"chainSong","chain-left":"chainLeft","chain-right":"chainRight","chain-playlist":"chainPlaylist"};
+ const fields={"song-cardinality":"cardA","playlist-cardinality":"cardB"};
  for(const [id,key] of Object.entries(fields))document.getElementById(id).value=state.song[key];
+ renderCheckboxList("song-playlists-choices","song-playlists",SONG_PLAYLIST_OPTIONS,state.song.playlists);
+ renderCheckboxList("playlist-songs-choices","playlist-songs",PLAYLIST_SONG_OPTIONS,state.song.songs);
  syncSongReveal();
- document.getElementById("song-merken").hidden=!isSolved("song-chain");
  for(const [id,key] of Object.entries({"r3-schueler-cardinality":"schueler","r3-ag-cardinality":"ag"}))document.getElementById(id).value=state.r3[key];
  for(const [id,key] of Object.entries({"r5-folgen-a":"folgenA","r5-folgen-b":"folgenB","r5-kommentieren-a":"kommentierenA","r5-kommentieren-b":"kommentierenB","r5-liken-a":"likenA","r5-liken-b":"likenB"}))document.getElementById(id).value=state.r5[key];
  for(const [id,key] of Object.entries({"r6-users-cardinality":"users","r6-likes-a-cardinality":"likesA","r6-likes-b-cardinality":"likesB","r6-photos-cardinality":"photos"}))document.getElementById(id).value=state.r6[key];
@@ -575,15 +567,16 @@ function restoreInputs(){
  document.getElementById("r7-summary").hidden=!["r7-f7a","r7-f7b"].every(isSolved);
 }
 function bindEvents(){
- for(const [id,fn] of Object.entries({"song-observation":checkSongObservation,"song-cardinality":checkSongCardinality,"song-fk":checkSongFk,"song-row":checkSongRow,"song-chain":checkSongChain,"r3-f3a":checkR3F3a,"r3-f3b":checkR3F3b,"r3-cardinality":checkR3Cardinality,"r5-cardinality":checkR5Cardinality,"r6-f6a":checkR6F6a,"r6-f6b":checkR6F6b,"r6-cardinality":checkR6Cardinality,"r7-f7a":checkR7F7a,"r7-f7b":checkR7F7b}))document.getElementById("check-"+id).addEventListener("click",fn);
+ for(const [id,fn] of Object.entries({"song-playlists":()=>checkSongChoices("song-playlists","playlists",SONG_PLAYLIST_OPTIONS,"Suche alle Zeilen mit der song_id von Gaslighter und vergleiche die playlist_id mit Playlist.","Richtig: Gaslighter steht in Good Oldies und Fussballhits."),"playlist-songs":()=>checkSongChoices("playlist-songs","songs",PLAYLIST_SONG_OPTIONS,"Suche alle Zeilen mit der playlist_id von Fussballhits und vergleiche die song_id mit Song.","Richtig: Fussballhits enthält Gaslighter, Wavin‘ Flag und ’54, ’74, ’90, 2006."),"song-cardinality":checkSongCardinality,"r3-f3a":checkR3F3a,"r3-f3b":checkR3F3b,"r3-cardinality":checkR3Cardinality,"r5-cardinality":checkR5Cardinality,"r6-f6a":checkR6F6a,"r6-f6b":checkR6F6b,"r6-cardinality":checkR6Cardinality,"r7-f7a":checkR7F7a,"r7-f7b":checkR7F7b}))document.getElementById("check-"+id).addEventListener("click",fn);
  R4_CLOZE_IDS.forEach(id=>document.getElementById("check-r4-"+id).addEventListener("click",()=>checkR4Cloze(id)));
- const fields={"song-playlists":"playlists","playlist-songs":"songs","song-cardinality":"cardA","playlist-cardinality":"cardB","song-fk":"songFk","playlist-fk":"playlistFk","new-song-id":"newSong","new-playlist-id":"newPlaylist","chain-song":"chainSong","chain-left":"chainLeft","chain-right":"chainRight","chain-playlist":"chainPlaylist"};
- for(const [id,key] of Object.entries(fields))document.getElementById(id).addEventListener(["song-fk","playlist-fk"].includes(id)?"change":"input",e=>{state.song[key]=e.target.value;saveState();});
+ const fields={"song-cardinality":"cardA","playlist-cardinality":"cardB"};
+ for(const [id,key] of Object.entries(fields))document.getElementById(id).addEventListener("input",e=>{state.song[key]=e.target.value;saveState();});
  for(const [id,key] of Object.entries({"r3-schueler-cardinality":"schueler","r3-ag-cardinality":"ag"}))document.getElementById(id).addEventListener("input",e=>{state.r3[key]=e.target.value;saveState();});
  for(const [id,key] of Object.entries({"r5-folgen-a":"folgenA","r5-folgen-b":"folgenB","r5-kommentieren-a":"kommentierenA","r5-kommentieren-b":"kommentierenB","r5-liken-a":"likenA","r5-liken-b":"likenB"}))document.getElementById(id).addEventListener("input",e=>{state.r5[key]=e.target.value;saveState();});
  for(const [id,key] of Object.entries({"r6-users-cardinality":"users","r6-likes-a-cardinality":"likesA","r6-likes-b-cardinality":"likesB","r6-photos-cardinality":"photos"}))document.getElementById(id).addEventListener("input",e=>{state.r6[key]=e.target.value;saveState();});
  R4_CLOZE_IDS.forEach(id=>r4ClozeGapIds(id).forEach(g=>clozeInput(id,g).addEventListener("input",e=>{state.r4[id][g]=e.target.value;saveState();clearClozeMark(e.target);})));
  const bindChoice=(name,fn,multi)=>document.querySelectorAll(`input[name="${name}"]`).forEach(input=>input.addEventListener("change",()=>{fn(multi?selectedValues(name):input.value);saveState();}));
+ bindChoice("song-playlists",v=>state.song.playlists=v,true);bindChoice("playlist-songs",v=>state.song.songs=v,true);
  bindChoice("r3-f3a",v=>state.r3.f3a=v,false);bindChoice("r3-f3b",v=>state.r3.f3b=v,false);
  bindChoice("r6-f6a",v=>state.r6.f6a=v,true);bindChoice("r6-f6b",v=>state.r6.f6b=v,true);
  bindChoice("r7-f7a",v=>state.r7.f7a=v,false);bindChoice("r7-f7b",v=>state.r7.f7b=v,true);

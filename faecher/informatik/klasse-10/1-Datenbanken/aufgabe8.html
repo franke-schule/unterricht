@@ -11,7 +11,7 @@
     <link rel="stylesheet" href="beziehungen.css?v=20260826b">
     <link rel="stylesheet" href="beziehungsarten.css?v=20261013">
     <script src="../../quiz-fragen-pruefen.js?v=20261006b"></script>
-    <script type="module" src="beziehungsarten-nm.js?v=20261013"></script>
+    <script type="module" src="beziehungsarten-nm.js?v=20261015"></script>
   </head>
   <body class="redundancy-page relation-page relation-types-page nm-page">
     <div class="site-backdrop" aria-hidden="true"></div>
@@ -32,7 +32,7 @@
 
       <section id="learning-module">
         <div class="progress-card" aria-label="Bearbeitungsfortschritt">
-          <div class="progress-copy"><span id="progress-label">Schritt 1 von 9</span><strong id="progress-percent">0 % bearbeitet</strong></div>
+          <div class="progress-copy"><span id="progress-label">Schritt 1 von 8</span><strong id="progress-percent">0 % bearbeitet</strong></div>
           <div class="progress-track" aria-hidden="true"><span id="progress-bar"></span></div>
         </div>
         <nav id="step-tabs" class="step-tabs" aria-label="Lernschritte" role="tablist"></nav>
@@ -41,10 +41,17 @@
           <div class="step-heading"><span class="step-number">1</span><div><p class="step-kicker">Entdecken</p><h2>Songs und Playlists</h2></div></div>
           <div class="scenario-card"><p>Aus Aufgabe 7 kennst du die Tabellen Song, Song_in_Playlist und Playlist. Für diese Aufgabe kommt eine weitere Zuordnung hinzu: Gaslighter gehört auch zu Fussballhits.</p></div>
           <div id="song-tables" class="table-excerpts" aria-label="Tabellen Song, Song_in_Playlist und Playlist"></div>
-          <div class="task-card"><h3 class="assignment-heading"><strong>Nenne</strong> alle Playlists, in denen Gaslighter steht. <strong>Nenne</strong> anschließend alle Songs in Fussballhits.</h3>
-          <div class="song-fields"><label for="song-playlists">Playlists von Gaslighter<input id="song-playlists" type="text" maxlength="80" autocomplete="off"></label><label for="playlist-songs">Songs in Fussballhits<input id="playlist-songs" type="text" maxlength="80" autocomplete="off"></label></div><div class="action-row"><button id="check-song-observation" class="primary-button" type="button">Beobachtung prüfen</button></div><p id="feedback-song-observation" class="feedback" aria-live="polite"></p>
+          <div class="task-card">
+            <h3 id="song-playlists-heading" class="assignment-heading">1.1 <strong>Kreuze</strong> alle Playlists <strong>an</strong>, in denen Gaslighter steht.</h3>
+            <div id="song-playlists-choices" class="choice-list" role="group" aria-labelledby="song-playlists-heading"></div>
+            <div class="action-row"><button id="check-song-playlists" class="primary-button" type="button">Playlists prüfen</button></div>
+            <p id="feedback-song-playlists" class="feedback" aria-live="polite"></p>
+            <h3 id="playlist-songs-heading" class="assignment-heading">1.2 <strong>Kreuze</strong> alle Songs in Fussballhits <strong>an</strong>.</h3>
+            <div id="playlist-songs-choices" class="choice-list" role="group" aria-labelledby="playlist-songs-heading"></div>
+            <div class="action-row"><button id="check-playlist-songs" class="primary-button" type="button">Songs prüfen</button></div>
+            <p id="feedback-playlist-songs" class="feedback" aria-live="polite"></p>
           <div class="help-stack"><details><summary>Hilfe 1</summary><p>Beginne mit der id von Gaslighter in Song.</p></details><details><summary>Hilfe 2</summary><p>Suche in Song_in_Playlist alle Zeilen mit dieser song_id und lies die playlist_id ab. Für Fussballhits gehst du umgekehrt vor.</p></details><details><summary>Hilfe 3</summary><p>Gaslighter hat die id 1; dazu gehören die playlist_id-Werte 1 und 2. Suche nun alle Zeilen mit playlist_id 2.</p></details></div></div>
-          <div class="task-card"><h3 class="assignment-heading"><strong>Trage</strong> die Kardinalitäten für Song und Playlist ein (1, n oder m).</h3>
+          <div class="task-card"><h3 class="assignment-heading">1.3 <strong>Trage</strong> die Kardinalitäten für Song und Playlist ein (1, n oder m).</h3>
           <div class="cardinality-demo"><article class="class-card diagram-class-card"><h3>Song</h3></article><div class="association-connector"><label class="cardinality-gap"><span class="sr-only">Kardinalität bei Song</span><input id="song-cardinality" type="text" maxlength="1" autocomplete="off" aria-label="Kardinalität bei Song" placeholder="?"></label><i aria-hidden="true"></i><label class="cardinality-gap"><span class="sr-only">Kardinalität bei Playlist</span><input id="playlist-cardinality" type="text" maxlength="1" autocomplete="off" aria-label="Kardinalität bei Playlist" placeholder="?"></label></div><article class="class-card diagram-class-card"><h3>Playlist</h3></article></div>
           <div class="action-row"><button id="check-song-cardinality" class="primary-button" type="button">Kardinalitäten prüfen</button></div><p id="feedback-song-cardinality" class="feedback" aria-live="polite"></p>
           <div class="help-stack"><details><summary>Hilfe 1</summary><p>Lies die Zuordnung in beide Richtungen.</p></details><details><summary>Hilfe 2</summary><p>Kann ein Song in mehreren Playlists stehen? Kann eine Playlist mehrere Songs enthalten?</p></details><details><summary>Hilfe 3</summary><p>Gaslighter steht in zwei Playlists; Fussballhits enthält drei Songs. Beide Seiten können also viele Zuordnungen haben.</p></details></div></div>
@@ -59,24 +66,7 @@
           </div>
         </section>
         <section id="step-2" class="step-panel" role="tabpanel" aria-labelledby="tab-2" hidden>
-          <div class="step-heading"><span class="step-number">2</span><div><p class="step-kicker">Verstehen und anwenden</p><h2>Die Beziehungstabelle</h2></div></div>
-          <div class="scenario-card"><p>Song_in_Playlist speichert die Zuordnungen zwischen Song und Playlist. In jeder Zeile stehen genau zwei Verweise.</p></div>
-          <div class="task-card"><h3 class="assignment-heading"><strong>Ordne zu</strong>, auf welchen Primärschlüssel song_id und playlist_id jeweils verweisen.</h3>
-          <label for="song-fk">song_id verweist auf</label><select id="song-fk"><option value="">Bitte wählen</option><option value="Song.id">Song.id</option><option value="Playlist.id">Playlist.id</option></select>
-          <label for="playlist-fk">playlist_id verweist auf</label><select id="playlist-fk"><option value="">Bitte wählen</option><option value="Song.id">Song.id</option><option value="Playlist.id">Playlist.id</option></select>
-          <div class="action-row"><button id="check-song-fk" class="primary-button" type="button">Fremdschlüssel prüfen</button></div><p id="feedback-song-fk" class="feedback" aria-live="polite"></p>
-          <div class="help-stack"><details><summary>Hilfe 1</summary><p>Die Endung _id nennt den Bezug zu einer Tabelle.</p></details><details><summary>Hilfe 2</summary><p>Vergleiche die Namen der Fremdschlüssel mit Song.id und Playlist.id.</p></details><details><summary>Hilfe 3</summary><p>song_id verweist auf Song.id; ordne playlist_id entsprechend zu.</p></details></div></div>
-          <div class="task-card"><h3 class="assignment-heading"><strong>Trage</strong> die neue Zuordnungszeile für Gaslighter in Fussballhits ein.</h3>
-          <div class="song-fields"><label for="new-song-id">song_id<input id="new-song-id" type="text" maxlength="3" autocomplete="off"></label><label for="new-playlist-id">playlist_id<input id="new-playlist-id" type="text" maxlength="3" autocomplete="off"></label></div><div class="action-row"><button id="check-song-row" class="primary-button" type="button">Zuordnungszeile prüfen</button></div><p id="feedback-song-row" class="feedback" aria-live="polite"></p>
-          <div class="help-stack"><details><summary>Hilfe 1</summary><p>Jede Zuordnung bekommt eine eigene Zeile.</p></details><details><summary>Hilfe 2</summary><p>Lies die id von Gaslighter und die id von Fussballhits ab.</p></details><details><summary>Hilfe 3</summary><p>Gaslighter hat song_id 1. Suche nun die playlist_id von Fussballhits.</p></details></div></div>
-          <div class="task-card"><h3 class="assignment-heading"><strong>Ergänze</strong> die Kardinalitäten der beiden Verbindungen über Song_in_Playlist.</h3>
-          <div class="song-chain"><span>Song</span><label for="chain-song" class="sr-only">Kardinalität bei Song</label><input id="chain-song" type="text" maxlength="1" autocomplete="off" aria-label="Kardinalität bei Song"><span>—</span><label for="chain-left" class="sr-only">Kardinalität bei Song_in_Playlist zu Song</label><input id="chain-left" type="text" maxlength="1" autocomplete="off" aria-label="Kardinalität bei Song_in_Playlist zu Song"><span>Song_in_Playlist</span><label for="chain-right" class="sr-only">Kardinalität bei Song_in_Playlist zu Playlist</label><input id="chain-right" type="text" maxlength="1" autocomplete="off" aria-label="Kardinalität bei Song_in_Playlist zu Playlist"><span>—</span><label for="chain-playlist" class="sr-only">Kardinalität bei Playlist</label><input id="chain-playlist" type="text" maxlength="1" autocomplete="off" aria-label="Kardinalität bei Playlist"><span>Playlist</span></div>
-          <div class="action-row"><button id="check-song-chain" class="primary-button" type="button">Verbindungen prüfen</button></div><p id="feedback-song-chain" class="feedback" aria-live="polite"></p>
-          <div class="help-stack"><details><summary>Hilfe 1</summary><p>Betrachte eine Zeile von Song_in_Playlist und danach alle Zeilen zu demselben Song.</p></details><details><summary>Hilfe 2</summary><p>Eine Zuordnungszeile gehört zu genau einem Song; ein Song kann in mehreren Zuordnungszeilen stehen. Prüfe die Playlist-Seite ebenso.</p></details><details><summary>Hilfe 3</summary><p>Bei Song und Playlist steht jeweils 1, bei Song_in_Playlist auf beiden Seiten n.</p></details></div></div>
-          <div id="song-merken" class="foreign-key-reveal" hidden><p>Ein einzelner Fremdschlüssel in Song oder Playlist reicht nicht für mehrere Zuordnungen. Auch eine Liste von ids in einer Zelle ersetzt keine Beziehungstabelle. Der Verbund aus Aufgabe 7 findet die zusammengehörigen Datensätze über dieselben beiden Fremdschlüssel; hier brauchst du dafür keine neue SQL-Abfrage.</p><strong>Merksatz</strong><p>Eine n:m-Beziehung wird durch eine Beziehungstabelle umgesetzt. Jede Zeile verbindet über zwei Fremdschlüssel genau einen Datensatz der einen Tabelle mit genau einem Datensatz der anderen Tabelle.</p><p>Eine Beziehungstabelle heißt auch Hilfstabelle.</p></div>
-        </section>
-        <section id="step-3" class="step-panel" role="tabpanel" aria-labelledby="tab-3" hidden>
-          <div class="step-heading"><span class="step-number">3</span><div><p class="step-kicker">Entdecken</p><h2>Lina besucht zwei AGs</h2></div></div>
+          <div class="step-heading"><span class="step-number">2</span><div><p class="step-kicker">Entdecken</p><h2>Lina besucht zwei AGs</h2></div></div>
           <div class="scenario-card"><p>Anmeldungen für die AGs: Robotik – Lina, Ben · Theater – Lina, Mia · Chor – Mia</p></div>
           <div class="schema-syntax"><pre><code>schueler(
   id: int
@@ -84,12 +74,12 @@
   ag_id[ag]: int
 )</code></pre></div>
           <div id="r3-tables" class="table-excerpts" aria-label="Tabellenauszüge ag und schueler (Versuch)"></div>
-          <h3 class="assignment-heading"><strong>Entscheide</strong>: Was trägst du bei Lina in ag_id ein?</h3>
+          <h3 class="assignment-heading">2.1 <strong>Entscheide</strong>: Was trägst du bei Lina in ag_id ein?</h3>
           <div id="r3-f3a-choices" class="choice-list"></div>
           <div class="action-row"><button id="check-r3-f3a" class="primary-button" type="button">Antwort 1 prüfen</button></div>
           <p id="feedback-r3-f3a" class="feedback" aria-live="polite"></p>
 
-          <h3 class="assignment-heading">Hilft es, den Fremdschlüssel stattdessen in ag zu speichern (schueler_id[schueler])?</h3>
+          <h3 class="assignment-heading">2.2 Hilft es, den Fremdschlüssel stattdessen in ag zu speichern (schueler_id[schueler])?</h3>
           <div id="r3-f3b-choices" class="choice-list"></div>
           <div class="action-row"><button id="check-r3-f3b" class="primary-button" type="button">Antwort 2 prüfen</button></div>
           <p id="feedback-r3-f3b" class="feedback" aria-live="polite"></p>
@@ -104,7 +94,7 @@
             </div>
             <article class="class-card diagram-class-card"><h3>AG</h3><div class="empty-class-body" aria-hidden="true"></div></article>
           </div>
-          <h3 class="assignment-heading"><strong>Trage</strong> die Kardinalitäten ein. Verwende 1, n oder m.</h3>
+          <h3 class="assignment-heading">2.3 <strong>Trage</strong> die Kardinalitäten ein. Verwende 1, n oder m.</h3>
           <div class="action-row"><button id="check-r3-cardinality" class="primary-button" type="button">Kardinalitäten prüfen</button></div>
           <p id="feedback-r3-cardinality" class="feedback" aria-live="polite"></p>
 
@@ -120,29 +110,29 @@
             <p>Mit nur einem Fremdschlüssel lässt sich eine n:m-Beziehung nicht umsetzen.</p>
           </div>
         </section>
-        <section id="step-4" class="step-panel" role="tabpanel" aria-labelledby="tab-4" hidden>
-          <div class="step-heading"><span class="step-number">4</span><div><p class="step-kicker">Verstehen</p><h2>Eine Tabelle für die Anmeldungen</h2></div></div>
+        <section id="step-3" class="step-panel" role="tabpanel" aria-labelledby="tab-3" hidden>
+          <div class="step-heading"><span class="step-number">3</span><div><p class="step-kicker">Verstehen</p><h2>Eine Tabelle für die Anmeldungen</h2></div></div>
           <div class="scenario-card"><p>Die Schule speichert die Anmeldungen in einer eigenen Tabelle teilnahme. Jede Zeile ist eine Anmeldung.</p></div>
           <div class="r4-workspace">
             <div id="r4-tables" class="table-excerpts three-up" aria-label="Tabellenauszüge schueler, teilnahme und ag"></div>
 
             <div class="r4-cloze-panel" role="region" aria-label="Lückentexte zu den Anmeldungen" tabindex="0">
               <div class="r4-cloze-task">
-                <h3 class="assignment-heading"><strong>Ergänze</strong>: Welche AGs besucht Lina?</h3>
+                <h3 class="assignment-heading">3.1 <strong>Ergänze</strong>: Welche AGs besucht Lina?</h3>
                 <p class="r4-cloze">Lina hat in schueler die id <input id="r4-f4a-id" class="cloze-input" type="text" autocomplete="off" autocapitalize="off" spellcheck="false" aria-label="Lückentext 1, Lücke 1: Linas id">. In teilnahme steht diese schueler_id zusammen mit den ag_id-Werten <input id="r4-f4a-agId1" class="cloze-input" type="text" autocomplete="off" autocapitalize="off" spellcheck="false" aria-label="Lückentext 1, Lücke 2: erste ag_id"> und <input id="r4-f4a-agId2" class="cloze-input" type="text" autocomplete="off" autocapitalize="off" spellcheck="false" aria-label="Lückentext 1, Lücke 3: zweite ag_id">. Lina besucht also die AGs <input id="r4-f4a-ag1" class="cloze-input is-word" type="text" autocomplete="off" autocapitalize="off" spellcheck="false" aria-label="Lückentext 1, Lücke 4: erste AG"> und <input id="r4-f4a-ag2" class="cloze-input is-word" type="text" autocomplete="off" autocapitalize="off" spellcheck="false" aria-label="Lückentext 1, Lücke 5: zweite AG">.</p>
                 <div class="action-row"><button id="check-r4-f4a" class="primary-button" type="button">Lückentext 1 prüfen</button></div>
                 <p id="feedback-r4-f4a" class="feedback" aria-live="polite"></p>
               </div>
 
               <div class="r4-cloze-task">
-                <h3 class="assignment-heading"><strong>Ergänze</strong>: Wer besucht die Theater-AG?</h3>
+                <h3 class="assignment-heading">3.2 <strong>Ergänze</strong>: Wer besucht die Theater-AG?</h3>
                 <p class="r4-cloze">Die Theater-AG hat in ag die id <input id="r4-f4b-id" class="cloze-input" type="text" autocomplete="off" autocapitalize="off" spellcheck="false" aria-label="Lückentext 2, Lücke 1: id der Theater-AG">. In teilnahme steht diese ag_id bei den schueler_id-Werten <input id="r4-f4b-schuelerId1" class="cloze-input" type="text" autocomplete="off" autocapitalize="off" spellcheck="false" aria-label="Lückentext 2, Lücke 2: erste schueler_id"> und <input id="r4-f4b-schuelerId2" class="cloze-input" type="text" autocomplete="off" autocapitalize="off" spellcheck="false" aria-label="Lückentext 2, Lücke 3: zweite schueler_id">. Die Theater-AG besuchen also <input id="r4-f4b-name1" class="cloze-input is-word" type="text" autocomplete="off" autocapitalize="off" spellcheck="false" aria-label="Lückentext 2, Lücke 4: erster Name"> und <input id="r4-f4b-name2" class="cloze-input is-word" type="text" autocomplete="off" autocapitalize="off" spellcheck="false" aria-label="Lückentext 2, Lücke 5: zweiter Name">.</p>
                 <div class="action-row"><button id="check-r4-f4b" class="primary-button" type="button">Lückentext 2 prüfen</button></div>
                 <p id="feedback-r4-f4b" class="feedback" aria-live="polite"></p>
               </div>
 
               <div class="r4-cloze-task">
-                <h3 class="assignment-heading">Ben meldet sich zusätzlich für den Chor an. <strong>Ergänze</strong>, was sich ändert.</h3>
+                <h3 class="assignment-heading">3.3 Ben meldet sich zusätzlich für den Chor an. <strong>Ergänze</strong>, was sich ändert.</h3>
                 <p class="r4-cloze">Die Tabelle <input id="r4-f4c-table" class="cloze-input is-word" type="text" autocomplete="off" autocapitalize="off" spellcheck="false" aria-label="Lückentext 3, Lücke 1: Tabelle"> bekommt eine neue <input id="r4-f4c-row" class="cloze-input is-word" type="text" autocomplete="off" autocapitalize="off" spellcheck="false" aria-label="Lückentext 3, Lücke 2: was neu hinzukommt">. Darin steht bei schueler_id der Wert <input id="r4-f4c-schuelerId" class="cloze-input" type="text" autocomplete="off" autocapitalize="off" spellcheck="false" aria-label="Lückentext 3, Lücke 3: Wert bei schueler_id"> und bei ag_id der Wert <input id="r4-f4c-agId" class="cloze-input" type="text" autocomplete="off" autocapitalize="off" spellcheck="false" aria-label="Lückentext 3, Lücke 4: Wert bei ag_id">.</p>
                 <div class="action-row"><button id="check-r4-f4c" class="primary-button" type="button">Lückentext 3 prüfen</button></div>
                 <p id="feedback-r4-f4c" class="feedback" aria-live="polite"></p>
@@ -179,8 +169,8 @@
             <p>Du kennst so eine Tabelle schon: Song_in_Playlist aus Aufgabe 7.</p>
           </div>
         </section>
-        <section id="step-5" class="step-panel" role="tabpanel" aria-labelledby="tab-5" hidden>
-          <div class="step-heading"><span class="step-number">5</span><div><p class="step-kicker">Anwenden</p><h2>Likes, Kommentare und Follower</h2></div></div>
+        <section id="step-4" class="step-panel" role="tabpanel" aria-labelledby="tab-4" hidden>
+          <div class="step-heading"><span class="step-number">4</span><div><p class="step-kicker">Anwenden</p><h2>Likes, Kommentare und Follower</h2></div></div>
           <div class="scenario-card"><p>InstaHub soll um Likes, Kommentare und Follower erweitert werden. Die bekannten 1:n-Beziehungen sind schon eingetragen.</p></div>
 
           <div id="r5-diagram" class="instahub-diagram" role="group" aria-label="Klassendiagramm: users, photos und tags mit Lücken für Kardinalitäten">
@@ -211,7 +201,7 @@
             <div class="association-connector fixed-cardinalities"><span>1</span><i aria-hidden="true"></i><span>n</span><small class="association-label">hat<b class="reading-arrow" data-dir="forward" aria-hidden="true"></b></small></div>
             <article class="class-card diagram-class-card"><h3>tags</h3><div class="empty-class-body" aria-hidden="true"></div></article>
           </div>
-          <h3 class="assignment-heading"><strong>Ergänze</strong> die Kardinalitäten bei »kann liken«, »kann kommentieren« und »kann folgen«.</h3>
+          <h3 class="assignment-heading">4.1 <strong>Ergänze</strong> die Kardinalitäten bei »kann liken«, »kann kommentieren« und »kann folgen«.</h3>
           <div class="action-row"><button id="check-r5-cardinality" class="primary-button" type="button">Kardinalitäten prüfen</button></div>
           <p id="feedback-r5-cardinality" class="feedback" aria-live="polite"></p>
 
@@ -222,8 +212,8 @@
           </div>
           <div id="r5-summary" class="short-summary" hidden><strong>Richtig:</strong> <code>users n ───── m photos</code> (kann liken, kann kommentieren) und <code>users n ───── m users</code> (kann folgen). Im Klassendiagramm bleibt jede n:m-Beziehung eine einzige Linie.</div>
         </section>
-        <section id="step-6" class="step-panel" role="tabpanel" aria-labelledby="tab-6" hidden>
-          <div class="step-heading"><span class="step-number">6</span><div><p class="step-kicker">Anwenden</p><h2>Die Beziehungstabelle (Hilfstabelle) likes</h2></div></div>
+        <section id="step-5" class="step-panel" role="tabpanel" aria-labelledby="tab-5" hidden>
+          <div class="step-heading"><span class="step-number">5</span><div><p class="step-kicker">Anwenden</p><h2>Die Beziehungstabelle (Hilfstabelle) likes</h2></div></div>
           <div class="scenario-card"><p>Für die Likes bekommt InstaHub die Beziehungstabelle (Hilfstabelle) likes.</p></div>
           <div class="schema-syntax"><pre><code>likes(
   id: int
@@ -234,12 +224,12 @@
 )</code></pre></div>
           <div id="r6-tables" class="table-excerpts three-up" aria-label="Tabellenauszüge users, photos und likes"></div>
 
-          <h3 class="assignment-heading"><strong>Kreuze an</strong>: Welche Fotos hat reisewut_emil geliked?</h3>
+          <h3 class="assignment-heading">5.1 <strong>Kreuze an</strong>: Welche Fotos hat reisewut_emil geliked?</h3>
           <div id="r6-f6a-choices" class="choice-list"></div>
           <div class="action-row"><button id="check-r6-f6a" class="primary-button" type="button">Antwort 1 prüfen</button></div>
           <p id="feedback-r6-f6a" class="feedback" aria-live="polite"></p>
 
-          <h3 class="assignment-heading">Wer hat Foto 14 geliked?</h3>
+          <h3 class="assignment-heading">5.2 Wer hat Foto 14 geliked?</h3>
           <div id="r6-f6b-choices" class="choice-list"></div>
           <div class="action-row"><button id="check-r6-f6b" class="primary-button" type="button">Antwort 2 prüfen</button></div>
           <p id="feedback-r6-f6b" class="feedback" aria-live="polite"></p>
@@ -274,7 +264,7 @@
   …
 )</code></pre></div>
           </div>
-          <h3 class="assignment-heading"><strong>Ergänze</strong> die Kardinalitäten. So wird users n ───── m photos mit Tabellen umgesetzt.</h3>
+          <h3 class="assignment-heading">5.3 <strong>Ergänze</strong> die Kardinalitäten. So wird users n ───── m photos mit Tabellen umgesetzt.</h3>
           <div class="action-row"><button id="check-r6-cardinality" class="primary-button" type="button">Kardinalitäten prüfen</button></div>
           <p id="feedback-r6-cardinality" class="feedback" aria-live="polite"></p>
 
@@ -285,8 +275,8 @@
           </div>
           <div id="r6-summary" class="short-summary" hidden><strong>Richtig:</strong> <code>users 1 ───── n likes n ───── 1 photos</code>. Ein Benutzer kann viele Likes vergeben, ein Foto viele Likes bekommen. Jede Zeile in likes gehört zu genau einem Benutzer und genau einem Foto.</div>
         </section>
-        <section id="step-7" class="step-panel" role="tabpanel" aria-labelledby="tab-7" hidden>
-          <div class="step-heading"><span class="step-number">7</span><div><p class="step-kicker">Übertragen</p><h2>Die Beziehungstabelle (Hilfstabelle) follows</h2></div></div>
+        <section id="step-6" class="step-panel" role="tabpanel" aria-labelledby="tab-6" hidden>
+          <div class="step-heading"><span class="step-number">6</span><div><p class="step-kicker">Übertragen</p><h2>Die Beziehungstabelle (Hilfstabelle) follows</h2></div></div>
           <div class="scenario-card"><p>Auch Follower speichert InstaHub in einer Beziehungstabelle (Hilfstabelle). follower_id: wer folgt · following_id: wem gefolgt wird.</p></div>
           <div class="schema-syntax"><pre><code>follows(
   id: int
@@ -298,12 +288,12 @@
           <p class="table-legend">follower_id: wer folgt · following_id: wem gefolgt wird</p>
           <div id="r7-tables" class="table-excerpts" aria-label="Tabellenauszüge users und follows"></div>
 
-          <h3 class="assignment-heading"><strong>Entscheide</strong>: Was bedeutet die Zeile mit id 947?</h3>
+          <h3 class="assignment-heading">6.1 <strong>Entscheide</strong>: Was bedeutet die Zeile mit id 947?</h3>
           <div id="r7-f7a-choices" class="choice-list"></div>
           <div class="action-row"><button id="check-r7-f7a" class="primary-button" type="button">Antwort 1 prüfen</button></div>
           <p id="feedback-r7-f7a" class="feedback" aria-live="polite"></p>
 
-          <h3 class="assignment-heading">zornigerfotograf und reisejoule folgen sich gegenseitig. <strong>Kreuze an</strong>, was stimmt.</h3>
+          <h3 class="assignment-heading">6.2 zornigerfotograf und reisejoule folgen sich gegenseitig. <strong>Kreuze an</strong>, was stimmt.</h3>
           <div id="r7-f7b-choices" class="choice-list"></div>
           <div class="action-row"><button id="check-r7-f7b" class="primary-button" type="button">Antwort 2 prüfen</button></div>
           <p id="feedback-r7-f7b" class="feedback" aria-live="polite"></p>
@@ -316,8 +306,8 @@
           <div id="r7-summary" class="short-summary" hidden><strong>Richtig:</strong> follows ist die Beziehungstabelle (Hilfstabelle) zu <code>users n ───── m users</code>. Beide Fremdschlüssel verweisen auf users, und jede Zeile beschreibt eine Richtung. In InstaHub sind likes, comments und follows solche Beziehungstabellen (Hilfstabellen).</div>
           <div class="foreign-key-reveal"><strong>Merksatz</strong><p>Eine n:m-Beziehung wird durch eine Beziehungstabelle umgesetzt. Jede Zeile verbindet über zwei Fremdschlüssel genau einen Datensatz der einen Tabelle mit genau einem Datensatz der anderen Tabelle.</p><p>Eine Beziehungstabelle heißt auch Hilfstabelle.</p></div>
         </section>
-        <section id="step-8" class="step-panel summary-panel" role="tabpanel" aria-labelledby="tab-8" hidden>
-          <div class="step-heading"><span class="step-number complete">8</span><div><p class="step-kicker">Übersicht</p><h2>n:m-Beziehungen auf einen Blick</h2></div></div>
+        <section id="step-7" class="step-panel summary-panel" role="tabpanel" aria-labelledby="tab-7" hidden>
+          <div class="step-heading"><span class="step-number complete">7</span><div><p class="step-kicker">Übersicht</p><h2>n:m-Beziehungen auf einen Blick</h2></div></div>
           <div class="uml-relationship cardinality-demo" role="img" aria-label="Klassendiagramm: Song n zu m Playlist. Ein Song kann in mehreren Playlists stehen; eine Playlist kann mehrere Songs enthalten.">
             <article class="class-card diagram-class-card"><h3>Song</h3><div class="empty-class-body" aria-hidden="true"></div></article>
             <div class="association-connector fixed-cardinalities" aria-hidden="true"><span>n</span><i></i><span>m</span></div>
@@ -337,10 +327,10 @@
           </section>
           <div class="summary-actions"><button id="reset-module" class="secondary-button" type="button">Modul neu beginnen</button><a class="secondary-button" href="../index.html">Zur Aufgabenübersicht</a></div>
         </section>
-        <section id="step-9" class="step-panel" role="tabpanel" aria-labelledby="tab-9" hidden>
-          <div class="step-heading"><span class="step-number">9</span><div><p class="step-kicker">Sichern</p><h2>Abschlussquiz</h2></div></div>
+        <section id="step-8" class="step-panel" role="tabpanel" aria-labelledby="tab-8" hidden>
+          <div class="step-heading"><span class="step-number">8</span><div><p class="step-kicker">Sichern</p><h2>Abschlussquiz</h2></div></div>
           <div class="scenario-card"><p>Kreuze alle richtigen Antworten an. Bei manchen Fragen sind mehrere Antworten richtig.</p></div>
-          <form id="final-quiz" class="final-quiz" novalidate><fieldset><legend><span>1</span> Was zeigen Song und Playlist in diesem Beispiel?</legend><div id="quiz-q1" class="choice-list"></div></fieldset><fieldset><legend><span>2</span> Was zeigt die Beziehung zwischen Schüler und AG?</legend><div id="quiz-q2" class="choice-list"></div></fieldset><fieldset><legend><span>3</span> Was gilt für die Beziehungstabelle einer n:m-Beziehung?</legend><div id="quiz-q3" class="choice-list"></div></fieldset><fieldset><legend><span>4</span> users n ───── m photos (kann liken): Was bedeutet das?</legend><div id="quiz-q4" class="choice-list"></div></fieldset><fieldset><legend><span>5</span> In likes steht die Zeile user_id 18, photo_id 14. Was bedeutet sie?</legend><div id="quiz-q5" class="choice-list"></div></fieldset><fieldset><legend><span>6</span> Was gilt für die Tabelle follows?</legend><div id="quiz-q6" class="choice-list"></div></fieldset><div class="action-row"><button class="primary-button" type="submit">Quiz auswerten</button></div><p id="feedback-step9" class="feedback" aria-live="polite"></p></form>
+          <form id="final-quiz" class="final-quiz" novalidate><fieldset><legend><span>8.1</span> Was zeigen Song und Playlist in diesem Beispiel?</legend><div id="quiz-q1" class="choice-list"></div></fieldset><fieldset><legend><span>8.2</span> Was zeigt die Beziehung zwischen Schüler und AG?</legend><div id="quiz-q2" class="choice-list"></div></fieldset><fieldset><legend><span>8.3</span> Was gilt für die Beziehungstabelle einer n:m-Beziehung?</legend><div id="quiz-q3" class="choice-list"></div></fieldset><fieldset><legend><span>8.4</span> users n ───── m photos (kann liken): Was bedeutet das?</legend><div id="quiz-q4" class="choice-list"></div></fieldset><fieldset><legend><span>8.5</span> In likes steht die Zeile user_id 18, photo_id 14. Was bedeutet sie?</legend><div id="quiz-q5" class="choice-list"></div></fieldset><fieldset><legend><span>8.6</span> Was gilt für die Tabelle follows?</legend><div id="quiz-q6" class="choice-list"></div></fieldset><div class="action-row"><button class="primary-button" type="submit">Quiz auswerten</button></div><p id="feedback-step8" class="feedback" aria-live="polite"></p></form>
           <section class="solution-download" aria-labelledby="solution-download-title">
             <h2 id="solution-download-title">Sicherungsblatt zu Aufgabe 8</h2>
             <details class="solution-reveal"><summary>Sicherungsblatt anzeigen</summary>
