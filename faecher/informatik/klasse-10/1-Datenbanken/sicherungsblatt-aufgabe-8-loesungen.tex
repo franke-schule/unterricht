@@ -11,7 +11,7 @@
 \usepackage{microtype}
 \usepackage[most]{tcolorbox}
 \usepackage{tikz}
-\usetikzlibrary{arrows.meta}
+\usetikzlibrary{arrows.meta,positioning}
 
 \pagestyle{empty}
 \setlength{\parindent}{0pt}
@@ -33,21 +33,41 @@
 
 \color{Ink}
 \newcommand{\sectiontitle}[1]{%
-  \vspace{1.5mm}{\color{Blue}\bfseries\large #1}\par
-  \vspace{0.7mm}{\color{Blue}\rule{\linewidth}{0.7pt}}\par\vspace{1.2mm}}
+  \vspace{0.8mm}{\color{Blue}\bfseries\large #1}\par
+  \vspace{0.7mm}{\color{Blue}\rule{\linewidth}{0.7pt}}\par\vspace{0.5mm}}
 \newcommand{\dbtablename}[1]{{\small\bfseries\color{Blue}\texttt{#1}}\par\vspace{1mm}}
 
 \begin{document}
 \colorbox{Navy}{\parbox{\dimexpr\linewidth-2\fboxsep\relax}{%
-  \vspace{3mm}\color{white}\begin{tabularx}{\linewidth}{@{}Xr@{}}
-  {\small\bfseries INFORMATIK · KLASSE 10} & \colorbox{Gold}{\color{Navy}\small\bfseries\strut LÖSUNGEN}\end{tabularx}
+  \vspace{2mm}\color{white}\begin{tabularx}{\linewidth}{@{}Xr@{}}
+  {\small\bfseries INFORMATIK \textperiodcentered{} KLASSE 10} & \colorbox{Gold}{\color{Navy}\small\bfseries\strut LÖSUNGEN}\end{tabularx}
   \vspace{2.4mm}{\fontsize{18}{21}\selectfont\bfseries Aufgabe 8 -- n:m-Beziehungen}\par
-  \vspace{0.8mm}{\large Sicherungsblatt · Beziehungstabellen}\vspace{2.8mm}}}
+  \vspace{0.8mm}{\large Sicherungsblatt \textperiodcentered{} Beziehungstabellen}\vspace{2mm}}}
 
-\sectiontitle{1 · Song und Playlist: viele auf beiden Seiten}
-{\centering\bfseries\textcolor{Blue}{Song \quad n \;\rule{30mm}{0.7pt}\; m \quad Playlist}\par}
-\vspace{1mm}
-{\centering\small n:m = m:n \quad · \quad n und m: unabhängige Anzahlen\par}
+\sectiontitle{1 \textperiodcentered{} Song und Playlist: viele auf beiden Seiten}
+\begin{minipage}{.60\linewidth}
+\centering
+\begin{tikzpicture}[
+  classcard/.style={draw=Blue,line width=.8pt,minimum width=32mm,minimum height=16mm,inner sep=0pt}
+]
+  \node[classcard] (songclass) {};
+  \node[classcard,right=38mm of songclass] (playlistclass) {};
+  \draw[Blue,line width=.8pt]
+    ([yshift=-6mm]songclass.north west) -- ([yshift=-6mm]songclass.north east);
+  \draw[Blue,line width=.8pt]
+    ([yshift=-6mm]playlistclass.north west) -- ([yshift=-6mm]playlistclass.north east);
+  \draw[Blue,line width=.8pt] (songclass.east) -- (playlistclass.west);
+  \node[font=\bfseries\ttfamily] at ([yshift=-3mm]songclass.north) {Song};
+  \node[font=\bfseries\ttfamily] at ([yshift=-3mm]playlistclass.north) {Playlist};
+  \node[font=\large\bfseries,above right=1mm and 3mm of songclass.east] {n};
+  \node[font=\large\bfseries,above left=1mm and 3mm of playlistclass.west] {m};
+\end{tikzpicture}
+\end{minipage}\hfill
+\begin{minipage}{.37\linewidth}
+{\small\bfseries\color{Blue}Klassendiagramm}\par\smallskip
+{\small Ein Song kann in mehreren Playlists stehen; eine Playlist kann mehrere Songs enthalten.}\par\smallskip
+{\footnotesize n:m = m:n; unabhängige Anzahlen}
+\end{minipage}\par
 \vspace{2mm}
 % Tabellenausschnitte und Schlüssel-Pfeile wie im Sicherungsblatt zu Aufgabe 7.
 {\centering\begingroup
@@ -59,9 +79,9 @@
     \begin{tabular}{|>{\columncolor{KeyBg}}c|l|}\hline
       \textbf{\shortstack{id\\[-1pt]{\scriptsize PK}}} & \cellcolor{Sky}\textbf{titel}\\\hline
       \textbf{1} & \textbf{Gaslighter}\\\hline
-      2 & Wavin‘ Flag\\\hline
+      2 & Wavin\textquoteleft{} Flag\\\hline
       3 & Try\\\hline
-      4 & ’54, ’74, ’90, 2006\\\hline
+      4 & \textquoteright{}54, \textquoteright{}74, \textquoteright{}90, 2006\\\hline
     \end{tabular}};
   \node[dbtable] (mapping) at (65mm,0) {%
     \begin{tabular}{|>{\columncolor{KeyBg}}c|>{\columncolor{Sky}}c|}\hline
@@ -78,9 +98,9 @@
       1 & Good Oldies\\\hline
       2 & Fussballhits\\\hline
     \end{tabular}};
-  \node[tablename] at ([yshift=9mm]song.north) {Song};
-  \node[tablename] at ([yshift=9mm]mapping.north) {Song\_in\_Playlist};
-  \node[tablename] at ([yshift=9mm]playlist.north) {Playlist};
+  \node[tablename] at ([yshift=7mm]song.north) {Song};
+  \node[tablename] at ([yshift=7mm]mapping.north) {Song\_in\_Playlist};
+  \node[tablename] at ([yshift=7mm]playlist.north) {Playlist};
   \draw[->,KeyLine,line width=.9pt]
     ([xshift=9.5mm]mapping.north west) -- ++(0,5mm)
     -| ([xshift=4.5mm]song.north west);
@@ -93,9 +113,9 @@
 \vspace{1mm}
 {\centering\small\bfseries\color{Blue}Song \quad 1 -- n \quad Song\_in\_Playlist \quad n -- 1 \quad Playlist\par}
 \vspace{1mm}
-{\footnotesize PK = Primärschlüssel · FK = Fremdschlüssel · Pfeil: FK verweist auf PK.}\par
+{\footnotesize PK = Primärschlüssel \textperiodcentered{} FK = Fremdschlüssel \textperiodcentered{} Pfeil: FK verweist auf PK.}\par
 
-\sectiontitle{2 · Schüler und AG: eine Zeile pro Anmeldung}
+\sectiontitle{2 \textperiodcentered{} Schüler und AG: eine Zeile pro Anmeldung}
 \begin{minipage}[t]{.25\linewidth}
 \dbtablename{schueler}
 {\small\begin{tabular}{|c|l|}\hline
@@ -127,11 +147,11 @@
 \end{tabular}}
 \end{minipage}
 \vspace{1.4mm}\par
-{\small Lina $\rightarrow$ Robotik + Theater \quad · \quad Theater $\rightarrow$ Lina + Mia}\par
+{\small Lina $\rightarrow$ Robotik + Theater \quad \textperiodcentered{} \quad Theater $\rightarrow$ Lina + Mia}\par
 {\small\textbf{Neue Zeile (2, 3):} Ben $\rightarrow$ Chor}\par
 
 \begin{minipage}[t]{.485\linewidth}
-\sectiontitle{3 · Likes: Upload $\neq$ Like}
+\sectiontitle{3 \textperiodcentered{} Likes: Upload $\neq$ Like}
 \begin{minipage}[t]{.43\linewidth}
 \dbtablename{photos (Auszug)}
 {\small\ttfamily\begin{tabular}{|c|c|}\hline
@@ -153,7 +173,7 @@
 {\footnotesize\texttt{users} 1 -- n \texttt{likes} n -- 1 \texttt{photos}}
 \end{minipage}\hfill
 \begin{minipage}[t]{.485\linewidth}
-\sectiontitle{4 · Follows: Richtung beachten}
+\sectiontitle{4 \textperiodcentered{} Follows: Richtung beachten}
 \dbtablename{follows}
 {\small\ttfamily\begin{tabular}{|c|c|c|}\hline
 \rowcolor{Sky}\textbf{id} & \textbf{follower\_id} & \textbf{following\_id}\\\hline
@@ -171,10 +191,10 @@
 \begin{tcolorbox}[colback=Mint,colframe=Blue,arc=2mm,boxrule=.8pt,left=3mm,right=3mm,top=1.7mm,bottom=1.7mm]
 \textbf{Merksatz}\par\smallskip
 {\small Eine n:m-Beziehung wird durch eine Beziehungstabelle umgesetzt. Jede Zeile verbindet über zwei Fremdschlüssel genau einen Datensatz der einen Tabelle mit genau einem Datensatz der anderen Tabelle.}\par\smallskip
-{\small\bfseries Eine Zeile = eine Zuordnung · Eine Zelle = eine id}\par
+{\small\bfseries Eine Zeile = eine Zuordnung \textperiodcentered{} Eine Zelle = eine id}\par
 {\footnotesize Beziehungstabelle = Hilfstabelle}
 \end{tcolorbox}
 
-\vfill{\color{Line}\rule{\linewidth}{.5pt}}\par\vspace{1.5mm}
-\begin{tabularx}{\linewidth}{@{}Xr@{}}{\small\color{Muted}Klasse 10 · Datenbanken} & {\small\color{Muted}Sicherungsblatt · Aufgabe 8}\end{tabularx}
+\vfill{\color{Line}\rule{\linewidth}{.5pt}}\par\vspace{1mm}
+\begin{tabularx}{\linewidth}{@{}Xr@{}}{\small\color{Muted}Klasse 10 \textperiodcentered{} Datenbanken} & {\small\color{Muted}Sicherungsblatt \textperiodcentered{} Aufgabe 8}\end{tabularx}
 \end{document}
