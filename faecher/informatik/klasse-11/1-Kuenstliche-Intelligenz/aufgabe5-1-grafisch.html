@@ -11,7 +11,7 @@
 <link rel="stylesheet" href="perzeptron/task5-1-grafisch.css?v=20261014-discovery">
 <script src="../../quiz-fragen-pruefen.js?v=20261006b">
 </script>
-<script type="module" src="perzeptron/ui/task5-1-grafisch.mjs?v=20261014-neuron-intro">
+<script type="module" src="perzeptron/ui/task5-1-grafisch.mjs?v=20261015-formula-fractions">
 </script>
 </head>
 <body class="perceptron-page task51"><div class="site-backdrop" aria-hidden="true"></div>
@@ -398,8 +398,9 @@
 <h3>4.2 Neuronen-Ungleichung</h3>
 <p>
 <strong>Beschreibe</strong> zuerst die Seite mit Ausgabe 1 als Geradenungleichung. <strong>Forme</strong> sie anschließend in die Neuronen-Ungleichung um.</p>
-<label for="six-diagram">Schritt 1: Geradenungleichung in x-y-Notation</label>
+<label for="six-diagram">Schritt 1: Geradenungleichung (x, y oder x₁, x₂)</label>
 <input id="six-diagram" type="text" autocomplete="off" spellcheck="false">
+<p class="syntax-help">Brüche wie 1/2 statt 0,5 sind erlaubt, z. B. als 1/2*x1 oder (1/2)x1. Gleichwertige Umformungen und vertauschte Seiten mit passendem Vergleichszeichen sind ebenfalls erlaubt.</p>
 <button id="check-six-diagram" class="primary-button" type="button">Geradenungleichung prüfen</button>
 <p id="feedback-six-diagram" class="feedback" role="status" aria-live="polite" hidden>
 </p>
@@ -509,7 +510,7 @@
 <div class="part">
 <h3>4.E Expertenaufgabe (freiwillig)</h3>
 <p>
-<strong>Vertausche</strong> außerhalb der Trennlinie die feuernde und die nicht feuernde Seite. <strong>Forme</strong> die neue Bedingung so um, dass wieder ein &gt;-Zeichen zwischen Summe und Schwellenwert steht.</p>
+<strong>Vertausche</strong> außerhalb der Trennlinie die feuernde und die nicht feuernde Seite. <strong>Formuliere</strong> die neue strenge Ungleichung; gleichwertige Umformungen und vertauschte Seiten sind erlaubt.</p>
 <label for="six-expert">Neue strenge Ungleichung in Eingangsnotation</label>
 <input id="six-expert" type="text" autocomplete="off" spellcheck="false">
 <button id="check-six-expert" class="primary-button" type="button">Expertenbedingung prüfen</button>

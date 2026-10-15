@@ -1,5 +1,5 @@
 import {calculate,normaliseNumber} from '../logic/perceptron.mjs';
-import {parseLinearRelation as parse,equivalent,countMatching} from '../logic/linear-inequality.mjs';
+import {parseLinearRelation as parse,equivalent,countMatching} from '../logic/linear-inequality.mjs?v=20261015-fractions';
 import {numberMatches,runEpoch} from '../logic/perceptron.mjs';
 import {evaluateSemanticAnswer} from './semantic-answer.mjs?v=20261010-scaleway';
 import {unlockSolution} from '../../../../klasse-10/1-Datenbanken/tab-navigation.mjs';
@@ -335,7 +335,7 @@ function setupStructure(){
     const current=state.signalStep;
     document.querySelectorAll('[data-signal]').forEach(el=>{const key=el.dataset.signal;const active=current>=0&&SIGNAL_STEPS[current].targets.includes(key),done=current>=0&&SIGNAL_STEPS.slice(0,current).some(step=>step.targets.includes(key));el.classList.toggle('is-active',active);el.classList.toggle('is-complete',done);el.classList.toggle('is-dimmed',!active&&!done);});
     document.querySelectorAll('[data-signal-arrow]').forEach(el=>{const keys=el.dataset.signalArrow.split(' ');const active=current>=0&&keys.some(key=>SIGNAL_STEPS[current].targets.includes(key));el.classList.toggle('is-active',active);el.classList.toggle('is-dimmed',!active);});
-    $('#signal-step-status').textContent=current<0?'Klicke auf Weiter, um mit Schritt 1 von 7 zu beginnen.':`Schritt ${current+1}/7: ${SIGNAL_STEPS[current].title} – ${SIGNAL_STEPS[current].text}`;
+    $('#signal-step-status').textContent=current<0?'Klicke auf Weiter, um mit Schritt 1 von 7 zu beginnen.':`Schritt ${current+1}/7: ${SIGNAL_STEPS[current].title}: ${SIGNAL_STEPS[current].text}`;
     $('#next-signal-step').textContent=current===6?'Schritte neu starten':'Weiter';
   };
   $('#next-signal-step').addEventListener('click',()=>{state.signalStep=state.signalStep===6?-1:state.signalStep+1;if(state.signalStep===6){state.signalObserved=true;mark('structure',true);}show();save();});
