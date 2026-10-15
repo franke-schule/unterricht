@@ -48,7 +48,15 @@
           <div class="cardinality-demo"><article class="class-card diagram-class-card"><h3>Song</h3></article><div class="association-connector"><label class="cardinality-gap"><span class="sr-only">Kardinalität bei Song</span><input id="song-cardinality" type="text" maxlength="1" autocomplete="off" aria-label="Kardinalität bei Song" placeholder="?"></label><i aria-hidden="true"></i><label class="cardinality-gap"><span class="sr-only">Kardinalität bei Playlist</span><input id="playlist-cardinality" type="text" maxlength="1" autocomplete="off" aria-label="Kardinalität bei Playlist" placeholder="?"></label></div><article class="class-card diagram-class-card"><h3>Playlist</h3></article></div>
           <div class="action-row"><button id="check-song-cardinality" class="primary-button" type="button">Kardinalitäten prüfen</button></div><p id="feedback-song-cardinality" class="feedback" aria-live="polite"></p>
           <div class="help-stack"><details><summary>Hilfe 1</summary><p>Lies die Zuordnung in beide Richtungen.</p></details><details><summary>Hilfe 2</summary><p>Kann ein Song in mehreren Playlists stehen? Kann eine Playlist mehrere Songs enthalten?</p></details><details><summary>Hilfe 3</summary><p>Gaslighter steht in zwei Playlists; Fussballhits enthält drei Songs. Beide Seiten können also viele Zuordnungen haben.</p></details></div></div>
-          <div id="song-reveal" class="foreign-key-reveal" hidden><p>Das ist eine n:m-Beziehung. Die Schreibweise m:n bedeutet dasselbe. n und m stehen für voneinander unabhängige Anzahlen: Wie viele Playlists ein Song hat, legt nicht fest, wie viele Songs eine Playlist enthält.</p><code>Song n — m Playlist</code></div>
+          <div id="song-reveal" class="foreign-key-reveal" hidden>
+            <p>Das ist eine n:m-Beziehung. Die Schreibweise m:n bedeutet dasselbe. n und m stehen für voneinander unabhängige Anzahlen: Wie viele Playlists ein Song hat, legt nicht fest, wie viele Songs eine Playlist enthält.</p>
+            <div class="uml-relationship cardinality-demo" role="img" aria-label="Klassendiagramm: Song n zu m Playlist. Ein Song kann in mehreren Playlists stehen; eine Playlist kann mehrere Songs enthalten.">
+              <article class="class-card diagram-class-card"><h3>Song</h3><div class="empty-class-body" aria-hidden="true"></div></article>
+              <div class="association-connector fixed-cardinalities" aria-hidden="true"><span>n</span><i></i><span>m</span></div>
+              <article class="class-card diagram-class-card"><h3>Playlist</h3><div class="empty-class-body" aria-hidden="true"></div></article>
+            </div>
+            <p>Ein Song kann in mehreren Playlists stehen; eine Playlist kann mehrere Songs enthalten.</p>
+          </div>
         </section>
         <section id="step-2" class="step-panel" role="tabpanel" aria-labelledby="tab-2" hidden>
           <div class="step-heading"><span class="step-number">2</span><div><p class="step-kicker">Verstehen und anwenden</p><h2>Die Beziehungstabelle</h2></div></div>
@@ -310,6 +318,11 @@
         </section>
         <section id="step-8" class="step-panel summary-panel" role="tabpanel" aria-labelledby="tab-8" hidden>
           <div class="step-heading"><span class="step-number complete">8</span><div><p class="step-kicker">Übersicht</p><h2>n:m-Beziehungen auf einen Blick</h2></div></div>
+          <div class="uml-relationship cardinality-demo" role="img" aria-label="Klassendiagramm: Song n zu m Playlist. Ein Song kann in mehreren Playlists stehen; eine Playlist kann mehrere Songs enthalten.">
+            <article class="class-card diagram-class-card"><h3>Song</h3><div class="empty-class-body" aria-hidden="true"></div></article>
+            <div class="association-connector fixed-cardinalities" aria-hidden="true"><span>n</span><i></i><span>m</span></div>
+            <article class="class-card diagram-class-card"><h3>Playlist</h3><div class="empty-class-body" aria-hidden="true"></div></article>
+          </div>
           <div class="summary-key-points"><article><h3>Beziehungstabelle</h3><p>Eine n:m-Beziehung wird durch eine Beziehungstabelle umgesetzt. Jede Zeile verbindet über zwei Fremdschlüssel genau einen Datensatz der einen Tabelle mit genau einem Datensatz der anderen Tabelle.</p><p>Eine Beziehungstabelle heißt auch Hilfstabelle.</p></article></div>
           <div id="answer-summary" class="answer-summary"></div><section class="solution-download" aria-labelledby="solution-download-title-summary">
             <h2 id="solution-download-title-summary">Sicherungsblatt zu Aufgabe 8</h2>
