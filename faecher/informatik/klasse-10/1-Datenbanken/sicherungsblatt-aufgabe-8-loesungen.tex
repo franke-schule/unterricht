@@ -62,11 +62,9 @@
   \node[classcard,right=34mm of songclass] (playlistclass) {};
   \draw[Blue,line width=.8pt] ([yshift=-5mm]songclass.north west) -- ([yshift=-5mm]songclass.north east);
   \draw[Blue,line width=.8pt] ([yshift=-5mm]playlistclass.north west) -- ([yshift=-5mm]playlistclass.north east);
-  \draw[Blue,line width=.8pt] (songclass.east) -- (playlistclass.west);
+  \draw[Blue,line width=.8pt] (songclass.east) -- node[above=1mm,pos=.10,font=\large\bfseries]{n} node[above=1mm,pos=.90,font=\large\bfseries]{m} (playlistclass.west);
   \node[font=\bfseries\ttfamily] at ([yshift=-2.5mm]songclass.north) {Song};
   \node[font=\bfseries\ttfamily] at ([yshift=-2.5mm]playlistclass.north) {Playlist};
-  \node[font=\large\bfseries,above right=0mm and 2mm of songclass.east] {n};
-  \node[font=\large\bfseries,above left=0mm and 2mm of playlistclass.west] {m};
 \end{tikzpicture}
 \end{minipage}\hfill
 \begin{minipage}[c]{.43\linewidth}
@@ -131,13 +129,19 @@
 \end{tabular}}
 \end{minipage}\par
 
-\sectiontitle{3 \textperiodcentered{} Likes: Upload $\neq$ Like}
+\sectiontitle{3 \textperiodcentered{} Instahub}
 \begingroup\setlength{\tabcolsep}{1mm}\small
-\begin{tabularx}{\linewidth}{@{}>{\raggedright\arraybackslash}p{.24\linewidth}@{\hspace{2mm}}>{\raggedright\arraybackslash}X@{\hspace{2mm}}>{\raggedright\arraybackslash}p{.23\linewidth}@{}}
+\begin{tabularx}{\linewidth}{@{}>{\raggedright\arraybackslash}p{.24\linewidth}@{\hspace{2mm}}>{\raggedright\arraybackslash}p{.36\linewidth}@{\hspace{2mm}}>{\raggedright\arraybackslash}X@{}}
 \dbtablename{users}
 {\ttfamily\begin{tabular}{|>{\columncolor{KeyBg}}c|l|}\hline
 \rowcolor{Sky}\textbf{\shortstack{id\\[-1pt]{\scriptsize PS}}} & \textbf{username}\\\hline
 3 & bergcoder\\\hline 4 & koch\_kicker\\\hline 15 & reisewut\_emil\\\hline 18 & gamewut\_jonas\\\hline
+\end{tabular}}
+&
+\dbtablename{likes (Beziehungstabelle)}
+{\ttfamily\begin{tabular}{|>{\columncolor{KeyBg}}c|>{\columncolor{Sky}}c|}\hline
+\textbf{\shortstack{user\_id\\[-1pt]{\scriptsize FS}}} & \textbf{\shortstack{photo\_id\\[-1pt]{\scriptsize FS}}}\\\hline
+15 & 12\\\hline 15 & 14\\\hline 18 & 14\\\hline
 \end{tabular}}
 &
 \dbtablename{photos (Auszug)}
@@ -146,12 +150,6 @@
 12 & Bin gerade am Debuggen mitten im Wald - das ist wahre \#Codel \ldots\\\hline
 14 & Ein neues Rezept ausprobiert! \ldots\\\hline
 \end{tabularx}}
-&
-\dbtablename{likes}
-{\ttfamily\begin{tabular}{|>{\columncolor{KeyBg}}c|>{\columncolor{Sky}}c|}\hline
-\textbf{\shortstack{user\_id\\[-1pt]{\scriptsize FS}}} & \textbf{\shortstack{photo\_id\\[-1pt]{\scriptsize FS}}}\\\hline
-15 & 12\\\hline 15 & 14\\\hline 18 & 14\\\hline
-\end{tabular}}
 \end{tabularx}\endgroup
 
 \vspace{1mm}
@@ -165,15 +163,15 @@
 \newpage
 
 % Seite 2: zwei gleich aufgebaute Vergleichsbereiche.
-\sheetheader{Upload und Like im Vergleich}{Sicherungsblatt \textperiodcentered{} Aufgabe 8}
+\sheetheader{1:n- und n:m-Beziehung im Vergleich}{Sicherungsblatt \textperiodcentered{} Aufgabe 8}
 \begin{tcolorbox}[colback=Sky,colframe=Line,arc=1mm,boxrule=.5pt,left=2mm,right=2mm,top=1mm,bottom=1mm]
 {\small\textbf{PS} = Primärschlüssel \textperiodcentered{} \textbf{FS} = Fremdschlüssel \textperiodcentered{} Pfeil: FS verweist auf PS.}
 \end{tcolorbox}
 
-\sectiontitle{Upload (1:n): eine Person kann mehrere Fotos hochladen}
+\sectiontitle{1:n-Beziehung (users - photos)}
 \begin{center}\begin{tikzpicture}[>=Latex,classcard/.style={draw=Blue,line width=.8pt,minimum width=35mm,minimum height=11mm,inner sep=1mm,align=center,font=\small\ttfamily}]
   \node[classcard] (usersup) {users}; \node[classcard,right=45mm of usersup] (photosup) {photos};
-  \draw[Blue,line width=.8pt] (usersup.east) -- node[above,font=\bfseries]{1} node[below,font=\small]{kann hochladen} node[above,near end,font=\bfseries]{n} (photosup.west);
+  \draw[Blue,line width=.8pt] (usersup.east) -- node[above=1mm,pos=.10,font=\bfseries]{1} node[below,font=\small]{kann hochladen} node[above=1mm,pos=.90,font=\bfseries]{n} (photosup.west);
 \end{tikzpicture}\end{center}
 \vspace{-1mm}
 \begin{center}\begin{tikzpicture}[>=Latex,
@@ -200,10 +198,10 @@
 {\small\ttfamily photos (id: int, user\_id[users]: int, description: varchar(255), \ldots)}\par
 \vspace{.5mm}{\small Ein Benutzer kann mehrere Fotos hochladen. Jedes Foto hat genau eine hochladende Person; ihre ID steht in photos.user\_id.}
 
-\sectiontitle{Likes (n:m): Personen und Fotos stehen in einer n:m-Beziehung}
+\sectiontitle{n:m-Beziehung (likes)}
 \begin{center}\begin{tikzpicture}[>=Latex,classcard/.style={draw=Blue,line width=.8pt,minimum width=31mm,minimum height=10mm,inner sep=1mm,align=center,font=\small\ttfamily}]
   \node[classcard] (userslike) {users}; \node[classcard,right=39mm of userslike] (photoslike) {photos};
-  \draw[Blue,line width=.8pt] (userslike.east) -- node[above,font=\bfseries]{n} node[below,font=\small]{kann liken} node[above,near end,font=\bfseries]{m} (photoslike.west);
+  \draw[Blue,line width=.8pt] (userslike.east) -- node[above=1mm,pos=.10,font=\bfseries]{n} node[below,font=\small]{kann liken} node[above=1mm,pos=.90,font=\bfseries]{m} (photoslike.west);
 \end{tikzpicture}\end{center}
 \vspace{-1mm}
 {\centering{\small\ttfamily users \quad 1 -- n \quad likes \quad n -- 1 \quad photos}\par}
@@ -241,7 +239,7 @@
 
 \vspace{1mm}
 \begin{tcolorbox}[colback=Mint,colframe=Blue,arc=1.5mm,boxrule=.7pt,left=2mm,right=2mm,top=1mm,bottom=1mm]
-{\small\bfseries Upload: ein FS in photos. Likes: zwei FS in der Beziehungstabelle likes.}
+{\small\bfseries Eine 1:n-Beziehung wird umgesetzt, indem der Primärschlüssel der 1-Seite (users) als Fremdschlüssel in die Tabelle der n-Seite (photos) eingefügt wird. Eine n:m-Beziehung wird umgesetzt, indem eine Beziehungstabelle erstellt wird, die die Fremdschlüssel beider Seiten beinhaltet.}
 \end{tcolorbox}
 
 \sheetfooter
