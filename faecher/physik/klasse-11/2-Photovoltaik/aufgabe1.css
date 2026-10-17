@@ -1,0 +1,80 @@
+.photovoltaik-page .physics-revision-hero { width: min(1080px, 100%); }
+.photovoltaik-page .physics-revision-hero h1 { max-width: 1080px; font-size: clamp(2rem, 4vw, 3.5rem); line-height: 1.12; }
+.photovoltaik-page .physics-step-tabs { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 8px; }
+.photovoltaik-page .physics-step-tabs [role="tab"] { min-width: 0; white-space: normal; line-height: 1.2; }
+.photovoltaik-page .physics-task-card { overflow: hidden; }
+.photovoltaik-page .physics-task-card p { line-height: 1.55; }
+.pv-energy-figure, .pv-graphs figure { min-width: 0; margin: 0; }
+.pv-energy-figure { margin: 1rem auto; max-width: 820px; }
+.pv-energy-figure svg, .pv-graphs svg { display: block; width: 100%; height: auto; }
+.pv-energy-figure svg { color: #163e6b; font: 18px/1.2 system-ui, sans-serif; }
+.pv-device { fill: #f3f8fc; stroke: #1d557d; stroke-width: 3; }
+.pv-lamp { fill: #fff0bd; stroke: #b98210; stroke-width: 4; }
+.pv-ray { fill: none; stroke: #d28b16; stroke-width: 4; }
+.pv-cell { fill: #e5f3fa; stroke: #1b7894; stroke-width: 3; }
+.pv-cell-line { fill: none; stroke: #4a99ae; stroke-width: 1.4; }
+.pv-house { fill: none; stroke: #1b7894; stroke-width: 4; stroke-linejoin: round; }
+.pv-light-arrow { stroke: #d28b16; stroke-width: 4; stroke-dasharray: 9 6; }
+.pv-electric-arrow { stroke: #1b7894; stroke-width: 4; }
+.pv-energy-figure figcaption, .pv-graphs figcaption { margin-top: .6rem; color: #52647b; text-align: center; font-size: .9rem; }
+.pv-graphs { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); align-items: start; gap: 1rem; }
+.pv-svg-host { min-width: 0; }
+.pv-svg-host svg { overflow: visible; font-family: system-ui, sans-serif; }
+.graph-grid { stroke: #dce5ee; stroke-width: 1; }
+.graph-axis { stroke: #263d53; stroke-width: 2.5; }
+.graph-tick { fill: #263d53; font-size: 12px; }
+.graph-axis-title { fill: #192f45; font-size: 15px; font-weight: 800; }
+.graph-curve { fill: none; stroke: #176ca0; stroke-width: 3.5; stroke-linejoin: round; stroke-linecap: round; }
+.graph-curve.power { stroke: #bd5e28; }
+.graph-point-label, .graph-end-label { fill: #172f49; font-size: 15px; font-weight: 800; paint-order: stroke; stroke: white; stroke-width: 4px; stroke-linejoin: round; }
+.pv-setup-figures figure { padding: .5rem; border: 1px solid #d9e4ed; border-radius: 12px; background: #fbfdff; }
+.pv-setup-figures svg { color: #193851; font: 26px/1.25 system-ui, sans-serif; }
+.circuit-wire { fill: none; stroke: #285b79; stroke-width: 4; stroke-linecap: round; stroke-linejoin: round; }
+.circuit-voltage { fill: none; stroke: #5680a0; stroke-width: 2.5; stroke-dasharray: 6 5; }
+.circuit-meter { fill: #fff; stroke: #285b79; stroke-width: 3; }
+.circuit-terminal { fill: #fff; stroke: #285b79; stroke-width: 3; }
+.circuit-solar { fill: #dceef6; stroke: #1b7894; stroke-width: 3; }
+.circuit-resistor { fill: none; stroke: #754a21; stroke-width: 4; stroke-linejoin: round; }
+.circuit-light { fill: none; stroke: #d28b16; stroke-width: 4; stroke-dasharray: 8 6; }
+.circuit-lamp { fill: none; stroke: #b98210; stroke-width: 4; stroke-linecap: round; }
+.circuit-separate { fill: none; stroke: #586c7b; stroke-width: 3; stroke-dasharray: 5 4; }
+.circuit-supply { fill: #eef5fa; stroke: #435e75; stroke-width: 2.5; }
+.circuit-sensor { fill: #fff8e8; stroke: #b98210; stroke-width: 2.5; }
+.pv-measurement-plan { padding-left: 1.5rem; line-height: 1.55; }
+.pv-measurement-plan li { padding-left: .25rem; margin-bottom: .55rem; }
+.pv-set-status { font-weight: 700; color: #28475f; }
+.photovoltaik-page .physics-quiz-question { margin: 1rem 0; padding: 1rem 1.1rem; border: 1px solid #d7e2ec; border-radius: 12px; background: #fff; }
+.photovoltaik-page .physics-quiz-question legend { max-width: 100%; padding: 0 .35rem; color: #163e6b; font-weight: 800; line-height: 1.4; }
+.photovoltaik-page .quiz-options { display: grid; gap: .45rem; margin-top: .7rem; }
+.photovoltaik-page .quiz-option { display: flex; align-items: flex-start; gap: .7rem; min-height: 44px; padding: .65rem .75rem; border: 1px solid #d9e4ed; border-radius: 9px; cursor: pointer; line-height: 1.4; }
+.photovoltaik-page .quiz-option input { flex: 0 0 auto; width: 1.2rem; height: 1.2rem; margin: .05rem 0 0; accent-color: #176ca0; }
+.photovoltaik-page .quiz-option:focus-within { outline: 3px solid rgba(23, 99, 213, .32); outline-offset: 2px; }
+.photovoltaik-page .physics-quiz-question.is-correct { border-inline-start: 6px solid #258045; }
+.photovoltaik-page .physics-quiz-question.is-wrong { border-inline-start: 6px solid #a34c3b; }
+.photovoltaik-page .quiz-question-check { display: flex; margin-top: .75rem; }
+.photovoltaik-page .quiz-question-feedback { margin: .65rem 0 0; }
+.photovoltaik-page .physics-feedback { min-height: 1.4rem; }
+.photovoltaik-page .physics-feedback.success, .photovoltaik-page .physics-feedback.partial, .photovoltaik-page .physics-feedback.error { padding: .7rem .85rem; border-radius: 8px; }
+.photovoltaik-page .physics-feedback.success { color: #174b29; background: #eaf5ec; }
+.photovoltaik-page .physics-feedback.partial { color: #704a0e; background: #fff4df; }
+.photovoltaik-page .physics-feedback.error { color: #702e2e; background: #fff0f0; }
+.pv-summary { margin-top: 1.5rem; padding: clamp(1rem, 3vw, 2rem); border: 2px solid #1b7894; border-radius: 14px; background: #f4f9fc; }
+.pv-summary[hidden] { display: none; }
+.pv-summary-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: .7rem; }
+.pv-summary-grid article { min-width: 0; padding: .8rem; border: 1px solid #d4e0e9; border-radius: 9px; background: #fff; }
+.pv-summary-grid h3 { margin: 0 0 .5rem; font-size: 1rem; }
+.pv-summary-grid ul { margin: 0; padding-left: 1.2rem; }
+.pv-summary-grid li { margin: .25rem 0; }
+.photovoltaik-page button:focus-visible, .photovoltaik-page a:focus-visible, .photovoltaik-page summary:focus-visible { outline: 3px solid rgba(23, 99, 213, .45); outline-offset: 3px; }
+@media (max-width: 760px) {
+  .pv-graphs { grid-template-columns: 1fr; }
+  .pv-summary-grid { grid-template-columns: 1fr; }
+  .photovoltaik-page .physics-step-tabs { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+}
+@media (max-width: 480px) {
+  .photovoltaik-page .physics-step-tabs { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .photovoltaik-page .physics-task-card { padding-inline: .75rem; }
+  .pv-energy-figure svg { font-size: 15px; }
+  .pv-setup-figures svg { font-size: 26px; }
+  .pv-summary { padding: .85rem; }
+}
