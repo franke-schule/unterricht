@@ -233,7 +233,7 @@
 \end{tikzpicture}\end{center}
 \vspace{-1mm}
 {\small\ttfamily users (id: int, username: varchar(255), \ldots)}\par
-{\small\ttfamily likes (id: int, user\_id[users]: int, photo\_id[photos]: int, \ldots)}\par
+{\small\ttfamily likes (user\_id[users]: int, photo\_id[photos]: int)}\par
 {\small\ttfamily photos (id: int, description: varchar(255), \ldots)}\par
 \vspace{.5mm}{\small Ein Benutzer kann mehrere Fotos liken; ein Foto kann Likes von mehreren Benutzern erhalten. Die likende Person steht in likes.user\_id, das gelikte Foto in likes.photo\_id.}
 

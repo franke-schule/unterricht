@@ -371,7 +371,7 @@ function renderR6Tables() {
   document.getElementById("r6-tables").innerHTML =
     miniTableCard("users", ["id", "username"], userRows.map((u) => [u.id, u.username])) +
     miniTableCard("photos", ["id", "user_id", "description"], photoRows.map((p) => [p.id, p.user_id, p.description]), { highlight: [1] }) +
-    miniTableCard("likes – Tabellenauszug (nur die Fremdschlüssel)", ["user_id", "photo_id"], INSTAHUB_LIKES.map((l) => [l.user_id, l.photo_id]), { captionText: "likes – Tabellenauszug (nur die Fremdschlüssel)" });
+    miniTableCard("likes", ["user_id", "photo_id"], INSTAHUB_LIKES.map((l) => [l.user_id, l.photo_id]));
 }
 function checkR6F6a() {
   state.r6.f6a = selectedValues("r6-f6a");
@@ -428,7 +428,7 @@ function renderR7Tables() {
   const userRows = INSTAHUB_USERS.filter((u) => [1, 52, 117, 138].includes(u.id));
   document.getElementById("r7-tables").innerHTML =
     miniTableCard("users", ["id", "username"], userRows.map((u) => [u.id, u.username])) +
-    miniTableCard("follows", ["id", "following_id", "follower_id"], INSTAHUB_FOLLOWS.map((f) => [f.id, f.following_id, f.follower_id]), { highlight: [1, 2] });
+    miniTableCard("follows", ["following_id", "follower_id"], INSTAHUB_FOLLOWS.map((f) => [f.following_id, f.follower_id]), { highlight: [0, 1] });
 }
 function maybeRevealR7Summary() {
   if (["r7-f7a", "r7-f7b"].every(isSolved)) document.getElementById("r7-summary").hidden = false;
@@ -448,7 +448,7 @@ function checkR7F7b() {
   const correctSet = ["twoRows", "swapped", "bothRefUsers"];
   if (!selected.length) { setFeedback("r7-f7b", "hint", "Noch nicht korrekt: Kreuze mindestens eine Aussage an."); return; }
   if (sameSet(selected, correctSet)) { setFeedback("r7-f7b", "success", "Richtig: Jede Zeile beschreibt eine Richtung. Für gegenseitiges Folgen braucht man zwei Zeilen, und beide Fremdschlüssel verweisen auf users."); markSolved("r7-f7b"); maybeRevealR7Summary(); return; }
-  if (selected.includes("oneRowEnough")) { const anyCorrect = selected.some((id) => correctSet.includes(id)); setFeedback("r7-f7b", anyCorrect ? "partial" : "hint", `${anyCorrect ? "Teilweise korrekt:" : "Noch nicht korrekt:"} Folgen gilt nicht automatisch in beide Richtungen: Zeile 947 zeigt, dass wanderriese_taro oekosmasher folgt – daraus folgt nicht, dass oekosmasher auch wanderriese_taro folgt.`); return; }
+  if (selected.includes("oneRowEnough")) { const anyCorrect = selected.some((id) => correctSet.includes(id)); setFeedback("r7-f7b", anyCorrect ? "partial" : "hint", `${anyCorrect ? "Teilweise korrekt:" : "Noch nicht korrekt:"} Folgen gilt nicht automatisch in beide Richtungen: Die Zeile mit following_id 52 und follower_id 138 zeigt, dass wanderriese_taro oekosmasher folgt – daraus folgt nicht, dass oekosmasher auch wanderriese_taro folgt.`); return; }
   setFeedback("r7-f7b", "partial", "Teilweise korrekt: Deine Auswahl stimmt, es fehlt aber noch mindestens eine richtige Aussage. Vergleiche die Zeilen 1 und 2 und sieh dir an, worauf following_id und follower_id verweisen.");
 }
 
@@ -538,7 +538,7 @@ function renderSummary(){
  ["3. Anmeldungen","Lies die Zuordnungen in teilnahme und trage Bens Chor-Anmeldung ein.","Lina: Robotik und Theater; Theater: Lina und Mia; Ben im Chor: teilnahme(2, 3). Lina (id 1): ag_id 1 und 2, also Robotik und Theater. Theater (id 2): schueler_id 1 und 3, also Lina und Mia. Bens Chor-Anmeldung ist eine neue Zeile in teilnahme mit schueler_id 2 und ag_id 3."],
  ["4. InstaHub","Ergänze die Kardinalitäten für liken, kommentieren und folgen.","users n — m photos (liken, kommentieren); users n — m users (folgen)."],
  ["5. likes","Lies Likes und ihre Umsetzung.","likes(18, 14): Benutzer 18 hat Foto 14 geliked; users 1 — n likes n — 1 photos. reisewut_emil hat die Fotos 12 und 14 geliked; Foto 14 gefällt reisewut_emil und gamewut_jonas."],
- ["6. follows","Lies die Richtung und das gegenseitige Folgen.","follows: follower_id = wer folgt, following_id = wem gefolgt wird; gegenseitiges Folgen benötigt zwei Zeilen. Zeile 947: wanderriese_taro folgt oekosmasher."],
+ ["6. follows","Lies die Richtung und das gegenseitige Folgen.","follows: follower_id = wer folgt, following_id = wem gefolgt wird; gegenseitiges Folgen benötigt zwei Zeilen. following_id 52, follower_id 138: wanderriese_taro folgt oekosmasher."],
  ["8. Abschlussquiz","Sichere die Beziehungen.","Alle sechs Fragen richtig beantwortet."]
  ];
  document.getElementById("answer-summary").innerHTML=entries.map(([title,prompt,result])=>`<section class="summary-section"><h3>${title}</h3><p class="prompt">${prompt}</p><dl class="summary-grid"><dt>Richtiges Ergebnis</dt><dd>${result}</dd></dl></section>`).join("");

@@ -11,7 +11,7 @@
     <link rel="stylesheet" href="beziehungen.css?v=20260826b">
     <link rel="stylesheet" href="beziehungsarten.css?v=20261013">
     <script src="../../quiz-fragen-pruefen.js?v=20261006b"></script>
-    <script type="module" src="beziehungsarten-nm.js?v=20261015"></script>
+    <script type="module" src="beziehungsarten-nm.js?v=20261016"></script>
   </head>
   <body class="redundancy-page relation-page relation-types-page nm-page">
     <div class="site-backdrop" aria-hidden="true"></div>
@@ -148,6 +148,7 @@
           <div id="r4-merke" class="foreign-key-reveal" hidden>
             <strong>Merke: Beziehungstabelle (Hilfstabelle)</strong>
             <p>Bei der Umsetzung von n:m-Beziehungen entsteht eine neue (Hilfs-)Tabelle. Diese enthält die Primärschlüssel beider Klassen als Fremdschlüssel.</p>
+            <p>Die Beziehungstabellen in diesem Lernmodul bestehen nur aus den beiden Fremdschlüsseln. Sie haben keine zusätzliche id-Spalte.</p>
             <p class="table-chain-caption">Umsetzung in der Datenbank (Tabellen)</p>
             <div class="table-chain" aria-label="Tabellenkette schueler, teilnahme und ag">
               <div class="schema-node"><pre><code>schueler(
@@ -216,11 +217,8 @@
           <div class="step-heading"><span class="step-number">5</span><div><p class="step-kicker">Anwenden</p><h2>Die Beziehungstabelle (Hilfstabelle) likes</h2></div></div>
           <div class="scenario-card"><p>Für die Likes bekommt InstaHub die Beziehungstabelle (Hilfstabelle) likes.</p></div>
           <div class="schema-syntax"><pre><code>likes(
-  id: int
   photo_id[photos]: int
   user_id[users]: int
-  created_at: date
-  updated_at: date
 )</code></pre></div>
           <div id="r6-tables" class="table-excerpts three-up" aria-label="Tabellenauszüge users, photos und likes"></div>
 
@@ -247,11 +245,8 @@
               <label class="cardinality-gap"><span class="sr-only">Kardinalität bei likes, Seite users</span><input id="r6-likes-a-cardinality" type="text" maxlength="1" inputmode="text" autocomplete="off" aria-label="Kardinalität bei likes, Seite users" placeholder="?"></label>
             </div>
             <div class="schema-node"><pre><code>likes(
-  id: int
   photo_id[photos]: int
   user_id[users]: int
-  created_at: date
-  updated_at: date
 )</code></pre></div>
             <div class="association-connector">
               <label class="cardinality-gap"><span class="sr-only">Kardinalität bei likes, Seite photos</span><input id="r6-likes-b-cardinality" type="text" maxlength="1" inputmode="text" autocomplete="off" aria-label="Kardinalität bei likes, Seite photos" placeholder="?"></label>
@@ -279,16 +274,13 @@
           <div class="step-heading"><span class="step-number">6</span><div><p class="step-kicker">Übertragen</p><h2>Die Beziehungstabelle (Hilfstabelle) follows</h2></div></div>
           <div class="scenario-card"><p>Auch Follower speichert InstaHub in einer Beziehungstabelle (Hilfstabelle). follower_id: wer folgt · following_id: wem gefolgt wird.</p></div>
           <div class="schema-syntax"><pre><code>follows(
-  id: int
   following_id[users]: int
   follower_id[users]: int
-  created_at: date
-  updated_at: date
 )</code></pre></div>
           <p class="table-legend">follower_id: wer folgt · following_id: wem gefolgt wird</p>
           <div id="r7-tables" class="table-excerpts" aria-label="Tabellenauszüge users und follows"></div>
 
-          <h3 class="assignment-heading">6.1 <strong>Entscheide</strong>: Was bedeutet die Zeile mit id 947?</h3>
+          <h3 class="assignment-heading">6.1 <strong>Entscheide</strong>: Was bedeutet die Zeile mit following_id 52 und follower_id 138?</h3>
           <div id="r7-f7a-choices" class="choice-list"></div>
           <div class="action-row"><button id="check-r7-f7a" class="primary-button" type="button">Antwort 1 prüfen</button></div>
           <p id="feedback-r7-f7a" class="feedback" aria-live="polite"></p>
