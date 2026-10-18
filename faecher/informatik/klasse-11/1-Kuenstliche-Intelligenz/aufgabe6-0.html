@@ -7,7 +7,7 @@
   <title>Aufgabe 6.0 – Objektorientierte Programmierung wiederholen | Informatik 11</title>
   <link rel="stylesheet" href="../../../../styles.css?v=20260707">
   <link rel="stylesheet" href="perzeptron/task5.css?v=20261010-tabs">
-  <link rel="stylesheet" href="perzeptron/task6-0.css?v=20261011">
+  <link rel="stylesheet" href="perzeptron/task6-0.css?v=20261018">
   <script src="../../quiz-fragen-pruefen.js?v=20261006b"></script>
   <script src="../../klasse-9/eingaben-speichern.js"></script>
   <script type="module" src="perzeptron/ui/task6-0.mjs?v=20261011-observation"></script>
@@ -34,11 +34,13 @@
         <div class="flow-navigation" data-flow="objects"></div>
       </section>
       <section id="signatures" class="step-panel" role="tabpanel" aria-labelledby="tab-signatures" data-panel="signatures" hidden><h2>Methodendeklarationen lesen</h2>
+        <p>Ein <strong>Setter</strong> setzt den Wert eines Attributs, ein <strong>Getter</strong> gibt den Wert eines Attributs zurück.</p>
         <div id="block-2a-setter"></div><div id="block-2a-getter"></div><div id="block-2b"></div><div id="block-2c"></div>
         <div id="remember-2" class="remember" hidden><p>Eingabeparameter stehen mit Datentyp und Namen in den runden Klammern der Methodendeklaration. Der Rückgabetyp steht vor dem Methodennamen.</p><p>Beim Methodenaufruf werden Argumente an die Eingabeparameter übergeben. Die Argumente müssen zu den Parametertypen passen.</p><p>Die Ganzzahl <code>2</code> darf an einen <code>double</code>-Parameter übergeben werden. Die Dezimalzahl <code>2.5</code> passt ohne Umwandlung nicht zu einem <code>int</code>-Parameter.</p></div>
         <div class="flow-navigation" data-flow="signatures"></div>
       </section>
       <section id="completion" class="step-panel" role="tabpanel" aria-labelledby="tab-completion" data-panel="completion" hidden><h2>Punktnotation und Auswahlfenster</h2>
+        <p>Mit der <strong>Punktnotation</strong> greifst du über eine Objektvariable auf zugängliche Attribute oder Methoden zu: <code>objekt.attribut</code> bzw. <code>objekt.methode(argumente)</code>; ohne Argumente bleiben die Klammern leer.</p>
         <div id="block-3a"></div><div id="block-3b"></div>
         <p class="data-boundary">Das Auswahlfenster zeigt zum Typ von <code>punkt</code> passende zugängliche Mitglieder. Es können auch geerbte Methoden erscheinen. Die <code>private</code>-Attribute von <code>Datenpunkt</code> sind im Hauptprogramm nicht direkt zugänglich. Eine Auswahl hilft beim Schreiben; sie führt die Methode nicht aus.</p>
         <p>Erscheint kein Fenster, prüfe <code>punkt</code>, seine vorherige Deklaration, den Gültigkeitsbereich und vorhandene Programmfehler; löse die Vorschläge danach erneut aus.</p>
@@ -55,7 +57,7 @@
         <a class="primary-button task6-0-next-link" href="aufgabe6.html">Weiter zu Aufgabe 6.1</a>
       </section>
     </div>
-  <section class="task6-0-ide" aria-label="Online-IDE"><h2>Online-IDE: Datenpunkt</h2><p>Dein Code wird von der Online-IDE gespeichert. Die Zurücksetzen-Funktion der IDE setzt den Code zurück.</p><p>Bei ganzzahligen <code>double</code>-Werten hängt das Startprogramm <code>.0</code> an, damit die Dezimalzahlen erkennbar bleiben.</p><div class="ide-container"><iframe id="frame-repeat" title="Online-IDE: Datenpunkt-Wiederholung" srcdoc="<script>window.jo_doc = window.frameElement.textContent;</script><script src='../../../../include/js/includeide/includeIDE.js'></script>">
+  <section class="task6-0-ide" aria-label="Online-IDE" tabindex="0"><h2>Online-IDE: Datenpunkt</h2><div class="ide-container"><iframe id="frame-repeat" title="Online-IDE: Datenpunkt-Wiederholung" srcdoc="<link rel='stylesheet' href='perzeptron/task6-0-ide.css?v=20261018'><script>window.jo_doc = window.frameElement.textContent;</script><script src='../../../../include/js/includeide/includeIDE.js'></script>">
 {'id':'Java11Aufgabe6_0Wiederholung','speed':10,'withBottomPanel':true,'withPCode':true,'withConsole':true,'withFileList':true,'withErrorList':true,'enableFileAccess':true}
 <script type="text/plain" title="Anleitung" data-type="hint">
 Starte Hauptprogramm.java und beobachte die Konsole. Wechsle über die Dateiliste zu Datenpunkt.java, um Attribute und Methoden nachzulesen. Eine Auswahl im Fenster ergänzt Code, führt den Aufruf aber noch nicht aus.
@@ -94,7 +96,7 @@ public class Datenpunkt {
     public void setzeLabel(int neuesLabel) { label = neuesLabel; }
 }
 </script>
-          </iframe></div></section>
+          </iframe></div><p>Dein Code wird von der Online-IDE gespeichert. Die Zurücksetzen-Funktion der IDE setzt den Code zurück.</p><p>Bei ganzzahligen <code>double</code>-Werten hängt das Startprogramm <code>.0</code> an, damit die Dezimalzahlen erkennbar bleiben.</p></section>
   </div>
   <section class="card task6-0-reset"><h2>Bearbeitungsstand</h2><p>Deine Antworten und dein Lernfortschritt werden gelöscht. Dein Code in der Online-IDE bleibt erhalten.</p><button id="reset-progress" class="secondary-button" type="button">Bearbeitungsstand zurücksetzen</button></section>
 </main>

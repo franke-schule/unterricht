@@ -1,0 +1,11 @@
+/* Nur die Einbettung von Aufgabe 6.0 anpassen; die gemeinsame IDE bleibt unverändert. */
+html .joeCssFence .joe_centerDiv, html .joeCssFence .joe_editorDiv { min-width:0; }
+html .joeCssFence .joe_rightDiv { width:30%; min-width:0; flex-shrink:0; }
+html .joeCssFence .jo_output { overflow-wrap:anywhere; }
+html .joeCssFence .joe_bottomDivInner { min-width:0; overflow-x:auto; }
+@media(max-width:700px) {
+  html .joe_javaOnlineDiv { flex-direction:column; }
+  html .joeCssFence .joe_editorDiv { min-height:0; }
+  html .joeCssFence .joe_rightDiv { width:100%; height:30%; border-left:0; border-top:1px solid gray; }
+  html .joeCssFence .joe_bottomDivFiles { width:40%; max-width:180px; flex-shrink:0; }
+}

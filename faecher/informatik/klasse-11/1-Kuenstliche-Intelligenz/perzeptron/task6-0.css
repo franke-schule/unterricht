@@ -1,12 +1,15 @@
 .task6-0-page .perceptron-hero h1 { font-size:clamp(2.2rem,5vw,4.2rem); overflow-wrap:anywhere; hyphens:auto; }
+.task6-0-page .page-shell { width:min(1600px,calc(100% - 44px)); }
 .task6-0-page .tab-list { grid-template-columns:repeat(5,minmax(0,1fr)); grid-auto-flow:row; }
 .task6-0-page .task6-0-layout { display:grid; grid-template-columns:minmax(0,1fr) minmax(320px,420px); gap:1.2rem; align-items:start; }
 .task6-0-page .task6-0-content { grid-column:2; grid-row:1; min-width:0; }
-.task6-0-page .task6-0-ide { grid-column:1; grid-row:1; min-width:0; position:sticky; top:1rem; }
+.task6-0-page .task6-0-layout:has(> .task6-0-ide[hidden]) > .task6-0-content { grid-column:1 / -1; }
+.task6-0-page .task6-0-ide { grid-column:1; grid-row:1; min-width:0; position:sticky; top:1rem; max-height:calc(100dvh - 2rem); overflow-y:auto; }
+.task6-0-page .task6-0-ide:focus-visible { outline:3px solid #f0a202; outline-offset:3px; }
 .task6-0-page .task6-0-ide h2 { margin:.2rem 0; }
 .task6-0-page .task6-0-ide p { margin:.4rem 0 .75rem; }
 .task6-0-page .ide-container { border:1px solid #b9d1df; border-radius:.85rem; overflow:hidden; background:#fff; }
-.task6-0-page .ide-container iframe { display:block; width:100%; min-height:700px; border:0; }
+.task6-0-page .ide-container iframe { display:block; width:100%; height:clamp(360px,calc(100dvh - 12rem),700px); border:0; }
 .task6-0-page .task6-0-block { margin:0 0 1rem; min-width:0; }
 .task6-0-page .task6-0-block h3 { margin-top:0; }
 .task6-0-page .task6-0-block .input-grid { grid-template-columns:repeat(2,minmax(0,1fr)); }
@@ -34,14 +37,14 @@
 .task6-0-page #quiz-summary li { margin:.7rem 0; }
 .task6-0-page #quiz-summary p { margin:.25rem 0; }
 .task6-0-page .knn-card:focus-visible,.task6-0-page .knn-slot:focus-visible,.task6-0-page summary:focus-visible { outline:3px solid #f0a202; outline-offset:3px; }
-@media(max-width:1050px) {
+@media(max-width:1150px) {
   .task6-0-page .task6-0-layout { grid-template-columns:1fr; }
   .task6-0-page .task6-0-content,.task6-0-page .task6-0-ide { grid-column:1; grid-row:auto; }
-  .task6-0-page .task6-0-ide { position:static; }
+  .task6-0-page .task6-0-ide { position:static; max-height:none; overflow:visible; }
+  .task6-0-page .ide-container iframe { height:650px; }
 }
 @media(max-width:700px) {
   .task6-0-page .tab-list { grid-template-columns:repeat(2,minmax(0,1fr)); }
   .task6-0-page .task6-0-block .input-grid,.task6-0-page .object-cards { grid-template-columns:1fr; }
-  .task6-0-page .ide-container iframe { min-height:590px; }
   .task6-0-page .knn-slot { grid-template-columns:4.6rem minmax(0,1fr); }
 }
