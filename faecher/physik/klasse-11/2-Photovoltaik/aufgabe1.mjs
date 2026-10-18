@@ -1,22 +1,18 @@
 import { setupPhysicsStepTabs } from "../1-Kreisbewegungen/components/physics-step-tabs.mjs";
 import { createPhysicsTaskProgress } from "../1-Kreisbewegungen/components/physics-task-progress.mjs";
+import { setupPhysicsSemanticTask } from "../1-Kreisbewegungen/components/physics-semantic-task.mjs";
 
 const sets = [
   { key: "knowledge", target: "knowledge-questions", questions: [
-    { id: "W1", prompt: "Welche Aussagen zur Solarzelle passen zur gezeigten Alltagssituation?", options: ["Die Solarzelle wandelt Lichtenergie direkt in elektrische Energie um.", "Die Lampe schickt elektrischen Strom direkt in die Solarzelle.", "Ein angeschlossenes Gerät kann die abgegebene elektrische Energie nutzen.", "Die Solarzelle erzeugt Energie aus dem Nichts."], correct: [0, 2], help: ["Verfolge in der Skizze die beiden Energiepfeile.", "Licht kommt an der Solarzelle an; danach fließt elektrische Energie zum Gerät.", "Die Aussage zur direkten Umwandlung von Lichtenergie ist richtig. Prüfe, wohin die elektrische Energie weitergegeben wird."], feedback: ["Korrekt. Lichtenergie wird in elektrische Energie umgewandelt und kann ein Gerät versorgen.", "Teilweise korrekt. Prüfe beide Energiepfeile und streiche Aussagen, die Energie aus dem Nichts oder einen elektrischen Anschluss der Lampe an die Zelle behaupten.", "Noch nicht korrekt. Beginne beim Lichtpfeil zur Solarzelle und verfolge danach den elektrischen Energiepfeil."] },
+    { id: "W1", prompt: "Welche Aussagen zur Solarzelle passen zur gezeigten Alltagssituation?", options: ["Die Solarzelle wandelt Lichtenergie direkt in elektrische Energie um.", "Die Sonne schickt elektrischen Strom direkt in die Solarzelle.", "Ein angeschlossenes Gerät kann die abgegebene elektrische Energie nutzen.", "Die Solarzelle erzeugt Energie aus dem Nichts."], correct: [0, 2], help: ["Verfolge in der Skizze die beiden Energiepfeile.", "Licht kommt an der Solarzelle an; danach fließt elektrische Energie zum Gerät.", "Die Aussage zur direkten Umwandlung von Lichtenergie ist richtig. Prüfe, wohin die elektrische Energie weitergegeben wird."], feedback: ["Korrekt. Lichtenergie wird in elektrische Energie umgewandelt und kann ein Gerät versorgen.", "Teilweise korrekt. Prüfe beide Energiepfeile und streiche Aussagen, die Energie aus dem Nichts oder einen elektrischen Anschluss der Sonne an die Zelle behaupten.", "Noch nicht korrekt. Beginne beim Lichtpfeil zur Solarzelle und verfolge danach den elektrischen Energiepfeil."] },
     { id: "W2", prompt: "Welche Aussagen zu den beiden Endpunkten der U-I-Kennlinie sind richtig?", options: ["Im Leerlauf ist I = 0 A.", "Beim idealisierten Kurzschluss ist U ungefähr 0 V.", "Beim Kurzschluss ist die abgegebene Leistung am größten.", "An beiden idealisierten Endpunkten ist P = U · I gleich 0 W."], correct: [0, 1, 3], help: ["Lies an jedem Endpunkt ab, welche Größe null ist.", "In einem Produkt genügt ein Faktor null, damit das Produkt null wird.", "Im Leerlauf ist I = 0 A; setze das in P = U · I ein."], feedback: ["Korrekt. Im Leerlauf ist I = 0 A, beim idealisierten Kurzschluss U ≈ 0 V; an beiden Endpunkten ist die Leistung 0 W.", "Teilweise korrekt. Prüfe beide Endpunkte einzeln und multipliziere dort U und I.", "Noch nicht korrekt. Suche zuerst den Endpunkt mit I = 0 A und den mit U ≈ 0 V."] },
-    { id: "W3", prompt: "Was zeigen die Punkte A, B und C der illustrierten Kennlinie über den MPP?", options: ["Bei B ist das Produkt aus gleichzeitigem U und I am größten.", "C hat die größte Spannung und deshalb auch die größte Leistung.", "Die maximale Leistung ergibt sich aus U₀ · Iₖ.", "Für die Leistung müssen U und I vom selben Arbeitspunkt stammen."], correct: [0, 3], help: ["Vergleiche die drei markierten Rechtecke.", "Rechne für A, B und C jeweils mit den zwei Werten desselben Punkts.", "Für A ergibt 0,20 V · 0,49 A = 0,098 W; vergleiche das mit B und C."], feedback: ["Korrekt. B hat das größte Produkt aus gleichzeitig gemessener Spannung und Stromstärke.", "Teilweise korrekt. Vergleiche die drei Produkte; die größte Spannung allein entscheidet nicht.", "Noch nicht korrekt. Verwende für jedes Produkt nur Werte desselben markierten Punkts."] },
-  ] },
-  { key: "setup", target: "setup-questions", questions: [
-    { id: "A1", prompt: "Wie werden die beiden Multimeter im Messkreis angeschlossen?", options: ["Das Amperemeter liegt in Reihe mit dem Widerstand.", "Das Voltmeter liegt parallel zur Solarzelle.", "Das Voltmeter liegt in Reihe mit dem Widerstand.", "Das Amperemeter wird parallel zur Solarzelle angeschlossen."], correct: [0, 1], help: ["Verfolge den Weg des Stroms durch das A-Meter.", "Stromstärke misst du im Stromweg, Spannung zwischen zwei Anschlüssen.", "Das A-Meter liegt im Stromweg mit dem Widerstand. Suche nun die zwei Anschlüsse für das V-Meter."], feedback: ["Korrekt. Das Amperemeter liegt in Reihe, das Voltmeter parallel zur Solarzelle.", "Teilweise korrekt. Prüfe, welches Messgerät im Stromweg liegt und welches zwei Anschlüsse verbindet.", "Noch nicht korrekt. Verfolge im Schaltbild zuerst den geschlossenen Stromkreis."] },
-    { id: "A2", prompt: "Welche Aufgaben haben Widerstand und Lampe in diesem Versuch?", options: ["Durch Ändern des Widerstands entstehen verschiedene Arbeitspunkte.", "Die Lampe beleuchtet die Solarzelle und hat eine eigene elektrische Versorgung.", "Das Netzgerät der Lampe wird elektrisch an die Solarzelle angeschlossen.", "Während einer Messreihe verändern wir ständig den Lampenabstand."], correct: [0, 1], help: ["Trenne in der Aufbauskizze Lichtweg und elektrische Leitungen.", "Während einer Messreihe soll nur eine Größe gezielt verändert werden.", "Der veränderliche Widerstand verschiebt den Arbeitspunkt; prüfe die eigene Versorgung der Lampe."], feedback: ["Korrekt. Der Widerstand verändert den Arbeitspunkt; die Lampe beleuchtet die Zelle aus einem getrennten Stromkreis.", "Teilweise korrekt. Prüfe den getrennten Lampenstromkreis und die innerhalb einer Reihe konstante Beleuchtung.", "Noch nicht korrekt. Suche im Schaltbild die elektrische Trennung zwischen Lampe und Solarzelle."] },
-    { id: "A3", prompt: "Was bleibt innerhalb einer Messreihe gleich, und was wird gezielt verändert?", options: ["Innerhalb einer Reihe bleiben Lampeneinstellung und Abstand möglichst gleich.", "Innerhalb einer Reihe wird der Widerstand verändert.", "Zwischen zwei Reihen kann die Beleuchtung verändert werden.", "Spannung und Stromstärke dürfen aus verschiedenen Einstellungen zu einem Paar kombiniert werden."], correct: [0, 1, 2], help: ["Unterscheide eine Reihe von dem Vergleich zweier Reihen.", "Ein U-I-Punkt braucht Werte, die gleichzeitig bei derselben Einstellung gelten.", "Innerhalb einer Reihe verändert sich der Widerstand; die Beleuchtung bleibt möglichst gleich."], feedback: ["Korrekt. Pro Reihe ändert sich der Widerstand, zwischen Reihen die Beleuchtung; U und I bleiben jeweils ein Paar.", "Teilweise korrekt. Trenne die Änderung innerhalb einer Reihe vom Vergleich zwischen Reihen und prüfe, welche U-I-Werte zusammengehören.", "Noch nicht korrekt. Beginne mit der Frage: Was verstellst du, um einen neuen Punkt auf derselben Kennlinie zu erhalten?"] },
+    { id: "W3", prompt: "Was zeigen die Punkte A, B und C der illustrierten Kennlinie über den MPP?", options: ["Bei B ist das Produkt aus gleichzeitigem U und I am größten.", "C hat die größte Spannung und deshalb auch die größte Leistung.", "Die maximale Leistung ergibt sich aus U₀ · Iₖ.", "Für die Leistung müssen U und I vom selben Punkt stammen."], correct: [0, 3], help: ["Vergleiche die drei markierten Rechtecke.", "Rechne für A, B und C jeweils mit den zwei Werten desselben Punkts.", "Für A ergibt 0,20 V · 0,49 A = 0,098 W; vergleiche das mit B und C."], feedback: ["Korrekt. B hat das größte Produkt aus gleichzeitig gemessener Spannung und Stromstärke.", "Teilweise korrekt. Vergleiche die drei Produkte; die größte Spannung allein entscheidet nicht.", "Noch nicht korrekt. Verwende für jedes Produkt nur Werte desselben markierten Punkts."] },
   ] },
   { key: "final", target: "final-questions", questions: [
     { id: "F1", prompt: "Drei gleichzeitig gemessene Paare sind A: 0,20 V und 0,45 A; B: 0,40 V und 0,40 A; C: 0,50 V und 0,15 A. Welche Aussagen stimmen?", options: ["B hat mit 0,160 W die größte Leistung der drei Punkte.", "C hat die größte Spannung der drei Punkte.", "C hat deshalb auch die größte Leistung.", "Für jeden Punkt wird die Leistung aus seinem eigenen U-I-Paar berechnet."], correct: [0, 1, 3], help: ["Die größte Spannung muss nicht das größte Produkt liefern.", "Multipliziere bei A, B und C jeweils die beiden zusammengehörigen Zahlen.", "Bei A erhältst du 0,20 V · 0,45 A = 0,090 W; vergleiche mit B und C."], feedback: ["Korrekt. B hat 0,160 W und damit mehr als A mit 0,090 W und C mit 0,075 W, obwohl C die größte Spannung hat.", "Teilweise korrekt. Berechne die drei Produkte einzeln; trenne die Frage nach der größten Spannung von der nach der größten Leistung.", "Noch nicht korrekt. Beginne mit P = U · I für A und verwende danach die jeweiligen Paare von B und C."] },
-    { id: "F2", prompt: "Jemand berechnet U₀ · Iₖ und nennt das die maximale Leistung der Solarzelle. Was ist daran zu prüfen?", options: ["U₀ und Iₖ stammen von verschiedenen Arbeitspunkten.", "Das Produkt U₀ · Iₖ ist immer genau Pₘₚₚ.", "Für eine tatsächliche Leistung werden gleichzeitig passende U- und I-Werte gebraucht.", "An beiden idealisierten Endpunkten selbst ist P = 0 W."], correct: [0, 2, 3], help: ["Wo liegen U₀ und Iₖ auf der Kennlinie?", "Prüfe, ob beide Werte am selben Punkt gleichzeitig auftreten.", "U₀ gehört zum Leerlauf mit I = 0 A; suche den Punkt von Iₖ."], feedback: ["Korrekt. U₀ und Iₖ gehören nicht zum selben Arbeitspunkt; am jeweiligen Endpunkt ist das Produkt U · I gleich 0 W.", "Teilweise korrekt. Ordne U₀ und Iₖ ihren jeweiligen Endpunkten zu und prüfe dort P = U · I.", "Noch nicht korrekt. Lies die beiden Endpunkte der U-I-Kennlinie getrennt ab."] },
-    { id: "F3", prompt: "Du willst zwei U-I-Kennlinien bei unterschiedlicher Beleuchtung aufnehmen. Welche Schritte sind sinnvoll?", options: ["Während jeder Reihe bleiben Lampeneinstellung, Abstand und Ausrichtung möglichst gleich.", "Zwischen den Reihen wird die Beleuchtung gezielt geändert.", "Zu jeder Widerstandseinstellung werden U und I als Paar notiert.", "Innerhalb einer Reihe werden Widerstand, Lampenabstand und Ausrichtung gleichzeitig geändert."], correct: [0, 1, 2], help: ["Für einen fairen Vergleich brauchst du pro Reihe klare Bedingungen.", "Neue Punkte einer Kennlinie entstehen durch verschiedene Widerstandseinstellungen bei gleicher Beleuchtung.", "Halte die Beleuchtung innerhalb einer Reihe gleich; überlege, wann du sie ändern darfst."], feedback: ["Korrekt. Je Reihe variiert der Widerstand, zwischen Reihen die Beleuchtung; zu jeder Einstellung gehören U und I zusammen.", "Teilweise korrekt. Prüfe den Unterschied zwischen Variation innerhalb und zwischen den Messreihen.", "Noch nicht korrekt. Plane zuerst eine einzelne Kennlinie bei möglichst gleichbleibender Beleuchtung."] },
-    { id: "F4", prompt: "Bei einem Versuch liefert Punkt B das größte Produkt der bisher gemessenen U-I-Paare. Welche Schlüsse sind zulässig?", options: ["B ist der beste unter den bisher gemessenen Punkten.", "Damit ist der genaue MPP ohne weitere Messung bewiesen.", "Zusätzliche Punkte in der Nähe von B können die MPP-Schätzung verbessern.", "Bei geänderter Beleuchtung kann der MPP an einem anderen Arbeitspunkt liegen."], correct: [0, 2, 3], help: ["Denke an die Lücken zwischen zwei gemessenen Punkten.", "Ein Maximum unter wenigen gemessenen Werten ist zunächst nur eine Näherung.", "B ist der beste bereits erfasste Punkt. Prüfe, was zusätzliche Punkte und neue Beleuchtung ändern können."], feedback: ["Korrekt. B ist der beste gemessene Punkt; weitere Messungen können die Lage des MPP genauer eingrenzen.", "Teilweise korrekt. Unterscheide den besten gemessenen Punkt vom genauen Maximum und denke an andere Beleuchtung.", "Noch nicht korrekt. Überlege, welche Aussage durch die bisher gemessenen Punkte tatsächlich belegt ist."] },
+    { id: "F2", prompt: "Jemand berechnet U₀ · Iₖ und nennt das die maximale Leistung der Solarzelle. Was ist daran zu prüfen?", options: ["U₀ und Iₖ stammen von verschiedenen Punkten.", "Das Produkt U₀ · Iₖ ist immer genau Pₘₚₚ.", "Für eine tatsächliche Leistung werden gleichzeitig passende U- und I-Werte gebraucht.", "An beiden idealisierten Endpunkten selbst ist P = 0 W."], correct: [0, 2, 3], help: ["Wo liegen U₀ und Iₖ auf der Kennlinie?", "Prüfe, ob beide Werte am selben Punkt gleichzeitig auftreten.", "U₀ gehört zum Leerlauf mit I = 0 A; suche den Punkt von Iₖ."], feedback: ["Korrekt. U₀ und Iₖ gehören nicht zum selben Punkt; am jeweiligen Endpunkt ist das Produkt U · I gleich 0 W.", "Teilweise korrekt. Ordne U₀ und Iₖ ihren jeweiligen Endpunkten zu und prüfe dort P = U · I.", "Noch nicht korrekt. Lies die beiden Endpunkte der U-I-Kennlinie getrennt ab."] },
+    { id: "F3", prompt: "Eine Mitschülerin möchte die Messgeräte in den Solarzellenkreis einbauen. Welche Anschlüsse passen zum Schaltplan?", options: ["Das Amperemeter wird in den geschlossenen Stromweg eingefügt.", "Das Voltmeter wird mit beiden Anschlüssen der Solarzelle verbunden.", "Das Amperemeter wird parallel zur Solarzelle angeschlossen.", "Das Voltmeter ersetzt den Widerstand im Stromweg."], correct: [0, 1], help: ["Verfolge die Leitungen an A und V im Schaltplan.", "Ein Messgerät liegt im Stromweg; das andere verbindet zwei Anschlüsse der Solarzelle.", "Das Amperemeter gehört in den Stromweg. Prüfe nun die beiden Leitungen des Voltmeters."], feedback: ["Korrekt. A liegt in Reihe; V ist parallel an die Solarzelle angeschlossen.", "Teilweise korrekt. Prüfe für beide Messgeräte getrennt, ob sie im Stromweg oder zwischen zwei Anschlüssen liegen.", "Noch nicht korrekt. Beginne beim geschlossenen Weg von der Solarzelle durch den Widerstand."] },
+    { id: "F4", prompt: "Du veränderst bei gleicher Beleuchtung den Widerstand und liest neue Werte ab. Welche Aussagen sind richtig?", options: ["Zu jeder Widerstandseinstellung gehören gleichzeitig eine Spannung U und eine Stromstärke I.", "Jedes zusammengehörige U-I-Paar beschreibt einen Punkt der Kennlinie.", "Für einen Punkt darf ich U aus der ersten und I aus der zweiten Einstellung kombinieren.", "Jeder Punkt der Kennlinie hat automatisch dieselbe Leistung."], correct: [0, 1], help: ["Denke an die zusammengehörigen Werte eines Kurvenpunkts.", "Wenn der Widerstand verändert wird, können sich U und I gemeinsam ändern.", "Ein Punkt entsteht aus U und I derselben Einstellung. Prüfe, welche Aussagen genau das beachten."], feedback: ["Korrekt. Jede Widerstandseinstellung liefert ein zusammengehöriges U-I-Paar und damit einen Punkt der Kennlinie.", "Teilweise korrekt. Prüfe, ob beide Werte wirklich aus derselben Einstellung stammen und ob ihre Produkte gleich sein müssen.", "Noch nicht korrekt. Beginne mit einer einzelnen Widerstandseinstellung und ihren beiden gleichzeitig abgelesenen Werten."] },
   ] },
 ];
 
@@ -83,6 +79,13 @@ const checkedAnswers = {};
 const checkedCorrectly = {};
 const progress = createPhysicsTaskProgress("photovoltaik-aufgabe1");
 const tabs = setupPhysicsStepTabs();
+let checkedDescription = null;
+const descriptionText = () => document.getElementById("pv-description-answer").value;
+function descriptionCorrect() { return checkedDescription === descriptionText() && document.getElementById("pv-description-feedback").dataset.status === "korrekt"; }
+setupPhysicsSemanticTask({ answerId: "pv-description-answer", buttonId: "pv-description-check", feedbackId: "pv-description-feedback", countId: "pv-description-count", taskId: "ph11-photovoltaik-schaltplan-beschreibung", minimumLength: 30, fallbackMaxPoints: 4, shortAnswerHint: "Beschreibe die Verbindung von Solarzelle, Widerstand und Messgeräten in mehreren Worten.", feedbackBuilder: (result) => { const p=document.createElement("p"); const status=result.status; p.textContent = result.context === "server-error" ? "Die automatische Prüfung ist gerade nicht erreichbar. Deine Antwort bleibt erhalten; bitte versuche es später erneut." : status === "korrekt" ? "Richtig. Du beschreibst den Stromkreis und die beiden Messgeräte mit ihrer Schaltung und Messgröße." : Array.isArray(result.missing) && result.missing.includes("Beschreibe die Verbindung von Solarzelle, Widerstand und Messgeräten in mehreren Worten.") ? "Beschreibe die Verbindung von Solarzelle, Widerstand und Messgeräten in mehreren Worten." : status === "teilweise korrekt" ? "Teilweise korrekt. Prüfe die Verbindung beider Messgeräte und ergänze, welche Größe jedes misst." : "Noch nicht korrekt. Verfolge zuerst den geschlossenen Stromweg und dann die zwei Anschlüsse des Voltmeters."; return p; } });
+document.getElementById("pv-description-answer").addEventListener("input", () => { checkedDescription=null; updateSummaryAvailability(); });
+const semanticFeedback=document.getElementById("pv-description-feedback");
+new MutationObserver(() => { if (semanticFeedback.dataset.status === "korrekt") checkedDescription=descriptionText(); else if (semanticFeedback.dataset.status === "nicht geprüft" || semanticFeedback.dataset.status === "noch nicht korrekt" || semanticFeedback.dataset.status === "teilweise korrekt") checkedDescription=null; updateSummaryAvailability(); progress.save(); }).observe(semanticFeedback,{attributes:true,attributeFilter:["data-status"],childList:true,subtree:true});
 document.querySelectorAll("[data-next-tab]").forEach((button) => button.addEventListener("click", () => tabs.goToTab(button.dataset.nextTab)));
 
 function setCorrectMark(question, correct) {
@@ -104,22 +107,23 @@ function setComplete(key) {
 }
 
 function updateStatuses() {
-  const names = { knowledge: "Wissenscheck", setup: "Versuchsaufbau", final: "Abschlussquiz" };
   sets.forEach((set) => {
     const count = allQuestions.filter((question) => question.setKey === set.key && isQuestionCurrent(question)).length;
     const total = allQuestions.filter((question) => question.setKey === set.key).length;
-    const status = document.querySelector(`[data-set-status="${set.key}"]`);
-    status.textContent = count === total ? `${count} von ${total} Fragen korrekt geprüft. Fragesatz abgeschlossen.` : `${count} von ${total} Fragen korrekt geprüft.`;
+    const status = document.querySelector("[data-set-status=\"" + set.key + "\"]");
+    status.textContent = count === total ? count + " von " + total + " Fragen korrekt geprüft. Fragesatz abgeschlossen." : count + " von " + total + " Fragen korrekt geprüft.";
   });
-  const totalCorrect = allQuestions.filter(isQuestionCurrent).length;
-  document.getElementById("final-feedback").textContent = totalCorrect === 10 ? "Bereit für das Experiment: Du kennst die Messgrößen, den Aufbau und den Weg zur MPP-Schätzung." : "";
 }
 
 function updateSummaryAvailability() {
   const summary = document.getElementById("quiz-summary");
-  const unlocked = allQuestions.length === 10 && allQuestions.every(isQuestionCurrent);
+  const unlocked = allQuestions.length === 7 && allQuestions.every(isQuestionCurrent) && descriptionCorrect();
   summary.hidden = !unlocked;
-  if (unlocked) document.getElementById("final-feedback").textContent = "Bereit für das Experiment: Du kennst die Messgrößen, den Aufbau und den Weg zur MPP-Schätzung.";
+  if (!unlocked && document.getElementById("final-feedback").textContent.startsWith("Bereit für das Experiment:")) document.getElementById("final-feedback").textContent = "";
+  if (unlocked) {
+    renderSummary();
+    document.getElementById("final-feedback").textContent = "Bereit für das Experiment: Du kannst Kennlinie, Leistung und Schaltplan erklären.";
+  }
 }
 
 function checkOutcome(question) {
@@ -170,23 +174,18 @@ function renderSummary() {
 
 function evaluateFinal() {
   const finalQuestions = allQuestions.filter((question) => question.setKey === "final");
-  const allFinalCorrect = finalQuestions.every(isQuestionCurrent);
   const feedback = document.getElementById("final-feedback");
-  if (!allFinalCorrect) {
+  if (!finalQuestions.every(isQuestionCurrent)) {
     feedback.textContent = "Noch sind nicht alle Transferfragen vollständig richtig. Prüfe die Rückmeldungen direkt unter den Fragen und versuche es erneut.";
     return;
   }
-  const knowledgeOpen = !setComplete("knowledge");
-  const setupOpen = !setComplete("setup");
-  feedback.textContent = "Alle vier Transferfragen sind richtig. Prüfe für die Gesamtübersicht gegebenenfalls noch die offenen Fragen aus Wissenscheck oder Versuchsaufbau.";
-  if (!knowledgeOpen && !setupOpen) {
-    feedback.textContent = "Bereit für das Experiment: Du kennst die Messgrößen, den Aufbau und den Weg zur MPP-Schätzung.";
-    renderSummary();
-    updateSummaryAvailability();
-  } else {
-    const missing = [knowledgeOpen ? "Wissenscheck" : "", setupOpen ? "Versuchsaufbau" : ""].filter(Boolean).join(" und ");
-    feedback.textContent += ` Offen: ${missing}.`;
+  const missing = [!setComplete("knowledge") ? "Wissenscheck" : "", !descriptionCorrect() ? "Beschreibung des Schaltplans" : ""].filter(Boolean);
+  if (missing.length) {
+    feedback.textContent = "Alle vier Transferfragen sind richtig. Für die Gesamtübersicht fehlt noch " + missing.join(" oder ") + ".";
+    return;
   }
+  feedback.textContent = "Bereit für das Experiment: Du kannst Kennlinie, Leistung und Schaltplan erklären.";
+  updateSummaryAvailability();
 }
 
 document.getElementById("evaluate-quiz").addEventListener("click", () => {
@@ -261,7 +260,7 @@ document.getElementById("ui-graph").innerHTML = graphSvg("current");
 document.getElementById("pu-graph").innerHTML = graphSvg("power");
 
 renderSummary();
-progress.registerPart("quiz-state", () => ({ checkedCorrectly, checkedAnswers, summaryVisible: !document.getElementById("quiz-summary").hidden }), (state) => {
+progress.registerPart("quiz-state", () => ({ checkedCorrectly, checkedAnswers, checkedDescription: descriptionCorrect() ? descriptionText() : null }), (state) => {
   if (!state || typeof state !== "object") return;
   allQuestions.forEach((question) => {
     const savedAnswers = state.checkedAnswers?.[question.id];
@@ -270,6 +269,8 @@ progress.registerPart("quiz-state", () => ({ checkedCorrectly, checkedAnswers, s
     checkedAnswers[question.id] = valid ? savedAnswers : null;
     question.fieldset.classList.toggle("is-correct", valid);
   });
+  checkedDescription = typeof state.checkedDescription === "string" && state.checkedDescription === descriptionText() ? state.checkedDescription : null;
+  if (checkedDescription) document.getElementById("pv-description-feedback").dataset.status = "korrekt";
   updateStatuses();
   updateSummaryAvailability();
 });

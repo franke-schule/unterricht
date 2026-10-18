@@ -174,10 +174,10 @@ assert.equal((html.match(/unlockSolution\(event, 'R7HZ-DWB4'/g) || []).length, 2
 assert.equal((html.match(/sicherungsblatt-aufgabe-6-loesungen\.pdf/g) || []).length, 2);
 assert.equal((html.match(/name="solution-code"/g) || []).length, 2);
 
-["<strong>Beschreibe</strong>", "<strong>erläutere</strong>", "<strong>Berechne</strong>", "<strong>Zeichne</strong>"].forEach((needle) => assert.ok(html.includes(needle), `Fehlender Operator: ${needle}`));
+["<strong>Beschreibe</strong>", "<strong>Erläutere</strong>", "<strong>Berechne</strong>", "<strong>Zeichne</strong>"].forEach((needle) => assert.ok(html.includes(needle), `Fehlender Operator: ${needle}`));
 
 assert.match(html, /Beschreibe<\/strong>, was bei größerem ω mit/);
-assert.match(html, /erläutere<\/strong>, welche Reihe stärker ausgelenkt wird/);
+assert.match(html, /Erläutere<\/strong> anhand des Kräfteparallelogramms, ob ein Sitz weiter außen eine andere Auslenkung erfährt/);
 assert.match(html, /id="omega-slider" type="range"/);
 assert.match(html, /id="omega-force-diagram"/);
 assert.match(html, /id="rows-svg-title"/);

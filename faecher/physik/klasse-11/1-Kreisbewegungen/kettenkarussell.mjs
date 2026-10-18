@@ -421,10 +421,12 @@ function setupOmegaDiagram() {
     line(part("guide-g"), x, y + gLength, zX, y);
     line(part("radius"), 70, 333, x, 333);
     point(part("radius-label"), (70 + x) / 2, 326);
-    point(part("label-g"), x + 13, y + 68);
-    point(part("label-s"), zX - 48, y - gLength + 28);
-    point(part("label-z"), (x + zX) / 2 - 12, y + 22);
-    point(part("angle-label"), 189 + 36 * Math.sin(alpha / 2), 88);
+    point(part("label-g"), x + 20, y + 62);
+    // Seitlich neben der Pfeilmitte bleiben die Bezeichnungen auch bei
+    // veränderter Auslenkung von Pfeilspitzen und Winkelbogen getrennt.
+    point(part("label-s"), (x + zX) / 2 - 20 * Math.cos(alpha), y - gLength / 2 + 20 * Math.sin(alpha) + 5);
+    point(part("label-z"), (x + zX) / 2, y + 26);
+    point(part("angle-label"), 158, 90);
     const arcX = 178 + 38 * Math.sin(alpha);
     const arcY = 45 + 38 * Math.cos(alpha);
     part("angle").setAttribute("d", `M178 83 A38 38 0 0 0 ${arcX.toFixed(2)} ${arcY.toFixed(2)}`);

@@ -26,6 +26,9 @@
 .rows-figure .rows-chain-outer { stroke: #b45309; stroke-width: 3; }
 .rows-seat-inner { fill: #dbeafe; stroke: #2563eb; stroke-width: 2; }
 .rows-seat-outer { fill: #fef3c7; stroke: #b45309; stroke-width: 2; }
+.carousel-roof { fill: #dbeafe; stroke: #475569; stroke-width: 2; stroke-linejoin: round; }
+.rows-tangent-triangle { fill: #dbeafe; }
+.rows-tangent-figure { width: 100%; max-width: 360px; }
 .rows-figure figcaption { margin-top: 8px; color: #334155; font-weight: 800; text-align: center; }
 .carousel-top-figure figcaption,
 .describe-figure figcaption { margin-top: 8px; color: #334155; font-weight: 800; text-align: center; }
@@ -46,6 +49,14 @@
 text.force-g { fill: #b45309; }
 text.force-s { fill: #2563eb; }
 text.force-z { fill: #dc2626; }
+
+/* Beschriftungen zuletzt zeichnen; ein heller Saum hält Hilfslinien fern. */
+#omega-force-diagram .svg-label {
+  stroke: #ffffff;
+  stroke-width: 4px;
+  stroke-linejoin: round;
+  paint-order: stroke fill;
+}
 
 /* Statische Figuren (Reiter 3 und 4) nutzen dieselben Szenen-Klassen wie
    .force-arrow-grid in kraefte-bewegung.css, liegen aber außerhalb davon und

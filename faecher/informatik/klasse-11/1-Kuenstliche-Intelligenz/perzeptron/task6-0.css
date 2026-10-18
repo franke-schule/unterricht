@@ -19,7 +19,9 @@
 .task6-0-page .task6-0-code code { white-space:pre; }
 .task6-0-page .object-cards { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:.75rem; }
 .task6-0-page .object-card { display:grid; gap:.2rem; min-width:0; padding:.8rem; border:2px solid #126e9c; border-radius:.85rem; background:#fff; }
-.task6-0-page .class-builder { display:grid; gap:.75rem; min-width:0; }
+.task6-0-page .class-builder { display:grid; grid-template-columns:minmax(0,1fr) minmax(0,1.35fr); align-items:start; gap:.75rem; min-width:0; }
+.task6-0-page .class-builder > .knn-bank { flex-direction:column; align-items:stretch; min-width:0; }
+.task6-0-page .class-builder > .knn-slots { min-width:0; }
 .task6-0-page .knn-bank { display:flex; flex-wrap:wrap; gap:.5rem; min-height:3.4rem; padding:.6rem; border:1px dashed #9db4c2; border-radius:.6rem; background:#f9fcfe; }
 .task6-0-page .knn-card { min-height:44px; max-width:100%; border:1px solid #b9d1df; border-radius:9px; padding:8px 12px; color:#12324a; background:#fff; font:inherit; font-weight:750; text-align:left; cursor:grab; touch-action:none; overflow-wrap:anywhere; }
 .task6-0-page .knn-card.is-picked,.task6-0-page .knn-slot.is-picked { outline:3px solid #126e9c; outline-offset:2px; }
@@ -44,6 +46,9 @@
   .task6-0-page .task6-0-content,.task6-0-page .task6-0-ide { grid-column:1; grid-row:auto; }
   .task6-0-page .task6-0-ide { position:static; max-height:none; overflow:visible; }
   .task6-0-page .ide-container iframe { height:650px; }
+}
+@media(max-width:900px) {
+  .task6-0-page .class-builder { grid-template-columns:1fr; }
 }
 @media(max-width:700px) {
   .task6-0-page .tab-list { grid-template-columns:repeat(2,minmax(0,1fr)); }

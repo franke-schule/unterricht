@@ -1,4 +1,4 @@
-/* Nur die Einbettung von Aufgabe 6.0 anpassen; die gemeinsame IDE bleibt unverändert. */
+/* Lokale Einbettung für Aufgaben 6.0 und 6.1; die gemeinsame IDE bleibt unverändert. */
 html .joeCssFence .joe_centerDiv, html .joeCssFence .joe_editorDiv { min-width:0; }
 html .joeCssFence .joe_rightDiv { width:30%; min-width:0; flex-shrink:0; }
 html .joeCssFence .jo_output { overflow-wrap:anywhere; }

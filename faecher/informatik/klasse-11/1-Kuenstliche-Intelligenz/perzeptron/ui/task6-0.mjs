@@ -24,7 +24,7 @@ const BLOCKS = [
   {
     id:'1a', title:'1A Beobachtung', mount:'block-1a',
     prompt:'<strong>Starte</strong> das Programm und <strong>vergleiche</strong> Wuffti und Schnuffi vor und nach dem Methodenaufruf. <strong>Bestimme</strong>, welcher Hund welchen Wert verändert und welcher Hund unverändert bleibt.',
-    fields:[['Objektvariable','petersHund',['petersHund','inasHund','Hund']],['Attribut','alter',['alter','name']],['Wert vorher','5',['5','6','8']],['Wert nachher','6',['6','5','8']],['Zweites Objekt unverändert','ja',['ja','nein']]],
+    fields:[['Dieses Objekt wird verändert.','petersHund',['petersHund','inasHund','Hund']],['Attribut','alter',['alter','name']],['Wert vorher','5',['5','6','8']],['Wert nachher','6',['6','5','8']],['Dieses Objekt wird <u>nicht</u> verändert.','inasHund',['petersHund','inasHund','Hund']]],
     button:'Beobachtung prüfen',
     hints:['Achte auf die Ausgaben unter „Vorher:“ und „Nachher:“ .','Vergleiche zuerst die beiden Zeilen zu Wuffti und danach die beiden zu Schnuffi.','Nur bei Wuffti ändert sich das Alter von 5 auf 6; Schnuffi bleibt 8 Jahre alt.'],
     feedback:['Korrekt. Der Aufruf an `petersHund` ändert nur Wufftis Alter von 5 auf 6; Schnuffi bleibt unverändert.','Teilweise korrekt. Prüfe noch Objektvariable, Attribut und die beiden Alterswerte in der Konsole.','Noch nicht korrekt. Suche zwischen „Vorher:“ und „Nachher:“ genau die geänderte Hundezeile.'],
@@ -107,8 +107,8 @@ const QUIZ = [
 
 function htmlCode(text) { return String(text).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/`([^`]+)`/g, '<code>$1</code>'); }
 function htmlContent(text) {
-  return String(text).split(/(<\/?(?:strong|code)>|<br\s*\/?>)/gi)
-    .map(part => /^<\/?(?:strong|code)>$|^<br\s*\/?>$/i.test(part) ? part : htmlCode(part))
+  return String(text).split(/(<\/?(?:strong|code|u)>|<br\s*\/?>)/gi)
+    .map(part => /^<\/?(?:strong|code|u)>$|^<br\s*\/?>$/i.test(part) ? part : htmlCode(part))
     .join('');
 }
 function readSaved() {
@@ -168,7 +168,7 @@ function renderBlock(block) {
   const prompt = document.createElement('p'); prompt.innerHTML = htmlContent(block.prompt); card.append(prompt);
   const fields = document.createElement('div'); fields.className = 'input-grid'; fields.id = 'fields-' + block.id;
   block.fields.forEach(([labelText, , options], index) => {
-    const label = document.createElement('label'); const id = 'answer-' + block.id + '-' + index; label.htmlFor = id; label.append(document.createTextNode(labelText));
+    const label = document.createElement('label'); const id = 'answer-' + block.id + '-' + index; label.htmlFor = id; label.innerHTML = htmlContent(labelText);
     let input;
     if (options) { input = document.createElement('select'); const blank = document.createElement('option'); blank.value = ''; blank.textContent = '– bitte wählen –'; input.append(blank); options.forEach(value => { const option = document.createElement('option'); option.value = value; option.textContent = value; input.append(option); }); }
     else { input = document.createElement('input'); input.type = 'text'; input.autocomplete = 'off'; }

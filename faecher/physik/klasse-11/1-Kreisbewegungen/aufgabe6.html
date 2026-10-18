@@ -10,9 +10,9 @@
     <link rel="stylesheet" href="kraefte-bewegung.css?v=20260923a">
     <link rel="stylesheet" href="winkelgeschwindigkeit-kreisbewegung.css?v=20260912a">
     <link rel="stylesheet" href="components/physics-notation.css?v=20260922b">
-    <link rel="stylesheet" href="kettenkarussell.css?v=20261018b">
+    <link rel="stylesheet" href="kettenkarussell.css?v=20261018d">
     <script src="../../../informatik/quiz-fragen-pruefen.js?v=20261018a" defer></script>
-    <script type="module" src="kettenkarussell.mjs?v=20261018b"></script>
+    <script type="module" src="kettenkarussell.mjs?v=20261018c"></script>
   </head>
   <body class="physics-revision-page circular-motion-page carousel-page">
     <div class="site-backdrop" aria-hidden="true"></div>
@@ -201,9 +201,9 @@
                   <title id="omega-svg-title">Kräfteparallelogramm am Kettenkarussell</title>
                   <desc id="omega-svg-description">Sitz und Person hängen an einer Kette. Am Schwerpunkt beginnen Gewichtskraft, Seilkraft und waagerechte Resultierende. Der Regler verändert Winkel, Bahnradius und Kraftpfeile.</desc>
                   <defs>
-                    <marker id="omega-arrow-g" markerWidth="9" markerHeight="9" refX="7" refY="3.5" orient="auto"><path d="M0,0 L0,7 L8,3.5 z" fill="#b45309"/></marker>
-                    <marker id="omega-arrow-s" markerWidth="9" markerHeight="9" refX="7" refY="3.5" orient="auto"><path d="M0,0 L0,7 L8,3.5 z" fill="#2563eb"/></marker>
-                    <marker id="omega-arrow-z" markerWidth="9" markerHeight="9" refX="7" refY="3.5" orient="auto"><path d="M0,0 L0,7 L8,3.5 z" fill="#dc2626"/></marker>
+                    <marker id="omega-arrow-g" markerUnits="userSpaceOnUse" markerWidth="20" markerHeight="12" refX="20" refY="6" orient="auto"><path d="M0,0 L20,6 L0,12 z" fill="#b45309"/></marker>
+                    <marker id="omega-arrow-s" markerUnits="userSpaceOnUse" markerWidth="20" markerHeight="12" refX="20" refY="6" orient="auto"><path d="M0,0 L20,6 L0,12 z" fill="#2563eb"/></marker>
+                    <marker id="omega-arrow-z" markerUnits="userSpaceOnUse" markerWidth="20" markerHeight="12" refX="20" refY="6" orient="auto"><path d="M0,0 L20,6 L0,12 z" fill="#dc2626"/></marker>
                   </defs>
                   <line class="carousel-axis" x1="70" y1="20" x2="70" y2="345"/>
                   <text class="svg-label" x="75" y="22">Drehachse</text>
@@ -211,7 +211,6 @@
                   <circle cx="178" cy="45" r="5" fill="#475569"/>
                   <line class="parallelogram-guide" x1="178" y1="45" x2="178" y2="86"/>
                   <path id="omega-angle" class="angle-arc"/>
-                  <text id="omega-angle-label" class="svg-label">α</text>
                   <line id="omega-guide-s" class="parallelogram-guide"/>
                   <line id="omega-guide-g" class="parallelogram-guide"/>
                   <line id="omega-force-g" class="force-g" stroke-width="5" marker-end="url(#omega-arrow-g)"/>
@@ -219,11 +218,12 @@
                   <line id="omega-force-z" class="force-z" stroke-width="5" marker-end="url(#omega-arrow-z)"/>
                   <circle id="omega-seat" r="8" fill="#dbeafe" stroke="#475569" stroke-width="2"/>
                   <circle id="omega-origin" r="5" class="force-origin-marker"/>
-                  <text id="omega-label-g" class="svg-label force-g">F<tspan baseline-shift="sub" font-size="11">G</tspan></text>
-                  <text id="omega-label-s" class="svg-label force-s">F<tspan baseline-shift="sub" font-size="11">S</tspan></text>
-                  <text id="omega-label-z" class="svg-label force-z">F<tspan baseline-shift="sub" font-size="11">ZP</tspan></text>
                   <line id="omega-radius" class="dimension-line" y1="333" y2="333"/>
                   <text id="omega-radius-label" class="svg-label" y="326" text-anchor="middle">r</text>
+                  <text id="omega-angle-label" class="svg-label">α</text>
+                  <text id="omega-label-g" class="svg-label force-g">F<tspan baseline-shift="sub" font-size="11">G</tspan></text>
+                  <text id="omega-label-s" class="svg-label force-s" text-anchor="end">F<tspan baseline-shift="sub" font-size="11">S</tspan></text>
+                  <text id="omega-label-z" class="svg-label force-z" text-anchor="middle">F<tspan baseline-shift="sub" font-size="11">ZP</tspan></text>
                 </svg>
                 <figcaption>Ein Kräfteparallelogramm für Sitz und Person: Bewege den Regler und vergleiche Kraftpfeile, Winkel α und Bahnradius r.</figcaption>
                 <p class="carousel-note">Der waagerechte Pfeil F<sub>ZP</sub> zeigt die Resultierende im Kräfteparallelogramm. Sie ist die Zentripetalkraft F<sub>Z</sub>, also F<sub>ZP</sub> = F<sub>Z</sub>.</p>
@@ -253,7 +253,8 @@
               <figure class="describe-figure rows-figure">
                 <svg viewBox="0 0 440 330" role="img" aria-labelledby="rows-svg-title rows-svg-description">
                   <title id="rows-svg-title">Zwei Sitzreihen am Kettenkarussell von der Seite</title>
-                  <desc id="rows-svg-description">Die äußere Sitzreihe ist weiter von der gemeinsamen Drehachse aufgehängt und hat einen größeren Bahnradius und Auslenkwinkel.</desc>
+                  <desc id="rows-svg-description">Ausschnitt des Karusselldachs mit zwei daran aufgehängten Sitzen. Die äußere Sitzreihe ist weiter von der gemeinsamen Drehachse aufgehängt und hat einen größeren Bahnradius und Auslenkwinkel.</desc>
+                  <path class="carousel-roof" d="M15 32 L45 28 L285 48 L285 52 L15 52 Z"/>
                   <line class="carousel-axis" x1="45" y1="17" x2="45" y2="304"/>
                   <text class="svg-label" x="50" y="20">Drehachse</text>
                   <line class="dimension-line rows-chain-inner" x1="135" y1="52" x2="187" y2="149"/>
@@ -275,10 +276,10 @@
                   <text class="svg-label" x="190" y="261" text-anchor="middle">r<tspan baseline-shift="sub" font-size="11">außen</tspan></text>
                   <text class="svg-label" x="220" y="315" text-anchor="middle">gleiche Kettenlänge · gleiche Vergleichsmasse</text>
                 </svg>
-                <figcaption>Zwei Sitzreihen von der Seite: Die äußere Reihe ist weiter von der gemeinsamen Drehachse entfernt aufgehängt als die innere.</figcaption>
+                <figcaption>Ausschnitt des Karusselldachs mit zwei Sitzreihen von der Seite: Die äußere Reihe ist weiter von der gemeinsamen Drehachse entfernt aufgehängt als die innere.</figcaption>
               </figure>
               <section class="physics-semantic-task" aria-labelledby="rows-question-title">
-                <p id="rows-question-title">Betrachte die beiden Sitzreihen und <strong>erläutere</strong>, welche Reihe stärker ausgelenkt wird. Nutze den Zusammenhang tan(α) = <span class="physics-fraction" role="img" aria-label="F mit Index Z durch F mit Index G"><span class="physics-fraction__numerator">F<sub>Z</sub></span><span class="physics-fraction__denominator">F<sub>G</sub></span></span>.</p>
+                <p id="rows-question-title"><strong>Erläutere</strong> anhand des Kräfteparallelogramms, ob ein Sitz weiter außen eine andere Auslenkung erfährt als ein Sitz im inneren. Nutze für den Zusammenhang zwischen dem Winkel α und dem Radius r den Tangens-Zusammenhang aus dem Kräfteparallelogramm.</p>
                 <label for="rows-answer">Deine Erläuterung</label>
                 <textarea id="rows-answer" maxlength="3000" rows="6"></textarea>
                 <div class="physics-semantic-task__actions"><span id="rows-count">0 von 3000 Zeichen</span><button id="check-rows" type="button">Antwort prüfen</button></div>
@@ -287,9 +288,46 @@
               </section>
             </div>
             <div class="physics-help-stack">
-              <details><summary>Hilfe 1: Hinweis</summary><p>Beide Sitzreihen benötigen für eine Umdrehung dieselbe Zeit T. Welche Größe ω ist deshalb für beide gleich?</p></details>
-              <details><summary>Hilfe 2: Denkansatz</summary><p>Vergleiche für beide Reihen das Verhältnis <span class="physics-fraction" role="img" aria-label="F mit Index Z durch F mit Index G"><span class="physics-fraction__numerator">F<sub>Z</sub></span><span class="physics-fraction__denominator">F<sub>G</sub></span></span>. Bei gleicher Masse ist die Zentripetalkraft auf der Bahn mit größerem Radius größer; für den Winkel entscheidet das Kräfteverhältnis.</p></details>
-              <details><summary>Hilfe 3: Teillösung</summary><p>Setze ein: tan α = <span class="physics-fraction" role="img" aria-label="F mit Index Z durch F mit Index G"><span class="physics-fraction__numerator">F<sub>Z</sub></span><span class="physics-fraction__denominator">F<sub>G</sub></span></span> = <span class="physics-fraction" role="img" aria-label="m gestrichen mal Omega Quadrat mal r durch m gestrichen mal g"><span class="physics-fraction__numerator"><s>m</s> ω² r</span><span class="physics-fraction__denominator"><s>m</s> g</span></span> = <span class="physics-fraction" role="img" aria-label="Omega Quadrat mal r durch g"><span class="physics-fraction__numerator">ω² r</span><span class="physics-fraction__denominator">g</span></span>. ω und g sind für beide Reihen gleich; beim größeren r ist tan α und damit α größer.</p></details>
+              <details>
+                <summary>Hilfe 1: Hinweis</summary>
+                <div class="parallelogram-explain">
+                  <div>
+                    <p>Im rechtwinkligen Dreieck des Kräfteparallelogramms gilt:</p>
+                    <p class="formula-display">tan α = <span class="physics-fraction" role="img" aria-label="Gegenkathete durch Ankathete"><span class="physics-fraction__numerator">Gegenkathete</span><span class="physics-fraction__denominator">Ankathete</span></span> = <span class="physics-fraction" role="img" aria-label="F mit Index Z durch F mit Index G"><span class="physics-fraction__numerator">F<sub>Z</sub></span><span class="physics-fraction__denominator">F<sub>G</sub></span></span>.</p>
+                  </div>
+                  <figure class="parallelogram-figure rows-tangent-figure">
+                    <svg viewBox="0 0 360 275" role="img" aria-labelledby="rows-tangent-title rows-tangent-description">
+                      <title id="rows-tangent-title">Tangens im Kräfteparallelogramm des Kettenkarussells</title>
+                      <desc id="rows-tangent-description">Am Sitz beginnen die Seilkraft F S schräg nach links oben, die Gewichtskraft F G senkrecht nach unten und ihre Resultierende F Z waagerecht nach links zur Drehachse. Gestrichelte Parallelen ergänzen das Parallelogramm. Das hervorgehobene rechtwinklige Dreieck hat am oberen Eck den Winkel Alpha zwischen Seilkraft und Senkrechter: Gegenkathete ist F Z, Ankathete ist die parallel verschobene Gewichtskraft F G.</desc>
+                      <defs>
+                        <marker id="rows-tan-arrow-g" markerUnits="userSpaceOnUse" markerWidth="14" markerHeight="10" refX="14" refY="5" orient="auto"><path d="M0 0 L14 5 L0 10 Z" fill="#b45309"/></marker>
+                        <marker id="rows-tan-arrow-s" markerUnits="userSpaceOnUse" markerWidth="14" markerHeight="10" refX="14" refY="5" orient="auto"><path d="M0 0 L14 5 L0 10 Z" fill="#2563eb"/></marker>
+                        <marker id="rows-tan-arrow-z" markerUnits="userSpaceOnUse" markerWidth="14" markerHeight="10" refX="14" refY="5" orient="auto"><path d="M0 0 L14 5 L0 10 Z" fill="#dc2626"/></marker>
+                      </defs>
+                      <path class="rows-tangent-triangle" d="M260 150 L140 60 L140 150 Z"/>
+                      <line class="dimension-line" x1="100" y1="30" x2="260" y2="150"/>
+                      <text class="svg-label" x="80" y="24">Kette</text>
+                      <line class="parallelogram-guide" x1="140" y1="60" x2="140" y2="150"/>
+                      <line class="parallelogram-guide" x1="260" y1="240" x2="140" y2="150"/>
+                      <path class="dimension-line" fill="none" d="M140 138 H152 V150"/>
+                      <path class="angle-arc" d="M140 90 A30 30 0 0 0 164 78"/>
+                      <line class="force-g" x1="260" y1="150" x2="260" y2="240" stroke-width="4" marker-end="url(#rows-tan-arrow-g)"/>
+                      <line class="force-s" x1="260" y1="150" x2="140" y2="60" stroke-width="4" marker-end="url(#rows-tan-arrow-s)"/>
+                      <line class="force-z" x1="260" y1="150" x2="140" y2="150" stroke-width="4" marker-end="url(#rows-tan-arrow-z)"/>
+                      <circle class="force-origin-marker" cx="260" cy="150" r="5"/>
+                      <text class="svg-label" x="164" y="101">α</text>
+                      <text class="svg-label force-g" x="125" y="113" text-anchor="end">F<tspan baseline-shift="sub" font-size="11">G</tspan></text>
+                      <text class="svg-label force-g" x="275" y="205">F<tspan baseline-shift="sub" font-size="11">G</tspan></text>
+                      <text class="svg-label force-s" x="220" y="105">F<tspan baseline-shift="sub" font-size="11">S</tspan></text>
+                      <text class="svg-label force-z" x="195" y="174" text-anchor="middle">F<tspan baseline-shift="sub" font-size="11">Z</tspan></text>
+                      <text class="svg-label" x="275" y="155">Sitz</text>
+                    </svg>
+                    <figcaption>Zum Winkel α: Gegenkathete F<sub>Z</sub>, Ankathete F<sub>G</sub>.</figcaption>
+                  </figure>
+                </div>
+              </details>
+              <details><summary>Hilfe 2: Denkansatz</summary><p>Es gilt tan α = <span class="physics-fraction" role="img" aria-label="F mit Index Z durch F mit Index G"><span class="physics-fraction__numerator">F<sub>Z</sub></span><span class="physics-fraction__denominator">F<sub>G</sub></span></span> = <span class="physics-fraction" role="img" aria-label="m mal Omega Quadrat mal r durch m mal g"><span class="physics-fraction__numerator">m · ω² · r</span><span class="physics-fraction__denominator">m · g</span></span> = <span class="physics-fraction" role="img" aria-label="Omega Quadrat mal r durch g"><span class="physics-fraction__numerator">ω² · r</span><span class="physics-fraction__denominator">g</span></span>. Welche Größen bleiben gleich, welche ändern sich?</p></details>
+              <details><summary>Hilfe 3: Teillösung</summary><p>Die Winkelgeschwindigkeit ω ist bei beiden Sitzen gleich. Wie verhält sich die Auslenkung α wenn der Radius beim äußeren Sitz größer ist?</p></details>
             </div>
           </article>
           <nav class="physics-step-next" aria-label="Weiter zum nächsten Reiter"><button type="button" class="physics-primary-button" data-next-tab="summary">Weiter: Auswertung</button></nav>

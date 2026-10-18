@@ -29,6 +29,11 @@
 .graph-point-label, .graph-end-label { fill: #172f49; font-size: 15px; font-weight: 800; paint-order: stroke; stroke: white; stroke-width: 4px; stroke-linejoin: round; }
 .pv-setup-figures figure { padding: .5rem; border: 1px solid #d9e4ed; border-radius: 12px; background: #fbfdff; }
 .pv-setup-figures svg { color: #193851; font: 26px/1.25 system-ui, sans-serif; }
+.pv-setup-figures svg { font-size: 13px; }
+.circuit-solar-outline { fill: none; stroke: #1b7894; stroke-width: 3; }
+.pv-setup-figures { max-width: 780px; margin-inline: auto; }
+.pv-work-order { margin-top: .25rem; }
+.pv-summary-description { grid-column: 1 / -1; padding: .8rem; border: 1px solid #d4e0e9; border-radius: 9px; background: #fff; }
 .circuit-wire { fill: none; stroke: #285b79; stroke-width: 4; stroke-linecap: round; stroke-linejoin: round; }
 .circuit-voltage { fill: none; stroke: #5680a0; stroke-width: 2.5; stroke-dasharray: 6 5; }
 .circuit-meter { fill: #fff; stroke: #285b79; stroke-width: 3; }
