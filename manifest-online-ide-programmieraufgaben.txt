@@ -46,26 +46,24 @@ Antwortfelder und Rueckmeldungsbereiche erhalten eindeutige IDs. Jeder
 Pruefbutton muss eindeutig der richtigen Teilaufgabe zugeordnet sein.
 
 
-3. Auswertung und Apps Script
------------------------------
+3. Auswertung ueber Scaleway
+----------------------------
 
-Bestehende JSONP-/Apps-Script-Schnittstellen nicht veraendern, solange keine
-Serveraenderung ausdruecklich verlangt ist.
-
-Die Dateien in apps-script/ nur aendern, wenn dies zum Auftrag gehoert. Bei
-reinen Seitenproblemen zuerst clientseitig untersuchen.
+Es gilt manifest-allgemein.txt Abschnitt 0. Neue KI-Aufgaben automatisch in
+scaleway-functions/source/tasks.js eintragen, passende Servertests ergaenzen
+und die Upload-ZIP bauen. apps-script/ bleibt als unveraendertes Archiv
+erhalten. Bei reinen Seitenproblemen zuerst clientseitig untersuchen.
 
 Bei neuen Aufgaben pruefen:
 
   - Existiert ein passender taskId-/Aufgabenbezug?
-  - Ist die Seite in Config.gs oder der vorhandenen Konfiguration vorgesehen?
+  - Ist die Aufgabe in scaleway-functions/source/tasks.js registriert?
   - Bleibt die Rueckgabe mit der vorhandenen Clientlogik kompatibel?
   - Verwendet jeder Button den richtigen Teilaufgaben-Key?
-  - Kann eine lange Antwort die maximale JSONP-URL-Laenge ueberschreiten?
+  - Werden die bestehenden Eingabegrenzen vor dem POST/JSON-Aufruf geprueft?
 
-Bei langen Antworten die URL-Laenge vor dem Absenden clientseitig behandeln
-und eine konkrete Meldung anzeigen. Ein HTTP-Fehler durch eine zu lange URL darf
-nicht pauschal als nicht erreichbarer Auswertungsserver ausgegeben werden.
+Zu lange Antworten oder Programme vor dem Absenden mit einer konkreten
+Meldung behandeln. Kein JSONP und keine Eingabeuebertragung in einer URL.
 
 
 4. Rueckmeldungsregeln
@@ -90,7 +88,8 @@ Zusaetzlich zur allgemeinen Checkliste:
   [ ] Jeder Pruefbutton verwendet den richtigen Teilaufgaben-Key.
   [ ] Erfolgs-, Fehler- und Servermeldungen erscheinen am richtigen Feld.
   [ ] Normale und lange Antworten wurden getestet.
-  [ ] Apps-Script blieb unveraendert, falls keine Serveraenderung verlangt war.
+  [ ] Scaleway-Quellen, Tests und Upload-ZIP sind aktuell; apps-script/ blieb
+      unveraendert. Ausstehende Bereitstellung ist bei der Uebergabe genannt.
   [ ] Sicherungsblatt- und Lehrercode-Regeln aus manifest-allgemein.txt gelten.
 
 

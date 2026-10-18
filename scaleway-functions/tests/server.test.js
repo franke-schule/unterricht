@@ -198,10 +198,10 @@ test('Lokale Aufrufbremse begrenzt Aufrufe ohne IPs oder Schülertexte zu speich
   assert.equal((await handle(post())).statusCode, 200);
 });
 
-test('Alle Aufgaben, Prompts, Normalisierungen und Regeln stimmen mit den Originalen überein', () => {
+test('Alle Aufgaben, Prompts, Normalisierungen und Regeln stimmen mit den Scaleway-Quellen überein', () => {
   const context = vm.createContext({});
-  for (const filename of ['Tasks.gs', 'EvaluationSchema.gs', 'Helpers.gs', 'Rules.gs', 'Gemini.gs']) {
-    vm.runInContext(fs.readFileSync(path.join(__dirname, '..', '..', 'apps-script', filename), 'utf8'), context);
+  for (const filename of ['config.js', 'tasks.js', 'evaluation-schema.js', 'helpers.js', 'rules.js', 'prompt.js']) {
+    vm.runInContext(fs.readFileSync(path.join(__dirname, '..', 'source', filename), 'utf8'), context);
   }
   assert.equal(JSON.stringify(core.TASKS), vm.runInContext('JSON.stringify(TASKS)', context));
   assert.equal(JSON.stringify(core.EVALUATION_SCHEMA), vm.runInContext('JSON.stringify(EVALUATION_SCHEMA)', context));

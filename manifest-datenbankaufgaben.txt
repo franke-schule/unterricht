@@ -68,9 +68,11 @@ Barrierearmut, Rueckmeldungen und Abschlusspruefung gelten zusaetzlich.
 4. Beschreibe-Aufgaben
 -----------------------
 
-  - Die bestehende Skript-Server-Pipeline und die vorhandenen
-    Bewertungsrubriken wiederverwenden. Keine neue API oder KI-Pipeline
-    einfuehren.
+  - Die bestehende Scaleway-Pipeline und die vorhandenen Bewertungsrubriken
+    wiederverwenden. Neue KI-Aufgaben automatisch in
+    scaleway-functions/source/tasks.js eintragen, testen und die Upload-ZIP
+    bauen (manifest-allgemein.txt Abschnitt 0). apps-script/ bleibt
+    unveraendertes Archiv. Keine neue API oder KI-Pipeline einfuehren.
   - Die Rueckmeldung direkt bei der Aufgabe in einem deutlich abgegrenzten
     Rahmen anzeigen.
   - Erreichte und maximal erreichbare Punktzahl sowie den Status als Text

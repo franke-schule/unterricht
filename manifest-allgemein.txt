@@ -19,6 +19,55 @@ konkretisieren, aber Navigation, Barrierearmut und Schutz von Sicherungsblaetter
 nicht umgehen.
 
 
+0. Automatisiertes KI-Feedback: Scaleway
+---------------------------------------
+
+Neue und ueberarbeitete Aufgaben mit automatisiertem KI-Feedback verwenden
+ausschliesslich den bestehenden Scaleway-Auswertungsserver. Die benoetigten
+Servereintraege gehoeren automatisch zum Aufgabenauftrag; ein gesonderter
+Auftrag fuer die Serverdateien ist nicht erforderlich.
+
+Massgebliche, bearbeitbare Quellen liegen unter scaleway-functions/source/:
+
+  tasks.js              Aufgaben-IDs, Anweisungen, Kontexte und Rubriken
+  rules.js              bestehende regelbasierte Bewertungsnachbearbeitung
+  prompt.js             gemeinsamer Promptaufbau
+  evaluation-schema.js  Ergebnisschema
+  helpers.js            gemeinsame Normalisierung und Hilfsfunktionen
+  config.js             Eingabegrenzen und kompatible Ergebnistypen
+
+Bestehende Aufgabenstruktur und Client-Anbindung wiederverwenden. Neue
+Aufgaben in tasks.js registrieren und passende Tests unter
+scaleway-functions/tests/ ergaenzen. rules.js nur erweitern, wenn eine
+aufgabenspezifische Regel benoetigt wird. Die generierten Dateien
+evaluation-core.js und source-manifest.json nicht von Hand bearbeiten.
+
+Die Google-Skript-Dateien unter apps-script/ bleiben als Archiv erhalten.
+Sie werden weder geloescht noch fuer neue Aufgaben oder Rueckmeldungen
+geaendert und sind keine Build- oder Laufzeitabhaengigkeit von Scaleway.
+Eine parallele Google-Bereitstellung oder Pflege ist nicht erforderlich.
+Diese Regel ersetzt aeltere Google-/Apps-Script-Vorgaben in Referenzdateien
+und Loeschanleitungen; deren fachliche Bewertungsregeln bleiben Vorlagen.
+
+Vor jeder Uebergabe mit neuen, geaenderten oder entfernten KI-Aufgaben:
+
+  1. node scaleway-functions/build-core.js
+  2. node --test scaleway-functions/tests/*.test.js
+     sowie die betroffenen aufgabenspezifischen Tests ausfuehren.
+  3. In PowerShell: & ./scaleway-functions/package.ps1
+     Das erzeugt scaleway-functions/dist/ki-auswertung-test.zip und die
+     zugehoerige SHA256-Datei mit dem aktuellen Aufgabenbestand.
+  4. ZIP samt Uploadhinweis uebergeben. Neue Aufgaben und Loeschungen sind
+     erst nach Upload und erneuter Bereitstellung der Function
+     ki-auswertung auf Scaleway online wirksam. Ohne Serverzugriff oder
+     bestaetigten Live-Test keine erfolgreiche Online-Aenderung behaupten.
+
+Transport: vorhandene Scaleway-Anbindung evaluateSemanticAnswer bzw.
+evaluateCodeAnswer verwenden (POST/JSON, keine neue KI-Pipeline und kein
+Google-Fallback). Bei Loeschungen auch die Aufgaben-IDs aus tasks.js und
+zugehoerige Regeln/Tests entfernen oder anpassen und eine neue ZIP bauen.
+
+
 1. Ordner, Dateinamen und Menues
 --------------------------------
 
@@ -443,6 +492,9 @@ Vor Abschluss mindestens pruefen:
   [ ] Jede MC-Frage hat einen eigenen Pruefen-Button, auch im
       Abschlussquiz.
   [ ] Inline-JavaScript ist syntaktisch gueltig.
+  [ ] Bei KI-Feedback: Scaleway-Aufgaben und passende Tests sind enthalten;
+      Build, Tests und ZIP sind aktuell, apps-script/ blieb unveraendert.
+      Noch ausstehender Upload und Live-Pruefung sind klar benannt.
   [ ] Sicherungsblatt-Download ist anfangs verborgen.
   [ ] Lehrercode stimmt mit der Dekodierdatei ueberein.
   [ ] Neue PDFs wurden gebaut, gerendert und visuell geprueft.

@@ -1,25 +1,25 @@
 # Scaleway-Testserver für die Unterrichtswebsite
 
-Stand 13.10.2026: Der Healthcheck der bereitgestellten Function meldet 69
-Aufgaben, die lokale `apps-script/Tasks.gs` enthielt vor der Bereinigung 67
-und enthält jetzt 64. Die drei nicht mehr verwendeten Quizaufgaben wurden
-aus der gemeinsamen Serverquelle entfernt. Vor einem erneuten
-Codeupload müssen die beiden zusätzlich bereitgestellten Aufgaben mit der
-aktuellen Serverquelle abgeglichen werden. Ein Paket aus dem lokalen Stand
-würde diese Aufgaben sonst entfernen. Die Bewertungsroute `11-5-1` wird
-weiterhin von Modul 5.2 verwendet und muss erhalten bleiben.
+Stand 18.10.2026: Maßgebliche Quellen sind ausschließlich die JavaScript-Dateien
+unter `scaleway-functions/source/`. `apps-script/` bleibt als unverändertes
+Google-Archiv erhalten und wird weder für neue Aufgaben gepflegt noch zum Bau
+oder Betrieb von Scaleway benötigt. Es gilt `manifest-allgemein.txt`, Abschnitt 0.
 
-Die drei entfernten Quizkennungen sind auf dem laufenden Server noch registriert:
-Leere Prüfanfragen wurden jeweils mit `INPUT_TOO_SHORT` abgewiesen. Dabei wurde
-kein Modell aufgerufen. Die Bereinigung erfordert deshalb eine neue
-Function-Bereitstellung aus der zuvor abgeglichenen Quelle. Das neu gebaute
-lokale ZIP enthält 64 Aufgaben und wurde noch nicht hochgeladen.
+Inf9 Datenbanken Aufgabe 2 wurde lokal einschließlich Sicherungsblatt entfernt.
+Das aktuelle ZIP enthält 71 Bewertungsaufgaben; ausschließlich die vier
+Bewertungskennungen dieses Moduls wurden aus dem bisherigen lokalen Bestand
+von 75 entfernt. Die Bewertungsroute `11-5-1` für Modul 5.2 bleibt erhalten.
+Der Live-Healthcheck meldet noch 75 Aufgaben; leere Prüfanfragen für alle vier
+entfernten Kennungen lieferten `INPUT_TOO_SHORT`, ohne Modellaufruf.
+Die Online-Löschung steht aus: Die verantwortliche Person lädt das ZIP in die
+Function `ki-auswertung` hoch und stellt sie erneut bereit. Anschließend müssen
+die vier Kennungen `UNKNOWN_TASK` liefern. Gleiche Aufgabenzahlen vor der
+Bereinigung belegen allein keine vollständige Übereinstimmung des Live-Codes;
+ein aktueller Live-Quellcodeexport liegt hier nicht vor.
 
-Dieser Server übernimmt Aufgaben, Prompts, Bewertungsregeln und Ergebnisformat
-aus `apps-script/`. Der Google-Server bleibt erhalten. Am 10.10.2026 wurden
-35 lokale Website-Dateien auf diesen Server umgestellt; noch nicht veröffentlicht.
-Die zwei weiteren manuellen Tests wurden auf ausdrücklichen Benutzerwunsch
-übersprungen und durch automatische technische Prüfungen ergänzt.
+Die späteren Chat-Schritt-Abschnitte dokumentieren die historische Migration
+vom 10.10.2026. Angaben zur Google-Bereitstellung und damalige Uploadstände
+sind historische Protokolle, keine Voraussetzung für neue Aufgaben.
 
 ## Bauen und prüfen
 
@@ -29,15 +29,22 @@ Aus dem Repository-Verzeichnis:
 ```powershell
 node scaleway-functions/build-core.js
 node --test scaleway-functions/tests/*.test.js
-node --test apps-script/tests/*.test.js
 & ./scaleway-functions/package.ps1
 ```
 
-`build-core.js` übernimmt `Tasks.gs`, `EvaluationSchema.gs`, die reinen Funktionen
-aus `Helpers.gs`, `Rules.gs` und den Promptaufbau aus `Gemini.gs`. Grenzen und
-Ergebnistypen stammen aus `Config.gs`. Bei geänderter Quellstruktur bricht die
-Extraktion ab. Generierter Kern und SHA256-Quellmanifest liegen im ZIP; bei jeder
-neuen Bereitstellung das getestete ZIP samt Prüfsumme extern archivieren.
+`source/tasks.js` enthält Aufgaben und Bewertungsrubriken, `source/rules.js`
+die regelbasierte Nachbearbeitung. Gemeinsame Quellen sind `prompt.js`,
+`helpers.js`, `evaluation-schema.js` und `config.js`. Neue KI-Aufgaben werden
+automatisch in diesen Scaleway-Quellen samt passenden Tests ergänzt; Google-
+Dateien werden dafür nicht geändert. Bestehende Frontend-Anbindung verwenden.
+
+`build-core.js` bündelt diese sechs Dateien unverändert zum generierten
+`evaluation-core.js` und erstellt das SHA256-Quellmanifest. Beide generierten
+Dateien nicht manuell ändern. `package.ps1` erzeugt `dist/ki-auswertung-test.zip`
+und `dist/ki-auswertung-test.sha256.txt`; die fünf Laufzeitdateien liegen direkt
+im ZIP-Root. Bei jeder Bereitstellung das getestete ZIP samt Prüfsumme extern
+archivieren. Archivtests unter `apps-script/tests/` bleiben erhalten; neue
+Bewertungstests gehören unter `scaleway-functions/tests/`.
 
 ## Konfiguration auf Scaleway
 
@@ -352,8 +359,8 @@ einem getrennten Function-Zugriffsschlüssel aufgerufen werden.
 
 Lokale Tests verwenden simulierte Modellantworten. Sie ersetzen nicht die Tests
 der echten Scaleway-Laufzeit, des gewählten Modells, der Klassenlast und jeder
-betroffenen Website-Aufgabe. Der vorhandene Google-Live-Export muss vor dem
-Produktivwechsel mit den lokalen Aufgaben-/Regeldateien abgeglichen sein.
+betroffenen Website-Aufgabe. Maßgeblich für künftige Änderungen sind die
+Scaleway-Quellen unter `source/`; Google-Abgleich ist nicht erforderlich.
 
 ## Rückweg
 

@@ -42,8 +42,9 @@ eigens genannt werden; fehlt ein Schritt, ist das Quiz nicht fertig.
   1. Modul N vollständig lesen und den Lernkern festhalten (Abschnitt 1).
   2. Quizseite bauen: aufgabeN-quiz.html, .mjs/.js und .css nach der
      Referenzimplementierung (Abschnitte 2 und 4). Nicht im Menü verlinken.
-  3. Zwei bis drei Beschreibe-Aufgaben samt Einträgen in apps-script/
-     Tasks.gs, Config.gs und tests/code-routing.test.js anlegen
+  3. Zwei bis drei Beschreibe-Aufgaben samt Einträgen in
+     scaleway-functions/source/tasks.js und passenden Tests unter
+     scaleway-functions/tests/ anlegen
      (Abschnitt 3).
   4. Die Löschanleitung aufgabeN-quiz-loeschen.txt schreiben (Abschnitt 5).
   5. Präsentation der Einheit erweitern: eigene Quiz-Folie direkt hinter der
@@ -54,9 +55,10 @@ eigens genannt werden; fehlt ein Schritt, ist das Quiz nicht fertig.
      Browser (Abschnitt 7).
   7. Übergabe an die verantwortliche Person mit den Schritten, die nur sie
      erledigen kann:
-       - Tasks.gs und Config.gs in Google Apps Script übernehmen und eine
-         neue Version bereitstellen (vorher werden die Beschreibe-Aufgaben
-         online nicht bewertet),
+       - die fertig gebaute scaleway-functions/dist/ki-auswertung-test.zip
+         auf Scaleway in die Function ki-auswertung hochladen und erneut
+         bereitstellen (vorher werden neue Beschreibe-Aufgaben online
+         nicht bewertet),
        - Website hochladen,
        - Änderungen committen (in unterricht und ggf. informatik-material),
        - gewünschten Kurzlink anlegen, falls noch keiner angegeben war.
@@ -164,7 +166,7 @@ Prüfen und Rückmeldung je Aufgabe (kein Abgabe-Button am Ende):
     Lernziel des Moduls und mit möglichst wenig Überschneidung.
   - Jede Aufgabe nennt eine konkrete Situation und verlangt drei bis vier
     fachliche Aspekte. Die Aspektzahl steht in der Aufgabenüberschrift.
-  - Bewertet wird über den vorhandenen Skriptserver (apps-script/) und die
+  - Bewertet wird über den vorhandenen Scaleway-Server und die
     vorhandene Client-Anbindung evaluateSemanticAnswer aus
     faecher/informatik/klasse-11/1-Kuenstliche-Intelligenz/perzeptron/ui/
     semantic-answer.mjs. Keine eigene KI-Pipeline.
@@ -185,31 +187,28 @@ Prüfen und Rückmeldung je Aufgabe (kein Abgabe-Button am Ende):
 
 Einträge auf dem Skriptserver, je Beschreibe-Aufgabe:
 
-  apps-script/Tasks.gs
+  scaleway-functions/source/tasks.js
     Aufgaben-ID nach dem Schema
       <fachkürzel><klasse>-a<N>-quiz-<stichwort>-beschreibung
       z. B. ph11-a3-quiz-karussell-beschreibung
     Alle IDs eines Quiz teilen sich das Präfix <fachkürzel><klasse>-a<N>-quiz-
-    und stehen als zusammenhängender Block in Tasks.gs.
+    und stehen als zusammenhängender Block in tasks.js.
     Felder wie in der Vorlage: title, grade, maxPoints, systemInstruction,
     instruction („Die Antwort stammt aus einem Test …“, keine vollständige
     Musterlösung ausgeben), context (Unterrichtsinhalte aus dem Modul und
     der Aufgabentext wörtlich), expectedAspects (Anzahl = maxPoints), rubric
     (gleichwertige Formulierungen und ausdrücklich nicht zu wertende
     Fehlvorstellungen), feedbackHints, statusLabels.
-  apps-script/Config.gs
-    eine Kommentarzeile im Kopf:
-      " * - <fach><klasse>/<einheit>/aufgabeN-quiz.html (n Beschreibe-Aufgaben,
-        nicht verlinkter Test)"
-  apps-script/tests/code-routing.test.js
-    jede Aufgaben-ID in die Liste der geprüften Beschreibe-Aufgaben.
+  scaleway-functions/tests/
+    passende Tests für Aufgaben-IDs, Rubriken und die Client-Anbindung.
 
-Nach dem Anlegen und nach dem Löschen: Tasks.gs und Config.gs in das
-Google-Apps-Script-Projekt übernehmen und die Bereitstellung auf eine neue
-Version setzen (Bereitstellen > Bereitstellungen verwalten > Bearbeiten >
-Version: Neue Version). Die /exec-URL bleibt gleich. Solange das nicht
-geschehen ist, kennt der Online-Server die Aufgaben nicht beziehungsweise
-weiterhin.
+Nach dem Anlegen und nach dem Löschen: Scaleway-Kern bauen, Tests ausführen
+und mit package.ps1 eine aktuelle Upload-ZIP erzeugen
+(manifest-allgemein.txt Abschnitt 0). Die ZIP in der Scaleway-Function
+ki-auswertung hochladen und erneut bereitstellen. Solange das nicht
+geschehen ist, kennt der Online-Server neue Aufgaben nicht beziehungsweise
+gelöschte Aufgaben weiterhin. apps-script/ bleibt unverändertes Archiv;
+keine Google-Skript-Dateien ändern und keine Google-Bereitstellung pflegen.
 
 
 4. Dateien und Einbindung
@@ -238,8 +237,9 @@ Regeln:
     ein. So lässt sich jedes Quiz einzeln und ohne Reste löschen.
   - Das Skript beginnt mit einem Kommentar, der auf aufgabeN-quiz-loeschen.txt
     verweist.
-  - Vor der Übergabe: node --check für das Skript, die Tests in apps-script/
-    tests und die Modultests der Einheit ausführen, git diff --check, und die
+  - Vor der Übergabe: node --check für das Skript, die Tests in
+    scaleway-functions/tests/ und die Modultests der Einheit ausführen,
+    aktuelle Upload-ZIP bauen, git diff --check, und die
     Seite im Browser bearbeiten, jede Aufgabe prüfen und die Rückmeldungen kontrollieren (Desktop
     und Smartphone).
 
@@ -259,9 +259,9 @@ enthält:
   - Alle Aufgaben-IDs auf dem Skriptserver mit Aufgabentext und Punktzahl.
   - Eine abhakbare Checkliste:
       [ ] Quizdateien löschen (git rm).
-      [ ] Tasks.gs: alle Blöcke mit dem Präfix des Quiz entfernen.
-      [ ] Config.gs: die Kommentarzeile entfernen.
-      [ ] code-routing.test.js: die IDs entfernen, Kommas prüfen.
+      [ ] scaleway-functions/source/tasks.js: alle Blöcke mit dem Präfix
+          des Quiz entfernen; zugehörige Regeln bei Bedarf bereinigen.
+      [ ] Passende Scaleway-Tests anpassen, übrige Aufgaben erhalten.
       [ ] Präsentation: die Quiz-Folie entfernen, die folgenden Folien
           wieder um eins zurückzählen (id und aria-label) und die
           abgelegte QR-SVG-Datei löschen.
@@ -269,8 +269,10 @@ enthält:
       [ ] Restekontrolle mit git grep -nw "aufgabeN-quiz" und git grep -n
           "<ID-Präfix>" (in beiden Repositorys).
       [ ] Tests ausführen.
-      [ ] Skriptserver: Tasks.gs und Config.gs in Google Apps Script
-          übernehmen und eine neue Version bereitstellen.
+      [ ] Scaleway-Kern und Upload-ZIP neu bauen; ZIP in ki-auswertung
+          hochladen und erneut bereitstellen. apps-script/ unverändert lassen.
+      [ ] Live-Prüfung der entfernten IDs ohne Modellaufruf: erwartet ist
+          UNKNOWN_TASK. Ohne Zugriff keine bestätigte Serverlöschung melden.
       [ ] Website neu hochladen.
       [ ] Zuletzt die Löschanleitung selbst löschen.
   - Den localStorage-Schlüssel mit dem Hinweis, dass er in den Browsern
@@ -353,8 +355,8 @@ anlegen.
   [ ] Alle Aufgaben wiederholen nur Inhalte des zugehörigen Moduls.
   [ ] Multiple Choice mit Auswahlkästchen, mindestens zwei Fragen mit
       mehreren richtigen Antworten.
-  [ ] Zwei bis drei Beschreibe-Aufgaben, jeweils mit Tasks.gs-Eintrag,
-      Config.gs-Zeile und Eintrag in code-routing.test.js.
+  [ ] Zwei bis drei Beschreibe-Aufgaben, jeweils mit Eintrag in
+      scaleway-functions/source/tasks.js und passenden Scaleway-Tests.
   [ ] Jede Aufgabe (jede MC-Frage) hat einen eigenen Prüfen-Button, kein
       Abgabe-Button; Rückmeldung dreistufig mit fachlichem Warum, ohne die
       Lösung vorzusagen; gelöste Aufgaben sind gesperrt; gewertet wird der
@@ -366,7 +368,7 @@ anlegen.
   [ ] Präsentation hat direkt hinter der Modulfolie eine eigene Quiz-Folie
       mit Link und passendem QR-Code; folgende Folien sind umnummeriert;
       Kurzlink nur, wenn beauftragt.
-  [ ] Übergabe nach Abschnitt 0, Schritt 7: Apps-Script-Bereitstellung,
-      Website-Upload, Commit, ggf. Kurzlink.
+  [ ] Übergabe nach Abschnitt 0, Schritt 7: fertig gebaute Scaleway-ZIP
+      samt Bereitstellungshinweis, Website-Upload, Commit, ggf. Kurzlink.
   [ ] Tests, node --check und git diff --check ohne Fehler; im Browser
       interaktiv getestet.

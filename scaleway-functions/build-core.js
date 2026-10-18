@@ -1,43 +1,25 @@
 'use strict';
 
-// Die .gs-Quellen bleiben unverändert. Nur reine Bewertungsfunktionen werden
-// für das Deployment gebündelt; Google-HTTP-Aufrufe und iframe-Ausgaben fehlen.
+// Die maßgeblichen Quellen liegen unter source/. apps-script/ ist ein Archiv
+// und wird weder für den Build noch für neue Aufgaben verwendet.
 const fs = require('node:fs');
 const path = require('node:path');
 const crypto = require('node:crypto');
 const vm = require('node:vm');
 
-const sourceDirectory = path.resolve(__dirname, '..', 'apps-script');
+const sourceDirectory = path.join(__dirname, 'source');
 const sourceHashes = {};
 function read(name) {
   const raw = fs.readFileSync(path.join(sourceDirectory, name));
   sourceHashes[name] = crypto.createHash('sha256').update(raw).digest('hex');
   return raw.toString('utf8').replace(/\r\n/g, '\n');
 }
-function extract(source, start, end) {
-  const first = source.indexOf(start);
-  const last = source.indexOf(end, first + start.length);
-  if (first < 0 || last < first) throw new Error('Quellstruktur geändert; Extraktion prüfen.');
-  return source.slice(first, last);
-}
-
-const helpers = read('Helpers.gs');
-const helperEnd = helpers.indexOf('function createPostMessageResponse_');
-if (helperEnd < 0) throw new Error('Quellstruktur von Helpers.gs geändert.');
-const gemini = read('Gemini.gs');
-const config = read('Config.gs');
 const sections = [
-  read('Tasks.gs'), read('EvaluationSchema.gs'),
-  helpers.slice(0, helperEnd), read('Rules.gs'),
-  extract(gemini, 'function buildPrompt_(', 'function extractGeminiText_(')
+  read('config.js'), read('tasks.js'), read('evaluation-schema.js'),
+  read('helpers.js'), read('rules.js'), read('prompt.js')
 ];
-const configContext = vm.createContext({});
-vm.runInContext(config, configContext);
-const constants = vm.runInContext('({MAX_ANSWER_LENGTH, MAX_CODE_LENGTH, RESULT_MESSAGE_TYPE, CODE_RESULT_MESSAGE_TYPE})', configContext);
-const constantSource = Object.entries(constants)
-  .map(([name, value]) => `const ${name} = ${JSON.stringify(value)};`).join('\n');
-const output = '// Generiert durch build-core.js aus apps-script/. Nicht manuell ändern.\n' +
-  "'use strict';\n" + constantSource + '\n' + sections.join('\n\n') +
+const output = '// Generiert durch build-core.js aus scaleway-functions/source/. Nicht manuell ändern.\n' +
+  "'use strict';\n" + sections.join('\n\n') +
   '\nmodule.exports = { TASKS, EVALUATION_SCHEMA, buildPrompt_, normalizeEvaluation_, ' +
   'applyRuleBasedMinimum_, createErrorResult_, MAX_ANSWER_LENGTH, MAX_CODE_LENGTH, ' +
   'RESULT_MESSAGE_TYPE, CODE_RESULT_MESSAGE_TYPE };\n';
