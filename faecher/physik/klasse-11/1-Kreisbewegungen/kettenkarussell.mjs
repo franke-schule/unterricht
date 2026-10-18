@@ -67,7 +67,7 @@ function joinList(items) {
 
 // ---- 5.1 renderMultipleChoice (Kopie aus kraefte-bewegung.mjs, drei Anpassungen) ----
 
-function renderMultipleChoice({ targetId, taskNumber, question, options, correct, success, hint, optionHints = {} }) {
+function renderMultipleChoice({ targetId, taskNumber, question, options, correct, success, hint, optionHints = {}, externalCheck = false }) {
   const target = document.getElementById(targetId);
   const fieldset = document.createElement("fieldset");
   fieldset.className = "physics-quiz-question quiz-question";
@@ -106,8 +106,10 @@ function renderMultipleChoice({ targetId, taskNumber, question, options, correct
     else if (!selected.length) setFeedback(feedback, "error", "Wähle mindestens eine Aussage aus und prüfe dann erneut.");
     else setFeedback(feedback, "error", `Noch nicht korrekt. ${extraHint || hint}`);
   });
-  fieldset.append(legend, optionWrap, button, feedback);
+  if (externalCheck) fieldset.append(legend, optionWrap);
+  else fieldset.append(legend, optionWrap, button, feedback);
   target.append(fieldset);
+  return fieldset;
 }
 
 // ---- Aufgabe 1: Richtung der Kräfte (statische Radio-Fieldsets, je eigener Button) ----
@@ -352,13 +354,13 @@ function semanticFeedbackParagraph(text) {
 function omegaChangeFeedback(result) {
   const fragment = document.createDocumentFragment();
   if (result.context === "server-error") {
-    fragment.append(semanticFeedbackParagraph("Zum Vergleich: Bei größerem ω ist eine größere Zentripetalkraft nötig ({{F_Z}} = m · ω² · r). Weil {{F_G}} gleich bleibt, muss die Kette weiter ausschwenken: α wird größer, damit auch der Radius r. Die Seilkraft {{F_S}} wird größer. Masse, Gewichtskraft und Kettenlänge bleiben unverändert. Deine eingegebene Antwort bleibt erhalten."));
+    fragment.append(semanticFeedbackParagraph("Die automatische Prüfung ist gerade nicht erreichbar. Deine Antwort bleibt erhalten; bitte versuche es später erneut."));
   } else if (result.status === "korrekt") {
-    fragment.append(semanticFeedbackParagraph("Richtig: Mit ω wächst die nötige Zentripetalkraft. Da {{F_G}} gleich bleibt, wird das Kräfteparallelogramm breiter: α, r und {{F_S}} nehmen zu, m, {{F_G}} und die Kettenlänge bleiben gleich."));
+    fragment.append(semanticFeedbackParagraph("Richtig. Wenn ω größer wird, steigt die benötigte Zentripetalkraft {{F_Z}}. Im Kräfteparallelogramm wachsen dadurch α, r und {{F_S}}; m und {{F_G}} bleiben gleich."));
   } else if (result.points > 0) {
-    fragment.append(semanticFeedbackParagraph("Teilweise richtig. Vergleiche in beiden Parallelogrammen jede Kraft einzeln: Welche wird länger, welche bleibt gleich – und was folgt daraus für α und r?"));
+    fragment.append(semanticFeedbackParagraph("Teilweise korrekt. Prüfe am Regler, welche der Pfeile {{F_ZP}}, {{F_S}} und {{F_G}} länger werden und was das für α und r bedeutet."));
   } else {
-    fragment.append(semanticFeedbackParagraph("Noch nicht richtig. Beginne bei {{F_Z}} = m · ω² · r: Was bedeutet ein größeres ω für die nötige Zentripetalkraft? Vergleiche dann die beiden Parallelogramme."));
+    fragment.append(semanticFeedbackParagraph("Noch nicht korrekt. Bewege den Regler von kleinerem zu größerem ω und beobachte zuerst die waagerechte Resultierende {{F_ZP}}. Vergleiche danach {{F_G}} und {{F_S}}."));
   }
   return fragment;
 }
@@ -366,23 +368,75 @@ function omegaChangeFeedback(result) {
 function rowsFeedback(result) {
   const fragment = document.createDocumentFragment();
   if (result.context === "server-error") {
-    fragment.append(semanticFeedbackParagraph("Zum Vergleich: Beide Reihen drehen sich mit derselben Winkelgeschwindigkeit ω. Die äußere Reihe bewegt sich auf einem größeren Radius r. Nach tan α = {{ω² · r|g}} werden die äußeren Sitze deshalb stärker ausgelenkt. Die Masse der Personen spielt keine Rolle, weil sie sich kürzt. Deine eingegebene Antwort bleibt erhalten."));
+    fragment.append(semanticFeedbackParagraph("Die automatische Prüfung ist gerade nicht erreichbar. Deine Antwort bleibt erhalten; bitte versuche es später erneut."));
     return fragment;
   }
   if (result.status === "korrekt") {
-    fragment.append(semanticFeedbackParagraph("Richtig: Bei gleichem ω hängt tan α = {{ω² · r|g}} nur noch vom Radius ab. Die äußere Reihe hat den größeren Radius und wird deshalb stärker ausgelenkt – unabhängig von der Besetzung."));
+    fragment.append(semanticFeedbackParagraph("Richtig. Die äußere Sitzreihe hat den größeren Bahnradius. Bei gleichem ω steigt damit tan α = {{ω² r|g}} und folglich α; die äußeren Sitze werden stärker ausgelenkt."));
     return fragment;
   }
   if (result.points > 0) {
-    fragment.append(semanticFeedbackParagraph("Teilweise richtig. Vergleiche die beiden Reihen Größe für Größe in tan α = {{ω² · r|g}}: Was ist für beide gleich, was ist verschieden?"));
+    fragment.append(semanticFeedbackParagraph("Teilweise korrekt. Vergleiche die Radien der beiden Sitzreihen und begründe den Winkelvergleich mit tan α = {{F_Z|F_G}}."));
   } else {
-    fragment.append(semanticFeedbackParagraph("Noch nicht richtig. Prüfe, welche Größen in tan α = {{ω² · r|g}} für die innere und die äußere Reihe gleich sind und welche nicht."));
+    fragment.append(semanticFeedbackParagraph("Noch nicht korrekt. Beide Sitzreihen drehen sich mit derselben Winkelgeschwindigkeit. Vergleiche ihre Bahnradii und prüfe, was daraus für tan α folgt."));
   }
-  const note = document.createElement("p");
-  note.className = "physics-semantic-note";
-  appendPhysicsText(note, "**Typischer Denkfehler: „Weil sich die Masse kürzt, werden alle Sitze gleich weit ausgelenkt.“ Die Masse kürzt sich zwar – prüfe aber, ob auch alle anderen Größen in tan α = {{ω² · r|g}} für beide Reihen gleich sind.**");
-  fragment.append(note);
   return fragment;
+}
+
+export function carouselEquilibrium(omega) {
+  const a = 3, length = 4, g = 9.81;
+  let low = 0, high = Math.PI / 2 - 0.01;
+  for (let i = 0; i < 60; i += 1) {
+    const angle = (low + high) / 2;
+    if (Math.tan(angle) > omega * omega * (a + length * Math.sin(angle)) / g) high = angle;
+    else low = angle;
+  }
+  const alpha = (low + high) / 2;
+  const radius = a + length * Math.sin(alpha);
+  return { alpha, radius, gravity: g, centripetal: g * Math.tan(alpha), rope: g / Math.cos(alpha) };
+}
+
+function setupOmegaDiagram() {
+  const slider = document.getElementById("omega-slider");
+  const svg = document.getElementById("omega-force-diagram");
+  const part = (name) => svg.querySelector(`#omega-${name}`);
+  const line = (element, x1, y1, x2, y2) => {
+    element.setAttribute("x1", x1.toFixed(2)); element.setAttribute("y1", y1.toFixed(2));
+    element.setAttribute("x2", x2.toFixed(2)); element.setAttribute("y2", y2.toFixed(2));
+  };
+  const point = (element, x, y) => { element.setAttribute("x", x.toFixed(2)); element.setAttribute("y", y.toFixed(2)); };
+  function update() {
+    const omega = Number(slider.value);
+    const { alpha } = carouselEquilibrium(omega);
+    const x = 178 + 144 * Math.sin(alpha);
+    const y = 45 + 144 * Math.cos(alpha);
+    const gLength = 92;
+    const zLength = gLength * Math.tan(alpha);
+    const zX = x - zLength;
+    line(part("chain"), 178, 45, x, y);
+    line(part("force-g"), x, y, x, y + gLength);
+    line(part("force-s"), x, y, zX, y - gLength);
+    line(part("force-z"), x, y, zX, y);
+    line(part("guide-s"), zX, y - gLength, zX, y);
+    line(part("guide-g"), x, y + gLength, zX, y);
+    line(part("radius"), 70, 333, x, 333);
+    point(part("radius-label"), (70 + x) / 2, 326);
+    point(part("label-g"), x + 13, y + 68);
+    point(part("label-s"), zX - 48, y - gLength + 28);
+    point(part("label-z"), (x + zX) / 2 - 12, y + 22);
+    point(part("angle-label"), 189 + 36 * Math.sin(alpha / 2), 88);
+    const arcX = 178 + 38 * Math.sin(alpha);
+    const arcY = 45 + 38 * Math.cos(alpha);
+    part("angle").setAttribute("d", `M178 83 A38 38 0 0 0 ${arcX.toFixed(2)} ${arcY.toFixed(2)}`);
+    part("seat").setAttribute("cx", x.toFixed(2)); part("seat").setAttribute("cy", y.toFixed(2));
+    part("origin").setAttribute("cx", x.toFixed(2)); part("origin").setAttribute("cy", y.toFixed(2));
+    const qualifier = omega < 1.035 ? "kleinere" : omega > 1.165 ? "größere" : "mittlere";
+    const state = `${qualifier} Winkelgeschwindigkeit: Kette, Kraftpfeile und Bahnradius sind angepasst.`;
+    slider.setAttribute("aria-valuetext", `${qualifier} Winkelgeschwindigkeit`);
+    document.getElementById("omega-state").textContent = state;
+  }
+  slider.addEventListener("input", update);
+  update();
 }
 
 function setupOmegaChangeTask() {
@@ -397,7 +451,7 @@ function setupRowsTask(progress) {
   setupPhysicsSemanticTask({
     answerId: "rows-answer", buttonId: "check-rows", feedbackId: "rows-feedback", countId: "rows-count",
     taskId: "ph11-kettenkarussell-zwei-sitzreihen", serverUrl: SCRIPT_SERVER_URL, feedbackBuilder: rowsFeedback,
-    minimumLength: 30, fallbackMaxPoints: 4, shortAnswerHint: "Formuliere eine etwas ausführlichere Erläuterung mit Begründung.",
+    minimumLength: 30, fallbackMaxPoints: 3, shortAnswerHint: "Formuliere eine etwas ausführlichere Erläuterung mit Begründung.",
   });
   // Ein Klick auf "prüfen" schaltet die Auswertung frei, unabhängig vom Ergebnis.
   document.getElementById("check-rows").addEventListener("click", () => {
@@ -496,7 +550,20 @@ export const quizItems = [
 ];
 
 function setupFinalQuiz() {
-  quizItems.forEach((item) => renderMultipleChoice({ targetId: "carousel-final-quiz", ...item }));
+  const fieldsets = quizItems.map((item) => renderMultipleChoice({ targetId: "carousel-final-quiz", ...item, externalCheck: true }));
+  const result = document.getElementById("final-quiz-feedback");
+  const showSummary = (correct) => {
+    setFeedback(result, correct === quizItems.length ? "success" : "partial", correct === quizItems.length
+      ? "Alle fünf Quizfragen sind richtig."
+      : "Prüfe die Rückmeldungen unter den einzelnen Fragen und versuche es erneut.");
+  };
+  const checks = window.addQuizQuestionChecks({
+    questions: fieldsets.map((fieldset, index) => ({ fieldset, solution: quizItems[index].correct })),
+    buttonClass: "physics-primary-button", feedbackClass: "physics-feedback",
+    levels: { high: "success", medium: "partial", low: "error" },
+    onAllCorrect: () => showSummary(quizItems.length),
+  });
+  document.getElementById("check-final-quiz").addEventListener("click", () => showSummary(checks.checkAll()));
 }
 
 // ---- Initialisierung nur im Browser ----
@@ -541,6 +608,7 @@ if (typeof document !== "undefined") {
     },
   });
   setupOmegaChangeTask();
+  setupOmegaDiagram();
   setupRowsTask(progress);
   setupCarouselForcesTask(progress);
   setupFinalQuiz();

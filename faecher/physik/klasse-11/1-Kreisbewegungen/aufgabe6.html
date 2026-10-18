@@ -10,8 +10,9 @@
     <link rel="stylesheet" href="kraefte-bewegung.css?v=20260923a">
     <link rel="stylesheet" href="winkelgeschwindigkeit-kreisbewegung.css?v=20260912a">
     <link rel="stylesheet" href="components/physics-notation.css?v=20260922b">
-    <link rel="stylesheet" href="kettenkarussell.css?v=20260922a">
-    <script type="module" src="kettenkarussell.mjs?v=20260930b"></script>
+    <link rel="stylesheet" href="kettenkarussell.css?v=20261018b">
+    <script src="../../../informatik/quiz-fragen-pruefen.js?v=20261018a" defer></script>
+    <script type="module" src="kettenkarussell.mjs?v=20261018b"></script>
   </head>
   <body class="physics-revision-page circular-motion-page carousel-page">
     <div class="site-backdrop" aria-hidden="true"></div>
@@ -193,44 +194,45 @@
 
           <article class="physics-task-card" aria-labelledby="omega-change-title">
             <h3 id="omega-change-title">Aufgabe 4 · Die Winkelgeschwindigkeit wird erhöht</h3>
+            <p>Verändere die Winkelgeschwindigkeit ω mit dem Regler und beobachte das Kräfteparallelogramm. <strong>Beschreibe</strong>, was bei größerem ω mit F<sub>Z</sub>, α, r, F<sub>S</sub> sowie m und F<sub>G</sub> geschieht.</p>
             <div class="describe-layout">
-              <figure class="describe-figure">
-                <svg viewBox="0 0 400 300" role="img" aria-label="Zwei Kräfteparallelogramme nebeneinander. Links vorher: Gewichtskraft F mit Index G nach unten, Seilkraft F mit Index S schräg nach oben entlang der Kette, Resultierende F mit Index Z waagerecht zur Drehachse, Winkel α 1 zwischen Kette und Senkrechter. Rechts bei größerem ω: gleich lange Gewichtskraft, längere Seilkraft, längere Resultierende und größerer Winkel α 2.">
+              <figure class="describe-figure omega-figure">
+                <svg id="omega-force-diagram" viewBox="0 0 500 390" role="img" aria-labelledby="omega-svg-title omega-svg-description">
+                  <title id="omega-svg-title">Kräfteparallelogramm am Kettenkarussell</title>
+                  <desc id="omega-svg-description">Sitz und Person hängen an einer Kette. Am Schwerpunkt beginnen Gewichtskraft, Seilkraft und waagerechte Resultierende. Der Regler verändert Winkel, Bahnradius und Kraftpfeile.</desc>
                   <defs>
-                    <marker id="dg-arrow-g" markerWidth="9" markerHeight="9" refX="7" refY="3.5" orient="auto"><path d="M0,0 L0,7 L8,3.5 z" fill="#b45309"/></marker>
-                    <marker id="dg-arrow-s" markerWidth="9" markerHeight="9" refX="7" refY="3.5" orient="auto"><path d="M0,0 L0,7 L8,3.5 z" fill="#2563eb"/></marker>
-                    <marker id="dg-arrow-z" markerWidth="9" markerHeight="9" refX="7" refY="3.5" orient="auto"><path d="M0,0 L0,7 L8,3.5 z" fill="#dc2626"/></marker>
+                    <marker id="omega-arrow-g" markerWidth="9" markerHeight="9" refX="7" refY="3.5" orient="auto"><path d="M0,0 L0,7 L8,3.5 z" fill="#b45309"/></marker>
+                    <marker id="omega-arrow-s" markerWidth="9" markerHeight="9" refX="7" refY="3.5" orient="auto"><path d="M0,0 L0,7 L8,3.5 z" fill="#2563eb"/></marker>
+                    <marker id="omega-arrow-z" markerWidth="9" markerHeight="9" refX="7" refY="3.5" orient="auto"><path d="M0,0 L0,7 L8,3.5 z" fill="#dc2626"/></marker>
                   </defs>
-
-                  <line x1="60" y1="130" x2="60" y2="90" class="parallelogram-guide"/>
-                  <path d="M 60 102 A 28 28 0 0 1 74 105.75" class="angle-arc"/>
-                  <text x="70" y="118" class="svg-label">α<tspan baseline-shift="sub" font-size="11">1</tspan></text>
-                  <line x1="60" y1="130" x2="129.3" y2="10" class="dimension-line"/>
-                  <line x1="123.5" y1="20" x2="123.5" y2="130" class="parallelogram-guide"/>
-                  <line x1="60" y1="240" x2="123.5" y2="130" class="parallelogram-guide"/>
-                  <line x1="60" y1="130" x2="60" y2="240" class="force-g" stroke-width="5" marker-end="url(#dg-arrow-g)"/>
-                  <line x1="60" y1="130" x2="123.5" y2="20" class="force-s" stroke-width="5" marker-end="url(#dg-arrow-s)"/>
-                  <line x1="60" y1="130" x2="123.5" y2="130" class="force-z" stroke-width="5" marker-end="url(#dg-arrow-z)"/>
-                  <circle cx="60" cy="130" r="6" class="force-origin-marker"/>
-                  <text x="60" y="288" text-anchor="middle" class="svg-label">vorher</text>
-
-                  <line x1="230" y1="130" x2="230" y2="90" class="parallelogram-guide"/>
-                  <path d="M 230 102 A 28 28 0 0 1 251.4 112" class="angle-arc"/>
-                  <text x="248" y="126" class="svg-label">α<tspan baseline-shift="sub" font-size="11">2</tspan></text>
-                  <line x1="230" y1="130" x2="373" y2="10" class="dimension-line"/>
-                  <line x1="361.1" y1="20" x2="361.1" y2="130" class="parallelogram-guide"/>
-                  <line x1="230" y1="240" x2="361.1" y2="130" class="parallelogram-guide"/>
-                  <line x1="230" y1="130" x2="230" y2="240" class="force-g" stroke-width="5" marker-end="url(#dg-arrow-g)"/>
-                  <line x1="230" y1="130" x2="361.1" y2="20" class="force-s" stroke-width="5" marker-end="url(#dg-arrow-s)"/>
-                  <line x1="230" y1="130" x2="361.1" y2="130" class="force-z" stroke-width="5" marker-end="url(#dg-arrow-z)"/>
-                  <circle cx="230" cy="130" r="6" class="force-origin-marker"/>
-                  <text x="296" y="288" text-anchor="middle" class="svg-label">nachher: größeres ω</text>
+                  <line class="carousel-axis" x1="70" y1="20" x2="70" y2="345"/>
+                  <text class="svg-label" x="75" y="22">Drehachse</text>
+                  <line id="omega-chain" class="dimension-line" x1="178" y1="45" x2="230" y2="180"/>
+                  <circle cx="178" cy="45" r="5" fill="#475569"/>
+                  <line class="parallelogram-guide" x1="178" y1="45" x2="178" y2="86"/>
+                  <path id="omega-angle" class="angle-arc"/>
+                  <text id="omega-angle-label" class="svg-label">α</text>
+                  <line id="omega-guide-s" class="parallelogram-guide"/>
+                  <line id="omega-guide-g" class="parallelogram-guide"/>
+                  <line id="omega-force-g" class="force-g" stroke-width="5" marker-end="url(#omega-arrow-g)"/>
+                  <line id="omega-force-s" class="force-s" stroke-width="5" marker-end="url(#omega-arrow-s)"/>
+                  <line id="omega-force-z" class="force-z" stroke-width="5" marker-end="url(#omega-arrow-z)"/>
+                  <circle id="omega-seat" r="8" fill="#dbeafe" stroke="#475569" stroke-width="2"/>
+                  <circle id="omega-origin" r="5" class="force-origin-marker"/>
+                  <text id="omega-label-g" class="svg-label force-g">F<tspan baseline-shift="sub" font-size="11">G</tspan></text>
+                  <text id="omega-label-s" class="svg-label force-s">F<tspan baseline-shift="sub" font-size="11">S</tspan></text>
+                  <text id="omega-label-z" class="svg-label force-z">F<tspan baseline-shift="sub" font-size="11">ZP</tspan></text>
+                  <line id="omega-radius" class="dimension-line" y1="333" y2="333"/>
+                  <text id="omega-radius-label" class="svg-label" y="326" text-anchor="middle">r</text>
                 </svg>
-                <figcaption>Kräfteparallelogramme am Schwerpunkt von Sitz und Person: links vorher, rechts bei größerer Winkelgeschwindigkeit</figcaption>
+                <figcaption>Ein Kräfteparallelogramm für Sitz und Person: Bewege den Regler und vergleiche Kraftpfeile, Winkel α und Bahnradius r.</figcaption>
+                <p class="carousel-note">Der waagerechte Pfeil F<sub>ZP</sub> zeigt die Resultierende im Kräfteparallelogramm. Sie ist die Zentripetalkraft F<sub>Z</sub>, also F<sub>ZP</sub> = F<sub>Z</sub>.</p>
+                <label class="omega-slider-label" for="omega-slider">Winkelgeschwindigkeit ω verändern</label>
+                <input id="omega-slider" type="range" min="0.9" max="1.3" step="0.005" value="1.1" aria-describedby="omega-state">
+                <div class="omega-slider-ends"><span>kleiner</span><span>größer</span></div>
+                <p id="omega-state" class="sr-only" aria-live="polite"></p>
               </figure>
-              <section class="physics-semantic-task" aria-labelledby="omega-change-question-title">
-                <p id="omega-change-question-title">Die Winkelgeschwindigkeit ω des Kettenkarussells wird erhöht.</p>
-                <p><strong>Beschreibe</strong> die Veränderungen, die sich daraus ergeben, anhand des nebenstehenden Kräfteparallelogramms.</p>
+              <section class="physics-semantic-task" aria-labelledby="omega-change-title">
                 <label for="omega-change-answer">Deine Beschreibung</label>
                 <textarea id="omega-change-answer" maxlength="3000" rows="6"></textarea>
                 <div class="physics-semantic-task__actions"><span id="omega-change-count">0 von 3000 Zeichen</span><button id="check-omega-change" type="button">Antwort prüfen</button></div>
@@ -239,26 +241,55 @@
               </section>
             </div>
             <div class="physics-help-stack">
-              <details><summary>Hilfe 1: Hinweis</summary><p>Vergleiche die beiden Parallelogramme: Welcher Pfeil ist gleich geblieben, welche Pfeile haben sich verändert?</p></details>
-              <details><summary>Hilfe 2: Denkansatz</summary><p>Nutze F<sub>Z</sub> = m · ω² · r: Was folgt aus einem größeren ω für die nötige Zentripetalkraft? Überlege dann, was mit dem Winkel α und dem Radius r geschieht.</p></details>
-              <details><summary>Hilfe 3: Teillösung</summary><p>F<sub>G</sub> bleibt gleich, weil sich Masse und Ortsfaktor nicht ändern. F<sub>Z</sub> muss größer werden. Beschreibe nun, was daraus für α, r und F<sub>S</sub> folgt.</p></details>
+              <details><summary>Hilfe 1: Hinweis</summary><p>Beobachte beim Bewegen des Reglers die Längen von F<sub>ZP</sub> und F<sub>G</sub> sowie den Winkel α.</p></details>
+              <details><summary>Hilfe 2: Denkansatz</summary><p>Erinnere dich an das Zentripetalkraft-Experiment: Bei größerem ω wurde eine größere Zentripetalkraft benötigt. Wie verändert die größere waagerechte Resultierende bei gleich bleibender Gewichtskraft das Kräfteparallelogramm?</p></details>
+              <details><summary>Hilfe 3: Teillösung</summary><p>m und F<sub>G</sub> = m · g bleiben unverändert. Weil F<sub>ZP</sub> = F<sub>Z</sub> zunimmt und F<sub>G</sub> gleich bleibt, wächst α; die Kette schwenkt weiter aus, sodass r und F<sub>S</sub> größer werden.</p></details>
             </div>
           </article>
 
           <article class="physics-task-card" aria-labelledby="rows-title">
             <h3 id="rows-title">Aufgabe 5 · Zwei Sitzreihen</h3>
-            <section class="physics-semantic-task" aria-labelledby="rows-question-title">
-              <p id="rows-question-title">Bei einem Kettenkarussell hängen die Sitze in zwei Reihen, also in zwei verschiedenen Abständen zur Drehachse. <strong>Erläutere</strong>, ob die Sitze gleich weit ausgelenkt werden.</p>
-              <label for="rows-answer">Deine Erläuterung</label>
-              <textarea id="rows-answer" maxlength="3000" rows="6"></textarea>
-              <div class="physics-semantic-task__actions"><span id="rows-count">0 von 3000 Zeichen</span><button id="check-rows" type="button">Antwort prüfen</button></div>
-              <p class="privacy-note"><strong>Hinweis:</strong> Gib keine personenbezogenen Informationen ein. Deine Antwort wird zur automatischen Auswertung an den Skriptserver und dort an ein KI-System übertragen.</p>
-              <div id="rows-feedback" class="physics-semantic-feedback" role="status" aria-live="polite" hidden></div>
-            </section>
+            <div class="describe-layout rows-layout">
+              <figure class="describe-figure rows-figure">
+                <svg viewBox="0 0 440 330" role="img" aria-labelledby="rows-svg-title rows-svg-description">
+                  <title id="rows-svg-title">Zwei Sitzreihen am Kettenkarussell von der Seite</title>
+                  <desc id="rows-svg-description">Die äußere Sitzreihe ist weiter von der gemeinsamen Drehachse aufgehängt und hat einen größeren Bahnradius und Auslenkwinkel.</desc>
+                  <line class="carousel-axis" x1="45" y1="17" x2="45" y2="304"/>
+                  <text class="svg-label" x="50" y="20">Drehachse</text>
+                  <line class="dimension-line rows-chain-inner" x1="135" y1="52" x2="187" y2="149"/>
+                  <line class="dimension-line rows-chain-outer" x1="250" y1="52" x2="324" y2="133"/>
+                  <circle cx="135" cy="52" r="5" fill="#475569"/><circle cx="250" cy="52" r="5" fill="#475569"/>
+                  <line class="parallelogram-guide" x1="135" y1="52" x2="135" y2="96"/>
+                  <line class="parallelogram-guide" x1="250" y1="52" x2="250" y2="96"/>
+                  <path class="angle-arc" d="M135 78 A26 26 0 0 0 147 75"/>
+                  <path class="angle-arc" d="M250 78 A26 26 0 0 0 268 71"/>
+                  <text class="svg-label" x="151" y="93">α<tspan baseline-shift="sub" font-size="11">innen</tspan></text>
+                  <text class="svg-label" x="274" y="91">α<tspan baseline-shift="sub" font-size="11">außen</tspan></text>
+                  <rect x="172" y="147" width="30" height="17" rx="5" class="rows-seat-inner"/>
+                  <rect x="309" y="131" width="30" height="17" rx="5" class="rows-seat-outer"/>
+                  <text class="svg-label" x="190" y="184" text-anchor="middle">innere Reihe</text>
+                  <text class="svg-label" x="326" y="169" text-anchor="middle">äußere Reihe</text>
+                  <line class="dimension-line" x1="45" y1="235" x2="187" y2="235"/>
+                  <line class="dimension-line" x1="45" y1="268" x2="324" y2="268"/>
+                  <text class="svg-label" x="113" y="229" text-anchor="middle">r<tspan baseline-shift="sub" font-size="11">innen</tspan></text>
+                  <text class="svg-label" x="190" y="261" text-anchor="middle">r<tspan baseline-shift="sub" font-size="11">außen</tspan></text>
+                  <text class="svg-label" x="220" y="315" text-anchor="middle">gleiche Kettenlänge · gleiche Vergleichsmasse</text>
+                </svg>
+                <figcaption>Zwei Sitzreihen von der Seite: Die äußere Reihe ist weiter von der gemeinsamen Drehachse entfernt aufgehängt als die innere.</figcaption>
+              </figure>
+              <section class="physics-semantic-task" aria-labelledby="rows-question-title">
+                <p id="rows-question-title">Betrachte die beiden Sitzreihen und <strong>erläutere</strong>, welche Reihe stärker ausgelenkt wird. Nutze den Zusammenhang tan(α) = <span class="physics-fraction" role="img" aria-label="F mit Index Z durch F mit Index G"><span class="physics-fraction__numerator">F<sub>Z</sub></span><span class="physics-fraction__denominator">F<sub>G</sub></span></span>.</p>
+                <label for="rows-answer">Deine Erläuterung</label>
+                <textarea id="rows-answer" maxlength="3000" rows="6"></textarea>
+                <div class="physics-semantic-task__actions"><span id="rows-count">0 von 3000 Zeichen</span><button id="check-rows" type="button">Antwort prüfen</button></div>
+                <p class="privacy-note"><strong>Hinweis:</strong> Gib keine personenbezogenen Informationen ein. Deine Antwort wird zur automatischen Auswertung an den Skriptserver und dort an ein KI-System übertragen.</p>
+                <div id="rows-feedback" class="physics-semantic-feedback" role="status" aria-live="polite" hidden></div>
+              </section>
+            </div>
             <div class="physics-help-stack">
-              <details><summary>Hilfe 1: Hinweis</summary><p>Überlege, ob sich beide Sitzreihen gleich schnell drehen, wenn sich das Karussell dreht.</p></details>
-              <details><summary>Hilfe 2: Denkansatz</summary><p>Vergleiche die beiden Reihen mithilfe von tan α = <span class="physics-fraction" role="img" aria-label="Omega Quadrat mal r durch g"><span class="physics-fraction__numerator">ω² · r</span><span class="physics-fraction__denominator">g</span></span>: Welche Größen sind für beide Reihen gleich, welche nicht?</p></details>
-              <details><summary>Hilfe 3: Teillösung</summary><p>Beide Reihen haben dieselbe Winkelgeschwindigkeit ω, weil sie für eine Umdrehung gleich lange brauchen. Vergleiche nun die Radien der beiden Reihen.</p></details>
+              <details><summary>Hilfe 1: Hinweis</summary><p>Beide Sitzreihen benötigen für eine Umdrehung dieselbe Zeit T. Welche Größe ω ist deshalb für beide gleich?</p></details>
+              <details><summary>Hilfe 2: Denkansatz</summary><p>Vergleiche für beide Reihen das Verhältnis <span class="physics-fraction" role="img" aria-label="F mit Index Z durch F mit Index G"><span class="physics-fraction__numerator">F<sub>Z</sub></span><span class="physics-fraction__denominator">F<sub>G</sub></span></span>. Bei gleicher Masse ist die Zentripetalkraft auf der Bahn mit größerem Radius größer; für den Winkel entscheidet das Kräfteverhältnis.</p></details>
+              <details><summary>Hilfe 3: Teillösung</summary><p>Setze ein: tan α = <span class="physics-fraction" role="img" aria-label="F mit Index Z durch F mit Index G"><span class="physics-fraction__numerator">F<sub>Z</sub></span><span class="physics-fraction__denominator">F<sub>G</sub></span></span> = <span class="physics-fraction" role="img" aria-label="m gestrichen mal Omega Quadrat mal r durch m gestrichen mal g"><span class="physics-fraction__numerator"><s>m</s> ω² r</span><span class="physics-fraction__denominator"><s>m</s> g</span></span> = <span class="physics-fraction" role="img" aria-label="Omega Quadrat mal r durch g"><span class="physics-fraction__numerator">ω² r</span><span class="physics-fraction__denominator">g</span></span>. ω und g sind für beide Reihen gleich; beim größeren r ist tan α und damit α größer.</p></details>
             </div>
           </article>
           <nav class="physics-step-next" aria-label="Weiter zum nächsten Reiter"><button type="button" class="physics-primary-button" data-next-tab="summary">Weiter: Auswertung</button></nav>
@@ -303,7 +334,7 @@
                   <button type="submit">Code prüfen</button>
                 </div>
                 <p id="solution-code-message-summary" class="solution-code-message" aria-live="polite"></p>
-                <a id="solution-download-link-summary" class="download-button" href="sicherungsblatt-aufgabe-6-loesungen.pdf?v=20260923b" download hidden>↓ Sicherungsblatt herunterladen</a>
+                <a id="solution-download-link-summary" class="download-button" href="sicherungsblatt-aufgabe-6-loesungen.pdf?v=20261018a" download hidden>↓ Sicherungsblatt herunterladen</a>
               </form>
             </details>
           </section>
@@ -332,6 +363,8 @@
             <h3 id="final-quiz-title">Aufgabe 7 · Wissen überprüfen</h3>
             <p><strong>Wähle</strong> bei jeder Frage alle richtigen Aussagen aus und prüfe deine Auswahl. Bei Fragen mit dem Hinweis „mehrere Antworten“ sind mindestens zwei Aussagen richtig.</p>
             <div id="carousel-final-quiz" class="physics-multiple-choice" aria-label="Abschlussquiz zum Kettenkarussell"></div>
+            <button id="check-final-quiz" class="physics-primary-button" type="button">Quiz auswerten</button>
+            <p id="final-quiz-feedback" class="physics-feedback" role="status" aria-live="polite" hidden></p>
           </article>
 
           <section class="solution-download" aria-labelledby="solution-download-title">
@@ -345,7 +378,7 @@
                   <button type="submit">Code prüfen</button>
                 </div>
                 <p id="solution-code-message" class="solution-code-message" aria-live="polite"></p>
-                <a id="solution-download-link" class="download-button" href="sicherungsblatt-aufgabe-6-loesungen.pdf?v=20260923b" download hidden>↓ Sicherungsblatt herunterladen</a>
+                <a id="solution-download-link" class="download-button" href="sicherungsblatt-aufgabe-6-loesungen.pdf?v=20261018a" download hidden>↓ Sicherungsblatt herunterladen</a>
               </form>
             </details>
           </section>

@@ -5,6 +5,7 @@ import {
   evaluateCarouselForces,
   evaluateCentripetalForce,
   isForceArrowPoint,
+  carouselEquilibrium,
   quizItems,
 } from "../kettenkarussell.mjs";
 import { hitWedgePoints } from "../components/point-vector-grid.mjs";
@@ -117,6 +118,23 @@ assert.match(wrong146.text, /Gondel/);
 assert.equal(evaluateCentripetalForce("340", "kg").status, "partial");
 assert.equal(evaluateCentripetalForce("340", "").status, "error");
 
+// ---- Stationäres Reglermodell ----
+
+const equilibria = [0.9, 1.1, 1.3].map(carouselEquilibrium);
+equilibria.forEach(({ alpha, radius, gravity, centripetal, rope }, index) => {
+  const omega = [0.9, 1.1, 1.3][index];
+  assert.ok(Math.abs(Math.tan(alpha) - omega ** 2 * radius / gravity) < 1e-12);
+  assert.ok(Math.abs(radius - (3 + 4 * Math.sin(alpha))) < 1e-12);
+  assert.ok(Math.abs(rope * Math.cos(alpha) - gravity) < 1e-12);
+  assert.ok(Math.abs(rope * Math.sin(alpha) - centripetal) < 1e-12);
+});
+for (let index = 1; index < equilibria.length; index += 1) {
+  for (const key of ["alpha", "radius", "centripetal", "rope"]) {
+    assert.ok(equilibria[index][key] > equilibria[index - 1][key], `${key} muss mit ω wachsen`);
+  }
+  assert.equal(equilibria[index].gravity, equilibria[0].gravity);
+}
+
 // ---- Quiz ----
 
 assert.equal(quizItems.length, 5);
@@ -156,10 +174,15 @@ assert.equal((html.match(/unlockSolution\(event, 'R7HZ-DWB4'/g) || []).length, 2
 assert.equal((html.match(/sicherungsblatt-aufgabe-6-loesungen\.pdf/g) || []).length, 2);
 assert.equal((html.match(/name="solution-code"/g) || []).length, 2);
 
-["<strong>Beschreibe</strong>", "<strong>Erläutere</strong>", "<strong>Berechne</strong>", "<strong>Zeichne</strong>"].forEach((needle) => assert.ok(html.includes(needle), `Fehlender Operator: ${needle}`));
+["<strong>Beschreibe</strong>", "<strong>erläutere</strong>", "<strong>Berechne</strong>", "<strong>Zeichne</strong>"].forEach((needle) => assert.ok(html.includes(needle), `Fehlender Operator: ${needle}`));
 
-assert.match(html, /Beschreibe<\/strong> die Veränderungen, die sich daraus ergeben, anhand des nebenstehenden Kräfteparallelogramms\./);
-assert.match(html, /Erläutere<\/strong>, ob die Sitze gleich weit ausgelenkt werden\./);
+assert.match(html, /Beschreibe<\/strong>, was bei größerem ω mit/);
+assert.match(html, /erläutere<\/strong>, welche Reihe stärker ausgelenkt wird/);
+assert.match(html, /id="omega-slider" type="range"/);
+assert.match(html, /id="omega-force-diagram"/);
+assert.match(html, /id="rows-svg-title"/);
+assert.match(html, /quiz-fragen-pruefen\.js/);
+assert.match(html, /id="check-final-quiz"/);
 
 assert.doesNotMatch(html, /Alle Sitze werden gleich weit ausgelenkt/i);
 assert.doesNotMatch(html, /je schneller/i);

@@ -18,6 +18,15 @@
 .carousel-top-figure svg,
 .parallelogram-figure svg,
 .describe-figure svg { display: block; width: 100%; height: auto; }
+.omega-slider-label { display: block; margin-top: 14px; font-weight: 800; color: #1e3a8a; }
+#omega-slider { display: block; width: 100%; min-height: 44px; accent-color: #2563eb; cursor: pointer; }
+#omega-slider:focus-visible { outline: 3px solid #2563eb; outline-offset: 3px; }
+.omega-slider-ends { display: flex; justify-content: space-between; font-weight: 700; color: #334155; }
+.rows-figure .rows-chain-inner { stroke: #2563eb; stroke-width: 3; }
+.rows-figure .rows-chain-outer { stroke: #b45309; stroke-width: 3; }
+.rows-seat-inner { fill: #dbeafe; stroke: #2563eb; stroke-width: 2; }
+.rows-seat-outer { fill: #fef3c7; stroke: #b45309; stroke-width: 2; }
+.rows-figure figcaption { margin-top: 8px; color: #334155; font-weight: 800; text-align: center; }
 .carousel-top-figure figcaption,
 .describe-figure figcaption { margin-top: 8px; color: #334155; font-weight: 800; text-align: center; }
 
