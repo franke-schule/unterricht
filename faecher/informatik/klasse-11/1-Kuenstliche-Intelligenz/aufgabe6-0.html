@@ -7,49 +7,68 @@
   <title>Aufgabe 6.0 – Objektorientierte Programmierung wiederholen | Informatik 11</title>
   <link rel="stylesheet" href="../../../../styles.css?v=20260707">
   <link rel="stylesheet" href="perzeptron/task5.css?v=20261010-tabs">
-  <link rel="stylesheet" href="perzeptron/task6-0.css?v=20261018">
+  <link rel="stylesheet" href="perzeptron/task6-0.css?v=20261018-hund">
+  <link rel="stylesheet" href="perzeptron/task6-0-ide.css?v=20261018-hund">
   <script src="../../quiz-fragen-pruefen.js?v=20261006b"></script>
-  <script src="../../klasse-9/eingaben-speichern.js"></script>
-  <script type="module" src="perzeptron/ui/task6-0.mjs?v=20261011-observation"></script>
+  <script src="../../klasse-9/eingaben-speichern.js?v=20261018"></script>
+  <script type="module" src="perzeptron/ui/task6-0.mjs?v=20261018-hund-fix2"></script>
 </head>
 <body class="perceptron-page task6-0-page">
 <div class="site-backdrop" aria-hidden="true"></div>
 <main class="page-shell">
   <nav class="topbar" aria-label="Navigation"><a class="back-link" href="../index.html">Zur Aufgabenübersicht</a><a class="back-link" href="../../../../">Startseite</a></nav>
-  <header class="perceptron-hero"><p class="perceptron-eyebrow">Künstliche Intelligenz · Programmierung</p><h1>Objektorientierte Programmierung wiederholen</h1><p class="module-task-number"><strong>Aufgabe 6.0</strong></p><p>Entdecke an zwei Datenpunkten, was eine Klasse beschreibt und was zu einem Objekt gehört. Lies anschließend Methoden und probiere ihre Aufrufe in Java aus.</p></header>
+  <header class="perceptron-hero"><p class="perceptron-eyebrow">Künstliche Intelligenz · Programmierung</p><h1>Objektorientierte Programmierung wiederholen</h1><p class="module-task-number"><strong>Aufgabe 6.0</strong></p><p>An Wuffti und Schnuffi siehst du, was eine Klasse festlegt und was sich nur bei einem Hund ändert. Danach liest du Methoden und probierst ihre Aufrufe in Java aus.</p></header>
   <p id="save-status" role="status" aria-live="polite">Dein Bearbeitungsstand wird in diesem Browser gespeichert.</p>
   <nav class="tab-list" role="tablist" aria-label="Lernschritte zur objektorientierten Programmierung">
-    <button id="tab-objects" role="tab" type="button" aria-selected="true" aria-controls="objects" data-tab="objects">1 Klasse und Objekte</button>
-    <button id="tab-signatures" role="tab" type="button" aria-selected="false" aria-controls="signatures" data-tab="signatures" tabindex="-1">2 Methodendeklarationen</button>
-    <button id="tab-completion" role="tab" type="button" aria-selected="false" aria-controls="completion" data-tab="completion" tabindex="-1">3 Punktnotation und Auswahlfenster</button>
-    <button id="tab-transfer" role="tab" type="button" aria-selected="false" aria-controls="transfer" data-tab="transfer" tabindex="-1">4 Anwenden und Übergang</button>
-    <button id="tab-quiz" role="tab" type="button" aria-selected="false" aria-controls="quiz" data-tab="quiz" tabindex="-1">5 Abschlussquiz und Auswertung</button>
+    <button id="tab-objects" role="tab" type="button" aria-selected="true" aria-controls="objects" data-tab="objects">1 Hunde als Objekte</button>
+    <button id="tab-class-card" role="tab" type="button" aria-selected="false" aria-controls="class-card" data-tab="class-card" tabindex="-1">2 Klassenkarte</button>
+    <button id="tab-signatures" role="tab" type="button" aria-selected="false" aria-controls="signatures" data-tab="signatures" tabindex="-1">3 Methoden lesen</button>
+    <button id="tab-completion" role="tab" type="button" aria-selected="false" aria-controls="completion" data-tab="completion" tabindex="-1">4 Punktnotation und Auswahlfenster</button>
+    <button id="tab-transfer" role="tab" type="button" aria-selected="false" aria-controls="transfer" data-tab="transfer" tabindex="-1">5 Anwenden</button>
+    <button id="tab-quiz" role="tab" type="button" aria-selected="false" aria-controls="quiz" data-tab="quiz" tabindex="-1">6 Abschlussquiz und Auswertung</button>
   </nav>
   <div class="task6-0-layout">
     <div class="task6-0-content">
-      <section id="objects" class="step-panel" role="tabpanel" aria-labelledby="tab-objects" data-panel="objects"><h2>Klasse und Objekte</h2>
+      <section id="objects" class="step-panel" role="tabpanel" aria-labelledby="tab-objects" data-panel="objects"><h2>Hunde als Objekte</h2>
         <div id="block-1a"></div>
-        <article class="card object-comparison" aria-label="Zwei Objekte der Klasse Datenpunkt"><h3>Zwei Objekte</h3><div class="object-cards"><div class="object-card"><strong>punkt</strong><span>x_1 = 2.5</span><span>x_2 = 4.0</span><span id="punkt-label-state" aria-live="polite">label = 1</span></div><div class="object-card"><strong>andererPunkt</strong><span>x_1 = 6.0</span><span>x_2 = 2.0</span><span>label = 0</span></div></div></article>
-        <div id="block-1b"></div><div id="remember-1" class="remember" hidden><p>Eine Klasse beschreibt Attribute und Methoden. Jedes Objekt dieser Klasse besitzt eigene Attributwerte.</p></div>
+        <article class="card object-comparison" aria-label="Zwei Objekte der Klasse Hund"><h3>Zwei Hunde</h3><div class="object-cards"><div class="object-card"><strong>petersHund · Wuffti</strong><span id="wuffti-age-state" aria-live="polite">alter = 5</span></div><div class="object-card"><strong>inasHund · Schnuffi</strong><span>alter = 8</span></div></div></article>
+        <div id="remember-1" class="remember" hidden><p>Die Klasse <code>Hund</code> legt fest, welche Attribute und Methoden Hunde-Objekte besitzen. Wuffti und Schnuffi sind verschiedene Objekte mit eigenen Attributwerten; ein Methodenaufruf an Wuffti ändert Schnuffi nicht.</p></div>
         <div class="flow-navigation" data-flow="objects"></div>
       </section>
-      <section id="signatures" class="step-panel" role="tabpanel" aria-labelledby="tab-signatures" data-panel="signatures" hidden><h2>Methodendeklarationen lesen</h2>
-        <p>Ein <strong>Setter</strong> setzt den Wert eines Attributs, ein <strong>Getter</strong> gibt den Wert eines Attributs zurück.</p>
-        <div id="block-2a-setter"></div><div id="block-2a-getter"></div><div id="block-2b"></div><div id="block-2c"></div>
-        <div id="remember-2" class="remember" hidden><p>Eingabeparameter stehen mit Datentyp und Namen in den runden Klammern der Methodendeklaration. Der Rückgabetyp steht vor dem Methodennamen.</p><p>Beim Methodenaufruf werden Argumente an die Eingabeparameter übergeben. Die Argumente müssen zu den Parametertypen passen.</p><p>Die Ganzzahl <code>2</code> darf an einen <code>double</code>-Parameter übergeben werden. Die Dezimalzahl <code>2.5</code> passt ohne Umwandlung nicht zu einem <code>int</code>-Parameter.</p></div>
+      <section id="class-card" class="step-panel" role="tabpanel" aria-labelledby="tab-class-card" data-panel="class-card" hidden><h2>Klassenkarte</h2>
+        <article class="card task6-0-block"><h3>2A Klassenkarte</h3><p><strong>Ordne</strong> die zwei Attribute und fünf Methoden der Klasse <code>Hund</code> in die Klassenkarte ein. Der vorgegebene Konstruktor gehört nicht in diese Zuordnung.</p><p>Ziehe, tippe oder wähle die Karten per Tastatur.</p>
+          <pre class="task6-0-code class-declarations" aria-label="Deklarationen aus Hund.java"><code>private int alter
+private String name
+public Hund(int startAlter, String startName)
+public void zeigeDaten()
+public void belle()
+public int gibAlter()
+public void setzeAlter(int neuesAlter)
+public void setzeDaten(int neuesAlter, String neuerName)</code></pre>
+          <div class="class-builder" id="class-builder"></div><input type="hidden" id="class-card-state">
+          <button id="check-class-card" type="button" class="primary-button">Klassenkarte prüfen</button><p id="class-card-feedback" class="feedback" role="status" aria-live="polite" hidden></p>
+          <details><summary>Hilfe 1</summary><p>Suche in den Deklarationen von <code>Hund.java</code> nach den beiden Zustandswerten.</p></details><details><summary>Hilfe 2</summary><p>Attribute haben hier keine Klammern; Methoden erkennst du an Namen und runden Klammern.</p></details><details><summary>Hilfe 3</summary><p>Oben stehen <code>alter</code> und <code>name</code>; unten die zwei Ausgabemethoden, der Getter und die zwei Setter. Den Konstruktor lässt du liegen.</p></details>
+        </article>
+        <div class="flow-navigation" data-flow="class-card"></div>
+      </section>
+      <section id="signatures" class="step-panel" role="tabpanel" aria-labelledby="tab-signatures" data-panel="signatures" hidden><h2>Methoden lesen</h2>
+        <p><code>petersHund.setzeAlter(6)</code> ändert Wufftis Alter: <code>setzeAlter</code> ist ein <strong>Setter</strong>. <code>petersHund.gibAlter()</code> liefert das Alter zurück: <code>gibAlter</code> ist ein <strong>Getter</strong>. Ein Getter zeigt den Wert erst dann in der Konsole, wenn du ihn ausgibst.</p>
+        <div id="block-3a"></div><div id="block-3b"></div><div id="block-3c"></div><div id="block-3d"></div>
+        <div id="remember-3" class="remember" hidden><p>Der Rückgabetyp steht vor dem Methodennamen. In den Klammern der Deklaration stehen Eingabeparameter mit Typ und Namen; im Aufruf stehen die konkreten Argumente.</p><p><code>void</code> heißt: Die Methode gibt keinen Wert zurück. Leere Klammern heißen: Die Methode erwartet kein Argument.</p></div>
         <div class="flow-navigation" data-flow="signatures"></div>
       </section>
       <section id="completion" class="step-panel" role="tabpanel" aria-labelledby="tab-completion" data-panel="completion" hidden><h2>Punktnotation und Auswahlfenster</h2>
-        <p>Mit der <strong>Punktnotation</strong> greifst du über eine Objektvariable auf zugängliche Attribute oder Methoden zu: <code>objekt.attribut</code> bzw. <code>objekt.methode(argumente)</code>; ohne Argumente bleiben die Klammern leer.</p>
-        <div id="block-3a"></div><div id="block-3b"></div>
-        <p class="data-boundary">Das Auswahlfenster zeigt zum Typ von <code>punkt</code> passende zugängliche Mitglieder. Es können auch geerbte Methoden erscheinen. Die <code>private</code>-Attribute von <code>Datenpunkt</code> sind im Hauptprogramm nicht direkt zugänglich. Eine Auswahl hilft beim Schreiben; sie führt die Methode nicht aus.</p>
-        <p>Erscheint kein Fenster, prüfe <code>punkt</code>, seine vorherige Deklaration, den Gültigkeitsbereich und vorhandene Programmfehler; löse die Vorschläge danach erneut aus.</p>
-        <div id="remember-3" class="remember" hidden><p>Mit der Punktnotation rufst du eine Methode an einem bestimmten Objekt auf. Auch ohne Eingabeparameter gehören runde Klammern zum Aufruf.</p><p>Das Auswahlfenster hilft dir, zugängliche Mitglieder des Objekttyps zu finden und einen Aufruf zu ergänzen. Es führt die Methode nicht aus.</p></div>
+        <p>Mit der <strong>Punktnotation</strong> rufst du eine zugängliche Methode an einem bestimmten Objekt auf: <code>objekt.methode(argumente)</code>. Auch ohne Argumente gehören die leeren Klammern zum Aufruf.</p>
+        <p>Die Zahlen in den folgenden Aufgaben gelten für das Startprogramm. Hast du schon eigene Setter-Aufrufe ergänzt, entferne sie für diesen Vergleich oder setze den IDE-Code zurück.</p>
+        <div id="block-4a"></div><div id="block-4b"></div>
+        <p class="data-boundary">Das Auswahlfenster zeigt zum Typ von <code>petersHund</code> passende zugängliche Mitglieder. Auch geerbte Methoden können erscheinen; die <code>private</code>-Attribute von <code>Hund</code> sind im Hauptprogramm nicht direkt zugänglich. Die Auswahl ergänzt Code und führt ihn nicht aus.</p>
+        <p>Erscheint kein Auswahlfenster, prüfe die Schreibweise von <code>petersHund</code>, seine vorherige Deklaration und mögliche Programmfehler; lies die Signatur gegebenenfalls in <code>Hund.java</code>.</p>
+        <div id="remember-4" class="remember" hidden><p>Mit <code>objekt.methode(argumente)</code> rufst du eine Methode an einem bestimmten Objekt auf. Das Auswahlfenster hilft beim Schreiben; die Wirkung siehst du erst, wenn das Programm den Aufruf ausführt.</p></div>
         <div class="flow-navigation" data-flow="completion"></div>
       </section>
-      <section id="transfer" class="step-panel" role="tabpanel" aria-labelledby="tab-transfer" data-panel="transfer" hidden><h2>Anwenden und Übergang</h2>
-        <div id="block-4a"></div><div id="block-4b"></div><div id="block-4c"></div>
-        <p class="data-boundary">In Aufgabe 6.1 begegnen dir diese Getter und Signaturen wieder. Wie das Perzeptron trainiert, erarbeitest du erst dort.</p>
+      <section id="transfer" class="step-panel" role="tabpanel" aria-labelledby="tab-transfer" data-panel="transfer" hidden><h2>Anwenden</h2>
+        <div id="block-5a"></div><div id="block-5b"></div>
+        <p class="data-boundary">In Aufgabe 6.1 nutzt du dieselben Leseschritte für Klassen, Methoden und Aufrufe bei einem neuen Beispiel. Wie das Perzeptron arbeitet, erarbeitest du erst dort.</p>
         <div class="flow-navigation" data-flow="transfer"></div>
       </section>
       <section id="quiz" class="step-panel" role="tabpanel" aria-labelledby="tab-quiz" data-panel="quiz" hidden><h2>Abschlussquiz und Auswertung</h2>
@@ -57,46 +76,50 @@
         <a class="primary-button task6-0-next-link" href="aufgabe6.html">Weiter zu Aufgabe 6.1</a>
       </section>
     </div>
-  <section class="task6-0-ide" aria-label="Online-IDE" tabindex="0"><h2>Online-IDE: Datenpunkt</h2><div class="ide-container"><iframe id="frame-repeat" title="Online-IDE: Datenpunkt-Wiederholung" srcdoc="<link rel='stylesheet' href='perzeptron/task6-0-ide.css?v=20261018'><script>window.jo_doc = window.frameElement.textContent;</script><script src='../../../../include/js/includeide/includeIDE.js'></script>">
-{'id':'Java11Aufgabe6_0Wiederholung','speed':10,'withBottomPanel':true,'withPCode':true,'withConsole':true,'withFileList':true,'withErrorList':true,'enableFileAccess':true}
-<script type="text/plain" title="Anleitung" data-type="hint">
-Starte Hauptprogramm.java und beobachte die Konsole. Wechsle über die Dateiliste zu Datenpunkt.java, um Attribute und Methoden nachzulesen. Eine Auswahl im Fenster ergänzt Code, führt den Aufruf aber noch nicht aus.
-</script>
-<script type="plain/text" title="Hauptprogramm.java">
-Datenpunkt punkt = new Datenpunkt(2.5, 4.0, 1);
-Datenpunkt andererPunkt = new Datenpunkt(6.0, 2.0, 0);
-String punktX1Text = "" + punkt.gibEingabewertX1();
-if (punkt.gibEingabewertX1() % 1 == 0 && punktX1Text.indexOf(".") &lt; 0) { punktX1Text = punktX1Text + ".0"; }
-String punktX2Text = "" + punkt.gibEingabewertX2();
-if (punkt.gibEingabewertX2() % 1 == 0 && punktX2Text.indexOf(".") &lt; 0) { punktX2Text = punktX2Text + ".0"; }
-String andererX1Text = "" + andererPunkt.gibEingabewertX1();
-if (andererPunkt.gibEingabewertX1() % 1 == 0 && andererX1Text.indexOf(".") &lt; 0) { andererX1Text = andererX1Text + ".0"; }
-String andererX2Text = "" + andererPunkt.gibEingabewertX2();
-if (andererPunkt.gibEingabewertX2() % 1 == 0 && andererX2Text.indexOf(".") &lt; 0) { andererX2Text = andererX2Text + ".0"; }
-System.out.println("Vorher punkt: x_1=" + punktX1Text + ", x_2=" + punktX2Text + ", label=" + punkt.gibLabel());
-System.out.println("Vorher andererPunkt: x_1=" + andererX1Text + ", x_2=" + andererX2Text + ", label=" + andererPunkt.gibLabel());
-punkt.setzeLabel(0);
-System.out.println("Nachher punkt: x_1=" + punktX1Text + ", x_2=" + punktX2Text + ", label=" + punkt.gibLabel());
-System.out.println("Nachher andererPunkt: x_1=" + andererX1Text + ", x_2=" + andererX2Text + ", label=" + andererPunkt.gibLabel());
-</script>
-<script type="plain/text" title="Datenpunkt.java">
-public class Datenpunkt {
-    private double x_1;
-    private double x_2;
-    private int label;
-    public Datenpunkt(double wert_x_1, double wert_x_2, int wert_label) {
-        x_1 = wert_x_1;
-        x_2 = wert_x_2;
-        label = wert_label;
+    <section class="task6-0-ide" aria-label="Online-IDE" tabindex="0"><h2>Online-IDE: Hund</h2><div class="ide-container"><iframe id="frame-hund" title="Online-IDE: Hundeprogramm" srcdoc='<link rel="stylesheet" href="perzeptron/task6-0-ide.css?v=20261018-hund"><script>window.jo_doc = window.frameElement.textContent;</script><script src="../../../../include/js/includeide/includeIDE.js"></script>'>
+{'id':'Java11Aufgabe6_0HundV2','speed':10,'withBottomPanel':true,'withPCode':true,'withConsole':true,'withFileList':true,'withErrorList':true,'enableFileAccess':true}
+<script type="text/plain" title="Anleitung" data-type="hint">Starte `Hauptprogramm.java` und vergleiche die Ausgaben vor und nach `setzeAlter(6)`. Über die Dateiliste kannst du `Hund.java` öffnen; das Auswahlfenster ergänzt Code, führt ihn aber noch nicht aus.</script>
+<script type="plain/text" title="Hauptprogramm.java">Hund petersHund = new Hund(5, "Wuffti");
+Hund inasHund = new Hund(8, "Schnuffi");
+System.out.println("Vorher:");
+petersHund.zeigeDaten();
+inasHund.zeigeDaten();
+inasHund.belle();
+petersHund.setzeAlter(6);
+System.out.println("Nachher:");
+petersHund.zeigeDaten();
+inasHund.zeigeDaten();</script>
+<script type="plain/text" title="Hund.java">public class Hund {
+    private int alter;
+    private String name;
+
+    public Hund(int startAlter, String startName) {
+        alter = startAlter;
+        name = startName;
     }
-    public double gibEingabewertX1() { return x_1; }
-    public double gibEingabewertX2() { return x_2; }
-    public int gibLabel() { return label; }
-    public void setzeEingabewertX1(double neuerWert) { x_1 = neuerWert; }
-    public void setzeLabel(int neuesLabel) { label = neuesLabel; }
-}
-</script>
-          </iframe></div><p>Dein Code wird von der Online-IDE gespeichert. Die Zurücksetzen-Funktion der IDE setzt den Code zurück.</p><p>Bei ganzzahligen <code>double</code>-Werten hängt das Startprogramm <code>.0</code> an, damit die Dezimalzahlen erkennbar bleiben.</p></section>
+
+    public void zeigeDaten() {
+        System.out.println("Der Hund heißt " + name + " und ist " + alter + " Jahre alt.");
+    }
+
+    public void belle() {
+        System.out.println(name + ": Wuff wuff");
+    }
+
+    public int gibAlter() {
+        return alter;
+    }
+
+    public void setzeAlter(int neuesAlter) {
+        alter = neuesAlter;
+    }
+
+    public void setzeDaten(int neuesAlter, String neuerName) {
+        alter = neuesAlter;
+        name = neuerName;
+    }
+}</script>
+          </iframe></div><p>Dein Code wird von der Online-IDE gespeichert. Die Zurücksetzen-Funktion der IDE setzt den Code zurück.</p></section>
   </div>
   <section class="card task6-0-reset"><h2>Bearbeitungsstand</h2><p>Deine Antworten und dein Lernfortschritt werden gelöscht. Dein Code in der Online-IDE bleibt erhalten.</p><button id="reset-progress" class="secondary-button" type="button">Bearbeitungsstand zurücksetzen</button></section>
 </main>
