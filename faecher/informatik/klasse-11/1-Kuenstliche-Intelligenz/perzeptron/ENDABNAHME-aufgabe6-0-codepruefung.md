@@ -1,0 +1,2 @@
+APPROVED
+Die Codeaufgaben übernehmen die vorgegebenen Wortlaute und Hilfestufen, nutzen die vorhandene IDE- und Auswertungslogik und bewerten Getter, Setter, Aufrufreihenfolge sowie kumulierte und unabhängige Lösungen gemäß Spezifikation. 5A lässt beide Reihenfolgen der Getter-Ausgaben zu; die einmalige 4A-Migration erhält spätere Codeerfolge. Der neue Prüfbericht bestätigt 8/8 Zieltests und 41/41 Gesamttests. Die KI-Livebewertung nach Bereitstellung bleibt gesondert offen.

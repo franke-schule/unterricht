@@ -1,6 +1,10 @@
 import { mountClassCard, evaluateClassCard, parseStoredChoices } from '../../../../klasse-10/2-Modellierung-und-Programmierung-Online-IDE/klassendiagramm.mjs';
+import { evaluateCodeAnswer } from './semantic-answer.mjs?v=20261019-code-check';
+import { unlockSolution } from '../../../../klasse-10/1-Datenbanken/tab-navigation.mjs';
 
 const STORAGE_KEY = 'informatik11-ki-aufgabe6-0-v2';
+const SERVER_URL = 'https://unterrichtkiichezbn4-ki-auswertung.functions.fnc.fr-par.scw.cloud/';
+const IDE_ID = 'Java11Aufgabe6_0HundV2';
 const STEPS = ['objects', 'class-card', 'signatures', 'completion', 'transfer', 'quiz'];
 const CLASS_CARD = {
   key: 'hund', className: 'Hund', attributeSlots: 2, methodSlots: 5,
@@ -64,42 +68,42 @@ const BLOCKS = [
   },
   {
     id:'4a', title:'4A Auswahl und Ausgabe', mount:'block-4a',
-    prompt:'<strong>Tippe</strong> im Hauptprogramm in einer neuen Zeile `petersHund.` und <strong>suche</strong> im Auswahlfenster den Getter für das Alter. <strong>Gib</strong> seinen Rückgabewert mit `System.out.println` aus und <strong>starte</strong> das Programm.',
-    fields:[['Ausgewählte Methode','gibAlter',['gibAlter','zeigeDaten','setzeAlter','belle']],['Beobachteter Zahlenwert','6',['6','5','8']],['Auswahl führt Aufruf bereits aus?','nein',['nein','ja']]],
-    button:'Auswahl und Ausgabe prüfen', hints:['Suche eine Methode, deren Name mit `gib` beginnt.','Der Getter braucht kein Argument; sein Rückgabewert wird erst durch eine Ausgabe sichtbar.','Ergänze `System.out.println(petersHund.gibAlter());` hinter dem Startprogramm.'],
-    feedback:['Korrekt. `gibAlter()` liefert hier `6`; sichtbar wird der Wert durch `System.out.println`.','Teilweise korrekt. Prüfe die leeren Klammern, die Ausgabeanweisung und die letzte Konsolenzeile.','Noch nicht korrekt. Wähle den Alters-Getter am Objekt `petersHund` und gib seinen Rückgabewert aus.'],
-    answer:'`System.out.println(petersHund.gibAlter());` zeigt `6`. Die Auswahl im Fenster führt nichts aus.'
+    prompt:'<strong>Tippe</strong> im Hauptprogramm in einer neuen Zeile `petersHund.` und <strong>suche</strong> im Auswahlfenster den Getter für das Alter. <strong>Ergänze</strong> eine Ausgabe seines Rückgabewerts mit `println(...)` und <strong>starte</strong> das Programm.',
+    codeTask:{ id:'11-6-0-4a-code', maxPoints:3 },
+    button:'Code zu 4A prüfen', hints:['Suche eine Methode, deren Name mit `gib` beginnt.','Der Getter braucht kein Argument; sein Rückgabewert wird erst durch eine Ausgabe sichtbar.','Ergänze `println(petersHund.gibAlter());` nach der vorhandenen Altersänderung.'],
+    feedback:['Korrekt. Dein Code gibt den Rückgabewert von `petersHund.gibAlter()` mit `println(...)` aus.','Teilweise korrekt. Prüfe, ob du den Rückgabewert des Getters ausgibst und die leeren Aufrufklammern ergänzt hast.','Noch nicht korrekt. Ergänze im Hauptprogramm eine Ausgabe mit dem Alters-Getter von `petersHund`.'],
+    answer:'`println(petersHund.gibAlter());` gibt Wufftis aktuelles Alter aus. Die Auswahl im Fenster ergänzt Code; der Programmlauf führt ihn aus.'
   },
   {
     id:'4b', title:'4B Eingabetyp im Auswahlfenster', mount:'block-4b',
-    prompt:'<strong>Lies</strong> im Auswahlfenster ab, welchen Datentyp `setzeAlter` als Eingabe erwartet.',
+    prompt:'<strong>Finde heraus</strong>, welchen Datentyp `setzeAlter` als Eingabe erwartet. <strong>Prüfe</strong> dazu den Vorschlag im Auswahlfenster oder die Deklaration in `Hund.java`.',
     fields:[['Erwarteter Eingabetyp','int',['int','void','String']]], button:'Eingabetyp prüfen',
-    hints:['Lies die runden Klammern der vorgeschlagenen Signatur.','Der Typ steht direkt vor `neuesAlter`.','Die Signatur lautet `setzeAlter(int neuesAlter)`.'],
-    feedback:['Korrekt. `setzeAlter` erwartet einen `int`-Wert.','Teilweise korrekt. Verwechsle den Eingabetyp nicht mit dem Rückgabetyp `void`.','Noch nicht korrekt. Lies die Signatur im Fenster oder in `Hund.java`: Gesucht ist der Typ vor `neuesAlter`.'],
+    hints:['Suche `setzeAlter` nach `petersHund.`.','Der Typ steht in den Klammern direkt vor `neuesAlter`.','Die Deklaration lautet `setzeAlter(int neuesAlter)`; der Eingabetyp ist `int`.'],
+    feedback:['Korrekt. `setzeAlter` erwartet einen `int`-Wert.','Teilweise korrekt. `void` bezeichnet den Rückgabetyp; suche den Eingabetyp in den Klammern.','Noch nicht korrekt. Lies die Deklaration in `Hund.java`: Gesucht ist der Typ vor `neuesAlter`.'],
     answer:'Der Eingabetyp ist `int`.'
   },
   {
     id:'5a', title:'5A Alter ändern', mount:'block-5a',
-    prompt:'<strong>Setze</strong> Wufftis Alter mit einem neuen Methodenaufruf auf `7`. <strong>Gib</strong> danach das Alter beider Hunde über den Getter aus und <strong>vergleiche</strong> die Werte.',
-    fields:[['Alter von Wuffti','7',['7','6','8']],['Alter von Schnuffi','8',['8','7','6']]], button:'Ausgaben vergleichen',
-    hints:['Rufe den Setter am Objekt `petersHund` auf.','Danach liest du mit `gibAlter()` die Werte beider Objektvariablen aus.','Ergänze `petersHund.setzeAlter(7);` und gib anschließend beide Getter mit `System.out.println` aus.'],
-    feedback:['Korrekt. Wuffti ist nun 7 Jahre alt; Schnuffi bleibt 8 Jahre alt.','Teilweise korrekt. Prüfe, an welchem Objekt der Setter aufgerufen wird und ob du beide Getter ausgibst.','Noch nicht korrekt. Ändere nur `petersHund` und lies beide Hunde getrennt aus.'],
-    answer:'`petersHund.setzeAlter(7);` ergibt danach `7` für Wuffti und `8` für Schnuffi.'
+    prompt:'<strong>Setze</strong> Wufftis Alter mit einem neuen Methodenaufruf auf `7`. <strong>Gib</strong> danach das Alter beider Hunde mit ihren Gettern aus und <strong>vergleiche</strong> die Werte.',
+    codeTask:{ id:'11-6-0-5a-code', maxPoints:4 }, button:'Code zu 5A prüfen',
+    hints:['Rufe den Setter am Objekt `petersHund` auf.','Lies danach mit `gibAlter()` die Werte beider Objektvariablen aus; drucke nicht bloß Zahlen.','Ergänze `petersHund.setzeAlter(7);` und danach je eine `println(...)`-Ausgabe mit `petersHund.gibAlter()` und `inasHund.gibAlter()`.'],
+    feedback:['Korrekt. Wufftis Alter wird auf `7` gesetzt; danach gibt dein Code beide Alterswerte über die Getter aus.','Teilweise korrekt. Prüfe den Setter an `petersHund` und die Ausgaben beider Getter nach dem Setzen.','Noch nicht korrekt. Setze Wufftis Alter in `Hauptprogramm.java` und gib danach die Getterwerte beider Hunde aus.'],
+    answer:'`petersHund.setzeAlter(7);` verändert Wuffti. Danach geben `println(petersHund.gibAlter());` und `println(inasHund.gibAlter());` die aktuellen Werte der beiden Hunde aus.'
   },
   {
     id:'5b', title:'5B Alter und Name ändern', mount:'block-5b',
-    prompt:'<strong>Setze</strong> bei `inasHund` mit einem Aufruf von `setzeDaten` das Alter auf `9` und den Namen auf `Flocke`. <strong>Starte</strong> das Programm und <strong>lies</strong> die anschließende Ausgabe von `zeigeDaten()`.',
-    fields:[['Objektvariable','inasHund',['inasHund','petersHund','Hund']],['Erstes Argument','9',['9','8','5']],['Zweites Argument','Flocke',['Flocke','Schnuffi','Wuffti']],['Beobachteter Name','Flocke',['Flocke','Schnuffi','Wuffti']],['Beobachtetes Alter','9',['9','8','5']]], button:'Neue Hundedaten prüfen',
-    hints:['Die Signatur von `setzeDaten` erwartet zuerst das Alter und dann den Namen.','Vor dem Punkt steht `inasHund`; Zeichenketten schreibst du in Java in Anführungszeichen.','Ergänze `inasHund.setzeDaten(9, "Flocke");` und danach `inasHund.zeigeDaten();`.'],
-    feedback:['Korrekt. Nur `inasHund` hat nun die Daten Flocke und 9 Jahre.','Teilweise korrekt. Prüfe die Reihenfolge der beiden Argumente und die Objektvariable vor dem Punkt.','Noch nicht korrekt. Lies die Signatur `setzeDaten(int neuesAlter, String neuerName)` und setze passende Werte ein.'],
-    answer:'`inasHund.setzeDaten(9, "Flocke");` und `inasHund.zeigeDaten();` geben `Der Hund heißt Flocke und ist 9 Jahre alt.` aus.'
+    prompt:'<strong>Setze</strong> bei `inasHund` mit `setzeDaten` das Alter auf `9` und den Namen auf `Flocke`. <strong>Rufe</strong> danach `inasHund.zeigeDaten()` auf und <strong>starte</strong> das Programm.',
+    codeTask:{ id:'11-6-0-5b-code', maxPoints:4 }, button:'Code zu 5B prüfen',
+    hints:['Die Deklaration erwartet zuerst das Alter und dann den Namen.','Vor dem Punkt steht `inasHund`; Zeichenketten stehen in Anführungszeichen.','Ergänze `inasHund.setzeDaten(9, "Flocke");` und rufe danach `inasHund.zeigeDaten();` auf.'],
+    feedback:['Korrekt. Dein Code setzt `inasHund` auf Flocke und 9 Jahre und ruft danach `zeigeDaten()` an diesem Objekt auf.','Teilweise korrekt. Prüfe Objektvariable, Reihenfolge der Argumente und den anschließenden Aufruf von `zeigeDaten()`.','Noch nicht korrekt. Verwende `setzeDaten` an `inasHund` mit Alter und Name in der deklarierten Reihenfolge.'],
+    answer:'`inasHund.setzeDaten(9, "Flocke");` setzt beide Werte; der folgende Aufruf `inasHund.zeigeDaten();` gibt die neuen Hundedaten aus.'
   },
 ];
 
 const QUIZ = [
   { q:'Was gilt für die Klasse `Hund` und ihre Objekte?', options:['`Hund` legt Attribute und Methoden fest.','Wuffti und Schnuffi können verschiedene Alterswerte haben.','Ein Setter-Aufruf an Wuffti ändert auch Schnuffi.','`petersHund` ist der Klassenname.'], solution:['A','B'], hint:'Die Klasse beschreibt die gemeinsame Struktur; die Werte gehören zu einzelnen Objekten.', explanation:'`Hund` ist der Klassenname. `petersHund` und `inasHund` bezeichnen verschiedene Objekte mit eigenen Werten.' },
   { q:'Was sagt `public void setzeAlter(int neuesAlter)` aus?', options:['Die Methode hat einen Eingabeparameter.','Der Eingabeparameter hat den Typ `int`.','`void` bedeutet, dass kein Wert zurückgegeben wird.','`void` bedeutet, dass kein Argument übergeben wird.'], solution:['A','B','C'], hint:'Lies Rückgabetyp und Klammerinhalt getrennt.', explanation:'`void` bezeichnet die fehlende Rückgabe; `int neuesAlter` ist ein Eingabeparameter.' },
-  { q:'Was gilt für `public int gibAlter()`?', options:['Der Rückgabetyp ist `int`.','Die Methode erwartet kein Argument.','Beim Aufruf gehören die leeren Klammern dazu.','Der Getter druckt seinen Wert immer selbst.'], solution:['A','B','C'], hint:'Ein Getter liefert einen Wert zurück; zur Anzeige braucht er eine Ausgabe.', explanation:'`gibAlter()` liefert einen `int`-Wert und hat keinen Eingabeparameter; `System.out.println` zeigt ihn an.' },
+  { q:'Was gilt für `public int gibAlter()`?', options:['Der Rückgabetyp ist `int`.','Die Methode erwartet kein Argument.','Beim Aufruf gehören die leeren Klammern dazu.','Der Getter druckt seinen Wert immer selbst.'], solution:['A','B','C'], hint:'`gibAlter()` liefert einen Wert zurück; zur Anzeige braucht es eine Ausgabe.', explanation:'`gibAlter()` liefert einen `int`-Wert und hat keinen Eingabeparameter; `println(...)` zeigt den Rückgabewert an.' },
   { q:'Was gilt für `petersHund.setzeAlter(6);`?', options:['`petersHund` ist die Objektvariable.','`setzeAlter` ist der Methodenname.','`6` ist das Argument.','`6` ist der Parametername der Deklaration.'], solution:['A','B','C'], hint:'Im Aufruf steht ein konkreter Wert, in der Deklaration ein Parametername.', explanation:'Der Aufruf übergibt `6` an `neuesAlter` und wirkt auf das Objekt `petersHund`.' },
   { q:'Was gilt für das Auswahlfenster nach `petersHund.`?', options:['Es zeigt zugängliche Vorschläge zum Objekttyp.','Es kann einen Methodenaufruf ergänzen.','Die Auswahl führt den Aufruf sofort aus.','`private int alter` ist im Hauptprogramm direkt zugänglich.'], solution:['A','B'], hint:'Das Fenster unterstützt beim Schreiben; die Wirkung entsteht erst bei der Ausführung.', explanation:'Vorschläge hängen von Typ und Zugänglichkeit ab. Auswählen ergänzt Code, der erst beim Programmlauf wirkt.' },
   { q:'Was gilt für `setzeDaten(int neuesAlter, String neuerName)`?', options:['Die Methode hat zwei Eingabeparameter.','Das Alter steht im Aufruf vor dem Namen.','`inasHund.setzeDaten(9, "Flocke");` ist ein passender Aufruf.','`void` ist der Typ des ersten Eingabeparameters.'], solution:['A','B','C'], hint:'Trenne Rückgabetyp von den beiden Typ-Namen-Paaren in Klammern.', explanation:'`int neuesAlter` und `String neuerName` sind die beiden Parameter; `void` ist der Rückgabetyp.' },
@@ -112,16 +116,28 @@ function htmlContent(text) {
     .join('');
 }
 function readSaved() {
+  let value;
   try {
-    const value = JSON.parse(localStorage.getItem(STORAGE_KEY));
-    if (!value || typeof value !== 'object') return { fields:{}, flags:{} };
-    value.fields = value.fields && typeof value.fields === 'object' ? value.fields : {};
-    value.flags = value.flags && typeof value.flags === 'object' ? value.flags : {};
-    value.fields['class-card-state'] = JSON.stringify(parseStoredChoices(value.fields['class-card-state'] || '', 7, CLASS_CARD.cards.map(card => card.id)));
-    if (!STEPS.includes(value.fields['active-tab'])) value.fields['active-tab'] = 'objects';
-    try { localStorage.setItem(STORAGE_KEY, JSON.stringify(value)); } catch { /* Seite bleibt ohne Speicherung benutzbar. */ }
-    return value;
-  } catch { return { fields:{}, flags:{} }; }
+    value = JSON.parse(localStorage.getItem(STORAGE_KEY));
+  } catch { value = null; }
+  if (!value || typeof value !== 'object' || Array.isArray(value)) value = { fields:{}, flags:{} };
+  value.fields = value.fields && typeof value.fields === 'object' && !Array.isArray(value.fields) ? value.fields : {};
+  value.flags = value.flags && typeof value.flags === 'object' && !Array.isArray(value.flags) ? value.flags : {};
+  // 4A used to be a dropdown-only check; invalidate it once, then preserve code success.
+  const migrationKey = 'migration-4a-code-v1';
+  if (value.flags[migrationKey] !== true) {
+    const hadDropdownOnly4a = value.flags['block-4a'] === true;
+    if (hadDropdownOnly4a) {
+      delete value.flags['block-4a'];
+      delete value.flags['remember-4'];
+    }
+    for (const key of Object.keys(value.fields)) if (/^answer-4a-/.test(key)) delete value.fields[key];
+    value.flags[migrationKey] = true;
+  }
+  value.fields['class-card-state'] = JSON.stringify(parseStoredChoices(value.fields['class-card-state'] || '', 7, CLASS_CARD.cards.map(card => card.id)));
+  if (!STEPS.includes(value.fields['active-tab'])) value.fields['active-tab'] = 'objects';
+  try { localStorage.setItem(STORAGE_KEY, JSON.stringify(value)); } catch { /* Seite bleibt ohne Speicherung benutzbar. */ }
+  return value;
 }
 const SAVED = readSaved();
 function showFeedback(element, level, message) {
@@ -157,9 +173,7 @@ let savedInputs;
 function reveal(id) { const element = document.getElementById(id); if (element) element.hidden = false; savedInputs?.setFlag(id); }
 function restoreFlags() {
   ['remember-1','remember-3','remember-4','quiz-summary'].forEach(id => { if (savedInputs?.hasFlag(id)) document.getElementById(id).hidden = false; });
-  if (savedInputs?.hasFlag('block-1a')) showObservedAgeChange();
 }
-function showObservedAgeChange() { document.getElementById('wuffti-age-state').textContent = 'alter = 5 → 6'; }
 
 function renderBlock(block) {
   const root = document.getElementById(block.mount); const card = document.createElement('article'); card.className = 'card task6-0-block'; card.id = 'task-' + block.id;
@@ -167,7 +181,7 @@ function renderBlock(block) {
   if (block.code) { const pre = document.createElement('pre'); pre.className = 'task6-0-code'; const code = document.createElement('code'); code.textContent = block.code; pre.append(code); card.append(pre); }
   const prompt = document.createElement('p'); prompt.innerHTML = htmlContent(block.prompt); card.append(prompt);
   const fields = document.createElement('div'); fields.className = 'input-grid'; fields.id = 'fields-' + block.id;
-  block.fields.forEach(([labelText, , options], index) => {
+  if (!block.codeTask) block.fields.forEach(([labelText, , options], index) => {
     const label = document.createElement('label'); const id = 'answer-' + block.id + '-' + index; label.htmlFor = id; label.innerHTML = htmlContent(labelText);
     let input;
     if (options) { input = document.createElement('select'); const blank = document.createElement('option'); blank.value = ''; blank.textContent = '– bitte wählen –'; input.append(blank); options.forEach(value => { const option = document.createElement('option'); option.value = value; option.textContent = value; input.append(option); }); }
@@ -177,9 +191,68 @@ function renderBlock(block) {
   card.append(fields); const button = document.createElement('button'); button.className = 'primary-button'; button.type = 'button'; button.textContent = block.button; card.append(button);
   const result = document.createElement('p'); result.className = 'feedback'; result.setAttribute('role', 'status'); result.setAttribute('aria-live', 'polite'); result.hidden = true; card.append(result);
   block.hints.forEach((hint, index) => { const details = document.createElement('details'); const summary = document.createElement('summary'); summary.textContent = 'Hilfe ' + (index + 1); const p = document.createElement('p'); p.innerHTML = htmlCode(hint); details.append(summary, p); card.append(details); });
-  button.addEventListener('click', () => checkBlock(block, fields, result)); root.append(card);
+  button.addEventListener('click', () => checkBlock(block, fields, result, button)); root.append(card);
 }
-function checkBlock(block, fields, result) {
+function readIdeCode() {
+  const frame = document.getElementById('frame-hund');
+  const access = frame?.contentWindow?.online_ide_access;
+  const ide = access?.getIDE?.(IDE_ID);
+  if (!ide || typeof ide.getFiles !== 'function') throw new Error('Die Online-IDE lädt noch. Bitte warte kurz und versuche es erneut.');
+  const files = ide.getFiles();
+  if (!Array.isArray(files)) throw new Error('Die Online-IDE lädt noch. Bitte warte kurz und versuche es erneut.');
+  const mainFile = files.find(file => file.getName?.() === 'Hauptprogramm.java');
+  if (!mainFile || typeof mainFile.getText !== 'function') throw new Error('`Hauptprogramm.java` wurde in der Online-IDE nicht gefunden.');
+  const dogFile = files.find(file => file.getName?.() === 'Hund.java');
+  if (!dogFile || typeof dogFile.getText !== 'function') throw new Error('`Hund.java` wurde in der Online-IDE nicht gefunden.');
+  return '// ===== Datei: Hauptprogramm.java =====\n' + mainFile.getText() + '\n// ===== Datei: Hund.java =====\n' + dogFile.getText();
+}
+function serverError(error) {
+  const message = String(error?.message || '');
+  if (/unbekannt|nicht gefunden|task.?id|Aufgabe.*nicht/i.test(message)) return 'Die Codeprüfung für Aufgabe 6.0 ist auf dem Server noch nicht bereitgestellt. Bitte informiere deine Lehrkraft.';
+  return 'Die Auswertung konnte nicht abgeschlossen werden. Bitte versuche es erneut.';
+}
+function renderCodeEvaluation(block, result) {
+  const level = result.points === result.maxPoints ? 'success' : result.points > 0 ? 'partial' : 'error';
+  const message = block.feedback[level === 'success' ? 0 : level === 'partial' ? 1 : 2];
+  const box = document.getElementById('task-' + block.id).querySelector('[aria-live="polite"]');
+  box.hidden = false;
+  box.className = 'feedback ' + level;
+  box.replaceChildren();
+  const heading = document.createElement('strong');
+  heading.textContent = `${result.points} von ${result.maxPoints} Punkten – ${result.status}`;
+  box.append(heading);
+  for (const [label, items, empty] of [
+    ['Das ist dir gelungen', result.strengths, 'Noch kein Aspekt ist eindeutig belegt.'],
+    ['Das solltest du überprüfen', result.missing, 'Es fehlt kein wesentlicher Aspekt.']
+  ]) {
+    const title = document.createElement('strong'); title.textContent = label; box.append(title);
+    if (items.length) { const list = document.createElement('ul'); for (const item of items) { const li = document.createElement('li'); li.textContent = item; list.append(li); } box.append(list); }
+    else { const p = document.createElement('span'); p.textContent = empty; box.append(p); }
+  }
+  const feedback = document.createElement('span'); feedback.textContent = message; box.append(feedback);
+  if (typeof result.feedback === 'string' && result.feedback.trim()) {
+    const detail = document.createElement('p'); detail.textContent = result.feedback.trim(); box.append(detail);
+  }
+}
+async function checkCodeBlock(block, result, button) {
+  let code;
+  try { code = readIdeCode(); } catch (error) { showFeedback(result, 'error', error.message); return; }
+  if (code.trim().length < 20) { showFeedback(result, 'error', 'Der aktuelle Programmcode ist noch zu kurz für eine Auswertung.'); return; }
+  if (code.length > 12000) { showFeedback(result, 'error', 'Dein Programmcode ist zu lang für die automatische Auswertung.'); return; }
+  button.disabled = true;
+  showFeedback(result, 'partial', 'Der aktuelle Programmcode wird für diesen Aufgabenteil ausgewertet.');
+  try {
+    const evaluation = await evaluateCodeAnswer({ serverUrl:SERVER_URL, taskId:block.codeTask.id, code, expectedMaxPoints:block.codeTask.maxPoints });
+    renderCodeEvaluation(block, evaluation);
+    if (evaluation.points === evaluation.maxPoints && block.id === '4a') {
+      savedInputs?.setFlag('block-4a');
+      if (savedInputs?.hasFlag('block-4b')) reveal('remember-4');
+    }
+  } catch (error) { showFeedback(result, 'error', serverError(error)); }
+  finally { button.disabled = false; }
+}
+function checkBlock(block, fields, result, button) {
+  if (block.codeTask) { checkCodeBlock(block, result, button); return; }
   let correct = 0; let empty = false;
   block.fields.forEach(([, expected], index) => {
     const input = fields.querySelector('[data-field-index="' + index + '"]'); const value = input.value.trim(); const valid = value === expected;
@@ -189,7 +262,7 @@ function checkBlock(block, fields, result) {
   if (empty) { showFeedback(result, '', 'Ergänze zuerst deine Antwort.'); return; }
   if (correct === block.fields.length) {
     showFeedback(result, 'success', block.feedback[0]);
-    if (block.id === '1a') { showObservedAgeChange(); savedInputs?.setFlag('block-1a'); reveal('remember-1'); }
+    if (block.id === '1a') reveal('remember-1');
     if (block.id === '3d') reveal('remember-3');
     if (block.id === '4a' || block.id === '4b') { savedInputs?.setFlag('block-' + block.id); if (savedInputs?.hasFlag('block-4a') && savedInputs?.hasFlag('block-4b')) reveal('remember-4'); }
   } else {
@@ -250,7 +323,8 @@ BLOCKS.forEach(renderBlock);
 setupCard();
 setupQuiz();
 buildSummary();
-savedInputs = window.persistTaskInputs(STORAGE_KEY, 'input, select, textarea');
+document.getElementById('solution-code-form').addEventListener('submit', event => unlockSolution(event, 'M3WP-D8B2', 'solution-download-link', 'solution-code-message'));
+savedInputs = window.persistTaskInputs(STORAGE_KEY, 'input:not([name="solution-code"]), select, textarea');
 showStep(STEPS.includes(document.getElementById('active-tab').value) ? document.getElementById('active-tab').value : 'objects');
 restoreFlags();
 document.getElementById('reset-progress').addEventListener('click', () => {

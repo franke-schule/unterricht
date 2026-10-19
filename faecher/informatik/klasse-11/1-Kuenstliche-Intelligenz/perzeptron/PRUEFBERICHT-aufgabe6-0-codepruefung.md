@@ -1,0 +1,2 @@
+PRUEFUNG_BESTANDEN
+Die Code-Akzeptanzkriterien sind erfüllt: 5A akzeptiert beide Reihenfolgen der Getter-Ausgaben, und die 4A-Legacy-Migration ist einmalig; Legacy- und frische Speicherstände bewahren einen späteren Codeerfolg samt Merksatz nach dem Reload. Zieltests 8/8, Gesamtsuite 41/41, JavaScript-Syntax und `git diff --check` bestehen; die parallele Sicherungsblatt-/Lehrercode-Ergänzung und ein KI-Live-Test nach Deployment wurden hier nicht inhaltlich bzw. visuell abgenommen.

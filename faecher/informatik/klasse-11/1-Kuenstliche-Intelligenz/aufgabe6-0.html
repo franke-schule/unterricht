@@ -7,11 +7,11 @@
   <title>Aufgabe 6.0 – Objektorientierte Programmierung wiederholen | Informatik 11</title>
   <link rel="stylesheet" href="../../../../styles.css?v=20260707">
   <link rel="stylesheet" href="perzeptron/task5.css?v=20261010-tabs">
-  <link rel="stylesheet" href="perzeptron/task6-0.css?v=20261018-hund-columns">
+  <link rel="stylesheet" href="perzeptron/task6-0.css?v=20261019-object-cards-drag">
   <link rel="stylesheet" href="perzeptron/task6-0-ide.css?v=20261018-hund">
   <script src="../../quiz-fragen-pruefen.js?v=20261006b"></script>
   <script src="../../klasse-9/eingaben-speichern.js?v=20261018"></script>
-  <script type="module" src="perzeptron/ui/task6-0.mjs?v=20261018-hund-labels"></script>
+  <script type="module" src="perzeptron/ui/task6-0.mjs?v=20261019-sicherungsblatt"></script>
 </head>
 <body class="perceptron-page task6-0-page">
 <div class="site-backdrop" aria-hidden="true"></div>
@@ -31,7 +31,13 @@
     <div class="task6-0-content">
       <section id="objects" class="step-panel" role="tabpanel" aria-labelledby="tab-objects" data-panel="objects"><h2>Hunde als Objekte</h2>
         <div id="block-1a"></div>
-        <article class="card object-comparison" aria-label="Zwei Objekte der Klasse Hund"><h3>Zwei Hunde</h3><div class="object-cards"><div class="object-card"><strong>petersHund · Wuffti</strong><span id="wuffti-age-state" aria-live="polite">alter = 5</span></div><div class="object-card"><strong>inasHund · Schnuffi</strong><span>alter = 8</span></div></div></article>
+        <article class="card object-comparison" aria-label="Zwei Objekte der Klasse Hund"><h3>Zwei Hunde</h3>
+          <div class="object-cards">
+            <div class="object-snapshot"><p>Vor <code>setzeAlter(6)</code></p><div class="object-card"><strong class="object-card-title">petersHund: Hund</strong><div class="object-card-attributes"><span>alter = 5</span><span>name = "Wuffti"</span></div></div></div>
+            <div class="object-snapshot"><p>Nach <code>setzeAlter(6)</code></p><div class="object-card"><strong class="object-card-title">petersHund: Hund</strong><div class="object-card-attributes"><span>alter = 6</span><span>name = "Wuffti"</span></div></div></div>
+            <div class="object-snapshot"><p>Unverändert</p><div class="object-card"><strong class="object-card-title">inasHund: Hund</strong><div class="object-card-attributes"><span>alter = 8</span><span>name = "Schnuffi"</span></div></div></div>
+          </div>
+        </article>
         <div id="remember-1" class="remember" hidden><p>Die Klasse <code>Hund</code> legt fest, welche Attribute und Methoden Hunde-Objekte besitzen. Wuffti und Schnuffi sind verschiedene Objekte mit eigenen Attributwerten; ein Methodenaufruf an Wuffti ändert Schnuffi nicht.</p></div>
         <div class="flow-navigation" data-flow="objects"></div>
       </section>
@@ -47,19 +53,21 @@ public void setzeAlter(int neuesAlter)
 public void setzeDaten(int neuesAlter, String neuerName)</code></pre>
           <div class="class-builder" id="class-builder"></div><input type="hidden" id="class-card-state">
           <button id="check-class-card" type="button" class="primary-button">Klassenkarte prüfen</button><p id="class-card-feedback" class="feedback" role="status" aria-live="polite" hidden></p>
-          <details><summary>Hilfe 1</summary><p>Suche in den Deklarationen von <code>Hund.java</code> nach den beiden Zustandswerten.</p></details><details><summary>Hilfe 2</summary><p>Attribute haben hier keine Klammern; Methoden erkennst du an Namen und runden Klammern.</p></details><details><summary>Hilfe 3</summary><p>Oben stehen <code>alter</code> und <code>name</code>; unten die zwei Ausgabemethoden, der Getter und die zwei Setter. Den Konstruktor lässt du liegen.</p></details>
+          <details><summary>Hilfe 1</summary><p>Suche in den Deklarationen von <code>Hund.java</code> nach den beiden Zustandswerten.</p></details><details><summary>Hilfe 2</summary><p>Attribute haben hier keine Klammern; Methoden erkennst du an Namen und runden Klammern.</p></details><details><summary>Hilfe 3</summary><p>Oben stehen <code>alter</code> und <code>name</code>; unten <code>zeigeDaten()</code>, <code>belle()</code>, <code>gibAlter()</code> und die zwei Setter. Den Konstruktor lässt du liegen.</p></details>
         </article>
         <div class="flow-navigation" data-flow="class-card"></div>
       </section>
       <section id="signatures" class="step-panel" role="tabpanel" aria-labelledby="tab-signatures" data-panel="signatures" hidden><h2>Methoden lesen</h2>
-        <p><code>petersHund.setzeAlter(6)</code> ändert Wufftis Alter: <code>setzeAlter</code> ist ein <strong>Setter</strong>. <code>petersHund.gibAlter()</code> liefert das Alter zurück: <code>gibAlter</code> ist ein <strong>Getter</strong>. Ein Getter zeigt den Wert erst dann in der Konsole, wenn du ihn ausgibst.</p>
+        <p><code>petersHund.gibAlter()</code> liefert Wufftis Alter zurück. <code>petersHund.setzeAlter(6)</code> ändert sein Alter.</p>
+        <p>Ein <strong>Getter</strong> ist eine Methode zur Ausgabe eines oder mehrerer Attributwerte. Ein <strong>Setter</strong> ist eine Methode zur kontrollierten Veränderung von Attributwerten.</p>
+        <p>Bei privaten Attributen können Getter und Setter in Kombination vor unbefugtem Zugriff und ungültigen Attributwerten schützen: Die Methoden legen fest, welche Werte gelesen oder verändert werden dürfen, und können neue Werte vor dem Speichern prüfen.</p>
         <div id="block-3a"></div><div id="block-3b"></div><div id="block-3c"></div><div id="block-3d"></div>
         <div id="remember-3" class="remember" hidden><p>Der Rückgabetyp steht vor dem Methodennamen. In den Klammern der Deklaration stehen Eingabeparameter mit Typ und Namen; im Aufruf stehen die konkreten Argumente.</p><p><code>void</code> heißt: Die Methode gibt keinen Wert zurück. Leere Klammern heißen: Die Methode erwartet kein Argument.</p></div>
         <div class="flow-navigation" data-flow="signatures"></div>
       </section>
       <section id="completion" class="step-panel" role="tabpanel" aria-labelledby="tab-completion" data-panel="completion" hidden><h2>Punktnotation und Auswahlfenster</h2>
         <p>Mit der <strong>Punktnotation</strong> rufst du eine zugängliche Methode an einem bestimmten Objekt auf: <code>objekt.methode(argumente)</code>. Auch ohne Argumente gehören die leeren Klammern zum Aufruf.</p>
-        <p>Die Zahlen in den folgenden Aufgaben gelten für das Startprogramm. Hast du schon eigene Setter-Aufrufe ergänzt, entferne sie für diesen Vergleich oder setze den IDE-Code zurück.</p>
+        <p>Wenn du im Auswahlfenster eine Methode auswählst, ergänzt die IDE den Code. Der Aufruf wirkt erst, wenn das Programm ihn ausführt.</p>
         <div id="block-4a"></div><div id="block-4b"></div>
         <p class="data-boundary">Das Auswahlfenster zeigt zum Typ von <code>petersHund</code> passende zugängliche Mitglieder. Auch geerbte Methoden können erscheinen; die <code>private</code>-Attribute von <code>Hund</code> sind im Hauptprogramm nicht direkt zugänglich. Die Auswahl ergänzt Code und führt ihn nicht aus.</p>
         <p>Erscheint kein Auswahlfenster, prüfe die Schreibweise von <code>petersHund</code>, seine vorherige Deklaration und mögliche Programmfehler; lies die Signatur gegebenenfalls in <code>Hund.java</code>.</p>
@@ -73,6 +81,21 @@ public void setzeDaten(int neuesAlter, String neuerName)</code></pre>
       </section>
       <section id="quiz" class="step-panel" role="tabpanel" aria-labelledby="tab-quiz" data-panel="quiz" hidden><h2>Abschlussquiz und Auswertung</h2>
         <section id="final-quiz" aria-labelledby="quiz-title"><h3 id="quiz-title">Abschlussquiz</h3><p><strong>Kreuze</strong> bei jeder Frage alle richtigen Aussagen an. <strong>Prüfe</strong> jede Frage einzeln und <strong>werte</strong> danach das Quiz aus.</p><p id="quiz-progress">0 von 6 Fragen vollständig richtig</p><form id="quiz-form"><div id="quiz-questions"></div><button class="primary-button" type="submit">Quiz auswerten</button></form><p id="quiz-feedback" class="feedback" role="status" aria-live="polite" hidden></p><div id="quiz-summary" class="remember" hidden></div></section>
+        <section class="solution-download" aria-labelledby="solution-download-title">
+          <h2 id="solution-download-title">Sicherungsblatt zu Aufgabe 6.0</h2>
+          <details class="solution-reveal">
+            <summary>Sicherungsblatt anzeigen</summary>
+            <form id="solution-code-form" class="solution-code-form">
+              <label for="solution-code">Lehrercode eingeben</label>
+              <div class="solution-code-controls">
+                <input id="solution-code" name="solution-code" type="text" maxlength="9" autocomplete="off" autocapitalize="characters" spellcheck="false" required>
+                <button type="submit">Code prüfen</button>
+              </div>
+              <p id="solution-code-message" class="solution-code-message" aria-live="polite"></p>
+              <a id="solution-download-link" class="download-button" href="sicherungsblatt-aufgabe-6-0-loesungen.pdf" download hidden>&#8595; Sicherungsblatt herunterladen</a>
+            </form>
+          </details>
+        </section>
         <a class="primary-button task6-0-next-link" href="aufgabe6.html">Weiter zu Aufgabe 6.1</a>
       </section>
     </div>
@@ -81,12 +104,12 @@ public void setzeDaten(int neuesAlter, String neuerName)</code></pre>
 <script type="text/plain" title="Anleitung" data-type="hint">Starte `Hauptprogramm.java` und vergleiche die Ausgaben vor und nach `setzeAlter(6)`. Über die Dateiliste kannst du `Hund.java` öffnen; das Auswahlfenster ergänzt Code, führt ihn aber noch nicht aus.</script>
 <script type="plain/text" title="Hauptprogramm.java">Hund petersHund = new Hund(5, "Wuffti");
 Hund inasHund = new Hund(8, "Schnuffi");
-System.out.println("Vorher:");
+println("Vorher:");
 petersHund.zeigeDaten();
 inasHund.zeigeDaten();
 inasHund.belle();
 petersHund.setzeAlter(6);
-System.out.println("Nachher:");
+println("Nachher:");
 petersHund.zeigeDaten();
 inasHund.zeigeDaten();</script>
 <script type="plain/text" title="Hund.java">public class Hund {
@@ -99,11 +122,11 @@ inasHund.zeigeDaten();</script>
     }
 
     public void zeigeDaten() {
-        System.out.println("Der Hund heißt " + name + " und ist " + alter + " Jahre alt.");
+        println("Der Hund heißt " + name + " und ist " + alter + " Jahre alt.");
     }
 
     public void belle() {
-        System.out.println(name + ": Wuff wuff");
+        println(name + ": Wuff wuff");
     }
 
     public int gibAlter() {

@@ -2362,6 +2362,100 @@ const TASKS = {
     }
   },
 
+  '11-6-0-4a-code': {
+    title: 'Informatik Klasse 11 Aufgabe 6.0 – 4A Auswahl und Ausgabe',
+    grade: 11,
+    responseType: 'code',
+    maxPoints: 3,
+    statusLabels: { correct: 'korrekt', partial: 'teilweise korrekt', incorrect: 'noch nicht korrekt' },
+    codeAnalysisContext: 'LearnJ-Online-IDE; Hauptprogramm.java enthält Top-Level-Anweisungen ohne main; println(...) ist hier gültig. Das Eingabefeld enthält Hauptprogramm.java und Hund.java in dieser Reihenfolge, jeweils mit einem Trenner // ===== Datei: Name =====. Anfangszustand: petersHund = new Hund(5, "Wuffti"), inasHund = new Hund(8, "Schnuffi"), danach bereits petersHund.setzeAlter(6). Hund.java enthält private Attribute, gibAlter(), setzeAlter(int), setzeDaten(int,String), zeigeDaten() und belle(); zeigeDaten() druckt die aktuellen Attribute. Bewerte ausführbaren Code und Reihenfolge in Hauptprogramm.java; Kommentare, Zeichenketten mit Java-Code, Anleitungstexte und hart kodierte erwartete Ausgaben sind keine Lösung. Hund.java dient zur Plausibilitätskontrolle: Wenn Eingriffe Signaturen oder Wirkungen der Methoden aufheben, darf kein voller Erfolg behauptet werden. Die statische Analyse belegt weder Kompilierung noch Programmlauf; bei nicht sicher erschließbarer Wirkung zurückhaltend bewerten und zur Ausführung in der IDE auffordern.',
+    instruction: 'Bewerte ausschließlich den Teilauftrag 4A: den tatsächlichen Rückgabewert des Alters-Getters für petersHund in einer ausführbaren println(...)-Ausgabe. Gib keine vollständige Musterlösung aus.',
+    expectedAspects: [
+      'petersHund.gibAlter() wird als tatsächlich erreichbarer Getteraufruf verwendet.',
+      'Der Rückgabewert dieses Getteraufrufs wird in einer ausführbaren println(...)-Ausgabe angezeigt, auch über eine korrekt zugewiesene Zwischenvariable.',
+      'Der Aufruf ist syntaktisch plausibel vollständig, enthält die leeren Klammern und steht nach der Objekterzeugung.'
+    ],
+    rubric: [
+      'Je ein Punkt pro erwartetem Aspekt. Ein späterer gültiger Setter aus 5A darf den Aufruf verändern und mindert 4A nicht.',
+      'Eine konstante Ausgabe wie println(6) oder println(7), ein Getter ohne Ausgabe und Code in Kommentaren, Zeichenketten oder Anleitung erfüllen die jeweiligen Aspekte nicht.',
+      'Bewerte ausführbaren Java-Code und die Erreichbarkeit im Hauptprogramm; offensichtliche Syntax- oder Typfehler schließen „korrekt“ aus.',
+      'Prüfe Hund.java auf Änderungen, die gibAlter() oder seine Wirkung auf das Alter aufheben. Bei nicht sicher erschließbarer Wirkung zurückhaltend bewerten und zur Ausführung in der IDE auffordern.',
+      'Volle 3 Punkte = korrekt, 1 bis 2 Punkte = teilweise korrekt, 0 Punkte = noch nicht korrekt. strengths nennt belegte Aspekte; missing den nächsten konkreten Prüfschritt. Keine vollständige Musterlösung.'
+    ],
+    codeAnalysisRules: [
+      'Analysiere den ausführbaren Code von Hauptprogramm.java in Reihenfolge. Kommentare, Zeichenketten mit Java-Code und Anleitungstext zählen nicht als Lösung.',
+      'Erkenne den Aufruf petersHund.gibAlter() als Getter-Aufruf; er muss nach der Deklaration des Objekts erreichbar sein.',
+      'Für die Ausgabe zählt nur der tatsächliche Rückgabewert des Getteraufrufs in println(...), direkt oder über eine korrekt zugewiesene Variable. Harte Zahlen wie println(6) zählen nicht.',
+      'Ein späterer gültiger petersHund.setzeAlter(7) ist erlaubt und entwertet eine Ausgabe des aktuellen Getterwerts nicht.',
+      'Prüfe Hund.java auf Signatur und Wirkung der verwendeten Methoden; schreibe bei unklarer statischer Wirkung keinen vollen Erfolg gut.',
+      'Ein echter Programmlauf kann nur in der IDE erfolgen. Behaupte keine beobachtete Konsolenausgabe und gib ohne Ausführung keine Aussage über die tatsächliche Laufzeit aus.'
+    ]
+  },
+
+  '11-6-0-5a-code': {
+    title: 'Informatik Klasse 11 Aufgabe 6.0 – 5A Alter ändern',
+    grade: 11,
+    responseType: 'code',
+    maxPoints: 4,
+    statusLabels: { correct: 'korrekt', partial: 'teilweise korrekt', incorrect: 'noch nicht korrekt' },
+    codeAnalysisContext: 'LearnJ-Online-IDE; Hauptprogramm.java enthält Top-Level-Anweisungen ohne main; println(...) ist hier gültig. Das Eingabefeld enthält Hauptprogramm.java und Hund.java in dieser Reihenfolge, jeweils mit einem Trenner // ===== Datei: Name =====. Anfangszustand: petersHund = new Hund(5, "Wuffti"), inasHund = new Hund(8, "Schnuffi"), danach bereits petersHund.setzeAlter(6). Hund.java enthält private Attribute, gibAlter(), setzeAlter(int), setzeDaten(int,String), zeigeDaten() und belle(); zeigeDaten() druckt die aktuellen Attribute. Bewerte ausführbaren Code und Reihenfolge in Hauptprogramm.java; Kommentare, Zeichenketten mit Java-Code, Anleitungstexte und hart kodierte erwartete Ausgaben sind keine Lösung. Hund.java dient zur Plausibilitätskontrolle: Wenn Eingriffe Signaturen oder Wirkungen der Methoden aufheben, darf kein voller Erfolg behauptet werden. Die statische Analyse belegt weder Kompilierung noch Programmlauf; bei nicht sicher erschließbarer Wirkung zurückhaltend bewerten und zur Ausführung in der IDE auffordern.',
+    instruction: 'Bewerte ausschließlich den Teilauftrag 5A: Wufftis Alter auf 7 setzen und danach beide tatsächlichen Getterwerte ausgeben. Gib keine vollständige Musterlösung aus.',
+    expectedAspects: [
+      'Ein ausführbarer Setter-Aufruf verändert petersHund.',
+      'Der Setter erhält den Wert 7 und steht nach dem vorgegebenen petersHund.setzeAlter(6).',
+      'Nach diesem Setter wird der tatsächliche Rückgabewert von petersHund.gibAlter() ausführbar ausgegeben.',
+      'Der tatsächliche Rückgabewert von inasHund.gibAlter() wird ebenfalls ausführbar ausgegeben. Beide Getter-Ausgaben stehen nach dem Setter; ihre Reihenfolge ist beliebig, und bis zu beiden Ausgaben bleibt inasHund unverändert.'
+    ],
+    rubric: [
+      'Je ein Punkt pro erwartetem Aspekt. Beide Getter-Ausgaben müssen nach dem Setter stehen und ihren tatsächlichen Rückgabewert ausgeben; harte Zahlen 7 oder 8 zählen dafür nicht.',
+      'Bis zu beiden Ausgaben muss inasHund unverändert sein. Ein vorheriger Setter an inasHund entwertet den betreffenden Ausgabepunkt und verhindert Vollerfolg.',
+      'Beliebige zusätzliche Beschriftungsausgaben und die spätere Änderung aus 5B sind zulässig. Akzeptiere funktional gleichwertige Zwischenvariablen und zusätzliche konsistente Ausgaben.',
+      'Offensichtliche Syntax-/Typfehler, die relevante Anweisungen unerreichbar oder nicht ausführbar machen, schließen „korrekt“ aus. Prüfe Hund.java auf aufgehobene Setter-/Getterwirkung.',
+      'Volle 4 Punkte = korrekt, 1 bis 3 Punkte = teilweise korrekt, 0 Punkte = noch nicht korrekt. strengths nennt belegte Aspekte; missing den nächsten konkreten Prüfschritt. Keine vollständige Musterlösung.'
+    ],
+    codeAnalysisRules: [
+      'Bewerte ausführbaren Code und Reihenfolge in Hauptprogramm.java, nicht Kommentare oder Zeichenketten mit Java-Code.',
+      'Erkenne einen Setter-Aufruf an petersHund nach dem vorhandenen Aufruf setzeAlter(6); das Argument muss 7 sein.',
+      'Nach dem Setter muss petersHund.gibAlter() tatsächlich ausgegeben werden. println(7) oder eine sonstige harte Zahl zählt nicht.',
+      'Auch inasHund.gibAlter() muss nach dem Setter tatsächlich ausgegeben werden. Die beiden Getter-Ausgaben dürfen in beliebiger Reihenfolge stehen. Bis zu beiden Ausgaben muss inasHund unverändert bleiben; frühere Änderungen an inasHund schließen diesen Aspekt aus.',
+      'Spätere gültige Aufrufe aus Aufgabe 5B dürfen die vorherigen Ergebnisse nicht entwerten. Andere Beschriftungen und konsistente Ausgaben sind erlaubt.',
+      'Prüfe Hund.java auf Signaturen und tatsächliche Wirkung. Syntax-/Typfehler, die Ausführung verhindern, schließen vollen Erfolg aus.',
+      'Statische Analyse beweist keinen Programmlauf. Behaupte keine tatsächlich beobachtete Ausgabe; bei unklarer Wirkung zur Ausführung in der IDE auffordern.'
+    ]
+  },
+
+  '11-6-0-5b-code': {
+    title: 'Informatik Klasse 11 Aufgabe 6.0 – 5B Alter und Name ändern',
+    grade: 11,
+    responseType: 'code',
+    maxPoints: 4,
+    statusLabels: { correct: 'korrekt', partial: 'teilweise korrekt', incorrect: 'noch nicht korrekt' },
+    codeAnalysisContext: 'LearnJ-Online-IDE; Hauptprogramm.java enthält Top-Level-Anweisungen ohne main; println(...) ist hier gültig. Das Eingabefeld enthält Hauptprogramm.java und Hund.java in dieser Reihenfolge, jeweils mit einem Trenner // ===== Datei: Name =====. Anfangszustand: petersHund = new Hund(5, "Wuffti"), inasHund = new Hund(8, "Schnuffi"), danach bereits petersHund.setzeAlter(6). Hund.java enthält private Attribute, gibAlter(), setzeAlter(int), setzeDaten(int,String), zeigeDaten() und belle(); zeigeDaten() druckt die aktuellen Attribute. Bewerte ausführbaren Code und Reihenfolge in Hauptprogramm.java; Kommentare, Zeichenketten mit Java-Code, Anleitungstexte und hart kodierte erwartete Ausgaben sind keine Lösung. Hund.java dient zur Plausibilitätskontrolle: Wenn Eingriffe Signaturen oder Wirkungen der Methoden aufheben, darf kein voller Erfolg behauptet werden. Die statische Analyse belegt weder Kompilierung noch Programmlauf; bei nicht sicher erschließbarer Wirkung zurückhaltend bewerten und zur Ausführung in der IDE auffordern.',
+    instruction: 'Bewerte ausschließlich den Teilauftrag 5B: inasHund mit setzeDaten auf Alter 9 und Name Flocke setzen und danach zeigeDaten() an diesem Objekt aufrufen. Gib keine vollständige Musterlösung aus.',
+    expectedAspects: [
+      'Ein ausführbarer Setter-Aufruf verwendet setzeDaten an inasHund.',
+      'Die Argumente stehen gemäß Signatur in der Reihenfolge Alter 9, dann Name "Flocke".',
+      'Nach dem Setter ist ein tatsächlich erreichbarer Aufruf inasHund.zeigeDaten() vorhanden.',
+      'Die Wirkung auf genau dieses Objekt ist bis zur Anzeige unverfälscht; die gesetzten Werte werden nicht vorher zurückgeändert.'
+    ],
+    rubric: [
+      'Je ein Punkt pro erwartetem Aspekt. Eine hart kodierte println-Ausgabe mit Flocke und 9 erfüllt den Aufruf von zeigeDaten() nicht.',
+      'Ein Aufruf von petersHund.zeigeDaten() oder zeigeDaten() vor setzeDaten erfüllt den nachfolgenden Aufruf an inasHund nicht.',
+      '5B ist unabhängig von 5A. Weder petersHund.setzeAlter(7) noch eine bestimmte spätere Wuffti-Ausgabe sind erforderlich.',
+      'Offensichtliche Syntax-/Typfehler, die relevante Anweisungen unerreichbar oder nicht ausführbar machen, schließen „korrekt“ aus. Prüfe Hund.java auf Signatur und Wirkung.',
+      'Volle 4 Punkte = korrekt, 1 bis 3 Punkte = teilweise korrekt, 0 Punkte = noch nicht korrekt. strengths nennt belegte Aspekte; missing den nächsten konkreten Prüfschritt. Keine vollständige Musterlösung.'
+    ],
+    codeAnalysisRules: [
+      'Bewerte ausführbaren Code und Reihenfolge in Hauptprogramm.java, nicht Kommentare oder Zeichenketten mit Java-Code.',
+      'Erkenne einen erreichbaren Aufruf setzeDaten an inasHund, dessen erstes Argument 9 und dessen zweites Argument der String "Flocke" ist.',
+      'Nach dem Setter muss inasHund.zeigeDaten() tatsächlich aufgerufen werden. Ein anderer Empfänger, ein Aufruf davor oder eine hart kodierte println-Ausgabe zählt nicht; println("Der Hund heißt Flocke und ist 9 Jahre alt.") ersetzt den Methodenaufruf nicht.',
+      'Zwischen Setter und Anzeige darf die Wirkung auf inasHund nicht zurückgesetzt werden. Andere Aufrufe und Ergebnisse aus 5A sind irrelevant.',
+      'Prüfe Hund.java auf Signatur und Wirkung der verwendeten Methoden; bei geänderter oder nicht sicher erschließbarer Wirkung zurückhaltend bewerten.',
+      'Offensichtliche Syntax-/Typfehler, die den relevanten Kontrollfluss unerreichbar oder nicht ausführbar machen, schließen vollen Erfolg aus.',
+      'Statische Analyse beweist keinen Programmlauf. Behaupte keine tatsächlich beobachtete Konsolenausgabe; bei unklarer Wirkung zur Ausführung in der IDE auffordern.'
+    ]
+  },
+
   'inf9-dfd-fehlersuche-gewinnspiel': {
     title:
       'Informatik Klasse 9 – Aufgabe 5b: Fehler im Datenflussdiagramm zum Gewinnspiel finden',
