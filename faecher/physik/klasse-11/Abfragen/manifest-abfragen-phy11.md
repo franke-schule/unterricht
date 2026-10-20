@@ -138,6 +138,11 @@ bei einer reinen Umstrukturierung inhaltlich und gestalterisch erhalten.
   Schülerfassung gibt die zu ermittelnde Ziffernzahl nicht ohne Auftrag vor;
   die Lösung erläutert die passende Genauigkeit. Exakte Zählwerte werden von
   gerundeten Messgrößen unterschieden.
+- Bei Abfragen verlangt der Operator **Berechne** einen selbstständig gewählten
+  Formelansatz und nötige Umstellungen. Die Schülerfassung gibt weder
+  Startformel noch Umstellungshinweis vor, sofern der Auftrag dies nicht
+  ausdrücklich verlangt. Die Lösungsfassung zeigt Ansatz, Umstellung,
+  Einsetzen, Einheit und angemessene Rundung.
 - Skizzen und Diagramme erhalten ausreichend Zeichenraum. Zugehörige
   Arbeitsaufträge stehen bei der Darstellung direkt vor dem Arbeitsbereich.
 - Beschreibungen, Erklärungen, Herleitungen und Bewertungen bleiben als
