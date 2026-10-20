@@ -1,0 +1,41 @@
+.gravitation-page .physics-step-tabs { display: grid; grid-template-columns: repeat(7, minmax(0,1fr)); gap: .35rem; overflow: visible; }
+.gravitation-page .physics-step-tabs [role="tab"] { min-width: 0; white-space: normal; overflow-wrap: anywhere; font-size: .88rem; line-height: 1.15; padding: .6rem .3rem; }
+.gravitation-page .physics-revision-panel { max-width: 100%; grid-template-columns: minmax(0, 1fr); }
+.gravitation-page .physics-task-card { margin-block: 1rem; }
+.gravitation-page .task-fields { display: grid; grid-template-columns: minmax(0, 1fr); gap: .75rem; margin: .75rem 0; }
+.gravitation-page .grav-choice { display: grid; gap: .25rem; font-weight: 700; }
+.gravitation-page .grav-choice select { width: 100%; max-width: 100%; min-height: 44px; }
+.gravitation-page .physics-number-entry { display: grid; gap: .3rem; }
+.gravitation-page .physics-number-controls { display: flex; gap: .5rem; flex-wrap: nowrap; }
+.gravitation-page .physics-number-controls input { min-width: 0; flex: 1 1 58%; }
+.gravitation-page .physics-number-controls select { min-width: 0; flex: 1 1 42%; }
+.gravitation-page .physics-number-controls input,.gravitation-page .physics-number-controls select { min-height: 44px; }
+.gravitation-page .source-text { line-height: 1.6; }
+.grav-simulation { display: grid; grid-template-columns: minmax(210px, 1fr) minmax(0,2fr); gap: 1rem; }
+.grav-controls { display: grid; align-content: start; gap: .35rem; }
+.grav-controls input[type="range"] { width: 100%; min-height: 44px; accent-color: #2563eb; }
+.grav-controls input[type="number"] { width: 100%; min-height: 44px; }
+.grav-scene svg { display: block; width: 100%; height: auto; border: 1px solid #94a3b8; border-radius: .6rem; background: #f8fafc; touch-action: none; }
+.grav-connector { stroke: #64748b; stroke-width: 1.5; stroke-dasharray: 5 5; }
+.grav-arrow { stroke-width: 4; stroke-linecap: round; pointer-events: none; }
+.grav-arrow1 { stroke: #2563eb; }.grav-arrow2 { stroke: #b45309; }
+.grav-body { cursor: grab; stroke-width: 3; }.grav-body:active { cursor: grabbing; }
+.grav-hit { fill: transparent; cursor: grab; touch-action: none; }
+.grav-hit:active { cursor: grabbing; }
+.grav-hit:focus-visible { fill: transparent; stroke: #111827; stroke-width: 2; stroke-dasharray: 5 4; }
+.grav-body1 { fill: #dbeafe; stroke: #2563eb; }.grav-body2 { fill: #fef3c7; stroke: #b45309; }
+.grav-center { fill: #111827; stroke: white; stroke-width: 1; }
+.grav-label { fill: #111827; font-weight: 800; font-size: 16px; }
+.grav-readout { grid-column: 1 / -1; display: flex; flex-wrap: wrap; gap: .5rem 1.5rem; font-weight: 700; }
+.grav-readout p { margin: 0; }
+.grav-table-scroll { max-width: 100%; overflow-x: auto; }
+.grav-table-scroll table { width: 100%; min-width: 460px; border-collapse: collapse; }
+.grav-table-scroll th,.grav-table-scroll td { padding: .45rem; border: 1px solid #cbd5e1; text-align: left; }
+.grav-table-scroll input { width: 100%; min-width: 6rem; min-height: 44px; }
+.grav-table-scroll [aria-invalid="true"] { border: 2px solid #b91c1c; }
+.grav-transfer { min-height: 44px; }
+.grav-summary-entry { padding: .6rem 0; border-top: 1px solid #cbd5e1; }
+.grav-summary-entry h4 { margin: 0; }
+.gravitation-page :is(input,select,button,summary):focus-visible { outline: 3px solid #2563eb; outline-offset: 3px; }
+@media(max-width: 900px){.gravitation-page .physics-step-tabs { grid-template-columns: repeat(4,minmax(0,1fr)); }.grav-simulation { grid-template-columns: 1fr; }}
+@media(max-width: 550px){.gravitation-page .physics-step-tabs { grid-template-columns: repeat(2,minmax(0,1fr)); }.gravitation-page .physics-step-tabs [role="tab"] { font-size: .82rem; }.grav-readout { display: block; }}

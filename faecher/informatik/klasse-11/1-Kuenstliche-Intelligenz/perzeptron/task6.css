@@ -12,9 +12,23 @@
 .task6-page .ide-container { border:1px solid #b9d1df; border-radius:.85rem; overflow:hidden; background:#fff; }
 .task6-page .ide-container iframe { display:block; width:100%; min-height:690px; border:0; }
 .task6-page textarea { width:100%; }
-.task6-page .code-snippets { padding-left:1.2rem; }
-.task6-page .code-snippets li { margin:.5rem 0; }
-.task6-page .code-snippets code { display:block; padding:.4rem; background:#edf6fb; overflow-x:auto; user-select:text; }
+/* Sortierhilfe aus Physik 11, Aufgabe 7: Kartenbank und nummerierte Felder. */
+.task6-page .step-order { display:grid; gap:10px; margin:10px 0 12px; }
+.task6-page .step-order-bank { display:flex; flex-wrap:wrap; gap:6px; min-height:46px; align-content:flex-start; padding:6px 8px; border:1px solid #cbd5e1; border-radius:10px; background:#f8fafc; }
+.task6-page .step-order-rows { display:grid; gap:8px; margin:0; padding:0; list-style:none; }
+.task6-page .step-order-row { display:flex; align-items:center; gap:8px; min-width:0; }
+.task6-page .step-order-number { display:grid; flex:0 0 28px; place-items:center; width:28px; height:28px; border-radius:50%; color:#fff; background:var(--p-ink); font-weight:800; }
+.task6-page .cloze-token,.task6-page .formula-slot { min-width:0; max-width:100%; min-height:46px; padding:6px 12px; border:1px solid #93c5fd; border-radius:9px; color:var(--p-ink); background:#eff6ff; font:inherit; text-align:left; line-height:1.3; cursor:grab; touch-action:none; user-select:none; }
+.task6-page .formula-slot { flex:1 1 auto; width:100%; border:2px dashed #93c5fd; }
+.task6-page .formula-slot:not(.is-filled) { color:#64748b; font-weight:600; cursor:pointer; }
+.task6-page .formula-slot.is-filled { border-style:solid; background:#fff; }
+.task6-page .cloze-token.is-picked,.task6-page .formula-slot.is-picked,.task6-page .formula-slot.is-selected { outline:3px solid var(--p-blue); outline-offset:2px; }
+.task6-page .formula-slot.is-drop-target { border-color:var(--p-ink); background:#dbeafe; }
+.task6-page .is-dragging { opacity:.45; }
+.task6-page .cloze-drag-ghost { position:fixed; z-index:1000; display:inline-flex; align-items:center; max-width:min(360px,90vw); transform:translate(-50%,-50%); box-shadow:0 6px 18px rgba(30,58,138,.25); pointer-events:none; }
+.task6-page .step-order code,.task6-page .cloze-drag-ghost code { white-space:pre-wrap; overflow-wrap:anywhere; font-size:.85rem; }
+.task6-page .code-snippet-context { min-width:0; margin:.25rem 0; color:var(--p-ink); }
+.task6-page .drag-help { color:#64748b; font-size:.88rem; }
 .task6-page .task6-summary { margin:1.5rem 0; }
 .task6-page .quiz-question { min-width:0; }
 .task6-page [hidden] { display:none!important; }

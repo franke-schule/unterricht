@@ -1,0 +1,201 @@
+\documentclass[10pt,a4paper]{article}
+
+% Die Loesungsfassung unterscheidet sich ausschliesslich durch \solutiontrue.
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage[ngerman]{babel}
+\usepackage[a4paper,margin=14mm]{geometry}
+\usepackage{lmodern}
+\usepackage[table]{xcolor}
+\usepackage{tabularx}
+\usepackage{microtype}
+\usepackage{amssymb}
+\usepackage{lastpage}
+\usepackage{tikz}
+
+\newif\ifsolution
+\solutiontrue
+\newif\iftest
+\testfalse
+
+\pagestyle{empty}
+\setlength{\parindent}{0pt}
+\setlength{\parskip}{0pt}
+\renewcommand{\familydefault}{\sfdefault}
+
+\definecolor{Navy}{HTML}{17324D}
+\definecolor{Blue}{HTML}{3B6EA5}
+\definecolor{Gold}{HTML}{F3B33D}
+\definecolor{Ink}{HTML}{1E2935}
+\definecolor{Muted}{HTML}{617080}
+\definecolor{Line}{HTML}{D8E1E8}
+\color{Ink}
+\ifdefined\XeTeXversion
+  \catcode"00B7=13\relax\def·{\textperiodcentered}
+  \catcode"00DF=13\relax\defß{\ss}
+\fi
+
+\newcommand{\kopf}{%
+  \colorbox{Navy}{\parbox{\dimexpr\linewidth-2\fboxsep\relax}{%
+    \vspace{1.1mm}\color{white}
+    \begin{tabularx}{\linewidth}{@{}Xr@{}}
+      {\small\bfseries PHYSIK · KLASSE 8} &
+      \colorbox{Gold}{\color{Navy}\small\bfseries\strut\ifsolution LÖSUNGEN\else ABFRAGE\fi}
+    \end{tabularx}
+    \vspace{0.7mm}
+    {\fontsize{16}{19}\selectfont\bfseries Spannung in Reihenschaltung}\par
+    \vspace{0.2mm}{\small Größen · Messgeräte · Umrechnungen · Spannungsmessung}\vspace{0.9mm}
+  }}\par\vspace{1.4mm}}
+\newcommand{\frage}[2]{%
+  \vspace{0.05mm}{\color{Blue}\bfseries\normalsize #1 · #2}\par
+  {\color{Blue}\rule{\linewidth}{0.55pt}}\par\vspace{0.05mm}}
+\newcommand{\wahl}[2]{%
+  \par\noindent\ifsolution\ifnum#1=1 $\boxtimes$\else $\square$\fi\else $\square$\fi\enspace #2\par}
+\newcommand{\antwortfeld}[2]{%
+  \par\vspace{0.2mm}%
+  \begin{tikzpicture}[x=1mm,y=1mm]
+    \path[use as bounding box] (0,0) rectangle (181.5,-7*#1);
+    \ifsolution
+      \node[anchor=north west,text width=179mm,inner sep=0pt,align=left,
+        font=\small,text=Blue] at (0,-0.7) {#2};
+    \else
+      \foreach \i in {1,...,#1}{\draw[Line,line width=.55pt] (0,-7*\i) -- (181.5,-7*\i);}
+    \fi
+  \end{tikzpicture}\par}
+\newcommand{\tabelle}[2]{%
+  \par\vspace{0.4mm}\begin{tikzpicture}[x=1mm,y=1mm]
+    \path[use as bounding box] (0,0) rectangle (181.5,-25);
+    \draw[Line,line width=.55pt] (0,0) rectangle (181.5,-25);
+    \draw[Line,line width=.45pt] (0,-7) -- (181.5,-7) (0,-16) -- (181.5,-16);
+    \draw[Line,line width=.45pt] (75,0)--(75,-25) (119,0)--(119,-25);
+    \node[font=\small\bfseries,text=Muted] at (37.5,-3.5) {Bezeichnung};
+    \node[font=\small\bfseries,text=Muted] at (97,-3.5) {Formelzeichen};
+    \node[font=\small\bfseries,text=Muted] at (150.25,-3.5) {Einheit};
+    \ifsolution
+      \node[font=\small,text=Blue] at (37.5,-11.5) {Stromstärke};
+      \node[font=\small,text=Blue] at (97,-11.5) {$I$};
+      \node[font=\small,text=Blue] at (150.25,-11.5) {Ampere (A)};
+      \node[font=\small,text=Blue] at (37.5,-20.5) {Spannung};
+      \node[font=\small,text=Blue] at (97,-20.5) {$U$};
+      \node[font=\small,text=Blue] at (150.25,-20.5) {Volt (V)};
+    \else
+      \node[font=\small,text=Ink] at (37.5,-11.5) {Stromstärke};
+      \node[font=\small,text=Ink] at (97,-20.5) {$U$};
+    \fi
+  \end{tikzpicture}\par}
+\newcommand{\schaltung}[3]{%
+  \begin{scope}[shift={(#1,#2)},x=.72mm,y=.60mm]
+    % Batterie liegt oben, Lampe unten. Alle vier Varianten teilen denselben Kreis.
+    \draw[Ink,line width=.65pt] (0,22)--(8,22) (12,22)--(50,22)--(50,0)--(39,0)
+      (31,0)--(0,0)--(0,22);
+    \draw[Ink,line width=.65pt] (8,19)--(8,25) (12,20.5)--(12,23.5);
+    \node[font=\scriptsize,text=Ink] at (6,26) {$+$};
+    \node[font=\scriptsize,text=Ink] at (14,26) {$-$};
+    \draw[Ink,line width=.65pt,fill=white] (35,0) circle (4);
+    \draw[Ink,line width=.55pt] (32.2,-2.8)--(37.8,2.8) (32.2,2.8)--(37.8,-2.8);
+    \node[font=\scriptsize,text=Muted] at (35,-7) {Lampe};
+    \ifnum#3=0 % Amperemeter parallel zur Lampe
+      \draw[Ink,line width=.65pt]
+        (23,0)--(23,13)--(31,13) (39,13)--(47,13)--(47,0);
+      \fill[Ink] (23,0) circle (.8) (47,0) circle (.8);
+      \draw[Ink,line width=.65pt,fill=white] (35,13) circle (4);
+      \node[font=\small,text=Ink] at (35,13) {A};
+    \fi
+    \ifnum#3=1 % Amperemeter in Reihe mit der Lampe
+      \draw[Ink,line width=.65pt] (50,0)--(50,5.5) (50,16.5)--(50,22);
+      \draw[Ink,line width=.65pt,fill=white] (50,11) circle (5.5);
+      \node[font=\small,text=Ink] at (50,11) {A};
+    \fi
+    \ifnum#3=2 % Voltmeter parallel zur Lampe
+      \draw[Ink,line width=.65pt]
+        (23,0)--(23,13)--(31,13) (39,13)--(47,13)--(47,0);
+      \fill[Ink] (23,0) circle (.8) (47,0) circle (.8);
+      \draw[Ink,line width=.65pt,fill=white] (35,13) circle (4);
+      \node[font=\small,text=Ink] at (35,13) {V};
+    \fi
+    \ifnum#3=3 % Voltmeter in Reihe mit der Lampe
+      \draw[Ink,line width=.65pt] (50,0)--(50,5.5) (50,16.5)--(50,22);
+      \draw[Ink,line width=.65pt,fill=white] (50,11) circle (5.5);
+      \node[font=\small,text=Ink] at (50,11) {V};
+    \fi
+  \end{scope}}
+\newcommand{\vierSchaltungen}{%
+  \par\vspace{0.2mm}\begin{tabularx}{\linewidth}{@{}X@{\hspace{8mm}}X@{}}
+    \begin{minipage}[t]{81mm}\wahl{0}{a)}\begin{tikzpicture}[x=1mm,y=1mm]\path[use as bounding box] (0,0) rectangle (68,-22);\schaltung{8}{-16}{0}\end{tikzpicture}\end{minipage} &
+    \begin{minipage}[t]{81mm}\wahl{1}{b)}\begin{tikzpicture}[x=1mm,y=1mm]\path[use as bounding box] (0,0) rectangle (68,-22);\schaltung{8}{-16}{1}\end{tikzpicture}\end{minipage} \\
+    \begin{minipage}[t]{81mm}\wahl{1}{c)}\begin{tikzpicture}[x=1mm,y=1mm]\path[use as bounding box] (0,0) rectangle (68,-22);\schaltung{8}{-16}{2}\end{tikzpicture}\end{minipage} &
+    \begin{minipage}[t]{81mm}\wahl{0}{d)}\begin{tikzpicture}[x=1mm,y=1mm]\path[use as bounding box] (0,0) rectangle (68,-22);\schaltung{8}{-16}{3}\end{tikzpicture}\end{minipage}
+  \end{tabularx}\par}
+\newcommand{\modellpaar}{%
+  \par\vspace{0.2mm}\begin{tikzpicture}[x=1mm,y=1mm]
+    \path[use as bounding box] (0,0) rectangle (181.5,-31);
+    \node[anchor=west,font=\small\bfseries,text=Muted] at (0,-2) {Stäbchenmodell};
+    \node[anchor=west,font=\small\bfseries,text=Muted] at (93,-2) {Schaltplan};
+    % Modell: Bauteile links/rechts; die Verbindungen gleicher Höhe liegen oben/unten.
+    \draw[Ink,line width=.8pt] (17,-6)--(72,-6) (17,-24)--(72,-24);
+    \draw[Ink,line width=1.2pt] (17,-6)--(17,-24) (72,-6)--(72,-24);
+    \node[font=\scriptsize,text=Ink,align=center] at (7,-15) {Batterie};
+    \node[font=\scriptsize,text=Ink,align=center] at (81,-15) {Lampe};
+    \node[font=\scriptsize,text=Ink] at (14,-6) {$+$};
+    \node[font=\scriptsize,text=Ink] at (14,-24) {$-$};
+    % Schaltplan: langer Batterie-Strich oben (Plus), kurzer unten (Minus).
+    \draw[Ink,line width=.8pt] (103,-6)--(153,-6) (103,-24)--(153,-24);
+    \draw[Ink,line width=1.2pt] (103,-6)--(103,-10) (103,-20)--(103,-24)
+      (153,-6)--(153,-11.5) (153,-18.5)--(153,-24);
+    \draw[Ink,line width=1.2pt] (99,-10)--(107,-10) (101,-20)--(105,-20);
+    \draw[Ink,line width=.65pt,fill=white] (153,-15) circle (3.5);
+    \draw[Ink,line width=.55pt] (150.5,-17.5)--(155.5,-12.5) (150.5,-12.5)--(155.5,-17.5);
+    \node[font=\scriptsize,text=Ink] at (96,-8) {$+$};
+    \node[font=\scriptsize,text=Ink] at (96,-22) {$-$};
+    \node[font=\scriptsize,text=Ink] at (103,-28) {Batterie};
+    \node[font=\scriptsize,text=Ink] at (153,-28) {Lampe};
+    \ifsolution
+      \draw[red!85!black,line width=1.4pt] (17,-6)--(72,-6)
+        (103,-6)--(153,-6) (103,-6)--(103,-10) (153,-6)--(153,-11.5);
+      \draw[blue!75!black,line width=1.4pt] (17,-24)--(72,-24)
+        (103,-24)--(153,-24) (103,-20)--(103,-24) (153,-18.5)--(153,-24);
+    \fi
+  \end{tikzpicture}\par}
+\newcommand{\umrechnungen}[6]{%
+  \begin{tikzpicture}[x=1mm,y=1mm]
+    \path[use as bounding box] (0,0) rectangle (181.5,-7);
+    \node[anchor=west,inner sep=0pt,text=\ifsolution Blue\else Ink\fi] at (0,-3.5)
+      {#1 = $\ifsolution #2\else\rule{25mm}{.4pt}\fi\,\mathrm{#3}$};
+    \node[anchor=west,inner sep=0pt,text=\ifsolution Blue\else Ink\fi] at (91,-3.5)
+      {#4 = $\ifsolution #5\else\rule{25mm}{.4pt}\fi\,\mathrm{#6}$};
+  \end{tikzpicture}\par}
+\newcommand{\fuss}{%
+  \vfill{\color{Line}\rule{\linewidth}{0.5pt}}\par\vspace{0.8mm}
+  \begin{tabularx}{\linewidth}{@{}Xr@{}}
+    {\small\color{Muted}Klasse 8 · Physik · Elektrischer Strom} &
+    {\small\color{Muted}\ifsolution Lösungen\else Abfrage\fi{} · Seite \thepage{} von \pageref{LastPage}}
+  \end{tabularx}}
+
+\begin{document}
+\kopf
+
+\frage{1}{Stromstärke und Spannung}
+\textbf{Ergänze} in der Tabelle die fehlenden Bezeichnungen, Formelzeichen und Einheiten.
+\tabelle{0}{0}
+
+\frage{2}{Messgeräte richtig anschließen}
+\vierSchaltungen
+\textbf{Kreuze} alle Schaltungen an, die die Stromstärke durch oder die Spannung an der Lampe richtig messen. \textbf{Begründe} die beiden richtigen Anschlüsse.
+\antwortfeld{2}{b) und c). Das Amperemeter liegt in Reihe mit der Lampe; so fließt der Lampenstrom auch durch das Messgerät. Das Voltmeter ist parallel zur Lampe mit deren beiden Anschlüssen verbunden; so misst es die Spannung an der Lampe.}
+
+\frage{3}{Spannungen umrechnen}
+\textbf{Rechne} in die jeweils angegebene Einheit um.\par
+\umrechnungen{$\mbox{a)}\;5\,\mathrm{V}$}{5000}{mV}{$\mbox{b)}\;500\,\mathrm{mV}$}{0{,}5}{V}
+\umrechnungen{$\mbox{c)}\;8\,\mathrm{V}$}{0{,}008}{kV}{$\mbox{d)}\;0{,}004\,\mathrm{kV}$}{4}{V}
+\umrechnungen{$\mbox{e)}\;7\,\mathrm{kV}$}{7\,000\,000}{mV}{$\mbox{f)}\;120\,\mathrm{mV}$}{0{,}00012}{kV}
+
+\frage{4}{Spannung an einer und zwei Lampen}
+\textbf{a) Baue} in der Simulation einen geschlossenen Stromkreis aus einer Batterie mit 6 V und einer Glühbirne. \textbf{Miss} die Spannung an der Batterie und an der Lampe und \textbf{vergleiche} die Werte.
+\antwortfeld{2}{An der Batterie und an der einzigen Lampe messe ich jeweils etwa 6 V. Die Spannungen sind gleich groß. Das Spannungsmessgerät wird jeweils parallel angeschlossen.}
+\textbf{b) Schalte} eine zweite gleichartige Glühbirne in Reihe und \textbf{lasse} die Batterie bei 6 V. \textbf{Wähle} sinnvolle Spannungsmessungen, \textbf{notiere} die Werte und \textbf{erkläre} deine Beobachtung mit dem Förderbandmodell als Modell für den elektrischen Stromkreis.
+\antwortfeld{5}{Sinnvolle Messungen: Batterie etwa 6 V, jede Lampe etwa 3 V, beide Lampen zusammen etwa 6 V; jeweils parallel messen. Im Förderbandmodell stellt das Förderband die Batterie dar, die Kugeln die Elektronen und jedes Drehkreuz eine Lampe. Der gesamte Höhenunterschied entspricht der Batteriespannung; bei zwei gleichen Drehkreuzen verteilt er sich auf zwei gleich große Abschnitte. Entsprechend fallen an den beiden gleichen Lampen je etwa 3 V ab. Die Elektronen geben Energie an die Lampen ab, die diese in Licht und Wärme umwandeln. Elektronen werden nicht verbraucht.}
+
+\fuss
+\end{document}
+
+

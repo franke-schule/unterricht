@@ -1,0 +1,51 @@
+<!doctype html>
+<html lang="de">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="robots" content="noindex, nofollow">
+  <title>Aufgabe 8 – Das Gravitationsgesetz | Physik 11</title>
+  <link rel="stylesheet" href="../../../../styles.css?v=20260911a">
+  <link rel="stylesheet" href="bewegung-koerpern.css?v=20260831c">
+  <link rel="stylesheet" href="kraefte-bewegung.css?v=20260923a">
+  <link rel="stylesheet" href="winkelgeschwindigkeit-kreisbewegung.css?v=20260912a">
+  <link rel="stylesheet" href="components/physics-notation.css?v=20260922b">
+  <link rel="stylesheet" href="kettenkarussell.css?v=20261018d">
+  <link rel="stylesheet" href="gravitation.css?v=20261020f">
+  <script src="../../../informatik/quiz-fragen-pruefen.js?v=20261018a" defer></script>
+  <script type="module" src="gravitation.mjs?v=20261020f"></script>
+</head>
+<body class="physics-revision-page circular-motion-page carousel-page gravitation-page">
+  <div class="site-backdrop" aria-hidden="true"></div>
+  <main class="page-shell physics-revision-shell">
+    <nav class="topbar" aria-label="Navigation"><a class="back-link" href="../index.html">Zur Aufgabenübersicht</a><a class="back-link" href="../../../../">Startseite</a></nav>
+    <header class="physics-revision-hero">
+      <p class="eyebrow">Kreisbewegungen</p><h1>Das Gravitationsgesetz</h1>
+      <p class="module-task-number"><strong>Aufgabe 8</strong></p>
+      <p>Untersuche die Anziehung zwischen Körpern und wende das Gravitationsgesetz an.</p>
+    </header>
+    <div class="physics-step-tabs" role="tablist" aria-label="Arbeitsschritte des Lernmoduls">
+      <button id="tab-newton" role="tab" type="button" aria-selected="true" aria-controls="panel-newton" data-physics-tab="newton">1 · Newton und sein Werk</button>
+      <button id="tab-principia" role="tab" type="button" aria-selected="false" aria-controls="panel-principia" data-physics-tab="principia" tabindex="-1">2 · Die Principia verstehen</button>
+      <button id="tab-simulation" role="tab" type="button" aria-selected="false" aria-controls="panel-simulation" data-physics-tab="simulation" tabindex="-1">3 · Massen und Kräfte untersuchen</button>
+      <button id="tab-law" role="tab" type="button" aria-selected="false" aria-controls="panel-law" data-physics-tab="law" tabindex="-1">4 · Das Gravitationsgesetz</button>
+      <button id="tab-application" role="tab" type="button" aria-selected="false" aria-controls="panel-application" data-physics-tab="application" tabindex="-1">5 · Gravitation anwenden</button>
+      <button id="tab-summary" role="tab" type="button" aria-selected="false" aria-controls="panel-summary" data-physics-tab="summary" tabindex="-1">6 · Überblick und Auswertung</button>
+      <button id="tab-quiz" role="tab" type="button" aria-selected="false" aria-controls="panel-quiz" data-physics-tab="quiz" tabindex="-1">7 · Abschlussquiz</button>
+    </div>
+    <div class="physics-revision-panels">
+      <section id="panel-newton" class="physics-revision-panel" role="tabpanel" aria-labelledby="tab-newton" data-physics-panel="newton"><div class="physics-card-heading"><h2>Newton und sein Werk</h2></div><p>Isaac Newton veröffentlichte 1687 sein Werk <em>Philosophiae Naturalis Principia Mathematica</em>. Darin beschreibt er Bewegungen auf der Erde und von Himmelskörpern mit gemeinsamen physikalischen Gesetzen. Du kennst bereits die Zentripetalkraft: Welche Kraft kann den Mond auf seiner Bahn zur Erde hin umlenken?</p><div id="tasks-newton"></div></section>
+      <section id="panel-principia" class="physics-revision-panel" role="tabpanel" aria-labelledby="tab-principia" data-physics-panel="principia" hidden><div class="physics-card-heading"><h2>Die Principia verstehen</h2></div><article class="physics-task-card source-text"><p>Historischer Auszug aus Isaac Newtons <em>Philosophiae Naturalis Principia Mathematica</em> (§ 7 und § 9). Die historische Rechtschreibung bleibt erhalten; Auslassungen sind mit […] gekennzeichnet. Die anschließenden Erklärungen sind heutige Erläuterungen, keine Newton-Zitate.</p><p><strong>§ 7</strong> „Bis jetzt haben wir jene Kraft, welche die Himmelskörper in ihren Bahnen erhält, Centripetalkraft genannt. Dass sie mit der Schwere identisch sei, ist ausgemacht, und wir wollen sie daher künftig Schwere nennen.“</p><p><strong>§ 9</strong> „Die Schwere kommt allen Körpern zu, und ist der in jedem enthaltenen Menge der Materie proportional.“</p><p><strong>§ 9 […]</strong> „dass die Schwere gegen einen von ihnen, welchen man besonders betrachtet, sich umgekehrt wie das Quadrat des Abstandes von seinem Schwerpunkte verhalte […]“</p></article><div id="tasks-principia"></div></section>
+      <section id="panel-simulation" class="physics-revision-panel" role="tabpanel" aria-labelledby="tab-simulation" data-physics-panel="simulation" hidden><div class="physics-card-heading"><h2>Massen und Kräfte untersuchen</h2></div><p><strong>Verschiebe</strong> beide Massen und verändere ihre Werte. <strong>Beobachte</strong>, wo die beiden Kraftpfeile beginnen, wohin sie zeigen und wie sich ihre Beträge vergleichen.</p><div id="simulation-view-3"></div><p>Die Kreise zeigen Körper symbolisch; ihre Größe ist kein Maßstab für Dichte oder Abstand. Der Abstand r wird zwischen den Mittelpunkten gemessen. Die Pfeillängen veranschaulichen Kräfte auf einer gemeinsamen Darstellungsskala; der Zahlenwert ist entscheidend.</p><div id="tasks-simulation"></div></section>
+      <section id="panel-law" class="physics-revision-panel" role="tabpanel" aria-labelledby="tab-law" data-physics-panel="law" hidden><div class="physics-card-heading"><h2>Das Gravitationsgesetz</h2></div><div id="tasks-law-start"></div><div id="simulation-view-4"></div><div id="tasks-law-end"></div></section>
+      <section id="panel-application" class="physics-revision-panel" role="tabpanel" aria-labelledby="tab-application" data-physics-panel="application" hidden><div class="physics-card-heading"><h2>Gravitation anwenden</h2></div><p>G = 6,67430·10⁻¹¹ <span class="physics-fraction"><span class="physics-fraction__numerator">N·m²</span><span class="physics-fraction__denominator">kg²</span></span>; Erdmasse M<sub>E</sub> = 5,974·10²⁴ kg; Erdradius R<sub>E</sub> = 6370 km; 1 km = 1000 m.</p><div id="tasks-application"></div></section>
+      <section id="panel-summary" class="physics-revision-panel" role="tabpanel" aria-labelledby="tab-summary" data-physics-panel="summary" hidden><div class="physics-card-heading"><h2>Überblick und Auswertung</h2></div><p id="summary-pending">Die Auswertung erscheint, sobald du die Aufgaben 1 bis 5 bearbeitet und geprüft hast.</p><div id="summary-content" hidden></div></section>
+      <section id="panel-quiz" class="physics-revision-panel" role="tabpanel" aria-labelledby="tab-quiz" data-physics-panel="quiz" hidden><div class="physics-card-heading"><h2>Abschlussquiz</h2></div><form id="final-quiz" class="final-quiz" novalidate></form><button id="check-final-quiz" type="button" class="physics-primary-button">Quiz auswerten</button><p id="final-quiz-feedback" class="physics-feedback" role="status" aria-live="polite" hidden></p></section>
+    </div>
+  </main>
+</body>
+</html>
+
+
+
+

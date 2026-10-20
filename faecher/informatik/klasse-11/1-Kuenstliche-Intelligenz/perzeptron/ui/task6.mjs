@@ -1,4 +1,5 @@
 import { evaluateSemanticAnswer, evaluateCodeAnswer } from './semantic-answer.mjs?v=20261010-scaleway';
+import { setupCodeSnippetOrder } from './code-snippet-order.mjs';
 
 const SERVER_URL = 'https://unterrichtkiichezbn4-ki-auswertung.functions.fnc.fr-par.scw.cloud/';
 const STORAGE_KEY = 'informatik11-ki-aufgabe6-v1';
@@ -18,8 +19,12 @@ const QUIZ = [
   { question:'4. Welche Änderungen gelten bei `delta = -1`?', options:['Für jedes Gewicht gilt: neuer Wert = alter Wert − α · Eingabe.','`theta` wird um α erhöht.','Jedes Gewicht wird unabhängig von der Eingabe um genau 1 kleiner.','Das Label wird in 1 geändert.'], correct:[0,1], explanation:'Bei `delta = -1` werden die gewichteten Lernschritte abgezogen und `theta` um α erhöht. Das Label wird nicht geändert.' }
 ];
 const state = { activationRule: 'strict', variant: null, description: '', quiz: QUIZ.map(() => []), quizSummary: false };
+let readSnippetOrder;
+let restoreSnippetOrder;
 
 function save() {
+  state.snippetOrder = readSnippetOrder?.();
+  state.snippetsOpen = document.querySelector('#code-snippets-help').open;
   try { localStorage.setItem(STORAGE_KEY, JSON.stringify(state)); }
   catch { document.querySelector('#save-status').textContent = 'Deine Eingaben können in diesem Browser gerade nicht gespeichert werden.'; }
 }
@@ -31,6 +36,8 @@ function restore() {
     if (typeof saved.description === 'string') state.description = saved.description.slice(0,600);
     if (Array.isArray(saved.quiz)) state.quiz = QUIZ.map((_,i) => Array.isArray(saved.quiz[i]) ? saved.quiz[i].filter(v => Number.isInteger(v) && v >= 0 && v < 4) : []);
     if (saved.quizSummary === true && saved.activationRule === 'strict') state.quizSummary = true;
+    restoreSnippetOrder?.(saved.snippetOrder);
+    document.querySelector('#code-snippets-help').open = saved.snippetsOpen === true;
   } catch { /* Beschädigte oder gesperrte Speicherung beeinträchtigt die Aufgabe nicht. */ }
 }
 function choose(variant) {
@@ -189,6 +196,14 @@ function unlockSolution(event) {
     ? 'Code korrekt. Das Sicherungsblatt ist freigeschaltet.'
     : 'Der eingegebene Code ist nicht gültig.';
 }
+setupCodeSnippetOrder({
+  save,
+  registerPart(id, read, restore) {
+    readSnippetOrder = read;
+    restoreSnippetOrder = restore;
+  },
+});
+document.querySelector('#code-snippets-help').addEventListener('toggle', save);
 buildQuiz();
 guardIdeReset('frame-einfach','einfach');
 guardIdeReset('frame-schwer','schwer');
