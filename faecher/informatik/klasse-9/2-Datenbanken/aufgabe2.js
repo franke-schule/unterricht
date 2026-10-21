@@ -1,6 +1,6 @@
 // Aufgabe 2 – Erste SQL-Abfragen (Informatik 9).
 // Seitengerüst nach klasse-9/2-Datenbanken/aufgabe1.js, SQL-Labor nach klasse-10/1-Datenbanken/sql-lab.js.
-import { classifyDescriptionResult, compareRelations, isValidScriptServerUrl, normalizeRelation, parseDelimited, sqlTokens, validateSelectStatement } from '../../klasse-10/1-Datenbanken/sql-lab-core.mjs?v=20260929b';
+import { classifyDescriptionResult, compareRelations, isValidScriptServerUrl, missingTextQuote, normalizeRelation, parseDelimited, sqlTokens, validateSelectStatement } from '../../klasse-10/1-Datenbanken/sql-lab-core.mjs?v=20260929b';
 import { evaluateSemanticAnswer } from '../../klasse-11/1-Kuenstliche-Intelligenz/perzeptron/ui/semantic-answer.mjs?v=20261021-inf9-db2';
 import { appendSolutionDownloadFromTemplate, enableTabKeyboardNavigation, focusTabPanelStart, renderTabFlowNavigation, syncTabSemantics } from '../../klasse-10/1-Datenbanken/tab-navigation.mjs?v=20260906a';
 
@@ -664,6 +664,11 @@ function splitGroups(tokens) {
   return groups;
 }
 function tokenKeyword(token) { return token?.type === 'word' ? token.value.toUpperCase() : ''; }
+function identifierValue(token) {
+  if (token?.type === 'word') return token.value;
+  if (token?.type === 'string' && !token.value.startsWith("'")) return stripQuotes(token.value);
+  return null;
+}
 function stripQuotes(value) { return String(value).replace(/^["'`]/, '').replace(/["'`]$/, ''); }
 
 function analyzeQuery(sql) {
@@ -674,6 +679,7 @@ function analyzeQuery(sql) {
   const orderIndex = keywords.indexOf('ORDER');
   const limitIndex = keywords.indexOf('LIMIT');
   const distinctIndex = keywords.indexOf('DISTINCT');
+  const whereIndex = keywords.indexOf('WHERE');
   const hasFrom = fromIndex > -1;
   const afterSelect = selectIndex + 1 + (keywords[selectIndex + 1] === 'DISTINCT' ? 1 : 0);
   const projectionEnd = hasFrom ? fromIndex : [orderIndex, limitIndex].filter((index) => index > -1).reduce((min, index) => Math.min(min, index), tokens.length);
@@ -682,25 +688,35 @@ function analyzeQuery(sql) {
     distinct: distinctIndex > -1,
     distinctMisplaced: distinctIndex > -1 && distinctIndex !== selectIndex + 1,
     columns: [],
-    missingComma: false,
+    implicitAliases: [],
+    selectAliases: [],
     trailingComma: hasFrom && tokens[fromIndex - 1]?.value === ',',
     orderBy: [],
     orderWithoutBy: (orderIndex > -1 && keywords[orderIndex + 1] !== 'BY') || keywords.includes('SORT'),
     limit: null,
     limitBeforeOrder: limitIndex > -1 && orderIndex > -1 && limitIndex < orderIndex,
     tokens,
-    orderIndex
+    orderIndex,
+    selectIndex,
+    fromIndex,
+    whereIndex,
+    source: sql,
+    distinctToken: distinctIndex > -1 ? tokens[distinctIndex] : null
   };
   splitGroups(tokens.slice(afterSelect, projectionEnd)).forEach((group) => {
     if (!analysis.columns) return;
-    const values = group.map((token) => token.value);
-    if (group.length === 1 && (group[0].type === 'word' || values[0] === '*')) analysis.columns.push(values[0].toLowerCase());
-    else if (group.length === 3 && group[0].type === 'word' && values[1] === '.' && (group[2].type === 'word' || values[2] === '*')) analysis.columns.push(values[2].toLowerCase());
-    else if (group.length === 3 && group[0].type === 'word' && tokenKeyword(group[1]) === 'AS' && group[2].type === 'word') analysis.columns.push(values[0].toLowerCase());
-    else {
-      if (group.length >= 2 && group[0].type === 'word' && group[1].type === 'word' && tokenKeyword(group[1]) !== 'AS') analysis.missingComma = true;
-      analysis.columns = null;
+    const values = group.map(identifierValue);
+    if (group.length === 1 && (values[0] || group[0].value === '*')) analysis.columns.push((values[0] || '*').toLowerCase());
+    else if (group.length === 3 && values[0] && group[1].value === '.' && (values[2] || group[2].value === '*')) analysis.columns.push((values[2] || '*').toLowerCase());
+    else if (group.length === 3 && values[0] && tokenKeyword(group[1]) === 'AS' && values[2]) {
+      analysis.columns.push(values[0].toLowerCase());
+      analysis.selectAliases.push({ column: values[0].toLowerCase(), alias: values[2].toLowerCase() });
     }
+    else if (group.length === 2 && values[0] && values[1]) {
+      analysis.columns.push(values[0].toLowerCase());
+      analysis.implicitAliases.push({ column: values[0].toLowerCase(), alias: values[1].toLowerCase() });
+      analysis.selectAliases.push({ column: values[0].toLowerCase(), alias: values[1].toLowerCase() });
+    } else analysis.columns = null;
   });
   if (orderIndex > -1 && keywords[orderIndex + 1] === 'BY') {
     const orderEnd = limitIndex > orderIndex ? limitIndex : tokens.length;
@@ -709,12 +725,10 @@ function analyzeQuery(sql) {
       const last = tokenKeyword(parts.at(-1));
       if (last === 'ASC' || last === 'DESC') { dir = last; parts = parts.slice(0, -1); }
       if (!parts.length) return;
-      const quoted = parts.some((token) => token.type === 'string');
-      let column;
-      if (parts.length === 3 && parts[1].value === '.') column = parts[2].value;
-      else if (parts.length === 1) column = parts[0].value;
-      else column = parts.map((token) => token.value).join(' ');
-      analysis.orderBy.push({ column: stripQuotes(column).toLowerCase(), dir, quoted });
+      const quoted = parts.some((token) => token.type === 'string' && token.value.startsWith("'"));
+      const rawColumn = stripQuotes(sql.slice(parts[0].start, parts.at(-1).end)).split('.').at(-1).trim().toLowerCase();
+      const column = analysis.selectAliases.find(({ alias }) => alias === rawColumn)?.column || rawColumn;
+      analysis.orderBy.push({ column, dir, quoted });
     });
   }
   if (limitIndex > -1 && tokens[limitIndex + 1]?.type === 'number') analysis.limit = Number(tokens[limitIndex + 1].value);
@@ -735,6 +749,46 @@ const GERMAN_COLUMN_HINTS = {
   nummer: 'id'
 };
 
+function unknownColumnClause(sql, analysis, name) {
+  const tokens = analysis.tokens;
+  const ranges = [];
+  if (analysis.selectIndex > -1 && analysis.fromIndex > analysis.selectIndex) {
+    ranges.push({ clause: 'SELECT', start: tokens[analysis.selectIndex].end, end: tokens[analysis.fromIndex].start });
+  }
+  if (analysis.whereIndex > -1) {
+    const endIndex = tokens.findIndex((token, index) => index > analysis.whereIndex && ['GROUP', 'HAVING', 'ORDER', 'LIMIT'].includes(tokenKeyword(token)));
+    ranges.push({ clause: 'WHERE', start: tokens[analysis.whereIndex].end, end: endIndex < 0 ? sql.length : tokens[endIndex].start });
+  }
+  if (analysis.orderIndex > -1 && tokenKeyword(tokens[analysis.orderIndex + 1]) === 'BY') {
+    const endIndex = tokens.findIndex((token, index) => index > analysis.orderIndex + 1 && tokenKeyword(token) === 'LIMIT');
+    ranges.push({ clause: 'ORDER BY', start: tokens[analysis.orderIndex + 1].end, end: endIndex < 0 ? sql.length : tokens[endIndex].start });
+  }
+  const needle = name.toLowerCase(); const identifiers = [];
+  for (let start = 0; start < tokens.length; start += 1) {
+    const first = tokens[start];
+    if (first.type === 'string') {
+      if (!first.value.startsWith("'") && stripQuotes(first.value).toLowerCase() === needle) identifiers.push({ start: first.start, end: first.end });
+      continue;
+    }
+    for (let end = start; end < tokens.length; end += 1) {
+      const current = tokens[end];
+      if (current.type === 'string' || (end > start && tokens[end - 1].end !== current.start)) break;
+      const raw = sql.slice(first.start, current.end);
+      if (raw.toLowerCase() === needle) {
+        const before = sql[first.start - 1] || '';
+        const after = sql[current.end] || '';
+        if (!/[\p{L}\p{N}_$]/u.test(before) && !/[\p{L}\p{N}_$]/u.test(after)) identifiers.push({ start: first.start, end: current.end });
+        break;
+      }
+      if (raw.length > name.length + 2) break;
+    }
+  }
+  for (const range of ranges) {
+    if (identifiers.some(({ start, end }) => start >= range.start && end <= range.end)) return range.clause;
+  }
+  return null;
+}
+
 function diagnoseError(error, sql) {
   const analysis = analyzeQuery(sql);
   const message = String(error?.message || error || '');
@@ -747,9 +801,14 @@ function diagnoseError(error, sql) {
   const unknown = message.match(/no such column:\s*(\S+)/i);
   if (unknown) {
     const name = stripQuotes(unknown[1]).split('.').pop();
-    const position = analysis.tokens.findIndex((token) => stripQuotes(token.value).toLowerCase() === name.toLowerCase());
-    const clause = analysis.orderIndex > -1 && position > analysis.orderIndex ? 'ORDER BY' : 'SELECT';
+    const clause = unknownColumnClause(sql, analysis, name) || 'SELECT';
     const english = GERMAN_COLUMN_HINTS[name.toLowerCase()];
+    const englishHint = english ? ` Die Spaltennamen sind englisch – gemeint ist vermutlich ${english}.` : '';
+    if (clause === 'WHERE') {
+      const quoteHint = missingTextQuote(sql, name);
+      if (quoteHint) return `${quoteHint}${englishHint}`;
+      return `Noch nicht korrekt: Die Spalte ${name} hinter WHERE gibt es in users nicht. Prüfe den Spaltennamen oder den Textwert.${englishHint}`;
+    }
     return `Noch nicht korrekt: Die Spalte ${name} hinter ${clause} gibt es in der Tabelle users nicht. Sieh im Tabellenschema nach, wie die Spalte heißt.${english ? ` Die Spaltennamen sind englisch – gemeint ist vermutlich ${english}.` : ''}`;
   }
   return 'Noch nicht korrekt: SQL versteht deine Abfrage nicht. Prüfe die Schreibweise der Schlüsselwörter, die Kommas zwischen den Spalten und die Reihenfolge der Klauseln.';
@@ -760,12 +819,27 @@ function valueKey(value) { return value === null ? '__NULL__' : `${typeof value}
 function rowKey(row) { return row.map(valueKey).join('\u001f'); }
 function columnIndex(relation, name) { return relation.columns.findIndex((column) => column.toLowerCase() === name.toLowerCase()); }
 function sameSet(left, right) { const a = new Set(left); const b = new Set(right); return a.size === b.size && [...a].every((value) => b.has(value)); }
+function sameMultiset(left, right) {
+  if (!Array.isArray(left) || !Array.isArray(right) || left.length !== right.length) return false;
+  const counts = new Map();
+  left.forEach((value) => counts.set(value, (counts.get(value) || 0) + 1));
+  for (const value of right) {
+    const remaining = counts.get(value) || 0;
+    if (!remaining) return false;
+    counts.set(value, remaining - 1);
+  }
+  return [...counts.values()].every((count) => count === 0);
+}
 
 function requireAnyOk(taskConfig, analysis) {
   if (!analysis.columns) return false;
   const has = (name) => analysis.columns.includes('*') || analysis.columns.includes(name);
   if (taskConfig.requireAny.length && !taskConfig.requireAny.some(has)) return false;
   return taskConfig.requireAll.every(has);
+}
+
+function projectedColumns(analysis) {
+  return analysis.columns ? analysis.columns.flatMap((name) => name === '*' ? USER_COLUMN_NAMES : [name]) : null;
 }
 
 // Referenz je Aufgabe; bei projection 'any' wird sie mit der Spaltenliste der Schülerin oder des Schülers neu gebaut.
@@ -776,7 +850,12 @@ function referenceSql(taskConfig, analysis) {
 
 async function isCorrect(taskConfig, analysis, actual) {
   if (taskConfig.projection === 'anyThree') {
-    if (!analysis.columns || analysis.distinct || actual.values.length !== 3) return false;
+    if (!analysis.columns || actual.values.length !== 3) return false;
+    if (analysis.distinct && analysis.distinctToken) {
+      const withoutDistinctSql = `${analysis.source.slice(0, analysis.distinctToken.start)}${analysis.source.slice(analysis.distinctToken.end)}`;
+      const withoutDistinct = await cachedExec(withoutDistinctSql);
+      if (!compareRelations(actual, withoutDistinct, { columnOrder: true, rowOrder: true }).correct) return false;
+    }
     const full = await cachedExec(`SELECT ${analysis.columns.join(', ')}\nFROM users`);
     const counts = new Map();
     full.values.forEach((row) => counts.set(rowKey(row), (counts.get(rowKey(row)) || 0) + 1));
@@ -788,7 +867,7 @@ async function isCorrect(taskConfig, analysis, actual) {
   const reference = await cachedExec(sql);
   const options = { columnOrder: taskConfig.projection === 'any' ? true : taskConfig.columnOrder, columnLabels: false, rowOrder: false };
   if (!taskConfig.order) return compareRelations(actual, reference, options).correct;
-  const actualIndex = columnIndex(actual, taskConfig.order.column);
+  const actualIndex = projectedColumns(analysis)?.findIndex((column) => column.toLowerCase() === taskConfig.order.column.toLowerCase()) ?? -1;
   const referenceIndex = columnIndex(reference, taskConfig.order.column);
   if (actualIndex < 0 || referenceIndex < 0) return compareRelations(actual, reference, { ...options, rowOrder: true }).correct;
   // Bei Gleichstand zählt jede Reihenfolge: Nur die Folge der Sortierwerte muss übereinstimmen (NULL gleich NULL).
@@ -797,12 +876,40 @@ async function isCorrect(taskConfig, analysis, actual) {
 }
 
 function actualColumnNames(analysis, actual) {
+  const selected = projectedColumns(analysis);
+  if (selected && (!actual.columns.length || selected.length === actual.columns.length)) return selected;
   if (actual.columns.length) return actual.columns;
-  if (analysis.columns) return analysis.columns.flatMap((name) => (name === '*' ? USER_COLUMN_NAMES : [name]));
   return [];
 }
 
 function rowCountText(count, limit) { return `Teilweise korrekt: Deine Ergebnisrelation hat ${count} Zeilen, gesucht sind genau ${limit}. Prüfe die Zahl hinter LIMIT.`; }
+
+function relationSubset(actual, expected, actualNames, expectedNames) {
+  if (!actualNames || !expectedNames || actualNames.length !== actual.columns.length || expectedNames.length !== expected.columns.length || !sameSet(actualNames, expectedNames)) return false;
+  const key = (row, names) => JSON.stringify(names.map((name, index) => [name.toLowerCase(), valueKey(row[index])]).sort(([left], [right]) => left.localeCompare(right)));
+  const counts = new Map();
+  expected.values.forEach((row) => { const rowKey = key(row, expectedNames); counts.set(rowKey, (counts.get(rowKey) || 0) + 1); });
+  return actual.values.every((row) => { const rowKey = key(row, actualNames); const remaining = counts.get(rowKey) || 0; if (!remaining) return false; counts.set(rowKey, remaining - 1); return true; });
+}
+
+function expectedColumnNames(taskConfig, analysis) {
+  if (taskConfig.projection === 'any' || taskConfig.projection === 'anyThree') return projectedColumns(analysis);
+  return taskConfig.select.replace(/^DISTINCT\s+/i, '').split(',').flatMap((name) => {
+    const column = stripQuotes(name.trim()).toLowerCase();
+    return column === '*' ? USER_COLUMN_NAMES : [column];
+  });
+}
+
+function missingExpectedComma(taskConfig, analysis, columns) {
+  const required = new Set(taskConfig.projection === 'any' ? [...taskConfig.requireAny, ...taskConfig.requireAll] : expectedColumnNames(taskConfig, analysis) || []);
+  return analysis.implicitAliases.some(({ column, alias }) => required.has(column) && required.has(alias) && !columns.includes(alias));
+}
+
+async function distinctlessResult(analysis) {
+  if (!analysis.distinct || !analysis.distinctToken) return null;
+  const sql = `${analysis.source.slice(0, analysis.distinctToken.start)}${analysis.source.slice(analysis.distinctToken.end)}`;
+  return cachedExec(sql);
+}
 
 async function evaluate(taskConfig, analysis, actual) {
   const names = actualColumnNames(analysis, actual);
@@ -810,23 +917,64 @@ async function evaluate(taskConfig, analysis, actual) {
   if (await isCorrect(taskConfig, analysis, actual)) return { level: 'success', text: taskConfig.texts.ok, solved: true };
   const fallback = { level: 'hint', text: 'Noch nicht korrekt: Vergleiche deine Ergebnisrelation mit der Aufgabe: Stimmen die Spalten, die Anzahl der Zeilen und ihre Reihenfolge?' };
   const partial = (text) => ({ level: 'partial', text });
-  if (analysis.missingComma) return { level: 'hint', text: 'Noch nicht korrekt: Zwischen zwei Spaltennamen fehlt ein Komma. Ohne Komma liest SQL das zweite Wort als neuen Namen für die erste Spalte – deshalb hat deine Ergebnisrelation zu wenige Spalten.' };
   if (taskConfig.projection === 'anyThree') {
     if (!analysis.columns) return fallback;
-    if (analysis.distinct) return partial(taskConfig.texts.distinct(context));
-    if (analysis.limit === null) return partial(taskConfig.texts.noLimit(context));
-    if (context.n !== taskConfig.limit) return partial(rowCountText(context.n, taskConfig.limit));
+    if (analysis.distinct) {
+      const withoutDistinct = await distinctlessResult(analysis);
+      if (withoutDistinct && !compareRelations(actual, withoutDistinct, { columnOrder: true, rowOrder: true }).correct) return partial(taskConfig.texts.distinct(context));
+    }
+    const full = await cachedExec(`SELECT ${analysis.columns.join(', ')}\nFROM users`);
+    if (analysis.limit !== null && analysis.limit !== taskConfig.limit) return partial(rowCountText(context.n, taskConfig.limit));
+    if (context.n === 0) return partial('Teilweise korrekt: Die Spalten passen, aber deine Abfrage liefert keine Zeilen. Prüfe, ob eine zusätzliche Bedingung alle Mitglieder ausschließt.');
+    if (context.n !== taskConfig.limit) {
+      if (analysis.limit !== null && analysis.limit !== taskConfig.limit) return partial(rowCountText(context.n, taskConfig.limit));
+      if (analysis.limit === null && context.n > taskConfig.limit) return partial(taskConfig.texts.noLimit(context));
+      return partial('Teilweise korrekt: Die Spalten passen, aber die ausgegebenen Zeilen stimmen noch nicht mit der Aufgabe überein. Prüfe zusätzliche Einschränkungen oder Zusammenfassungen.');
+    }
+    if (!relationSubset(actual, full, projectedColumns(analysis), projectedColumns(analysis))) return partial('Teilweise korrekt: Die Spalten passen, aber die ausgegebenen Zeilen stimmen noch nicht mit der Aufgabe überein. Prüfe zusätzliche Einschränkungen oder Zusammenfassungen.');
     return fallback;
   }
+  if (taskConfig.projection === 'any' && !analysis.columns) return fallback;
   const reference = taskConfig.projection === 'any' ? null : await cachedExec(`SELECT ${taskConfig.select}\n${taskConfig.tail}`);
-  const columnsWrong = taskConfig.projection === 'any' ? !requireAnyOk(taskConfig, analysis) : !sameSet(context.cols, reference.columns.map((name) => name.toLowerCase()));
+  const expected = taskConfig.projection === 'any' ? await cachedExec(referenceSql(taskConfig, analysis)) : reference;
+  const selected = projectedColumns(analysis);
+  const expectedNames = expectedColumnNames(taskConfig, analysis);
+  const columnsWrong = taskConfig.projection === 'any' ? !requireAnyOk(taskConfig, analysis) : !sameMultiset(context.cols, expectedNames || []);
+  if (analysis.implicitAliases.length && missingExpectedComma(taskConfig, analysis, context.cols)) {
+    return { level: 'hint', text: 'Noch nicht korrekt: Zwischen zwei gewünschten Spalten fehlt ein Komma. SQL liest das zweite Wort sonst als Alias der ersten Spalte.' };
+  }
   if (columnsWrong) return { level: 'hint', text: taskConfig.texts.cols(context) };
-  if (taskConfig.requireDistinct && !analysis.distinct) return partial(taskConfig.texts.noDistinct(context));
-  if (!taskConfig.requireDistinct && analysis.distinct) return partial('Teilweise korrekt: Die Spalten stimmen. DISTINCT entfernt aber Zeilen, die hier gebraucht werden – gesucht sind alle Mitglieder, nicht nur verschiedene Werte. Lass DISTINCT weg.');
+  if (taskConfig.limit === null && analysis.limit !== null) return partial(TEXT_NO_LIMIT_EXPECTED(context));
+  if (context.n === 0) return partial('Teilweise korrekt: Die Spalten passen, aber deine Abfrage liefert keine Zeilen. Prüfe, ob eine zusätzliche Bedingung alle Mitglieder ausschließt.');
+  const rowsMatch = compareRelations(actual, expected, { columnOrder: taskConfig.projection === 'any' ? true : taskConfig.columnOrder, columnLabels: false, rowOrder: false }).correct;
+  const isSubset = relationSubset(actual, expected, selected, expectedNames);
+  if (taskConfig.requireDistinct && !analysis.distinct) {
+    const hasDuplicates = actual.values.some((row, index) => actual.values.slice(0, index).some((other) => rowKey(row) === rowKey(other)));
+    if (hasDuplicates) return partial(taskConfig.texts.noDistinct(context));
+  }
+  if (!taskConfig.requireDistinct && analysis.distinct) {
+    const withoutDistinct = await distinctlessResult(analysis);
+    if (withoutDistinct && compareRelations(withoutDistinct, expected, { columnOrder: taskConfig.projection === 'any' ? true : taskConfig.columnOrder, columnLabels: false, rowOrder: false }).correct) {
+      return partial('Teilweise korrekt: Die Spalten stimmen. DISTINCT entfernt aber Zeilen, die hier gebraucht werden – gesucht sind alle Mitglieder, nicht nur verschiedene Werte. Lass DISTINCT weg.');
+    }
+  }
+  if (!rowsMatch && isSubset && taskConfig.limit === null && analysis.limit !== null) return partial(TEXT_NO_LIMIT_EXPECTED(context));
+  if (!rowsMatch && taskConfig.limit !== null && context.n !== taskConfig.limit) {
+    if (analysis.limit === null && (taskConfig.order && analysis.orderBy[0]?.column === taskConfig.order.column && analysis.orderBy[0]?.dir === taskConfig.order.dir)) return partial(taskConfig.texts.noLimit(context));
+    if (analysis.limit !== null && analysis.limit !== taskConfig.limit) return partial(rowCountText(context.n, taskConfig.limit));
+  }
+  if (!rowsMatch && isSubset) {
+    if (context.n < expected.values.length && ['t1', 't2', 't3', 't4', 't5', 't6', 't11', 't13'].includes(taskConfig.id)) {
+      if (taskConfig.limit !== null && analysis.limit !== null && analysis.limit !== taskConfig.limit) return partial(rowCountText(context.n, taskConfig.limit));
+      return partial('Teilweise korrekt: Die Spalten passen, aber es fehlen Mitglieder. Prüfe, ob deine Abfrage die Zeilen unnötig einschränkt.');
+    }
+    return partial('Teilweise korrekt: Die Spalten passen, aber die ausgegebenen Zeilen stimmen noch nicht mit der Aufgabe überein. Prüfe zusätzliche Einschränkungen oder Zusammenfassungen.');
+  }
+  if (!rowsMatch && taskConfig.limit !== null && context.n !== taskConfig.limit && analysis.limit !== null && analysis.limit !== taskConfig.limit) return partial(rowCountText(context.n, taskConfig.limit));
   if (taskConfig.order) {
     const first = analysis.orderBy[0];
     if (!first) return partial(taskConfig.texts.noOrder(context));
-    if (first.quoted) return partial('Teilweise korrekt: Hinter ORDER BY steht der Spaltenname ohne Anführungszeichen, zum Beispiel ORDER BY centimeters.');
+    if (first.quoted) return partial("Teilweise korrekt: Hinter ORDER BY steht ein Textwert. Sortiere nach der Spalte ohne einfache Anführungszeichen.");
     if (first.column !== taskConfig.order.column) return partial(taskConfig.texts.wrongCol ? taskConfig.texts.wrongCol(context) : `Teilweise korrekt: Du sortierst nach ${first.column}. Die Aufgabe verlangt eine Sortierung nach ${taskConfig.order.column}. Prüfe die Spalte hinter ORDER BY.`);
     if (first.dir !== taskConfig.order.dir) return partial(taskConfig.texts.dir(context));
   }
@@ -834,6 +982,7 @@ async function evaluate(taskConfig, analysis, actual) {
     if (analysis.limit === null) return partial(taskConfig.texts.noLimit(context));
     if (context.n !== taskConfig.limit) return partial(rowCountText(context.n, taskConfig.limit));
   } else if (analysis.limit !== null) return partial(TEXT_NO_LIMIT_EXPECTED(context));
+  if (!rowsMatch) return partial('Teilweise korrekt: Die Spalten passen, aber die ausgegebenen Zeilen stimmen noch nicht mit der Aufgabe überein. Prüfe zusätzliche Einschränkungen oder Zusammenfassungen.');
   return fallback;
 }
 

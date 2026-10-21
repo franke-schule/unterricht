@@ -2,21 +2,20 @@
 \usepackage[T1]{fontenc}
 \usepackage[utf8]{inputenc}
 \usepackage[ngerman]{babel}
-\usepackage[a4paper,margin=14mm]{geometry}
+\usepackage[a4paper,left=12mm,right=12mm,top=12mm,bottom=9mm]{geometry}
 \usepackage{lmodern}
 \usepackage[table]{xcolor}
 \usepackage{tabularx}
 \usepackage{array}
 \usepackage{microtype}
 \usepackage[most]{tcolorbox}
-\usepackage{tikz}
-\usetikzlibrary{arrows.meta}
 \pagestyle{empty}
 \setlength{\parindent}{0pt}
 \setlength{\parskip}{0pt}
+\setlength{\tabcolsep}{3pt}
 \renewcommand{\familydefault}{\sfdefault}
-\linespread{1.08}\selectfont
-\renewcommand{\arraystretch}{1.2}
+\linespread{1.0}\selectfont
+\renewcommand{\arraystretch}{1.02}
 \definecolor{Navy}{HTML}{17324D}
 \definecolor{Blue}{HTML}{3B6EA5}
 \definecolor{Sky}{HTML}{EAF3FA}
@@ -28,23 +27,28 @@
 \definecolor{CodeBg}{HTML}{F5F7F9}
 \color{Ink}
 \newcommand{\sectiontitle}[1]{%
-  \vspace{2.5mm}{\color{Blue}\bfseries\large #1}\par
-  \vspace{.6mm}{\color{Blue}\rule{\linewidth}{.65pt}}\par\vspace{1.2mm}}
+  \vspace{.3mm}{\color{Blue}\bfseries\large #1}\par
+  \vspace{.2mm}{\color{Blue}\rule{\linewidth}{.65pt}}\par\vspace{.3mm}}
 \newcommand{\sqlkw}[1]{\textcolor{Blue}{\bfseries #1}}
 \newcommand{\sqlbox}[1]{%
   \begin{tcolorbox}[colback=CodeBg,colframe=Line,arc=1.3mm,boxrule=.55pt,
-    left=2.4mm,right=2.4mm,top=1.2mm,bottom=1.2mm,boxsep=0pt]
-  {\ttfamily\fontsize{9.4}{11.4}\selectfont #1}
+    left=2.2mm,right=2.2mm,top=.5mm,bottom=.5mm,boxsep=0pt]
+  {\ttfamily\fontsize{9.4}{11.2}\selectfont #1}
+  \end{tcolorbox}}
+\newcommand{\workbox}[1]{%
+  \begin{tcolorbox}[colback=Sky,colframe=Blue,arc=1.2mm,boxrule=.55pt,
+    left=2mm,right=2mm,top=.35mm,bottom=.35mm,boxsep=0pt]
+  {\fontsize{9.2}{11}\selectfont\hyphenpenalty=10000\exhyphenpenalty=10000\textcolor{Blue}{\bfseries Arbeitsauftrag:} #1}
   \end{tcolorbox}}
 \newcommand{\pageheader}{%
   \colorbox{Navy}{\parbox{\dimexpr\linewidth-2\fboxsep\relax}{%
-    \vspace{2mm}\color{white}\begin{tabularx}{\linewidth}{@{}Xr@{}}
+    \vspace{1.5mm}\color{white}\begin{tabularx}{\linewidth}{@{}Xr@{}}
     {\small\bfseries INFORMATIK \textperiodcentered{} KLASSE 9} &
     \colorbox{Gold}{\color{Navy}\small\bfseries\strut LÖSUNGEN}
     \end{tabularx}
-    \vspace{1.5mm}{\fontsize{17}{20}\selectfont\bfseries
+    \vspace{1mm}{\fontsize{17}{20}\selectfont\bfseries
     Aufgabe 2 -- Erste SQL-Abfragen}\par
-    \vspace{.6mm}{\large Sicherungsblatt}\vspace{2mm}}}}
+    \vspace{.6mm}{\large Sicherungsblatt}\vspace{1.5mm}}}}
 \newcommand{\pagefooter}[1]{%
   \vfill{\color{Line}\rule{\linewidth}{.5pt}}\par\vspace{1mm}
   \begin{tabularx}{\linewidth}{@{}Xc r@{}}
@@ -54,126 +58,161 @@
   \end{tabularx}}
 \newcommand{\merkebox}[1]{%
   \begin{tcolorbox}[colback=Mint,colframe=Blue,arc=2mm,boxrule=.8pt,
-    left=3mm,right=3mm,top=2mm,bottom=2mm]
-  \textcolor{Blue}{\bfseries Merke}\par\vspace{.8mm}
-  \fontsize{10}{12.5}\selectfont #1
+    left=3mm,right=3mm,top=1.5mm,bottom=1.5mm]
+  \textcolor{Blue}{\bfseries Merke}\par\vspace{.5mm}
+  {\fontsize{9.6}{11.6}\selectfont #1}
   \end{tcolorbox}}
+\newcommand{\smallcaption}[1]{{\small\color{Muted}#1}\par\vspace{.5mm}}
 \newcommand{\miniresult}[2]{%
-  {\fontsize{8.6}{10.5}\selectfont
+  {\fontsize{8.6}{10.2}\selectfont
   \begin{tabular}{|>{\ttfamily\bfseries}l|}\hline
   \rowcolor{Sky}#1\\\hline
   #2\\\hline
   \end{tabular}}}
-\newcommand{\tworesult}[6]{%
-  {\fontsize{8.6}{10.5}\selectfont
-  \begin{tabular}{|>{\ttfamily\bfseries}l|>{\ttfamily\bfseries}l|}\hline
-  \rowcolor{Sky}#1 & #2\\\hline
-  #3 & #4\\\hline
-  #5 & #6\\\hline
-  \end{tabular}}}
-\newcommand{\smallcaption}[1]{{\small\color{Muted}#1}\par\vspace{.7mm}}
 \begin{document}
 \pageheader\par
-\vspace{2mm}
-\colorbox{Sky}{\parbox{\dimexpr\linewidth-2\fboxsep\relax}{\vspace{1.7mm}
-\textcolor{Blue}{\bfseries Ziel:} Aus der Tabelle users gezielt Spalten auswählen und Ergebnisrelationen lesen.
-\vspace{1.7mm}}}
 \sectiontitle{1 \textperiodcentered{} Von users zur Ergebnisrelation}
-\textbf{Auftrag der Werbekunden:} Zeige die Geburtsdaten aller Mitglieder.\par
-\vspace{1mm}
 \smallcaption{Ausschnitt aus users (4 von 317 Zeilen; 5 von 18 Spalten)}
-{\fontsize{8.6}{10.5}\selectfont
+{\fontsize{8.6}{10.2}\selectfont
 \begin{tabularx}{\linewidth}{|>{\ttfamily\bfseries}p{7mm}|>{\raggedright\arraybackslash}X|>{\ttfamily\raggedright\arraybackslash}p{31mm}|>{\ttfamily\raggedright\arraybackslash}p{25mm}|>{\raggedright\arraybackslash}p{19mm}|}\hline
-\rowcolor{Sky}id & name & username & \ttfamily\bfseries birthday & city\\\hline
-1 & Noah Schneider & \ttfamily zornigerfotograf & \cellcolor{Mint}\ttfamily 2007-10-02 & Schwerin\\\hline
-2 & Finn Becker & \ttfamily wanderwut\_finn & \cellcolor{Mint}\ttfamily 2006-06-14 & München\\\hline
-3 & Liam Hoffmann & \ttfamily bergcoder & \cellcolor{Mint}\ttfamily 2009-07-08 & Zürich\\\hline
-4 & Elias Wagner & \ttfamily koch\_kicker & \cellcolor{Mint}\ttfamily 2008-04-23 & Berlin\\\hline
-\end{tabularx}}
-\vspace{1.2mm}
-\begin{center}
-\begin{tikzpicture}[font=\small, every node/.style={draw=Line,fill=CodeBg,rounded corners=2pt,minimum height=8mm,align=center,inner xsep=3mm},flow/.style={-{Stealth[length=2.2mm]},draw=Blue,line width=.8pt}]
-  \node (from) at (0,0) {1 FROM users: Tabelle wählen};
-  \node (select) at (6.1,0) {2 SELECT birthday: Spalte wählen};
-  \node (result) at (12.4,0) {3 Ergebnisrelation};
-  \draw[flow] (from.east) -- (select.west);
-  \draw[flow] (select.east) -- (result.west);
-\end{tikzpicture}
-\end{center}
-\vspace{-1mm}
-\begin{minipage}[t]{.45\linewidth}
-\smallcaption{SQL-Abfrage}
+\rowcolor{Sky}id & name & username & birthday & city\\\hline
+1 & Noah Schneider & zornigerfotograf & 2007-10-02 & Schwerin\\\hline
+2 & Finn Becker & wanderwut\_finn & 2006-06-14 & München\\\hline
+3 & Liam Hoffmann & bergcoder & 2009-07-08 & Zürich\\\hline
+4 & Elias Wagner & koch\_kicker & 2008-04-23 & Berlin\\\hline
+\end{tabularx}}\par
+\vspace{.3mm}
+\workbox{Zeige die Geburtsdaten aller Mitglieder.}
+\begin{minipage}[t]{.32\linewidth}
+\smallcaption{SQL-Anweisung}
 \sqlbox{\sqlkw{SELECT} birthday\par\sqlkw{FROM} users}
 \end{minipage}\hfill
-\begin{minipage}[t]{.50\linewidth}
-\smallcaption{Ausschnitt der Ergebnisrelation (4 von 317 Zeilen)}
-\miniresult{birthday}{2007-10-02\\2006-06-14\\2009-07-08\\2008-04-23}
+\begin{minipage}[t]{.64\linewidth}
+\smallcaption{Ergebnisrelation}
+\miniresult{birthday}{2007-10-02\\2006-06-14\\2009-07-08\\2008-04-23\\\ldots}
 \end{minipage}\par
-\vspace{1mm}
-FROM users wählt die Tabelle. SELECT birthday wählt die Ergebnisspalte; alle 317 Zeilen bleiben erhalten.\par
+\vspace{.7mm}
+\smallcaption{Allgemeine Form}
+\sqlbox{\sqlkw{SELECT} Spaltenname\par\sqlkw{FROM} tabellenname}
+
 \sectiontitle{2 \textperiodcentered{} Mehrere oder alle Spalten}
-\begin{minipage}[t]{.54\linewidth}
+\workbox{Zeige die Usernames und die Geburtsdaten aller Mitglieder an}
+\begin{minipage}[t]{.27\linewidth}
+\smallcaption{SQL-Anweisung}
 \sqlbox{\sqlkw{SELECT} username, birthday\par\sqlkw{FROM} users}
-\smallcaption{Ausschnitt der Ergebnisrelation}
-\tworesult{username}{birthday}{zornigerfotograf}{2007-10-02}{wanderwut\_finn}{2006-06-14}
 \end{minipage}\hfill
-\begin{minipage}[t]{.42\linewidth}
+\begin{minipage}[t]{.71\linewidth}
+\smallcaption{Ergebnisrelation (erste 2 von 317 Zeilen)}
+{\fontsize{8.6}{10.2}\selectfont
+\begin{tabular}{|>{\ttfamily\bfseries}l|>{\ttfamily}l|}\hline
+\rowcolor{Sky}username & birthday\\\hline
+zornigerfotograf & 2007-10-02\\\hline
+wanderwut\_finn & 2006-06-14\\\hline
+\ldots & \ldots\\\hline
+\end{tabular}}
+\end{minipage}\par
+\vspace{.2mm}
+\workbox{Zeige alle Daten aller Mitglieder an.}
+\begin{minipage}[t]{.22\linewidth}
+\smallcaption{SQL-Anweisung}
 \sqlbox{\sqlkw{SELECT} *\par\sqlkw{FROM} users}
-\end{minipage}
-\merkebox{Die Auswahl von Spalten heißt Projektion. Mehrere Spalten trennt ein Komma; SELECT * gibt alle Spalten aus. Eine Abfrage verändert users nicht.}
+\end{minipage}\hfill
+\begin{minipage}[t]{.76\linewidth}
+\smallcaption{Ergebnisrelation (2 von 317 Zeilen, 5 von 18 Spalten gezeigt)}
+{\fontsize{8.6}{10.2}\selectfont\setlength{\tabcolsep}{1.5pt}
+\begin{tabular}{|>{\ttfamily}c|>{\raggedright\arraybackslash}p{26mm}|>{\ttfamily\raggedright\arraybackslash}p{30mm}|>{\ttfamily}c|>{\ttfamily\raggedright\arraybackslash}p{22mm}|>{\raggedright\arraybackslash}p{18mm}|>{\ttfamily}c|}\hline
+\rowcolor{Sky}id & \mbox{name} & \mbox{username} & \ldots & \mbox{birthday} & \mbox{city} & \ldots\\\hline
+1 & Noah Schneider & zornigerfotograf & \ldots & 2007-10-02 & Schwerin & \ldots\\\hline
+2 & Finn Becker & wanderwut\_finn & \ldots & 2006-06-14 & München & \ldots\\\hline
+\ldots & \ldots & \ldots & \ldots & \ldots & \ldots & \ldots\\\hline
+\end{tabular}}
+\end{minipage}\par
+\vspace{.2mm}
+\merkebox{In der SELECT-Klausel (Fachbegriff: Projektion) werden die Spalten angegeben, die ausgegeben werden sollen. Die Spalten müssen in der Tabelle der FROM-Klausel vorhanden sein. SELECT * gibt alle Spalten aus.}
+
 \sectiontitle{3 \textperiodcentered{} Sortieren mit ORDER BY}
-\begin{minipage}[t]{.43\linewidth}
+\workbox{Zeige Usernames und Gr\"o\ss{}en aller Mitglieder an, nach Gr\"o\ss{}e absteigend geordnet.}
+\begin{minipage}[t]{.39\linewidth}
+\smallcaption{SQL-Anweisung}
 \sqlbox{\sqlkw{SELECT} username, centimeters\par\sqlkw{FROM} users\par\sqlkw{ORDER BY} centimeters DESC}
 \end{minipage}\hfill
-\begin{minipage}[t]{.53\linewidth}
-\smallcaption{Schematische Sortierung desselben Dreier-Ausschnitts}
-{\small\begin{tabularx}{\linewidth}{@{}>{\ttfamily}X>{\ttfamily}r@{\quad}>{\ttfamily}X>{\ttfamily}r@{}}\textbf{vorher}&&\textbf{nachher}&\\
-zornigerfotograf&168&wanderwut\_finn&183\\wanderwut\_finn&183&bergcoder&174\\bergcoder&174&zornigerfotograf&168
-\end{tabularx}}
-\end{minipage}
-\vspace{1mm}
-DESC: groß nach klein. ASC: klein nach groß; ohne Angabe gilt ASC.
+\begin{minipage}[t]{.59\linewidth}
+\smallcaption{Beginn der Ergebnisrelation (5 von 317 Zeilen; gleich gro\ss{}e Mitglieder können ihre Reihenfolge tauschen)}
+{\fontsize{8.6}{10.2}\selectfont
+\begin{tabular}{|>{\ttfamily\bfseries}l|>{\ttfamily}r|}\hline
+\rowcolor{Sky}username & centimeters\\\hline
+frageriese & 195\\\hline
+wanderriese\_taro & 195\\\hline
+turmriese\_max & 195\\\hline
+reiseriese\_elias & 195\\\hline
+fragezornriese & 194\\\hline
+\end{tabular}}
+\end{minipage}\par
+\vspace{.2mm}
+\merkebox{ORDER BY centimeters DESC sortiert absteigend: gro\ss{}e Werte stehen oben. Ohne DESC gilt ASC (aufsteigend).}
 \pagefooter{1}
+
 \newpage
 \pageheader\par
 \sectiontitle{4 \textperiodcentered{} Dopplungen vermeiden mit DISTINCT}
 \begin{minipage}[t]{.48\linewidth}
+\workbox{Zeige die Geschlechtsangaben aller Mitglieder an.}
+\smallcaption{SQL-Anweisung}
 \sqlbox{\sqlkw{SELECT} gender\par\sqlkw{FROM} users}
-\smallcaption{317 Zeilen; \ldots ist ein abgekürzter Ausschnitt}
-\miniresult{gender}{male\\male\\male\\\ldots}
+\smallcaption{Ergebnisrelation (Ausschnitt aus 317 Zeilen)}
+{\fontsize{8.6}{10.2}\selectfont
+\begin{tabular}{|>{\ttfamily\bfseries}l|}\hline
+\rowcolor{Sky}gender\\\hline
+male\\\hline male\\\hline male\\\hline \ldots\\\hline
+\end{tabular}}
 \end{minipage}\hfill
 \begin{minipage}[t]{.48\linewidth}
+\workbox{Zeige jede unterschiedliche Geschlechtsangabe nur einmal an.}
+\smallcaption{SQL-Anweisung}
 \sqlbox{\sqlkw{SELECT} \sqlkw{DISTINCT} gender\par\sqlkw{FROM} users}
-\smallcaption{4 Zeilen}
-\miniresult{gender}{male\\female\\diverse\\NULL}
-\end{minipage}
-\merkebox{DISTINCT steht direkt hinter SELECT und gibt jeden Wert nur einmal aus. Es verändert nur die Ergebnisrelation, nicht die Tabelle users. NULL bedeutet: kein Wert eingetragen.}
-\small\color{Muted}NULL rechts ist das Konto admin.\color{Ink}\normalsize\par\vspace{2mm}
-\sectiontitle{5 \textperiodcentered{} Zeilen begrenzen mit LIMIT}
-\begin{minipage}[t]{.42\linewidth}
-\sqlbox{\sqlkw{SELECT} username\par\sqlkw{FROM} users\par\sqlkw{LIMIT} 3}
-\smallcaption{Ausschnitt der Ergebnisrelation}
-\miniresult{username}{zornigerfotograf\\wanderwut\_finn\\bergcoder}
-\par
+\smallcaption{Ergebnisrelation (4 Zeilen)}
+{\fontsize{8.6}{10.2}\selectfont
+\begin{tabular}{|>{\ttfamily\bfseries}l|}\hline
+\rowcolor{Sky}gender\\\hline
+male\\\hline female\\\hline diverse\\\hline NULL\\\hline
+\end{tabular}}\par\vspace{.5mm}
+{\small\color{Muted}NULL steht für das Konto admin ohne Eintrag.}
+\par\vspace{.4mm}
+\smallcaption{Allgemeine Form}
+\sqlbox{\sqlkw{SELECT} \sqlkw{DISTINCT} Spaltenname\par\sqlkw{FROM} tabellenname}
+\end{minipage}\par
 \vspace{1mm}
-LIMIT 3 zeigt höchstens drei Zeilen. Welche drei es sind, hängt von der Reihenfolge ab.
-\end{minipage}\hspace{3mm}
-\begin{minipage}[t]{.51\linewidth}
+\merkebox{DISTINCT steht direkt hinter SELECT. Gleiche Werte erscheinen in der Ergebnisrelation nur einmal; die Tabelle users bleibt unverändert. NULL bedeutet: kein Wert eingetragen.}
+
+\sectiontitle{5 \textperiodcentered{} Zeilen begrenzen mit LIMIT}
+\begin{minipage}[t]{.48\linewidth}
+\workbox{Zeige die Usernames der ersten drei Mitglieder an.}
+\smallcaption{SQL-Anweisung}
+\sqlbox{\sqlkw{SELECT} username\par\sqlkw{FROM} users\par\sqlkw{LIMIT} 3}
+\smallcaption{Ergebnisrelation (3 Zeilen)}
+\miniresult{username}{zornigerfotograf\\wanderwut\_finn\\bergcoder}
+\vspace{.5mm}\par
+{\fontsize{9.2}{11}\selectfont LIMIT 3 zeigt höchstens drei Zeilen; ohne Sortierung hängt die Auswahl von der vorhandenen Reihenfolge ab.}
+\end{minipage}\hfill
+\begin{minipage}[t]{.48\linewidth}
+\workbox{Zeige die Usernames und Geburtsdaten der vier jüngsten Mitglieder an.}
+\smallcaption{SQL-Anweisung}
 \sqlbox{\sqlkw{SELECT} username, birthday\par\sqlkw{FROM} users\par\sqlkw{ORDER BY} birthday DESC\par\sqlkw{LIMIT} 4}
-\smallcaption{Ausschnitt der Ergebnisrelation}
-{\fontsize{8.5}{10.4}\selectfont
+\smallcaption{Ergebnisrelation (4 Zeilen)}
+{\fontsize{8.6}{10.2}\selectfont
 \begin{tabular}{|>{\ttfamily\bfseries}l|>{\ttfamily}l|}\hline
 \rowcolor{Sky}username & birthday\\\hline
 gartenlesemaus & 2010-07-07\\\hline
 gartencoderin & 2010-06-28\\\hline
 codekickemmi & 2010-06-22\\\hline
 modereiselio & 2010-06-15\\\hline
-\end{tabular}}
-\par
+\end{tabular}}\par\vspace{.5mm}
+{\fontsize{9.2}{11}\selectfont Erst sortiert ORDER BY die spätesten Geburtsdaten nach oben; danach zeigt LIMIT die ersten vier Zeilen.}
+\end{minipage}\par
+\vspace{.4mm}
+\smallcaption{Allgemeine Form}
+\sqlbox{\sqlkw{SELECT} Spaltenname\par\sqlkw{FROM} tabellenname\par\sqlkw{LIMIT} Anzahl}
 \vspace{1mm}
-Erst stehen die spätesten Geburtsdaten oben; dann bleiben die ersten vier Zeilen übrig.
-\end{minipage}
-\vspace{2mm}
-\merkebox{Reihenfolge: SELECT [DISTINCT] $\rightarrow$ FROM $\rightarrow$ ORDER BY $\rightarrow$ LIMIT. SELECT wählt Spalten, FROM die Tabelle, ORDER BY sortiert und LIMIT begrenzt die Ausgabe.}
+\merkebox{Reihenfolge der Klauseln: SELECT (gegebenenfalls mit DISTINCT) $\rightarrow$ FROM $\rightarrow$ ORDER BY $\rightarrow$ LIMIT.}
 \pagefooter{2}
 \end{document}
