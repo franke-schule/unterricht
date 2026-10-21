@@ -1,0 +1,50 @@
+PRÜFHINWEISE FÜR DIE LEHRKRAFT
+Gewählte Kurzarbeit Informatik, Klasse 10: Datenbanken
+Stand: 21.10.2026
+
+VERBINDLICHE FASSUNG
+
+Die aktuelle Fassung in Design-SA-Vorlage ist gewählt. Schülerfassung und Musterlösung liegen jeweils als LaTeX, Text und PDF gemeinsam mit Erstellungs-Prompt und diesen Hinweisen in diesem Ordner. Der Unterordner build enthält die zugehörigen Prüfdateien und Renderbilder.
+
+Gestaltung: SA-Kopfanordnung mit Namens- und Datumsfeld, Latin Modern Sans (10 pt), blaue Überschriften mit Trennlinie, hellblaue Tabellenkopfzeilen. Alle sechs Klassenkarten besitzen einen Namensbereich und einen leeren zweiten Bereich. Die beiden Diagramme sind proportional an die Satzbreite angepasst, die Karofelder behalten das 5-mm-Raster.
+Die Referenzvorlage liegt unverändert unter ../Latex-SA-Vorlage.
+
+UMFANG UND BEWERTUNG
+
+Drei A4-Seiten:
+1: Grundwissen und Aufgabe 2a bis 2c.
+2: Aufgabe 3 mit Tabellen, Diagramm sowie Teilaufgaben a und b.
+3: Aufgabe 3c und Aufgabe 4a bis 4b; keine Fortsetzungsüberschrift.
+A1: 4 BE; A2: 9 BE; A3: 10 BE; A4: 5 BE. Gesamt: 28 BE.
+Beschriftungen: Klassendiagramm Nr. 1, Tabellenausschnitte Nr. 1, Klassendiagramm Nr. 2. Verweise entsprechend angepasst.
+
+FACHLICHE ANNAHMEN UND AUSLEGUNG
+
+Aufgabe 2:
+Die Vorgabe, dass ein Benutzer nur ein Handy hat, legt nicht fest, ob ein Handy mehreren Benutzern gehören darf. Die Gegenrichtung bleibt eine Modellierungsannahme. Fachlich konsistente, begründete Modellierungen sind entsprechend zu berücksichtigen.
+Aufgabe 2a verlangt bereits Beziehungsnamen; 2b wiederholt dies. Im Unterrichtskontext ist bei 2b insbesondere die Beziehungsart mit Begründung naheliegend. Der vorgegebene Wortlaut wurde nicht geändert.
+
+Aufgabe 3:
+Die zwei verlangten Stammtabellen werden durch eine kleine Zuordnungstabelle ergänzt, damit freigegebene Berechtigungen und die SQL-Abfrage eindeutig definiert sind. Die Zuordnungstabelle besteht wie in Aufgabe 8 der Einheit nur aus zwei Fremdschlüsseln mit eindeutigem Schlüsselpaar.
+Der Ausschnitt zeigt fünf bereits freigegebene Zuordnungen. WhatsApp und Standort existieren schon; die Zuordnung WhatsApp–Standort fehlt zunächst. Die Freigabe ist hier auf das dargestellte Szenario beschränkt; eine nutzer- oder gerätespezifische Speicherung wird nicht verlangt.
+Die Klassenbezeichnung Berechtigungen entspricht der Tabelle Berechtigung; Berechtigungen-von-Apps bezeichnet die SQL-Tabelle Berechtigungen_von_Apps. Zusätzliche Erklärungstexte zu Schlüsseln, gespeicherten Zuordnungen und der mittleren Klassenkarte wurden auf Wunsch aus der Schülerfassung entfernt.
+Korrekturanlass in 3a ist die Vermischung der fachlichen Klassenebene mit der relationalen Umsetzung. Nach dem Unterrichtsmodell aus Aufgabe 8 gehört im fachlichen Klassendiagramm eine direkte n:m-Beziehung zwischen Apps und Berechtigungen; die zusätzliche Beziehungstabelle gehört zur Umsetzung. Die gezeigte Kette ist als relationales Tabellenmodell mit zwei 1:n-Beziehungen grundsätzlich korrekt. Der Fehler ist deshalb nur unter der ausdrücklich verlangten Einordnung als fachliches Klassendiagramm zu verstehen, nicht als allgemeiner Modellierungsfehler einer Zuordnungsklasse.
+Aufgabe 3c wird als Ausgabe aller gespeicherten Freigabe-Zuordnungen interpretiert. Alle Apps im Ausschnitt haben mindestens eine Freigabe. Die App mit id 2 heißt jetzt TikTok. Die Musterlösung verwendet mehrere Tabellen in FROM und Verknüpfungsbedingungen in WHERE; es gibt keine JOIN-Anweisung.
+
+Aufgabe 4:
+Das Attribut heißt nun durchgängig gruendungsjahr und hat den Typ int; die Bedingung lautet gruendungsjahr < 2025. Ein zusätzlicher erklärender Hinweis zur Speicherung eines Jahres entfällt. erscheinungsdatum ist vom Typ date. Die Legende beginnt mit „Verwendete Abkürzungen: PS = Primärschlüssel, FS = Fremdschlüssel“.
+Die Formulierung „zwei Fehler“ in 4b wird als zwei Fehlerbereiche ausgelegt: fehlende SELECT-Liste und falsche Verknüpfungsbedingung insgesamt. Innerhalb der WHERE-Klausel sind sowohl der Vergleich über App.id statt über den Fremdschlüssel als auch die zusätzliche Namensgleichheit problematisch. Bei einer kleinteiligen Fehlerzählung sind somit drei Beanstandungen möglich.
+Welche Spalten in 4b auszugeben sind, ist nicht festgelegt. Unterschiedliche syntaktisch und fachlich passende SELECT-Listen sind daher vertretbar.
+
+DURCHGEFÜHRTE PRÜFUNGEN
+
+Die aktuelle Schülerfassung und die neue Musterlösung wurden mit LaTeX gebaut, mit Poppler gerendert und auf allen sechs Seiten visuell geprüft. Keine Overfull-Meldungen in beiden LaTeX-Logs.
+Alle 26 Aufgabentextabschnitte wurden in Reihenfolge bestätigt, ebenso die Beschriftungen und die BE-Verteilung 4/9/10/5 mit insgesamt 28 BE. SQL-Verbund mit den Beispieldaten intern geprüft: fünf Ergebniszeilen vor, sechs nach Ergänzung der neuen Freigabe.
+Schüler- und Lösungsquelle unterscheiden sich ausschließlich durch den Schalter solutionfalse/solutiontrue. Antwortfelder und Diagramme behalten feste Maße; die Hauptaufgabenpositionen stimmen auf jeder Seite überein (zusätzlich automatisch mit pdfplumber kontrolliert). Beide Fassungen haben drei A4-Seiten und insgesamt 28 BE.
+Die Lösungen zu 3c und 4b wurden mit mehreren Tabellen in FROM und Bedingungen in WHERE ausgeführt. Aufgabe 4 wurde mit unterschiedlichen App- und Entwickler-IDs sowie unterschiedlichen Namen geprüft, damit eine falsche Verknüpfung nicht zufällig zutrifft. Die Grenze gruendungsjahr = 2025 wird ausgeschlossen. Die Grundwissenslösungen erscheinen ausschließlich in der Musterlösung.
+Vor der vierten Ausfülllinie in Aufgabe 1 stehen nun 4 mm statt 1 mm Abstand. „begründe“ in 2b und „Begründe“ in 2c sind fett gesetzt. Die Formulierungen in Aufgabe 2a, dem Vorspann von Aufgabe 3, Aufgabe 3a und 3b wurden wie beauftragt geändert.
+
+EIGENSTÄNDIGE NACHPRÜFUNG
+
+build/aktualisieren.py erzeugt die Lösungsquelle aus der Schülerquelle durch Umschalten auf solutiontrue. build/pruefen.py prüft beide Fassungen, erzeugt ihre Textfassungen und führt den Wortlautabgleich, die Datenbankprüfung und den Vergleich der Aufgabenpositionen aus. Ergebnisse: build/pruefergebnisse.json. Renderbilder: build/seite-1.png bis seite-3.png sowie build/loesung-1.png bis loesung-3.png.
+Die LaTeX-Datei ist eigenständig kompilierbar und enthält alle benötigten Grafikdefinitionen. Es besteht keine Abhängigkeit von einer anderen Design-Fassung.

@@ -1,0 +1,18 @@
+{
+  "seiten_schueler": 3,
+  "seiten_loesungen": 3,
+  "BE": [
+    4,
+    9,
+    7,
+    5
+  ],
+  "gesamt_BE": 25,
+  "erste_version_unveraendert": true,
+  "urspruengliche_dateien_geprueft": 22,
+  "aufgabenfolge_und_schemata": true,
+  "sql_ohne_join": true,
+  "sql_ausgefuehrt": true,
+  "layoutgleichheit": true,
+  "latex_overfull": false
+}

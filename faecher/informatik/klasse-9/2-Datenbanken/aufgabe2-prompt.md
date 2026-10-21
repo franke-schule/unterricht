@@ -1,20 +1,20 @@
-# Prompt: Informatik 9 · Datenbanken · Aufgabe 3 – Erste SQL-Abfragen
+# Prompt: Informatik 9 · Datenbanken · Aufgabe 2 – Erste SQL-Abfragen
 
 Aufruf: `/lernmodul-loop` mit dem folgenden Text als Aufgabenbeschreibung.
 
 ---
 
-Erstelle das Lernmodul **Aufgabe 3 – Erste SQL-Abfragen** für Informatik
-Klasse 9, Einheit Datenbanken. Es trägt weiterhin die Nummer 3 und führt
+Erstelle das Lernmodul **Aufgabe 2 – Erste SQL-Abfragen** für Informatik
+Klasse 9, Einheit Datenbanken. Es trägt weiterhin die Nummer 2 und führt
 nach „Aufgabe 1 – Warum Datenbanken?" in einfache SQL-Abfragen auf der Tabelle
 `users` des InstaHub ein.
 
 ## Dateien und Einbindung
 
-- Neue Seite `faecher/informatik/klasse-9/2-Datenbanken/aufgabe3.html` mit
-  `aufgabe3.js` und bei Bedarf `aufgabe3.css`.
+- Neue Seite `faecher/informatik/klasse-9/2-Datenbanken/aufgabe2.html` mit
+  `aufgabe2.js` und bei Bedarf `aufgabe2.css`.
 - Menüeintrag in `faecher/informatik/klasse-9/index.html` direkt hinter
-  Aufgabe 1: **Aufgabe 3** – „Erste SQL-Abfragen".
+  Aufgabe 1: **Aufgabe 2** – „Erste SQL-Abfragen".
 - Kein Sicherungsblatt und keine Lehrercode-Box (nicht beauftragt). Kein
   Wiederholungs-Quiz.
 

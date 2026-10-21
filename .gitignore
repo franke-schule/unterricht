@@ -3,6 +3,9 @@
 # Ersetzt die frühere Einzelaufzählung der material-Ordner.
 **/*[Mm]aterial*/
 
+# Lokale Leistungsnachweise
+/faecher/LNWs/
+
 # Lokale Claude-Code-Berechtigungen (maschinenspezifisch)
 /.claude/settings.local.json
 

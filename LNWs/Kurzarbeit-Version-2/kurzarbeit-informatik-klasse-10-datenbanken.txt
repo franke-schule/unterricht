@@ -1,0 +1,73 @@
+Kurzarbeit Informatik – Datenbanken
+Klasse 10 Datum: Name:
+1. Grundwissen: [ /4 BE]
+Vervollständige die Sätze, indem zu jedem Begriﬀ aus dem Kontext Datenbanken den passenden Begriﬀ aus dem
+Kontext Programmierung ﬁndest.
+Eine Spalte entspricht in der objektorientierten Programmierung .
+Eine Zeile entspricht in der objektorientierten Programmierung .
+Eine Tabelle entspricht in der objektorientierten Programmierung .
+Eine Zelle - außer in der ersten Zeile - entspricht in der objektorientierten Programmierung
+.
+2. Apps auf dem Handy [ /9 BE]
+Klassendiagramm Nr. 1
+App Handy Benutzer
+a) Ergänze das Klassendiagramm, indem du Beziehungen (zwischen den Klassen App und Handy bzw. Handy und
+Benutzer) ergänzt. Wähle sinnvolle Kardinalitäten und benenne jede Beziehungen eindeutig.
+Hinweis: Ein Benutzer hat in diesem Szenarion nur ein Handy und nicht mehrere.
+b) Benenne die Beziehungen zwischen den Klassen und begründe deine Entscheidung.
+c) Erkläre bei welcher Beziehungsart eine Beziehungstabelle notwendig ist. Begründe deine Entscheidung.
+1
+3. Berechtigungen und Apps [ /7 BE]
+Tabellenausschnitte Nr. 1
+Berechtigung
+id name
+1 Kamera
+2 Standort
+3 Fotos lesen
+Apps
+id name
+1 WhatsApp
+2 TikTok
+3 Instagram
+Berechtigungen_von_Apps
+app_id berechtigung_id
+1 1
+1 3
+2 1
+3 2
+3 3
+Klassendiagramm Nr. 2
+Berechtigungen Apps
+n m
+ist freigegeben für
+a) WhatsApp fragt beim Öﬀnen der App nach einer neuen Berechtigung "Standort". Du nimmst die Berechtigungsanfrage
+an.
+Beschreibe die Veränderungen, die passieren müssen, damit die Tabellen (siehe Tabellenausschnitte Nr. 1) auf dem
+aktuellen Stand sind.
+b) Formuliere eine SQL-Anweisung, die zu jeder App alle passenden Berechtigungen, die freigegeben wurden, auﬂistet.
+2
+4. Appentwickler [ /5 BE]
+Ein Appentwickler kann mehrere Apps entwickeln. Jede App wird in diesem Szenario von genau einem Appentwickler
+entwickelt.
+App (id: int [PS], name: varchar(255),
+erscheinungsdatum: date, kategorie: varchar(255))
+Verwendete Abkürzungen: PS = Primärschlüssel, FS = Fremdschlüssel.
+a) Beschreibe folgende SQL-Anweisung in eigenen Worten.
+SELECT COUNT(*)
+FROM Appentwickler
+WHERE gruendungsjahr < 2025
+Appentwickler (id: int [PS], name: varchar(255), gruendungsjahr: int)
+Zuordnung-Apps-Appentwickler (
+app_id: int [FS → App.id],
+appentwickler_id: int [FS → Appentwickler.id])
+In Zuordnung-Apps-Appentwickler bildet das Paar der beiden Fremdschlüssel den Primärschlüssel.
+b) In den Tabellenschemata Apps, Appentwickler bzw. Zuordnung-Apps-Appentwickler haben sich Fehler eingeschli-
+chen. Korrigiere den Fehler oder die Fehler. Du kannst direkt in das Tabellenschema hineinschreiben und Falsches
+durchstreichen, wenn notwendig.
+Begründe deine Änderungen.
+c) Korrigiere zwei Fehler, die in folgender SQL-Anweisung passiert sind. Schreibe die SQL-Anweisung darunter neu.
+SELECT
+FROM Appentwickler, App
+WHERE App.id = Appentwickler.id AND App.name = Appentwickler.name
+Gesamt: [ /25 BE]
+3
