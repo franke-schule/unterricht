@@ -1,4 +1,4 @@
-import { mountClassCard, evaluateClassCard, parseStoredChoices } from '../../../../klasse-10/2-Modellierung-und-Programmierung-Online-IDE/klassendiagramm.mjs';
+import { mountClassCard, evaluateClassCard, parseStoredChoices } from '../../../../klasse-10/2-Modellierung-und-Programmierung-Online-IDE/klassendiagramm.mjs?v=20261021-compact';
 import { evaluateCodeAnswer } from './semantic-answer.mjs?v=20261019-code-check';
 import { unlockSolution } from '../../../../klasse-10/1-Datenbanken/tab-navigation.mjs';
 
@@ -7,7 +7,7 @@ const SERVER_URL = 'https://unterrichtkiichezbn4-ki-auswertung.functions.fnc.fr-
 const IDE_ID = 'Java11Aufgabe6_0HundV2';
 const STEPS = ['objects', 'class-card', 'signatures', 'completion', 'transfer', 'quiz'];
 const CLASS_CARD = {
-  key: 'hund', className: 'Hund', attributeSlots: 2, methodSlots: 5,
+  key: 'hund', className: 'Hund', attributeSlots: 2, methodSlots: 5, compact: true,
   cards: [
     { id:'a1', text:'private int alter', kind:'A' },
     { id:'a2', text:'private String name', kind:'A' },

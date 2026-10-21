@@ -23,9 +23,9 @@
 .task6-0-page .object-card { min-width:0; overflow:hidden; border:2px solid #126e9c; border-radius:.85rem; background:#fff; }
 .task6-0-page .object-card-title { display:block; padding:.6rem .8rem; border-bottom:2px solid #126e9c; text-align:center; text-decoration:underline; overflow-wrap:anywhere; }
 .task6-0-page .object-card-attributes { display:grid; gap:.2rem; padding:.6rem .8rem; overflow-wrap:anywhere; }
-.task6-0-page .class-builder { display:grid; grid-template-columns:minmax(0,1fr) minmax(0,1.35fr); align-items:start; gap:.75rem; min-width:0; }
-.task6-0-page .class-builder > .knn-bank { flex-direction:column; align-items:stretch; min-width:0; }
-.task6-0-page .class-builder > .knn-slots { min-width:0; }
+.task6-0-page .class-builder { display:grid; grid-template-columns:minmax(0,1fr) minmax(0,430px); align-items:start; gap:.75rem; min-width:0; }
+.task6-0-page .class-builder > .knn-bank { flex-direction:column; align-items:stretch; align-self:stretch; justify-content:flex-start; min-width:0; }
+.task6-0-page .class-builder > .knn-slots { min-width:0; width:100%; }
 .task6-0-page .knn-bank { display:flex; flex-wrap:wrap; gap:.5rem; min-height:3.4rem; padding:.6rem; border:1px dashed #9db4c2; border-radius:.6rem; background:#f9fcfe; }
 .task6-0-page .knn-card { min-height:44px; max-width:100%; border:1px solid #b9d1df; border-radius:9px; padding:8px 12px; color:#12324a; background:#fff; font:inherit; font-weight:750; text-align:left; cursor:grab; touch-action:none; user-select:none; overflow-wrap:anywhere; }
 .task6-0-page .knn-card.is-picked,.task6-0-page .knn-slot.is-picked { outline:3px solid #126e9c; outline-offset:2px; }
@@ -40,6 +40,13 @@
 .task6-0-page .knn-slot.is-filled { border-style:solid; background:#fff; }
 .task6-0-page .knn-slot.is-drop-target { background:#d7ebf6; border-color:#12324a; }
 .task6-0-page .knn-slot-label { font-weight:800; color:#126e9c; }
+.task6-0-page .class-card-compact { display:block; padding:0; }
+.task6-0-page .class-card-compact .class-card-title { margin:0; padding:7px 10px; border-bottom:2px solid #126e9c; background:#edf3f9; font-family:"SFMono-Regular",Consolas,monospace; }
+.task6-0-page .class-card-area + .class-card-area { border-top:2px solid #126e9c; }
+.task6-0-page .class-card-compact .knn-slot { display:block; width:100%; min-height:44px; padding:7px 10px; border:0; background:#fff; font-family:"SFMono-Regular",Consolas,monospace; font-size:.86rem; font-weight:400; }
+.task6-0-page .class-card-compact .knn-slot + .knn-slot { border-top:1px solid #dce3eb; }
+.task6-0-page .class-card-compact .knn-slot[hidden],.task6-0-page .class-card-compact .knn-slot-label { display:none; }
+.task6-0-page .class-card-compact .knn-slot.is-drop-target { background:#d7ebf6; }
 .task6-0-page .task6-0-reset { margin:1rem 0; }
 .task6-0-page .task6-0-next-link { display:inline-flex; align-items:center; text-decoration:none; }
 .task6-0-page .task6-0-next-link:hover { color:#fff; }

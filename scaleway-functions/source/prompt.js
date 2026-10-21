@@ -98,7 +98,12 @@ function buildCodePrompt_(
       'Erwartete Aspekte:',
       task.expectedAspects.map(function(aspect, index) { return (index + 1) + '. ' + aspect; }).join('\n'),
       '',
+      task.rubric
+        ? 'Bewertungsrubrik:\n' + task.rubric.map(function(item, index) { return (index + 1) + '. ' + item; }).join('\n')
+        : '',
+      '',
       'Bewerte jeden erwarteten Aspekt mit höchstens einem Punkt. Bewerte fachlich wohlwollend, aber nicht beliebig.',
+      'Prüfe ausschließlich die genannten Aspekte und Bedingungen. Erfinde keine zusätzlichen Anforderungen. Vergib nur für tatsächlich belegte Aspekte Punkte; strengths und missing müssen zu diesen Aspekten und zur Punktzahl passen.',
       'Gib keine personenbezogenen Daten aus. Gib kurze, direkt umsetzbare Hinweise ohne vollständige Musterlösung.',
       '',
       'Antworte ausschliesslich als JSON-Objekt mit diesen Feldern:',

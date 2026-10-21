@@ -324,7 +324,24 @@ export function mountClassCard(container, task, stateInput, checkButton, resultB
       list.prepend(title);
     }
     const fields = list.querySelectorAll('.knn-slot');
-    if (fields[task.attributeSlots]) fields[task.attributeSlots].classList.add('section-start');
+    if (task.compact) {
+      list.classList.add('class-card-compact');
+      const ranges = [[0, task.attributeSlots, 'Attribute'], [task.attributeSlots, slots.length, 'Methoden']];
+      ranges.forEach(([start, end, label]) => {
+        const area = document.createElement('div');
+        area.className = 'class-card-area';
+        area.setAttribute('role', 'group');
+        area.setAttribute('aria-label', label);
+        let available = false;
+        [...fields].slice(start, end).forEach((field) => {
+          const empty = !field.classList.contains('is-filled');
+          field.hidden = empty && available;
+          if (empty) available = true;
+          area.append(field);
+        });
+        list.append(area);
+      });
+    } else if (fields[task.attributeSlots]) fields[task.attributeSlots].classList.add('section-start');
     container.querySelectorAll('.knn-card').forEach((card) => { card.dataset.cardKind = 'class'; });
     if (edgeRoot) {
       list.dataset.treeNodeKey = task.key;

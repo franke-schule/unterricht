@@ -96,6 +96,23 @@ test('Rubriken decken kumulative und unabhängige Schritte samt Scheinlösungen 
   assert.match(c.codeAnalysisRules.join(' '), /Kommentare/);
 });
 
+test('4A übermittelt die Bewertungsrubrik und konkrete Regeln für beide gemeldeten Fehlbewertungen', () => {
+  const task = core.TASKS['11-6-0-4a-code'];
+  const wrongCode = codeBundle(`${mainStart}\nprintln(petersHund.zeigeDaten());`);
+  const correctCode = codeBundle(`${mainStart}\nprintln(petersHund.gibAlter());`);
+  for (const code of [wrongCode, correctCode]) {
+    const prompt = core.buildPrompt_(task, code);
+    for (const rule of task.rubric) assert.ok(prompt.includes(rule), `Rubrikregel fehlt: ${rule}`);
+    for (const rule of task.codeAnalysisRules) assert.ok(prompt.includes(rule), `Coderegel fehlt: ${rule}`);
+    assert.match(prompt, /Fehlt dort petersHund\.gibAlter\(\), sind alle drei Aspekte unerfüllt und es gibt 0 Punkte/);
+    assert.match(prompt, /println\(petersHund\.zeigeDaten\(\)\) ist deshalb ein Typfehler, kein Getteraufruf/);
+    assert.match(prompt, /keine zusätzlichen Anforderungen/);
+    assert.match(prompt, /nach dem vorgegebenen petersHund\.setzeAlter\(6\) vollständig richtig: 3 von 3 Punkten/);
+    assert.match(prompt, /Eine zusätzliche Getterausgabe vor der Altersänderung ist nicht gefordert/);
+    assert.ok(prompt.endsWith(`${code}\nENDE SCHUELERCODE`));
+  }
+});
+
 test('Client prüft aktuellen IDE-Code aus beiden Dateien und Codeblöcke haben keine Begleitfelder', () => {
   assert.match(client, /evaluateCodeAnswer\(\{ serverUrl:SERVER_URL, taskId:block\.codeTask\.id, code, expectedMaxPoints:block\.codeTask\.maxPoints \}\)/);
   assert.match(client, /online_ide_access/);
@@ -264,6 +281,12 @@ test('Prompt-Vertrag mit Codefixtures und kontrollierten Modellantworten (Mock; 
     { name:'4A mit späterem Setter', taskId:'11-6-0-4a-code',
       code:codeBundle(`${mainStart}\nprintln(petersHund.gibAlter());\npetersHund.setzeAlter(7);`), points:3,
       fragment:'entwertet eine Ausgabe des aktuellen Getterwerts nicht' },
+    { name:'gemeldete gültige Getterausgabe nur nach der Altersänderung', taskId:'11-6-0-4a-code',
+      code:codeBundle(`${mainStart}\nprintln(petersHund.gibAlter());`), points:3,
+      fragment:'Eine zusätzliche Getterausgabe vor der Altersänderung ist nicht gefordert' },
+    { name:'gemeldete void-Ausgabe statt Getteraufruf', taskId:'11-6-0-4a-code',
+      code:codeBundle(`${mainStart}\nprintln(petersHund.zeigeDaten());`), points:0,
+      fragment:'println(petersHund.zeigeDaten()) ist deshalb ein Typfehler, kein Getteraufruf' },
     { name:'5B allein', taskId:'11-6-0-5b-code',
       code:codeBundle(`${mainStart}\ninasHund.setzeDaten(9, "Flocke");\ninasHund.zeigeDaten();`), points:4,
       fragment:'Andere Aufrufe und Ergebnisse aus 5A sind irrelevant' },
