@@ -7,6 +7,11 @@ function applyRuleBasedMinimum_(
   task,
   answer
 ) {
+  if (task === TASKS['11-6-0-4a-code']) {
+    const getterEvaluation = evaluateDogGetterByRules_(answer, task);
+    if (getterEvaluation) return getterEvaluation;
+  }
+
   let ruleBasedEvaluation = null;
 
   if (task === TASKS.b) {
@@ -61,6 +66,104 @@ function applyRuleBasedMinimum_(
   }
 
   return evaluation;
+}
+
+
+function evaluateDogGetterByRules_(answer, task) {
+  const files = { 'Hauptprogramm.java': [], 'Hund.java': [] };
+  const tokens = /\s+|\/\/[^\r\n]*|\/\*[\s\S]*?\*\/|"(?:\\[^\r\n]|[^"\\\r\n])*"|[A-Za-z_$][\w$]*|\d+|[{}().,;=+\-]/gy;
+  let file = '';
+  let offset = 0;
+  while (offset < answer.length) {
+    tokens.lastIndex = offset;
+    const match = tokens.exec(answer);
+    if (!match) return null;
+    const token = match[0];
+    offset = tokens.lastIndex;
+    if (/^\s+$/.test(token)) continue;
+    if (token.startsWith('//')) {
+      const marker = token.match(/^\/\/ ===== Datei: (Hauptprogramm\.java|Hund\.java) =====\s*$/);
+      if (marker) {
+        if (files[marker[1]].length) return null;
+        file = marker[1];
+      }
+      continue;
+    }
+    if (token.startsWith('/*')) continue;
+    if (!file) return null;
+    if (token.startsWith('"') && !/^"(?:[^"\\\r\n]|\\(?:[btnfr"'\\]|[0-7]{1,3}))*"$/.test(token)) return null;
+    if (/^\d+$/.test(token) && (/^0\d/.test(token) || Number(token) > (files[file][files[file].length - 1] === '-' ? 2147483648 : 2147483647))) return null;
+    files[file].push(token.startsWith('"') ? '""' : token);
+  }
+
+  const dog = files['Hund.java'].join(' ');
+  if (!dog.startsWith('public class Hund { ') || !dog.endsWith(' }')) return null;
+  let members = dog.slice('public class Hund { '.length, -2);
+  const referenceMembers = [
+    'private int alter ;',
+    'private String name ;',
+    'public Hund ( int startAlter , String startName ) { alter = startAlter ; name = startName ; }',
+    'public int gibAlter ( ) { return alter ; }',
+    'public void setzeAlter ( int neuesAlter ) { alter = neuesAlter ; }',
+    'public void setzeDaten ( int neuesAlter , String neuerName ) { alter = neuesAlter ; name = neuerName ; }',
+    'public void zeigeDaten ( ) { println ( "" + name + "" + alter + "" ) ; }',
+    'public void belle ( ) { println ( name + "" ) ; }'
+  ];
+  for (const member of referenceMembers) {
+    const padded = ' ' + members + ' ';
+    const expected = ' ' + member + ' ';
+    if (!padded.includes(expected)) return null;
+    members = padded.replace(expected, ' ').trim();
+  }
+  if (members) return null;
+
+  const main = files['Hauptprogramm.java'];
+  if (!main.length || main[main.length - 1] !== ';') return null;
+  const declared = new Set();
+  let getter = false;
+  let printed = false;
+  let voidOutput = false;
+  for (const statement of main.join(' ').split(' ;').filter(text => text.trim())) {
+    const text = statement.trim();
+    const declaration = text.match(/^Hund (petersHund|inasHund) = new Hund \( (?:- )?\d+ , "" \)$/);
+    if (declaration) {
+      if (declared.has(declaration[1])) return null;
+      declared.add(declaration[1]);
+      continue;
+    }
+    const receiver = text.match(/\b(petersHund|inasHund) \./);
+    if (receiver && !declared.has(receiver[1])) return null;
+    if (/^(?:petersHund|inasHund) \. (?:zeigeDaten|belle|gibAlter) \( \)$/.test(text)) {
+      if (text === 'petersHund . gibAlter ( )') getter = true;
+    } else if (/^(?:petersHund|inasHund) \. setzeAlter \( (?:- )?\d+ \)$/.test(text) ||
+      /^(?:petersHund|inasHund) \. setzeDaten \( (?:- )?\d+ , "" \)$/.test(text)) {
+      continue;
+    } else if (/^println \( (?:petersHund|inasHund) \. gibAlter \( \) \)$/.test(text)) {
+      if (text === 'println ( petersHund . gibAlter ( ) )') { getter = true; printed = true; }
+    } else if (/^println \( (?:petersHund|inasHund) \. (?:zeigeDaten|belle) \( \) \)$/.test(text)) {
+      voidOutput = true;
+    } else if (!/^println \( (?:""|(?:- )?\d+) \)$/.test(text)) {
+      return null;
+    }
+  }
+
+  const points = Number(getter) + Number(printed) + Number(getter && !voidOutput);
+  const strengths = [];
+  if (getter) strengths.push('Du rufst petersHund.gibAlter() nach der Objekterzeugung auf.');
+  if (printed) strengths.push('Du gibst den Rückgabewert des Getters mit println(...) aus.');
+  if (getter && !voidOutput) strengths.push('Der Getteraufruf ist vollständig und enthält die leeren Klammern.');
+  const missing = [];
+  if (voidOutput) missing.push('zeigeDaten() und belle() haben den Rückgabetyp void und geben selbst Text aus. Ihr Aufruf liefert keinen Wert für println(...).');
+  if (!getter) missing.push('Im Hauptprogramm fehlt ein Aufruf des Alters-Getters an petersHund.');
+  else if (!printed) missing.push('Gib den Rückgabewert des Alters-Getters mit println(...) aus.');
+  return {
+    ok: true, points, maxPoints: task.maxPoints,
+    status: points === task.maxPoints ? task.statusLabels.correct : points ? task.statusLabels.partial : task.statusLabels.incorrect,
+    strengths, missing,
+    feedback: points === task.maxPoints
+      ? 'Korrekt. Du gibst den Rückgabewert von petersHund.gibAlter() mit println(...) aus. Vorherige Aufrufe von zeigeDaten() oder setzeAlter(...) sind erlaubt; der Getter muss nicht direkt nach der Objekterzeugung stehen.'
+      : missing.join(' ')
+  };
 }
 
 

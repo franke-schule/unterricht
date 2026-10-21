@@ -1,6 +1,7 @@
 import { setupPhysicsStepTabs } from './components/physics-step-tabs.mjs';
 import { createPhysicsTaskProgress } from './components/physics-task-progress.mjs';
 import { appendPhysicsText } from './components/physics-notation.mjs';
+import { enableTokenDrag, wasDragged } from './components/token-drag.mjs';
 import { G, INITIAL, MIN_DISTANCE, MAX_DISTANCE, distance, force, validState, setDistance, moveBody, checkQuantity, parseQuantity } from './gravitation-model.mjs';
 
 const $ = id => document.getElementById(id);
@@ -11,6 +12,7 @@ const feedbackWords = {
 };
 const completed = new Set();
 const numericCards = new Map();
+const wordBoards = new Map();
 const separateChoiceFeedback = {
   M3:{success:'Richtig. Die Simulation verwendet G bereits; sie bestimmt die Naturkonstante nicht unabhängig.',error:'Noch nicht korrekt. Der Kraftwert wird mit einem hinterlegten G berechnet.'},
   M4:{success:'Richtig. Der gewählte Ansatz löst das Gravitationsgesetz nach G auf.',error:'Noch nicht korrekt. Stelle das Gravitationsgesetz nach G um.'},
@@ -70,6 +72,7 @@ function addSelect(host, id, label, choices) {
   return wrap;
 }
 function setupStructured({host,id,title,prompt,fields,answers,helps,messages,after}) {
+  if (/^(?:P[1-4]|S[12])$/.test(id)) return setupWordCards({host,id,title,prompt,fields,answers,helps,messages,after});
   const area = card(host,id,title,prompt,helps);
   fields.forEach(([suffix,label,choices]) => addSelect(area,`${id.toLowerCase()}-${suffix}`,label,choices));
   $(`check-${id.toLowerCase()}`).addEventListener('click',()=>{
@@ -84,15 +87,124 @@ function setupStructured({host,id,title,prompt,fields,answers,helps,messages,aft
     if(level==='success'){finish(id);after?.();}
   });
 }
+function setupWordCards({host,id,title,prompt,fields,answers,helps,messages,after}) {
+  const area = card(host,id,title,prompt,helps);
+  const cardRoot = area.closest('.physics-task-card');
+  const bank = document.createElement('div');
+  bank.className = 'cloze-term-bank grav-word-bank';
+  bank.setAttribute('role','group');
+  bank.setAttribute('aria-label',`${id}: Wortspeicher`);
+  const values = fields.map(()=>'');
+  const cards = [...new Map(fields.flatMap(([, ,choices])=>choices).map(([key,label])=>[key,label])).entries()];
+  const labels = new Map(cards);
+  const controls = fields.map(([suffix])=>{
+    const input = document.createElement('input');
+    input.type = 'hidden'; input.id = `${id.toLowerCase()}-${suffix}`;
+    area.append(input);
+    return input;
+  });
+  const targets = [];
+  let picked = null;
+  const selector = `#${cardRoot.id} [data-word-slot]`;
+  const bankSelector = `#${cardRoot.id} .grav-word-bank`;
+  function setValues(next) {
+    values.splice(0,values.length,...next);
+    controls.forEach((control,index)=>{control.value=values[index];});
+    render();
+  }
+  function move(key,to) {
+    if(!labels.has(key)) return;
+    const from=values.indexOf(key), prior=to>=0?values[to]:'';
+    if(from===to) { picked=null;render();return; }
+    if(from>=0) values[from]='';
+    if(to>=0) values[to]=key;
+    if(prior&&prior!==key&&from>=0) values[from]=prior;
+    picked=null;
+    controls.forEach((control,index)=>{control.value=values[index];});
+    (controls[to>=0?to:Math.max(0,from)]).dispatchEvent(new Event('input',{bubbles:true}));
+    render();progress?.save();
+  }
+  function token(key,index) {
+    const button=document.createElement('button');button.type='button';
+    button.className=index>=0?'cloze-gap is-filled':'cloze-token';
+    button.dataset.wordKey=key;
+    button.textContent=labels.get(key);
+    button.setAttribute('aria-pressed',String(picked===key));
+    button.classList.toggle('is-picked',picked===key);
+    if(index>=0) button.setAttribute('aria-label',`${fields[index][1]}: ${labels.get(key)}`);
+    enableTokenDrag(button,{getLabel:()=>labels.get(key),dropSelector:selector,bankSelector,
+      onDrop:(slot,onBank)=>{if(slot)move(key,Number(slot.dataset.wordSlot));else if(onBank)move(key,-1);else render();}});
+    button.addEventListener('click',event=>{
+      event.stopPropagation();if(wasDragged(button))return;
+      if(picked&&picked!==key&&index>=0){move(picked,index);return;}
+      if(picked===key){if(index>=0)move(key,-1);else {picked=null;render();}return;}
+      picked=key;render();
+      if(index<0)(targets.find((target,i)=>!values[i])?.querySelector('button')||bank.querySelector(`[data-word-key="${key}"]`))?.focus();
+      else targets[index].querySelector('button')?.focus();
+    });
+    return button;
+  }
+  function render(){
+    bank.replaceChildren(...cards.filter(([key])=>!values.includes(key)).map(([key])=>token(key,-1)));
+    targets.forEach((target,index)=>{
+      target.replaceChildren();
+      const key=values[index];
+      if(key)target.append(token(key,index));
+      else {
+        const empty=document.createElement('button');empty.type='button';empty.className='cloze-gap';
+        empty.textContent='□';empty.setAttribute('aria-label',`${fields[index][1]}: leer`);
+        empty.addEventListener('click',()=>{if(picked)move(picked,index);});
+        target.append(empty);
+      }
+      target.classList.toggle('is-drop-target',false);
+    });
+  }
+  bank.addEventListener('click',()=>{if(picked)move(picked,-1);});
+  if(id==='P1'||id==='P3'){
+    const line=cardRoot.querySelector('.task-prompt');
+    const parts=prompt.split('______');line.replaceChildren();
+    parts.forEach((part,index)=>{
+      if(index) {const slot=document.createElement('span');slot.className='grav-word-target';slot.dataset.wordSlot=String(index-1);targets.push(slot);line.append(slot);}
+      const fragment=document.createElement('span');fragment.innerHTML=htmlText(part);line.append(fragment);
+    });
+    area.append(bank);
+  }else{
+    area.append(bank);
+    const rows=document.createElement('div');rows.className='grav-word-rows';area.append(rows);
+    fields.forEach(([,label],index)=>{
+      const row=document.createElement('div');row.className='grav-word-row';
+      const caption=document.createElement('strong');caption.innerHTML=htmlText(label);
+      const slot=document.createElement('span');slot.className='grav-word-target';slot.dataset.wordSlot=String(index);
+      targets.push(slot);row.append(caption,slot);rows.append(row);
+    });
+  }
+  cardRoot.querySelector(`#check-${id.toLowerCase()}`).addEventListener('click',()=>{
+    const hits=values.filter((value,index)=>value===answers[index]).length;
+    const level=hits===answers.length?'success':hits?'partial':'error';
+    feedback(`feedback-${id.toLowerCase()}`,level,messages[level]);
+    if(level==='success'){finish(id);after?.();}
+  });
+  wordBoards.set(id,{fields,answers,values,setValues,controls});
+  render();
+}
 const yesNo = (correct, wrong) => [['yes',correct],['no',wrong]];
 const greater = [['up','größer'],['down','kleiner']];
 
 function buildSources() {
   setupStructured({host:'tasks-newton',id:'N1',title:'N1 · Newtons Verbindung',prompt:'<strong>Wähle</strong> die Aussage, die Newtons Verbindung zur bekannten Kreisbewegung trifft.',fields:[['choice','Aussage',[['a','Für den Mond gelten völlig andere Bewegungsgesetze als für Körper auf der Erde.'],['b','Die Anziehung durch die Erde kann für den Mond die benötigte Zentripetalkraft sein.'],['c','Zentripetalkraft und Erdanziehung sind immer zwei zusätzlich zu addierende Kräfte.']]]],answers:['b'],helps:['Denke an die Richtung der Kraft, die eine Kreisbahn ermöglicht.','Für eine Kreisbahn braucht der Mond eine Kraft zur Erde hin.','Die Erdanziehung zeigt zum Erdmittelpunkt und kann beim Mond die Rolle der Zentripetalkraft übernehmen.'],messages:{success:'Richtig. Die gravitative Anziehung kann den Mond zur Erde hin umlenken.',partial:'Teilweise korrekt. Du hast die Richtung erkannt; prüfe noch, ob dafür zwei Kräfte addiert werden.',error:'Noch nicht korrekt. Die Zentripetalkraft ist eine Rolle einer wirkenden Kraft; die Erdanziehung kann diese Rolle übernehmen.'}});
+  function source(reference,quote){
+    const block=document.createElement('blockquote');block.className='grav-source-quote';
+    const cite=document.createElement('cite');cite.textContent=reference;
+    const text=document.createElement('p');text.textContent=quote;
+    block.append(cite,text);$('tasks-principia').append(block);
+  }
+  source('§ 7','„Bis jetzt haben wir jene Kraft, welche die Himmelskörper in ihren Bahnen erhält, Centripetalkraft genannt. Dass sie mit der Schwere identisch sei, ist ausgemacht, und wir wollen sie daher künftig Schwere nennen.“');
   setupStructured({host:'tasks-principia',id:'P1',title:'P1 · § 7',prompt:'<strong>Ergänze</strong> zu § 7: Bei der Mondbahn ist die ______ die Kraft, die als ______ wirkt.',fields:[['first','Erste Lücke',[['gravity','gravitative Anziehung'],['inertia','Trägheit'],['extra','zweite Zusatzkraft']]],['second','Zweite Lücke',[['center','Zentripetalkraft'],['friction','Reibung'],['flight','Fliehkraft']]]],answers:['gravity','center'],helps:['Was hält nach Newton die Himmelskörper in ihren Bahnen?','Die Anziehung lenkt den Mond zur Erde hin.','Die gravitative Anziehung ist hier bereits die Zentripetalkraft; es wird keine zweite Kraft addiert.'],messages:{success:'Richtig. Die Gravitation übernimmt bei der Mondbahn die Rolle der Zentripetalkraft.',partial:'Teilweise korrekt. Eine der beiden Rollen stimmt; prüfe die andere am Wortlaut von § 7.',error:'Noch nicht korrekt. Newton benennt dieselbe zur Bahnmitte wirkende Kraft zunächst anders.'},after:()=>{$('modern-note').hidden=false;}});
   const note=document.createElement('p');note.id='modern-note';note.hidden=true;note.textContent='Mit ‚Schwere‘ meint Newton hier die allgemeine gravitative Anziehung von Körpern mit Masse.';$('card-p1').after(note);
+  source('§ 9','„Die Schwere kommt allen Körpern zu, und ist der in jedem enthaltenen Menge der Materie proportional.“');
   setupStructured({host:'tasks-principia',id:'P2',title:'P2 · § 9',prompt:'<strong>Ordne zu</strong>, worauf sich Newtons ‚Schwere‘ bezieht: allgemeine Kraft, beteiligte Massen und Richtung.',fields:[['schwere','Schwere',[['gravity','gravitative Anziehung'],['fall','nur Fallbewegung auf der Erde']]],['materie','Menge der Materie',[['mass','Masse'],['speed','Bahngeschwindigkeit']]],['richtung','zum anderen Körper',[['line','entlang der Verbindung der Schwerpunkte'],['perp','senkrecht zur Verbindung']]]],answers:['gravity','mass','line'],helps:['Lies § 9 und denke an zwei Körper.','‚Menge der Materie‘ ist die historische Umschreibung einer Körpergröße.','Gemeint sind Gravitation, Masse und die Verbindung der Schwerpunkte.'],messages:{success:'Richtig. ‚Schwere‘ bezeichnet hier die Anziehung, deren Stärke von Masse abhängt.',partial:'Teilweise korrekt. Einige Zuordnungen passen; überprüfe Masse und Kraftrichtung getrennt.',error:'Noch nicht korrekt. Newton beschreibt nicht nur das Fallen auf der Erde.'}});
   setupStructured({host:'tasks-principia',id:'P3',title:'P3 · Alle Körper',prompt:'<strong>Ergänze</strong> die Aussage zu § 9: Gravitation wirkt zwischen ______ Körpern mit ______.',fields:[['scope','Erste Lücke',[['all','allen'],['sky','nur himmlischen']]],['property','Zweite Lücke',[['mass','Masse'],['charge','Ladung']]]],answers:['all','mass'],helps:['Achte auf das Wort ‚allen‘ im ersten Satz von § 9.','Planeten sind nur Beispiele; auch Alltagsgegenstände haben die entsprechende Eigenschaft.','Alle Körper mit Masse ziehen einander gravitativ an.'],messages:{success:'Richtig. Die Aussage gilt grundsätzlich für alle Körper mit Masse.',partial:'Teilweise korrekt. Prüfe noch, ob Newton die Wirkung auf Himmelskörper beschränkt.',error:'Noch nicht korrekt. Lies den ersten Satz von § 9 erneut.'}});
+  source('§ 9 […]','„dass die Schwere gegen einen von ihnen, welchen man besonders betrachtet, sich umgekehrt wie das Quadrat des Abstandes von seinem Schwerpunkte verhalte […]“');
   setupStructured({host:'tasks-principia',id:'P4',title:'P4 · Mittelpunktabstand',prompt:'<strong>Ordne zu</strong>, wie sich die Kraft bei doppeltem und dreifachem Mittelpunktabstand ändert, wenn die Massen gleich bleiben.',fields:[['double','2r',[['quarter','ein Viertel der Kraft'],['twice','2F'],['half','die Hälfte der Kraft']]],['triple','3r',[['ninth','ein Neuntel der Kraft'],['three','3F'],['third','ein Drittel der Kraft']]]],answers:['quarter','ninth'],helps:['Im Text steht ‚umgekehrt wie das Quadrat‘.','Beim doppelten Abstand steht im Nenner 2².','Für 2r folgt ein Viertel, für 3r ein Neuntel der Kraft.'],messages:{success:'Richtig. Der Abstand geht quadratisch in den Nenner ein.',partial:'Teilweise korrekt. Eine Zuordnung stimmt; quadriere auch den anderen Abstandsfaktor.',error:'Noch nicht korrekt. Verdopple oder verdreifache zuerst r und quadriere dann diesen Faktor.'}});
 }
 
@@ -265,39 +377,65 @@ function buildApplications(){
 }
 
 function simulationMarkup(prefix){
-  return `<div class="grav-simulation physics-task-card" id="${prefix}-root"><div class="grav-controls"><label for="${prefix}-m1">Masse 1: <output id="${prefix}-m1-out">3,5 t</output></label><input id="${prefix}-m1" type="range" min="0" max="8" step="0.1" value="3.5"><label for="${prefix}-m2">Masse 2: <output id="${prefix}-m2-out">4,5 t</output></label><input id="${prefix}-m2" type="range" min="0" max="8" step="0.1" value="4.5"><label for="${prefix}-distance">Mittelpunktabstand r in m</label><input id="${prefix}-distance" type="number" min="0.5" max="12" step="0.1" value="7"><button id="${prefix}-reset" type="button" class="physics-primary-button">Ausgangslage wiederherstellen</button><p id="${prefix}-distance-feedback" class="physics-feedback" role="status" aria-live="polite" hidden></p></div><div class="grav-scene"><svg id="${prefix}-svg" viewBox="0 0 640 440" role="group" aria-labelledby="${prefix}-title ${prefix}-desc"><title id="${prefix}-title">Gravitationskräfte zwischen zwei Massen</title><desc id="${prefix}-desc">Zwei verschiebbare Körper mit gleich langen, entgegengesetzt gerichteten Kraftpfeilen. Pfeiltasten verschieben den fokussierten Körper um 0,1 Meter, mit Umschalttaste um 0,5 Meter.</desc><defs><marker id="${prefix}-arrow1" markerWidth="9" markerHeight="9" refX="8" refY="4.5" orient="auto"><path d="M0,0 L9,4.5 L0,9 Z" fill="#2563eb"></path></marker><marker id="${prefix}-arrow2" markerWidth="9" markerHeight="9" refX="8" refY="4.5" orient="auto"><path d="M0,0 L9,4.5 L0,9 Z" fill="#b45309"></path></marker></defs><line id="${prefix}-connector" class="grav-connector"></line><line id="${prefix}-force1" class="grav-arrow grav-arrow1" marker-end="url(#${prefix}-arrow1)"></line><line id="${prefix}-force2" class="grav-arrow grav-arrow2" marker-end="url(#${prefix}-arrow2)"></line><circle id="${prefix}-body1" class="grav-body grav-body1" aria-hidden="true" pointer-events="none"></circle><circle id="${prefix}-body2" class="grav-body grav-body2" aria-hidden="true" pointer-events="none"></circle><circle id="${prefix}-center1" class="grav-center" r="3" pointer-events="none"></circle><circle id="${prefix}-center2" class="grav-center" r="3" pointer-events="none"></circle><text id="${prefix}-label1" class="grav-label" text-anchor="middle">m₁</text><text id="${prefix}-label2" class="grav-label" text-anchor="middle">m₂</text><circle id="${prefix}-hit1" class="grav-hit" r="26" tabindex="0" role="button" aria-label="Masse 1 verschieben"></circle><circle id="${prefix}-hit2" class="grav-hit" r="26" tabindex="0" role="button" aria-label="Masse 2 verschieben"></circle></svg></div><div class="grav-readout" aria-live="polite"><p id="${prefix}-readout">Mittelpunktabstand r = 7,0 m</p><p id="${prefix}-force1-readout">Kraft auf Masse 1 durch Masse 2</p><p id="${prefix}-force2-readout">Kraft auf Masse 2 durch Masse 1</p></div></div>`;
+  return `<div class="grav-simulation physics-task-card" id="${prefix}-root"><div class="grav-controls"><label for="${prefix}-m1">Masse 1: <output id="${prefix}-m1-out">3,5 t</output></label><input id="${prefix}-m1" type="range" min="0" max="8" step="0.1" value="3.5"><label for="${prefix}-m2">Masse 2: <output id="${prefix}-m2-out">4,5 t</output></label><input id="${prefix}-m2" type="range" min="0" max="8" step="0.1" value="4.5"><label for="${prefix}-distance">Abstand der beiden Mittelpunkte zueinander: <output id="${prefix}-distance-out">7,0 m</output></label><p class="grav-distance-note">r ist der Abstand der Mittelpunkte.</p><input id="${prefix}-distance" type="range" min="0.5" max="12" step="0.1" value="7"><button id="${prefix}-reset" type="button" class="physics-primary-button">Ausgangslage wiederherstellen</button><p id="${prefix}-distance-feedback" class="physics-feedback" role="status" aria-live="polite" hidden></p></div><div class="grav-scene"><svg id="${prefix}-svg" viewBox="0 0 640 440" role="group" aria-labelledby="${prefix}-title ${prefix}-desc"><title id="${prefix}-title">Gravitationskräfte zwischen zwei Massen</title><desc id="${prefix}-desc">Zwei verschiebbare Körper mit gleich langen, entgegengesetzt gerichteten Kraftpfeilen. Pfeiltasten verschieben den fokussierten Körper um 0,1 Meter, mit Umschalttaste um 0,5 Meter.</desc><defs><marker id="${prefix}-arrow1" markerWidth="9" markerHeight="9" refX="8" refY="4.5" orient="auto"><path d="M0,0 L9,4.5 L0,9 Z" fill="#2563eb"></path></marker><marker id="${prefix}-arrow2" markerWidth="9" markerHeight="9" refX="8" refY="4.5" orient="auto"><path d="M0,0 L9,4.5 L0,9 Z" fill="#b45309"></path></marker></defs><line id="${prefix}-connector" class="grav-connector"></line><line id="${prefix}-force1" class="grav-arrow grav-arrow1" marker-end="url(#${prefix}-arrow1)"></line><line id="${prefix}-force2" class="grav-arrow grav-arrow2" marker-end="url(#${prefix}-arrow2)"></line><circle id="${prefix}-body1" class="grav-body grav-body1" aria-hidden="true" pointer-events="none"></circle><circle id="${prefix}-body2" class="grav-body grav-body2" aria-hidden="true" pointer-events="none"></circle><circle id="${prefix}-center1" class="grav-center" r="3" pointer-events="none"></circle><circle id="${prefix}-center2" class="grav-center" r="3" pointer-events="none"></circle><text id="${prefix}-label1" class="grav-label" text-anchor="middle">m₁</text><text id="${prefix}-label2" class="grav-label" text-anchor="middle">m₂</text><circle id="${prefix}-hit1" class="grav-hit" r="26" tabindex="0" role="button" aria-label="Masse 1 verschieben"></circle><circle id="${prefix}-hit2" class="grav-hit" r="26" tabindex="0" role="button" aria-label="Masse 2 verschieben"></circle></svg></div><div class="grav-readout" aria-live="polite"><p id="${prefix}-readout">Mittelpunktabstand r = 7,0 m</p><p id="${prefix}-force1-readout">Kraft auf Masse 1 durch Masse 2</p><p id="${prefix}-force2-readout">Kraft auf Masse 2 durch Masse 1</p></div></div>`;
 }
 const WORLD_SCALE=32;
 function scenePoint(x,y){return {x:320+x*WORLD_SCALE,y:220-y*WORLD_SCALE};}
-function eventPoint(svg,event){
-  const point=svg.createSVGPoint();point.x=event.clientX;point.y=event.clientY;
-  const mapped=point.matrixTransform(svg.getScreenCTM().inverse());
-  return {x:mapped.x,y:mapped.y};
+export function forceArrowLength(state){
+  const value=force(state);
+  return value===0?0:20+48*Math.log1p(value*1e6);
+}
+function screenInverse(svg){
+  try{
+    const matrix=svg.getScreenCTM();
+    if(!matrix||![matrix.a,matrix.b,matrix.c,matrix.d,matrix.e,matrix.f].every(Number.isFinite)||Math.abs(matrix.a*matrix.d-matrix.b*matrix.c)<1e-12)return null;
+    return matrix.inverse();
+  }catch{return null;}
+}
+function eventPoint(svg,event,inverse){
+  if(!inverse||!Number.isFinite(event.clientX)||!Number.isFinite(event.clientY))return null;
+  try{
+    const point=svg.createSVGPoint();point.x=event.clientX;point.y=event.clientY;
+    const mapped=point.matrixTransform(inverse);
+    return Number.isFinite(mapped.x)&&Number.isFinite(mapped.y)?{x:mapped.x,y:mapped.y}:null;
+  }catch{return null;}
+}
+let simulationFrame=0;
+function requestSimulationUpdate(){
+  if(simulationFrame)return;
+  simulationFrame=requestAnimationFrame(()=>{simulationFrame=0;updateSimulation();});
 }
 function updateSimulation(){
   for(const prefix of ['sim3','sim4']){
     const p1=scenePoint(simulation.x1,simulation.y1),p2=scenePoint(simulation.x2,simulation.y2);
     const scene=$(`${prefix}-svg`),margin=80;
-    const left=Math.min(0,p1.x-margin,p2.x-margin),top=Math.min(0,p1.y-margin,p2.y-margin);
-    const right=Math.max(640,p1.x+margin,p2.x+margin),bottom=Math.max(440,p1.y+margin,p2.y+margin);
-    scene.setAttribute('viewBox',`${left} ${top} ${right-left} ${bottom-top}`);
-    const transform=scene.getScreenCTM();
-    const hitRadius=transform?Math.max(26,22/Math.hypot(transform.a,transform.b)):26;
     const r=distance(simulation),f=force(simulation),micro=f*1e6;
+    const ux=(p2.x-p1.x)/(r*WORLD_SCALE),uy=(p2.y-p1.y)/(r*WORLD_SCALE);
+    const length=forceArrowLength(simulation);
+    const arrowEnds=f===0?[]:[{x:p1.x+ux*length,y:p1.y+uy*length},{x:p2.x-ux*length,y:p2.y-uy*length}];
+    const extents=[p1,p2,...arrowEnds];
+    const left=Math.min(0,...extents.map(p=>p.x-margin)),top=Math.min(0,...extents.map(p=>p.y-margin));
+    const right=Math.max(640,...extents.map(p=>p.x+margin)),bottom=Math.max(440,...extents.map(p=>p.y+margin));
+    if(!scene.dataset.dragActive)scene.setAttribute('viewBox',`${left} ${top} ${right-left} ${bottom-top}`);
+    let transform=null;
+    try{transform=scene.getScreenCTM();}catch{}
+    const screenScale=transform?Math.hypot(transform.a,transform.b):0;
+    const hitRadius=Number.isFinite(screenScale)&&screenScale>1e-8?Math.max(26,22/screenScale):26;
     $(`${prefix}-m1`).value=simulation.m1;$(`${prefix}-m2`).value=simulation.m2;
     $(`${prefix}-m1-out`).textContent=`${simulation.m1.toFixed(1).replace('.',',')} t`;
     $(`${prefix}-m2-out`).textContent=`${simulation.m2.toFixed(1).replace('.',',')} t`;
     $(`${prefix}-distance`).value=r.toFixed(1);
+    $(`${prefix}-distance-out`).textContent=`${r.toFixed(1).replace('.',',')} m`;
     const connector=$(`${prefix}-connector`);connector.setAttribute('x1',p1.x);connector.setAttribute('y1',p1.y);connector.setAttribute('x2',p2.x);connector.setAttribute('y2',p2.y);
-    const ux=(p2.x-p1.x)/(r*WORLD_SCALE),uy=(p2.y-p1.y)/(r*WORLD_SCALE);
-    const length=f===0?0:Math.min(95,20+32*Math.log1p(micro));
     for(const [which,p,dir] of [[1,p1,1],[2,p2,-1]]){
       const body=$(`${prefix}-body${which}`),hit=$(`${prefix}-hit${which}`),center=$(`${prefix}-center${which}`),label=$(`${prefix}-label${which}`),arrow=$(`${prefix}-force${which}`);
       const mass=simulation[`m${which}`];body.setAttribute('cx',p.x);body.setAttribute('cy',p.y);body.setAttribute('r',12+5*Math.sqrt(mass));
       center.setAttribute('cx',p.x);center.setAttribute('cy',p.y);label.setAttribute('x',p.x);label.setAttribute('y',p.y-26-5*Math.sqrt(mass));
       hit.setAttribute('cx',p.x);hit.setAttribute('cy',p.y);hit.setAttribute('r',hitRadius);
       hit.setAttribute('aria-label',`Masse ${which}: ${mass.toFixed(1).replace('.',',')} Tonnen, Mittelpunkt verschieben`);
-      arrow.setAttribute('x1',p.x);arrow.setAttribute('y1',p.y);arrow.setAttribute('x2',p.x+dir*ux*length);arrow.setAttribute('y2',p.y+dir*uy*length);arrow.style.display=f===0?'none':'';
+      const offset=which===1?6:-6;
+      arrow.setAttribute('x1',p.x-uy*offset);arrow.setAttribute('y1',p.y+ux*offset);
+      arrow.setAttribute('x2',p.x+dir*ux*length-uy*offset);arrow.setAttribute('y2',p.y+dir*uy*length+ux*offset);arrow.style.display=f===0?'none':'';
     }
     $(`${prefix}-readout`).textContent=`Mittelpunktabstand r = ${r.toFixed(2).replace('.',',')} m; m₁ = ${simulation.m1.toFixed(1).replace('.',',')} t; m₂ = ${simulation.m2.toFixed(1).replace('.',',')} t`;
     $(`${prefix}-force1-readout`).textContent=`Kraft auf Masse 1 durch Masse 2: ${micro.toFixed(2).replace('.',',')} µN`;
@@ -309,17 +447,40 @@ function setupSimulation(){
   $('simulation-view-4').innerHTML=simulationMarkup('sim4');
   for(const prefix of ['sim3','sim4']){
     const scene=$(`${prefix}-svg`);scene.setAttribute('role','group');
+    let activeDrag=null;
+    const endDrag=()=>{
+      if(!activeDrag)return;
+      clearInterval(activeDrag.timer);
+      const {body,pointerId}=activeDrag;
+      activeDrag=null;delete scene.dataset.dragActive;
+      try{if(body.hasPointerCapture(pointerId))body.releasePointerCapture(pointerId);}catch{}
+      if(simulationFrame){cancelAnimationFrame(simulationFrame);simulationFrame=0;}
+      updateSimulation();progress?.save();
+    };
+    document.addEventListener('visibilitychange',()=>{if(document.hidden)endDrag();});
+    window.addEventListener('resize',endDrag);
+    document.querySelectorAll('[data-physics-tab]').forEach(tab=>tab.addEventListener('click',endDrag));
     scene.insertBefore($(`${prefix}-force1`),$(`${prefix}-center1`));
     scene.insertBefore($(`${prefix}-force2`),$(`${prefix}-center1`));
     for(const which of [1,2]){
       $(`${prefix}-m${which}`).addEventListener('input',event=>{simulation[`m${which}`]=Number(event.target.value);updateSimulation();progress?.save();});
       const body=$(`${prefix}-hit${which}`),svg=$(`${prefix}-svg`);
-      body.addEventListener('pointerdown',event=>{body.setPointerCapture(event.pointerId);body.dataset.drag='1';event.preventDefault();});
-      body.addEventListener('pointermove',event=>{
-        if(body.dataset.drag!=='1')return;
-        const p=eventPoint(svg,event);simulation=moveBody(simulation,which,(p.x-320)/WORLD_SCALE,(220-p.y)/WORLD_SCALE);updateSimulation();progress?.save();
+      body.addEventListener('pointerdown',event=>{
+        if(event.button!==0)return;
+        endDrag();
+        const inverse=screenInverse(svg);if(!inverse){requestSimulationUpdate();return;}
+        try{body.setPointerCapture(event.pointerId);}catch{return;}
+        scene.dataset.dragActive='true';
+        activeDrag={body,pointerId:event.pointerId,inverse,timer:setInterval(()=>progress?.save(),700)};
+        event.preventDefault();
       });
-      for(const type of ['pointerup','pointercancel','lostpointercapture'])body.addEventListener(type,()=>{delete body.dataset.drag;});
+      body.addEventListener('pointermove',event=>{
+        if(!activeDrag||activeDrag.body!==body||activeDrag.pointerId!==event.pointerId)return;
+        const p=eventPoint(svg,event,activeDrag.inverse);if(!p){requestSimulationUpdate();return;}
+        simulation=moveBody(simulation,which,(p.x-320)/WORLD_SCALE,(220-p.y)/WORLD_SCALE);
+        requestSimulationUpdate();
+      });
+      for(const type of ['pointerup','pointercancel','lostpointercapture'])body.addEventListener(type,event=>{if(activeDrag?.pointerId===event.pointerId)endDrag();});
       body.addEventListener('keydown',event=>{
         const dir={ArrowLeft:[-1,0],ArrowRight:[1,0],ArrowUp:[0,1],ArrowDown:[0,-1]}[event.key];if(!dir)return;
         event.preventDefault();const delta=event.shiftKey?0.5:0.1;
@@ -327,7 +488,7 @@ function setupSimulation(){
       });
     }
     const dist=$(`${prefix}-distance`);
-    dist.addEventListener('change',()=>{
+    dist.addEventListener('input',()=>{
       const next=setDistance(simulation,Number(dist.value));
       if(next){simulation=next;$(`${prefix}-distance-feedback`).hidden=true;updateSimulation();progress?.save();}
       else {feedback(`${prefix}-distance-feedback`,'error','Der Mittelpunktabstand muss zwischen 0,5 m und 12 m liegen.');updateSimulation();}
@@ -457,7 +618,18 @@ if(typeof document!=='undefined'){
     m2Cases.forEach(item=>{delete m2Observations[item.id];if(validM2Observation(item,saved?.[item.id]))m2Observations[item.id]={...saved[item.id]};});
     renderM2Observations();
   });
-  progress.registerPart('completed',()=>[...completed],saved=>{if(Array.isArray(saved)){const allowed=new Set(Object.keys(solutionIdeas));saved.forEach(id=>{if(allowed.has(id)&&!numericCards.has(id)&&(id!=='M2'||allM2Observations()&&m2SelectionsCorrect()))completed.add(id);});}if(!completed.has('M2')){completed.delete('M3');completed.delete('M4');}lawStepUnlock();updateSummary();$('modern-note').hidden=!completed.has('P1');$('m4-note').hidden=!completed.has('M4');});
+  progress.registerPart('word-cards',()=>Object.fromEntries([...wordBoards].map(([id,board])=>[id,[...board.values]])),saved=>{
+    for(const [id,board] of wordBoards){
+      const candidate=Array.isArray(saved?.[id])&&saved[id].length===board.values.length?saved[id]:board.controls.map(control=>control.value);
+      const allowed=new Set(board.fields.flatMap(([, ,choices])=>choices.map(([key])=>key)));
+      const used=new Set();
+      board.setValues(candidate.map(value=>{
+        if(typeof value!=='string'||!allowed.has(value)||used.has(value))return '';
+        used.add(value);return value;
+      }));
+    }
+  });
+  progress.registerPart('completed',()=>[...completed],saved=>{if(Array.isArray(saved)){const allowed=new Set(Object.keys(solutionIdeas));saved.forEach(id=>{const board=wordBoards.get(id);if(allowed.has(id)&&(!board||board.values.every((value,index)=>value===board.answers[index]))&&!numericCards.has(id)&&(id!=='M2'||allM2Observations()&&m2SelectionsCorrect()))completed.add(id);});}if(!completed.has('M2')){completed.delete('M3');completed.delete('M4');}lawStepUnlock();updateSummary();$('modern-note').hidden=!completed.has('P1');$('m4-note').hidden=!completed.has('M4');});
   progress.registerPart('numeric-checks',()=>Object.fromEntries([...numericCards].map(([id,state])=>[id,{numberPassed:state.numberPassed,choicePassed:{...state.choicePassed}}])),saved=>{
     if(!saved||typeof saved!=='object'||Array.isArray(saved))return;
     for(const [id,state] of numericCards){
@@ -479,6 +651,3 @@ if(typeof document!=='undefined'){
   });
   progress.restore();lawStepUnlock();updateSummary();
 }
-
-
-

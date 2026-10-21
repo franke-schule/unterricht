@@ -113,6 +113,90 @@ test('4A übermittelt die Bewertungsrubrik und konkrete Regeln für beide gemeld
   }
 });
 
+test('4A bewertet den gemeldeten gültigen Code unabhängig von einer falschen KI-Rückmeldung vollständig', () => {
+  const task = core.TASKS['11-6-0-4a-code'];
+  const code = codeBundle(`${mainStart}\nprintln(petersHund.gibAlter());`);
+  for (const points of [0, 1, 2, 3]) {
+    const incorrect = core.normalizeEvaluation_({ points, strengths:['Getter vorhanden.'],
+      missing:['Der Getteraufruf muss direkt nach der Objekterzeugung erfolgen.'],
+      feedback:'Vorher darf zeigeDaten() nicht aufgerufen werden.' }, task);
+    const result = core.applyRuleBasedMinimum_(incorrect, task, code);
+    assert.equal(result.points, 3);
+    assert.equal(result.status, 'korrekt');
+    assert.equal(result.strengths.length, 3);
+    assert.deepEqual(result.missing, []);
+    assert.match(result.feedback, /Vorherige Aufrufe von zeigeDaten\(\) oder setzeAlter\(\.\.\.\) sind erlaubt/);
+  }
+  const embeddedDog = html.match(/<script type="plain\/text" title="Hund\.java">([\s\S]*?)<\/script>/)[1];
+  const embeddedBundle = code.replace(dogClass, embeddedDog);
+  assert.equal(core.applyRuleBasedMinimum_({ points:0 }, task, embeddedBundle).points, 3);
+  const getterBefore = codeBundle(mainStart.replace('println("Vorher:");', 'println(petersHund.gibAlter());\nprintln("Vorher:");'));
+  assert.equal(core.applyRuleBasedMinimum_({ points:0 }, task, getterBefore).points, 3);
+  assert.equal(core.applyRuleBasedMinimum_({ points:0 }, task, cumulativeSolution).points, 3);
+});
+
+test('4A unterscheidet void-Ausgabe, Getter ohne Ausgabe und Scheinlösungen', () => {
+  const task = core.TASKS['11-6-0-4a-code'];
+  const inflated = core.normalizeEvaluation_({ points:3, strengths:task.expectedAspects, missing:[], feedback:'Alles korrekt.' }, task);
+  const wrong = core.applyRuleBasedMinimum_(inflated, task, codeBundle(`${mainStart}\nprintln(petersHund.zeigeDaten());`));
+  assert.equal(wrong.points, 0);
+  assert.equal(wrong.status, 'noch nicht korrekt');
+  assert.deepEqual(wrong.strengths, []);
+  assert.match(wrong.feedback, /Rückgabetyp void/);
+  assert.match(wrong.feedback, /fehlt ein Aufruf des Alters-Getters/);
+  const getterOnly = core.applyRuleBasedMinimum_(inflated, task, codeBundle(`${mainStart}\npetersHund.gibAlter();`));
+  assert.equal(getterOnly.points, 2);
+  assert.match(getterOnly.feedback, /Rückgabewert.*println/);
+  for (const suffix of ['', '\nprintln(6);', '\n// println(petersHund.gibAlter());',
+    '\n/* println(petersHund.gibAlter()); */', '\nprintln("println(petersHund.gibAlter());");']) {
+    assert.equal(core.applyRuleBasedMinimum_(inflated, task, codeBundle(mainStart + suffix)).points, 0);
+  }
+  const mixed = core.applyRuleBasedMinimum_(inflated, task, codeBundle(`${mainStart}\nprintln(petersHund.gibAlter());\nprintln(petersHund.zeigeDaten());`));
+  assert.ok(mixed.points < 3);
+  assert.match(mixed.feedback, /void/);
+});
+
+test('4A hebt die Bewertung bei ungeprüfter Syntax, Kontrollfluss oder geänderter Hund-Klasse nicht an', () => {
+  const task = core.TASKS['11-6-0-4a-code'];
+  const unchanged = core.normalizeEvaluation_({ points:0, strengths:[], missing:['Code prüfen.'], feedback:'Code prüfen.' }, task);
+  const inputs = [
+    codeBundle(`${mainStart}\nif (false) { println(petersHund.gibAlter()); }`),
+    codeBundle(`${mainStart}\nprintln(petersHund.gibAlter())`),
+    codeBundle(`println(petersHund.gibAlter());\n${mainStart}`),
+    codeBundle(`${mainStart}\nprintln(petersHund.gibAlter());`).replace('return alter;', 'return 42;'),
+    codeBundle(`${mainStart}\nprintln(petersHund.gibAlter());`).replace('alter = startAlter;', 'alter = 0;'),
+    codeBundle(`${mainStart}\npetersHund = null;\nprintln(petersHund.gibAlter());`),
+    codeBundle(`${mainStart}\nprintln(petersHund.gibAlter(1));`),
+    codeBundle(`${mainStart}\nprintln(petersHund.gibAlter());`).replace('new Hund(5,', 'new Hund(2147483648,'),
+    codeBundle(`${mainStart}\nprintln(petersHund.gibAlter());`).replace('new Hund(5,', 'new Hund(09,'),
+    codeBundle(`${mainStart}\nprintln(petersHund.gibAlter());`).replace('Wuffti', '\\q'),
+    codeBundle(`${mainStart}\nprintln(petersHund.gibAlter());\n/* nicht geschlossen`)
+  ];
+  for (const code of inputs) assert.equal(core.applyRuleBasedMinimum_(unchanged, task, code), unchanged);
+  for (const id of ['11-6-0-5a-code', '11-6-0-5b-code']) {
+    assert.equal(core.applyRuleBasedMinimum_(unchanged, core.TASKS[id], cumulativeSolution), unchanged);
+  }
+});
+
+test('4A korrigiert die gemeldete Zwei-Punkte-Antwort im tatsächlichen Server-Antwortweg', async () => {
+  const handle = createHandler({ env:{ AI_API_KEY:'mock-only', AI_PROJECT_ID:'11111111-1111-1111-1111-111111111111',
+    AI_MODEL:'mock-model', AI_EVALUATION_ENABLED:'true' }, fetchImpl:async () => ({ ok:true, status:200,
+    text:async () => JSON.stringify({ choices:[{ finish_reason:'stop', message:{ content:JSON.stringify({
+      points:2, maxPoints:3, status:'teilweise korrekt', strengths:['Getterwert wird ausgegeben.'],
+      missing:['Getter muss direkt nach der Objekterzeugung stehen.'], feedback:'Vorherige Ausgabe mit zeigeDaten() ist falsch.'
+    }) } }] }) }) });
+  const response = await handle({ httpMethod:'POST', path:'/', headers:{ 'Content-Type':'application/json' },
+    body:JSON.stringify({ requestId:'getter_regression', taskId:'11-6-0-4a-code', requestType:'code',
+      code:codeBundle(`${mainStart}\nprintln(petersHund.gibAlter());`) }) });
+  assert.equal(response.statusCode, 200);
+  const result = JSON.parse(response.body).result;
+  assert.equal(result.points, 3);
+  assert.equal(result.status, 'korrekt');
+  assert.deepEqual(result.missing, []);
+  assert.match(result.feedback, /^Korrekt\./);
+  assert.doesNotMatch(response.body, /Getter muss direkt|Vorherige Ausgabe mit zeigeDaten\(\) ist falsch/);
+});
+
 test('Client prüft aktuellen IDE-Code aus beiden Dateien und Codeblöcke haben keine Begleitfelder', () => {
   assert.match(client, /evaluateCodeAnswer\(\{ serverUrl:SERVER_URL, taskId:block\.codeTask\.id, code, expectedMaxPoints:block\.codeTask\.maxPoints \}\)/);
   assert.match(client, /online_ide_access/);
@@ -349,9 +433,15 @@ test('Prompt-Vertrag mit Codefixtures und kontrollierten Modellantworten (Mock; 
     assert.equal(result.points, fixture.points, fixture.name);
     assert.equal(result.maxPoints, task.maxPoints, fixture.name);
     assert.equal(result.status, fixture.points === task.maxPoints ? task.statusLabels.correct : fixture.points ? task.statusLabels.partial : task.statusLabels.incorrect, fixture.name);
-    assert.deepEqual(result.strengths, task.expectedAspects.slice(0, fixture.points), `${fixture.name}: kontrollierte erkannte Aspekte`);
-    assert.deepEqual(result.missing, task.expectedAspects.slice(fixture.points), `${fixture.name}: kontrollierte fehlende Aspekte`);
-    assert.equal(result.feedback, 'Mock-Antwort; keine semantische Livebewertung.', fixture.name);
+    if (fixture.taskId !== '11-6-0-4a-code') {
+      assert.deepEqual(result.strengths, task.expectedAspects.slice(0, fixture.points), `${fixture.name}: kontrollierte erkannte Aspekte`);
+      assert.deepEqual(result.missing, task.expectedAspects.slice(fixture.points), `${fixture.name}: kontrollierte fehlende Aspekte`);
+      assert.equal(result.feedback, 'Mock-Antwort; keine semantische Livebewertung.', fixture.name);
+    } else {
+      assert.equal(result.strengths.length, fixture.points, `${fixture.name}: belegte Aspekte`);
+      assert.equal(result.missing.length === 0, fixture.points === task.maxPoints, `${fixture.name}: konkrete Hinweise nur bei Fehlern`);
+      assert.ok(result.feedback.length > 0, fixture.name);
+    }
   }
 });
 
