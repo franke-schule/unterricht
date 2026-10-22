@@ -1,5 +1,5 @@
 import { normaliseNumber } from '../../perzeptron/logic/perceptron.mjs';
-import { evaluateSemanticAnswer, renderCompactEvaluation } from "../../perzeptron/ui/semantic-answer.mjs?v=20261022-compact-feedback";
+import { evaluateSemanticAnswer, renderCompactEvaluation } from "../../perzeptron/ui/semantic-answer.mjs?v=20261022-feedback-two-sentences";
 import { SHIRT_SYMBOLS, SHIRT_TRAINING } from '../data/shirts.mjs';
 import { BLANK_IDS, COMPARE_A, COMPARE_B, COMPARE_P, EXPECTED, N1, N2, N5, PAIR_A, PAIR_B, STOP_H, STOP_K } from '../data/task7.mjs';
 import { euclidean, formatDecimal, withinTolerance } from '../logic/knn.mjs';

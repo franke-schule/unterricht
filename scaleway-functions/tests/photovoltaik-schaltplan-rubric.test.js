@@ -77,8 +77,7 @@ test('Semantische Freitextkarte verarbeitet korrekte, teilweise, kurze und nicht
     await elements.get('pv-description-check').listeners.click();
     const feedback = elements.get('pv-description-feedback');
     assert.equal(feedback.dataset.status, scenario.status);
-    const expectedStatus = scenario.points === 4 ? 'Sehr gut, alles richtig' : scenario.points ? 'teilweise korrekt' : 'noch nicht korrekt';
-    assert.equal(feedback.children[0].textContent, `${scenario.points} von 4 Punkten – ${expectedStatus}`);
+    assert.equal(feedback.children[0].textContent, `${scenario.points} von 4 Punkten` + (scenario.points === 4 ? ' – Sehr gut, alles richtig' : ''));
     if (scenario.points < 4) assert.equal(feedback.children[1].children[0].children[0].textContent, 'Aspekt fehlt.');
   }
 

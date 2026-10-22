@@ -1,4 +1,4 @@
-import { evaluateSemanticAnswer, evaluateCodeAnswer, renderCompactEvaluation } from './semantic-answer.mjs?v=20261022-compact-feedback';
+import { evaluateSemanticAnswer, evaluateCodeAnswer, renderCompactEvaluation } from './semantic-answer.mjs?v=20261022-feedback-two-sentences';
 import { setupCodeSnippetOrder } from './code-snippet-order.mjs';
 
 const SERVER_URL = 'https://unterrichtkiichezbn4-ki-auswertung.functions.fnc.fr-par.scw.cloud/';

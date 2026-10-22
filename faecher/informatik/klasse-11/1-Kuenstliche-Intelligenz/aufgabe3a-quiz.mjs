@@ -1,5 +1,5 @@
 import { enableTokenDrag, wasDragged } from "../../../physik/klasse-11/1-Kreisbewegungen/components/token-drag.mjs";
-import { evaluateSemanticAnswer, renderCompactEvaluation } from "./perzeptron/ui/semantic-answer.mjs?v=20261022-compact-feedback";
+import { evaluateSemanticAnswer, renderCompactEvaluation } from "./perzeptron/ui/semantic-answer.mjs?v=20261022-feedback-two-sentences";
 
 // Wiederholungs-Quiz zu Aufgabe 3a: nicht verlinkte Seite, jede Aufgabe mit eigenem Prüfen-Button.
 // Eigenständig aufgebaut (Vorlage: Physik 11, aufgabe3-quiz.mjs), damit der Test ohne Reste

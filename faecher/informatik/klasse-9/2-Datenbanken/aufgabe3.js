@@ -1,6 +1,6 @@
 // Aufgabe 3 – Datensätze filtern mit WHERE (Informatik 9).
 import { classifyDescriptionResult, compareRelations, isValidScriptServerUrl, missingTextQuote, normalizeRelation, parseDelimited, sqlTokens, validateSelectStatement } from '../../klasse-10/1-Datenbanken/sql-lab-core.mjs?v=20260929b';
-import { evaluateSemanticAnswer, renderCompactEvaluation } from '../../klasse-11/1-Kuenstliche-Intelligenz/perzeptron/ui/semantic-answer.mjs?v=20261022-compact-feedback';
+import { evaluateSemanticAnswer, renderCompactEvaluation } from '../../klasse-11/1-Kuenstliche-Intelligenz/perzeptron/ui/semantic-answer.mjs?v=20261022-feedback-two-sentences';
 import { enableTabKeyboardNavigation, focusTabPanelStart, renderTabFlowNavigation, syncTabSemantics } from '../../klasse-10/1-Datenbanken/tab-navigation.mjs?v=20260906a';
 const STORAGE_KEY = 'informatik9-datenbanken-aufgabe3-where-v1';
 const NEUTRAL_SQL_PLACEHOLDER = 'SELECT ...\nFROM ...';

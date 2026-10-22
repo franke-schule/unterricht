@@ -1,5 +1,5 @@
 import { mountClassCard, evaluateClassCard, parseStoredChoices } from '../../../../klasse-10/2-Modellierung-und-Programmierung-Online-IDE/klassendiagramm.mjs?v=20261021-compact';
-import { evaluateCodeAnswer, renderCompactEvaluation } from './semantic-answer.mjs?v=20261022-compact-feedback';
+import { evaluateCodeAnswer, renderCompactEvaluation } from './semantic-answer.mjs?v=20261022-feedback-two-sentences';
 import { unlockSolution } from '../../../../klasse-10/1-Datenbanken/tab-navigation.mjs';
 
 const STORAGE_KEY = 'informatik11-ki-aufgabe6-0-v2';

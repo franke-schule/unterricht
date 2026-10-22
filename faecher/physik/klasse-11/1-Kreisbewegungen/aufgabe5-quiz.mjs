@@ -1,7 +1,7 @@
 // Löschanleitung: aufgabe5-quiz-loeschen.txt.
 import { enableTokenDrag, wasDragged } from "./components/token-drag.mjs";
 import { appendPhysicsText, physicsTextSpan } from "./components/physics-notation.mjs?v=20260911a";
-import { evaluateSemanticAnswer, renderCompactEvaluation } from "../../../informatik/klasse-11/1-Kuenstliche-Intelligenz/perzeptron/ui/semantic-answer.mjs?v=20261022-compact-feedback";
+import { evaluateSemanticAnswer, renderCompactEvaluation } from "../../../informatik/klasse-11/1-Kuenstliche-Intelligenz/perzeptron/ui/semantic-answer.mjs?v=20261022-feedback-two-sentences";
 
 // Wiederholungs-Quiz zu Aufgabe 5: nicht verlinkte Seite, jede Aufgabe mit eigenem Prüfen-Button.
 // Eigenständig aufgebaut (Vorlage: wdh2-quiz.mjs), damit der Test ohne Reste wieder

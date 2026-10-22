@@ -1,5 +1,5 @@
 import { normaliseNumber } from '../../perzeptron/logic/perceptron.mjs';
-import { evaluateSemanticAnswer, renderCompactEvaluation } from "../../perzeptron/ui/semantic-answer.mjs?v=20261022-compact-feedback";
+import { evaluateSemanticAnswer, renderCompactEvaluation } from "../../perzeptron/ui/semantic-answer.mjs?v=20261022-feedback-two-sentences";
 import { SHIRT_CLASSES, SHIRT_SYMBOLS, SHIRT_TRAINING } from '../data/shirts.mjs';
 import {
   EXPECTED, HEFT_VALIDATION, HOUSES, HOUSE_AREAS, HOUSE_K, LARGE_K_PERSONS, OPEN_CELLS, OUTLIER_POINT, REGRESSION,

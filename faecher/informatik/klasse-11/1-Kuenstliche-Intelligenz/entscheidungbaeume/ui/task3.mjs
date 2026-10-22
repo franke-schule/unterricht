@@ -9,7 +9,7 @@ import {
   moveSubtree,
   setNodeAtPath,
 } from "../logic/decision-tree.mjs";
-import { evaluateSemanticAnswer, renderCompactEvaluation } from "./semantic-answer.mjs?v=20261022-compact-feedback";
+import { evaluateSemanticAnswer, renderCompactEvaluation } from "./semantic-answer.mjs?v=20261022-feedback-two-sentences";
 import { renderTreeEdges } from "./tree-edges.mjs?v=20260820d";
 
 const STORAGE_KEY = "informatik11-fish-tree-task3-v1";

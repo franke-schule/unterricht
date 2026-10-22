@@ -1,4 +1,4 @@
-import { evaluateSemanticAnswer, renderCompactEvaluation } from "../../../../informatik/klasse-11/1-Kuenstliche-Intelligenz/perzeptron/ui/semantic-answer.mjs?v=20261022-compact-feedback";
+import { evaluateSemanticAnswer, renderCompactEvaluation } from "../../../../informatik/klasse-11/1-Kuenstliche-Intelligenz/perzeptron/ui/semantic-answer.mjs?v=20261022-feedback-two-sentences";
 import { appendPhysicsText } from "./physics-notation.mjs?v=20260911a";
 
 const MAX_LENGTH = 3000;

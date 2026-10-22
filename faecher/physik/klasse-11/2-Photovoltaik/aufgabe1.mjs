@@ -1,6 +1,6 @@
 import { setupPhysicsStepTabs } from "../1-Kreisbewegungen/components/physics-step-tabs.mjs";
 import { createPhysicsTaskProgress } from "../1-Kreisbewegungen/components/physics-task-progress.mjs";
-import { setupPhysicsSemanticTask } from "../1-Kreisbewegungen/components/physics-semantic-task.mjs?v=20261022-compact-feedback";
+import { setupPhysicsSemanticTask } from "../1-Kreisbewegungen/components/physics-semantic-task.mjs?v=20261022-feedback-two-sentences";
 
 const sets = [
   { key: "knowledge", target: "knowledge-questions", questions: [

@@ -1,7 +1,7 @@
 import {calculate,normaliseNumber} from '../logic/perceptron.mjs';
 import {parseLinearRelation as parse,equivalent,countMatching} from '../logic/linear-inequality.mjs?v=20261015-fractions';
 import {numberMatches,runEpoch} from '../logic/perceptron.mjs';
-import {evaluateSemanticAnswer, renderCompactEvaluation} from './semantic-answer.mjs?v=20261022-compact-feedback';
+import {evaluateSemanticAnswer, renderCompactEvaluation} from './semantic-answer.mjs?v=20261022-feedback-two-sentences';
 import {unlockSolution} from '../../../../klasse-10/1-Datenbanken/tab-navigation.mjs';
 
 const KEY='informatik11-perzeptron-aufgabe5-2-v1';

@@ -1709,7 +1709,7 @@ async function submitCode(taskId) {
   resultBox.className = 'result';
   resultBox.textContent = 'Der aktuelle Programmcode wird ausgewertet.';
   try {
-    const { evaluateCodeAnswer, renderCompactEvaluation } = await import('../../klasse-11/1-Kuenstliche-Intelligenz/perzeptron/ui/semantic-answer.mjs?v=20261022-compact-feedback');
+    const { evaluateCodeAnswer, renderCompactEvaluation } = await import('../../klasse-11/1-Kuenstliche-Intelligenz/perzeptron/ui/semantic-answer.mjs?v=20261022-feedback-two-sentences');
     const result = await evaluateCodeAnswer({ serverUrl: SCRIPT_SERVER_URL, taskId, code,
       expectedMaxPoints: SCW_TASK_POINTS[taskId] });
     showEvaluation(resultBox, result, renderCompactEvaluation);

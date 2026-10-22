@@ -95,6 +95,33 @@ function normalizeEvaluation_(
 }
 
 
+function compactFeedbackSentences_(values) {
+  const result = [];
+  const seen = new Set();
+  const segmenter = new Intl.Segmenter('de', { granularity: 'sentence' });
+  for (const value of values) {
+    if (typeof value !== 'string') continue;
+    const text = value.replace(/^\s*[-*•]\s*/, '')
+      .replace(/^(?:Teilweise (?:korrekt|richtig)|Noch nicht korrekt|Noch unvollständig)[.!:]?\s*/i, '').trim();
+    // Code und Abkürzungen enthalten Punkte, die kein Satzende sind.
+    const protectedParts = [];
+    const protectedText = text.replace(/`[^`]*`|\b[A-Za-z_$][\w$]*(?:\.[\w$]+)*\((?:[^()]|\([^()]*\))*\)|\b(?:z\.\s*B\.|d\.\s*h\.|u\.\s*a\.|bzw\.|ca\.|ggf\.)/gi, part => {
+      protectedParts.push(part);
+      return '\uE000' + (protectedParts.length - 1) + '\uE001';
+    });
+    for (const { segment } of segmenter.segment(protectedText)) {
+      const sentence = segment.replace(/\uE000(\d+)\uE001/g, (_, index) => protectedParts[index]).trim();
+      const key = normalizeGermanText_(sentence).replace(/[.!?]+$/, '');
+      if (!key || seen.has(key) || /^(?:korrigiere dies|ueberarbeite deine antwort mithilfe der hinweise|pruefe (?:deinen code|deine antwort)(?: noch einmal)?)$/.test(key)) continue;
+      seen.add(key);
+      result.push(sentence);
+      if (result.length === 2) return result;
+    }
+  }
+  return result;
+}
+
+
 function formatFinalEvaluation_(evaluation, task) {
   const result = Object.assign({}, evaluation);
   result.strengths = [];
@@ -109,20 +136,9 @@ function formatFinalEvaluation_(evaluation, task) {
     const note = cleanText_(task.feedbackNoteAboveHalf, '');
     if (note) feedback = feedback.split(note).join('').replace(/\s+/g, ' ').trim();
   }
-  const stripBullet = item => String(item || '').replace(/^(?:[-*•]\s*)+/, '').trim();
-  const items = cleanStringArray_(result.missing).map(stripBullet);
-  const unique = [];
-  const seen = new Set();
-  for (const item of items) {
-    const key = normalizeGermanText_(item).replace(/[.,;:!?]/g, '').trim();
-    if (key && !seen.has(key)) {
-      seen.add(key);
-      unique.push(item);
-    }
-    if (unique.length === 2) break;
-  }
-  result.missing = unique;
-  result.feedback = unique.length ? '' : feedback ? '- ' + stripBullet(feedback) : '';
+  const missing = cleanStringArray_(result.missing);
+  result.missing = compactFeedbackSentences_(missing.length ? missing : [feedback]);
+  result.feedback = '';
   return result;
 }
 

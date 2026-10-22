@@ -1,6 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { renderCompactEvaluation } from '../ui/semantic-answer.mjs';
+import { renderCompactEvaluation, compactFeedbackSentences } from '../ui/semantic-answer.mjs';
 
 // Minimal DOM records text and children; raw HTML is deliberately unsupported.
 class Element {
@@ -33,7 +33,7 @@ test('volle Punktzahl zeigt ausschließlich Punktzahl und den gewünschten Erfol
 test('Teilpunkte zeigen nur konkrete Stichpunkte, keine Stärken und keine doppelte Prosa', () => {
   const container = box();
   renderCompactEvaluation(container, partial);
-  assert.equal(container.children[0].textContent, '1 von 3 Punkten – teilweise korrekt');
+  assert.equal(container.children[0].textContent, '1 von 3 Punkten');
   assert.equal(container.children[1].tagName, 'ul');
   assert.deepEqual(container.children[1].children.map(item => item.textContent), partial.missing);
   assert.doesNotMatch(container.textContent, /Korrektes Detail|Lange|gelungen|überprüfen/);
@@ -50,7 +50,7 @@ test('höchstens zwei unterschiedliche Hinweise, leere und doppelte Einträge en
 test('ohne missing wird individueller Feedbacktext einmal als Stichpunkt verwendet', () => {
   const container = box();
   renderCompactEvaluation(container, { ...partial, points: 0, missing: [], feedback: 'Noch nicht korrekt. Ergänze die Ausgabe.' });
-  assert.equal(container.children[0].textContent, '0 von 3 Punkten – noch nicht korrekt');
+  assert.equal(container.children[0].textContent, '0 von 3 Punkten');
   assert.equal(container.children[1].textContent, 'Ergänze die Ausgabe.');
 });
 
@@ -69,4 +69,26 @@ test('bestehende Formelrenderer können den Text der Stichpunkte formatieren', (
   const seen = [];
   renderCompactEvaluation(container, partial, { appendText: (node, text) => { seen.push(text); node.textContent = text; } });
   assert.deepEqual(seen, partial.missing);
+});
+
+test('gemeldete Getter-Rückmeldung besteht genau aus Punktzahl und konkretem Fehlersatz', () => {
+  const container = box();
+  renderCompactEvaluation(container, { ...partial, points: 0, maxPoints: 4,
+    missing: ['Die Methode gibAlter() hat keinen Eingabeparameter. Korrigiere dies.'] });
+  assert.equal(container.children[0].textContent, '0 von 4 Punkten');
+  assert.deepEqual(container.children[1].children.map(item => item.textContent), ['Die Methode gibAlter() hat keinen Eingabeparameter.']);
+});
+
+test('Satzgrenze gilt insgesamt, auch bei mehreren Sätzen innerhalb eines Hinweises', () => {
+  assert.deepEqual(compactFeedbackSentences(['Der Getter erwartet keine Argumente. Entferne die 7.', 'Ergänze die Ausgabe. Noch ein Tipp.']),
+    ['Der Getter erwartet keine Argumente.', 'Entferne die 7.']);
+  assert.deepEqual(compactFeedbackSentences(['Entferne die 7. Entferne die 7.', 'Ergänze die Ausgabe.']),
+    ['Entferne die 7.', 'Ergänze die Ausgabe.']);
+});
+
+test('Methodenaufrufe, Dateinamen und Abkürzungen bleiben als vollständige Hinweise erhalten', () => {
+  assert.deepEqual(compactFeedbackSentences(['Ersetze z. B. petersHund.zeigeDaten() in Hund.java durch println(...) mit gibAlter(). Ergänze die Ausgabe.', 'Dritter Satz.']),
+    ['Ersetze z. B. petersHund.zeigeDaten() in Hund.java durch println(...) mit gibAlter().', 'Ergänze die Ausgabe.']);
+  assert.deepEqual(compactFeedbackSentences(['Ersetze println("Hallo. Welt.") durch einen Getter-Aufruf. Gib dessen Rückgabewert aus.', 'Dritter Satz.']),
+    ['Ersetze println("Hallo. Welt.") durch einen Getter-Aufruf.', 'Gib dessen Rückgabewert aus.']);
 });

@@ -1,7 +1,7 @@
 // Wiederholungs-Quiz zu Aufgabe 3: nicht verlinkte Seite, jede Aufgabe mit eigenem Prüfen-Button.
 // Löschanleitung: aufgabe3-quiz-loeschen.txt.
 import { enableTokenDrag, wasDragged } from "../../../physik/klasse-11/1-Kreisbewegungen/components/token-drag.mjs";
-import { evaluateSemanticAnswer, renderCompactEvaluation } from "../../klasse-11/1-Kuenstliche-Intelligenz/perzeptron/ui/semantic-answer.mjs?v=20261022-compact-feedback";
+import { evaluateSemanticAnswer, renderCompactEvaluation } from "../../klasse-11/1-Kuenstliche-Intelligenz/perzeptron/ui/semantic-answer.mjs?v=20261022-feedback-two-sentences";
 const STORAGE_KEY = "informatik10-datenbanken-aufgabe3-test-v1";
 const SCRIPT_SERVER_URL = "https://unterrichtkiichezbn4-ki-auswertung.functions.fnc.fr-par.scw.cloud/";
 const DESCRIBE_MIN_LENGTH = 30;

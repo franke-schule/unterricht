@@ -803,7 +803,7 @@ async function submitDescription(taskId) {
   resultBox.className = 'result';
   resultBox.textContent = 'Deine Beschreibung wird ausgewertet.';
   try {
-    const { evaluateSemanticAnswer, renderCompactEvaluation } = await import('../../klasse-11/1-Kuenstliche-Intelligenz/perzeptron/ui/semantic-answer.mjs?v=20261022-compact-feedback');
+    const { evaluateSemanticAnswer, renderCompactEvaluation } = await import('../../klasse-11/1-Kuenstliche-Intelligenz/perzeptron/ui/semantic-answer.mjs?v=20261022-feedback-two-sentences');
     const result = await evaluateSemanticAnswer({ serverUrl: SCRIPT_SERVER_URL, taskId: serverTaskId,
       answer, expectedMaxPoints: SCW_TASK_POINTS[serverTaskId] });
     showEvaluation(resultBox, result, renderCompactEvaluation);

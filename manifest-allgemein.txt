@@ -70,7 +70,11 @@ zugehoerige Regeln/Tests entfernen oder anpassen und eine neue ZIP bauen.
 Finales KI-Feedback wird nach der regelbasierten Nachbewertung zentral im
 Scaleway-Client kompakt formatiert. Volle Punktzahl liefert exakt
 "Sehr gut, alles richtig"; strengths und missing sind dann leer. Sonst stehen
-in missing hoechstens zwei deduplizierte, kurze Handlungsanweisungen. Bei Code
+in missing insgesamt hoechstens zwei deduplizierte, kurze Saetze, auch wenn
+ein Modell mehrere Saetze pro Eintrag liefert. Neben der Punktzahl steht bei
+Fehlern kein zusaetzlicher Status. Der erste Satz benennt den konkreten Fehler,
+ein zweiter gibt nur bei Bedarf einen konkreten Tipp. Allgemeine Aufforderungen
+wie "Korrigiere dies" entfallen. Bei Code
 kommen Syntax- und Typfehler zuerst und nennen die konkrete Stelle samt
 Ersetzung oder Ergaenzung. Doppelte Lob-/Fehltabschnitte und wiederholte
 Prosa entfallen. Die gemeinsame Anzeige verwendet renderCompactEvaluation;

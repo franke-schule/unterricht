@@ -78,7 +78,9 @@ Meldung behandeln. Kein JSONP und keine Eingabeuebertragung in einer URL.
     Seiteninhalt erweitert wird.
   - Finale Rueckmeldungen ueber die gemeinsame Anzeige renderCompactEvaluation
     ausgeben: volle Punktzahl mit "Sehr gut, alles richtig", sonst hoechstens
-    zwei deduplizierte Handlungsanweisungen. Bei Code Syntax- und Typfehler
+    zwei kurze Saetze insgesamt. Bei Fehlern nur Punktzahl, kein Statuszusatz;
+    danach konkreter Fehler und bei Bedarf ein konkreter Tipp. Allgemeine
+    Aufforderungen wie "Korrigiere dies" entfallen. Bei Code Syntax- und Typfehler
     zuerst benennen und die konkrete Stelle samt Ersetzung oder Ergaenzung
     angeben. Staerkenliste und wiederholte Prosa nicht parallel anzeigen.
 

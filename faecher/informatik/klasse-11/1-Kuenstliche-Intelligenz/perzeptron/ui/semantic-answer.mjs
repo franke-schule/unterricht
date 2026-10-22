@@ -68,29 +68,43 @@ export function evaluateSemanticAnswer(parameters) { return evaluate(parameters,
 export function evaluateCodeAnswer(parameters) { return evaluate(parameters, 'code'); }
 
 /** Gemeinsame, knappe Anzeige für Beschreibe- und Programmieraufgaben. */
+export function compactFeedbackSentences(values) {
+  const result = [];
+  const seen = new Set();
+  const segmenter = new Intl.Segmenter('de', { granularity: 'sentence' });
+  for (const value of values) {
+    if (typeof value !== 'string') continue;
+    const text = value.replace(/^\s*[-*•]\s*/, '')
+      .replace(/^(?:Teilweise (?:korrekt|richtig)|Noch nicht korrekt|Noch unvollständig)[.!:]?\s*/i, '').trim();
+    const protectedParts = [];
+    const protectedText = text.replace(/`[^`]*`|\b[A-Za-z_$][\w$]*(?:\.[\w$]+)*\((?:[^()]|\([^()]*\))*\)|\b(?:z\.\s*B\.|d\.\s*h\.|u\.\s*a\.|bzw\.|ca\.|ggf\.)/gi, part => {
+      protectedParts.push(part);
+      return '\uE000' + (protectedParts.length - 1) + '\uE001';
+    });
+    for (const { segment } of segmenter.segment(protectedText)) {
+      const sentence = segment.replace(/\uE000(\d+)\uE001/g, (_, index) => protectedParts[index]).trim();
+      const key = sentence.toLocaleLowerCase('de').replace(/[.!?]+$/, '');
+      if (!key || seen.has(key) || /^(?:korrigiere dies|[uü]berarbeite deine antwort mithilfe der hinweise|pr[uü]fe (?:deinen code|deine antwort)(?: noch einmal)?)$/.test(key)) continue;
+      seen.add(key);
+      result.push(sentence);
+      if (result.length === 2) return result;
+    }
+  }
+  return result;
+}
+
 export function renderCompactEvaluation(container, result, { appendText } = {}) {
   const document = container.ownerDocument;
-  const complete = result.points === result.maxPoints;
-  const status = complete ? 'Sehr gut, alles richtig'
-    : result.points > 0 ? 'teilweise korrekt' : 'noch nicht korrekt';
+  const complete = result.maxPoints > 0 && result.points === result.maxPoints;
   const heading = document.createElement('strong');
-  heading.textContent = `${result.points} von ${result.maxPoints} Punkten – ${status}`;
+  heading.textContent = `${result.points} von ${result.maxPoints} Punkten` + (complete ? ' – Sehr gut, alles richtig' : '');
   container.replaceChildren(heading);
   if (complete) return;
 
   const missing = Array.isArray(result.missing) ? result.missing : [];
   const values = missing.some(item => typeof item === 'string' && item.trim())
     ? missing : String(result.feedback || '').split(/\r?\n/);
-  const seen = new Set();
-  const hints = values.filter(item => typeof item === 'string').map(item => item
-    .replace(/^\s*[-*•]\s*/, '')
-    .replace(/^(?:Teilweise (?:korrekt|richtig)|Noch nicht korrekt|Noch unvollständig)[.!:]?\s*/i, '')
-    .trim()).filter(item => {
-      const key = item.toLocaleLowerCase('de').replace(/[.!]$/, '');
-      if (!key || seen.has(key)) return false;
-      seen.add(key);
-      return true;
-    }).slice(0, 2);
+  const hints = compactFeedbackSentences(values);
   if (!hints.length) hints.push('Ergänze die fehlenden Aspekte deiner Antwort und prüfe erneut.');
   const list = document.createElement('ul');
   for (const hint of hints) {

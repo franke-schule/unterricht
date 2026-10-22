@@ -1,4 +1,4 @@
-import { evaluateSemanticAnswer, renderCompactEvaluation } from '../../klasse-11/1-Kuenstliche-Intelligenz/perzeptron/ui/semantic-answer.mjs?v=20261022-compact-feedback';
+import { evaluateSemanticAnswer, renderCompactEvaluation } from '../../klasse-11/1-Kuenstliche-Intelligenz/perzeptron/ui/semantic-answer.mjs?v=20261022-feedback-two-sentences';
 
 // Test zu Aufgabe 2 (Redundanzen): nicht verlinkte Seite, jede Aufgabe mit eigenem Prüfen-Button.
 // Bewusst eigenständig und ohne Abhängigkeit zum Test zu Aufgabe 1, damit beide Tests getrennt gelöscht werden können.

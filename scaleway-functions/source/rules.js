@@ -191,8 +191,8 @@ function evaluateDogGetterByRules_(answer, task) {
     return {
       ok: true, points: 0, maxPoints: task.maxPoints,
       status: task.statusLabels.incorrect, strengths: [],
-      missing: ['Die Methode gibAlter() hat keinen Eingabeparameter. Korrigiere dies.'],
-      feedback: 'Die Methode gibAlter() hat keinen Eingabeparameter. Korrigiere dies.'
+      missing: ['Die Methode gibAlter() hat keinen Eingabeparameter.'],
+      feedback: 'Die Methode gibAlter() hat keinen Eingabeparameter.'
     };
   }
 

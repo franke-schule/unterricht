@@ -154,7 +154,7 @@ test('4A unterscheidet void-Ausgabe, Getter ohne Ausgabe und Scheinlösungen', (
   }
   const badArity = core.applyRuleBasedMinimum_(inflated, task, codeBundle(`${mainStart}\nprintln(petersHund.gibAlter(7));`));
   assert.equal(badArity.points, 0);
-  assert.equal(badArity.feedback, 'Die Methode gibAlter() hat keinen Eingabeparameter. Korrigiere dies.');
+  assert.equal(badArity.feedback, 'Die Methode gibAlter() hat keinen Eingabeparameter.');
   const showOnly = core.applyRuleBasedMinimum_(inflated, task, codeBundle(mainStart));
   assert.equal(showOnly.points, 0);
   assert.match(showOnly.missing[0], /^Ersetze petersHund\.zeigeDaten\(\)/);
@@ -182,7 +182,7 @@ test('4A hebt die Bewertung bei ungeprüfter Syntax, Kontrollfluss oder geänder
   for (const code of inputs) assert.equal(core.applyRuleBasedMinimum_(unchanged, task, code), unchanged);
   const badArity = core.applyRuleBasedMinimum_(unchanged, task, codeBundle(`${mainStart}\nprintln(petersHund.gibAlter(7));`));
   assert.equal(badArity.points, 0);
-  assert.equal(badArity.missing[0], 'Die Methode gibAlter() hat keinen Eingabeparameter. Korrigiere dies.');
+  assert.equal(badArity.missing[0], 'Die Methode gibAlter() hat keinen Eingabeparameter.');
   const fiveA = core.applyRuleBasedMinimum_(unchanged, core.TASKS['11-6-0-5a-code'], cumulativeSolution);
   assert.equal(fiveA.points, 4);
   assert.equal(core.applyRuleBasedMinimum_(unchanged, core.TASKS['11-6-0-5b-code'], cumulativeSolution), unchanged);
@@ -209,7 +209,7 @@ test('4A korrigiert die gemeldete Zwei-Punkte-Antwort im tatsächlichen Server-A
       code:codeBundle(`${mainStart}\nprintln(petersHund.gibAlter(7));`) }) });
   const badArityResult = JSON.parse(badArity.body).result;
   assert.equal(badArityResult.points, 0);
-  assert.deepEqual(badArityResult.missing, ['Die Methode gibAlter() hat keinen Eingabeparameter. Korrigiere dies.']);
+  assert.deepEqual(badArityResult.missing, ['Die Methode gibAlter() hat keinen Eingabeparameter.']);
   assert.equal(badArityResult.feedback, '');
   assert.doesNotMatch(response.body, /Getter muss direkt|Vorherige Ausgabe mit zeigeDaten\(\) ist falsch/);
 });
@@ -250,8 +250,10 @@ test('5A wertet den kumulativen Startcode regelbasiert mit 4/4 trotz falscher KI
   assert.notEqual(voidGetter.points, 4);
   const syntaxErrorWithGetter = await request(`${mainStart}\npetersHund.setzeAlter(7);\nprintln(petersHund.gibAlter());\nprintln(inasHund.gibAlter())\nprintln(petersHund.gibAlter());`);
   assert.equal(syntaxErrorWithGetter.points, 0);
-  const badFiveAArity = await request(code.replace('println(petersHund.gibAlter());', 'println(petersHund.gibAlter(7));'));
+  const badFiveAArity = await request(codeBundle(`${mainStart}\nprintln(petersHund.gibAlter());\npetersHund.setzeAlter(7);\nprintln(petersHund.gibAlter(7));\nprintln(inasHund.gibAlter());`));
   assert.equal(badFiveAArity.points, 0);
+  assert.deepEqual(badFiveAArity.missing, ['Die Methode gibAlter() hat keinen Eingabeparameter.']);
+  assert.equal(badFiveAArity.feedback, '');
 });
 
 test('Client prüft aktuellen IDE-Code aus beiden Dateien und Codeblöcke haben keine Begleitfelder', () => {
