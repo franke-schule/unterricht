@@ -42,13 +42,13 @@ const DESCRIPTION_TASKS = [
     id: 'd-projection', tab: 'projection', tabLabel: 'Reiter 2', serverTaskId: 'inf9-db2-beschreibe-projektion',
     title: 'Einstieg – Anweisung beschreiben', prompt: '**Beschreibe** in eigenen Worten, welche Daten diese Anweisung ausgibt.',
     sql: 'SELECT username, birthday\nFROM users',
-    hints: ['Sieh zuerst hinter FROM nach: Wo liegen die Daten?', 'Hinter SELECT stehen zwei Spalten. Welche Eigenschaften eines Mitglieds sind das?', 'Die Tabelle heißt users. In der Ergebnisrelation stehen username und birthday – überlege noch, für welche Mitglieder.'],
-    aspects: ['Tabelle users', 'Genau Benutzername und Geburtsdatum als Ergebnisspalten und in dieser Reihenfolge', 'Alle Mitglieder/alle Zeilen, keine Filterung'],
-    model: 'Die Abfrage liest alle Mitglieder aus users und zeigt zu jedem Mitglied zuerst den Benutzernamen und dann das Geburtsdatum.',
-    anchor: 'Prüfe Tabelle, ausgewählte Spalten und ob Zeilen weggefiltert werden.',
+    hints: ['Sieh zuerst hinter FROM nach: Wo liegen die Daten?', 'Hinter SELECT stehen zwei Spalten. Welche Eigenschaften eines Mitglieds sind das?', 'Die Tabelle heißt users. username steht für den Benutzernamen und birthday für den Geburtstag.'],
+    aspects: ['Tabelle users', 'Benutzername/username als Ausgabespalte', 'Geburtstag/Geburtsdatum/birthday als Ausgabespalte'],
+    model: 'Die Abfrage liest Daten aus users und zeigt Benutzernamen und Geburtstage.',
+    anchor: 'Prüfe die Tabelle und ob du beide ausgewählten Spalten genannt hast.',
     fallbacks: {
-      korrekt: 'Korrekt: Du hast Tabelle, beide Ausgabespalten und alle berücksichtigten Mitglieder richtig beschrieben.',
-      partial: 'Teilweise korrekt: Ein Teil stimmt. Prüfe Tabelle, beide Spalten und ob Zeilen ausgefiltert werden.',
+      korrekt: 'Korrekt: Du hast die Tabelle und beide Ausgabespalten richtig beschrieben.',
+      partial: 'Teilweise korrekt: Ein Teil stimmt. Prüfe die Tabelle und ob du beide Ausgabespalten genannt hast.',
       incorrect: 'Noch nicht korrekt: Lies zuerst FROM und dann SELECT. Was ist die Tabelle, was sind die Ergebnisspalten?'
     }
   },
