@@ -68,11 +68,18 @@ const BLOCKS = [
   },
   {
     id:'4a', title:'4A Auswahl und Ausgabe', mount:'block-4a',
-    prompt:'<strong>Tippe</strong> im Hauptprogramm in einer neuen Zeile `petersHund.` und <strong>suche</strong> im Auswahlfenster den Getter für das Alter. <strong>Ergänze</strong> eine Ausgabe seines Rückgabewerts mit `println(...)` und <strong>starte</strong> das Programm.',
+    introduction:['`petersHund.zeigeDaten();` gibt selbst einen vollständigen Satz mit Name und Alter aus. Die Methode hat den Rückgabetyp `void`: Sie gibt keinen Wert an das aufrufende Programm zurück.','Der Getter für das Alter gibt dagegen nur den Alterswert als `int` an das Programm zurück. Damit dieser Wert in der Konsole erscheint, brauchst du zusätzlich `println(...)`.'],
+    prompt:[
+      '<strong>Schreibe</strong> am Ende von `Hauptprogramm.java` in einer neuen Zeile `println();` und <strong>setze</strong> den Cursor zwischen die Klammern.',
+      '<strong>Tippe</strong> dort `petersHund.` und <strong>wähle</strong> im Auswahlfenster die Methode, die das Alter zurückgibt. <strong>Ergänze</strong> ihre leeren Aufrufklammern.',
+      '<strong>Starte</strong> das Programm und <strong>vergleiche</strong> die neue Ausgabe mit der Ausgabe von `zeigeDaten()`.'
+    ],
+    reflection:'<strong>Erkläre</strong>, warum bei `zeigeDaten()` kein zusätzliches `println(...)` nötig ist, beim Getter `gibAlter()` aber schon, wenn sein Rückgabewert angezeigt werden soll.',
+    reflectionAnswer:'`zeigeDaten()` enthält selbst eine `println(...)`-Anweisung und gibt keinen Wert zurück (`void`). `gibAlter()` liefert mit `return alter;` einen `int`-Wert zurück, druckt ihn aber nicht selbst. In `println(petersHund.gibAlter());` wird zuerst dieser Wert ermittelt und dann von `println(...)` ausgegeben.',
     codeTask:{ id:'11-6-0-4a-code', maxPoints:3 },
-    button:'Code zu 4A prüfen', hints:['Suche eine Methode, deren Name mit `gib` beginnt.','Der Getter braucht kein Argument; sein Rückgabewert wird erst durch eine Ausgabe sichtbar.','Ergänze `println(petersHund.gibAlter());` nach der vorhandenen Altersänderung.'],
-    feedback:['Korrekt. Dein Code gibt den Rückgabewert von `petersHund.gibAlter()` mit `println(...)` aus.','Teilweise korrekt. Prüfe, ob du den Rückgabewert des Getters ausgibst und die leeren Aufrufklammern ergänzt hast.','Noch nicht korrekt. Ergänze im Hauptprogramm eine Ausgabe mit dem Alters-Getter von `petersHund`.'],
-    answer:'`println(petersHund.gibAlter());` gibt Wufftis aktuelles Alter aus. Die Auswahl im Fenster ergänzt Code; der Programmlauf führt ihn aus.'
+    button:'Code zu 4A prüfen', hints:['Suche eine Methode, deren Name mit `gib` beginnt. `zeigeDaten()` gibt selbst einen Satz aus und liefert keinen Rückgabewert.','Der Getter-Aufruf gehört zwischen die Klammern von `println(...)`. Er braucht eigene leere Klammern; am Ende stehen deshalb zwei schließende Klammern vor dem Semikolon.','Ergänze `println(petersHund.gibAlter());` am Ende des Hauptprogramms. Der Getter liefert den Alterswert, die äußere Anweisung gibt ihn aus.'],
+    feedback:['Korrekt. Dein Code gibt den Rückgabewert von `petersHund.gibAlter()` mit `println(...)` aus.','Teilweise korrekt. Prüfe, ob der Alters-Getter mit eigenen leeren Klammern innerhalb von `println(...)` steht. `zeigeDaten()` gibt selbst Text aus und liefert keinen Rückgabewert.','Noch nicht korrekt. Schreibe zuerst `println();` und ergänze zwischen dessen Klammern den Aufruf des Alters-Getters an `petersHund`.'],
+    answer:'`println(petersHund.gibAlter());` gibt Wufftis aktuelles Alter aus; direkt nach dem vorgegebenen Startprogramm ist das `6`. `zeigeDaten()` gibt selbst einen Satz aus und liefert keinen Rückgabewert (`void`); `gibAlter()` liefert einen `int`-Wert, den erst `println(...)` anzeigt. Die Auswahl im Fenster ergänzt Code; der Programmlauf führt ihn aus.'
   },
   {
     id:'4b', title:'4B Eingabetyp im Auswahlfenster', mount:'block-4b',
@@ -114,6 +121,11 @@ function htmlContent(text) {
   return String(text).split(/(<\/?(?:strong|code|u)>|<br\s*\/?>)/gi)
     .map(part => /^<\/?(?:strong|code|u)>$|^<br\s*\/?>$/i.test(part) ? part : htmlCode(part))
     .join('');
+}
+function htmlPrompt(prompt) {
+  return Array.isArray(prompt)
+    ? '<ol>' + prompt.map(step => '<li>' + htmlContent(step) + '</li>').join('') + '</ol>'
+    : '<p>' + htmlContent(prompt) + '</p>';
 }
 function readSaved() {
   let value;
@@ -179,7 +191,8 @@ function renderBlock(block) {
   const root = document.getElementById(block.mount); const card = document.createElement('article'); card.className = 'card task6-0-block'; card.id = 'task-' + block.id;
   const title = document.createElement('h3'); title.textContent = block.title; card.append(title);
   if (block.code) { const pre = document.createElement('pre'); pre.className = 'task6-0-code'; const code = document.createElement('code'); code.textContent = block.code; pre.append(code); card.append(pre); }
-  const prompt = document.createElement('p'); prompt.innerHTML = htmlContent(block.prompt); card.append(prompt);
+  (block.introduction || []).forEach(text => { const p = document.createElement('p'); p.innerHTML = htmlCode(text); card.append(p); });
+  card.insertAdjacentHTML('beforeend', htmlPrompt(block.prompt));
   const fields = document.createElement('div'); fields.className = 'input-grid'; fields.id = 'fields-' + block.id;
   if (!block.codeTask) block.fields.forEach(([labelText, , options], index) => {
     const label = document.createElement('label'); const id = 'answer-' + block.id + '-' + index; label.htmlFor = id; label.innerHTML = htmlContent(labelText);
@@ -191,6 +204,11 @@ function renderBlock(block) {
   card.append(fields); const button = document.createElement('button'); button.className = 'primary-button'; button.type = 'button'; button.textContent = block.button; card.append(button);
   const result = document.createElement('p'); result.className = 'feedback'; result.setAttribute('role', 'status'); result.setAttribute('aria-live', 'polite'); result.hidden = true; card.append(result);
   block.hints.forEach((hint, index) => { const details = document.createElement('details'); const summary = document.createElement('summary'); summary.textContent = 'Hilfe ' + (index + 1); const p = document.createElement('p'); p.innerHTML = htmlCode(hint); details.append(summary, p); card.append(details); });
+  if (block.reflection) {
+    const question = document.createElement('p'); question.innerHTML = htmlContent(block.reflection); card.append(question);
+    const details = document.createElement('details'); const summary = document.createElement('summary'); summary.textContent = 'Eigene Erklärung vergleichen';
+    const answer = document.createElement('p'); answer.innerHTML = htmlCode(block.reflectionAnswer); details.append(summary, answer); card.append(details);
+  }
   button.addEventListener('click', () => checkBlock(block, fields, result, button)); root.append(card);
 }
 function readIdeCode() {
@@ -313,7 +331,7 @@ function buildSummary() {
   const summary = document.getElementById('quiz-summary'); summary.replaceChildren(); const h = document.createElement('h3'); h.textContent = 'Auswertung aller Teilaufgaben'; summary.append(h); const list = document.createElement('ol');
   const classAnswer = { title:'2A Klassenkarte', prompt:'<strong>Ordne</strong> die zwei Attribute und fünf Methoden der Klasse <code>Hund</code> in die Klassenkarte ein. Der vorgegebene Konstruktor gehört nicht in diese Zuordnung.', answer:'Attribute: <code>private int alter</code>, <code>private String name</code>. Methoden: <code>zeigeDaten()</code>, <code>belle()</code>, <code>gibAlter()</code>, <code>setzeAlter(int neuesAlter)</code>, <code>setzeDaten(int neuesAlter, String neuerName)</code>. Der Konstruktor ist nicht einsortiert.' };
   const all = [BLOCKS[0], classAnswer, ...BLOCKS.slice(1)];
-  all.forEach(block => { const li = document.createElement('li'); li.innerHTML = '<strong>' + block.title + '</strong><p>' + htmlContent(block.prompt) + '</p><p>Richtig: ' + htmlCode(block.answer) + '</p>'; list.append(li); });
+  all.forEach(block => { const li = document.createElement('li'); li.innerHTML = '<strong>' + block.title + '</strong>' + htmlPrompt(block.prompt) + (block.reflection ? '<p>' + htmlContent(block.reflection) + '</p>' : '') + '<p>Richtig: ' + htmlCode(block.answer) + '</p>'; list.append(li); });
   QUIZ.forEach((entry,index) => { const li = document.createElement('li'); const answers = entry.solution.map(letter => htmlCode(entry.options['ABCD'.indexOf(letter)])); li.innerHTML = '<strong>Quizfrage ' + (index + 1) + ': ' + htmlCode(entry.q) + '</strong><p>Richtig: ' + answers.join(' · ') + '</p><p>' + htmlCode(entry.explanation) + '</p>'; list.append(li); });
   summary.append(list);
 }
