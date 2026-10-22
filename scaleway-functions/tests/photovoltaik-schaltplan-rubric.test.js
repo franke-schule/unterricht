@@ -57,6 +57,8 @@ test('Semantische Freitextkarte verarbeitet korrekte, teilweise, kurze und nicht
     addEventListener(name, callback) { this.listeners[name] = callback; }
     append(...items) { this.children.push(...items); }
     replaceChildren(...items) { this.children = items; }
+    get ownerDocument() { return global.document; }
+    replaceChildren(...items) { this.children = items; }
     setAttribute(name, value) { this[name] = value; }
     focus() { this.focused = true; }
   }
@@ -66,7 +68,7 @@ test('Semantische Freitextkarte verarbeitet korrekte, teilweise, kurze und nicht
     { status: 'noch nicht korrekt', points: 0, message: 'Noch nicht korrekt. Verfolge zuerst den geschlossenen Stromweg und dann die zwei Anschlüsse des Voltmeters.' }
   ]) {
     const elements = new Map(['pv-description-answer', 'pv-description-check', 'pv-description-feedback', 'pv-description-count'].map(id => [id, new Element()]));
-    global.document = { getElementById: id => elements.get(id), createElement: () => new Element() };
+    global.document = { getElementById: id => elements.get(id), createElement: () => new Element(), createTextNode: text => ({ textContent: text }) };
     const { setupPhysicsSemanticTask } = await semanticTaskPromise;
     setupPhysicsSemanticTask({ answerId: 'pv-description-answer', buttonId: 'pv-description-check', feedbackId: 'pv-description-feedback', countId: 'pv-description-count', taskId,
       evaluationFunction: async () => ({ status: scenario.status, points: scenario.points, maxPoints: 4, strengths: ['Aspekt erkannt.'], missing: ['Aspekt fehlt.'] }),
@@ -75,13 +77,13 @@ test('Semantische Freitextkarte verarbeitet korrekte, teilweise, kurze und nicht
     await elements.get('pv-description-check').listeners.click();
     const feedback = elements.get('pv-description-feedback');
     assert.equal(feedback.dataset.status, scenario.status);
-    assert.ok(feedback.children.some(child => child.textContent === scenario.message));
-    assert.ok(feedback.children.some(child => child.textContent === 'Das ist dir gelungen:'));
-    assert.ok(feedback.children.some(child => child.textContent === 'Das kannst du ergänzen:'));
+    const expectedStatus = scenario.points === 4 ? 'Sehr gut, alles richtig' : scenario.points ? 'teilweise korrekt' : 'noch nicht korrekt';
+    assert.equal(feedback.children[0].textContent, `${scenario.points} von 4 Punkten – ${expectedStatus}`);
+    if (scenario.points < 4) assert.equal(feedback.children[1].children[0].children[0].textContent, 'Aspekt fehlt.');
   }
 
   const elements = new Map(['pv-description-answer', 'pv-description-check', 'pv-description-feedback', 'pv-description-count'].map(id => [id, new Element()]));
-  global.document = { getElementById: id => elements.get(id), createElement: () => new Element() };
+  global.document = { getElementById: id => elements.get(id), createElement: () => new Element(), createTextNode: text => ({ textContent: text }) };
   const { setupPhysicsSemanticTask } = await semanticTaskPromise;
   setupPhysicsSemanticTask({ answerId: 'pv-description-answer', buttonId: 'pv-description-check', feedbackId: 'pv-description-feedback', countId: 'pv-description-count', taskId,
     evaluationFunction: async () => { throw new Error('offline'); }, feedbackBuilder: result => { const p = document.createElement('p'); p.textContent = result.context === 'server-error' ? 'Die automatische Prüfung ist gerade nicht erreichbar. Deine Antwort bleibt erhalten; bitte versuche es später erneut.' : ''; return p; }

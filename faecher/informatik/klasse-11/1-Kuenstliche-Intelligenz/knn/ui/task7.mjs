@@ -1,5 +1,5 @@
 import { normaliseNumber } from '../../perzeptron/logic/perceptron.mjs';
-import { evaluateSemanticAnswer } from '../../perzeptron/ui/semantic-answer.mjs?v=20261010-scaleway';
+import { evaluateSemanticAnswer, renderCompactEvaluation } from "../../perzeptron/ui/semantic-answer.mjs?v=20261022-compact-feedback";
 import { SHIRT_SYMBOLS, SHIRT_TRAINING } from '../data/shirts.mjs';
 import { BLANK_IDS, COMPARE_A, COMPARE_B, COMPARE_P, EXPECTED, N1, N2, N5, PAIR_A, PAIR_B, STOP_H, STOP_K } from '../data/task7.mjs';
 import { euclidean, formatDecimal, withinTolerance } from '../logic/knn.mjs';
@@ -745,8 +745,8 @@ function setupExplanation() {
     try {
       const result = await evaluateSemanticAnswer({ serverUrl: SERVER_URL, taskId: TASK_ID, answer });
       const kind = result.points === result.maxPoints ? 'success' : result.points > 0 ? 'partial' : 'error';
-      const fallback = FALLBACK_TEXT[kind === 'success' ? 'correct' : kind === 'partial' ? 'partial' : 'incorrect'];
-      feedback('apply-answer-feedback', kind, result.points + ' von ' + result.maxPoints + ' Punkten – ' + result.status + '. ' + ((result.feedback || '').trim() || fallback));
+      feedback('apply-answer-feedback', kind, '');
+      renderCompactEvaluation($('#apply-answer-feedback'), result);
     } catch (error) {
       const unknown = error.message === 'Diese Aufgabe ist auf dem Auswertungsserver nicht bekannt.';
       feedback('apply-answer-feedback', 'error', unknown ? 'Für Aufgabe 7 ist noch keine aktuelle Serverversion bereitgestellt. Bitte informiere deine Lehrkraft.' : error.message);

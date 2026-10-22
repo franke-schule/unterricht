@@ -7,7 +7,7 @@ function applyRuleBasedMinimum_(
   task,
   answer
 ) {
-  if (task === TASKS['11-6-0-4a-code']) {
+  if (task === TASKS['11-6-0-4a-code'] || task === TASKS['11-6-0-5a-code']) {
     const getterEvaluation = evaluateDogGetterByRules_(answer, task);
     if (getterEvaluation) return getterEvaluation;
   }
@@ -123,6 +123,17 @@ function evaluateDogGetterByRules_(answer, task) {
   let getter = false;
   let printed = false;
   let voidOutput = false;
+  let voidInPrint = false;
+  let voidCall = null;
+  let wrongGetterArity = false;
+  let peterSetterAfterStarter = false;
+  let setterSevenAfterStarter = false;
+  let peterValueSeven = false;
+  let peterPrintedAfterSeven = false;
+  let inaPrintedAfterSeven = false;
+  let inaChangedBeforeBoth = false;
+  let sawPeterShow = false;
+  let starterSetterSeen = false;
   for (const statement of main.join(' ').split(' ;').filter(text => text.trim())) {
     const text = statement.trim();
     const declaration = text.match(/^Hund (petersHund|inasHund) = new Hund \( (?:- )?\d+ , "" \)$/);
@@ -133,18 +144,83 @@ function evaluateDogGetterByRules_(answer, task) {
     }
     const receiver = text.match(/\b(petersHund|inasHund) \./);
     if (receiver && !declared.has(receiver[1])) return null;
+    if (/^(?:println \( )?(?:petersHund|inasHund) \. gibAlter \( (?:- )?\d+ \)(?: \))?$/.test(text)) {
+      wrongGetterArity = true;
+      continue;
+    }
     if (/^(?:petersHund|inasHund) \. (?:zeigeDaten|belle|gibAlter) \( \)$/.test(text)) {
       if (text === 'petersHund . gibAlter ( )') getter = true;
+      if (text === 'petersHund . zeigeDaten ( )') sawPeterShow = true;
     } else if (/^(?:petersHund|inasHund) \. setzeAlter \( (?:- )?\d+ \)$/.test(text) ||
       /^(?:petersHund|inasHund) \. setzeDaten \( (?:- )?\d+ , "" \)$/.test(text)) {
+      const previousStarterSeen = starterSetterSeen;
+      if (text === 'petersHund . setzeAlter ( 6 )') starterSetterSeen = true;
+      if (previousStarterSeen && text.startsWith('petersHund . setzeAlter')) {
+        peterSetterAfterStarter = true;
+        const setterValue = text.match(/setzeAlter \( (-?\d+) \)/);
+        peterValueSeven = Boolean(setterValue && setterValue[1] === '7');
+        if (peterValueSeven) setterSevenAfterStarter = true;
+      } else if (text.startsWith('petersHund . setzeDaten')) {
+        peterValueSeven = false;
+      }
+      if (text === 'petersHund . setzeAlter ( 6 )' && !previousStarterSeen) peterValueSeven = false;
+      if (text.startsWith('inasHund . setzeAlter') || text.startsWith('inasHund . setzeDaten')) {
+        if (!(peterPrintedAfterSeven && inaPrintedAfterSeven)) {
+          inaChangedBeforeBoth = true;
+          inaPrintedAfterSeven = false;
+        }
+      }
       continue;
     } else if (/^println \( (?:petersHund|inasHund) \. gibAlter \( \) \)$/.test(text)) {
-      if (text === 'println ( petersHund . gibAlter ( ) )') { getter = true; printed = true; }
+      if (text === 'println ( petersHund . gibAlter ( ) )') {
+        getter = true; printed = true;
+        if (peterValueSeven) peterPrintedAfterSeven = true;
+      }
+      if (text === 'println ( inasHund . gibAlter ( ) )' && peterValueSeven && !inaChangedBeforeBoth) inaPrintedAfterSeven = true;
     } else if (/^println \( (?:petersHund|inasHund) \. (?:zeigeDaten|belle) \( \) \)$/.test(text)) {
       voidOutput = true;
+      voidInPrint = true;
+      const match = text.match(/^println \( (petersHund|inasHund) \. (zeigeDaten|belle) \( \) \)$/);
+      if (match) voidCall = { receiver: match[1], method: match[2] };
     } else if (!/^println \( (?:""|(?:- )?\d+) \)$/.test(text)) {
       return null;
     }
+  }
+
+  if (wrongGetterArity) {
+    return {
+      ok: true, points: 0, maxPoints: task.maxPoints,
+      status: task.statusLabels.incorrect, strengths: [],
+      missing: ['Die Methode gibAlter() hat keinen Eingabeparameter. Korrigiere dies.'],
+      feedback: 'Die Methode gibAlter() hat keinen Eingabeparameter. Korrigiere dies.'
+    };
+  }
+
+  if (task === TASKS['11-6-0-5a-code']) {
+    const strengths = [];
+    const missing = [];
+    if (peterSetterAfterStarter) strengths.push('Du verwendest nach dem vorgegebenen Setter einen ausführbaren Setter-Aufruf an petersHund.');
+    else missing.push('Füge nach dem vorgegebenen setzeAlter(6)-Aufruf einen Setter-Aufruf an petersHund ein.');
+    if (setterSevenAfterStarter) {
+      strengths.push('Der Setter setzt petersHund nach dem vorhandenen setzeAlter(6)-Aufruf auf 7.');
+    } else missing.push('Setze petersHund nach dem vorhandenen setzeAlter(6)-Aufruf mit setzeAlter(7) auf 7.');
+    if (peterValueSeven && peterPrintedAfterSeven) strengths.push('Du gibst Wufftis Getterwert nach dem Setter aus.');
+    else missing.push('Gib den Rückgabewert von petersHund.gibAlter() nach setzeAlter(7) aus.');
+    if (peterValueSeven && inaPrintedAfterSeven && !inaChangedBeforeBoth) strengths.push('Du gibst Inas unveränderten Getterwert nach dem Setter aus.');
+    else missing.push('Gib den Rückgabewert von inasHund.gibAlter() nach dem Setter aus, bevor du inasHund änderst.');
+    let points = Number(peterSetterAfterStarter) + Number(setterSevenAfterStarter) + Number(peterValueSeven && peterPrintedAfterSeven) + Number(peterValueSeven && inaPrintedAfterSeven && !inaChangedBeforeBoth);
+    if (voidOutput) {
+      points = Math.min(points, task.maxPoints - 1);
+      const receiver = voidCall ? voidCall.receiver : 'petersHund';
+      const method = voidCall ? voidCall.method : 'zeigeDaten';
+      missing.unshift(`Ersetze println(${receiver}.${method}()) durch eine Ausgabe des Alters-Getters; ${method}() hat den Rückgabetyp void.`);
+    }
+    return {
+      ok: true, points, maxPoints: task.maxPoints,
+      status: points === task.maxPoints ? task.statusLabels.correct : points ? task.statusLabels.partial : task.statusLabels.incorrect,
+      strengths, missing: missing.slice(0, 2),
+      feedback: missing.slice(0, 2).join(' ')
+    };
   }
 
   const points = Number(getter) + Number(printed) + Number(getter && !voidOutput);
@@ -153,8 +229,12 @@ function evaluateDogGetterByRules_(answer, task) {
   if (printed) strengths.push('Du gibst den Rückgabewert des Getters mit println(...) aus.');
   if (getter && !voidOutput) strengths.push('Der Getteraufruf ist vollständig und enthält die leeren Klammern.');
   const missing = [];
-  if (voidOutput) missing.push('zeigeDaten() und belle() haben den Rückgabetyp void und geben selbst Text aus. Ihr Aufruf liefert keinen Wert für println(...).');
-  if (!getter) missing.push('Im Hauptprogramm fehlt ein Aufruf des Alters-Getters an petersHund.');
+  if (voidOutput) {
+    if (voidInPrint && voidCall) missing.push(`Ersetze den inneren Aufruf ${voidCall.receiver}.${voidCall.method}() durch petersHund.gibAlter(); ${voidCall.method}() hat den Rückgabetyp void.`);
+    else missing.push('Ersetze petersHund.zeigeDaten() durch einen Aufruf von println(...) und einem Aufruf der Getter-Methode in den runden Klammern von println.');
+  }
+  else if (!getter && sawPeterShow) missing.push('Ersetze petersHund.zeigeDaten() durch einen Aufruf von println(...) und einem Aufruf der Getter-Methode in den runden Klammern von println.');
+  else if (!getter) missing.push('Ergänze eine Ausgabe des Rückgabewerts von petersHund.gibAlter() mit println(...).');
   else if (!printed) missing.push('Gib den Rückgabewert des Alters-Getters mit println(...) aus.');
   return {
     ok: true, points, maxPoints: task.maxPoints,
@@ -433,7 +513,7 @@ function evaluateTaskBByRules_(
     );
   } else {
     missing.push(
-      'Fuer die volle Punktzahl solltest du noch die Bedeutung der Zahlen erwaehnen.'
+      'Erkläre die Bedeutung der Zahlen für Position und Größe.'
     );
   }
 
@@ -579,7 +659,7 @@ function evaluateTaskCByRules_(
     );
   } else {
     missing.push(
-      'Fuer die volle Punktzahl solltest du noch genauer sagen, welche Zahl wofuer steht.'
+      'Ordne jeder Zahl ihre Bedeutung zu.'
     );
   }
 
@@ -609,8 +689,8 @@ function evaluateTaskCByRules_(
       missing.slice(0, 4),
     feedback:
       points >= maxPoints * 0.75
-        ? 'Deine Antwort beschreibt die Bedeutung der Zahlen schon gut. Fuer die volle Punktzahl ordne die einzelnen Zahlen noch genauer zu.'
-        : 'Du hast wichtige Beobachtungen genannt. Ergaenze noch genauer, welche Zahl welche Wirkung hat.'
+        ? 'Ordne jeder Zahl ihre Bedeutung zu.'
+        : 'Erkläre die Bedeutung der Zahlen für Position und Größe.'
   };
 }
 

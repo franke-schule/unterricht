@@ -11,24 +11,26 @@ const transformed = transformPage(source);
 const scriptStart = transformed.indexOf('<script>', transformed.indexOf('</main>')) + 8;
 const script = transformed.slice(scriptStart, transformed.indexOf('</script>', scriptStart));
 
-function element() {
-  return { value: '', disabled: false, hidden: true, className: '', children: [],
+function element(ownerDocument) {
+  return { ownerDocument, value: '', disabled: false, hidden: true, className: '', children: [],
     set textContent(value) { this.text = String(value); this.children = []; },
     get textContent() { return this.text || ''; },
-    appendChild(child) { this.children.push(child); }, focus() { this.focused = true; } };
+    appendChild(child) { this.children.push(child); }, append(...items) { this.children.push(...items); },
+    replaceChildren(...items) { this.children = items; }, focus() { this.focused = true; } };
 }
 function harness(fetchImpl) {
-  const elements = Object.fromEntries(['b', 'c'].flatMap(task =>
-    ['answer', 'button', 'result', 'count'].map(kind => [kind + '-' + task, element()])));
+  const elements = {};
+  const document = { getElementById: id => elements[id], createElement: () => element(document) };
+  for (const task of ['b', 'c']) for (const kind of ['answer', 'button', 'result', 'count']) elements[kind + '-' + task] = element(document);
   const timers = new Map();
   let timerCount = 0;
-  const context = vm.createContext({ document: { getElementById: id => elements[id], createElement: element },
+  const context = vm.createContext({ document,
     window: { crypto: { randomUUID } }, URL, AbortController, fetch: fetchImpl,
     setTimeout: callback => { timers.set(++timerCount, callback); return timerCount; },
     clearTimeout: id => timers.delete(id) });
   const helper = fs.readFileSync(path.resolve(__dirname, '../../faecher/informatik/klasse-11/1-Kuenstliche-Intelligenz/perzeptron/ui/semantic-answer.mjs'), 'utf8').replace(/^export /gm, '');
   vm.runInContext(helper, context);
-  vm.runInContext('globalThis.scwTestModule = { evaluateSemanticAnswer, evaluateCodeAnswer };', context);
+  vm.runInContext('globalThis.scwTestModule = { evaluateSemanticAnswer, evaluateCodeAnswer, renderCompactEvaluation };', context);
   vm.runInContext(script.replace(/import\('[^']+'\)/g, 'Promise.resolve(scwTestModule)'), context);
   return { elements, timers, context };
 }
@@ -65,7 +67,7 @@ test('3000 Zeichen werden im POST-Body übertragen; vorhandene Anzeige verarbeit
     const body = JSON.parse(call.options.body);
     assert.equal(body.taskId, taskId);
     assert.equal(body.answer.length, 3000);
-    assert.equal(h.elements['result-' + taskId].children[0].textContent, '6 von 6 Punkten – korrekt');
+    assert.equal(h.elements['result-' + taskId].children[0].textContent, '6 von 6 Punkten – Sehr gut, alles richtig');
     assert.equal(h.elements['button-' + taskId].disabled, false);
     assert.equal(h.elements['answer-' + taskId].disabled, false);
   }

@@ -1,4 +1,4 @@
-import { evaluateSemanticAnswer } from '../../klasse-11/1-Kuenstliche-Intelligenz/perzeptron/ui/semantic-answer.mjs?v=20261010-scaleway';
+import { evaluateSemanticAnswer, renderCompactEvaluation } from '../../klasse-11/1-Kuenstliche-Intelligenz/perzeptron/ui/semantic-answer.mjs?v=20261022-compact-feedback';
 
 // Test zu Aufgabe 2 (Redundanzen): nicht verlinkte Seite, jede Aufgabe mit eigenem Prüfen-Button.
 // Bewusst eigenständig und ohne Abhängigkeit zum Test zu Aufgabe 1, damit beide Tests getrennt gelöscht werden können.
@@ -663,13 +663,8 @@ function renderDescribe(task) {
   } else if (describeErrors[task.id]) {
     setFeedback(box, 'error', [`Die Antwort konnte gerade nicht automatisch bewertet werden (${describeErrors[task.id]}). Versuche es in einem Moment noch einmal.`]);
   } else if (ai) {
-    const parts = [`${ai.status}: ${ai.points} von ${ai.maxPoints} Aspekten erkannt.`];
-    [['Das ist dir gelungen:', ai.strengths, 'Noch kein Aspekt wurde eindeutig erkannt.'], ['Das fehlt noch:', ai.missing, 'Es fehlen keine wesentlichen Aspekte.']].forEach(([title, entries, fallback]) => {
-      parts.push(element('h4', '', title), feedbackList(entries?.length ? entries : [fallback]));
-    });
-    if (ai.feedback) parts.push(ai.feedback);
-    if (!solved) parts.push('Ergänze deine Antwort und prüfe sie erneut.');
-    setFeedback(box, describeStatus(ai), parts);
+    setFeedback(box, describeStatus(ai), []);
+    renderCompactEvaluation(box, ai);
   } else {
     box.hidden = true;
   }

@@ -76,6 +76,11 @@ Meldung behandeln. Kein JSONP und keine Eingabeuebertragung in einer URL.
   - Waehrend einer Anfrage Mehrfachabsendungen verhindern.
   - Bestehende Funktionsnamen und Result-Strukturen beibehalten, wenn nur der
     Seiteninhalt erweitert wird.
+  - Finale Rueckmeldungen ueber die gemeinsame Anzeige renderCompactEvaluation
+    ausgeben: volle Punktzahl mit "Sehr gut, alles richtig", sonst hoechstens
+    zwei deduplizierte Handlungsanweisungen. Bei Code Syntax- und Typfehler
+    zuerst benennen und die konkrete Stelle samt Ersetzung oder Ergaenzung
+    angeben. Staerkenliste und wiederholte Prosa nicht parallel anzeigen.
 
 
 5. Spezifische Abschlusspruefung

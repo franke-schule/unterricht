@@ -2464,8 +2464,10 @@ const TASKS = {
       'Nach der Objekterzeugung bedeutet an einer beliebigen späteren erreichbaren Stelle, nicht unmittelbar danach. Vorherige Aufrufe von zeigeDaten(), belle(), setzeAlter(...) und zusätzliche println-Ausgaben sind zulässig und rechtfertigen keinen Punktabzug. Die direkte Verwendung des Getterwerts betrifft das Argument von println(...), nicht die Position der Zeile im Programm.',
       'Unterscheide Aufruf und Definition: public int gibAlter() in Hund.java ist kein Aufruf im Hauptprogramm. Zeige in strengths nur Aspekte auf, die durch den eingereichten Hauptprogrammcode belegt sind. Fehlt dort petersHund.gibAlter(), sind alle drei Aspekte unerfüllt und es gibt 0 Punkte.',
       'Verwechsle zeigeDaten() nicht mit gibAlter(): zeigeDaten() gibt selbst Text aus und hat im vorgegebenen Hund.java den Rückgabetyp void. println(petersHund.zeigeDaten()) ist deshalb ein Typfehler, kein Getteraufruf. Benenne bei diesem Fehler konkret die verwendete Methode, den Rückgabetyp void und den fehlenden Rückgabewert; behaupte nicht, der Getter sei vorhanden oder nur seine Ausgabe falsch. Prüfe bei geändertem Hund.java die tatsächlich eingereichte Signatur.',
+      'Wenn petersHund.zeigeDaten() statt des Getters aufgerufen wird, verwende als Hinweis exakt: "Ersetze petersHund.zeigeDaten() durch einen Aufruf von println(...) und einem Aufruf der Getter-Methode in den runden Klammern von println." Bei println(petersHund.zeigeDaten()) benenne nur den inneren Aufruf und kurz den Rückgabetyp void.',
       'Für die Ausgabe zählt nur der tatsächliche Rückgabewert des Getteraufrufs in println(...), direkt oder über eine korrekt zugewiesene Variable. Harte Zahlen wie println(6) zählen nicht.',
       'Eine einzige Ausgabe mit println(petersHund.gibAlter()) nach der Objekterzeugung genügt. Insbesondere ist sie nach dem vorgegebenen petersHund.setzeAlter(6) vollständig richtig: 3 von 3 Punkten, sofern Hund.java unverändert ist und keine relevanten Syntax- oder Typfehler vorliegen. Eine zusätzliche Getterausgabe vor der Altersänderung ist nicht gefordert; erfinde keine Vorher-Nachher-Anforderung aus dem vorhandenen Startcode.',
+      'gibAlter() hat keine Eingabeparameter. Ein Aufruf wie gibAlter(7) ist ein Syntax-/Typfehler, zählt nicht als Getteraufruf und erhält keinen vollen Score.',
       'Ein späterer gültiger petersHund.setzeAlter(7) ist erlaubt und entwertet eine Ausgabe des aktuellen Getterwerts nicht.',
       'Prüfe Hund.java auf Signatur und Wirkung der verwendeten Methoden; schreibe bei unklarer statischer Wirkung keinen vollen Erfolg gut.',
       'Ein echter Programmlauf kann nur in der IDE erfolgen. Behaupte keine beobachtete Konsolenausgabe und gib ohne Ausführung keine Aussage über die tatsächliche Laufzeit aus.'
@@ -2488,16 +2490,23 @@ const TASKS = {
     ],
     rubric: [
       'Je ein Punkt pro erwartetem Aspekt. Beide Getter-Ausgaben müssen nach dem Setter stehen und ihren tatsächlichen Rückgabewert ausgeben; harte Zahlen 7 oder 8 zählen dafür nicht.',
+      'Der zusätzliche ausführbare Setter-Aufruf und der Setterwert 7 nach dem vorgegebenen setzeAlter(6)-Aufruf sind getrennte Aspekte. Ein anderer Setterwert erfüllt nur den Aufrufaspekt, nicht den Wertaspekt.',
       'Bis zu beiden Ausgaben muss inasHund unverändert sein. Ein vorheriger Setter an inasHund entwertet den betreffenden Ausgabepunkt und verhindert Vollerfolg.',
+      'Nach dem Setter auf 7 darf petersHund nicht erneut auf einen anderen Wert gesetzt werden, bevor sein Getterwert ausgegeben wird. println(zeigeDaten()) ist wegen void ein Typfehler und schließt Vollerfolg aus.',
+      'Vorhandene zeigeDaten()- und belle()-Aufrufe aus dem Hauptprogrammstart sind erlaubt und verändern den Hundezustand nicht. Sie dürfen weder abgewertet noch als Ersatz für eine Getterausgabe gewertet werden.',
       'Beliebige zusätzliche Beschriftungsausgaben und die spätere Änderung aus 5B sind zulässig. Akzeptiere funktional gleichwertige Zwischenvariablen und zusätzliche konsistente Ausgaben.',
       'Offensichtliche Syntax-/Typfehler, die relevante Anweisungen unerreichbar oder nicht ausführbar machen, schließen „korrekt“ aus. Prüfe Hund.java auf aufgehobene Setter-/Getterwirkung.',
       'Volle 4 Punkte = korrekt, 1 bis 3 Punkte = teilweise korrekt, 0 Punkte = noch nicht korrekt. strengths nennt belegte Aspekte; missing den nächsten konkreten Prüfschritt. Keine vollständige Musterlösung.'
     ],
     codeAnalysisRules: [
       'Bewerte ausführbaren Code und Reihenfolge in Hauptprogramm.java, nicht Kommentare oder Zeichenketten mit Java-Code.',
+      'Werte einen zusätzlichen ausführbaren petersHund.setzeAlter(...)-Aufruf nach dem vorgegebenen setzeAlter(6) als Setter-Aspekt. Nur der Wert 7 erfüllt zusätzlich den geforderten Setterwert; ein späterer abweichender Wert macht die Getterausgabe nicht zu einer Ausgabe von 7.',
+      'Der vorgegebene Hauptprogrammstart einschließlich zeigeDaten() und belle() ist zulässig; diese Methoden verändern den Zustand nicht. Werte solche Aufrufe nicht ab und berücksichtige sie nicht als Getterausgaben.',
       'Erkenne einen Setter-Aufruf an petersHund nach dem vorhandenen Aufruf setzeAlter(6); das Argument muss 7 sein.',
       'Nach dem Setter muss petersHund.gibAlter() tatsächlich ausgegeben werden. println(7) oder eine sonstige harte Zahl zählt nicht.',
       'Auch inasHund.gibAlter() muss nach dem Setter tatsächlich ausgegeben werden. Die beiden Getter-Ausgaben dürfen in beliebiger Reihenfolge stehen. Bis zu beiden Ausgaben muss inasHund unverändert bleiben; frühere Änderungen an inasHund schließen diesen Aspekt aus.',
+      'Ändert ein Setter inasHund, bevor beide erforderlichen Getterausgaben erfolgt sind, gibt es keinen vollen Erfolg. Eine spätere Änderung aus 5B nach beiden Ausgaben ist erlaubt.',
+      'println(zeigeDaten()) ist ein Typfehler. Unbekannte Syntax, Kontrollfluss oder eine geänderte Hund-Klasse dürfen nicht regelbasiert hochgestuft werden.',
       'Spätere gültige Aufrufe aus Aufgabe 5B dürfen die vorherigen Ergebnisse nicht entwerten. Andere Beschriftungen und konsistente Ausgaben sind erlaubt.',
       'Prüfe Hund.java auf Signaturen und tatsächliche Wirkung. Syntax-/Typfehler, die Ausführung verhindern, schließen vollen Erfolg aus.',
       'Statische Analyse beweist keinen Programmlauf. Behaupte keine tatsächlich beobachtete Ausgabe; bei unklarer Wirkung zur Ausführung in der IDE auffordern.'
@@ -2520,6 +2529,7 @@ const TASKS = {
     ],
     rubric: [
       'Je ein Punkt pro erwartetem Aspekt. Eine hart kodierte println-Ausgabe mit Flocke und 9 erfüllt den Aufruf von zeigeDaten() nicht.',
+      'Bewerte die tatsächliche Methodensignatur: zeigeDaten() hat im vorgegebenen Hund.java den Rückgabetyp void und gibt selbst Text aus. println(zeigeDaten()) ist deshalb ein Typfehler.',
       'Ein Aufruf von petersHund.zeigeDaten() oder zeigeDaten() vor setzeDaten erfüllt den nachfolgenden Aufruf an inasHund nicht.',
       '5B ist unabhängig von 5A. Weder petersHund.setzeAlter(7) noch eine bestimmte spätere Wuffti-Ausgabe sind erforderlich.',
       'Offensichtliche Syntax-/Typfehler, die relevante Anweisungen unerreichbar oder nicht ausführbar machen, schließen „korrekt“ aus. Prüfe Hund.java auf Signatur und Wirkung.',

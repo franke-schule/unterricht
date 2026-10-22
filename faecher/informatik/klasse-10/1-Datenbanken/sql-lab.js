@@ -1,4 +1,4 @@
-import { evaluateSemanticAnswer } from '../../klasse-11/1-Kuenstliche-Intelligenz/perzeptron/ui/semantic-answer.mjs?v=20261010-scaleway';
+import { evaluateSemanticAnswer, renderCompactEvaluation } from '../../klasse-11/1-Kuenstliche-Intelligenz/perzeptron/ui/semantic-answer.mjs?v=20261022-compact-feedback';
 import { analyzeMultiTableSelect, classifyDescriptionResult, compareRelations, diagnoseMultiTableError, diagnoseSqlError, diagnoseSqlTask, explainSqlError, flexibleReferenceSql, isValidScriptServerUrl, normalizeRelation, parseDelimited, validateSelectStatement } from './sql-lab-core.mjs?v=20260929b';
 import { MENU_QUIZ, MENU_TABLES, MENU_TABLE_NAMES, MENU_TABLE_SCHEMAS, buildMenuCombinations, menuRelation } from './menue-kreuzprodukt-daten.mjs?v=20260929a';
 import { SONG_PLAYLIST_PAIRS, SONG_VERBUND_COLUMN_GROUPS, SONG_VERBUND_COLUMNS, SONG_VERBUND_QUIZ, SONG_VERBUND_SQL, SONG_VERBUND_TABLE_NAMES, SONG_VERBUND_TABLE_SCHEMAS, SONG_VERBUND_TABLES, SONG_VERBUND_VISIBLE_TEXT, evaluateFirstConnection, evaluateQuizQuestion, evaluateSecondConnection } from './song-verbund-daten.mjs?v=20260929a';
@@ -316,15 +316,11 @@ async function submitDescription(task, input, card) {
   } catch (error) { state.server[task.id] = { level: 'error', text: error.message || 'Die Auswertung konnte nicht abgeschlossen werden.' }; }
   finally { input.disabled = false; button.disabled = false; button.textContent = 'Erklärung erneut prüfen'; save(); renderServerFeedback(task, card); }
 }
-function appendEvaluationList(container, headingText, items, emptyText) { container.append(element('h4', '', headingText)); const list = document.createElement('ul'); (items.length ? items : [emptyText]).forEach((item) => list.append(element('li', '', item))); container.append(list); }
 export function renderServerFeedback(task, card, providedFeedback = state.server[task.id]) {
   card.querySelector('.server-feedback')?.remove(); const feedback = providedFeedback; if (!feedback) return;
-  const box = element('section', `result server-feedback${feedback.level === 'loading' ? '' : ` ${feedback.level}`}`); box.setAttribute('aria-live', 'polite');
+  const level = Number.isFinite(feedback.points) && feedback.maxPoints > 0 ? feedback.points === feedback.maxPoints ? 'success' : feedback.points > 0 ? 'partial' : 'error' : feedback.level; const box = element('section', `result server-feedback${level === 'loading' ? '' : ` ${level}`}`); box.setAttribute('aria-live', 'polite');
   if (Number.isFinite(feedback.points) && feedback.maxPoints > 0) {
-    box.append(element('h3', '', `${feedback.points} von ${feedback.maxPoints} Punkten – ${feedback.status}`));
-    appendEvaluationList(box, 'Das ist dir gelungen:', feedback.strengths, 'Es wurde noch kein eindeutiger richtiger Aspekt erkannt.');
-    appendEvaluationList(box, 'Das solltest du ergänzen oder überprüfen:', feedback.missing, 'Es fehlen keine wesentlichen Aspekte.');
-    const detail = element('div', 'feedback'); detail.append(element('h4', '', 'Rückmeldung'), element('p', '', feedback.text)); box.append(detail);
+    renderCompactEvaluation(box, { ...feedback, feedback: feedback.text });
   } else box.append(element('p', '', feedback.text));
   card.append(box);
 }

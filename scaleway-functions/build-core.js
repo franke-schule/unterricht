@@ -21,7 +21,7 @@ const sections = [
 const output = '// Generiert durch build-core.js aus scaleway-functions/source/. Nicht manuell ändern.\n' +
   "'use strict';\n" + sections.join('\n\n') +
   '\nmodule.exports = { TASKS, EVALUATION_SCHEMA, buildPrompt_, normalizeEvaluation_, ' +
-  'applyRuleBasedMinimum_, createErrorResult_, MAX_ANSWER_LENGTH, MAX_CODE_LENGTH, ' +
+  'formatFinalEvaluation_, applyRuleBasedMinimum_, createErrorResult_, MAX_ANSWER_LENGTH, MAX_CODE_LENGTH, ' +
   'RESULT_MESSAGE_TYPE, CODE_RESULT_MESSAGE_TYPE };\n';
 new vm.Script(output, { filename: 'evaluation-core.js' });
 fs.writeFileSync(path.join(__dirname, 'evaluation-core.js'), output, 'utf8');

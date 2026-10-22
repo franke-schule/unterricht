@@ -902,10 +902,10 @@ async function submitAnswer(taskId) {
   resultBox.className = 'result';
   resultBox.textContent = 'Deine Antwort wird ausgewertet.';
   try {
-    const { evaluateSemanticAnswer } = await import('../../klasse-11/1-Kuenstliche-Intelligenz/perzeptron/ui/semantic-answer.mjs?v=20261010-scaleway');
+    const { evaluateSemanticAnswer, renderCompactEvaluation } = await import('../../klasse-11/1-Kuenstliche-Intelligenz/perzeptron/ui/semantic-answer.mjs?v=20261022-compact-feedback');
     const result = await evaluateSemanticAnswer({ serverUrl: SCRIPT_SERVER_URL, taskId: serverTaskId,
       answer, expectedMaxPoints: SCW_TASK_POINTS[serverTaskId] });
-    showEvaluation(resultBox, result);
+    showEvaluation(resultBox, result, renderCompactEvaluation);
   } catch (error) { showError(resultBox, error.message || 'Die Auswertung konnte nicht abgeschlossen werden.'); }
   finally {
     button.disabled = false; textarea.disabled = false;
@@ -913,172 +913,13 @@ async function submitAnswer(taskId) {
   }
 }
 
-    function showEvaluation(
-      resultBox,
-      result
-    ) {
-      resultBox.textContent = '';
-      resultBox.hidden = false;
-      resultBox.className =
-        'result ' +
-        getEvaluationLevelClass(
-          result.points
-        );
+    function showEvaluation(resultBox, result, renderCompactEvaluation) {
+  resultBox.hidden = false;
+  resultBox.className = 'result ' + (result.points === result.maxPoints ? 'high' : result.points > 0 ? 'medium' : 'low');
+  renderCompactEvaluation(resultBox, result);
+}
 
-
-      const heading =
-        document.createElement('h3');
-
-      heading.textContent =
-        result.points +
-        ' von ' +
-        result.maxPoints +
-        ' Punkten – ' +
-        result.status;
-
-      resultBox.appendChild(
-        heading
-      );
-
-
-      appendList(
-        resultBox,
-        'Das ist dir gelungen:',
-        result.strengths,
-        'Es wurde noch kein eindeutiger richtiger Aspekt erkannt.'
-      );
-
-
-      appendList(
-        resultBox,
-        'Das solltest du ergänzen oder überprüfen:',
-        result.missing,
-        'Es fehlen keine wesentlichen Aspekte.'
-      );
-
-
-      const feedbackContainer =
-        document.createElement('div');
-
-      feedbackContainer.className =
-        'feedback';
-
-
-      const feedbackHeading =
-        document.createElement('h4');
-
-      feedbackHeading.textContent =
-        'Rückmeldung';
-
-
-      const feedbackText =
-        document.createElement('p');
-
-      feedbackText.textContent =
-        result.feedback ||
-        'Überprüfe deine Antwort noch einmal.';
-
-
-      feedbackContainer.appendChild(
-        feedbackHeading
-      );
-
-      feedbackContainer.appendChild(
-        feedbackText
-      );
-
-      resultBox.appendChild(
-        feedbackContainer
-      );
-    }
-
-
-    /**
-     * Ordnet die Farbe der Auswertung den erreichten Punkten zu.
-     */
-    function getEvaluationLevelClass(points) {
-      const numericPoints =
-        Number(points);
-
-      if (numericPoints <= 2) {
-        return 'low';
-      }
-
-      if (numericPoints <= 4) {
-        return 'medium';
-      }
-
-      return 'high';
-    }
-
-
-    /**
-     * Erstellt eine sichere Aufzählung.
-     */
-    function appendList(
-      container,
-      headingText,
-      items,
-      emptyText
-    ) {
-      const heading =
-        document.createElement('h4');
-
-      heading.textContent =
-        headingText;
-
-      container.appendChild(
-        heading
-      );
-
-
-      if (
-        !Array.isArray(items) ||
-        items.length === 0
-      ) {
-        const paragraph =
-          document.createElement('p');
-
-        paragraph.textContent =
-          emptyText;
-
-        container.appendChild(
-          paragraph
-        );
-
-        return;
-      }
-
-
-      const list =
-        document.createElement('ul');
-
-
-      items.forEach(
-        function(item) {
-          const listItem =
-            document.createElement('li');
-
-          listItem.textContent =
-            String(item);
-
-          list.appendChild(
-            listItem
-          );
-        }
-      );
-
-
-      container.appendChild(
-        list
-      );
-    }
-
-
-    /**
-     * Zeigt eine Fehlermeldung an.
-     */
-    function showError(
+function showError(
       resultBox,
       message
     ) {

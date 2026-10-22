@@ -95,6 +95,38 @@ function normalizeEvaluation_(
 }
 
 
+function formatFinalEvaluation_(evaluation, task) {
+  const result = Object.assign({}, evaluation);
+  result.strengths = [];
+  if (result.maxPoints > 0 && result.points === result.maxPoints) {
+    result.missing = [];
+    result.feedback = 'Sehr gut, alles richtig';
+    return result;
+  }
+
+  let feedback = cleanText_(result.feedback, '');
+  if (task.feedbackNoteAboveHalf) {
+    const note = cleanText_(task.feedbackNoteAboveHalf, '');
+    if (note) feedback = feedback.split(note).join('').replace(/\s+/g, ' ').trim();
+  }
+  const stripBullet = item => String(item || '').replace(/^(?:[-*•]\s*)+/, '').trim();
+  const items = cleanStringArray_(result.missing).map(stripBullet);
+  const unique = [];
+  const seen = new Set();
+  for (const item of items) {
+    const key = normalizeGermanText_(item).replace(/[.,;:!?]/g, '').trim();
+    if (key && !seen.has(key)) {
+      seen.add(key);
+      unique.push(item);
+    }
+    if (unique.length === 2) break;
+  }
+  result.missing = unique;
+  result.feedback = unique.length ? '' : feedback ? '- ' + stripBullet(feedback) : '';
+  return result;
+}
+
+
 function clampNumber_(
   value,
   min,

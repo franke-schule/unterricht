@@ -1,7 +1,7 @@
 import { setupPhysicsStepTabs } from "./components/physics-step-tabs.mjs";
 import { appendPhysicsText, createIndexedSymbol, physicsTextSpan, unitChoiceValue } from "./components/physics-notation.mjs?v=20260915a";
 import { centripetalForce, circleVectors, clamp, shuffleIncorrect, tangentialSpeed } from "./components/circle-kinematics.mjs";
-import { setupPhysicsSemanticTask } from "./components/physics-semantic-task.mjs";
+import { setupPhysicsSemanticTask } from "./components/physics-semantic-task.mjs?v=20261022-compact-feedback";
 import { enableTokenDrag, wasDragged } from "./components/token-drag.mjs";
 
 const STORAGE_KEY = "physik11-kreisbewegungen-aufgabe4-v1";

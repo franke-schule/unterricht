@@ -1,7 +1,7 @@
 // Löschanleitung: aufgabe5-quiz-loeschen.txt.
 import { enableTokenDrag, wasDragged } from "./components/token-drag.mjs";
 import { appendPhysicsText, physicsTextSpan } from "./components/physics-notation.mjs?v=20260911a";
-import { evaluateSemanticAnswer } from "../../../informatik/klasse-11/1-Kuenstliche-Intelligenz/perzeptron/ui/semantic-answer.mjs?v=20261010-scaleway";
+import { evaluateSemanticAnswer, renderCompactEvaluation } from "../../../informatik/klasse-11/1-Kuenstliche-Intelligenz/perzeptron/ui/semantic-answer.mjs?v=20261022-compact-feedback";
 
 // Wiederholungs-Quiz zu Aufgabe 5: nicht verlinkte Seite, jede Aufgabe mit eigenem Prüfen-Button.
 // Eigenständig aufgebaut (Vorlage: wdh2-quiz.mjs), damit der Test ohne Reste wieder
@@ -766,15 +766,7 @@ function renderDescribe(task) {
     box.replaceChildren(element("p", "", `Die Antwort konnte gerade nicht automatisch bewertet werden (${describeErrors[task.id]}). Versuche es in einem Moment noch einmal.`));
   } else if (ai) {
     box.dataset.status = ai.status || "";
-    box.replaceChildren(element("h4", "", `${ai.status}: ${ai.points} von ${ai.maxPoints} Aspekten erkannt.`));
-    [["Das ist dir gelungen:", ai.strengths, "Noch kein Aspekt wurde eindeutig erkannt."], ["Das fehlt noch:", ai.missing, "Es fehlen keine wesentlichen Aspekte."]].forEach(([title, entries, fallback]) => {
-      box.append(element("h4", "", title));
-      const list = document.createElement("ul");
-      (entries?.length ? entries : [fallback]).forEach((entry) => list.append(element("li", "", entry)));
-      box.append(list);
-    });
-    if (ai.feedback) box.append(element("p", "", ai.feedback));
-    if (!solved) box.append(element("p", "", "Ergänze deine Antwort und prüfe sie erneut."));
+    renderCompactEvaluation(box, ai);
   } else {
     box.hidden = true;
     return;

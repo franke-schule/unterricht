@@ -1,6 +1,6 @@
 // Löschanleitung: aufgabe1-quiz-skriptserver.txt. Test zu Aufgabe 1: nicht verlinkte Seite,
 // jede Aufgabe mit eigenem Prüfen-Button und sofortiger Rückmeldung.
-import { evaluateSemanticAnswer } from '../../klasse-11/1-Kuenstliche-Intelligenz/perzeptron/ui/semantic-answer.mjs?v=20261010-scaleway';
+import { evaluateSemanticAnswer, renderCompactEvaluation } from '../../klasse-11/1-Kuenstliche-Intelligenz/perzeptron/ui/semantic-answer.mjs?v=20261022-compact-feedback';
 
 const STORAGE_KEY = 'informatik10-datenbanken-aufgabe1-test-v1';
 const SCRIPT_SERVER_URL = 'https://unterrichtkiichezbn4-ki-auswertung.functions.fnc.fr-par.scw.cloud/';
@@ -630,15 +630,8 @@ function renderDescribe(task) {
   } else if (describeErrors[task.id]) {
     setFeedback(box, 'error', [`Die Antwort konnte gerade nicht automatisch bewertet werden (${describeErrors[task.id]}). Versuche es in einem Moment noch einmal.`]);
   } else if (ai) {
-    const parts = [element('h4', '', `${ai.status}: ${ai.points} von ${ai.maxPoints} Aspekten erkannt.`)];
-    [['Das ist dir gelungen:', ai.strengths, 'Noch kein Aspekt wurde eindeutig erkannt.'], ['Das fehlt noch:', ai.missing, 'Es fehlen keine wesentlichen Aspekte.']].forEach(([title, entries, fallback]) => {
-      const list = document.createElement('ul');
-      (entries?.length ? entries : [fallback]).forEach((entry) => list.append(element('li', '', entry)));
-      parts.push(element('h4', '', title), list);
-    });
-    if (ai.feedback) parts.push(ai.feedback);
-    if (!solved) parts.push('Ergänze deine Antwort und prüfe sie erneut.');
-    setFeedback(box, statusClass(ai.status), parts);
+    setFeedback(box, statusClass(ai.status), []);
+    renderCompactEvaluation(box, ai);
   } else {
     box.hidden = true;
   }

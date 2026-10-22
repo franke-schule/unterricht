@@ -1,5 +1,5 @@
 import { mountClassCard, evaluateClassCard, parseStoredChoices } from '../../../../klasse-10/2-Modellierung-und-Programmierung-Online-IDE/klassendiagramm.mjs?v=20261021-compact';
-import { evaluateCodeAnswer } from './semantic-answer.mjs?v=20261019-code-check';
+import { evaluateCodeAnswer, renderCompactEvaluation } from './semantic-answer.mjs?v=20261022-compact-feedback';
 import { unlockSolution } from '../../../../klasse-10/1-Datenbanken/tab-navigation.mjs';
 
 const STORAGE_KEY = 'informatik11-ki-aufgabe6-0-v2';
@@ -231,26 +231,10 @@ function serverError(error) {
 }
 function renderCodeEvaluation(block, result) {
   const level = result.points === result.maxPoints ? 'success' : result.points > 0 ? 'partial' : 'error';
-  const message = block.feedback[level === 'success' ? 0 : level === 'partial' ? 1 : 2];
   const box = document.getElementById('task-' + block.id).querySelector('[aria-live="polite"]');
   box.hidden = false;
   box.className = 'feedback ' + level;
-  box.replaceChildren();
-  const heading = document.createElement('strong');
-  heading.textContent = `${result.points} von ${result.maxPoints} Punkten – ${result.status}`;
-  box.append(heading);
-  for (const [label, items, empty] of [
-    ['Das ist dir gelungen', result.strengths, 'Noch kein Aspekt ist eindeutig belegt.'],
-    ['Das solltest du überprüfen', result.missing, 'Es fehlt kein wesentlicher Aspekt.']
-  ]) {
-    const title = document.createElement('strong'); title.textContent = label; box.append(title);
-    if (items.length) { const list = document.createElement('ul'); for (const item of items) { const li = document.createElement('li'); li.textContent = item; list.append(li); } box.append(list); }
-    else { const p = document.createElement('span'); p.textContent = empty; box.append(p); }
-  }
-  const feedback = document.createElement('span'); feedback.textContent = message; box.append(feedback);
-  if (typeof result.feedback === 'string' && result.feedback.trim()) {
-    const detail = document.createElement('p'); detail.textContent = result.feedback.trim(); box.append(detail);
-  }
+  renderCompactEvaluation(box, result);
 }
 async function checkCodeBlock(block, result, button) {
   let code;

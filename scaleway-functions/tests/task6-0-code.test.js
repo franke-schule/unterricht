@@ -143,7 +143,8 @@ test('4A unterscheidet void-Ausgabe, Getter ohne Ausgabe und Scheinlösungen', (
   assert.equal(wrong.status, 'noch nicht korrekt');
   assert.deepEqual(wrong.strengths, []);
   assert.match(wrong.feedback, /Rückgabetyp void/);
-  assert.match(wrong.feedback, /fehlt ein Aufruf des Alters-Getters/);
+  assert.match(wrong.feedback, /Ersetze den inneren Aufruf petersHund\.zeigeDaten\(\) durch petersHund\.gibAlter\(\)/);
+  assert.equal(wrong.missing.length, 1, 'Ein konkreter Ersetzen-Hinweis genügt.');
   const getterOnly = core.applyRuleBasedMinimum_(inflated, task, codeBundle(`${mainStart}\npetersHund.gibAlter();`));
   assert.equal(getterOnly.points, 2);
   assert.match(getterOnly.feedback, /Rückgabewert.*println/);
@@ -151,6 +152,13 @@ test('4A unterscheidet void-Ausgabe, Getter ohne Ausgabe und Scheinlösungen', (
     '\n/* println(petersHund.gibAlter()); */', '\nprintln("println(petersHund.gibAlter());");']) {
     assert.equal(core.applyRuleBasedMinimum_(inflated, task, codeBundle(mainStart + suffix)).points, 0);
   }
+  const badArity = core.applyRuleBasedMinimum_(inflated, task, codeBundle(`${mainStart}\nprintln(petersHund.gibAlter(7));`));
+  assert.equal(badArity.points, 0);
+  assert.equal(badArity.feedback, 'Die Methode gibAlter() hat keinen Eingabeparameter. Korrigiere dies.');
+  const showOnly = core.applyRuleBasedMinimum_(inflated, task, codeBundle(mainStart));
+  assert.equal(showOnly.points, 0);
+  assert.match(showOnly.missing[0], /^Ersetze petersHund\.zeigeDaten\(\)/);
+  assert.equal(showOnly.missing.length, 1, 'Keine zusätzliche generische Getter-Erklärung.');
   const mixed = core.applyRuleBasedMinimum_(inflated, task, codeBundle(`${mainStart}\nprintln(petersHund.gibAlter());\nprintln(petersHund.zeigeDaten());`));
   assert.ok(mixed.points < 3);
   assert.match(mixed.feedback, /void/);
@@ -166,16 +174,18 @@ test('4A hebt die Bewertung bei ungeprüfter Syntax, Kontrollfluss oder geänder
     codeBundle(`${mainStart}\nprintln(petersHund.gibAlter());`).replace('return alter;', 'return 42;'),
     codeBundle(`${mainStart}\nprintln(petersHund.gibAlter());`).replace('alter = startAlter;', 'alter = 0;'),
     codeBundle(`${mainStart}\npetersHund = null;\nprintln(petersHund.gibAlter());`),
-    codeBundle(`${mainStart}\nprintln(petersHund.gibAlter(1));`),
     codeBundle(`${mainStart}\nprintln(petersHund.gibAlter());`).replace('new Hund(5,', 'new Hund(2147483648,'),
     codeBundle(`${mainStart}\nprintln(petersHund.gibAlter());`).replace('new Hund(5,', 'new Hund(09,'),
     codeBundle(`${mainStart}\nprintln(petersHund.gibAlter());`).replace('Wuffti', '\\q'),
     codeBundle(`${mainStart}\nprintln(petersHund.gibAlter());\n/* nicht geschlossen`)
   ];
   for (const code of inputs) assert.equal(core.applyRuleBasedMinimum_(unchanged, task, code), unchanged);
-  for (const id of ['11-6-0-5a-code', '11-6-0-5b-code']) {
-    assert.equal(core.applyRuleBasedMinimum_(unchanged, core.TASKS[id], cumulativeSolution), unchanged);
-  }
+  const badArity = core.applyRuleBasedMinimum_(unchanged, task, codeBundle(`${mainStart}\nprintln(petersHund.gibAlter(7));`));
+  assert.equal(badArity.points, 0);
+  assert.equal(badArity.missing[0], 'Die Methode gibAlter() hat keinen Eingabeparameter. Korrigiere dies.');
+  const fiveA = core.applyRuleBasedMinimum_(unchanged, core.TASKS['11-6-0-5a-code'], cumulativeSolution);
+  assert.equal(fiveA.points, 4);
+  assert.equal(core.applyRuleBasedMinimum_(unchanged, core.TASKS['11-6-0-5b-code'], cumulativeSolution), unchanged);
 });
 
 test('4A korrigiert die gemeldete Zwei-Punkte-Antwort im tatsächlichen Server-Antwortweg', async () => {
@@ -193,8 +203,55 @@ test('4A korrigiert die gemeldete Zwei-Punkte-Antwort im tatsächlichen Server-A
   assert.equal(result.points, 3);
   assert.equal(result.status, 'korrekt');
   assert.deepEqual(result.missing, []);
-  assert.match(result.feedback, /^Korrekt\./);
+  assert.equal(result.feedback, 'Sehr gut, alles richtig');
+  const badArity = await handle({ httpMethod:'POST', path:'/', headers:{ 'Content-Type':'application/json' },
+    body:JSON.stringify({ requestId:'getter_bad_arity', taskId:'11-6-0-4a-code', requestType:'code',
+      code:codeBundle(`${mainStart}\nprintln(petersHund.gibAlter(7));`) }) });
+  const badArityResult = JSON.parse(badArity.body).result;
+  assert.equal(badArityResult.points, 0);
+  assert.deepEqual(badArityResult.missing, ['Die Methode gibAlter() hat keinen Eingabeparameter. Korrigiere dies.']);
+  assert.equal(badArityResult.feedback, '');
   assert.doesNotMatch(response.body, /Getter muss direkt|Vorherige Ausgabe mit zeigeDaten\(\) ist falsch/);
+});
+
+test('5A wertet den kumulativen Startcode regelbasiert mit 4/4 trotz falscher KI-Ausgabe', async () => {
+  const code = cumulativeSolution;
+  const handle = createHandler({ env:{ AI_API_KEY:'mock-only', AI_PROJECT_ID:'11111111-1111-1111-1111-111111111111',
+    AI_MODEL:'mock-model', AI_EVALUATION_ENABLED:'true' }, fetchImpl:async () => ({ ok:true, status:200,
+    text:async () => JSON.stringify({ choices:[{ finish_reason:'stop', message:{ content:JSON.stringify({
+      points:0, maxPoints:4, status:'noch nicht korrekt', strengths:[], missing:['Setter fehlt.'], feedback:'Setter ergänzen.'
+    }) } }] }) }) });
+  const request = async source => {
+    const response = await handle({ httpMethod:'POST', path:'/', headers:{ 'Content-Type':'application/json' },
+      body:JSON.stringify({ requestId:'task5a_regression', taskId:'11-6-0-5a-code', requestType:'code', code:source }) });
+    assert.equal(response.statusCode, 200);
+    return JSON.parse(response.body).result;
+  };
+  const result = await request(code);
+  assert.equal(result.points, 4);
+  assert.equal(result.status, 'korrekt');
+  assert.deepEqual(result.strengths, []);
+  assert.deepEqual(result.missing, []);
+  assert.equal(result.feedback, 'Sehr gut, alles richtig');
+
+  const changedIna = await request(code.replace('petersHund.setzeAlter(7);', 'petersHund.setzeAlter(7);\ninasHund.setzeAlter(8);'));
+  assert.equal(changedIna.points, 3);
+  assert.notEqual(changedIna.status, 'korrekt');
+  assert.ok(changedIna.missing.length > 0 && changedIna.missing.length <= 2);
+  assert.equal(changedIna.feedback, '');
+  const inaGetterThenSetter = await request(code.replace('petersHund.setzeAlter(7);\nprintln(petersHund.gibAlter());\nprintln(inasHund.gibAlter());',
+    'petersHund.setzeAlter(7);\nprintln(inasHund.gibAlter());\ninasHund.setzeAlter(8);\nprintln(petersHund.gibAlter());'));
+  assert.equal(inaGetterThenSetter.points, 3);
+  const wrongSetterValue = await request(code.replace('petersHund.setzeAlter(7);', 'petersHund.setzeAlter(8);'));
+  assert.notEqual(wrongSetterValue.points, 4);
+  const resetPeter = await request(code.replace('petersHund.setzeAlter(7);', 'petersHund.setzeAlter(7);\npetersHund.setzeAlter(8);'));
+  assert.notEqual(resetPeter.points, 4);
+  const voidGetter = await request(code.replace('println(petersHund.gibAlter());', 'println(petersHund.zeigeDaten());'));
+  assert.notEqual(voidGetter.points, 4);
+  const syntaxErrorWithGetter = await request(`${mainStart}\npetersHund.setzeAlter(7);\nprintln(petersHund.gibAlter());\nprintln(inasHund.gibAlter())\nprintln(petersHund.gibAlter());`);
+  assert.equal(syntaxErrorWithGetter.points, 0);
+  const badFiveAArity = await request(code.replace('println(petersHund.gibAlter());', 'println(petersHund.gibAlter(7));'));
+  assert.equal(badFiveAArity.points, 0);
 });
 
 test('Client prüft aktuellen IDE-Code aus beiden Dateien und Codeblöcke haben keine Begleitfelder', () => {
@@ -433,14 +490,18 @@ test('Prompt-Vertrag mit Codefixtures und kontrollierten Modellantworten (Mock; 
     assert.equal(result.points, fixture.points, fixture.name);
     assert.equal(result.maxPoints, task.maxPoints, fixture.name);
     assert.equal(result.status, fixture.points === task.maxPoints ? task.statusLabels.correct : fixture.points ? task.statusLabels.partial : task.statusLabels.incorrect, fixture.name);
-    if (fixture.taskId !== '11-6-0-4a-code') {
-      assert.deepEqual(result.strengths, task.expectedAspects.slice(0, fixture.points), `${fixture.name}: kontrollierte erkannte Aspekte`);
-      assert.deepEqual(result.missing, task.expectedAspects.slice(fixture.points), `${fixture.name}: kontrollierte fehlende Aspekte`);
-      assert.equal(result.feedback, 'Mock-Antwort; keine semantische Livebewertung.', fixture.name);
+    if (fixture.points === task.maxPoints) {
+      assert.deepEqual(result.strengths, [], `${fixture.name}: volle Punktzahl ohne Stärkenliste`);
+      assert.deepEqual(result.missing, [], `${fixture.name}: volle Punktzahl ohne Fehlendes`);
+      assert.equal(result.feedback, 'Sehr gut, alles richtig', fixture.name);
+    } else if (fixture.taskId !== '11-6-0-4a-code') {
+      assert.equal(result.missing.length <= 2, true, `${fixture.name}: höchstens zwei Hinweise`);
+      assert.deepEqual(result.strengths, [], `${fixture.name}: keine parallele Stärkenliste`);
+      if (result.missing.length) assert.equal(result.feedback, '', `${fixture.name}: keine doppelte Erklärung`);
     } else {
-      assert.equal(result.strengths.length, fixture.points, `${fixture.name}: belegte Aspekte`);
       assert.equal(result.missing.length === 0, fixture.points === task.maxPoints, `${fixture.name}: konkrete Hinweise nur bei Fehlern`);
-      assert.ok(result.feedback.length > 0, fixture.name);
+      assert.deepEqual(result.strengths, [], `${fixture.name}: keine parallele Stärkenliste`);
+      if (result.missing.length) assert.equal(result.feedback, '', `${fixture.name}: keine doppelte Erklärung`);
     }
   }
 });

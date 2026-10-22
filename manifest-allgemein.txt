@@ -67,6 +67,15 @@ evaluateCodeAnswer verwenden (POST/JSON, keine neue KI-Pipeline und kein
 Google-Fallback). Bei Loeschungen auch die Aufgaben-IDs aus tasks.js und
 zugehoerige Regeln/Tests entfernen oder anpassen und eine neue ZIP bauen.
 
+Finales KI-Feedback wird nach der regelbasierten Nachbewertung zentral im
+Scaleway-Client kompakt formatiert. Volle Punktzahl liefert exakt
+"Sehr gut, alles richtig"; strengths und missing sind dann leer. Sonst stehen
+in missing hoechstens zwei deduplizierte, kurze Handlungsanweisungen. Bei Code
+kommen Syntax- und Typfehler zuerst und nennen die konkrete Stelle samt
+Ersetzung oder Ergaenzung. Doppelte Lob-/Fehltabschnitte und wiederholte
+Prosa entfallen. Die gemeinsame Anzeige verwendet renderCompactEvaluation;
+serverseitig bleibt der interne Bewertungsvertrag kompatibel.
+
 
 1. Ordner, Dateinamen und Menues
 --------------------------------
@@ -455,6 +464,11 @@ Beibehalten:
 
 Richtig/falsch darf nicht ausschliesslich durch Farbe vermittelt werden. Immer
 zusaetzlich eine konkrete Textmeldung anzeigen.
+
+Bei KI-Feedback keine parallelen Abschnitte fuer Staerken und Fehlendes
+ausgeben. Fuer die finale Anzeige gilt renderCompactEvaluation: volle
+Punktzahl mit dem festgelegten Erfolgssatz, sonst hoechstens zwei konkrete,
+deduplizierte Handlungsanweisungen.
 
 Feedback-Buttons bei Multiple-Choice-Fragen:
 

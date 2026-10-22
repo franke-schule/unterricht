@@ -66,3 +66,38 @@ async function evaluate({ serverUrl = SCW_FUNCTION_URL, taskId, answer, code,
 
 export function evaluateSemanticAnswer(parameters) { return evaluate(parameters, 'text'); }
 export function evaluateCodeAnswer(parameters) { return evaluate(parameters, 'code'); }
+
+/** Gemeinsame, knappe Anzeige für Beschreibe- und Programmieraufgaben. */
+export function renderCompactEvaluation(container, result, { appendText } = {}) {
+  const document = container.ownerDocument;
+  const complete = result.points === result.maxPoints;
+  const status = complete ? 'Sehr gut, alles richtig'
+    : result.points > 0 ? 'teilweise korrekt' : 'noch nicht korrekt';
+  const heading = document.createElement('strong');
+  heading.textContent = `${result.points} von ${result.maxPoints} Punkten – ${status}`;
+  container.replaceChildren(heading);
+  if (complete) return;
+
+  const missing = Array.isArray(result.missing) ? result.missing : [];
+  const values = missing.some(item => typeof item === 'string' && item.trim())
+    ? missing : String(result.feedback || '').split(/\r?\n/);
+  const seen = new Set();
+  const hints = values.filter(item => typeof item === 'string').map(item => item
+    .replace(/^\s*[-*•]\s*/, '')
+    .replace(/^(?:Teilweise (?:korrekt|richtig)|Noch nicht korrekt|Noch unvollständig)[.!:]?\s*/i, '')
+    .trim()).filter(item => {
+      const key = item.toLocaleLowerCase('de').replace(/[.!]$/, '');
+      if (!key || seen.has(key)) return false;
+      seen.add(key);
+      return true;
+    }).slice(0, 2);
+  if (!hints.length) hints.push('Ergänze die fehlenden Aspekte deiner Antwort und prüfe erneut.');
+  const list = document.createElement('ul');
+  for (const hint of hints) {
+    const item = document.createElement('li');
+    if (typeof appendText === 'function') appendText(item, hint);
+    else item.textContent = hint;
+    list.append(item);
+  }
+  container.append(list);
+}

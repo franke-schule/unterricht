@@ -98,7 +98,8 @@ async function evaluate(task, answer, config, fetchImpl) {
     throw new ApiError(502, 'INVALID_MODEL_RESPONSE', 'Das Modell hat keine gültige Bewertung geliefert. Bitte versuche es erneut.');
   }
   validateEvaluation(evaluation, task);
-  return core.applyRuleBasedMinimum_(core.normalizeEvaluation_(evaluation, task), task, answer);
+  const ruleAdjusted = core.applyRuleBasedMinimum_(core.normalizeEvaluation_(evaluation, task), task, answer);
+  return core.formatFinalEvaluation_(ruleAdjusted, task);
 }
 
 module.exports = { ApiError, readConfig, evaluate, evaluationSchema, validateEvaluation };

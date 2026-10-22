@@ -1,4 +1,4 @@
-import { evaluateSemanticAnswer, evaluateCodeAnswer } from './semantic-answer.mjs?v=20261010-scaleway';
+import { evaluateSemanticAnswer, evaluateCodeAnswer, renderCompactEvaluation } from './semantic-answer.mjs?v=20261022-compact-feedback';
 import { setupCodeSnippetOrder } from './code-snippet-order.mjs';
 
 const SERVER_URL = 'https://unterrichtkiichezbn4-ki-auswertung.functions.fnc.fr-par.scw.cloud/';
@@ -80,7 +80,7 @@ function showMessage(box, message, kind='error') {
   box.textContent = message;
 }
 function resultLevel(result) {
-  if (result.points >= result.maxPoints) return 0;
+  if (result.points === result.maxPoints) return 0;
   if (result.points > 0) return 1;
   return 2;
 }
@@ -88,23 +88,7 @@ function renderEvaluation(box, result, fallbackKey) {
   box.hidden = false;
   const level = resultLevel(result);
   box.className = 'feedback ' + ['success','partial','error'][level];
-  box.replaceChildren();
-  const heading = document.createElement('h3');
-  heading.textContent = `${result.points} von ${result.maxPoints} Punkten – ${result.status}`;
-  box.append(heading);
-  const emptyStrength = ['Alle erwarteten Aspekte wurden erkannt.', 'Einige erwartete Aspekte wurden erkannt.', 'Es wurde noch kein eindeutiger richtiger Aspekt erkannt.'][level];
-  const emptyMissing = ['Es fehlen keine wesentlichen Aspekte.', 'Es fehlen noch erwartete Aspekte. Prüfe die Rückmeldung unten.', 'Wichtige Aspekte fehlen noch. Prüfe die Rückmeldung unten.'][level];
-  for (const [title, items, empty] of [['Das ist dir gelungen',result.strengths,emptyStrength],['Das solltest du überprüfen',result.missing,emptyMissing]]) {
-    const h = document.createElement('h4'); h.textContent = title; box.append(h);
-    if (Array.isArray(items) && items.length) { const ul = document.createElement('ul'); for (const item of items) { const li = document.createElement('li'); li.textContent = item; ul.append(li); } box.append(ul); }
-    else { const p = document.createElement('p'); p.textContent = empty; box.append(p); }
-  }
-  const feedback = document.createElement('p');
-  const serverFeedback = typeof result.feedback === 'string' ? result.feedback.trim() : '';
-  feedback.textContent = serverFeedback && serverFeedback !== 'Ueberarbeite deine Antwort mithilfe der Hinweise.'
-    ? serverFeedback
-    : FALLBACK[fallbackKey][level];
-  box.append(feedback);
+  renderCompactEvaluation(box, result);
 }
 function serverError(error) {
   const message = error?.message || 'Die Auswertung konnte nicht abgeschlossen werden.';

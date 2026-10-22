@@ -1,7 +1,7 @@
 // Wiederholungs-Quiz zu Aufgabe 3: nicht verlinkte Seite, jede Aufgabe mit eigenem Prüfen-Button.
 // Löschanleitung: aufgabe3-quiz-loeschen.txt.
 import { enableTokenDrag, wasDragged } from "../../../physik/klasse-11/1-Kreisbewegungen/components/token-drag.mjs";
-import { evaluateSemanticAnswer } from "../../klasse-11/1-Kuenstliche-Intelligenz/perzeptron/ui/semantic-answer.mjs?v=20261010-scaleway";
+import { evaluateSemanticAnswer, renderCompactEvaluation } from "../../klasse-11/1-Kuenstliche-Intelligenz/perzeptron/ui/semantic-answer.mjs?v=20261022-compact-feedback";
 const STORAGE_KEY = "informatik10-datenbanken-aufgabe3-test-v1";
 const SCRIPT_SERVER_URL = "https://unterrichtkiichezbn4-ki-auswertung.functions.fnc.fr-par.scw.cloud/";
 const DESCRIBE_MIN_LENGTH = 30;
@@ -575,15 +575,7 @@ function renderDescribe(task) {
     box.replaceChildren(element("p", "", `Die Antwort konnte gerade nicht automatisch bewertet werden (${describeErrors[task.id]}). Versuche es in einem Moment noch einmal.`));
   } else if (ai) {
     box.dataset.status = ai.status || "";
-    box.replaceChildren(element("h4", "", `${ai.status}: ${ai.points} von ${ai.maxPoints} Aspekten erkannt.`));
-    [["Das ist dir gelungen:", ai.strengths, "Noch kein Aspekt wurde eindeutig erkannt."], ["Das fehlt noch:", ai.missing, "Es fehlen keine wesentlichen Aspekte."]].forEach(([title, entries, fallback]) => {
-      box.append(element("h4", "", title));
-      const list = document.createElement("ul");
-      (entries?.length ? entries : [fallback]).forEach((entry) => list.append(element("li", "", entry)));
-      box.append(list);
-    });
-    if (ai.feedback) box.append(element("p", "", ai.feedback));
-    if (!solved) box.append(element("p", "", "Ergänze deine Antwort und prüfe sie erneut."));
+    renderCompactEvaluation(box, ai);
   } else {
     box.hidden = true;
     return;

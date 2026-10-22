@@ -1,5 +1,5 @@
 import { FISH_DEPTH_RESULTS, numberMatches, percentageMatches } from "../logic/fish-depth.mjs";
-import { evaluateSemanticAnswer } from "./semantic-answer.mjs?v=20261010-scaleway";
+import { evaluateSemanticAnswer, renderCompactEvaluation } from "./semantic-answer.mjs?v=20261022-compact-feedback";
 
 const SCRIPT_SERVER_URL = "https://unterrichtkiichezbn4-ki-auswertung.functions.fnc.fr-par.scw.cloud/";
 const MAX_LENGTH = 3000;
@@ -97,31 +97,12 @@ function setupTabs() {
   showStep(state.activeStep);
 }
 
-function appendFeedbackList(container, title, items, fallback) {
-  const heading = document.createElement("h4");
-  heading.textContent = title;
-  const list = document.createElement("ul");
-  (Array.isArray(items) && items.length ? items : [fallback]).forEach((text) => {
-    const item = document.createElement("li");
-    item.textContent = text;
-    list.append(item);
-  });
-  container.append(heading, list);
-}
-
 function renderSemanticResult(container, result) {
   container.replaceChildren();
   container.hidden = false;
-  const complete = Number(result.points) >= Math.ceil(Number(result.maxPoints) * 0.75);
+  const complete = Number(result.points) === Number(result.maxPoints);
   container.className = `fish-semantic-feedback${complete ? " success" : ""}`;
-  const heading = document.createElement("h3");
-  heading.textContent = `${result.points} von ${result.maxPoints} Punkten – ${result.status}`;
-  container.append(heading);
-  appendFeedbackList(container, "Das ist dir gelungen:", result.strengths, "Es wurde noch kein eindeutiger richtiger Aspekt erkannt.");
-  appendFeedbackList(container, "Das solltest du ergänzen:", result.missing, "Es fehlen keine wesentlichen Aspekte.");
-  const feedback = document.createElement("p");
-  feedback.textContent = result.feedback || "Überprüfe deine Beschreibung noch einmal.";
-  container.append(feedback);
+  renderCompactEvaluation(container, result);
 }
 
 async function checkSemanticTask(config) {

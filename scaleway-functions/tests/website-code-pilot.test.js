@@ -12,16 +12,18 @@ const start = transformed.indexOf('<script>', transformed.indexOf('</main>')) + 
 const fullScript = transformed.slice(start, transformed.indexOf('</script>', start));
 const script = fullScript.slice(0, fullScript.indexOf('    function setupChoiceQuiz('));
 
-function element() {
-  return { disabled: false, hidden: true, dataset: {}, children: [], className: '',
+function element(ownerDocument) {
+  return { ownerDocument, disabled: false, hidden: true, dataset: {}, children: [], className: '',
     set textContent(value) { this.text = String(value); this.children = []; },
     get textContent() { return this.text || ''; },
-    appendChild(child) { this.children.push(child); } };
+    appendChild(child) { this.children.push(child); }, append(...items) { this.children.push(...items); },
+    replaceChildren(...items) { this.children = items; } };
 }
 function harness(fetchImpl) {
   const state = { code: 'Robot dudu = new Robot(1, 1, 12, 12);', ready: true };
-  const elements = Object.fromEntries(['10-3a', '10-3b'].flatMap(task =>
-    ['button', 'result'].map(kind => [kind + '-' + task, element()])));
+  const elements = {};
+  const document = { getElementById: id => elements[id], createElement: () => element(document) };
+  for (const task of ['10-3a', '10-3b']) for (const kind of ['button', 'result']) elements[kind + '-' + task] = element(document);
   elements['button-10-3a'].textContent = 'Meinen Code für a prüfen';
   elements['button-10-3b'].textContent = 'Meinen Code für b prüfen';
   elements['robot-ide'] = { contentWindow: { online_ide_access: { getIDE(id) {
@@ -33,13 +35,13 @@ function harness(fetchImpl) {
   } } } };
   const timers = new Map();
   let timerCount = 0;
-  const context = vm.createContext({ document: { getElementById: id => elements[id], createElement: element },
+  const context = vm.createContext({ document,
     window: { crypto: { randomUUID } }, URL, AbortController, fetch: fetchImpl,
     setTimeout: callback => { timers.set(++timerCount, callback); return timerCount; },
     clearTimeout: id => timers.delete(id) });
   const helper = fs.readFileSync(path.resolve(__dirname, '../../faecher/informatik/klasse-11/1-Kuenstliche-Intelligenz/perzeptron/ui/semantic-answer.mjs'), 'utf8').replace(/^export /gm, '');
   vm.runInContext(helper, context);
-  vm.runInContext('globalThis.scwTestModule = { evaluateSemanticAnswer, evaluateCodeAnswer };', context);
+  vm.runInContext('globalThis.scwTestModule = { evaluateSemanticAnswer, evaluateCodeAnswer, renderCompactEvaluation };', context);
   vm.runInContext(script.replace(/import\('[^']+'\)/g, 'Promise.resolve(scwTestModule)'), context);
   return { elements, state, timers, context };
 }
@@ -83,7 +85,7 @@ test('Code aus Hauptprogramm.java geht als JSON-Body an Scaleway; a/b haben eige
     assert.equal(call.options.credentials, 'omit');
     assert.equal(h.elements['button-' + taskId].disabled, false);
     const maxPoints = taskId === '10-3a' ? 3 : 6;
-    assert.equal(h.elements['result-' + taskId].children[0].textContent, `${maxPoints} von ${maxPoints} Punkten – korrekt`);
+    assert.equal(h.elements['result-' + taskId].children[0].textContent, `${maxPoints} von ${maxPoints} Punkten – Sehr gut, alles richtig`);
   }
   assert.equal(h.elements['button-10-3a'].textContent, 'Meinen Code für a prüfen');
   assert.equal(h.timers.size, 0);

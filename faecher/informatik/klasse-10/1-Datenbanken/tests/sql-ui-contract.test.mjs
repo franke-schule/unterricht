@@ -34,7 +34,7 @@ assert.match(source, /panel\.append\(schemaCard\(MENU_TABLE_SCHEMAS\)\)/);
 assert.match(source, /panel\.append\(schemaCard\(SONG_VERBUND_TABLE_SCHEMAS\)\)/);
 assert.match(source, /Ergebnisrelation horizontal und vertikal scrollen/);
 assert.match(source, /`result server-feedback/);
-assert.match(source, /\$\{feedback\.points\} von \$\{feedback\.maxPoints\} Punkten/);
+assert.match(source, /renderCompactEvaluation\(box, \{ \.\.\.feedback, feedback: feedback\.text \}\)/);
 assert.match(source, /button\.textContent = 'Erklärung erneut prüfen'/);
 assert.match(source, /card\.querySelector\('\.server-feedback'\)\?\.remove\(\)/);
 assert.match(css, /\.sql-page \.progress-card \{ position: static; \}/);

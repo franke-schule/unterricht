@@ -1,41 +1,15 @@
-import { evaluateSemanticAnswer } from "../../../../informatik/klasse-11/1-Kuenstliche-Intelligenz/perzeptron/ui/semantic-answer.mjs?v=20261010-scaleway";
+import { evaluateSemanticAnswer, renderCompactEvaluation } from "../../../../informatik/klasse-11/1-Kuenstliche-Intelligenz/perzeptron/ui/semantic-answer.mjs?v=20261022-compact-feedback";
+import { appendPhysicsText } from "./physics-notation.mjs?v=20260911a";
 
 const MAX_LENGTH = 3000;
 const SCRIPT_SERVER_URL = "https://unterrichtkiichezbn4-ki-auswertung.functions.fnc.fr-par.scw.cloud/";
 
-function appendFeedbackList(container, title, items, fallback) {
-  const heading = document.createElement("h4");
-  heading.textContent = title;
-  const list = document.createElement("ul");
-  (Array.isArray(items) && items.length ? items : [fallback]).forEach((itemText) => {
-    const item = document.createElement("li");
-    item.textContent = itemText;
-    list.append(item);
-  });
-  container.append(heading, list);
-}
-
-function renderSemanticResult(container, result, feedbackBuilder) {
+function renderSemanticResult(container, result) {
   container.replaceChildren();
   container.hidden = false;
   container.className = "physics-semantic-feedback";
   container.dataset.status = result.status || "noch nicht korrekt";
-
-  const heading = document.createElement("h3");
-  heading.textContent = result.status || "noch nicht korrekt";
-  const score = document.createElement("p");
-  score.textContent = `${result.points} von ${result.maxPoints} Aspekten erkannt.`;
-  container.append(heading, score);
-  appendFeedbackList(container, "Das ist dir gelungen:", result.strengths, "Noch kein Aspekt wurde eindeutig erkannt.");
-  appendFeedbackList(container, "Das kannst du ergänzen:", result.missing, "Es fehlen keine wesentlichen Aspekte.");
-  if (typeof feedbackBuilder === "function") {
-    const feedbackContent = feedbackBuilder(result);
-    if (feedbackContent) container.append(feedbackContent);
-  } else {
-    const feedback = document.createElement("p");
-    feedback.textContent = result.feedback || "Überprüfe deine Beschreibung noch einmal.";
-    container.append(feedback);
-  }
+  renderCompactEvaluation(container, result, { appendText: appendPhysicsText });
 }
 
 /**
@@ -83,7 +57,7 @@ export function setupPhysicsSemanticTask({
           strengths: [],
           missing: [shortAnswerHint],
           feedback: ""
-        }, feedbackBuilder);
+        });
         textarea.focus();
         return;
       }
@@ -109,7 +83,7 @@ export function setupPhysicsSemanticTask({
         taskId,
         answer,
       });
-      renderSemanticResult(feedback, result, feedbackBuilder);
+      renderSemanticResult(feedback, result);
     } catch (error) {
       if (typeof feedbackBuilder === "function") {
         feedback.replaceChildren();

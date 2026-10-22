@@ -1,5 +1,5 @@
 import { createPointVectorGrid } from "./components/point-vector-grid.mjs?v=20260930a";
-import { setupPhysicsSemanticTask } from "./components/physics-semantic-task.mjs?v=20260910a";
+import { setupPhysicsSemanticTask } from "./components/physics-semantic-task.mjs?v=20261022-compact-feedback";
 import { setupPhysicsStepTabs } from "./components/physics-step-tabs.mjs";
 import { appendPhysicsText, physicsTextSpan } from "./components/physics-notation.mjs?v=20260911a";
 import { createPhysicsTaskProgress } from "./components/physics-task-progress.mjs?v=20260930a";

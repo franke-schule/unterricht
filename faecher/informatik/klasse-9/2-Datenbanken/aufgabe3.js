@@ -1,6 +1,6 @@
 // Aufgabe 3 – Datensätze filtern mit WHERE (Informatik 9).
 import { classifyDescriptionResult, compareRelations, isValidScriptServerUrl, missingTextQuote, normalizeRelation, parseDelimited, sqlTokens, validateSelectStatement } from '../../klasse-10/1-Datenbanken/sql-lab-core.mjs?v=20260929b';
-import { evaluateSemanticAnswer } from '../../klasse-11/1-Kuenstliche-Intelligenz/perzeptron/ui/semantic-answer.mjs?v=20261021-inf9-db2';
+import { evaluateSemanticAnswer, renderCompactEvaluation } from '../../klasse-11/1-Kuenstliche-Intelligenz/perzeptron/ui/semantic-answer.mjs?v=20261022-compact-feedback';
 import { enableTabKeyboardNavigation, focusTabPanelStart, renderTabFlowNavigation, syncTabSemantics } from '../../klasse-10/1-Datenbanken/tab-navigation.mjs?v=20260906a';
 const STORAGE_KEY = 'informatik9-datenbanken-aufgabe3-where-v1';
 const NEUTRAL_SQL_PLACEHOLDER = 'SELECT ...\nFROM ...';
@@ -1019,23 +1019,14 @@ function appendHints(card, hints) {
   card.append(box);
 }
 
-function appendDescriptionList(container, headingText, items, emptyText) {
-  container.append(element('h4', '', headingText));
-  const list = document.createElement('ul');
-  (items.length ? items : [emptyText]).forEach((item) => list.append(element('li', '', item)));
-  container.append(list);
-}
-
 function renderDescriptionFeedback(task, box) {
   box.replaceChildren();
   const feedback = state.descriptionFeedback[task.id];
   if (!feedback) return;
-  box.className = `result server-feedback ${feedback.level}`;
+  const level = Number.isInteger(feedback.points) ? feedback.points === 3 ? 'success' : feedback.points > 0 ? 'partial' : 'error' : feedback.level;
+  box.className = `result server-feedback ${level}`;
   if (Number.isInteger(feedback.points)) {
-    box.append(element('h3', '', `${feedback.points} von 3 Punkten – ${feedback.status}`));
-    appendDescriptionList(box, 'Das ist dir gelungen:', feedback.strengths || [], 'Es wurde noch kein eindeutiger richtiger Aspekt erkannt.');
-    appendDescriptionList(box, 'Das solltest du ergänzen oder überprüfen:', feedback.missing || [], 'Es fehlen keine wesentlichen Aspekte.');
-    const detail = element('div', 'feedback'); detail.append(element('h4', '', 'Rückmeldung'), element('p', '', feedback.text)); box.append(detail);
+    renderCompactEvaluation(box, { ...feedback, maxPoints: 3, feedback: feedback.text });
   } else box.append(element('p', '', feedback.text));
 }
 

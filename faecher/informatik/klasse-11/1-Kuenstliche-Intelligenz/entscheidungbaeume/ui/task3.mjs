@@ -9,7 +9,7 @@ import {
   moveSubtree,
   setNodeAtPath,
 } from "../logic/decision-tree.mjs";
-import { evaluateSemanticAnswer } from "./semantic-answer.mjs?v=20261010-scaleway";
+import { evaluateSemanticAnswer, renderCompactEvaluation } from "./semantic-answer.mjs?v=20261022-compact-feedback";
 import { renderTreeEdges } from "./tree-edges.mjs?v=20260820d";
 
 const STORAGE_KEY = "informatik11-fish-tree-task3-v1";
@@ -770,29 +770,13 @@ function checkFishTree() {
   updateUnlocks();
 }
 
-function appendFeedbackList(container, title, items, fallback) {
-  const heading = document.createElement("h4");
-  heading.textContent = title;
-  const list = document.createElement("ul");
-  const values = Array.isArray(items) && items.length ? items : [fallback];
-  values.forEach((text) => { const item = document.createElement("li"); item.textContent = text; list.append(item); });
-  container.append(heading, list);
-}
-
 function renderSemanticResult(result) {
   const box = document.querySelector("#algorithm-feedback");
   box.replaceChildren();
   box.hidden = false;
-  const complete = Number(result.points) >= 4;
+  const complete = Number(result.points) === Number(result.maxPoints);
   box.className = `fish-semantic-feedback${complete ? " success" : ""}`;
-  const heading = document.createElement("h3");
-  heading.textContent = `${result.points} von ${result.maxPoints} Punkten – ${result.status}`;
-  box.append(heading);
-  appendFeedbackList(box, "Das ist dir gelungen:", result.strengths, "Es wurde noch kein eindeutiger richtiger Aspekt erkannt.");
-  appendFeedbackList(box, "Das solltest du ergänzen:", result.missing, "Es fehlen keine wesentlichen Schritte.");
-  const feedback = document.createElement("p");
-  feedback.textContent = result.feedback || "Überprüfe deine Beschreibung noch einmal.";
-  box.append(feedback);
+  renderCompactEvaluation(box, result);
   if (complete) {
     state.algorithmComplete = true;
     saveState();

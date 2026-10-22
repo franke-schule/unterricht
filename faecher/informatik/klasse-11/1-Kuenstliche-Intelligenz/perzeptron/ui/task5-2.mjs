@@ -1,7 +1,7 @@
 import {calculate,normaliseNumber} from '../logic/perceptron.mjs';
 import {parseLinearRelation as parse,equivalent,countMatching} from '../logic/linear-inequality.mjs?v=20261015-fractions';
 import {numberMatches,runEpoch} from '../logic/perceptron.mjs';
-import {evaluateSemanticAnswer} from './semantic-answer.mjs?v=20261010-scaleway';
+import {evaluateSemanticAnswer, renderCompactEvaluation} from './semantic-answer.mjs?v=20261022-compact-feedback';
 import {unlockSolution} from '../../../../klasse-10/1-Datenbanken/tab-navigation.mjs';
 
 const KEY='informatik11-perzeptron-aufgabe5-2-v1';
@@ -384,7 +384,7 @@ function setupEpoch(){
 function setupSemantic(){
   const textarea=$('#learning-answer'),counter=$('#learning-counter'),button=$('#check-learning-answer');
   const update=()=>counter.textContent=textarea.value.length+' von 600 Zeichen';textarea.addEventListener('input',update);
-  button.addEventListener('click',async()=>{const answer=textarea.value.trim();if(answer.length<30){feedback('learning-feedback','error','Bitte formuliere eine etwas ausführlichere Antwort, damit sie sinnvoll ausgewertet werden kann.');return;}button.disabled=true;feedback('learning-feedback','','Deine Antwort wird mit dem Erwartungshorizont verglichen.');try{const result=await evaluateSemanticAnswer({serverUrl:SERVER_URL,taskId:'11-5-1',answer});feedback('learning-feedback',result.points>=3?'success':result.points?'partial':'error',`${result.points} von ${result.maxPoints} Punkten – ${result.status}. ${(result.feedback||'').trim()}`);}catch(error){feedback('learning-feedback','error',error.message);}finally{button.disabled=false;}});
+  button.addEventListener('click',async()=>{const answer=textarea.value.trim();if(answer.length<30){feedback('learning-feedback','error','Bitte formuliere eine etwas ausführlichere Antwort, damit sie sinnvoll ausgewertet werden kann.');return;}button.disabled=true;feedback('learning-feedback','','Deine Antwort wird mit dem Erwartungshorizont verglichen.');try{const result=await evaluateSemanticAnswer({serverUrl:SERVER_URL,taskId:'11-5-1',answer});feedback('learning-feedback',result.points===result.maxPoints?'success':result.points?'partial':'error','');renderCompactEvaluation($('#learning-feedback'),result);}catch(error){feedback('learning-feedback','error',error.message);}finally{button.disabled=false;}});
   return update;
 }
 function start() {

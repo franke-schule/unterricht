@@ -1,6 +1,6 @@
 import { setupPhysicsStepTabs } from "../1-Kreisbewegungen/components/physics-step-tabs.mjs";
 import { createPhysicsTaskProgress } from "../1-Kreisbewegungen/components/physics-task-progress.mjs";
-import { setupPhysicsSemanticTask } from "../1-Kreisbewegungen/components/physics-semantic-task.mjs";
+import { setupPhysicsSemanticTask } from "../1-Kreisbewegungen/components/physics-semantic-task.mjs?v=20261022-compact-feedback";
 
 const sets = [
   { key: "knowledge", target: "knowledge-questions", questions: [
@@ -82,7 +82,7 @@ const tabs = setupPhysicsStepTabs();
 let checkedDescription = null;
 const descriptionText = () => document.getElementById("pv-description-answer").value;
 function descriptionCorrect() { return checkedDescription === descriptionText() && document.getElementById("pv-description-feedback").dataset.status === "korrekt"; }
-setupPhysicsSemanticTask({ answerId: "pv-description-answer", buttonId: "pv-description-check", feedbackId: "pv-description-feedback", countId: "pv-description-count", taskId: "ph11-photovoltaik-schaltplan-beschreibung", minimumLength: 30, fallbackMaxPoints: 4, shortAnswerHint: "Beschreibe die Verbindung von Solarzelle, Widerstand und Messgeräten in mehreren Worten.", feedbackBuilder: (result) => { const p=document.createElement("p"); const status=result.status; p.textContent = result.context === "server-error" ? "Die automatische Prüfung ist gerade nicht erreichbar. Deine Antwort bleibt erhalten; bitte versuche es später erneut." : status === "korrekt" ? "Richtig. Du beschreibst den Stromkreis und die beiden Messgeräte mit ihrer Schaltung und Messgröße." : Array.isArray(result.missing) && result.missing.includes("Beschreibe die Verbindung von Solarzelle, Widerstand und Messgeräten in mehreren Worten.") ? "Beschreibe die Verbindung von Solarzelle, Widerstand und Messgeräten in mehreren Worten." : status === "teilweise korrekt" ? "Teilweise korrekt. Prüfe die Verbindung beider Messgeräte und ergänze, welche Größe jedes misst." : "Noch nicht korrekt. Verfolge zuerst den geschlossenen Stromweg und dann die zwei Anschlüsse des Voltmeters."; return p; } });
+setupPhysicsSemanticTask({ answerId: "pv-description-answer", buttonId: "pv-description-check", feedbackId: "pv-description-feedback", countId: "pv-description-count", taskId: "ph11-photovoltaik-schaltplan-beschreibung", minimumLength: 30, fallbackMaxPoints: 4, shortAnswerHint: "Beschreibe die Verbindung von Solarzelle, Widerstand und Messgeräten in mehreren Worten.", feedbackBuilder: () => { const p=document.createElement("p"); p.textContent="Deine Antwort bleibt erhalten. Versuche die automatische Prüfung später erneut."; return p; } });
 document.getElementById("pv-description-answer").addEventListener("input", () => { checkedDescription=null; updateSummaryAvailability(); });
 const semanticFeedback=document.getElementById("pv-description-feedback");
 new MutationObserver(() => { if (semanticFeedback.dataset.status === "korrekt") checkedDescription=descriptionText(); else if (semanticFeedback.dataset.status === "nicht geprüft" || semanticFeedback.dataset.status === "noch nicht korrekt" || semanticFeedback.dataset.status === "teilweise korrekt") checkedDescription=null; updateSummaryAvailability(); progress.save(); }).observe(semanticFeedback,{attributes:true,attributeFilter:["data-status"],childList:true,subtree:true});
