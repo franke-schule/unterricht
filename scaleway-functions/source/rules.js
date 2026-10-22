@@ -7,6 +7,11 @@ function applyRuleBasedMinimum_(
   task,
   answer
 ) {
+  if (task === TASKS['ph11-kettenkarussell-winkelgeschwindigkeit']) {
+    const changes = evaluateKettenkarussellChangesByRules_(answer, task);
+    if (changes) return changes;
+  }
+
   if (task === TASKS['11-6-0-4a-code'] || task === TASKS['11-6-0-5a-code']) {
     const getterEvaluation = evaluateDogGetterByRules_(answer, task);
     if (getterEvaluation) return getterEvaluation;
@@ -66,6 +71,52 @@ function applyRuleBasedMinimum_(
   }
 
   return evaluation;
+}
+
+
+function evaluateKettenkarussellChangesByRules_(answer, task) {
+  const text = normalizeGermanText_(normalizePhysicsNotation_(answer));
+  // Nur eindeutig erkannte Beschreibungen nachbewerten. Zitate, Zweifel,
+  // Negationen und andere unklare Aussagen bleiben bei der KI-Bewertung.
+  if (/[?"„“]/.test(text) || /\b(?:angeblich|vielleicht|behauptet|bewerte|punkte|zentrifugalkraft)\b/.test(text) || /nach aussen|nicht\s+keine/.test(text)) return null;
+  const subjects = /(?<force>\bzentripetalkraft(?:\s+f_z)?\b|\bf_z\b)|(?<angle>\b(?:auslenk)?winkel(?:\s+α)?\b|α)|(?<radius>\b(?:bahn)?radius(?:\s+r)?\b|\br\b)|(?<rope>\bseilkraft(?:\s+f_?s)?\b|\bf_?s\b)|(?<mass>\bmasse(?:\s+m)?\b|\bm\b)|(?<weight>\bgewichtskraft(?:\s+f_?g)?\b|\bf_?g\b)/g;
+  const matches = [...text.matchAll(subjects)];
+  const growth = /\b(?:groesser|vergroessert|steigt|steigen|zunimmt|zunehmen|nimmt\s+(?:\w+\s+){0,2}zu|nehmen\s+(?:\w+\s+){0,2}zu|erhoeht)\b/;
+  const contrary = /\b(?:nicht|kein(?:e|en|er|es)?|kleiner|abnimmt|abnehmen|sinkt|sinken|weniger)\b/;
+  const chunks = matches.map((match, index) => {
+    const span = text.slice(match.index + match[0].length, matches[index + 1]?.index ?? text.length);
+    return { kind: Object.keys(match.groups).find(key => match.groups[key] !== undefined), span,
+      grows: growth.test(span), constant: /\b(?:gleich|unveraendert|konstant)\b/.test(span), negated: contrary.test(span) };
+  });
+  // Gemeinsame Prädikate wie „Masse und Gewichtskraft bleiben gleich“.
+  for (let index = chunks.length - 2; index >= 0; index--) {
+    if (/^\s*(?:(?:,|und|sowie)\s*)*(?:(?:die|der|das)\s*)?$/.test(chunks[index].span)) {
+      for (const property of ['grows', 'constant', 'negated']) chunks[index][property] = chunks[index + 1][property];
+    }
+  }
+  const entries = kind => chunks.filter(chunk => chunk.kind === kind);
+  const increased = kind => entries(kind).some(chunk => chunk.grows && !chunk.constant && !chunk.negated);
+  for (const kind of ['force', 'angle', 'radius', 'rope']) {
+    if (entries(kind).some(chunk => chunk.negated || chunk.constant)) return null;
+  }
+  for (const kind of ['mass', 'weight']) {
+    if (entries(kind).some(chunk => chunk.grows || /\bnicht\b[^,.;]*\b(?:gleich|konstant|unveraendert)\b/.test(chunk.span))) return null;
+    if (entries(kind).some(chunk => /\b(?:kleiner|weniger|sinkt|abnimmt|schrumpft|nimmt\s+ab)\b/.test(chunk.span))) return null;
+    if (entries(kind).some(chunk => /\b(?:aendert|veraendert)\b/.test(chunk.span) && !/\bnicht\b/.test(chunk.span))) return null;
+  }
+  const massUnaffected = /\b(?:keine(?:n)?\s+(?:auswirkung(?:en)?|einfluss)\s+auf\s+(?:die\s+)?(?:masse|m))\b/.test(text);
+  const massConstant = entries('mass').some(chunk => chunk.constant) || massUnaffected;
+  const weightConstant = entries('weight').some(chunk => chunk.constant);
+  if (!increased('force') || !increased('angle') || !increased('radius') || !massConstant || !weightConstant) return null;
+  if (entries('rope').length && !increased('rope')) return null;
+  const points = increased('rope') ? 5 : 4;
+  return {
+    ok: true, points, maxPoints: task.maxPoints,
+    status: points === task.maxPoints ? task.statusLabels.correct : task.statusLabels.partial,
+    strengths: [],
+    missing: points === 5 ? [] : ['Die Veränderung der Seilkraft F_S fehlt; vergleiche die Länge ihres Kraftpfeils bei größerer Winkelgeschwindigkeit.'],
+    feedback: points === 5 ? 'Sehr gut, alles richtig' : ''
+  };
 }
 
 

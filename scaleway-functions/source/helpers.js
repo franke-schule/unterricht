@@ -14,6 +14,25 @@ function normalizeGermanText_(text) {
 }
 
 
+function isPhysicsTask_(task) {
+  return /^Physik\b/i.test(task.title || '') || /Physiklehrkraft/i.test(task.systemInstruction || '');
+}
+
+
+function normalizePhysicsNotation_(answer) {
+  // Nur eindeutige Größen-Aliase vereinheitlichen; Zahlen, Einheiten und
+  // fachliche Aussagen bleiben unverändert. Keine globale Kleinschreibung.
+  return String(answer || '')
+    .replace(/(?<![\p{L}\p{N}_])f_?zp?(?![\p{L}\p{N}_])/giu, 'F_Z')
+    .replace(/(?<![\p{L}\p{N}_])(?:alpha|α)(?![\p{L}\p{N}_])/giu, 'α');
+}
+
+
+function formatPhysicsFeedbackNotation_(text) {
+  return String(text || '').replace(/\bF_?(ZP|Z|S|G|H|R|N|M)\b/g, 'F_$1');
+}
+
+
 function containsAny_(
   text,
   needles
@@ -137,6 +156,10 @@ function formatFinalEvaluation_(evaluation, task) {
     if (note) feedback = feedback.split(note).join('').replace(/\s+/g, ' ').trim();
   }
   const missing = cleanStringArray_(result.missing);
+  if (isPhysicsTask_(task)) {
+    feedback = formatPhysicsFeedbackNotation_(feedback);
+    for (let index = 0; index < missing.length; index++) missing[index] = formatPhysicsFeedbackNotation_(missing[index]);
+  }
   result.missing = compactFeedbackSentences_(missing.length ? missing : [feedback]);
   result.feedback = '';
   return result;

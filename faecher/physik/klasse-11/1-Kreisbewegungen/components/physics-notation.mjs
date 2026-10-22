@@ -24,7 +24,7 @@ function unitAriaLabel(numerator, denominator) {
 // Ersetzt Muster wie "v_B" durch ein <sub>-Element via createIndexedSymbol;
 // alles andere bleibt unveränderter Text. Bestehende Texte ohne "_" sind
 // davon nicht betroffen.
-const INDEXED_TOKEN = /([A-Za-zωΔ])_([A-Z0-9])/g;
+const INDEXED_TOKEN = /([A-Za-zωΔ])_([A-Z0-9]+)/g;
 
 function appendIndexedText(target, text) {
   const value = String(text);
@@ -146,7 +146,7 @@ export function appendPhysicsText(target, text) {
     .forEach((part, index) => {
       if (!part) return;
       if (index % 2 === 1) target.append(createPhysicsNotation(part));
-      else target.append(document.createTextNode(part));
+      else appendIndexedText(target, part.replace(/\bF_?(ZP|Z|S|G|H|R|N|M)\b/g, 'F_$1'));
     });
 }
 

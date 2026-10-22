@@ -1,8 +1,8 @@
 import { createForceArrowGrid } from "./components/point-vector-grid.mjs?v=20260930a";
-import { setupPhysicsSemanticTask } from "./components/physics-semantic-task.mjs?v=20261022-feedback-two-sentences";
+import { setupPhysicsSemanticTask } from "./components/physics-semantic-task.mjs?v=20261022-force-indices";
 import { setupPhysicsStepTabs } from "./components/physics-step-tabs.mjs";
 import { enableTokenDrag, wasDragged } from "./components/token-drag.mjs";
-import { appendPhysicsText, physicsTextSpan } from "./components/physics-notation.mjs?v=20260911a";
+import { appendPhysicsText, physicsTextSpan } from "./components/physics-notation.mjs?v=20261022-force-indices";
 import { createPhysicsTaskProgress } from "./components/physics-task-progress.mjs?v=20260930a";
 
 const SCRIPT_SERVER_URL = "https://unterrichtkiichezbn4-ki-auswertung.functions.fnc.fr-par.scw.cloud/";

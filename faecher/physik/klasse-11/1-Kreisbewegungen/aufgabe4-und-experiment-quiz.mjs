@@ -1,5 +1,5 @@
 import { enableTokenDrag, wasDragged } from "./components/token-drag.mjs";
-import { appendPhysicsText, physicsTextSpan } from "./components/physics-notation.mjs?v=20260911a";
+import { appendPhysicsText, physicsTextSpan } from "./components/physics-notation.mjs?v=20261022-force-indices";
 import { evaluateSemanticAnswer, renderCompactEvaluation } from "../../../informatik/klasse-11/1-Kuenstliche-Intelligenz/perzeptron/ui/semantic-answer.mjs?v=20261022-feedback-two-sentences";
 
 // Löschanleitung: aufgabe4-und-experiment-quiz-loeschen.txt.
@@ -715,7 +715,7 @@ function renderDescribe(task) {
     box.replaceChildren(element("p", "", `Die Antwort konnte gerade nicht automatisch bewertet werden (${describeErrors[task.id]}). Versuche es in einem Moment noch einmal.`));
   } else if (ai && state.aiText[task.id] === state.texts[task.id]) {
     box.dataset.status = ai.status || "";
-    renderCompactEvaluation(box, ai);
+    renderCompactEvaluation(box, ai, { appendText: appendPhysicsText });
   } else {
     box.hidden = true;
     return;

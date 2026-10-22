@@ -1,5 +1,5 @@
 import { evaluateSemanticAnswer, renderCompactEvaluation } from "../../../../informatik/klasse-11/1-Kuenstliche-Intelligenz/perzeptron/ui/semantic-answer.mjs?v=20261022-feedback-two-sentences";
-import { appendPhysicsText } from "./physics-notation.mjs?v=20260911a";
+import { appendPhysicsText } from "./physics-notation.mjs?v=20261022-force-indices";
 
 const MAX_LENGTH = 3000;
 const SCRIPT_SERVER_URL = "https://unterrichtkiichezbn4-ki-auswertung.functions.fnc.fr-par.scw.cloud/";

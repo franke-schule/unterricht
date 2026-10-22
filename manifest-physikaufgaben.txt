@@ -114,7 +114,38 @@ Verbindliche Muster für Rückmeldungen:
     und Lösungen bleibt der Bruchstrich verbindlich.
 
 
-5. Abschlussprüfung für Physikaufgaben
+5. Automatisiertes Feedback
+--------------------------
+
+  - Für alle KI-gestützten Beschreibe-Aufgaben einschließlich der
+    Wiederholungsquizze gilt das gemeinsame kompakte Feedbackformat:
+    Punktzahl und insgesamt höchstens zwei kurze, konkrete Sätze.
+  - Bei voller Punktzahl steht daneben „Sehr gut, alles richtig“.
+    Sonst entfallen Statuszusätze sowie getrennte Lob-/Fehltabschnitte.
+  - Zuerst den konkreten fachlichen Fehler benennen, bei Bedarf einen
+    passenden Denkhinweis ergänzen. Bei Rechenaufgaben Zahlenwert, Einheit
+    und gültige Ziffern unterscheiden, soweit sie zur Aufgabe gehören.
+  - Die bestehende Scaleway-Pipeline und renderCompactEvaluation verwenden;
+    auch längere oder ältere Serverantworten werden auf zwei Sätze begrenzt.
+  - In Beschreibe-Antworten sind der ausgeschriebene Name einer Größe und
+    ihr Formelzeichen gleichwertig; nie beide Bezeichnungen verlangen.
+    F_Z, F_ZP, FZ und FZP werden unabhängig von Groß-/Kleinschreibung als
+    Zentripetalkraft erkannt. α, alpha und „Winkel alpha“ sind gleichwertig.
+    Diese eindeutigen Aliase werden serverseitig vor der KI-Auswertung
+    vereinheitlicht. Zahlen und Einheiten werden dabei nicht verändert.
+    Die fachlich richtige Richtung, Veränderung bzw. Beziehung bleibt nötig;
+    eine reine Aufzählung von Größen erhält dadurch keine zusätzlichen Punkte.
+  - Formelzeichen, Indizes, Brüche und Einheiten mit appendPhysicsText
+    darstellen. Dafür im Feedback {{F_Z}}, {{F|m}} bzw. {{m/s²}} verwenden.
+    Auch unformatierte Kraftsymbole aus einer Serverantwort werden abgesichert:
+    FS wird zu F_S, FG zu F_G und FZ bzw. FZP zu F_Z bzw. F_ZP.
+    Die Physikansicht stellt den gesamten Index tief; ohne Formatierung
+    bleibt mindestens der Unterstrich sichtbar.
+  - Diese Formatregel ändert weder die fachlichen Kriterien noch die
+    Bewertung oder die gesonderten Rückmeldungen zu Rechen- und Quizaufgaben.
+
+
+6. Abschlussprüfung für Physikaufgaben
 --------------------------------------
 
   [ ] Formelzeichen und Indizes sind in allen Darstellungen konsistent.

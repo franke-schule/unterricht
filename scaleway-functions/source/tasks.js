@@ -2379,6 +2379,9 @@ const TASKS = {
     rubric: [
       'Ein Punkt je eindeutig beschriebenem Aspekt.',
       'Vollständig korrekt nur bei fünf Punkten; teilweise korrekt bei einem bis vier Punkten; noch nicht korrekt bei null Punkten.',
+      'Für den Radiuspunkt genügt die Aussage, dass der Radius größer wird. Eine Begründung, warum er größer wird, ist nicht zusätzlich verlangt.',
+      'Auch „die Winkelgeschwindigkeit hat keine Auswirkung auf die Masse“ erfüllt die Aussage, dass die Masse unverändert bleibt. Ist zusätzlich die unveränderte Gewichtskraft genannt, ist der fünfte Aspekt vollständig erfüllt; weder das Formelzeichen m noch der Satz „die Masse bleibt gleich“ ist wörtlich erforderlich.',
+      'Sind Zentripetalkraft, Winkel und Radius als größer sowie Masse und Gewichtskraft als unverändert beschrieben und fehlt nur die Seilkraft, vergib genau 4 von 5 Punkten. Nenne dann ausschließlich die fehlende Veränderung der Seilkraft F_S; markiere weder Masse noch Radius als fehlend.',
       'Die Aussage, die Gewichtskraft oder die Masse werde größer, ist fachlich falsch und schließt den Punkt für die unveränderten Größen aus.',
       'Eine nach außen gerichtete Zentrifugalkraft als Begründung ist für einen ruhenden Beobachter nicht zulässig; der betroffene Aspekt erhält dann keinen Punkt, sofern die Veränderung nicht zusätzlich korrekt mit FZ, FS und FG beschrieben wird.'
     ],

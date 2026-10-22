@@ -1,5 +1,5 @@
 import { createForceArrowGrid } from "./components/point-vector-grid.mjs?v=20260930a";
-import { appendPhysicsText, physicsTextSpan, createIndexedSymbol, createQuotient, createSquareRoot, createUnitFraction, addSquareRootSigns } from "./components/physics-notation.mjs?v=20260922b";
+import { appendPhysicsText, physicsTextSpan, createIndexedSymbol, createQuotient, createSquareRoot, createUnitFraction, addSquareRootSigns } from "./components/physics-notation.mjs?v=20261022-force-indices";
 import { setupPhysicsStepTabs } from "./components/physics-step-tabs.mjs";
 import { createPhysicsTaskProgress } from "./components/physics-task-progress.mjs";
 import { setupStepOrder as setupSharedStepOrder } from "./components/step-order.mjs";

@@ -1,5 +1,5 @@
 import { enableTokenDrag, wasDragged } from "./components/token-drag.mjs";
-import { appendPhysicsText, physicsTextSpan } from "./components/physics-notation.mjs?v=20260911a";
+import { appendPhysicsText, physicsTextSpan } from "./components/physics-notation.mjs?v=20261022-force-indices";
 import { evaluateSemanticAnswer, renderCompactEvaluation } from "../../../informatik/klasse-11/1-Kuenstliche-Intelligenz/perzeptron/ui/semantic-answer.mjs?v=20261022-feedback-two-sentences";
 
 // Wiederholungs-Quiz zu Aufgabe 4 (Zentripetalkraft, Reiter 1 und 2 ohne Herleitung) mit den
@@ -623,7 +623,7 @@ function renderDescribe(task) {
     box.replaceChildren(element("p", "", `Die Antwort konnte gerade nicht automatisch bewertet werden (${describeErrors[task.id]}). Versuche es in einem Moment noch einmal.`));
   } else if (ai) {
     box.dataset.status = ai.status || "";
-    renderCompactEvaluation(box, ai);
+    renderCompactEvaluation(box, ai, { appendText: appendPhysicsText });
   } else {
     box.hidden = true;
     return;

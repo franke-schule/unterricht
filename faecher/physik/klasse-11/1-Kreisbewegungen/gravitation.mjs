@@ -1,6 +1,6 @@
 import { setupPhysicsStepTabs } from './components/physics-step-tabs.mjs';
 import { createPhysicsTaskProgress } from './components/physics-task-progress.mjs';
-import { appendPhysicsText } from './components/physics-notation.mjs';
+import { appendPhysicsText } from './components/physics-notation.mjs?v=20261022-force-indices';
 import { enableTokenDrag, wasDragged } from './components/token-drag.mjs';
 import { G, INITIAL, MIN_DISTANCE, MAX_DISTANCE, distance, force, validState, setDistance, moveBody, checkQuantity, parseQuantity } from './gravitation-model.mjs';
 
