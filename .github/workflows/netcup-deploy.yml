@@ -1,0 +1,75 @@
+name: Website zu netcup uebertragen
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: netcup-website
+  cancel-in-progress: false
+
+jobs:
+  deploy:
+    if: github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    steps:
+      - name: Repository laden
+        uses: actions/checkout@v6
+        with:
+          persist-credentials: false
+
+      # Dasselbe Buildverfahren wie GitHub Pages bei main / (root).
+      - name: Website mit GitHub Pages bauen
+        uses: actions/jekyll-build-pages@v1
+        with:
+          source: ./
+          destination: ./_site
+          verbose: false
+
+      - name: Website-Dateien fuer netcup auswaehlen
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p _netcup/faecher _netcup/include
+          for directory in faecher include; do
+            rsync -a \
+              --exclude='LNWs/' \
+              --exclude='tests/' \
+              --exclude='.git/' \
+              --exclude='.claude/' \
+              --exclude='.codex/' \
+              --exclude='AGENTS.*' \
+              --exclude='PRUEFBERICHT*' \
+              --exclude='ENDABNAHME*' \
+              --exclude='SPEZIFIKATION*' \
+              "_site/$directory/" "_netcup/$directory/"
+          done
+          # Nur HTML/CSS-Quelldateien aus dem Root, keine gerenderten Betriebsunterlagen.
+          shopt -s nullglob
+          for file in *.html *.css; do
+            cp "_site/$file" "_netcup/$file"
+          done
+          test -s _netcup/index.html
+          test -s _netcup/styles.css
+          test -s _netcup/faecher/informatik/index.html
+          test -s _netcup/faecher/physik/index.html
+          echo "Dateien fuer den Upload: $(find _netcup -type f | wc -l)"
+          du -sh _netcup
+
+      - name: Website verschluesselt zu netcup uebertragen
+        uses: SamKirkland/FTP-Deploy-Action@v4.4.0
+        with:
+          server: ${{ secrets.NETCUP_FTP_SERVER }}
+          username: ${{ secrets.NETCUP_FTP_USERNAME }}
+          password: ${{ secrets.NETCUP_FTP_PASSWORD }}
+          protocol: ftps
+          port: 21
+          security: strict
+          local-dir: ./_netcup/
+          server-dir: ./
+          state-name: .netcup-website-sync-state.json
+          dangerous-clean-slate: false
+          log-level: minimal
