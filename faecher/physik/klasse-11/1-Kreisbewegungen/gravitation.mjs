@@ -4,6 +4,26 @@ import { appendPhysicsText } from './components/physics-notation.mjs?v=20261022-
 import { enableTokenDrag, wasDragged } from './components/token-drag.mjs';
 import { G, INITIAL, MIN_DISTANCE, MAX_DISTANCE, distance, force, validState, setDistance, moveBody, checkQuantity, parseQuantity } from './gravitation-model.mjs';
 
+// Lehrercode-Freigabe nach dem bestehenden Muster aus kettenkarussell.mjs.
+function unlockSolution(event, expectedCode, downloadLinkId, messageId) {
+  event.preventDefault();
+  const form = event.currentTarget;
+  const enteredCode = form.elements['solution-code'].value.toUpperCase().replace(/[^A-Z0-9]/g, '');
+  const normalizedExpectedCode = expectedCode.replace(/[^A-Z0-9]/g, '');
+  const downloadLink = document.getElementById(downloadLinkId);
+  const message = document.getElementById(messageId);
+  if (enteredCode === normalizedExpectedCode) {
+    downloadLink.hidden = false;
+    message.className = 'solution-code-message';
+    message.textContent = 'Code korrekt. Das Lösungsblatt ist freigeschaltet.';
+    return;
+  }
+  downloadLink.hidden = true;
+  message.className = 'solution-code-message error';
+  message.textContent = 'Der eingegebene Code ist nicht gültig.';
+}
+if (typeof document !== 'undefined') window.unlockSolution = unlockSolution;
+
 const $ = id => document.getElementById(id);
 const unitFraction = '<span class="physics-fraction"><span class="physics-fraction__numerator">N·m²</span><span class="physics-fraction__denominator">kg²</span></span>';
 const feedbackWords = {
@@ -11,6 +31,7 @@ const feedbackWords = {
   wrong: 'Prüfe deinen Zahlenwert, die Einheit und die Anzahl der gültigen Ziffern.'
 };
 const completed = new Set();
+let s1Checked = false;
 const numericCards = new Map();
 const wordBoards = new Map();
 const separateChoiceFeedback = {
@@ -71,10 +92,35 @@ function addSelect(host, id, label, choices) {
   host.append(wrap);
   return wrap;
 }
-function setupStructured({host,id,title,prompt,fields,answers,helps,messages,after}) {
-  if (/^(?:P[1-4]|S[12])$/.test(id)) return setupWordCards({host,id,title,prompt,fields,answers,helps,messages,after});
+function addStatementChoices(host, id, label, choices) {
+  // Keep the original field ID so saved dropdown answers remain compatible.
+  const value = document.createElement('input');
+  value.type = 'hidden'; value.id = id;
+  const group = document.createElement('fieldset');
+  group.className = 'force-kind-picker grav-statement-choices';
+  const legend = document.createElement('legend');
+  legend.textContent = `${label} auswählen`;
+  group.append(legend);
+  const radios = choices.map(([key,text]) => {
+    const option = document.createElement('label');
+    option.className = 'force-kind-option';
+    const radio = document.createElement('input');
+    radio.type = 'radio'; radio.name = id; radio.id = `${id}-${key}`; radio.value = key;
+    const statement = document.createElement('span');
+    statement.innerHTML = `<strong>${key.toUpperCase()}</strong> · ${htmlText(text)}`;
+    radio.addEventListener('change', () => { if (radio.checked) value.value = key; });
+    option.append(radio,statement); group.append(option);
+    return radio;
+  });
+  value.addEventListener('input', () => {
+    radios.forEach(radio => { radio.checked = radio.value === value.value; });
+  });
+  host.append(value,group);
+}
+function setupStructured({host,id,title,prompt,fields,answers,helps,messages,after,statementChoices=false}) {
+  if (/^(?:P[1-4]|S2|M0|M2)$/.test(id)) return setupWordCards({host,id,title,prompt,fields,answers,helps,messages,after});
   const area = card(host,id,title,prompt,helps);
-  fields.forEach(([suffix,label,choices]) => addSelect(area,`${id.toLowerCase()}-${suffix}`,label,choices));
+  fields.forEach(([suffix,label,choices]) => (statementChoices ? addStatementChoices : addSelect)(area,`${id.toLowerCase()}-${suffix}`,label,choices));
   $(`check-${id.toLowerCase()}`).addEventListener('click',()=>{
     const actual = fields.map(([suffix])=> $(`${id.toLowerCase()}-${suffix}`).value);
     const hits = actual.filter((v,i)=>v===answers[i]).length;
@@ -87,16 +133,19 @@ function setupStructured({host,id,title,prompt,fields,answers,helps,messages,aft
     if(level==='success'){finish(id);after?.();}
   });
 }
-function setupWordCards({host,id,title,prompt,fields,answers,helps,messages,after}) {
-  const area = card(host,id,title,prompt,helps);
+function setupWordCards({host,id,title,prompt,fields,answers,helps,messages,after,reuseArea,checkButtonId,feedbackId,onCheck}) {
+  const area = reuseArea || card(host,id,title,prompt,helps);
   const cardRoot = area.closest('.physics-task-card');
   const bank = document.createElement('div');
   bank.className = 'cloze-term-bank grav-word-bank';
   bank.setAttribute('role','group');
   bank.setAttribute('aria-label',`${id}: Wortspeicher`);
   const values = fields.map(()=>'');
-  const cards = [...new Map(fields.flatMap(([, ,choices])=>choices).map(([key,label])=>[key,label])).entries()];
-  const labels = new Map(cards);
+  const instances = fields.map(()=>'');
+  const cards = id==='M0'
+    ? ['mass1','mass2','range'].flatMap(suffix=>[['up','größer'],['down','kleiner']].map(([value,label])=>({key:`m0-${suffix}-${value}`,value,label})))
+    : [...new Map(fields.flatMap(([, ,choices])=>choices).map(([key,label])=>[key,label])).entries()].map(([key,label])=>({key,value:key,label}));
+  const byKey = new Map(cards.map(item=>[item.key,item]));
   const controls = fields.map(([suffix])=>{
     const input = document.createElement('input');
     input.type = 'hidden'; input.id = `${id.toLowerCase()}-${suffix}`;
@@ -108,19 +157,26 @@ function setupWordCards({host,id,title,prompt,fields,answers,helps,messages,afte
   const selector = `#${cardRoot.id} [data-word-slot]`;
   const bankSelector = `#${cardRoot.id} .grav-word-bank`;
   function setValues(next) {
-    values.splice(0,values.length,...next);
-    controls.forEach((control,index)=>{control.value=values[index];});
+    const used=new Set();
+    next.forEach((candidate,index)=>{
+      let item=byKey.get(candidate);
+      if(!item)item=cards.find(card=>card.value===candidate&&!used.has(card.key));
+      instances[index]=item&&!used.has(item.key)?item.key:'';
+      if(instances[index])used.add(instances[index]);
+      values[index]=instances[index]?byKey.get(instances[index]).value:'';
+      controls[index].value=values[index];
+    });
     render();
   }
   function move(key,to) {
-    if(!labels.has(key)) return;
-    const from=values.indexOf(key), prior=to>=0?values[to]:'';
+    if(!byKey.has(key)) return;
+    const from=instances.indexOf(key), prior=to>=0?instances[to]:'';
     if(from===to) { picked=null;render();return; }
-    if(from>=0) values[from]='';
-    if(to>=0) values[to]=key;
-    if(prior&&prior!==key&&from>=0) values[from]=prior;
+    if(from>=0) instances[from]='';
+    if(to>=0) instances[to]=key;
+    if(prior&&prior!==key&&from>=0) instances[from]=prior;
     picked=null;
-    controls.forEach((control,index)=>{control.value=values[index];});
+    controls.forEach((control,index)=>{values[index]=instances[index]?byKey.get(instances[index]).value:'';control.value=values[index];});
     (controls[to>=0?to:Math.max(0,from)]).dispatchEvent(new Event('input',{bubbles:true}));
     render();progress?.save();
   }
@@ -128,27 +184,28 @@ function setupWordCards({host,id,title,prompt,fields,answers,helps,messages,afte
     const button=document.createElement('button');button.type='button';
     button.className=index>=0?'cloze-gap is-filled':'cloze-token';
     button.dataset.wordKey=key;
-    button.textContent=labels.get(key);
+    button.innerHTML=htmlText(byKey.get(key).label);
+    if(id==='M4')button.innerHTML+=` <span aria-hidden="true">(G = ${htmlText(key==='yes'?'{{F·r²|M·m}}':'{{F·M·m|r²}}')})</span>`;
     button.setAttribute('aria-pressed',String(picked===key));
     button.classList.toggle('is-picked',picked===key);
-    if(index>=0) button.setAttribute('aria-label',`${fields[index][1]}: ${labels.get(key)}`);
-    enableTokenDrag(button,{getLabel:()=>labels.get(key),dropSelector:selector,bankSelector,
+    if(index>=0) button.setAttribute('aria-label',`${fields[index][1]}: ${byKey.get(key).label}`);
+    enableTokenDrag(button,{getLabel:()=>byKey.get(key).label,dropSelector:selector,bankSelector,
       onDrop:(slot,onBank)=>{if(slot)move(key,Number(slot.dataset.wordSlot));else if(onBank)move(key,-1);else render();}});
     button.addEventListener('click',event=>{
       event.stopPropagation();if(wasDragged(button))return;
       if(picked&&picked!==key&&index>=0){move(picked,index);return;}
       if(picked===key){if(index>=0)move(key,-1);else {picked=null;render();}return;}
       picked=key;render();
-      if(index<0)(targets.find((target,i)=>!values[i])?.querySelector('button')||bank.querySelector(`[data-word-key="${key}"]`))?.focus();
+      if(index<0)(targets.find((target,i)=>!instances[i])?.querySelector('button')||bank.querySelector(`[data-word-key="${key}"]`))?.focus();
       else targets[index].querySelector('button')?.focus();
     });
     return button;
   }
   function render(){
-    bank.replaceChildren(...cards.filter(([key])=>!values.includes(key)).map(([key])=>token(key,-1)));
+    bank.replaceChildren(...cards.filter(({key})=>!instances.includes(key)).map(({key})=>token(key,-1)));
     targets.forEach((target,index)=>{
       target.replaceChildren();
-      const key=values[index];
+      const key=instances[index];
       if(key)target.append(token(key,index));
       else {
         const empty=document.createElement('button');empty.type='button';empty.className='cloze-gap';
@@ -178,20 +235,24 @@ function setupWordCards({host,id,title,prompt,fields,answers,helps,messages,afte
       targets.push(slot);row.append(caption,slot);rows.append(row);
     });
   }
-  cardRoot.querySelector(`#check-${id.toLowerCase()}`).addEventListener('click',()=>{
+  cardRoot.querySelector(`#${checkButtonId||`check-${id.toLowerCase()}`}`).addEventListener('click',()=>{
     const hits=values.filter((value,index)=>value===answers[index]).length;
     const level=hits===answers.length?'success':hits?'partial':'error';
-    feedback(`feedback-${id.toLowerCase()}`,level,messages[level]);
-    if(level==='success'){finish(id);after?.();}
+    feedback(feedbackId||`feedback-${id.toLowerCase()}`,level,messages[level]);
+    if(onCheck)onCheck(level);
+    else if(level==='success'){
+      if(id==='M2'&&!allM2Observations()){feedback('feedback-m2','partial','Halte zuerst alle drei Vergleichsmessungen in der Simulation fest.');return;}
+      finish(id);after?.();
+    }
   });
-  wordBoards.set(id,{fields,answers,values,setValues,controls});
+  wordBoards.set(id,{fields,answers,values,instances,setValues,controls,cardLabels:new Map(cards.map(item=>[item.key,item.label]))});
   render();
 }
 const yesNo = (correct, wrong) => [['yes',correct],['no',wrong]];
 const greater = [['up','größer'],['down','kleiner']];
 
 function buildSources() {
-  setupStructured({host:'tasks-newton',id:'N1',title:'N1 · Newtons Verbindung',prompt:'<strong>Wähle</strong> die Aussage, die Newtons Verbindung zur bekannten Kreisbewegung trifft.',fields:[['choice','Aussage',[['a','Für den Mond gelten völlig andere Bewegungsgesetze als für Körper auf der Erde.'],['b','Die Anziehung durch die Erde kann für den Mond die benötigte Zentripetalkraft sein.'],['c','Zentripetalkraft und Erdanziehung sind immer zwei zusätzlich zu addierende Kräfte.']]]],answers:['b'],helps:['Denke an die Richtung der Kraft, die eine Kreisbahn ermöglicht.','Für eine Kreisbahn braucht der Mond eine Kraft zur Erde hin.','Die Erdanziehung zeigt zum Erdmittelpunkt und kann beim Mond die Rolle der Zentripetalkraft übernehmen.'],messages:{success:'Richtig. Die gravitative Anziehung kann den Mond zur Erde hin umlenken.',partial:'Teilweise korrekt. Du hast die Richtung erkannt; prüfe noch, ob dafür zwei Kräfte addiert werden.',error:'Noch nicht korrekt. Die Zentripetalkraft ist eine Rolle einer wirkenden Kraft; die Erdanziehung kann diese Rolle übernehmen.'}});
+  setupStructured({host:'tasks-newton',id:'N1',statementChoices:true,title:'N1 · Newtons Verbindung',prompt:'<strong>Wähle</strong> die Aussage, die Newtons Verbindung zur bekannten Kreisbewegung trifft.',fields:[['choice','Aussage',[['a','Für den Mond gelten völlig andere Bewegungsgesetze als für Körper auf der Erde.'],['b','Die Anziehung durch die Erde kann für den Mond die benötigte Zentripetalkraft sein.'],['c','Zentripetalkraft und Erdanziehung sind immer zwei zusätzlich zu addierende Kräfte.']]]],answers:['b'],helps:['Denke an die Richtung der Kraft, die eine Kreisbahn ermöglicht.','Für eine Kreisbahn braucht der Mond eine Kraft zur Erde hin.','Die Erdanziehung zeigt zum Erdmittelpunkt und kann beim Mond die Rolle der Zentripetalkraft übernehmen.'],messages:{success:'Richtig. Die gravitative Anziehung kann den Mond zur Erde hin umlenken.',partial:'Teilweise korrekt. Du hast die Richtung erkannt; prüfe noch, ob dafür zwei Kräfte addiert werden.',error:'Noch nicht korrekt. Die Zentripetalkraft ist eine Rolle einer wirkenden Kraft; die Erdanziehung kann diese Rolle übernehmen.'}});
   function source(reference,quote){
     const block=document.createElement('blockquote');block.className='grav-source-quote';
     const cite=document.createElement('cite');cite.textContent=reference;
@@ -209,8 +270,39 @@ function buildSources() {
 }
 
 function buildSimulationTasks(){
-  setupStructured({host:'tasks-simulation',id:'S1',title:'S1 · Kräftebild',prompt:'<strong>Ordne</strong> jedem Körper den auf ihn wirkenden Kraftpfeil zu und <strong>vergleiche</strong> beide Kraftbeträge.',fields:[['one','Pfeil auf m₁',[['to2','zeigt zu m₂'],['right','beide nach rechts'],['between','beginnt zwischen den Körpern']]],['two','Pfeil auf m₂',[['to1','zeigt zu m₁'],['right','beide nach rechts'],['between','beginnt zwischen den Körpern']]],['amount','Beträge',[['same','gleich groß'],['large','größere Masse erhält größere Kraft']]]],answers:['to2','to1','same'],helps:['Lies die Beschriftung ‚Kraft auf …‘.','Jede Masse zieht die andere entlang der Verbindungslinie an.','Die Pfeile greifen an verschiedenen Körpern an, zeigen aufeinander zu und haben denselben Betrag.'],messages:{success:'Richtig. Die Kräfte sind gleich groß, entgegengesetzt gerichtet und wirken auf verschiedene Körper.',partial:'Teilweise korrekt. Prüfe noch Angriffspunkt, Richtung oder Betragsvergleich.',error:'Noch nicht korrekt. Beobachte die Pfeile bei deutlich unterschiedlichen Massen.'}});
+  const s1=card('tasks-simulation','S1','S1 · Kräftebild','<strong>Betrachte</strong> die beiden Kraftpfeile bei unterschiedlichen Massen. <strong>Wähle</strong> alle richtigen Aussagen aus.',[
+    'Lies an jedem Pfeil ab, auf welchen Körper die Kraft wirkt.',
+    'Die Ziffer an F bezeichnet hier die Masse, die die Kraft verursacht. Vergleiche die beiden Zahlenwerte.',
+    'Masse 2 zieht Masse 1 an; Masse 1 zieht Masse 2 an. Die Kräfte haben denselben Betrag und wirken auf verschiedene Körper.'
+  ]);
+  const options=[
+    'Der {{V2}} wirkt auf Masse 1 und zeigt zu Masse 2.',
+    'Der {{V1}} wirkt auf Masse 2 und zeigt zu Masse 1.',
+    'Beide Pfeile beginnen im Mittelpunkt des Körpers, auf den die jeweilige Kraft wirkt.',
+    'Die Kraft auf die größere Masse hat immer den größeren Betrag.',
+    'Die beiden Kräfte wirken auf denselben Körper.'
+  ];
+  const fieldset=document.createElement('fieldset');fieldset.className='physics-quiz-question quiz-question grav-s1-choices';
+  fieldset.innerHTML=`<legend>S1 · Kräftebild</legend><div class="quiz-options">${options.map((option,index)=>`<label class="quiz-option"><input id="s1-option-${index+1}" type="checkbox" value="${index+1}"><span>${option.replace('{{V2}}',vectorHtml(2)).replace('{{V1}}',vectorHtml(1))}</span></label>`).join('')}</div>`;
+  s1.append(fieldset);
+  $('check-s1').addEventListener('click',()=>{
+    const selected=[...fieldset.querySelectorAll('input:checked')].map(input=>Number(input.value));
+    const hits=selected.filter(value=>value<=3).length;
+    const level=hits===3&&selected.length===3?'success':hits?'partial':'error';
+    feedback('feedback-s1',level,{
+      success:'Richtig. Beide Kräfte greifen an verschiedenen Mittelpunkten an, zeigen aufeinander zu und haben denselben Betrag.',
+      partial:'Teilweise korrekt. Prüfe für jeden Pfeil Angriffspunkt und Richtung; vergleiche dann die beiden Kraftbeträge.',
+      error:'Noch nicht korrekt. Stelle deutlich unterschiedliche Massen ein und beobachte, von welchem Mittelpunkt jeder Pfeil ausgeht.'
+    }[level]);
+    s1Checked=level==='success';
+    if(level==='success')finish('S1');
+    else progress?.save();
+  });
   setupStructured({host:'tasks-simulation',id:'S2',title:'S2 · Newtons Axiome',prompt:'<strong>Ordne</strong> Trägheitssatz, Aktionsprinzip und Wechselwirkungsprinzip den drei Aussagen zu. <strong>Wähle</strong> anschließend, warum verschieden schwere Körper bei gleichem Kraftbetrag verschieden stark beschleunigen.',fields:[['inertia','Ohne resultierende Kraft bleibt die geradlinig gleichförmige Bewegung erhalten',[['inertia','Trägheitssatz'],['action','Aktionsprinzip'],['interaction','Wechselwirkungsprinzip']]],['action','Bei gleicher Kraft ist die Beschleunigung eines größeren Körpers kleiner',[['inertia','Trägheitssatz'],['action','Aktionsprinzip'],['interaction','Wechselwirkungsprinzip']]],['interaction','Beide Körper üben gleich große, entgegengesetzte Kräfte aufeinander aus',[['inertia','Trägheitssatz'],['action','Aktionsprinzip'],['interaction','Wechselwirkungsprinzip']]],['acceleration','Folgerung',[['ratio','Beschleunigung ist Kraft geteilt durch Masse; bei größerer Masse ist a kleiner'],['force','größerer Körper erfährt größere Kraft'],['equal','beide Beschleunigungen sind gleich']]]],answers:['inertia','action','interaction','ratio'],helps:['Vergleiche Kraftbetrag und Bewegung getrennt.','Das dritte Axiom betrifft zwei Kräfte auf zwei verschiedenen Körpern; das zweite verknüpft Kraft und Beschleunigung eines Körpers.','Gleiche Gegenkräfte bedeuten wegen a={{F|m}} bei ungleichen Massen nicht gleiche Beschleunigungen.'],messages:{success:'Richtig. Gleiche Gegenkräfte können unterschiedliche Beschleunigungen verursachen.',partial:'Teilweise korrekt. Die Axiome oder die Folgerung aus a=F/m sind noch nicht vollständig zugeordnet.',error:'Noch nicht korrekt. Verwechsle Kraft auf einen Körper nicht mit dessen Beschleunigung.'}});
+}
+function vectorHtml(index){
+  const name=index===2?'Vektor F mit Index 2, Kraft auf Masse 1 durch Masse 2':'Vektor F mit Index 1, Kraft auf Masse 2 durch Masse 1';
+  return `<span class="grav-vector-symbol" role="img" aria-label="${name}"><span aria-hidden="true">F<sub>${index}</sub></span></span>`;
 }
 
 const rows = {
@@ -280,8 +372,6 @@ function lawStepUnlock(){
   ['A','B','C'].forEach(key=>{$(`card-m1${key.toLowerCase()}`).hidden=!completed.has('M0');});
   const measured=['M1A','M1B','M1C'].every(x=>completed.has(x));
   $('law-after-measure').hidden=!measured;
-  if(measured){$('m2-observations').before($('simulation-view-4'));$('simulation-view-4').before($('m2-observation-instruction'));}
-  else $('card-m1a').before($('simulation-view-4'));
   requestAnimationFrame(updateSimulation);
   $('law-formula').hidden=!completed.has('M2');
   $('law-after-formula').hidden=!completed.has('M2');
@@ -290,7 +380,6 @@ const updateLawUnlock=lawStepUnlock;
 function buildLaw(){
   setupStructured({host:'tasks-law-start',id:'M0',title:'M0 · Vermutungen',prompt:'<strong>Vervollständige</strong> je einen Je-desto-Satz für m₁, m₂ und r. Halte beim Vergleichen jeweils die beiden anderen Größen konstant.',fields:[['mass1','Je größer m₁, desto … F',greater],['mass2','Je größer m₂, desto … F',greater],['range','Je größer r, desto … F',greater]],answers:['up','up','down'],helps:['Verändere in der Simulation nur eine Größe.','Vergleiche dieselbe Einstellung vor und nach einer Erhöhung.','Mehr Masse verstärkt, mehr Abstand schwächt die Anziehung.'],messages:{success:'Richtig. Beide Massen verstärken die Kraft, größerer Abstand schwächt sie.',partial:'Teilweise korrekt. Prüfe den Satz zum Abstand noch einmal getrennt von den Massen.',error:'Noch nicht korrekt. Ändere immer nur eine Größe und beobachte die Kraftanzeige.'},after:updateLawUnlock});
   ['A','B','C'].forEach(buildMeasurement);
-  $('card-m1a').before($('simulation-view-4'));
   const locked=document.createElement('div');locked.id='law-after-measure';locked.hidden=true;$('tasks-law-end').append(locked);
   const m2host=document.createElement('div');m2host.id='law-m2-host';locked.append(m2host);
   setupStructured({host:'law-m2-host',id:'M2',title:'M2 · Messreihen auswerten',prompt:'<strong>Vergleiche</strong> F/m₁ in Reihe A, F/m₂ in Reihe B und F·r² in Reihe C. <strong>Ordne</strong> die drei daraus folgenden Proportionalitäten zu.',fields:[['a','Reihe A: F/m₁',[['m1','F∝m₁'],['m2','F∝m₂'],['r','F∝r⁻²']]],['b','Reihe B: F/m₂',[['m1','F∝m₁'],['m2','F∝m₂'],['r','F∝r⁻²']]],['c','Reihe C: F·r²',[['m1','F∝m₁'],['m2','F∝m₂'],['r','F∝r⁻²']]],['prediction','Bei Verdopplung beider Massen und bei Verdopplung von r',[['right','viermal F und ein Viertel F'],['wrong','zweimal F und halb F']]]],answers:['m1','m2','r','right'],helps:['Ein annähernd konstanter Quotient zeigt direkte Proportionalität.','Prüfe beim Abstand das Produkt F·r² statt F/r.','F ist proportional zu m₁ und m₂, aber umgekehrt proportional zu r².'],messages:{success:'Richtig. Die beiden Massen wirken direkt, der Abstand quadratisch invers.',partial:'Teilweise korrekt. Prüfe insbesondere, ob beim Abstand F·r² annähernd konstant bleibt.',error:'Noch nicht korrekt. Vergleiche Quotient und Produkt getrennt; aus Tabellenrundung folgen kleine Abweichungen.'},after:updateLawUnlock});
@@ -323,11 +412,18 @@ function setupNumeric({host,id,title,prompt,numbers,choices=[],helps,messages,af
   }
   area.append($(`check-${id.toLowerCase()}`),$(`feedback-${id.toLowerCase()}`));
   for(const [suffix,label,options,right] of choices){
-    const choice=addSelect(area,`${id.toLowerCase()}-${suffix}`,label,options);
+    const wordChoice=id==='M3'||id==='M4';
+    const choice=wordChoice?document.createElement('div'):addSelect(area,`${id.toLowerCase()}-${suffix}`,label,options);
+    if(wordChoice){choice.className='grav-inline-word-choice';area.append(choice);}
     const button=document.createElement('button');button.id=`check-${id.toLowerCase()}-${suffix}`;button.type='button';button.className='physics-primary-button';button.textContent=`${label} prüfen`;
     const result=document.createElement('p');result.id=`feedback-${id.toLowerCase()}-${suffix}`;result.className='physics-feedback';result.setAttribute('role','status');result.setAttribute('aria-live','polite');result.hidden=true;
     choice.after(button,result);
-    button.addEventListener('click',()=>{
+    if(wordChoice){
+      setupWordCards({id,reuseArea:choice,fields:[[suffix,label,options]],answers:[right],messages:{success:separateChoiceFeedback[id].success,partial:separateChoiceFeedback[id].error,error:separateChoiceFeedback[id].error},checkButtonId:button.id,feedbackId:result.id,onCheck:level=>{
+        state.choicePassed[suffix]=level==='success';
+        perhapsFinish();progress?.save();
+      }});
+    }else button.addEventListener('click',()=>{
       const selected=$(`${id.toLowerCase()}-${suffix}`).value;
       const correct=selected===right;
       state.choicePassed[suffix]=correct;
@@ -352,7 +448,7 @@ function setupNumeric({host,id,title,prompt,numbers,choices=[],helps,messages,af
   });
 }
 function setupRatio(){
-  const area=card('tasks-application','A5','A5 · Merkur-Modell','Im vereinfachten Modell besitzt Merkur genau die halbe Marsmasse und dieselbe Oberflächenfallbeschleunigung. <strong>Bestimme</strong> das Verhältnis R<sub>Merkur</sub>/R<sub>Mars</sub> mit drei gültigen Ziffern.',[
+  const area=card('tasks-fast','A5','A5 · Merkur-Modell','Im vereinfachten Modell besitzt Merkur genau die halbe Marsmasse und dieselbe Oberflächenfallbeschleunigung. <strong>Bestimme</strong> das Verhältnis R<sub>Merkur</sub>/R<sub>Mars</sub> mit drei gültigen Ziffern.',[
     'Setze die beiden Oberflächenbeschleunigungen gleich.',
     'Bei gleichem g ist der Radius proportional zur Quadratwurzel der Masse.',
     'Das gesuchte Verhältnis ist √(M<sub>Merkur</sub>/M<sub>Mars</sub>)=√0,5.'
@@ -370,9 +466,9 @@ function buildApplications(){
   const appleForce=G*earthMass*0.150/earthRadius**2;
   setupNumeric({host:'tasks-application',id:'A1',title:'A1 · Apfel und Erde',prompt:'Ein Apfel mit 150 g hängt dicht über der Erde. <strong>Bestimme</strong> die gegenseitige Kraft und die Beschleunigung von Apfel und Erde; <strong>wähle</strong> die Erklärung, warum vor allem der Apfel sichtbar fällt.',numbers:[['force','Kraft',appleForce,2,'F'],['apple','Beschleunigung Apfel',appleForce/0.150,2,'a'],['earth','Beschleunigung Erde',appleForce/earthMass,2,'a']],choices:[['why','Erklärung',yesNo('Gleiche Kraft, aber die Erde hat viel größere Masse und deshalb viel kleinere Beschleunigung','Auf die Erde wirkt keine Kraft'),'yes']],helps:['Für den Abstand genügt hier näherungsweise der Erdradius.','Berechne zuerst F und teile denselben Kraftbetrag jeweils durch die betreffende Masse.','m<sub>Apfel</sub>=0,150 kg; F≈1,474 N. Für beide Beschleunigungen gilt a=F/m, aber mit verschiedener Masse.'],messages:{success:'Richtig. Beide Kräfte sind gleich groß; wegen der riesigen Erdmasse ist ihre Beschleunigung kaum merklich.',partial:'Teilweise korrekt. Prüfe die zweite Beschleunigung und die Auswahl zu gleichen Kräften.',error:'Noch nicht korrekt. Setze 0,150 kg und den Erdradius in Metern ein.'}});
   setupNumeric({host:'tasks-application',id:'A2',title:'A2 · Astronautin',prompt:'Eine Astronautin mit 62 kg umkreist die Erde in 400 km Höhe. <strong>Berechne</strong> ihre Gravitationskraft dort und am Boden; <strong>wähle</strong> die Erklärung für scheinbare Schwerelosigkeit im Orbit.',numbers:[['orbit','Kraft in 400 km Höhe',G*earthMass*62/(6770e3)**2,2,'F'],['ground','Kraft am Boden',G*earthMass*62/earthRadius**2,2,'F']],choices:[['why','Erklärung',yesNo('Astronautin und Raumstation befinden sich gemeinsam im freien Fall um die Erde','Dort wirkt keine Erdgravitation'),'yes']],helps:['Der Abstand beginnt am Erdmittelpunkt.','Für die Höhe addiere Erdradius und 400 km; berechne F zweimal.','Verwende r<sub>Orbit</sub>=6770 km und r<sub>Boden</sub>=6370 km. Die Orbitkraft ist noch deutlich von null verschieden.'],messages:{success:'Richtig. Auch im Orbit wirkt starke Gravitation; das gemeinsame Fallen erklärt die scheinbare Schwerelosigkeit.',partial:'Teilweise korrekt. Prüfe den Mittelpunktabstand oder die Erklärung zum freien Fall.',error:'Noch nicht korrekt. 400 km ist die Höhe über der Oberfläche, nicht der Abstand vom Erdmittelpunkt.'}});
-  const derivation=document.createElement('article');derivation.className='physics-task-card';derivation.id='surface-derivation';derivation.innerHTML='<p>An der Oberfläche gilt für einen Probekörper zugleich F<sub>G</sub> = m·g und F<sub>G</sub> = G·<span class="physics-fraction"><span class="physics-fraction__numerator">M·m</span><span class="physics-fraction__denominator">R²</span></span>. Nach Kürzen der Probemasse folgt g = G·<span class="physics-fraction"><span class="physics-fraction__numerator">M</span><span class="physics-fraction__denominator">R²</span></span>.</p>';$('tasks-application').append(derivation);
-  setupNumeric({host:'tasks-application',id:'A3',title:'A3 · Mond',prompt:'Der Mond hat M=7,349·10²² kg und R=1737 km. <strong>Bestimme</strong> seine Oberflächenfallbeschleunigung und <strong>vergleiche</strong> sie mit der der Erde.',numbers:[['g','Oberflächenfallbeschleunigung',G*7.349e22/(1737e3)**2,4,'a']],choices:[['comparison','Vergleich',yesNo('kleiner als auf der Erde, ungefähr ein Sechstel','gleich wegen gleicher Probemasse'),'yes']],helps:['Die Probemasse fällt in g=G·M/R² heraus.','Wandle 1737 km in Meter um und quadriere den Radius.','Setze M=7,349·10²² kg und R=1,737·10⁶ m ein; der Rechenwert liegt nahe 1,63 m/s².'],messages:{success:'Richtig. Auf dem Mond beträgt g etwa 1,626 m/s² und ist deutlich kleiner als auf der Erde.',partial:'Teilweise korrekt. Prüfe die vier gültigen Ziffern oder den Vergleich mit der Erde.',error:'Noch nicht korrekt. Der Mondradius muss vor dem Quadrieren in Meter umgerechnet werden.'}});
-  setupNumeric({host:'tasks-application',id:'A4',title:'A4 · Mars',prompt:'Für Mars gelten M=6,417·10²³ kg und g=3,7 m/s². <strong>Bestimme</strong> den mittleren Radius aus dem Gravitationsgesetz.',numbers:[['radius','Marsradius',Math.sqrt(G*6.417e23/3.7),2,'R']],helps:['Stelle g=G·M/R² nach R um.','Nach Multiplikation mit R² folgt R²=G·M/g.','Ziehe die Wurzel aus G·M/g; vor Rundung sind es etwa 3402 km.'],messages:{success:'Richtig. Der Modellwert für den Marsradius ist 3,4·10³ km.',partial:'Teilweise korrekt. Der Betrag passt; prüfe Einheit oder zwei gültige Ziffern.',error:'Noch nicht korrekt. Nach R² musst du noch die Quadratwurzel ziehen.'}});
+  const derivation=document.createElement('article');derivation.className='physics-task-card';derivation.id='surface-derivation';derivation.innerHTML='<p>An der Oberfläche gilt für einen Probekörper zugleich F<sub>G</sub> = m·g und F<sub>G</sub> = G·<span class="physics-fraction"><span class="physics-fraction__numerator">M·m</span><span class="physics-fraction__denominator">R²</span></span>. Nach Kürzen der Probemasse folgt g = G·<span class="physics-fraction"><span class="physics-fraction__numerator">M</span><span class="physics-fraction__denominator">R²</span></span>.</p>';$('tasks-fast').append(derivation);
+  setupNumeric({host:'tasks-fast',id:'A3',title:'A3 · Mond',prompt:'Der Mond hat M=7,349·10²² kg und R=1737 km. <strong>Bestimme</strong> seine Oberflächenfallbeschleunigung und <strong>vergleiche</strong> sie mit der der Erde.',numbers:[['g','Oberflächenfallbeschleunigung',G*7.349e22/(1737e3)**2,4,'a']],choices:[['comparison','Vergleich',yesNo('kleiner als auf der Erde, ungefähr ein Sechstel','gleich wegen gleicher Probemasse'),'yes']],helps:['Die Probemasse fällt in g=G·M/R² heraus.','Wandle 1737 km in Meter um und quadriere den Radius.','Setze M=7,349·10²² kg und R=1,737·10⁶ m ein; der Rechenwert liegt nahe 1,63 m/s².'],messages:{success:'Richtig. Auf dem Mond beträgt g etwa 1,626 m/s² und ist deutlich kleiner als auf der Erde.',partial:'Teilweise korrekt. Prüfe die vier gültigen Ziffern oder den Vergleich mit der Erde.',error:'Noch nicht korrekt. Der Mondradius muss vor dem Quadrieren in Meter umgerechnet werden.'}});
+  setupNumeric({host:'tasks-fast',id:'A4',title:'A4 · Mars',prompt:'Für Mars gelten M=6,417·10²³ kg und g=3,7 m/s². <strong>Bestimme</strong> den mittleren Radius aus dem Gravitationsgesetz.',numbers:[['radius','Marsradius',Math.sqrt(G*6.417e23/3.7),2,'R']],helps:['Stelle g=G·M/R² nach R um.','Nach Multiplikation mit R² folgt R²=G·M/g.','Ziehe die Wurzel aus G·M/g; vor Rundung sind es etwa 3402 km.'],messages:{success:'Richtig. Der Modellwert für den Marsradius ist 3,4·10³ km.',partial:'Teilweise korrekt. Der Betrag passt; prüfe Einheit oder zwei gültige Ziffern.',error:'Noch nicht korrekt. Nach R² musst du noch die Quadratwurzel ziehen.'}});
   setupRatio();
 }
 
@@ -413,13 +509,19 @@ function updateSimulation(){
     const ux=(p2.x-p1.x)/(r*WORLD_SCALE),uy=(p2.y-p1.y)/(r*WORLD_SCALE);
     const length=forceArrowLength(simulation);
     const arrowEnds=f===0?[]:[{x:p1.x+ux*length,y:p1.y+uy*length},{x:p2.x-ux*length,y:p2.y-uy*length}];
-    const extents=[p1,p2,...arrowEnds];
+    const labelAlong=Math.min(60,Math.max(32,length*0.42));
+    const vectorPositions=[
+      {x:p1.x+ux*labelAlong-uy*48,y:p1.y+uy*labelAlong+ux*48},
+      {x:p2.x-ux*labelAlong+uy*78,y:p2.y-uy*labelAlong-ux*78}
+    ];
+    const extents=[p1,p2,...arrowEnds,...vectorPositions];
     const left=Math.min(0,...extents.map(p=>p.x-margin)),top=Math.min(0,...extents.map(p=>p.y-margin));
     const right=Math.max(640,...extents.map(p=>p.x+margin)),bottom=Math.max(440,...extents.map(p=>p.y+margin));
     if(!scene.dataset.dragActive)scene.setAttribute('viewBox',`${left} ${top} ${right-left} ${bottom-top}`);
     let transform=null;
     try{transform=scene.getScreenCTM();}catch{}
     const screenScale=transform?Math.hypot(transform.a,transform.b):0;
+    const vectorScale=Number.isFinite(screenScale)&&screenScale>1e-8?Math.max(1,15/(18*screenScale)):1;
     const hitRadius=Number.isFinite(screenScale)&&screenScale>1e-8?Math.max(26,22/screenScale):26;
     $(`${prefix}-m1`).value=simulation.m1;$(`${prefix}-m2`).value=simulation.m2;
     $(`${prefix}-m1-out`).textContent=`${simulation.m1.toFixed(1).replace('.',',')} t`;
@@ -433,13 +535,23 @@ function updateSimulation(){
       center.setAttribute('cx',p.x);center.setAttribute('cy',p.y);label.setAttribute('x',p.x);label.setAttribute('y',p.y-26-5*Math.sqrt(mass));
       hit.setAttribute('cx',p.x);hit.setAttribute('cy',p.y);hit.setAttribute('r',hitRadius);
       hit.setAttribute('aria-label',`Masse ${which}: ${mass.toFixed(1).replace('.',',')} Tonnen, Mittelpunkt verschieben`);
-      const offset=which===1?6:-6;
-      arrow.setAttribute('x1',p.x-uy*offset);arrow.setAttribute('y1',p.y+ux*offset);
-      arrow.setAttribute('x2',p.x+dir*ux*length-uy*offset);arrow.setAttribute('y2',p.y+dir*uy*length+ux*offset);arrow.style.display=f===0?'none':'';
+      arrow.setAttribute('x1',p.x);arrow.setAttribute('y1',p.y);
+      arrow.setAttribute('x2',p.x+dir*ux*length);arrow.setAttribute('y2',p.y+dir*uy*length);arrow.style.display=f===0?'none':'';
     }
+    [[2,vectorPositions[0]],[1,vectorPositions[1]]].forEach(([index,position])=>{
+      const label=$(`${prefix}-vector${index}`);
+      label.setAttribute('x',position.x);label.setAttribute('y',position.y);
+      label.setAttribute('font-size',18*vectorScale);
+      label.querySelector('tspan:last-child').setAttribute('font-size',12*vectorScale);
+      label.style.display=f===0?'none':'';
+      const mark=$(`${prefix}-vector${index}-mark`);
+      mark.setAttribute('d',`M ${position.x-11*vectorScale} ${position.y-19*vectorScale} H ${position.x+vectorScale} m ${-4*vectorScale} ${-3*vectorScale} ${4*vectorScale} ${3*vectorScale} ${-4*vectorScale} ${3*vectorScale}`);
+      mark.setAttribute('stroke-width',2*vectorScale);
+      mark.style.display=f===0?'none':'';
+    });
     $(`${prefix}-readout`).textContent=`Mittelpunktabstand r = ${r.toFixed(2).replace('.',',')} m; m₁ = ${simulation.m1.toFixed(1).replace('.',',')} t; m₂ = ${simulation.m2.toFixed(1).replace('.',',')} t`;
-    $(`${prefix}-force1-readout`).textContent=`Kraft auf Masse 1 durch Masse 2: ${micro.toFixed(2).replace('.',',')} µN`;
-    $(`${prefix}-force2-readout`).textContent=`Kraft auf Masse 2 durch Masse 1: ${micro.toFixed(2).replace('.',',')} µN`;
+    $(`${prefix}-force1-readout`).innerHTML=`${vectorHtml(2)}: Kraft auf Masse 1 durch Masse 2: ${micro.toFixed(2).replace('.',',')} µN`;
+    $(`${prefix}-force2-readout`).innerHTML=`${vectorHtml(1)}: Kraft auf Masse 2 durch Masse 1: ${micro.toFixed(2).replace('.',',')} µN`;
   }
 }
 function setupSimulation(){
@@ -447,6 +559,13 @@ function setupSimulation(){
   $('simulation-view-4').innerHTML=simulationMarkup('sim4');
   for(const prefix of ['sim3','sim4']){
     const scene=$(`${prefix}-svg`);scene.setAttribute('role','group');
+    for(const suffix of ['m1','m2','distance']){
+      const input=$(`${prefix}-${suffix}`),label=document.querySelector(`label[for="${prefix}-${suffix}"]`);
+      if(suffix==='distance')label.firstChild.textContent='Mittelpunktabstand r: ';
+      const pair=document.createElement('div');pair.className='grav-control-pair';
+      label.before(pair);pair.append(label,input);
+      if(suffix==='distance')pair.append($(`${prefix}-root`).querySelector('.grav-distance-note'));
+    }
     let activeDrag=null;
     const endDrag=()=>{
       if(!activeDrag)return;
@@ -462,6 +581,22 @@ function setupSimulation(){
     document.querySelectorAll('[data-physics-tab]').forEach(tab=>tab.addEventListener('click',endDrag));
     scene.insertBefore($(`${prefix}-force1`),$(`${prefix}-center1`));
     scene.insertBefore($(`${prefix}-force2`),$(`${prefix}-center1`));
+    for(const [index,which] of [[2,1],[1,2]]){
+      const label=document.createElementNS('http://www.w3.org/2000/svg','text');
+      label.id=`${prefix}-vector${index}`;
+      label.classList.add('grav-force-label',`grav-force-label${which}`);
+      label.setAttribute('text-anchor','middle');
+      label.setAttribute('role','img');
+      label.setAttribute('aria-label',index===2?'Vektor F mit Index 2, Kraft auf Masse 1 durch Masse 2':'Vektor F mit Index 1, Kraft auf Masse 2 durch Masse 1');
+      const letter=document.createElementNS('http://www.w3.org/2000/svg','tspan');letter.textContent='F';
+      const sub=document.createElementNS('http://www.w3.org/2000/svg','tspan');sub.setAttribute('baseline-shift','sub');sub.setAttribute('font-size','12');sub.textContent=String(index);
+      label.append(letter,sub);
+      const mark=document.createElementNS('http://www.w3.org/2000/svg','path');
+      mark.id=`${prefix}-vector${index}-mark`;mark.classList.add('grav-vector-arrowmark',`grav-vector-arrowmark${which}`);
+      mark.setAttribute('aria-hidden','true');
+      scene.insertBefore(mark,$(`${prefix}-hit1`));
+      scene.insertBefore(label,$(`${prefix}-hit1`));
+    }
     for(const which of [1,2]){
       $(`${prefix}-m${which}`).addEventListener('input',event=>{simulation[`m${which}`]=Number(event.target.value);updateSimulation();progress?.save();});
       const body=$(`${prefix}-hit${which}`),svg=$(`${prefix}-svg`);
@@ -514,7 +649,7 @@ const solutionIdeas={
   P2:'Newton meint mit ‚Schwere‘ die allgemeine Anziehung aller Körper mit Masse.',
   P3:'Newton meint mit ‚Schwere‘ die allgemeine Anziehung aller Körper mit Masse.',
   P4:'Bei 2r bleibt F/4, bei 3r F/9.',
-  S1:'Die Kräfte greifen an verschiedenen Körpern an, sind gleich groß und entgegengesetzt; die größere Masse wird bei gleicher Kraft weniger beschleunigt.',
+  S1:'Der Vektor F mit Index 2 wirkt auf m₁ durch m₂, der Vektor F mit Index 1 auf m₂ durch m₁. Die Kräfte greifen an verschiedenen Mittelpunkten an, sind gleich groß und entgegengesetzt gerichtet.',
   S2:'Die Kräfte greifen an verschiedenen Körpern an, sind gleich groß und entgegengesetzt; die größere Masse wird bei gleicher Kraft weniger beschleunigt.',
   M0:'F ist proportional zu m₁ und m₂ sowie umgekehrt proportional zu r²; beim Verdoppeln beider Massen entsteht 4F, beim Verdoppeln des Abstands F/4.',
   M1A:'21,45 | 24,52 | 27,58 | 30,65 µN',M1B:'23,84 | 27,24 | 30,65 | 34,05 µN',M1C:'19,86 | 16,69 | 12,26 | 10,68 µN',
@@ -529,22 +664,38 @@ const solutionIdeas={
 };
 function updateSummary(){
   if(typeof document==='undefined')return;
-  const all=Object.keys(solutionIdeas).every(id=>completed.has(id));
+  const all=Object.keys(solutionIdeas).filter(id=>!['A3','A4','A5'].includes(id)).every(id=>completed.has(id));
   $('summary-pending').hidden=all;$('summary-content').hidden=!all;
   if(!all)return;
-  const groupings=[['Newton und die Principia',['N1','P1','P2','P3','P4']],['Kräftebild',['S1','S2']],['Messreihen und Gesetz',['M0','M1A','M1B','M1C','M2','M3','M4']],['Anwendungen',['A1','A2','A3','A4','A5']]];
+  const groupings=[['Newton und die Principia',['N1','P1','P2','P3','P4']],['Kräftebild',['S1','S2']],['Messreihen und Gesetz',['M0','M1A','M1B','M1C','M2','M3','M4']],['Anwendungen',['A1','A2']],['Für die Schnellen',['A3','A4','A5'].filter(id=>completed.has(id))]];
   const root=$('summary-content');root.replaceChildren();
   const memory=document.createElement('article');memory.className='physics-task-card';memory.innerHTML=`<h3>Merksätze</h3><p>Alle Körper mit Masse ziehen einander an. Die beiden Kräfte sind gleich groß, entgegengesetzt gerichtet und wirken auf verschiedene Körper.</p><p>Bei einer durch Gravitation bewirkten Kreisbewegung ist die Gravitationskraft die benötigte Zentripetalkraft; beide Kräfte werden nicht addiert.</p><p>Die Gravitationskraft wächst proportional mit jeder der beiden Massen und nimmt mit dem Quadrat des Mittelpunktabstands ab.</p><p>Für den Kraftbetrag gilt F<sub>G</sub> = G·<span class="physics-fraction"><span class="physics-fraction__numerator">m₁·m₂</span><span class="physics-fraction__denominator">r²</span></span>. Auf der Oberfläche eines Himmelskörpers gilt g=G·<span class="physics-fraction"><span class="physics-fraction__numerator">M</span><span class="physics-fraction__denominator">R²</span></span>.</p><p>Schwerelosigkeit im Orbit bedeutet gemeinsamer freier Fall, nicht fehlende Gravitation.</p>`;root.append(memory);
   groupings.forEach(([heading,ids])=>{
+    if(!ids.length)return;
     const details=document.createElement('details');details.className='physics-task-card';
     const summary=document.createElement('summary');summary.textContent=heading;details.append(summary);
     ids.forEach(id=>{
       const original=$(`card-${id.toLowerCase()}`),entry=document.createElement('div');entry.className='grav-summary-entry';
       const title=original.querySelector('h3')?.textContent||id,prompt=original.querySelector('.task-prompt')?.innerHTML||'';
       const fields=[...original.querySelectorAll('.task-fields input, .task-fields select')].filter(el=>!el.id.endsWith('-unit'));
-      const own=fields.map(el=>el.tagName==='SELECT'?el.selectedOptions[0]?.textContent:`${el.value}${$(el.id+'-unit')?.value?' '+$(el.id+'-unit').value:''}`).join(' · ');
+      const board=wordBoards.get(id);
+      const own=id==='S1'
+        ? [...original.querySelectorAll('.grav-s1-choices input:checked')].map(el=>el.closest('label')?.textContent.trim()).join(' · ')
+        : board ? [
+          ...((id==='M3'||id==='M4')?[`${$(`${id.toLowerCase()}-g`).value} ${$(`${id.toLowerCase()}-g-unit`).value}`.trim()]:[]),
+          ...board.instances.map(key=>board.cardLabels.get(key)||'—')
+        ].join(' · ')
+        : fields.map(el=>el.tagName==='SELECT'?el.selectedOptions[0]?.textContent:`${el.value}${$(el.id+'-unit')?.value?' '+$(el.id+'-unit').value:''}`).join(' · ');
       entry.innerHTML=`<h4>${title}</h4><p>${prompt}</p><p><strong>Deine Eingabe:</strong> <span data-own-answer></span></p><p><strong>Lösungsidee:</strong> ${htmlText(solutionIdeas[id])}</p>`;
       entry.querySelector('[data-own-answer]').textContent=own;
+      if(id==='S1'){
+        const answer=entry.querySelector('[data-own-answer]');answer.replaceChildren();
+        [...original.querySelectorAll('.grav-s1-choices input:checked')].forEach((input,index)=>{
+          if(index)answer.append(document.createTextNode(' · '));
+          answer.append(input.closest('label').querySelector('span').cloneNode(true));
+        });
+      }
+      if(id==='S1')entry.querySelector('p:last-child').innerHTML=`<strong>Lösungsidee:</strong> ${vectorHtml(2)} auf m₁ durch m₂; ${vectorHtml(1)} auf m₂ durch m₁. Die Kräfte greifen an verschiedenen Mittelpunkten an, sind gleich groß und entgegengesetzt gerichtet.`;
       if(id==='M2'){
         const observations=document.createElement('p');observations.className='m2-summary-observations';
         observations.textContent=m2Cases.map(item=>`${item.label}: ${validM2Observation(item,m2Observations[item.id])?(m2Observations[item.id].force*1e6).toFixed(2).replace('.',',')+' µN':'—'}`).join(' · ');
@@ -584,11 +735,18 @@ function buildQuiz(){
 }
 
 if(typeof document!=='undefined'){
-  setupPhysicsStepTabs();
+  const stepTabs = setupPhysicsStepTabs();
+  document.querySelectorAll("[data-next-tab]").forEach(button=>{
+    button.addEventListener("click",()=>{
+      stepTabs.goToTab(button.dataset.nextTab,true);
+      document.querySelector(".physics-step-tabs")?.scrollIntoView({behavior:window.matchMedia("(prefers-reduced-motion: reduce)").matches?"auto":"smooth",block:"start"});
+    });
+  });
   buildSources();buildSimulationTasks();buildLaw();buildApplications();buildQuiz();setupSimulation();
   const invalidate=event=>{
     const card=event.target.closest?.('.physics-task-card[id^="card-"]');if(!card)return;
     const id=card.id.slice(5).toUpperCase();
+    if(id==='S1')s1Checked=false;
     const numeric=numericCards.get(id);
     if(numeric){
       const changed=event.target.id;
@@ -618,26 +776,25 @@ if(typeof document!=='undefined'){
     m2Cases.forEach(item=>{delete m2Observations[item.id];if(validM2Observation(item,saved?.[item.id]))m2Observations[item.id]={...saved[item.id]};});
     renderM2Observations();
   });
-  progress.registerPart('word-cards',()=>Object.fromEntries([...wordBoards].map(([id,board])=>[id,[...board.values]])),saved=>{
+  progress.registerPart('word-cards',()=>Object.fromEntries([...wordBoards].map(([id,board])=>[id,[...board.instances]])),saved=>{
     for(const [id,board] of wordBoards){
       const candidate=Array.isArray(saved?.[id])&&saved[id].length===board.values.length?saved[id]:board.controls.map(control=>control.value);
-      const allowed=new Set(board.fields.flatMap(([, ,choices])=>choices.map(([key])=>key)));
-      const used=new Set();
-      board.setValues(candidate.map(value=>{
-        if(typeof value!=='string'||!allowed.has(value)||used.has(value))return '';
-        used.add(value);return value;
-      }));
+      board.setValues(candidate);
     }
   });
-  progress.registerPart('completed',()=>[...completed],saved=>{if(Array.isArray(saved)){const allowed=new Set(Object.keys(solutionIdeas));saved.forEach(id=>{const board=wordBoards.get(id);if(allowed.has(id)&&(!board||board.values.every((value,index)=>value===board.answers[index]))&&!numericCards.has(id)&&(id!=='M2'||allM2Observations()&&m2SelectionsCorrect()))completed.add(id);});}if(!completed.has('M2')){completed.delete('M3');completed.delete('M4');}lawStepUnlock();updateSummary();$('modern-note').hidden=!completed.has('P1');$('m4-note').hidden=!completed.has('M4');});
+  progress.registerPart('s1-checked',()=>s1Checked,saved=>{
+    const selected=[...$('card-s1').querySelectorAll('.grav-s1-choices input:checked')].map(input=>Number(input.value));
+    s1Checked=saved===true&&selected.length===3&&[1,2,3].every(value=>selected.includes(value));
+  });
+  progress.registerPart('completed',()=>[...completed],saved=>{if(Array.isArray(saved)){const allowed=new Set(Object.keys(solutionIdeas));saved.forEach(id=>{if(id==='S1'||numericCards.has(id))return;const board=wordBoards.get(id);if(allowed.has(id)&&(!board||board.values.every((value,index)=>value===board.answers[index]))&&(id!=='M2'||allM2Observations()&&m2SelectionsCorrect()))completed.add(id);});}if(s1Checked)completed.add('S1');if(!completed.has('M2')){completed.delete('M3');completed.delete('M4');}lawStepUnlock();updateSummary();$('modern-note').hidden=!completed.has('P1');$('m4-note').hidden=!completed.has('M4');});
   progress.registerPart('numeric-checks',()=>Object.fromEntries([...numericCards].map(([id,state])=>[id,{numberPassed:state.numberPassed,choicePassed:{...state.choicePassed}}])),saved=>{
     if(!saved||typeof saved!=='object'||Array.isArray(saved))return;
     for(const [id,state] of numericCards){
       const record=saved[id];if(!record||typeof record!=='object')continue;
       const validNumbers=state.numbers.every(([suffix,label,target,digits,kind])=>checkQuantity($(`${id.toLowerCase()}-${suffix}`).value,$(`${id.toLowerCase()}-${suffix}-unit`).value,{target,digits,units:unitSets[kind],tolerance:id==='M3'?0.01e-11:0})==='correct');
       state.numberPassed=record.numberPassed===true&&validNumbers;
-      for(const [suffix,label,options,right] of state.choices)state.choicePassed[suffix]=record.choicePassed?.[suffix]===true&&$(`${id.toLowerCase()}-${suffix}`).value===right;
-      if(state.numberPassed&&state.choices.every(([suffix])=>state.choicePassed[suffix]))completed.add(id);
+      for(const [suffix,label,options,right] of state.choices)state.choicePassed[suffix]=record.choicePassed?.[suffix]===true&&$(`${id.toLowerCase()}-${suffix}`).value===right&&(!wordBoards.has(id)||wordBoards.get(id).values[0]===right);
+      if(state.numberPassed&&state.choices.every(([suffix])=>state.choicePassed[suffix])&&(!(id==='M3'||id==='M4')||completed.has('M2')))completed.add(id);
     }
     updateSummary();$('m4-note').hidden=!completed.has('M4');
   });

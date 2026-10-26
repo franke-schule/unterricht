@@ -1,0 +1,172 @@
+\documentclass[10pt,a4paper]{article}
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage[ngerman]{babel}
+\usepackage[a4paper,margin=12mm]{geometry}
+\usepackage{lmodern}
+\usepackage[table]{xcolor}
+\usepackage{tabularx,array,booktabs,amsmath,microtype}
+\usepackage[most]{tcolorbox}
+\usepackage{tikz}
+\usetikzlibrary{arrows.meta,calc}
+\pagestyle{empty}
+\setlength{\parindent}{0pt}
+\setlength{\parskip}{0pt}
+\renewcommand{\familydefault}{\sfdefault}
+\renewcommand{\arraystretch}{1.12}
+\definecolor{Navy}{HTML}{17324D}
+\definecolor{Blue}{HTML}{3B6EA5}
+\definecolor{Sky}{HTML}{EAF3FA}
+\definecolor{Mint}{HTML}{E8F5EF}
+\definecolor{Gold}{HTML}{F3B33D}
+\definecolor{Ink}{HTML}{1E2935}
+\definecolor{Muted}{HTML}{617080}
+\definecolor{Line}{HTML}{D8E1E8}
+\color{Ink}
+\newcommand{\unit}[1]{\,\mathrm{#1}}
+\newcommand{\unitfrac}[2]{\,\frac{\mathrm{#1}}{\mathrm{#2}}}
+\newcommand{\sectiontitle}[1]{\par\vspace{2mm}{\color{Blue}\bfseries\large #1}\par\vspace{.3mm}{\color{Blue}\rule{\linewidth}{.7pt}}\par\vspace{1mm}}
+\newcommand{\step}[2]{\par\vspace{1.3mm}\textbf{\textcolor{Blue}{#1}\quad #2}\par\vspace{.4mm}}
+\newcommand{\sheethead}[1]{\par\normalsize\color{Ink}\leavevmode%
+  \colorbox{Navy}{\parbox{\dimexpr\linewidth-2\fboxsep\relax}{\vspace{1.3mm}\color{white}\small\bfseries PHYSIK \textperiodcentered{} KLASSE 11\hfill\textcolor{Gold}{LÖSUNGEN}\par\vspace{1.1mm}{\large Lösungsblatt \textperiodcentered{} Schritt für Schritt}\vspace{1.1mm}}}
+  \par\vspace{1.6mm}{\color{Navy}\fontsize{15}{18}\selectfont\bfseries Gravitation anwenden\par}
+  \vspace{.5mm}\textbf{Aufgabe 8}\hfill\textcolor{Muted}{#1}\par\vspace{1mm}}
+\newcommand{\pagefooter}[1]{\vfill{\color{Line}\rule{\linewidth}{.5pt}}\par\vspace{1mm}\begin{tabularx}{\linewidth}{@{}Xc r@{}}{\leavevmode\small\color{Muted}Klasse 11 \textperiodcentered{} Physik \textperiodcentered{} Kreisbewegungen} & {\leavevmode\small\color{Muted}#1 von 2} & {\leavevmode\small\color{Muted}Lösungsblatt \textperiodcentered{} Aufgabe 8}\end{tabularx}}
+\tcbset{sheetbox/.style={colframe=Line,arc=1.2mm,boxrule=.6pt,left=2mm,right=2mm,top=1mm,bottom=1mm,before skip=1.5mm,after skip=1.5mm}}
+\setlength{\abovedisplayskip}{3pt}
+\setlength{\belowdisplayskip}{3pt}
+\begin{document}
+\sheethead{Reiter 5 \textperiodcentered{} Rechenaufgaben A1 und A2}
+\small
+\begin{tcolorbox}[sheetbox,colback=Sky]
+\textbf{Vorgaben aus dem Modul:}
+$G=6{,}67430\cdot10^{-11}\unitfrac{N\cdot m^2}{kg^2}$,
+$M_{\mathrm E}=5{,}974\cdot10^{24}\unit{kg}$,\\[1mm]
+$R_{\mathrm E}=6370\unit{km}=6{,}370\cdot10^6\unit{m}$.
+Der Abstand $r$ wird zwischen den Mittelpunkten gemessen.
+\end{tcolorbox}
+\sectiontitle{A1 \textperiodcentered{} Apfel und Erde}
+\textbf{Gegeben:} Ein Apfel mit $m_{\mathrm A}=150\unit{g}$ hängt dicht über der Erdoberfläche. Gesucht sind der gegenseitige Kraftbetrag und beide Beschleunigungen.
+\step{1}{Masse umrechnen und Abstand festlegen}
+\[
+m_{\mathrm A}=150\unit{g}=0{,}150\unit{kg},\qquad r\approx R_{\mathrm E}=6{,}370\cdot10^6\unit{m}.
+\]
+\step{2}{Gravitationskraft berechnen}
+\[
+F=G\cdot\frac{M_{\mathrm E}\cdot m_{\mathrm A}}{r^2}
+=\frac{6{,}67430\cdot10^{-11}\unitfrac{N\cdot m^2}{kg^2}\cdot5{,}974\cdot10^{24}\unit{kg}\cdot0{,}150\unit{kg}}
+{(6{,}370\cdot10^6\unit{m})^2}
+=1{,}47395\ldots\unit{N}.
+\]
+Nach dem Wechselwirkungsprinzip ziehen sich Apfel und Erde mit gleich gro\ss{}en, entgegengesetzt gerichteten Kräften an. Diese Kräfte greifen an verschiedenen Körpern an.
+\step{3}{Denselben Kraftbetrag durch die jeweilige Masse teilen}
+Für die Fallbewegung nach dem Loslassen gilt jeweils $a=\dfrac{F}{m}$:
+\begin{align*}
+a_{\mathrm A}&=\frac{G\cdot M_{\mathrm E}}{R_{\mathrm E}^2}
+=\frac{1{,}47395\ldots\unit{N}}{0{,}150\unit{kg}}
+=9{,}82635\ldots\unitfrac{m}{s^2},\\[1mm]
+a_{\mathrm E}&=\frac{G\cdot m_{\mathrm A}}{R_{\mathrm E}^2}
+=\frac{1{,}47395\ldots\unit{N}}{5{,}974\cdot10^{24}\unit{kg}}
+=2{,}46728\ldots\cdot10^{-25}\unitfrac{m}{s^2}.
+\end{align*}
+\begin{tcolorbox}[sheetbox,colback=Mint]
+\textbf{Ergebnisse mit zwei gültigen Ziffern:}
+$\boxed{F\approx1{,}5\unit{N}}$,\quad
+$\boxed{a_{\mathrm A}\approx9{,}8\unitfrac{m}{s^2}}$,\quad
+$\boxed{a_{\mathrm E}\approx2{,}5\cdot10^{-25}\unitfrac{m}{s^2}}$.\\[1mm]
+Vor allem der Apfel fällt sichtbar: Bei gleichem Kraftbetrag ist die Beschleunigung der viel massereicheren Erde verschwindend klein. Solange der Apfel noch hängt, wird seine Gravitationskraft durch die Haltekraft ausgeglichen.
+\end{tcolorbox}
+\sectiontitle{A2 \textperiodcentered{} Astronautin in 400 km Höhe}
+\textbf{Gegeben:} $m=62\unit{kg}$, $h=400\unit{km}$. Gesucht sind die Gravitationskräfte im Orbit und am Boden sowie die Erklärung der scheinbaren Schwerelosigkeit.
+\step{1}{Mittelpunktabstände bestimmen}
+\[
+r_{\mathrm{Orbit}}=R_{\mathrm E}+h=6770\unit{km}=6{,}770\cdot10^6\unit{m},\qquad
+r_{\mathrm{Boden}}=6{,}370\cdot10^6\unit{m}.
+\]
+\step{2}{Gravitationsgesetz für beide Abstände anwenden}
+\begin{align*}
+F_{\mathrm{Orbit}}&=G\cdot\frac{M_{\mathrm E}\cdot m}{r_{\mathrm{Orbit}}^2}
+=\frac{6{,}67430\cdot10^{-11}\cdot5{,}974\cdot10^{24}\cdot62}{(6{,}770\cdot10^6)^2}\unit{N}
+=539{,}368\ldots\unit{N},\\[1mm]
+F_{\mathrm{Boden}}&=G\cdot\frac{M_{\mathrm E}\cdot m}{R_{\mathrm E}^2}
+=\frac{6{,}67430\cdot10^{-11}\cdot5{,}974\cdot10^{24}\cdot62}{(6{,}370\cdot10^6)^2}\unit{N}
+=609{,}233\ldots\unit{N}.
+\end{align*}
+Die Zahlenrechnungen verwenden ausschlie\ss{}lich SI-Einheiten.
+\step{3}{Runden und die Schwerelosigkeit erklären}
+\begin{tcolorbox}[sheetbox,colback=Mint]
+\textbf{Zwei gültige Ziffern:}
+$\boxed{F_{\mathrm{Orbit}}\approx5{,}4\cdot10^2\unit{N}}$,\quad
+$\boxed{F_{\mathrm{Boden}}\approx6{,}1\cdot10^2\unit{N}}$.\\[1mm]
+Auch im Orbit wirkt eine starke Gravitationskraft. Astronautin und Raumstation befinden sich gemeinsam im freien Fall um die Erde. Die Astronautin wird daher nicht wie am Boden von einer Unterlage getragen und erscheint schwerelos. Die Gravitation wirkt dabei als Zentripetalkraft.
+\end{tcolorbox}
+\pagefooter{1}
+\newpage
+\sheethead{Reiter 6 \textperiodcentered{} Für die Schnellen: A3 bis A5}
+\small
+\sectiontitle{Gemeinsamer Ansatz: Fallbeschleunigung an der Oberfläche}
+Für einen Probekörper der Masse $m$ an einem kugelförmigen Himmelskörper gilt:
+\[
+F_{\mathrm G}=m\cdot g=G\cdot\frac{M\cdot m}{R^2}
+\quad\Longrightarrow\quad\boxed{g=G\cdot\frac{M}{R^2}}.
+\]
+Die Probemasse $m$ kürzt sich. $M$ ist die Masse des Himmelskörpers, $R$ sein Radius.
+\sectiontitle{A3 \textperiodcentered{} Oberflächenfallbeschleunigung des Mondes}
+\textbf{Gegeben:} $M_{\mathrm{Mond}}=7{,}349\cdot10^{22}\unit{kg}$, $R_{\mathrm{Mond}}=1737\unit{km}$.
+\step{1}{Radius in Meter umrechnen}
+\[
+R_{\mathrm{Mond}}=1737\unit{km}=1{,}737\cdot10^6\unit{m}.
+\]
+\step{2}{In den Oberflächenansatz einsetzen}
+\[
+g_{\mathrm{Mond}}=G\cdot\frac{M_{\mathrm{Mond}}}{R_{\mathrm{Mond}}^2}
+=\frac{6{,}67430\cdot10^{-11}\unitfrac{N\cdot m^2}{kg^2}\cdot7{,}349\cdot10^{22}\unit{kg}}
+{(1{,}737\cdot10^6\unit{m})^2}
+=1{,}625677\ldots\unitfrac{m}{s^2}.
+\]
+\step{3}{Auf vier gültige Ziffern runden und vergleichen}
+\begin{tcolorbox}[sheetbox,colback=Mint]
+$\boxed{g_{\mathrm{Mond}}\approx1{,}626\unitfrac{m}{s^2}}$.
+Mit dem Erdwert aus A1 gilt $\dfrac{g_{\mathrm{Mond}}}{g_{\mathrm E}}\approx0{,}165\approx\dfrac16$.
+Die Fallbeschleunigung auf dem Mond ist ungefähr ein Sechstel so gro\ss{} wie auf der Erde.
+\end{tcolorbox}
+\sectiontitle{A4 \textperiodcentered{} Mittlerer Radius des Mars}
+\textbf{Gegeben:} $M_{\mathrm{Mars}}=6{,}417\cdot10^{23}\unit{kg}$, $g_{\mathrm{Mars}}=3{,}7\unitfrac{m}{s^2}$.
+\step{1}{Nach dem gesuchten Radius umstellen}
+\[
+g=G\cdot\frac{M}{R^2}
+\quad\Longrightarrow\quad g\cdot R^2=G\cdot M
+\quad\Longrightarrow\quad R^2=\frac{G\cdot M}{g}
+\quad\Longrightarrow\quad R=\sqrt{\frac{G\cdot M}{g}}.
+\]
+\step{2}{Einsetzen, Wurzel ziehen und umrechnen}
+\[
+R_{\mathrm{Mars}}=\sqrt{\frac{6{,}67430\cdot10^{-11}\unitfrac{N\cdot m^2}{kg^2}\cdot6{,}417\cdot10^{23}\unit{kg}}{3{,}7\unitfrac{m}{s^2}}}
+=3{,}402264\ldots\cdot10^6\unit{m}=3402{,}264\ldots\unit{km}.
+\]
+\begin{tcolorbox}[sheetbox,colback=Mint]
+\textbf{Zwei gültige Ziffern:} $\boxed{R_{\mathrm{Mars}}\approx3{,}4\cdot10^6\unit{m}=3{,}4\cdot10^3\unit{km}}$.
+\end{tcolorbox}
+\sectiontitle{A5 \textperiodcentered{} Merkur-Modell: Verhältnis der Radien}
+\textbf{Modellvorgaben:} $M_{\mathrm{Merkur}}=\dfrac12\,M_{\mathrm{Mars}}$ und $g_{\mathrm{Merkur}}=g_{\mathrm{Mars}}$.
+Gesucht ist $\dfrac{R_{\mathrm{Merkur}}}{R_{\mathrm{Mars}}}$.
+\step{1}{Die beiden Oberflächenfallbeschleunigungen gleichsetzen}
+\[
+G\cdot\frac{M_{\mathrm{Merkur}}}{R_{\mathrm{Merkur}}^2}
+=G\cdot\frac{M_{\mathrm{Mars}}}{R_{\mathrm{Mars}}^2}.
+\]
+\step{2}{G kürzen, umstellen und die positive Wurzel ziehen}
+\[
+\frac{R_{\mathrm{Merkur}}^2}{R_{\mathrm{Mars}}^2}
+=\frac{M_{\mathrm{Merkur}}}{M_{\mathrm{Mars}}}
+\quad\Longrightarrow\quad
+\frac{R_{\mathrm{Merkur}}}{R_{\mathrm{Mars}}}
+=\sqrt{\frac{M_{\mathrm{Merkur}}}{M_{\mathrm{Mars}}}}
+=\sqrt{0{,}5}=0{,}707106\ldots
+\]
+\begin{tcolorbox}[sheetbox,colback=Mint]
+\textbf{Drei gültige Ziffern:} $\boxed{\dfrac{R_{\mathrm{Merkur}}}{R_{\mathrm{Mars}}}\approx0{,}707}$ (ohne Einheit).
+Im vorgegebenen Modell beträgt der Merkurradius etwa $70{,}7\,\%$ des Marsradius. Bei gleichem $g$ bedeutet halbe Masse wegen des Quadrats von $R$ nicht halben Radius.
+\end{tcolorbox}
+\pagefooter{2}
+\end{document}

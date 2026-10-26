@@ -1,19 +1,43 @@
-.gravitation-page .physics-step-tabs { display: grid; grid-template-columns: repeat(7, minmax(0,1fr)); gap: .35rem; overflow: visible; }
-.gravitation-page .physics-step-tabs [role="tab"] { min-width: 0; white-space: normal; overflow-wrap: anywhere; font-size: .88rem; line-height: 1.15; padding: .6rem .3rem; }
+.gravitation-page .physics-step-tabs { display: grid; grid-template-columns: repeat(8, minmax(0,1fr)); gap: .35rem; overflow: visible; }
+.gravitation-page .physics-step-tabs [role="tab"] { min-width: 0; white-space: normal; hyphens: auto; overflow-wrap: anywhere; font-size: .88rem; line-height: 1.15; padding: .6rem .3rem; }
 .gravitation-page .physics-revision-panel { max-width: 100%; grid-template-columns: minmax(0, 1fr); }
 .gravitation-page .physics-task-card { margin-block: 1rem; }
 .gravitation-page .task-fields { display: grid; grid-template-columns: minmax(0, 1fr); gap: .75rem; margin: .75rem 0; }
 .gravitation-page .grav-choice { display: grid; gap: .25rem; font-weight: 700; }
 .gravitation-page .grav-choice select { width: 100%; max-width: 100%; min-height: 44px; }
+.gravitation-page .grav-statement-choices { display: grid; gap: .75rem; min-width: 0; margin: 0; }
+.gravitation-page .grav-statement-choices .force-kind-option { align-items: flex-start; padding: 1rem; gap: .75rem; line-height: 1.5; }
+.gravitation-page .grav-statement-choices input { flex: 0 0 auto; width: 20px; height: 20px; margin: .15rem 0 0; accent-color: #1e3a8a; }
+.gravitation-page .grav-statement-choices .force-kind-option:hover { border-color: #1e3a8a; }
 .gravitation-page .physics-number-entry { display: grid; gap: .3rem; }
 .gravitation-page .physics-number-controls { display: flex; gap: .5rem; flex-wrap: nowrap; }
 .gravitation-page .physics-number-controls input { min-width: 0; flex: 1 1 58%; }
 .gravitation-page .physics-number-controls select { min-width: 0; flex: 1 1 42%; }
 .gravitation-page .physics-number-controls input,.gravitation-page .physics-number-controls select { min-height: 44px; }
 .gravitation-page .source-text { line-height: 1.6; }
-.grav-source-quote { margin: 1.4rem 0 .5rem; padding: 1rem 1.25rem; border-left: 5px solid #a17439; border-radius: .3rem; background: #fbf6e9; color: #292524; font-family: "Palatino Linotype", "Book Antiqua", Georgia, serif; font-size: 1.08rem; line-height: 1.65; }
-.grav-source-quote cite { display: block; font-style: normal; font-weight: 700; }
-.grav-source-quote p { margin: .3rem 0 0; }
+.grav-principia-titlepage { width: min(100%, 320px); margin: 1rem auto 1.5rem; }
+.grav-principia-titlepage img { display: block; width: 100%; height: auto; border: 1px solid #c5aa76; box-shadow: 0 5px 16px #60461e26; }
+.grav-principia-titlepage figcaption { margin-top: .75rem; color: #475569; font-size: .9rem; line-height: 1.5; text-align: center; }
+.grav-source-quote {
+  margin: 1.4rem 0 .75rem;
+  padding: clamp(1.1rem, 3vw, 2rem);
+  border: 1px solid #b99a60;
+  border-radius: 3px 8px 4px 10px / 8px 3px 9px 4px;
+  background-color: #efdfb4;
+  background-image:
+    radial-gradient(ellipse at 8% 12%, #ab773331, transparent 45%),
+    radial-gradient(ellipse at 92% 88%, #a6753433, transparent 50%),
+    repeating-linear-gradient(3deg, #fff8df17 0 1px, transparent 1px 4px),
+    linear-gradient(100deg, #dfc48b, #f7ebc9 18%, #f1e0b3 75%, #ddbf82);
+  box-shadow: inset 0 0 24px #8b5e2833, 0 4px 10px #60461e1a;
+  color: #3e2c1c;
+  font-family: "Palatino Linotype", "Book Antiqua", Georgia, serif;
+  font-size: clamp(1.08rem, 2vw, 1.2rem);
+  line-height: 1.8;
+  text-align: left;
+}
+.grav-source-quote cite { display: block; color: #6b4525; font-style: normal; font-variant: small-caps; font-weight: 700; letter-spacing: .06em; }
+.grav-source-quote p { margin: .5rem 0 0; font-style: italic; }
 .gravitation-page .grav-word-bank { margin: .5rem 0 .9rem; }
 .gravitation-page .grav-word-target { display: inline-flex; min-width: 5.5rem; vertical-align: middle; }
 .gravitation-page .grav-word-target .cloze-gap { width: 100%; min-height: 46px; }
@@ -22,8 +46,18 @@
 .gravitation-page .grav-word-row { display: grid; grid-template-columns: minmax(10rem, 1fr) minmax(10rem, 1.5fr); align-items: center; gap: .6rem; }
 .gravitation-page .grav-word-row .grav-word-target { width: 100%; }
 .gravitation-page :is(.cloze-token,.cloze-gap):focus-visible { outline: 3px solid #2563eb; outline-offset: 3px; }
-.grav-simulation { display: grid; grid-template-columns: minmax(210px, 1fr) minmax(0,2fr); gap: 1rem; }
-.grav-controls { display: grid; align-content: start; gap: .35rem; }
+.grav-workspace { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 1rem; align-items: start; }
+.grav-simulation-column,.grav-task-scroll { min-width: 0; }
+.grav-task-scroll { max-height: min(75vh, 850px); overflow-y: auto; overscroll-behavior: contain; padding: 0 .75rem .5rem 0; scrollbar-gutter: stable; }
+.grav-task-scroll:focus-visible { outline: 3px solid #2563eb; outline-offset: 2px; }
+.grav-simulation { display: flex; flex-direction: column; gap: 1rem; }
+.grav-scene { order: -1; }
+.grav-controls { display: grid; grid-template-columns: repeat(3,minmax(0,1fr)); align-content: start; align-items: end; gap: .35rem .65rem; }
+.grav-control-pair { display: grid; align-content: end; gap: .15rem; min-width: 0; }
+.grav-control-pair label { line-height: 1.25; }
+.grav-control-pair .grav-distance-note { margin: 0; font-size: .85rem; }
+.grav-controls > button,.grav-controls > .physics-feedback { grid-column: 1 / -1; }
+.grav-controls > button { justify-self: start; min-height: 44px; }
 .grav-controls input[type="range"] { width: 100%; min-height: 44px; accent-color: #2563eb; }
 .grav-controls input[type="number"] { width: 100%; min-height: 44px; }
 .grav-scene svg { display: block; width: 100%; height: auto; border: 1px solid #94a3b8; border-radius: .6rem; background: #f8fafc; touch-action: none; }
@@ -37,6 +71,13 @@
 .grav-body1 { fill: #dbeafe; stroke: #2563eb; }.grav-body2 { fill: #fef3c7; stroke: #b45309; }
 .grav-center { fill: #111827; stroke: white; stroke-width: 1; }
 .grav-label { fill: #111827; font-weight: 800; font-size: 16px; }
+.grav-force-label { font-family: Georgia, serif; font-weight: 800; paint-order: stroke fill; stroke: #fff; stroke-width: 4px; pointer-events: none; }
+.grav-force-label1 { fill: #1d4ed8; }.grav-force-label2 { fill: #92400e; }
+.grav-vector-arrowmark { fill: none; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; pointer-events: none; }
+.grav-vector-arrowmark1 { stroke: #1d4ed8; }.grav-vector-arrowmark2 { stroke: #92400e; }
+.grav-vector-symbol { display: inline-block; position: relative; padding-top: .17em; white-space: nowrap; font-style: italic; font-family: Georgia, serif; }
+.grav-vector-symbol::before { content: '→'; position: absolute; left: 0; top: -.42em; font-size: .9em; line-height: 1; }
+.grav-vector-symbol sub { font-size: .7em; }
 .grav-readout { grid-column: 1 / -1; display: flex; flex-wrap: wrap; gap: .5rem 1.5rem; font-weight: 700; }
 .grav-readout p { margin: 0; }
 .grav-table-scroll { max-width: 100%; overflow-x: auto; }
@@ -48,5 +89,5 @@
 .grav-summary-entry { padding: .6rem 0; border-top: 1px solid #cbd5e1; }
 .grav-summary-entry h4 { margin: 0; }
 .gravitation-page :is(input,select,button,summary):focus-visible { outline: 3px solid #2563eb; outline-offset: 3px; }
-@media(max-width: 900px){.gravitation-page .physics-step-tabs { grid-template-columns: repeat(4,minmax(0,1fr)); }.grav-simulation { grid-template-columns: 1fr; }}
-@media(max-width: 550px){.gravitation-page .physics-step-tabs { grid-template-columns: repeat(2,minmax(0,1fr)); }.gravitation-page .physics-step-tabs [role="tab"] { font-size: .82rem; }.grav-readout { display: block; }.gravitation-page .grav-word-row { grid-template-columns: 1fr; gap: .2rem; }}
+@media(max-width: 900px){.gravitation-page .physics-step-tabs { grid-template-columns: repeat(4,minmax(0,1fr)); }.grav-workspace { grid-template-columns: minmax(0,1fr); }.grav-task-scroll { max-height: none; overflow-y: visible; padding: 0; scrollbar-gutter: auto; }}
+@media(max-width: 550px){.gravitation-page .physics-step-tabs { grid-template-columns: repeat(2,minmax(0,1fr)); }.gravitation-page .physics-step-tabs [role="tab"] { font-size: .82rem; }.grav-controls { grid-template-columns: repeat(2,minmax(0,1fr)); }.grav-control-pair:last-of-type { grid-column: 1 / -1; }.grav-readout { display: block; }.gravitation-page .grav-word-row { grid-template-columns: 1fr; gap: .2rem; }}

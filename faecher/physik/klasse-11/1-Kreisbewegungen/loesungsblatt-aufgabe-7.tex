@@ -1,0 +1,246 @@
+\documentclass[10pt,a4paper]{article}
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage[ngerman]{babel}
+\usepackage[a4paper,margin=12mm]{geometry}
+\usepackage{lmodern}
+\usepackage[table]{xcolor}
+\usepackage{tabularx,array,booktabs,amsmath,microtype}
+\usepackage[most]{tcolorbox}
+\usepackage{tikz}
+\usetikzlibrary{arrows.meta,calc}
+\pagestyle{empty}
+\setlength{\parindent}{0pt}
+\setlength{\parskip}{0pt}
+\renewcommand{\familydefault}{\sfdefault}
+\renewcommand{\arraystretch}{1.12}
+\definecolor{Navy}{HTML}{17324D}
+\definecolor{Blue}{HTML}{3B6EA5}
+\definecolor{Sky}{HTML}{EAF3FA}
+\definecolor{Mint}{HTML}{E8F5EF}
+\definecolor{Gold}{HTML}{F3B33D}
+\definecolor{Ink}{HTML}{1E2935}
+\definecolor{Muted}{HTML}{617080}
+\definecolor{Line}{HTML}{D8E1E8}
+\color{Ink}
+\newcommand{\unit}[1]{\,\mathrm{#1}}
+\newcommand{\unitfrac}[2]{\,\frac{\mathrm{#1}}{\mathrm{#2}}}
+\newcommand{\sectiontitle}[1]{\par\vspace{2mm}{\color{Blue}\bfseries\large #1}\par\vspace{.3mm}{\color{Blue}\rule{\linewidth}{.7pt}}\par\vspace{1mm}}
+\newcommand{\step}[2]{\par\vspace{1.8mm}\textbf{\textcolor{Blue}{#1}\quad #2}\par\vspace{.5mm}}
+\newcommand{\sheethead}[1]{\par\color{Ink}\leavevmode%
+  \colorbox{Navy}{\parbox{\dimexpr\linewidth-2\fboxsep\relax}{\vspace{1.3mm}\color{white}\small\bfseries PHYSIK \textperiodcentered{} KLASSE 11\hfill\textcolor{Gold}{LÖSUNGEN}\par\vspace{1.1mm}{\large Lösungsblatt \textperiodcentered{} Schritt für Schritt}\vspace{1.1mm}}}
+  \par\vspace{1.6mm}{\color{Navy}\fontsize{15}{18}\selectfont\bfseries Übungen zur Zentripetalkraft\par}
+  \vspace{.5mm}\textbf{Aufgabe 7}\hfill\textcolor{Muted}{#1}\par\vspace{1mm}}
+\newcommand{\pagefooter}[1]{\vfill{\color{Line}\rule{\linewidth}{.5pt}}\par\vspace{1mm}\begin{tabularx}{\linewidth}{@{}Xc r@{}}{\leavevmode\small\color{Muted}Klasse 11 \textperiodcentered{} Physik \textperiodcentered{} Kreisbewegungen} & {\leavevmode\small\color{Muted}#1 von 3} & {\leavevmode\small\color{Muted}Lösungsblatt \textperiodcentered{} Aufgabe 7}\end{tabularx}}
+\tcbset{sheetbox/.style={colframe=Line,arc=1.2mm,boxrule=.6pt,left=2mm,right=2mm,top=1mm,bottom=1mm,before skip=1.5mm,after skip=1.5mm}}
+\setlength{\abovedisplayskip}{4pt}
+\setlength{\belowdisplayskip}{4pt}
+\begin{document}
+\sheethead{1 \textperiodcentered{} Hammerwurf}
+\begin{tcolorbox}[sheetbox,colback=Sky]
+\textbf{Gegeben:} $l_{\mathrm{Seil}}=1{,}22\unit{m}$, $l_{\mathrm{Arm}}=86{,}0\unit{cm}$,
+$v_{\mathrm B}=25{,}0\unitfrac{m}{s}$, $m=7{,}16\unit{kg}$.\\[1mm]
+Gesucht: Frequenz $f$, Haltekraft $F_{\mathrm Z}$ und geeignete Abwurfposition.
+\end{tcolorbox}
+\sectiontitle{1a \textperiodcentered{} Frequenz kurz vor dem Abwurf}
+\step{1}{Armlänge umrechnen und Radius bestimmen}
+Der Radius reicht von der Drehachse des Werfers bis zur Kugel. Deshalb werden Armlänge und Seillänge addiert:
+\[
+l_{\mathrm{Arm}}=86{,}0\unit{cm}=0{,}860\unit{m},\qquad
+r=1{,}22\unit{m}+0{,}860\unit{m}=2{,}08\unit{m}.
+\]
+\step{2}{Zusammenhang aufstellen und nach der Frequenz auflösen}
+In einer Umdrehung legt die Kugel den Umfang $2\pi r$ zurück. Mit $f$ Umdrehungen pro Sekunde gilt:
+\[
+v_{\mathrm B}=2\pi\cdot f\cdot r
+\quad\Longrightarrow\quad f=\frac{v_{\mathrm B}}{2\pi\cdot r}.
+\]
+\step{3}{Einsetzen und auf drei gültige Ziffern runden}
+\[
+f=\frac{25{,}0\unitfrac{m}{s}}{2\pi\cdot2{,}08\unit{m}}
+=1{,}9129\ldots\unit{Hz}\quad\Longrightarrow\quad\boxed{f\approx1{,}91\unit{Hz}}.
+\]
+Die Kugel führt kurz vor dem Abwurf etwa $1{,}91$ Umdrehungen pro Sekunde aus. Die drei vorherigen Drehungen werden für diese momentane Frequenz nicht benötigt.
+\sectiontitle{1b \textperiodcentered{} Haltekraft kurz vor dem Abwurf}
+\step{1}{Physikalischen Ansatz wählen}
+Im vereinfachten Modell der Aufgabe ist die gesuchte Haltekraft die zum Kreismittelpunkt gerichtete Zentripetalkraft:
+\[
+F_{\mathrm Z}=\frac{m\cdot v_{\mathrm B}^{2}}{r}.
+\]
+\step{2}{Werte einsetzen; die Geschwindigkeit quadrieren}
+\[
+F_{\mathrm Z}=\frac{7{,}16\unit{kg}\cdot\left(25{,}0\unitfrac{m}{s}\right)^2}{2{,}08\unit{m}}
+=2151{,}44\ldots\unit{N}.
+\]
+\step{3}{Mit drei gültigen Ziffern angeben}
+\begin{tcolorbox}[sheetbox,colback=Mint]
+\centering $\boxed{F_{\mathrm Z}\approx2{,}15\cdot10^3\unit{N}=2{,}15\unit{kN}}$\quad Die Kraft zeigt zur Drehachse.
+\end{tcolorbox}
+\sectiontitle{1c \textperiodcentered{} Geeignete Stelle zum Loslassen}
+\begin{minipage}[c]{.64\linewidth}
+\textbf{1. Bewegungsrichtung bestimmen:} Die momentane Geschwindigkeit zeigt tangential zur Kreisbahn.\\[1.5mm]
+\textbf{2. Wirkung des Loslassens erklären:} Die Kraft zur Drehachse entfällt. Von oben gesehen bewegt sich der Hammer tangential weiter.\\[1.5mm]
+\textbf{3. Abwurfposition wählen:} Der Hammer muss dort losgelassen werden, wo die Tangente in Bewegungsrichtung durch die Netzöffnung ins freie Feld zeigt. In der Skizze ist das für den dargestellten Drehsinn der rote Punkt.
+\end{minipage}\hfill
+\begin{minipage}[c]{.33\linewidth}\centering
+\begin{tikzpicture}[x=1mm,y=1mm,>=Latex]
+\coordinate (W) at (16,16);
+\draw[Muted,line width=1.6pt] ($(W)+(50:14)$) arc[start angle=50,end angle=310,radius=14];
+\node[font=\scriptsize,Muted,anchor=south west] at ($(W)+(55:14.5)$) {Schutznetz};
+\draw[Blue,line width=.7pt] (W) circle (9);
+\draw[-{Latex},Blue,line width=.7pt] ($(W)+(155:9)$) arc[start angle=155,end angle=105,radius=9];
+\fill[Navy] (W) circle (1.2);
+\node[font=\scriptsize,below] at ($(W)+(0,-1.4)$) {Werfer};
+\draw[-{Latex},green!50!black,line width=1.1pt] ($(W)+(0,9)$) -- ($(W)+(31,9)$);
+\fill[red!80!black] ($(W)+(0,9)$) circle (1.3);
+\end{tikzpicture}
+\par\vspace{1mm}{\scriptsize\color{Muted}Blick von oben, nicht ma\ss{}stäblich. Die Gewichtskraft wirkt weiterhin nach unten.}
+\end{minipage}
+\pagefooter{1}
+\newpage
+\sheethead{2 \textperiodcentered{} Rennbahn}
+\sectiontitle{2 \textperiodcentered{} Optimale Neigung einer Rennbahn}
+\begin{tcolorbox}[sheetbox,colback=Sky]
+\textbf{Gegeben:} $r=50\unit{m}$, $v_{\mathrm B}=36\unitfrac{km}{h}$, $g=9{,}81\unitfrac{m}{s^2}$.\\[1mm]
+\textbf{Gesucht:} Neigung $\alpha$ gegen die Waagerechte, bei der keine seitliche Reibung nötig ist.
+\end{tcolorbox}
+\step{1}{Geschwindigkeit in SI-Einheiten umrechnen}
+\[
+v_{\mathrm B}=36\unitfrac{km}{h}=\frac{36\cdot1000\unit{m}}{3600\unit{s}}=10\unitfrac{m}{s}.
+\]
+\step{2}{Kräfte und Winkel im Kräftedreieck zuordnen}
+Es wirken die Gewichtskraft $F_{\mathrm G}$ senkrecht nach unten und die Normalkraft $F_{\mathrm N}$ senkrecht zur Bahn. Ihre Summe ist waagerecht zur Kurvenmitte gerichtet:
+\[
+\vec F_{\mathrm N}+\vec F_{\mathrm G}=\vec F_{\mathrm Z}.
+\]
+\begin{minipage}[c]{.40\linewidth}\centering
+\begin{tikzpicture}[x=.95mm,y=.95mm,>=Latex]
+\coordinate (S) at (0,0);\coordinate (P) at (16,34.3);\coordinate (Q) at (16,0);
+\draw[-{Latex},Blue,line width=1.2pt] (S)--(P) node[midway,left] {$F_{\mathrm N}$};
+\draw[-{Latex},Gold!85!black,line width=1.2pt] (P)--(Q) node[midway,right] {$F_{\mathrm G}$};
+\draw[-{Latex},red!80!black,line width=1.2pt] (S)--(Q) node[midway,below] {$F_{\mathrm Z}$};
+\draw ($(Q)+(-3,0)$)--++(0,3)--++(3,0);
+\draw ($(P)+(270:9)$) arc[start angle=270,end angle=245,radius=9];
+\node at ($(P)+(257:12)$) {$\alpha$};
+\end{tikzpicture}
+\par\vspace{1mm}{\scriptsize\color{Muted}Kräftedreieck, nicht ma\ss{}stäblich.}
+\end{minipage}\hfill
+\begin{minipage}[c]{.57\linewidth}
+$F_{\mathrm N}$ ist die \textbf{Hypotenuse}, $F_{\mathrm G}$ die \textbf{Ankathete} und $F_{\mathrm Z}$ die \textbf{Gegenkathete} von $\alpha$.\\[2mm]
+Da $F_{\mathrm N}$ senkrecht zur Bahn steht, ist der Winkel zur Senkrechten genauso gro\ss{} wie die Neigung der Bahn gegen die Waagerechte.
+\end{minipage}
+\step{3}{Senkrechte und waagerechte Teilgleichung aufstellen}
+Die Höhe bleibt gleich, deshalb heben sich die senkrechten Kraftanteile auf. Waagerecht ist die Zentripetalkraft nötig:
+\begin{align*}
+F_{\mathrm N}\cdot\cos\alpha&=F_{\mathrm G}=m\cdot g,\\
+F_{\mathrm N}\cdot\sin\alpha&=F_{\mathrm Z}=\frac{m\cdot v_{\mathrm B}^{2}}{r}.
+\end{align*}
+\step{4}{Waagerechte durch senkrechte Gleichung teilen und kürzen}
+\[
+\frac{F_{\mathrm N}\cdot\sin\alpha}{F_{\mathrm N}\cdot\cos\alpha}
+=\frac{m\cdot v_{\mathrm B}^{2}}{r\cdot m\cdot g}
+\quad\Longrightarrow\quad
+\frac{\sin\alpha}{\cos\alpha}=\frac{v_{\mathrm B}^{2}}{r\cdot g}.
+\]
+Links kürzt sich $F_{\mathrm N}$, rechts $m$. Mit $\dfrac{\sin\alpha}{\cos\alpha}=\tan\alpha$ folgt:
+\[
+\tan\alpha=\frac{v_{\mathrm B}^{2}}{r\cdot g}.
+\]
+\step{5}{Einsetzen und mit der Umkehrfunktion den Winkel berechnen}
+\[
+\tan\alpha=\frac{\left(10\unitfrac{m}{s}\right)^2}{50\unit{m}\cdot9{,}81\unitfrac{m}{s^2}}
+=0{,}203873\ldots
+\]
+\[
+\alpha=\arctan\left(\frac{\left(10\unitfrac{m}{s}\right)^2}{50\unit{m}\cdot9{,}81\unitfrac{m}{s^2}}\right)
+=11{,}523\ldots{}^{\circ}.
+\]
+\begin{tcolorbox}[sheetbox,colback=Mint]
+\textbf{Ergebnis mit zwei gültigen Ziffern:} $\boxed{\alpha\approx12^{\circ}}$. Die Bahn muss zur Kurvenmitte hin abfallen. Die optimale Neigung hängt nicht von der Masse des Fahrzeugs ab.
+\end{tcolorbox}
+\begin{tcolorbox}[sheetbox,colback=Sky]
+\textbf{Beim Rechnen beachten:} Taschenrechner auf Grad (DEG) stellen. Erst das Endergebnis runden. $\tan\alpha\approx0{,}204$ ist ein Verhältnis, noch kein Winkel.
+\end{tcolorbox}
+\pagefooter{2}
+\newpage
+\sheethead{3 \textperiodcentered{} Kettenkarussell und Abschlussquiz}
+\small\setlength{\abovedisplayskip}{2pt}\setlength{\belowdisplayskip}{2pt}
+\renewcommand{\step}[2]{\par\vspace{1mm}\textbf{\textcolor{Blue}{#1}\quad #2}\par\vspace{.3mm}}
+\sectiontitle{3a \textperiodcentered{} Kräfte am Mann einzeichnen}
+\begin{minipage}[c]{.31\linewidth}\centering
+\begin{tikzpicture}[x=.58mm,y=.58mm,>=Latex]
+\coordinate (A) at (6,45);\coordinate (P) at (46,18);
+\coordinate (FG) at (46,-2);\coordinate (FZ) at (16.3,18);\coordinate (FS) at (16.3,38);
+\draw[Muted,dash dot,line width=.6pt] (6,-4)--(6,54);
+\node[font=\scriptsize,anchor=south] at (6,54) {Drehachse};
+\draw[Muted,line width=.7pt] (A)--(P) node[pos=.17,above right,font=\scriptsize] {$l$};
+\draw[Muted,{Latex[length=1.6mm]}-{Latex[length=1.6mm]}] (6,50)--(46,50) node[midway,above,font=\scriptsize] {$r$};
+\draw[Muted,densely dotted] (46,50)--(46,21);
+\draw ($(A)+(-90:8)$) arc[start angle=-90,end angle=-34,radius=8];
+\node[font=\scriptsize] at (9.5,33.5) {$\alpha$};
+\draw[Blue!45,densely dashed] (FS)--(FZ);\draw[Blue!45,densely dashed] (FG)--(FZ);
+\fill (P) circle (.9);
+\draw[-{Latex},Gold!85!black,line width=1.1pt] (P)--(FG) node[right,font=\scriptsize] {$F_{\mathrm G}$};
+\draw[-{Latex},Blue,line width=1.1pt] (P)--(FS) node[pos=.55,below left,font=\scriptsize] {$F_{\mathrm S}$};
+\draw[-{Latex},red!80!black,line width=1.1pt] (P)--(FZ) node[midway,below,font=\scriptsize] {$F_{\mathrm Z}$};
+\end{tikzpicture}
+\par{\scriptsize\color{Muted}Seitenansicht, nicht ma\ss{}stäblich.}
+\end{minipage}\hfill
+\begin{minipage}[c]{.66\linewidth}
+\textbf{1.} Am Körperschwerpunkt $F_{\mathrm G}$ senkrecht nach unten einzeichnen.\\[1mm]
+\textbf{2.} $F_{\mathrm S}$ entlang der Kette zum Aufhängepunkt einzeichnen. Die Seilkraft ist grö\ss{}er als die Gewichtskraft, denn nur ihr senkrechter Anteil gleicht $F_{\mathrm G}$ aus.\\[1mm]
+\textbf{3.} Das Kräfteparallelogramm ergänzen. Seine Diagonale $F_{\mathrm Z}$ zeigt waagerecht zur Drehachse:
+\[
+\vec F_{\mathrm S}+\vec F_{\mathrm G}=\vec F_{\mathrm Z}.
+\]
+$F_{\mathrm Z}$ bezeichnet die \textbf{Resultierende}, keine dritte äu\ss{}ere Kraft.
+\end{minipage}
+\sectiontitle{3b \textperiodcentered{} Bahngeschwindigkeit berechnen}
+\textbf{Gegeben:} $l=15\unit{m}$, $\alpha=56^{\circ}$, $m=75\unit{kg}$, $g=9{,}81\unitfrac{m}{s^2}$.
+\step{1}{Radius aus der Geometrie bestimmen}
+Der Aufhängepunkt liegt im Aufgabenmodell an der Drehachse. Im rechtwinkligen Dreieck ist $l$ die Hypotenuse und $r$ die Gegenkathete zu $\alpha$:
+\[
+\sin\alpha=\frac{r}{l}\quad\Longrightarrow\quad
+r=l\cdot\sin\alpha=15\unit{m}\cdot\sin56^{\circ}=12{,}43556\ldots\unit{m}.
+\]
+\step{2}{Kräftegleichungen aufstellen und durcheinander teilen}
+\[
+F_{\mathrm S}\cdot\cos\alpha=m\cdot g,\qquad
+F_{\mathrm S}\cdot\sin\alpha=\frac{m\cdot v_{\mathrm B}^{2}}{r}.
+\]
+\[
+\frac{F_{\mathrm S}\cdot\sin\alpha}{F_{\mathrm S}\cdot\cos\alpha}
+=\frac{m\cdot v_{\mathrm B}^{2}}{r\cdot m\cdot g}
+\quad\Longrightarrow\quad\tan\alpha=\frac{v_{\mathrm B}^{2}}{r\cdot g}.
+\]
+Die Seilkraft und die Masse kürzen sich. Die Angabe $m=75\unit{kg}$ wird für die Geschwindigkeit nicht benötigt.
+\step{3}{Nach der Bahngeschwindigkeit auflösen}
+\[
+v_{\mathrm B}^{2}=r\cdot g\cdot\tan\alpha
+\quad\Longrightarrow\quad v_{\mathrm B}=\sqrt{r\cdot g\cdot\tan\alpha}.
+\]
+\step{4}{Mit ungerundetem Radius einsetzen und am Ende runden}
+\[
+v_{\mathrm B}=\sqrt{15\unit{m}\cdot\sin56^{\circ}\cdot9{,}81\unitfrac{m}{s^2}\cdot\tan56^{\circ}}
+=13{,}4485\ldots\unitfrac{m}{s}.
+\]
+\begin{tcolorbox}[sheetbox,colback=Mint]
+\textbf{Zwei gültige Ziffern:} $\boxed{v_{\mathrm B}\approx13\unitfrac{m}{s}}$. Aus dem ungerundeten Wert folgt alternativ $v_{\mathrm B}=48{,}414\ldots\unitfrac{km}{h}\approx48\unitfrac{km}{h}$.
+\end{tcolorbox}
+\sectiontitle{4 \textperiodcentered{} Abschlussquiz: richtige Aussagen und Begründungen}
+\small
+Die Nummern nennen die richtigen Auswahlkästchen in der Reihenfolge der Aussagen im Modul.
+\par\vspace{1mm}
+\begin{tabularx}{\linewidth}{@{}>{\bfseries}l >{\raggedright\arraybackslash}p{19mm} >{\raggedright\arraybackslash}X@{}}
+\toprule
+Frage & Kästchen & Begründung\\\midrule
+4a & 1 und 3 & Die Zentripetalkraft ist die zum Kreismittelpunkt gerichtete Resultierende realer Kräfte.\\[1mm]
+4b & 1 und 3 & Doppelte Masse oder halber Radius verdoppeln $F_{\mathrm Z}$. Doppelte Geschwindigkeit vervierfacht $F_{\mathrm Z}$; doppelter Radius halbiert sie.\\[1mm]
+4c & 1 und 3 & $F_{\mathrm N}\cos\alpha=F_{\mathrm G}$ und $F_{\mathrm N}\sin\alpha=F_{\mathrm Z}$; $F_{\mathrm N}$ ist die Hypotenuse.\\[1mm]
+4d & 1 und 3 & Die Masse kürzt sich. Bei festem Radius verlangt eine höhere Geschwindigkeit eine grö\ss{}ere Neigung; ein grö\ss{}erer Radius verlangt bei gleicher Geschwindigkeit eine kleinere.\\[1mm]
+4e & 2 und 4 & Der Mann spürt seine Trägheit. Rei\ss{}t die Kette, bewegt er sich von oben gesehen tangential weiter. Für den Beobachter am Boden wirkt keine Fliehkraft nach au\ss{}en.\\[1mm]
+4f & 1, 3 und 5 & Im Modell wirken $F_{\mathrm G}$ und $F_{\mathrm S}$. Ihre Summe zeigt zur Drehachse und ist nicht null. Wegen $F_{\mathrm S}\cos\alpha=F_{\mathrm G}$ gilt $F_{\mathrm S}>F_{\mathrm G}$.\\
+\bottomrule
+\end{tabularx}
+\pagefooter{3}
+\end{document}

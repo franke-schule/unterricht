@@ -4,7 +4,7 @@ import { setupPhysicsStepTabs } from "./components/physics-step-tabs.mjs";
 import { createPhysicsTaskProgress } from "./components/physics-task-progress.mjs";
 import { setupStepOrder as setupSharedStepOrder } from "./components/step-order.mjs";
 
-// ---- Unverändert aus kettenkarussell.mjs übernommen ----
+// ---- Lehrercode-Freigabe nach kettenkarussell.mjs; gilt für beide Blätter ----
 
 function unlockSolution(event, expectedCode, downloadLinkId, messageId) {
   event.preventDefault();
@@ -16,12 +16,14 @@ function unlockSolution(event, expectedCode, downloadLinkId, messageId) {
 
   if (enteredCode === normalizedExpectedCode) {
     downloadLink.hidden = false;
+    form.querySelectorAll(".download-button").forEach((link) => { link.hidden = false; });
     message.className = "solution-code-message";
-    message.textContent = "Code korrekt. Das Sicherungsblatt ist freigeschaltet.";
+    message.textContent = "Code korrekt. Sicherungsblatt und Lösungsblatt sind freigeschaltet.";
     return;
   }
 
   downloadLink.hidden = true;
+  form.querySelectorAll(".download-button").forEach((link) => { link.hidden = true; });
   message.className = "solution-code-message error";
   message.textContent = "Der eingegebene Code ist nicht gültig.";
 }
