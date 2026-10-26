@@ -12,11 +12,11 @@ const specs = [
   ['11-6-1-if-code', 3, ['gewichtete_Summe_2 strikt', '>=', 'if-Block']],
   ['11-6-1-ifelse-code', 3, ['strikt >', 'else', 'Gleichheit']],
   ['11-6-1-elseif-code', 3, ['delta_uebung == 1', 'delta_uebung == -1', 'Ein einzelnes =', 'nur ein Zweig']],
-  ['11-6-1-for-code', 3, ['i=0', 'i<3', 'i++', 'hart codierte']],
-  ['11-6-1-foreach-code', 3, ['gibLabel()', 'hart codierte', 'Datenpunkt']]
+  ['11-6-1-for-code', 3, ['i < 4', 'i <= 3', 'Datenpunkt 3', 'hart codierte']]
 ];
 
-test('Aufgabe 6.1 registriert fünf getrennte Code-Rubriken mit je drei Punkten', () => {
+test('Aufgabe 6.1 registriert vier getrennte Code-Rubriken mit je drei Punkten', () => {
+  assert.equal(core.TASKS['11-6-1-foreach-code'], undefined);
   for (const [id, points, terms] of specs) {
     const task = core.TASKS[id];
     assert.ok(task, `Fehlende Aufgaben-ID ${id}`);
@@ -34,9 +34,10 @@ test('Aufgabe 6.1 registriert fünf getrennte Code-Rubriken mit je drei Punkten'
 });
 
 test('Client übermittelt aktuelle IDE-Dateien für jeden individuellen Codeauftrag', () => {
-  for (const id of ['Java11Aufgabe6_1IfV1','Java11Aufgabe6_1IfElseV1','Java11Aufgabe6_1ElseIfV1','Java11Aufgabe6_1ForV1','Java11Aufgabe6_1ForEachV1']) {
+  for (const id of ['Java11Aufgabe6_1IfV1','Java11Aufgabe6_1IfElseV1','Java11Aufgabe6_1ElseIfV1','Java11Aufgabe6_1ForV2']) {
     assert.ok(html.includes(id), `Fehlende IDE-ID ${id}`);
   }
+  assert.ok(!html.includes('Java11Aufgabe6_1ForEachV1'));
   for (const [id] of specs) assert.ok(client.includes(id), `Client kennt ${id} nicht`);
   assert.match(client, /ide\.getFiles\(\)/);
   assert.match(client, /getText\(\)/);
@@ -51,10 +52,8 @@ test('IDE-Konsolenstartstände enthalten die geforderten Fälle und getrennte Ü
   assert.match(html, /Zweiter Fall für Aufgabe 1B/);
   assert.match(html, /Zweiter Fall für Aufgabe 2B/);
   assert.match(html, /Zweite, eigenständige Kette für Aufgabe 3B/);
-  assert.match(html, /println\("Datenpunkt " \+ 0\);[\s\S]*?println\("Datenpunkt " \+ 1\);[\s\S]*?println\("Datenpunkt " \+ 2\);/);
-  assert.match(html, /new Datenpunkt\(2, 2, 1\), new Datenpunkt\(4, 1, 0\), new Datenpunkt\(0, 4, 1\)/);
-  assert.match(html, /for \(Datenpunkt punkt : punkte\)/);
-  assert.match(html, /private double x_1;[\s\S]*?private double x_2;[\s\S]*?private int label;/);
+  assert.match(html, /for \(int i = 0; i < 3; i\+\+\) \{[\s\S]*?println\("Datenpunkt " \+ i\);/);
+  assert.ok(!html.includes('Datenpunkt.java'));
 });
 
 

@@ -2706,33 +2706,12 @@ const TASKS = {
     title: 'Informatik Klasse 11 Aufgabe 6.1 – 4B gezählte for-Schleife',
     grade: 11, responseType: 'code', maxPoints: 3,
     statusLabels: { correct: 'korrekt', partial: 'teilweise korrekt', incorrect: 'noch nicht korrekt' },
-    codeAnalysisContext: "LearnJ-Online-IDE mit Top-Level-Anweisungen, println(...) ist erlaubt. Es werden aktuelle IDE-Dateien mit Trennern `// ===== Datei: Hauptprogramm.java =====` und gegebenenfalls `// ===== Datei: Datenpunkt.java =====` übertragen. Die statische Codebewertung belegt keinen Programmlauf; behaupte nicht, eine Ausgabe beobachtet zu haben. Bewerte nur ausführbaren Code, keine Kommentare oder Zeichenketten mit Java-Code. Akzeptiere fachlich gleichwertige Java-Formatierung, aber keine unveränderte Startlösung und keine hart codierten Ausgaben statt der geforderten Kontrollstruktur/Getterverwendung. Hauptprogramm.java startet mit drei Einzelzeilen Datenpunkt 0, Datenpunkt 1, Datenpunkt 2. Die Aufgabe verlangt einen gezählten for-Block mit i=0, i<3, i++ und Ausgabe „Datenpunkt “ plus i.",
+    codeAnalysisContext: "LearnJ-Online-IDE mit Top-Level-Anweisungen, println(...) ist erlaubt. Es werden aktuelle IDE-Dateien mit Trennern `// ===== Datei: Hauptprogramm.java =====` übertragen. Die statische Codebewertung belegt keinen Programmlauf; behaupte nicht, eine Ausgabe beobachtet zu haben. Bewerte nur ausführbaren Code, keine Kommentare oder Zeichenketten mit Java-Code. Akzeptiere fachlich gleichwertige Java-Formatierung, aber keine unveränderte Startlösung und keine hart codierten Ausgaben statt der geforderten Kontrollstruktur. Hauptprogramm.java startet mit for (int i = 0; i < 3; i++) und println(\"Datenpunkt \" + i). In 4B soll die Bedingung zu i < 4 oder gleichwertig i <= 3 geändert werden, damit auch Datenpunkt 3 als vierte Zeile erscheint.",
     instruction: "Bewerte ausschließlich den Teilauftrag 4B gezählte for-Schleife. Keine vollständige Musterlösung ausgeben.",
-    expectedAspects: ["Die gezählte Schleife startet bei 0, prüft i < 3 und erhöht i.","Die Schleife durchläuft genau i = 0, 1 und 2.","Die Ausgabe verwendet innerhalb des Blocks den aktuellen Zähler i."],
+    expectedAspects: ["Die gezählte Schleife startet bei 0, erhöht i und lässt mit i < 4 oder i <= 3 auch i = 3 zu.","Die Schleife erzeugt genau vier Zeilen Datenpunkt 0, Datenpunkt 1, Datenpunkt 2 und Datenpunkt 3.","Die Ausgabe verwendet innerhalb des Blocks dynamisch den aktuellen Zähler i; keine hart codierte zusätzliche Zeile."],
     rubric: [
       'Je ein Punkt für die im Erwartungsaspekt benannten Schritte; höchstens 3 Punkte.',
-      'Unveränderter Startcode erhält keine Punkte. Hart codierte Ausgaben ersetzen keine Kontrollstruktur.',
-      'Akzeptiere fachlich gleichwertige Java-Formatierung, bewerte aber keine fachlich falschen Grenzfälle als korrekt.',
-      'Keine vollständige Musterlösung in der Rückmeldung.'
-    ],
-    codeAnalysisRules: [
-      'Prüfe nur ausführbaren Quelltext, nicht Kommentare oder Zeichenketten mit Java-Code.',
-      'Erfülle keinen Aspekt durch unveränderten Startcode oder hart codierte erwartete Ausgaben.',
-      'Bewerte fachlich gleichwertige Java-Schreibweisen gleich.',
-      'Die statische Prüfung belegt keinen beobachteten Programmlauf.'
-    ]
-  },
-
-  '11-6-1-foreach-code': {
-    title: 'Informatik Klasse 11 Aufgabe 6.1 – 4D erweiterte for-Schleife und Getter',
-    grade: 11, responseType: 'code', maxPoints: 3,
-    statusLabels: { correct: 'korrekt', partial: 'teilweise korrekt', incorrect: 'noch nicht korrekt' },
-    codeAnalysisContext: "LearnJ-Online-IDE mit Top-Level-Anweisungen, println(...) ist erlaubt. Es werden aktuelle IDE-Dateien mit Trennern `// ===== Datei: Hauptprogramm.java =====` und gegebenenfalls `// ===== Datei: Datenpunkt.java =====` übertragen. Die statische Codebewertung belegt keinen Programmlauf; behaupte nicht, eine Ausgabe beobachtet zu haben. Bewerte nur ausführbaren Code, keine Kommentare oder Zeichenketten mit Java-Code. Akzeptiere fachlich gleichwertige Java-Formatierung, aber keine unveränderte Startlösung und keine hart codierten Ausgaben statt der geforderten Kontrollstruktur/Getterverwendung. punkte enthält drei Datenpunkt-Objekte mit Labels 1, 0, 1. Die vorhandene erweiterte for-Schleife besucht jedes Objekt als punkt. Ersetze nur die Platzhalterausgabe durch die Ausgabe von punkt.gibLabel().",
-    instruction: "Bewerte ausschließlich den Teilauftrag 4D erweiterte for-Schleife und Getter. Keine vollständige Musterlösung ausgeben.",
-    expectedAspects: ["Die erweiterte for-Schleife durchläuft die Sammlung punkte mit aktuellem Objekt punkt.","Der Block gibt für jedes Objekt genau einmal das Label aus.","Die Labelausgabe erfolgt dynamisch über gibLabel() des aktuellen punkt."],
-    rubric: [
-      'Je ein Punkt für die im Erwartungsaspekt benannten Schritte; höchstens 3 Punkte.',
-      'Unveränderter Startcode erhält keine Punkte. Hart codierte Ausgaben ersetzen keine Kontrollstruktur.',
+      'Unveränderter Startcode mit i < 3 erhält keine volle Punktzahl. Hart codierte Ausgaben ersetzen keine vierte Schleifeniteration.',
       'Akzeptiere fachlich gleichwertige Java-Formatierung, bewerte aber keine fachlich falschen Grenzfälle als korrekt.',
       'Keine vollständige Musterlösung in der Rückmeldung.'
     ],
