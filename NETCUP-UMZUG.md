@@ -80,15 +80,26 @@ Die Werte der Secrets müssen weder ausgelesen noch erneut im Chat angegeben wer
 - [x] Schritt 14b: Nutzer und unabhängige curl-Prüfung bestätigen gültiges HTTPS für `www.franke-schule.de`; Antwort HTTP 200 ohne TLS-Fehler.
 - [x] Schritt 14c: Nutzer hat den Schalter aktiviert; unabhängige Serverprüfung am 26.10.2026 bestätigt HTTP 301 auf `https://franke-schule.de/` und dort HTTP 200 mit gültiger TLS-Verbindung.
 - [x] Browsernachprüfung: Nutzer bestätigt nach privatem Fenster die korrekte HTTPS-Weiterleitung.
-- [ ] Schritt 14d: Bevorzugte Domain auf `franke-schule.de` setzen; www soll auf die Stamm-Domain weiterleiten.
+- [x] Schritt 14d: Nutzer bestätigt die Weiterleitung von www auf `https://franke-schule.de/` nach Setzen der bevorzugten Domain.
+- [ ] Schritt 15a: In Scaleway `AI_ALLOWED_ORIGINS` um die neue HTTPS-Origin ergänzen, falls noch nicht vorhanden; bisherige Werte erhalten.
 - [ ] Schritte 11 bis 16: offen, siehe unten.
 
-**Unmittelbar nächster Schritt:** Im CCP unter Produkte → Hosting251092 die
-Domain `franke-schule.de` wählen und Einstellungen bearbeiten öffnen. Ausschließlich
-„Bevorzugte Domain“ auf `franke-schule.de` ohne www setzen und speichern.
-Dokumentenstamm und Hosting-Typ unverändert lassen. Anschließend
-`https://www.franke-schule.de/` auf Weiterleitung zu `https://franke-schule.de/`
-prüfen. Beide Namen besitzen jetzt ein funktionierendes Zertifikat.
+**Unmittelbar nächster Schritt:** Scaleway Console → Serverless Compute → Functions
+öffnen, den Namespace mit `ki-auswertung` und dann Namespace settings auswählen.
+In Environment variables `AI_ALLOWED_ORIGINS` suchen und, falls noch nicht vorhanden,
+`,https://franke-schule.de` an den bestehenden Wert anhängen (ohne Slash am Ende).
+Alle bisherigen Einträge erhalten, insbesondere die Origins von `florian-franke.org`.
+Ist der Wert leer, ausschließlich die neue Origin ohne vorangestelltes Komma setzen;
+bei fehlender Variable oder abweichender Maske zunächst klären, ob sie direkt an
+der Function statt am Namespace konfiguriert ist. Funktionsvariablen überschreiben
+gleichnamige Namespace-Variablen. Nur diese Konfiguration bearbeiten, keinen Code
+oder ZIP hochladen. Speichern/validieren; die vorhandenen bereitstehenden Functions
+werden laut Scaleway-Dokumentation nach Namespace-Variablenänderungen neu bereitgestellt.
+Auf Ready warten. Danach folgt ein echter Test im Browser auf der neuen Domain.
+
+Eine kostenlose OPTIONS-Voranfrage an den vorhandenen Scaleway-Endpunkt mit
+Origin `https://franke-schule.de` ist nach 20 Sekunden ohne Antwort abgelaufen.
+Das belegt keinen CORS-Fehler und erlaubt keine Aussage über die aktuelle Allowlist.
 
 Unabhängige Prüfung am 26.10.2026: Beide HTTP-Hostnamen erreichen dieselbe IPv6
 `2a03:4000:6d:2e96::25:1092`; www antwortet mit 301 auf seine HTTPS-Variante.
