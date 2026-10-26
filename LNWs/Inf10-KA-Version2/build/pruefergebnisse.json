@@ -1,0 +1,30 @@
+{
+  "fassung": "Inf10-KA-Version2",
+  "seiten": 4,
+  "deckblatt": 1,
+  "aufgabenbeginn": 2,
+  "notizseite": false,
+  "kopf_schrift_pt": {
+    "titel": 22,
+    "daten": 14
+  },
+  "schreibfelder_mm": {
+    "2b": 70,
+    "2c": 45,
+    "3a": 50,
+    "3b": 55,
+    "4a": 45,
+    "4b": 60
+  },
+  "BE": [
+    4,
+    9,
+    10,
+    5
+  ],
+  "gesamt_BE": 28,
+  "aufgabeninhalt_unveraendert": true,
+  "version1_unveraendert": true,
+  "layoutgleich": true,
+  "keine_ueberlaeufe": true
+}

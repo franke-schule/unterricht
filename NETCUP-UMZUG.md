@@ -1,7 +1,20 @@
-# Website von GitHub Pages zu netcup umziehen
+# Lernmodul-Website auf netcup unter franke-schule.de betreiben
 
 Stand: 26.10.2026. Diese Datei ist die Fortsetzungsanleitung für den laufenden Chat.
 Sie dokumentiert den Plan; offene Punkte sind noch nicht ausgeführt oder bestätigt.
+
+## Verbindliche Zieländerung vom 26.10.2026
+
+Der Nutzer hat ausdrücklich festgelegt: Ab jetzt wird `franke-schule.de` als
+neue Adresse der Lernmodul-Website verwendet, nicht lediglich als Testdomain.
+`florian-franke.org` bleibt vorerst unberührt und unverändert. Die früheren
+Pläne zur Umschaltung dieser Domain und zur späteren Abschaltung von GitHub
+Pages sind damit aufgehoben.
+
+Keine Änderungen an DNS, Hostingzuordnung, Weiterleitungen, Zertifikaten oder
+GitHub-Pages-Domainbindung von `florian-franke.org` vornehmen. Die bestehende
+Datei `CNAME` mit der bisherigen Domain bleibt erhalten. Keine pauschalen
+Domainersetzungen in den gemeinsamen Websitequellen durchführen.
 
 ## Vorgehen im Chat
 
@@ -9,8 +22,8 @@ Sie dokumentiert den Plan; offene Punkte sind noch nicht ausgeführt oder bestä
 - Erst nach bestätigtem Ergebnis mit dem nächsten Schritt fortfahren.
 - Nach jeder Bestätigung den Stand in dieser Datei aktualisieren.
 - Keine Passwörter oder Schlüssel in diese Datei, den Chat oder Quellcode schreiben.
-- GitHub Pages während Vorbereitung und Tests aktiv lassen. Die produktiven
-  Domain-Einstellungen erst ganz am Ende ändern.
+- GitHub Pages und die bisherigen Einstellungen von `florian-franke.org`
+  erhalten. Ausschließlich `franke-schule.de` bei netcup einrichten.
 - Der Auftrag ist eine Hosting-Migration, keine Überarbeitung der Lernmodule.
 
 ## Ziele und bekannte Daten
@@ -23,9 +36,14 @@ Sie dokumentiert den Plan; offene Punkte sind noch nicht ausgeführt oder bestä
 | Hosting | Hosting251092 – Webhosting 1000 |
 | Registrar der Domain | netcup; kein Registrarwechsel und kein Auth-Code notwendig |
 | Bisherige Website | GitHub Pages mit eigener Domain |
-| Domain | `florian-franke.org` und `www.florian-franke.org` |
-| Bisherige bevorzugte Adresse | `www.florian-franke.org`, entsprechend der vorhandenen Datei `CNAME` |
+| Neue produktive Domain | `franke-schule.de`; die `www`-Variante bei DNS und HTTPS mit berücksichtigen |
+| Bisheriger Dokumentenstamm von franke-schule.de | Nutzerbestätigung: `franke-schule.de/httpdocs`; diesen Ordner erhalten |
+| Aktiver Website-Ordner von franke-schule.de | Änderung auf `hosting251092.af908.netcup.net/httpdocs` und angezeigte HTTP-Website vom Nutzer bestätigt |
+| Bisherige Domain, unverändert zu erhalten | `florian-franke.org` und `www.florian-franke.org` |
+| Bisherige Pages-Adresse | `www.florian-franke.org`, entsprechend der unverändert zu erhaltenden Datei `CNAME` |
 | netcup-Testadresse | http://hosting251092.af908.netcup.net/ |
+| Eigene HTTPS-Adresse | Direkt `franke-schule.de`; eine zusätzliche Testsubdomain ist für den nächsten Schritt nicht erforderlich |
+| Domainzuordnung im WCP | Nutzer sieht nur `franke-schule.de` und die Hosting-Standarddomain; `florian-franke.org` ist bislang nur im CCP unter Domains vorhanden |
 | FTP-Server | `af908.netcup.net` |
 | Separater FTP-Benutzer | `github-deploy` |
 | Basisverzeichnis des FTP-Benutzers | `/hosting251092.af908.netcup.net/httpdocs` |
@@ -54,14 +72,32 @@ Die Werte der Secrets müssen weder ausgelesen noch erneut im Chat angegeben wer
 - [x] Schritt 9a: Nutzer hat das Anlegen des Hauptworkflows auf GitHub bestätigt.
 - [x] Schritt 9b: Nutzer hat am 26.10.2026 den erfolgreichen Hauptupload und die angezeigte Website bestätigt.
 - [x] Schritt 10a: Nutzer hat am 26.10.2026 den erfolgreichen automatischen Lauf nach Aktivierung des Push-Triggers bestätigt.
-- [ ] Schritt 10b: Automatische Veröffentlichung einer erkennbaren Website-Änderung prüfen.
+- [ ] Schritt 10b: Automatische Veröffentlichung einer erkennbaren Website-Änderung prüfen; auf Nutzerwunsch vorerst zurückgestellt.
+- [x] Schritt 11a: Nutzer meldet eine Zertifikatswarnung auf der HTTPS-Standarddomain; gültiges HTTPS ist dort nicht bestätigt.
+- [x] Schritt 11b: Nutzer bestätigt den bisherigen Dokumentenstamm `franke-schule.de/httpdocs`.
+- [x] Schritt 13a vorgezogen: Nutzer bestätigt nach Dokumentenstammänderung die Lernmodul-Website unter `http://franke-schule.de/`.
+- [x] Schritt 14a: Nutzer bestätigt, dass `https://franke-schule.de/` ohne Zertifikatswarnung lädt.
+- [x] Schritt 14b: Nutzer und unabhängige curl-Prüfung bestätigen gültiges HTTPS für `www.franke-schule.de`; Antwort HTTP 200 ohne TLS-Fehler.
+- [x] Schritt 14c: Nutzer hat den Schalter aktiviert; unabhängige Serverprüfung am 26.10.2026 bestätigt HTTP 301 auf `https://franke-schule.de/` und dort HTTP 200 mit gültiger TLS-Verbindung.
+- [x] Browsernachprüfung: Nutzer bestätigt nach privatem Fenster die korrekte HTTPS-Weiterleitung.
+- [ ] Schritt 14d: Bevorzugte Domain auf `franke-schule.de` setzen; www soll auf die Stamm-Domain weiterleiten.
 - [ ] Schritte 11 bis 16: offen, siehe unten.
 
-**Unmittelbar nächster Schritt:** Schritt 10b: Im Repository-Root auf GitHub
-`netcup-push-test.html` mit dem sichtbaren Satz „Automatische Veröffentlichung funktioniert.“
-anlegen und direkt auf `main` committen. Ohne manuellen Start muss der Hauptworkflow
-laufen. Nach grünem Lauf die Datei unter der netcup-Standarddomain aufrufen und
-den Satz bestätigen lassen. Keine produktiven DNS-Einträge ändern.
+**Unmittelbar nächster Schritt:** Im CCP unter Produkte → Hosting251092 die
+Domain `franke-schule.de` wählen und Einstellungen bearbeiten öffnen. Ausschließlich
+„Bevorzugte Domain“ auf `franke-schule.de` ohne www setzen und speichern.
+Dokumentenstamm und Hosting-Typ unverändert lassen. Anschließend
+`https://www.franke-schule.de/` auf Weiterleitung zu `https://franke-schule.de/`
+prüfen. Beide Namen besitzen jetzt ein funktionierendes Zertifikat.
+
+Unabhängige Prüfung am 26.10.2026: Beide HTTP-Hostnamen erreichen dieselbe IPv6
+`2a03:4000:6d:2e96::25:1092`; www antwortet mit 301 auf seine HTTPS-Variante.
+Der anfängliche Namensfehler des www-Zertifikats wurde behoben. Nach erneuter
+Ausstellung liefert www am 26.10.2026 mit gültigem TLS HTTP 200, aber noch keine
+Weiterleitung zur Stamm-Domain. Auch die Stamm-Domain funktioniert mit TLS und HTTP 200.
+Keine Änderung an `florian-franke.org`, GitHub Pages, FTP-Ziel oder Workflow.
+DNS-Sicherung bleibt vor etwaigen DNS-Änderungen offen; Schritt 10b bleibt auf
+Nutzerwunsch zurückgestellt.
 
 Der Hauptworkflow wurde zunächst ausschließlich manuell erfolgreich getestet.
 Der Push-Trigger für `main` wurde ebenfalls erfolgreich getestet. Er baut die Website
@@ -191,179 +227,157 @@ werden über netcup ausgeliefert. GitHub Pages ist weiterhin aktiv.
 Erfolg: Ein normaler Push aktualisiert netcup ohne erneuten manuellen Dateiupload.
 Die Verbindung GitHub → netcup ist damit vollständig hergestellt.
 
-## Schritt 11: HTTPS-Testadresse und externe Funktionen prüfen
+## Schritt 11: Domain und Dokumentenstamm feststellen
 
-1. HTTPS auf der netcup-Standarddomain nur nutzen, wenn ein gültiges Zertifikat
-   vorhanden ist. Zertifikatswarnungen nicht als bestandenen Test behandeln.
-2. Falls die Standarddomain kein geeignetes Zertifikat erhält, eine eigene,
-   bisher ungenutzte Subdomain wie `test.florian-franke.org` ausschließlich für
-   Tests anlegen. Deren DNS auf netcup richten, sie auf denselben Dokumentenstamm
-   legen und ein gültiges Zertifikat einrichten. Stamm- und `www`-Domain bleiben
-   dabei auf GitHub Pages. Vor Anlage einen bestehenden gleichnamigen Dienst ausschließen.
-3. netcup weist auf gemeinsame Let's-Encrypt-Limits für `.netcup.net` hin;
-   die eigene Testsubdomain ist deshalb ein möglicher Ausweichweg.
-4. Auf HTTPS Startseite, Fach-/Klassenmenüs, verschachtelte Links, CSS, Bilder,
-   PDFs, Sicherungsblatt-Freischaltung, Quiz, Speicherung und repräsentative
-   Simulationen/Editoren prüfen. Entwicklerkonsole auf fehlende Dateien,
-   falsche MIME-Typen, Mixed Content und CORS-Fehler kontrollieren.
-5. Browserfunktionen, die einen sicheren Kontext benötigen, nicht allein anhand
-   der unverschlüsselten Standarddomain beurteilen.
-6. Mindestens eine bestehende KI-Beschreibe-Aufgabe und ggf. Codeauswertung
-   von der neuen Test-Origin aus prüfen. Keine neue Auswertungspipeline bauen.
+1. Im WCP unter Websites & Domains `franke-schule.de` auswählen und die
+   Hosting-Einstellungen öffnen. Den derzeitigen Dokumentenstamm ablesen.
+2. Mit `hosting251092.af908.netcup.net/httpdocs` vergleichen. Dort liegt die
+   erfolgreich über GitHub bereitgestellte Website.
+3. Feststellen, ob unter dem aktuellen Dokumentenstamm bereits andere Inhalte
+   liegen. Diese bei einer späteren Änderung erhalten und zuvor sichern.
+4. Die Domain ist laut Nutzer bereits im WCP vorhanden; keine erneute
+   Domainregistrierung, keine Zuordnung von `florian-franke.org` erforderlich.
+5. Eine frühere Testsubdomain ist für die direkte Einrichtung der neuen
+   Produktionsdomain nicht notwendig. Bereits angelegte Testadressen nicht
+   ungefragt löschen.
 
-### Scaleway bleibt ein externer Dienst
+Erfolg: Aktueller und gewünschter Dokumentenstamm sind eindeutig bekannt.
+Noch keine Änderungen an den Domains vornehmen.
 
-Die statische Website zieht zu netcup. Die vorhandene Function `ki-auswertung`
-und ihre KI-Anbindung bleiben zunächst bei Scaleway. „Vollständig umgezogen“
-bedeutet hier alle bisher über Pages ausgelieferten Website-Dateien samt
-funktionierender Anbindung; es bedeutet nicht, dass die KI nun auf netcup läuft.
-Falls auch dieser Dienst zu netcup wechseln soll, ist dessen Laufzeit separat
-zu prüfen und die zusätzliche Migration ausdrücklich zu klären.
+## Schritt 12: Einstellungen und Rückweg für franke-schule.de sichern
 
-Die erlaubten Browser-Origins steuert `AI_ALLOWED_ORIGINS` bei Scaleway.
-`scaleway-functions/handler.js` prüft diese Liste exakt. Die Test-Origin nur
-bei Bedarf ergänzen, alte Produktions-Origin erhalten. Format: Protokoll und
-Hostname, ohne abschließenden Slash, mehrere Einträge durch Komma getrennt.
-Keinen API-Schlüssel ins Frontend übertragen. Nach Konfigurationsänderung
-die erforderliche Übernahme/Bereitstellung in Scaleway und den echten
-Browserzugriff prüfen. Ist die Produktionsadresse später identisch, ändert
-ein bloßer Wechsel des Webservers die Browser-Origin nicht.
-
-Erfolg: Die wesentlichen Website-Funktionen einschließlich KI funktionieren
-auf netcup. Einschränkungen sind vor der Domainumschaltung bekannt und behoben.
-
-## Schritt 12: DNS und Rückweg sichern
-
-1. Im netcup CCP die aktuellen DNS-Einträge von `florian-franke.org` sichern,
-   z. B. Export oder Screenshots mit Host, Typ, Ziel und TTL.
-2. Insbesondere aktuelle `A`, `AAAA` und `CNAME` für Stamm- und `www`-Domain
-   sowie eventuelle Weiterleitungen dokumentieren.
+1. Im CCP die derzeitigen DNS-Einträge von `franke-schule.de` sichern, z. B.
+   als Export oder Screenshots mit Host, Typ, Ziel und TTL.
+2. Insbesondere A-/AAAA-/CNAME-Einträge für Stamm und `www` sowie vorhandene
+   Weiterleitungen festhalten. Bei externen Nameservern die tatsächliche
+   DNS-Verwaltung ermitteln, bevor Änderungen geplant werden.
 3. Die tatsächliche IPv4 und ggf. IPv6 des Hosting-Pakets aus dem CCP notieren.
-   Keine GitHub-IP, alte Anleitung oder erratene Server-IP übernehmen.
-4. MX-, SPF-, DKIM-, DMARC-, Verifizierungs- und sonstige fremde Diensteinträge
-   identifizieren und erhalten. Vorhandene CAA-Regeln bei Zertifikatsproblemen prüfen.
-5. Wenn möglich, nur die TTL der später geänderten Webeinträge rechtzeitig
-   reduzieren, z. B. auf 300 Sekunden, und mindestens die vorherige TTL abwarten.
-   Das ändert noch nicht das Hostingziel und wirkt nicht rückwirkend auf Caches.
-6. Aktuellen erfolgreichen Git-Commit und funktionsfähigen Uploadstand notieren;
-   Hosting-Backup bzw. Kopie des ausgelieferten Pakets aufbewahren.
+   Keine Serveradressen erraten oder aus einer fremden Anleitung übernehmen.
+4. Mail-DNS und andere Dienste erhalten: MX, SPF, DKIM, DMARC und sonstige
+   Verifizierungseinträge nicht durch pauschale DNS-Vorgaben ersetzen.
+5. Den erfolgreichen Git-Stand, den derzeitigen Dokumentenstamm und bei Bedarf
+   vorhandene Website-Inhalte von `franke-schule.de` sichern.
+6. Falls Web-DNS geändert werden muss, bei Bedarf die entsprechende TTL
+   rechtzeitig reduzieren und die vorherige TTL berücksichtigen.
 
-Erfolg: Die bisherigen DNS-Werte und der letzte funktionierende Website-Stand
-sind für eine Rückkehr verfügbar. Pages bleibt weiter aktiv.
+Erfolg: Die bisherigen Einstellungen von `franke-schule.de` sind gesichert.
+`florian-franke.org` wird weder zugeordnet noch in seinen DNS-Einträgen geändert.
 
-## Schritt 13: Produktive Domain und TLS bei netcup vorbereiten
+## Schritt 13: franke-schule.de auf die hochgeladene Website richten
 
-1. Die Domain im CCP dem Hosting-Paket zuordnen und denselben Dokumentenstamm
-   wie beim getesteten Upload verwenden. Auch `www` muss bedient werden.
-2. Vor dem Bestätigen prüfen, ob der Dialog automatisch DNS-Einträge ändert.
-   Falls ja, gehört diese Aktion erst zum eigentlichen Umschalten in Schritt 14.
-   Nicht zur bloßen Vorbereitung unbemerkt die produktive Domain umstellen.
-3. Ein gültiges Zertifikat für `florian-franke.org` UND `www.florian-franke.org`
-   vorbereiten. Nach Möglichkeit DNS-Validierung nutzen, während beide Adressen
-   noch zu Pages zeigen. Ein Zertifikat nur für `*.florian-franke.org` deckt
-   die Stamm-Domain nicht ab; benötigte Namen explizit prüfen.
-4. Falls das verfügbare netcup-Verfahren eine Vorab-Ausstellung nicht zulässt,
-   das vor dem Umschalten erklären: Dann kann während Umschalten und Ausstellung
-   eine kurze HTTPS-Unterbrechung entstehen. Keine unterbrechungsfreie Migration versprechen.
-   Alternativen wie ein vorab per DNS validiertes und importiertes Zertifikat prüfen.
-5. Bei manueller Wildcard-Ausstellung die Verlängerung beachten; netcup
-   dokumentiert dafür eine manuelle Erneuerung. Automatische Erneuerung nicht unterstellen.
-6. Bevorzugte Produktionsadresse weiterhin `https://www.florian-franke.org`
-   verwenden, sofern der Nutzer nichts anderes möchte. Weiterleitung von der
-   Stamm-Domain erst mit funktionierenden Zertifikaten für beide Namen einschalten.
-7. Wenn technisch möglich, produktive Hostnamen vor der öffentlichen DNS-Änderung
-   gezielt gegen die neue Server-IP testen, z. B. per `curl --resolve` mit gültiger
-   Zertifikatsprüfung. Ein Aufruf nur der nackten IP testet keinen korrekten virtuellen Host.
+1. Falls nötig, den Dokumentenstamm von `franke-schule.de` auf den bereits
+   verwendeten Website-Ordner `hosting251092.af908.netcup.net/httpdocs` setzen.
+   Hauptdomain-Einstellungen werden bei netcup gegebenenfalls im CCP unter
+   Produkte und der ausgewählten Domain geändert. Konkrete Maske prüfen.
+2. Auch die Zuordnung der `www`-Variante prüfen. Keine zweite Websitekopie
+   anlegen, wenn beide Namen denselben Upload verwenden können.
+3. Falls das Web-DNS bereits auf die korrekten netcup-Adressen zeigt, nichts
+   daran ändern. Anderenfalls ausschließlich die betreffenden Webeinträge von
+   `franke-schule.de` anpassen: Stamm auf die tatsächliche Hosting-IP richten,
+   `www` mit passendem CNAME oder passenden Adressrecords bedienen.
+4. Keine widersprüchlichen CNAME- und A-/AAAA-Einträge am selben Host anlegen.
+   Alte, abweichende IPv6-Einträge berücksichtigen; ohne nutzbares netcup-IPv6
+   keinen falschen AAAA-Eintrag erhalten. Mail-Einträge unverändert lassen.
+5. HTTP-Erreichbarkeit und die richtige Startseite unter `franke-schule.de`
+   prüfen. DNS-Caches und TTL beachten. Bei falscher Standardseite zuerst
+   Dokumentenstamm und Priorität von Indexdateien prüfen.
 
-Erfolg: Domainzuordnung, Verzeichnis, Zertifikatsweg und Zeitpunkt der
-DNS-Änderung sind eindeutig. Alle Vorbereitungen, die Pages erhalten können,
-sind erledigt. Erst jetzt im Chat den konkreten letzten Umschaltschritt anleiten.
+Erfolg: Die neue Domain liefert die bereits hochgeladene Website von netcup.
+Der bestehende FTP-Zugang und Workflow müssen dafür nicht auf einen anderen
+Ordner umgestellt werden. GitHub Pages bleibt unverändert in Betrieb.
 
-## Schritt 14: Produktive Domain auf netcup umschalten
+## Schritt 14: HTTPS für die neue Domain einrichten
 
-1. Diesen Schritt erst nach erfolgreichen Upload-/Funktionstests und der
-   TLS-Vorbereitung ausführen. Nutzer vorher ausdrücklich darauf hinweisen,
-   dass jetzt die produktive Domain umgestellt wird.
-2. Falls noch offen, Domainzuordnung aus Schritt 13 mit dem richtigen
-   Dokumentenstamm abschließen und automatische DNS-Änderungen kontrollieren.
-3. Die Webeinträge gezielt umstellen: Stamm-Domain mit den tatsächlichen
-   netcup-Adressen bedienen; `www` passend auf dieselbe Website führen.
-   Bei `www` entweder einen passenden CNAME oder passende Adressrecords verwenden,
-   keine miteinander unvereinbaren CNAME-/A-/AAAA-Einträge am selben Host.
-4. Alte GitHub-Adressrecords ersetzen, einschließlich alter AAAA-Einträge.
-   Falls netcup kein IPv6-Ziel vorgibt, keinen alten GitHub-AAAA-Eintrag stehen lassen.
-5. Mail- und sonstige Dienste nicht zurücksetzen. Kein Nameserverwechsel nötig,
-   wenn die Domain weiterhin die vorhandenen netcup-Nameserver benutzt.
-6. Änderungen speichern. DNS-Auflösung für beide Hostnamen und IPv4/IPv6 prüfen,
-   z. B. mit PowerShell `Resolve-DnsName`; Browser-/Resolvercaches berücksichtigen.
-7. GitHub Pages und seine Custom-Domain-Einstellung vorerst erhalten. Während
-   der DNS-Umstellung können unterschiedliche Besucher noch verschiedene
-   Server erreichen; beide müssen denselben funktionierenden Stand anbieten.
-8. Falls noch nötig, Zertifikat umgehend ausstellen/zuweisen. Gültiges HTTPS
-   und anschließend HTTP→HTTPS sowie Stamm→www auf Weiterleitungsschleifen prüfen.
+1. Bei `franke-schule.de` im WCP SSL/TLS-Zertifikate öffnen.
+2. Ein kostenloses Let's-Encrypt-Basiszertifikat für `franke-schule.de` und,
+   wenn deren DNS korrekt auf netcup zeigt, `www.franke-schule.de` einrichten.
+   Keine Wildcard auswählen, wenn nur diese Namen benötigt werden.
+3. Zertifikat ausstellen und in den Hosting-Einstellungen zuweisen.
+4. Beide Namen über HTTPS auf gültige Zertifikate ohne Browserwarnung prüfen.
+   Erst danach HTTP-auf-HTTPS-Weiterleitung einschalten.
+5. Die bevorzugte Adresse festlegen, standardmäßig `https://franke-schule.de`.
+   Die www-Variante darauf weiterleiten, sobald beide Zertifikatsnamen funktionieren.
+   Auf Schleifen und auf versehentliche Weiterleitung zur alten Domain prüfen.
+6. Automatische Zertifikatserneuerung kontrollieren. Falls ausnahmsweise eine
+   manuelle DNS-/Wildcard-Validierung gewählt wird, deren Verlängerungspflichten
+   dokumentieren statt automatische Erneuerung zu unterstellen.
 
-Erfolg: Beide produktiven Domainvarianten erreichen netcup mit gültigem HTTPS.
-Die Domainregistrierung bleibt unverändert bei netcup.
+Erfolg: Die neue produktive Adresse funktioniert verschlüsselt. Die frühere
+Zertifikatswarnung der netcup-Standarddomain ist kein Hindernis für ein eigenes,
+gültiges Zertifikat von `franke-schule.de`.
 
-## Schritt 15: Produktivbetrieb kontrollieren und Rückfalloption erhalten
+## Schritt 15: Funktionen, Scaleway und automatische Veröffentlichung prüfen
 
-1. Startseite, mehrere tief verlinkte Module, Downloads, Quiz, lokale Speicherung
-   und KI-Auswertung unter der produktiven HTTPS-Adresse prüfen.
-2. Einen normalen Push ausführen und die automatische Aktualisierung der
-   produktiven netcup-Website nachweisen.
-3. Netcup-Zugriffs-/Fehlerprotokolle und fehlgeschlagene GitHub-Actions prüfen.
-4. Über mindestens die vorherige relevante DNS-TTL und mit mehreren Auflösungswegen
-   beobachten; idealerweise zusätzlich ein bis zwei Tage stabilen Betrieb abwarten.
-5. Pages während dieser Rückfallphase aktiv lassen. Die alte `github.io`-Adresse
-   ist mit gesetzter Custom Domain möglicherweise nur eine Weiterleitung zur
-   produktiven Domain, also kein unabhängiger Ausweichlink.
-6. Da `www` und HTTPS beibehalten werden, bleibt die Browser-Origin für lokale
-   Bearbeitungsstände gleich. Daten einer separaten Testdomain werden dagegen
-   nicht automatisch zur Produktionsdomain übertragen.
+1. Unter der neuen HTTPS-Adresse Startseite, Fach-/Klassenmenüs, verschachtelte
+   Links, Bilder, PDFs, Sicherungsblatt-Freischaltung, Quiz und repräsentative
+   Simulationen/Editoren prüfen. Entwicklerkonsole auf fehlende Dateien,
+   falsche MIME-Typen, Mixed Content und CORS-Probleme kontrollieren.
+2. Mindestens eine vorhandene KI-Beschreibe-Aufgabe und ggf. Codeauswertung testen.
+   Die Function `ki-auswertung` bleibt bei Scaleway; keine neue KI-Pipeline bauen.
+3. In Scaleway `AI_ALLOWED_ORIGINS` bei Bedarf um `https://franke-schule.de`
+   ergänzen. `https://www.franke-schule.de` nur zusätzlich aufnehmen, wenn dort
+   tatsächlich Inhalte ausgeführt werden und keine sofortige Weiterleitung erfolgt.
+   Bisher erlaubte Origins von `florian-franke.org` erhalten, damit die alte
+   Website weiter funktioniert. Format: exakte Origin ohne abschließenden Slash,
+   mehrere Werte durch Komma getrennt. Keine Schlüssel in den Browser übertragen.
+4. Nach Konfigurationsänderungen die erforderliche Übernahme/Bereitstellung in
+   Scaleway und den echten Browserzugriff prüfen. Nur Konfiguration ändern,
+   keinen unbeteiligten Backend-Quellstand mitveröffentlichen.
+5. Auf absolute Links, Canonical-Angaben und Jekyll-Metadaten zur alten Domain
+   achten. Wegen der weiterhin bestehenden GitHub-Pages-Domainbindung keine
+   pauschalen Ersetzungen gemeinsamer Websitequellen durchführen. Falls eine
+   Anpassung notwendig ist, sie auf das netcup-Paket begrenzen und gezielt testen.
+6. Lokale Bearbeitungsstände prüfen. Wegen der neuen Domain ist der Browser-Origin
+   anders: localStorage-Daten von `florian-franke.org` werden nicht automatisch
+   auf `franke-schule.de` übernommen; Daten der alten Domain bleiben dort erhalten.
+7. Den zurückgestellten Veröffentlichungstest nachholen: eine kleine erkennbare
+   Änderung oder eine separate Testdatei auf `main` pushen und nach automatisch
+   grünem Workflow auf der neuen Domain nachweisen. Keine unbeteiligten lokalen
+   Änderungen mitcommitten. Netcup-Logs und fehlgeschlagene Actions prüfen.
 
-Erfolg: Produktion und Push-Deployment sind stabil, Links und externe Dienste
-funktionieren. Ein dokumentierter DNS-Rückweg ist weiterhin verfügbar.
+Erfolg: Die neue Domain funktioniert einschließlich KI und Push-Deployment.
+Alle bisher über Pages ausgelieferten Website-Funktionen sind geprüft; die KI
+selbst wird weiterhin als externer Scaleway-Dienst betrieben.
 
-## Schritt 16: Aufräumen und Betrieb dokumentieren
+## Schritt 16: Aufräumen und den neuen Betrieb dokumentieren
 
-1. Nur wenn kein Rückfall mehr benötigt wird, Custom Domain in GitHub Pages
-   entfernen und Pages optional deaktivieren. Die Datei `CNAME` entsprechend
-   der gewählten Pages-Veröffentlichungsart bereinigen. GitHub-Repository,
-   Branch und netcup-Deployment bleiben erhalten.
-2. Vor Entfernen der GitHub-Domainbindung sicherstellen, dass keine eigenen
-   DNS-Einträge mehr auf dieses Pages-Angebot zeigen.
-3. Den kleinen Workflow `netcup-test.yml` sowie `netcup-test.html`,
-   `github-netcup-test.html` und `netcup-push-test.html` entfernen, wenn nicht mehr
-   benötigt. Die Statusdatei des
-   Hauptdeployments erhalten; sie ermöglicht inkrementelle Übertragungen.
-4. Eine eigene Testsubdomain bei Bedarf als Testumgebung behalten oder gezielt
-   entfernen. Nicht mehr verwendete Test-Origins aus Scaleway entfernen.
-5. DNS-TTL auf einen geeigneten Normalwert zurücksetzen.
-6. Abschlussstand ergänzen: produktive URL, Commit/Workflow, Dokumentenstamm,
-   Datum, funktionierendes HTTPS mit Verlängerung, Backup und Rückweg.
-7. Den künftigen Arbeitsweg festhalten: lokal bearbeiten → gezielt committen →
-   nach `main` pushen → erfolgreichen netcup-Workflow kontrollieren.
+1. GitHub Pages, seine Custom-Domain-Einstellung und die Datei `CNAME` unverändert
+   erhalten. Kein Abschalten, Entfernen der Domainbindung oder Weiterleiten von
+   `florian-franke.org` als Teil dieses Auftrags.
+2. Testdateien und den kleinen Workflow `netcup-test.yml` nach Bedarf gezielt
+   entfernen: `netcup-test.html`, `github-netcup-test.html` und gegebenenfalls
+   `netcup-push-test.html`. Die Statusdatei des Hauptdeployments erhalten.
+3. Falls eine Testsubdomain angelegt wurde, deren weiteren Bedarf klären und sie
+   nur dann gezielt entfernen. Nicht mehr benötigte Test-Origins in Scaleway
+   entfernen; die Origins der bisherigen produktiven Website beibehalten.
+4. Falls angepasst, die DNS-TTL von `franke-schule.de` auf einen geeigneten
+   Normalwert zurücksetzen. Keine Änderung an `florian-franke.org`.
+5. Abschlussstand dokumentieren: neue URL, Dokumentenstamm, erfolgreicher
+   Git-Commit/Workflow, funktionierendes HTTPS und Erneuerung, Backups, Datum.
+6. Arbeitsweg: lokal bearbeiten → gezielt committen → nach `main` pushen →
+   erfolgreichen netcup-Workflow kontrollieren. Die bestehende Pages-Publikation
+   läuft mit ihrer bisherigen Konfiguration weiter.
 
-## Fehlerbehebung und Rückkehr
+## Fehlerbehebung und Rückweg
 
 | Beobachtung | Nächste Prüfung |
 | --- | --- |
-| Website und FTP nicht erreichbar | Providerstatus, Erreichbarkeit und erst danach Einstellungen prüfen |
-| FTP-Anmeldung abgelehnt | Vollständiger Name `github-deploy`, Passwort-Secret, Servername |
-| TLS-Zertifikatsfehler bei FTP | Serverhostname und Zertifikat prüfen; nicht dauerhaft `security: loose` verwenden |
-| Grüner Upload, aber HTTP 404 | Basisverzeichnis, `server-dir: ./`, Dokumentenstamm und tatsächliche Datei prüfen |
-| Standardseite statt eigener Startseite | Indexdateien und deren Priorität im Dokumentenstamm prüfen |
-| Neue Datei fehlt auf netcup | Commit/Branch, Actions-Lauf und Veröffentlichungsauswahl prüfen |
-| KI funktioniert auf Pages, auf Testdomain nicht | Exakte Test-Origin und CORS in Scaleway prüfen |
-| Einige Besucher sehen Pages, andere netcup | DNS-Caches, alte TTL und insbesondere A-/AAAA-Einträge prüfen |
-| HTTPS fehlt oder falsches Zertifikat | Beide Hostnamen, virtuelle Hosts und zugewiesenes Zertifikat prüfen |
+| Website und FTP nicht erreichbar | Aktuellen Providerstatus prüfen |
+| FTP-Anmeldung abgelehnt | Benutzer `github-deploy`, Passwort-Secret und Servername |
+| FTPS-Zertifikatsfehler | Serverhostname und Zertifikat; strikte Prüfung erhalten |
+| Upload grün, neue Domain zeigt falsche Seite | Dokumentenstamm und tatsächlichen DNS-/Serverpfad prüfen |
+| Neue Datei fehlt | Commit/Branch, automatischen Lauf und Veröffentlichungsauswahl prüfen |
+| KI funktioniert nur auf der alten Domain | Neue HTTPS-Origin in Scaleway und CORS prüfen |
+| Nur manche Geräte erreichen die neue Website | A-/AAAA-Einträge, DNS-Caches und TTL prüfen |
+| Zertifikatswarnung auf der neuen Domain | Namen, Zertifikatszuweisung und DNS prüfen |
+| Lokale Fortschritte fehlen auf der neuen Domain | Getrennten Browserspeicher je Origin berücksichtigen |
 
-Bei ernsthaften Problemen nach der DNS-Umschaltung die gesicherten vorherigen
-Web-DNS-Einträge wiederherstellen, solange Pages und seine Domainbindung noch
-bestehen. DNS-Caches machen auch die Rückkehr nicht sofort überall wirksam.
-Netcup-Dateien dabei nicht löschen. Bei reinen Inhaltsfehlern stattdessen den
-bekannten funktionierenden Git-Stand erneut über den Hauptworkflow veröffentlichen.
-Keine Änderungen an Mail-DNS als Teil dieses Rückwegs.
+Bei Problemen die gesicherten Einstellungen von `franke-schule.de` gezielt
+wiederherstellen oder den bekannten funktionierenden Git-Stand erneut über
+netcup veröffentlichen. Vorhandene Inhalte nicht löschen. Die unveränderte
+Website unter `florian-franke.org` bleibt verfügbar; ihre DNS-Einträge sind
+kein Bestandteil dieses Rückwegs. DNS-Caches machen Änderungen nicht sofort
+überall wirksam. Keine Änderungen an Mail-DNS als Teil der Fehlerbehebung.
 
 ## Quellen und lokale Referenzen
 

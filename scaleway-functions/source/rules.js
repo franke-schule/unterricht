@@ -12,6 +12,7 @@ function applyRuleBasedMinimum_(
     if (changes) return changes;
   }
 
+
   if (task === TASKS['11-6-0-4a-code'] || task === TASKS['11-6-0-5a-code']) {
     const getterEvaluation = evaluateDogGetterByRules_(answer, task);
     if (getterEvaluation) return getterEvaluation;

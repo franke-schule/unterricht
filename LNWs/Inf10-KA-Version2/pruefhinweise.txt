@@ -1,0 +1,13 @@
+PRÜFHINWEISE – Inf10-KA-Version2
+Stand: 26.10.2026
+
+Beide PDFs enthalten vier A4-Seiten: schlichtes Deckblatt, Aufgaben1/2, Aufgaben3a/3b, Aufgaben3c/4.
+Deckblatt: ausschließlich Überschrift, Klasse, Datum, Name; Titel22pt, Kopfdaten14pt; ohne Seitenzahl. Seite2 beginnt direkt mit1.Grundwissen. Die frühere Notizseite entfällt.
+Aufgaben, Daten, Diagramme, SQL-Vorgaben und BE sind identisch mit Version1. Ausschließlich die Karofelder2b/2c wurden auf70/45mm verlängert, um den auf die Titelseite verlegten Kopf auszugleichen.
+Gesamt28BE:4/9/10/5. Gleiche Aufgabenpositionen und Feldgrößen in Schüler- und Lösungsfassung.
+
+Prüfung: Vier Seiten pro PDF, Deckblattinhalt und größere Schriften, Aufgabenbeginn aufSeite2, keine Notizseite und keine Overfull-Meldungen. Alle acht Seiten alsPNG gerendert und visuell geprüft. Aufgabenquelle vollständig gegen Version1 abgeglichen. Alle vorhandenen Dateien der Version1 besitzen unveränderte SHA256-Prüfsummen.
+
+Reproduktion: build/aktualisieren.py erzeugt die Lösungsquelle. Beide LaTeX-Dateien kompilieren; build/pruefen.py prüft die PDFs und exportiert die Textfassungen. Die fertigen PDFs danach aus build in diesen Ordner kopieren. Prüfergebnisse und Seitenbilder liegen unter build.
+
+Deckblatt ergänzt: Nach Klasse 10 steht eine 8 mm lange Ausfülllinie für den Buchstaben der Parallelklasse.

@@ -92,7 +92,7 @@ function renderEvaluation(box, result, fallbackKey) {
 }
 function serverError(error) {
   const message = error?.message || 'Die Auswertung konnte nicht abgeschlossen werden.';
-  if (/unbekannt|nicht gefunden|task.?id|Aufgabe.*nicht/i.test(message)) return 'Für Aufgabe 6.1 ist noch keine aktuelle Serverversion bereitgestellt. Bitte informiere deine Lehrkraft.';
+  if (/unbekannt|nicht gefunden|task.?id|Aufgabe.*nicht/i.test(message)) return 'Für Aufgabe 6.2 ist noch keine aktuelle Serverversion bereitgestellt. Bitte informiere deine Lehrkraft.';
   if (/nicht rechtzeitig|timeout/i.test(message)) return 'Der Auswertungsserver hat nicht rechtzeitig geantwortet. Bitte versuche es erneut.';
   return message;
 }

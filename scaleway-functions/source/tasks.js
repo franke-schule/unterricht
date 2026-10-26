@@ -2647,5 +2647,101 @@ const TASKS = {
       partial: 'teilweise korrekt',
       incorrect: 'noch nicht korrekt'
     }
-  }
+  },
+  '11-6-1-if-code': {
+    title: 'Informatik Klasse 11 Aufgabe 6.1 – 1B if-Block im zweiten Fall',
+    grade: 11, responseType: 'code', maxPoints: 3,
+    statusLabels: { correct: 'korrekt', partial: 'teilweise korrekt', incorrect: 'noch nicht korrekt' },
+    codeAnalysisContext: "LearnJ-Online-IDE mit Top-Level-Anweisungen, println(...) ist erlaubt. Es werden aktuelle IDE-Dateien mit Trennern `// ===== Datei: Hauptprogramm.java =====` und gegebenenfalls `// ===== Datei: Datenpunkt.java =====` übertragen. Die statische Codebewertung belegt keinen Programmlauf; behaupte nicht, eine Ausgabe beobachtet zu haben. Bewerte nur ausführbaren Code, keine Kommentare oder Zeichenketten mit Java-Code. Akzeptiere fachlich gleichwertige Java-Formatierung, aber keine unveränderte Startlösung und keine hart codierten Ausgaben statt der geforderten Kontrollstruktur/Getterverwendung. Im markierten zweiten Fall ist gewichtete_Summe_2 = 6, theta_2 = 5 und berechnete_ausgabe_2 zunächst 0. Ein ausführbarer if-Block mit striktem > setzt berechnete_ausgabe_2 auf 1. Der erste Demonstrationsfall für 1A zählt nicht als Lösung für den zweiten Fall.",
+    instruction: "Bewerte ausschließlich den Teilauftrag 1B if-Block im zweiten Fall. Keine vollständige Musterlösung ausgeben.",
+    expectedAspects: ["Im zweiten Abschnitt nach dem Marker wird ein if-Bedingungsblock ausgeführt.","Die Bedingung vergleicht gewichtete_Summe_2 strikt mit theta_2; >= erfüllt den Lernauftrag nicht.","Im if-Block wird berechnete_ausgabe_2 auf 1 gesetzt."],
+    rubric: ["Je ein Punkt für Bedingung/Block, striktes > und Zuweisung 1, insgesamt 3.","Die erste Demonstration zählt nie zu diesen Punkten.","Bei >= oder anderen fachlich falschen Vergleichen kein Punkt für striktes >.","Keine harte Ausgabe 1 als Ersatz für die bedingte Zuweisung.","Volle 3 Punkte nur bei vollständig ausführbarer, plausibler Lösung."],
+    codeAnalysisRules: ["Prüfe nur den zweiten Abschnitt hinter `Zweiter Fall für Aufgabe 1B`.","Unveränderter Code enthält dort keinen if-Block und darf nicht als erfüllt bewertet werden.","Vergleich muss die zweiten Fallvariablen mit strikt > vergleichen; >= ist ausdrücklich falsch.","Ausgabevariable muss im erreichbaren if-Zweig auf 1 gesetzt werden.","Statische Bewertung sagt nicht aus, dass das Programm tatsächlich ausgeführt wurde."]
+  },
+
+  '11-6-1-ifelse-code': {
+    title: 'Informatik Klasse 11 Aufgabe 6.1 – 2B if/else im zweiten Fall',
+    grade: 11, responseType: 'code', maxPoints: 3,
+    statusLabels: { correct: 'korrekt', partial: 'teilweise korrekt', incorrect: 'noch nicht korrekt' },
+    codeAnalysisContext: "LearnJ-Online-IDE mit Top-Level-Anweisungen, println(...) ist erlaubt. Es werden aktuelle IDE-Dateien mit Trennern `// ===== Datei: Hauptprogramm.java =====` und gegebenenfalls `// ===== Datei: Datenpunkt.java =====` übertragen. Die statische Codebewertung belegt keinen Programmlauf; behaupte nicht, eine Ausgabe beobachtet zu haben. Bewerte nur ausführbaren Code, keine Kommentare oder Zeichenketten mit Java-Code. Akzeptiere fachlich gleichwertige Java-Formatierung, aber keine unveränderte Startlösung und keine hart codierten Ausgaben statt der geforderten Kontrollstruktur/Getterverwendung. Im markierten zweiten Fall ist gewichtete_Summe_2 = 5 und theta_2 = 5. Die Ausgabe soll bei größerer Summe 1 und sonst 0 sein. Der erste vollständige Demonstrationsfall zählt nicht als Lösung für den markierten zweiten Fall.",
+    instruction: "Bewerte ausschließlich den Teilauftrag 2B if/else im zweiten Fall. Keine vollständige Musterlösung ausgeben.",
+    expectedAspects: ["Der markierte zweite Abschnitt enthält einen if- und else-Zweig.","Der if-Vergleich verwendet strikt >, sodass Gleichheit zum else-Zweig führt.","Der if-Zweig setzt 1 und der else-Zweig setzt 0."],
+    rubric: [
+      'Je ein Punkt für die im Erwartungsaspekt benannten Schritte; höchstens 3 Punkte.',
+      'Unveränderter Startcode erhält keine Punkte. Hart codierte Ausgaben ersetzen keine Kontrollstruktur.',
+      'Akzeptiere fachlich gleichwertige Java-Formatierung, bewerte aber keine fachlich falschen Grenzfälle als korrekt.',
+      'Keine vollständige Musterlösung in der Rückmeldung.'
+    ],
+    codeAnalysisRules: [
+      'Prüfe nur ausführbaren Quelltext, nicht Kommentare oder Zeichenketten mit Java-Code.',
+      'Erfülle keinen Aspekt durch unveränderten Startcode oder hart codierte erwartete Ausgaben.',
+      'Bewerte fachlich gleichwertige Java-Schreibweisen gleich.',
+      'Die statische Prüfung belegt keinen beobachteten Programmlauf.'
+    ]
+  },
+
+  '11-6-1-elseif-code': {
+    title: 'Informatik Klasse 11 Aufgabe 6.1 – 3B zweite else-if-Kette',
+    grade: 11, responseType: 'code', maxPoints: 3,
+    statusLabels: { correct: 'korrekt', partial: 'teilweise korrekt', incorrect: 'noch nicht korrekt' },
+    codeAnalysisContext: "LearnJ-Online-IDE mit Top-Level-Anweisungen, println(...) ist erlaubt. Es werden aktuelle IDE-Dateien mit Trennern `// ===== Datei: Hauptprogramm.java =====` und gegebenenfalls `// ===== Datei: Datenpunkt.java =====` übertragen. Die statische Codebewertung belegt keinen Programmlauf; behaupte nicht, eine Ausgabe beobachtet zu haben. Bewerte nur ausführbaren Code, keine Kommentare oder Zeichenketten mit Java-Code. Akzeptiere fachlich gleichwertige Java-Formatierung, aber keine unveränderte Startlösung und keine hart codierten Ausgaben statt der geforderten Kontrollstruktur/Getterverwendung. Die erste Kette zeigt die drei Fälle bereits. Im markierten zweiten Abschnitt soll eine unabhängige Kette für delta_uebung = 1, -1, 0 ergänzt werden. Erwartete Texte: Ausgabe zu klein, Ausgabe zu groß, Ausgabe passt.",
+    instruction: "Bewerte ausschließlich den Teilauftrag 3B zweite else-if-Kette. Keine vollständige Musterlösung ausgeben.",
+    expectedAspects: ["delta_uebung == 1 wählt den Text Ausgabe zu klein.","else if mit delta_uebung == -1 wählt den Text Ausgabe zu groß.","Der else-Fall wählt Ausgabe passt; nur ein Zweig läuft."],
+    rubric: [
+      'Je ein Punkt für die im Erwartungsaspekt benannten Schritte; höchstens 3 Punkte.',
+      'Unveränderter Startcode erhält keine Punkte. Hart codierte Ausgaben ersetzen keine Kontrollstruktur.',
+      'Ein einzelnes = statt == ist kein gültiger Vergleich und darf nicht als korrekte Bedingung zählen.',
+      'Akzeptiere fachlich gleichwertige Java-Formatierung, bewerte aber keine fachlich falschen Grenzfälle als korrekt.',
+      'Keine vollständige Musterlösung in der Rückmeldung.'
+    ],
+    codeAnalysisRules: [
+      'Prüfe nur ausführbaren Quelltext, nicht Kommentare oder Zeichenketten mit Java-Code.',
+      'Erfülle keinen Aspekt durch unveränderten Startcode oder hart codierte erwartete Ausgaben.',
+      'Bewerte fachlich gleichwertige Java-Schreibweisen gleich.',
+      'Die statische Prüfung belegt keinen beobachteten Programmlauf.'
+    ]
+  },
+
+  '11-6-1-for-code': {
+    title: 'Informatik Klasse 11 Aufgabe 6.1 – 4B gezählte for-Schleife',
+    grade: 11, responseType: 'code', maxPoints: 3,
+    statusLabels: { correct: 'korrekt', partial: 'teilweise korrekt', incorrect: 'noch nicht korrekt' },
+    codeAnalysisContext: "LearnJ-Online-IDE mit Top-Level-Anweisungen, println(...) ist erlaubt. Es werden aktuelle IDE-Dateien mit Trennern `// ===== Datei: Hauptprogramm.java =====` und gegebenenfalls `// ===== Datei: Datenpunkt.java =====` übertragen. Die statische Codebewertung belegt keinen Programmlauf; behaupte nicht, eine Ausgabe beobachtet zu haben. Bewerte nur ausführbaren Code, keine Kommentare oder Zeichenketten mit Java-Code. Akzeptiere fachlich gleichwertige Java-Formatierung, aber keine unveränderte Startlösung und keine hart codierten Ausgaben statt der geforderten Kontrollstruktur/Getterverwendung. Hauptprogramm.java startet mit drei Einzelzeilen Datenpunkt 0, Datenpunkt 1, Datenpunkt 2. Die Aufgabe verlangt einen gezählten for-Block mit i=0, i<3, i++ und Ausgabe „Datenpunkt “ plus i.",
+    instruction: "Bewerte ausschließlich den Teilauftrag 4B gezählte for-Schleife. Keine vollständige Musterlösung ausgeben.",
+    expectedAspects: ["Die gezählte Schleife startet bei 0, prüft i < 3 und erhöht i.","Die Schleife durchläuft genau i = 0, 1 und 2.","Die Ausgabe verwendet innerhalb des Blocks den aktuellen Zähler i."],
+    rubric: [
+      'Je ein Punkt für die im Erwartungsaspekt benannten Schritte; höchstens 3 Punkte.',
+      'Unveränderter Startcode erhält keine Punkte. Hart codierte Ausgaben ersetzen keine Kontrollstruktur.',
+      'Akzeptiere fachlich gleichwertige Java-Formatierung, bewerte aber keine fachlich falschen Grenzfälle als korrekt.',
+      'Keine vollständige Musterlösung in der Rückmeldung.'
+    ],
+    codeAnalysisRules: [
+      'Prüfe nur ausführbaren Quelltext, nicht Kommentare oder Zeichenketten mit Java-Code.',
+      'Erfülle keinen Aspekt durch unveränderten Startcode oder hart codierte erwartete Ausgaben.',
+      'Bewerte fachlich gleichwertige Java-Schreibweisen gleich.',
+      'Die statische Prüfung belegt keinen beobachteten Programmlauf.'
+    ]
+  },
+
+  '11-6-1-foreach-code': {
+    title: 'Informatik Klasse 11 Aufgabe 6.1 – 4D erweiterte for-Schleife und Getter',
+    grade: 11, responseType: 'code', maxPoints: 3,
+    statusLabels: { correct: 'korrekt', partial: 'teilweise korrekt', incorrect: 'noch nicht korrekt' },
+    codeAnalysisContext: "LearnJ-Online-IDE mit Top-Level-Anweisungen, println(...) ist erlaubt. Es werden aktuelle IDE-Dateien mit Trennern `// ===== Datei: Hauptprogramm.java =====` und gegebenenfalls `// ===== Datei: Datenpunkt.java =====` übertragen. Die statische Codebewertung belegt keinen Programmlauf; behaupte nicht, eine Ausgabe beobachtet zu haben. Bewerte nur ausführbaren Code, keine Kommentare oder Zeichenketten mit Java-Code. Akzeptiere fachlich gleichwertige Java-Formatierung, aber keine unveränderte Startlösung und keine hart codierten Ausgaben statt der geforderten Kontrollstruktur/Getterverwendung. punkte enthält drei Datenpunkt-Objekte mit Labels 1, 0, 1. Die vorhandene erweiterte for-Schleife besucht jedes Objekt als punkt. Ersetze nur die Platzhalterausgabe durch die Ausgabe von punkt.gibLabel().",
+    instruction: "Bewerte ausschließlich den Teilauftrag 4D erweiterte for-Schleife und Getter. Keine vollständige Musterlösung ausgeben.",
+    expectedAspects: ["Die erweiterte for-Schleife durchläuft die Sammlung punkte mit aktuellem Objekt punkt.","Der Block gibt für jedes Objekt genau einmal das Label aus.","Die Labelausgabe erfolgt dynamisch über gibLabel() des aktuellen punkt."],
+    rubric: [
+      'Je ein Punkt für die im Erwartungsaspekt benannten Schritte; höchstens 3 Punkte.',
+      'Unveränderter Startcode erhält keine Punkte. Hart codierte Ausgaben ersetzen keine Kontrollstruktur.',
+      'Akzeptiere fachlich gleichwertige Java-Formatierung, bewerte aber keine fachlich falschen Grenzfälle als korrekt.',
+      'Keine vollständige Musterlösung in der Rückmeldung.'
+    ],
+    codeAnalysisRules: [
+      'Prüfe nur ausführbaren Quelltext, nicht Kommentare oder Zeichenketten mit Java-Code.',
+      'Erfülle keinen Aspekt durch unveränderten Startcode oder hart codierte erwartete Ausgaben.',
+      'Bewerte fachlich gleichwertige Java-Schreibweisen gleich.',
+      'Die statische Prüfung belegt keinen beobachteten Programmlauf.'
+    ]
+  },
+
 };

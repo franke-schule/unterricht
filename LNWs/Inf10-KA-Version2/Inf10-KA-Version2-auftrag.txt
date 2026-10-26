@@ -1,0 +1,16 @@
+Inf10-KA-Version2 – Stand 26.10.2026
+
+Ausgangspunkt: aktuelle Inf10-KA-Version1. Version1 bleibt unverändert.
+Neuer Ordner: LNWs/Inf10-KA-Version2.
+
+Vier A4-Seiten, davon ein schlichtes Deckblatt und drei Aufgabenseiten.
+Seite1: ausschließlich Überschrift, Klasse10, Datum und Name. Überschrift22pt, Kopfdaten14pt; keine Seitenzahl und keine weiteren Inhalte.
+Seite2 beginnt mit „1. Grundwissen“ und enthält Aufgaben1 und2. Die durch den entfallenen Kopf gewonnene Fläche erweitert die Karofelder2b auf70mm und2c auf45mm.
+Seite3: Aufgabe3a und3b einschließlich freiem55mm-Zeichenrahmen.
+Seite4: Aufgabe3c und Aufgabe4. Die bisherige Notizseite entfällt.
+
+Alle Aufgabenformulierungen, Daten, Diagramme und SQL-Vorgaben bleiben aus Version1 erhalten. Bewertung:4/9/10/5BE, insgesamt28BE. Lösungen ohne JOIN-Syntax. Musterlösung besitzt dieselbe Seiteneinteilung, Feldgrößen und Aufgabenpositionen.
+
+LaTeX und PDF sowie extrahierter Text jeweils für Schüler- und Lösungsfassung. Lösung wird mit build/aktualisieren.py aus der Schülerquelle erzeugt. Prüfung und Renderbilder liegen unter build.
+
+Deckblatt ergänzt: Nach Klasse 10 steht eine 8 mm lange Ausfülllinie für den Buchstaben der Parallelklasse.

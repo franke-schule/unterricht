@@ -33,12 +33,12 @@ assert.match(html, /<meta charset="utf-8">/);
 assert.match(html, /<title>Aufgabe 7 – Der k-nächste-Nachbarn-Algorithmus \| Informatik 11<\/title>/);
 const topbar = html.match(/<nav class="topbar" aria-label="Navigation">([\s\S]*?)<\/nav>/)[1];
 assert.deepEqual([...topbar.matchAll(/<a class="back-link" href="([^"]*)">([^<]*)<\/a>/g)].map((m) => [m[1], m[2]]), [
-  ['../index.html', 'Zur Aufgabenübersicht'], ['aufgabe6.html', 'Zu Aufgabe 6.1'], ['../../../../', 'Startseite'],
+  ['../index.html', 'Zur Aufgabenübersicht'], ['aufgabe6.html', 'Zu Aufgabe 6.2'], ['../../../../', 'Startseite'],
 ]);
 assert.match(html, /<body class="perceptron-page knn-page">/);
 assert.match(html, /knn\/task7\.css\?v=20261003a/);
-assert.match(html, /knn\/ui\/task7\.mjs\?v=20261022-compact-feedback/);
-assert.match(html, /perzeptron\/task5\.css\?v=20260926a/);
+assert.match(html, /knn\/ui\/task7\.mjs\?v=20261022-feedback-two-sentences/);
+assert.match(html, /perzeptron\/task5\.css\?v=20261010-tabs/);
 ['knn/task7.css', 'knn/ui/task7.mjs', 'perzeptron/task5.css', 'knn/ui/card-slots.mjs', 'knn/ui/knn-plot.mjs', 'knn/logic/knn.mjs', 'knn/data/shirts.mjs', 'knn/data/task7.mjs', 'perzeptron/ui/semantic-answer.mjs', 'perzeptron/logic/perceptron.mjs']
   .forEach((path) => assert.ok(existsSync(new URL('../../' + path, import.meta.url)), path + ' fehlt'));
 
@@ -78,7 +78,7 @@ assert.doesNotMatch(ui, /solution-download|solution-code|unlockSolution/);
 // Skriptserver, Speicherung und Wiederverwendung
 assert.match(ui, /'11-7-1'/);
 assert.match(ui, /informatik11-knn-aufgabe7-v1/);
-assert.match(ui, /from '\.\.\/\.\.\/perzeptron\/ui\/semantic-answer\.mjs'/);
+assert.match(ui, /from "\.\.\/\.\.\/perzeptron\/ui\/semantic-answer\.mjs\?v=20261022-feedback-two-sentences"/);
 assert.match(ui, /from '\.\.\/\.\.\/perzeptron\/logic\/perceptron\.mjs'/);
 assert.match(html, /<textarea id="apply-answer" maxlength="600"/);
 assert.match(html, /id="apply-counter"/);
@@ -97,9 +97,9 @@ assert.match(html, /class="privacy"/);
   assert.match(html, new RegExp('<desc id="' + id + '-desc">'));
 });
 
-// Menü: Aufgabe 7 steht direkt nach Aufgabe 6.1
-const positions = [0, 1, 2, 3, 4, 5, 6, 7].map((n) => menu.indexOf('1-Kuenstliche-Intelligenz/aufgabe' + n + '.html"'));
-assert.ok(positions[7] > positions[6] && positions[6] > positions[5] && positions[5] > positions[4], 'Menüreihenfolge');
+// Menü: Aufgabe 7 folgt auf 6.0, 6.1 und 6.2.
+const positions = ['aufgabe6-0.html','aufgabe6-1.html','aufgabe6.html','aufgabe7.html'].map((file) => menu.indexOf('1-Kuenstliche-Intelligenz/' + file + '"'));
+assert.ok(positions.every((position) => position >= 0) && positions.every((position,index) => index === 0 || position > positions[index-1]), 'Menüreihenfolge');
 assert.match(menu, /<a class="module-button" href="1-Kuenstliche-Intelligenz\/aufgabe7\.html">\s*<strong>Aufgabe 7<\/strong>\s*<span>k-nächste Nachbarn: Idee und Abstand<\/span>/);
 
 console.log('HTML-Vertrag, Navigation, Merke-Kästen, Formeln und Menüeintrag von Aufgabe 7 sind korrekt.');
