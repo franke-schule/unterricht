@@ -11,19 +11,19 @@
   "schreibfelder_mm": {
     "2b": 70,
     "2c": 45,
-    "3a": 50,
+    "3a": 45,
     "3b": 55,
     "4a": 45,
-    "4b": 60
+    "4b": 50
   },
   "BE": [
     4,
-    9,
-    10,
-    5
+    11,
+    8,
+    6
   ],
-  "gesamt_BE": 28,
-  "aufgabeninhalt_unveraendert": true,
+  "gesamt_BE": 29,
+  "aufgabeninhalt_wie_beauftragt_angepasst": true,
   "version1_unveraendert": true,
   "layoutgleich": true,
   "keine_ueberlaeufe": true

@@ -28,7 +28,7 @@
 \newcommand{\kopf}{\thispagestyle{empty}
 {\color{Blue}\fontsize{22}{27}\selectfont\bfseries\noindent\ifsolution Musterlösung\else Kurzarbeit\fi{} Informatik -- Datenbanken}\par
 \vspace{8mm}
-{\fontsize{14}{20}\selectfont Klasse 10\,\rule{8mm}{.4pt}\hfill Datum: \rule{38mm}{.4pt}\par
+{\fontsize{14}{20}\selectfont Klasse 10\,\rule{8mm}{.4pt}\hfill Datum: 27.10.2026\par
 \vspace{6mm}Name: \rule{110mm}{.4pt}\par}}
 \newcommand{\sectiontitle}[1]{\vspace{1mm}{\color{Blue}\bfseries\large #1}\par\vspace{.3mm}{\color{Blue}\rule{\linewidth}{.7pt}}\par\vspace{1.5mm}}
 \newcommand{\fuss}[1]{\par}
@@ -63,10 +63,10 @@
 \sectiontitle{1. Grundwissen:\bewertung{4}}
 \textbf{Vervollständige} die Sätze, indem zu jedem Begriff aus dem Kontext Datenbanken den passenden Begriff aus dem Kontext Programmierung findest.\par\vspace{2mm}
 Eine Spalte entspricht in der objektorientierten Programmierung \luecke{einem Attribut}.\par\vspace{3mm}
-Eine Zeile entspricht in der objektorientierten Programmierung \luecke{einem Objekt}.\par\vspace{3mm}
+Ein Datensatz entspricht in der objektorientierten Programmierung \luecke{einem Objekt}.\par\vspace{3mm}
 Eine Tabelle entspricht in der objektorientierten Programmierung \luecke{einer Klasse}.\par\vspace{3mm}
 Eine Zelle - au\ss{}er in der ersten Zeile - entspricht in der objektorientierten Programmierung\par\vspace{4mm}\luecke{einem Attributwert}.\par\vspace{3mm}
-\sectiontitle{2. Apps auf dem Handy\bewertung{9}}
+\sectiontitle{2. Apps auf dem Handy\bewertung{11}}
 {\bfseries\color{Blue}Klassendiagramm Nr. 1}\par
 \noindent\resizebox{\linewidth}{!}{\begin{tikzpicture}[x=1mm,y=1mm,karte/.style={draw=Blue,line width=.7pt,minimum height=20mm,outer sep=0pt}]
 \path[use as bounding box] (0,0) rectangle (182,31);
@@ -87,7 +87,8 @@ Eine Zelle - au\ss{}er in der ersten Zeile - entspricht in der objektorientierte
 \gridfield{45mm}{Eine Beziehungstabelle ist bei einer \textbf{n:m-Beziehung} notwendig. Ein einzelner Fremdschlüssel in einer der beiden Tabellen reicht für die vielen Zuordnungen in beiden Richtungen nicht aus. Jede Zeile der Beziehungstabelle verbindet über zwei Fremdschlüssel genau zwei Datensätze.}
 \fuss{1}
 \newpage
-\sectiontitle{3. Berechtigungen und Apps\bewertung{10}}
+\sectiontitle{3. Berechtigungen und Apps\bewertung{8}}
+Betrachte die Ausschnitte aus den Tabellen Berechtigung, Apps und Berechtigung\_von\_Apps.\par\vspace{1.5mm}
 {\bfseries\color{Blue}Tabellenausschnitte Nr. 1}\par\vspace{1.5mm}
 \begingroup\renewcommand{\arraystretch}{1.15}\setlength{\tabcolsep}{2mm}
 \begin{minipage}[t]{.30\linewidth}\dbtitle{Berechtigung}
@@ -106,9 +107,10 @@ Eine Zelle - au\ss{}er in der ersten Zeile - entspricht in der objektorientierte
 \end{tabular}
 \end{minipage}\par\endgroup\vspace{2mm}
 \textbf{a)} WhatsApp fragt beim Öffnen der App nach einer neuen Berechtigung \textquotedbl{}Standort\textquotedbl{}. Du nimmst die Berechtigungsanfrage an.\par
-\textbf{Beschreibe} die Veränderungen, die passieren müssen, damit die Tabellen (siehe Tabellenausschnitte Nr. 1) auf dem aktuellen Stand sind.
-\gridfield{50mm}{WhatsApp hat die \texttt{id} 1; Standort hat die \texttt{id} 2. In \texttt{Berechtigungen\_von\_Apps} wird eine neue Zeile mit \texttt{app\_id = 1} und \texttt{berechtigung\_id = 2} ergänzt. Beide Stammdatensätze existieren bereits; in \texttt{Apps} und \texttt{Berechtigung} sind keine neuen Zeilen erforderlich.}
+\textbf{Beschreibe} die Veränderungen, die passieren müssen, damit die Tabellen (siehe Tabellenausschnitte Nr. 1) auf dem aktuellen Stand sind, \textbf{genau}.
+\gridfield{45mm}{WhatsApp hat die \texttt{id} 1; Standort hat die \texttt{id} 2. In \texttt{Berechtigungen\_von\_Apps} wird eine neue Zeile mit \texttt{app\_id = 1} und \texttt{berechtigung\_id = 2} ergänzt. Beide Stammdatensätze existieren bereits; in \texttt{Apps} und \texttt{Berechtigung} sind keine neuen Zeilen erforderlich.}
 \vspace{3mm}
+Betrachte das folgende Klassendiagramm mit den Klassen Berechtigungen, Berechtigungen-von-Apps und Apps (siehe Klassendiagramm Nr. 2). Es sind Fehler in diesem Klassendiagramm enthalten.\par\vspace{1.5mm}
 {\bfseries\color{Blue}Klassendiagramm Nr. 2}\par
 \noindent\resizebox{\linewidth}{!}{\begin{tikzpicture}[x=1mm,y=1mm,karte/.style={draw=Blue,line width=.7pt,minimum height=20mm,outer sep=0pt}]
 \path[use as bounding box] (0,0) rectangle (182,46);
@@ -118,7 +120,6 @@ Eine Zelle - au\ss{}er in der ersten Zeile - entspricht in der objektorientierte
 \draw[Blue,line width=.7pt] (b.east) -- node[pos=.12,above,font=\small] {1} node[pos=.88,above,font=\small] {n} (ba.west);
 \draw[Blue,line width=.7pt] (ba.east) -- node[pos=.12,above,font=\small] {n} node[pos=.88,above,font=\small] {1} (a.west);
 \end{tikzpicture}}\par
-Betrachte das obige Klassendiagramm mit den Klassen Berechtigungen, Berechtigungen-von-Apps und Apps (siehe Klassendiagramm Nr. 2). Es sind Fehler in diesem Klassendiagramm enthalten.\par\vspace{1.5mm}
 \textbf{b) Skizziere} die korrigierte Version des abgebildeten Klassendiagramm, sodass es den Sachverhalt korrekt darstellt.\par
 \zeichenfeld{55mm}
 \vspace{3mm}
@@ -132,7 +133,8 @@ Betrachte das obige Klassendiagramm mit den Klassen Berechtigungen, Berechtigung
 \sqlvorgabe{10mm}{FROM Berechtigung, Apps,\\Berechtigung\_von\_Apps}{1}&\sqlkorrektur{10mm}{FROM Berechtigung, Apps,\\Berechtigungen\_von\_Apps}\\
 \sqlvorgabe{19mm}{WHERE Berechtigungen.id = Apps.id\\AND Berechtigung\_von\_Apps.id = App.id}{1}&\sqlkorrektur{19mm}{WHERE Berechtigung.id =\\Berechtigungen\_von\_Apps.berechtigung\_id\\AND Apps.id =\\Berechtigungen\_von\_Apps.app\_id;}\\\hline
 \end{tabularx}\endgroup\par\vspace{1mm}
-\sectiontitle{4. Appentwickler\bewertung{5}}
+\sectiontitle{4. Appentwickler\bewertung{6}}
+Betrachte die folgenden Tabellenschemata der Tabellen Appentwickler und App.\par\vspace{1.5mm}
 \schematext{Appentwickler (id: int [PS], name: varchar(255),}
 \schematext{\hspace{4mm}gruendungsjahr: int)}
 \vspace{1mm}
@@ -148,9 +150,10 @@ Betrachte das obige Klassendiagramm mit den Klassen Berechtigungen, Berechtigung
 \gridfield{45mm}{Die Anweisung zählt die Apps, die \textbf{nach dem Jahr 2025} erschienen sind, also ab 2026. Ausgegeben wird eine einzelne Zahl. Apps mit Erscheinungsjahr 2025 werden nicht mitgezählt.}
 \vspace{3mm}
 \textbf{b) Formuliere} eine SQL-Anweisung, die Namen der Apps zusammen mit den Namen der Appentwickler ausgibt, die die jeweilige App entwickelt haben.
-\gridfield{60mm}{{\ttfamily\fontsize{9}{11}\selectfont SELECT App.name, Appentwickler.name\\
+\gridfield{50mm}{{\ttfamily\fontsize{9}{11}\selectfont SELECT App.name, Appentwickler.name\\
 FROM App, Appentwickler\\
 WHERE App.appentwickler\_id = Appentwickler.id;}\par\smallskip Die beiden Tabellen werden über den Fremdschlüssel \texttt{App.appentwickler\_id} und den Primärschlüssel \texttt{Appentwickler.id} verknüpft.}
-\par\vspace{2mm}{\bfseries Gesamt:\bewertung{28}}\par
+\par\vspace{2mm}{\bfseries Gesamt:\bewertung{29}}\par
+\par\vspace{1mm}\hfill{\bfseries Viel Erfolg! Franke}\par
 \fuss{3}
 \end{document}

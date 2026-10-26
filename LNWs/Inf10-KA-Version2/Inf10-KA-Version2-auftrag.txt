@@ -1,16 +1,17 @@
-Inf10-KA-Version2 – Stand 26.10.2026
+VERBINDLICHER STAND – Inf10-KA-Version2
+Stand: 26.10.2026
 
-Ausgangspunkt: aktuelle Inf10-KA-Version1. Version1 bleibt unverändert.
-Neuer Ordner: LNWs/Inf10-KA-Version2.
+Version1 bleibt unverändert. Vier A4-Seiten in Schüler- und Lösungsfassung:
+1. Schlichtes Deckblatt: Titel22pt, Kopfdaten14pt. Klasse10 mit8mm-Ausfülllinie für die Parallelklasse, Datum27.10.2026, Name mit Ausfülllinie. Keine Seitenzahl oder weiteren Inhalte.
+2. Beginn mit1.Grundwissen; Aufgaben1/2. Karofelder2b70mm,2c45mm.
+3. Aufgaben3a/3b. Karofeld3a45mm, freier Zeichenrahmen3b55mm.
+4. Aufgabe3c und Aufgabe4. Karofelder4a45mm,4b50mm. Keine Notizseite.
 
-Vier A4-Seiten, davon ein schlichtes Deckblatt und drei Aufgabenseiten.
-Seite1: ausschließlich Überschrift, Klasse10, Datum und Name. Überschrift22pt, Kopfdaten14pt; keine Seitenzahl und keine weiteren Inhalte.
-Seite2 beginnt mit „1. Grundwissen“ und enthält Aufgaben1 und2. Die durch den entfallenen Kopf gewonnene Fläche erweitert die Karofelder2b auf70mm und2c auf45mm.
-Seite3: Aufgabe3a und3b einschließlich freiem55mm-Zeichenrahmen.
-Seite4: Aufgabe3c und Aufgabe4. Die bisherige Notizseite entfällt.
+Bewertung: A1=4BE, A2=11BE, A3=8BE, A4=6BE; Gesamt29BE.
+Aufgabe3 beginnt mit „Betrachte die Ausschnitte aus den Tabellen Berechtigung, Apps und Berechtigung_von_Apps.“
+3a: „Beschreibe die Veränderungen, die passieren müssen, damit die Tabellen (siehe Tabellenausschnitte Nr.1) auf dem aktuellen Stand sind, genau.“ Dabei genau fett; die Referenz behält im Dokument die Schreibweise „Nr. 1“.
+Aufgabe4 beginnt vor den Schemata mit „Betrachte die folgenden Tabellenschemata der Tabellen Appentwickler und App.“
+Alle übrigen Aufgaben, Daten, Diagramme, SQL-Vorgaben und Lösungen bleiben erhalten. Keine JOIN-Syntax in der Musterlösung.
+Schüler- und Lösungsquelle unterscheiden sich ausschließlich durch den solution-Schalter. build/aktualisieren.py erzeugt die Lösungsquelle; build/pruefen.py prüft beide PDFs und exportiert die Textfassungen.
 
-Alle Aufgabenformulierungen, Daten, Diagramme und SQL-Vorgaben bleiben aus Version1 erhalten. Bewertung:4/9/10/5BE, insgesamt28BE. Lösungen ohne JOIN-Syntax. Musterlösung besitzt dieselbe Seiteneinteilung, Feldgrößen und Aufgabenpositionen.
-
-LaTeX und PDF sowie extrahierter Text jeweils für Schüler- und Lösungsfassung. Lösung wird mit build/aktualisieren.py aus der Schülerquelle erzeugt. Prüfung und Renderbilder liegen unter build.
-
-Deckblatt ergänzt: Nach Klasse 10 steht eine 8 mm lange Ausfülllinie für den Buchstaben der Parallelklasse.
+Aktualisierung: Deckblattdatum 27.10.2026; in Aufgabe1 „Ein Datensatz entspricht“ statt „Eine Zeile entspricht“. Der Satz „Betrachte das folgende Klassendiagramm mit den Klassen Berechtigungen, Berechtigungen-von-Apps und Apps (siehe Klassendiagramm Nr. 2). Es sind Fehler in diesem Klassendiagramm enthalten.“ steht vor der Beschriftung und Grafik zu Klassendiagramm Nr.2. Am Schluss nach Gesamt steht „Viel Erfolg! Franke“. Karofeld4b jetzt50mm, damit vier Seiten erhalten bleiben.

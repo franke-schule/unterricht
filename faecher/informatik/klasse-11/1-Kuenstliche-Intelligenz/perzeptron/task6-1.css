@@ -5,6 +5,9 @@
 .task6-1-page .task6-1-layout { display:grid;grid-template-columns:minmax(0,1fr) minmax(360px,460px);gap:1.2rem;align-items:start; }
 .task6-1-page .task6-1-content { grid-column:2;grid-row:1;min-width:0; }
 .task6-1-page .task6-1-ides { grid-column:1;grid-row:1;min-width:0;position:sticky;top:1rem; }
+.task6-1-page .task6-1-layout.is-quiz { grid-template-columns:minmax(0,1fr); }
+.task6-1-page .task6-1-layout.is-quiz .task6-1-content { grid-column:1 / -1; }
+.task6-1-page .task6-1-ides[hidden] { display:none!important; }
 .task6-1-page .task6-1-ide h2 { margin:.2rem 0; }
 .task6-1-page .ide-container { border:1px solid #b9d1df;border-radius:.85rem;overflow:hidden;background:#fff; }
 .task6-1-page .ide-container iframe { display:block;width:100%;height:clamp(420px,calc(100dvh - 13rem),700px);border:0; }

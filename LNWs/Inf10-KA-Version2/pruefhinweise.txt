@@ -1,13 +1,12 @@
 PRÜFHINWEISE – Inf10-KA-Version2
 Stand: 26.10.2026
 
-Beide PDFs enthalten vier A4-Seiten: schlichtes Deckblatt, Aufgaben1/2, Aufgaben3a/3b, Aufgaben3c/4.
-Deckblatt: ausschließlich Überschrift, Klasse, Datum, Name; Titel22pt, Kopfdaten14pt; ohne Seitenzahl. Seite2 beginnt direkt mit1.Grundwissen. Die frühere Notizseite entfällt.
-Aufgaben, Daten, Diagramme, SQL-Vorgaben und BE sind identisch mit Version1. Ausschließlich die Karofelder2b/2c wurden auf70/45mm verlängert, um den auf die Titelseite verlegten Kopf auszugleichen.
-Gesamt28BE:4/9/10/5. Gleiche Aufgabenpositionen und Feldgrößen in Schüler- und Lösungsfassung.
+Vier Seiten je PDF: Deckblatt, Aufgaben1/2, Aufgaben3a/3b, Aufgaben3c/4. Aufgabenbeginn aufSeite2; keine Notizseite. Deckblatt enthält Klasse10 mit8mm-Ausfülllinie, Datum27.10.2026 und Name. Titel22pt, Kopfdaten14pt.
+BE:4/11/8/6, insgesamt29. Neue Einführungssätze vor den Tabellen inAufgabe3 sowie vor den Schemata inAufgabe4. 3a endet mit „auf dem aktuellen Stand sind, genau.“; genau ist fett.
+Für die vierseitige Fassung wurden die Schreibflächen3a und4b um je5mm gekürzt. Feldhöhen:2b70,2c45,3a45,3b55,4a45,4b50mm. Feld3b besitzt ausschließlich einen Außenrahmen.
 
-Prüfung: Vier Seiten pro PDF, Deckblattinhalt und größere Schriften, Aufgabenbeginn aufSeite2, keine Notizseite und keine Overfull-Meldungen. Alle acht Seiten alsPNG gerendert und visuell geprüft. Aufgabenquelle vollständig gegen Version1 abgeglichen. Alle vorhandenen Dateien der Version1 besitzen unveränderte SHA256-Prüfsummen.
+Prüfung: Beide PDFs neu gebaut, alle acht Seiten gerendert und visuell geprüft. Keine Overfull-Meldungen; identische Aufgabenpositionen in Schüler- und Lösungsfassung. Neue Sätze aus beiden PDFs ausgelesen, Fettdruck von genau über die Schriftinformationen geprüft. Gesamte Aufgabenquelle gegen Version1 einschließlich der ausdrücklich beauftragten Anpassungen verglichen. Alle vorhandenen Dateien der Version1 besitzen unveränderte SHA256-Prüfsummen.
 
-Reproduktion: build/aktualisieren.py erzeugt die Lösungsquelle. Beide LaTeX-Dateien kompilieren; build/pruefen.py prüft die PDFs und exportiert die Textfassungen. Die fertigen PDFs danach aus build in diesen Ordner kopieren. Prüfergebnisse und Seitenbilder liegen unter build.
+Reproduktion: build/aktualisieren.py erzeugt die Lösungsquelle. Beide LaTeX-Dateien kompilieren; build/pruefen.py prüft die PDFs und exportiert die Textfassungen. Finale PDFs aus build in diesen Ordner kopieren. Ergebnisse und Renderbilder liegen unter build.
 
-Deckblatt ergänzt: Nach Klasse 10 steht eine 8 mm lange Ausfülllinie für den Buchstaben der Parallelklasse.
+Aktualisierung: Deckblattdatum 27.10.2026; in Aufgabe1 „Ein Datensatz entspricht“ statt „Eine Zeile entspricht“. Der Satz „Betrachte das folgende Klassendiagramm mit den Klassen Berechtigungen, Berechtigungen-von-Apps und Apps (siehe Klassendiagramm Nr. 2). Es sind Fehler in diesem Klassendiagramm enthalten.“ steht vor der Beschriftung und Grafik zu Klassendiagramm Nr.2. Am Schluss nach Gesamt steht „Viel Erfolg! Franke“. Karofeld4b jetzt50mm, damit vier Seiten erhalten bleiben.

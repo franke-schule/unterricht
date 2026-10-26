@@ -1,15 +1,15 @@
 Musterlösung Informatik – Datenbanken
-Klasse 10 Datum:
+Klasse 10 Datum: 27.10.2026
 Name:
 1. Grundwissen: [ /4 BE]
 Vervollständige die Sätze, indem zu jedem Begriff aus dem Kontext Datenbanken den passenden Begriff aus dem
 Kontext Programmierung findest.
 Eine Spalte entspricht in der objektorientierten Programmierung einem Attribut.
-Eine Zeile entspricht in der objektorientierten Programmierung einem Objekt.
+Ein Datensatz entspricht in der objektorientierten Programmierung einem Objekt.
 Eine Tabelle entspricht in der objektorientierten Programmierung einer Klasse.
 Eine Zelle - außer in der ersten Zeile - entspricht in der objektorientierten Programmierung
 einem Attributwert.
-2. Apps auf dem Handy [ /9 BE]
+2. Apps auf dem Handy [ /11 BE]
 Klassendiagramm Nr. 1
 App Handy Benutzer
 n m n 1
@@ -26,7 +26,8 @@ Eine Beziehungstabelle ist bei einer n:m-Beziehung notwendig. Ein einzelner Frem
 reicht für die vielen Zuordnungen in beiden Richtungen nicht aus. Jede Zeile der Beziehungstabelle verbindet über zwei
 Fremdschlüssel genau zwei Datensätze.
 2
-3. Berechtigungen und Apps [ /10 BE]
+3. Berechtigungen und Apps [ /8 BE]
+Betrachte die Ausschnitte aus den Tabellen Berechtigung, Apps und Berechtigung_von_Apps.
 Tabellenausschnitte Nr. 1
 Berechtigung Apps Berechtigungen_von_Apps
 id name id name app_id berechtigung_id
@@ -38,15 +39,15 @@ id name id name app_id berechtigung_id
 a)WhatsAppfragtbeimÖffnenderAppnacheinerneuenBerechtigung"Standort".DunimmstdieBerechtigungsanfrage
 an.
 Beschreibe die Veränderungen, die passieren müssen, damit die Tabellen (siehe Tabellenausschnitte Nr. 1) auf dem
-aktuellen Stand sind.
+aktuellen Stand sind, genau.
 WhatsApp hat die id 1; Standort hat die id 2. In Berechtigungen_von_Apps wird eine neue Zeile mit app_id = 1 und
 berechtigung_id = 2 ergänzt. Beide Stammdatensätze existieren bereits; in Apps und Berechtigung sind keine neuen
 Zeilen erforderlich.
+Betrachte das folgende Klassendiagramm mit den Klassen Berechtigungen, Berechtigungen-von-Apps und Apps (siehe
+Klassendiagramm Nr. 2). Es sind Fehler in diesem Klassendiagramm enthalten.
 Klassendiagramm Nr. 2
 Berechtigungen Berechtigungen-von-Apps Apps
 1 n n 1
-Betrachte das obige Klassendiagramm mit den Klassen Berechtigungen, Berechtigungen-von-Apps und Apps (siehe
-Klassendiagramm Nr. 2). Es sind Fehler in diesem Klassendiagramm enthalten.
 b) Skizziere die korrigierte Version des abgebildeten Klassendiagramm, sodass es den Sachverhalt korrekt darstellt.
 Berechtigungen Apps
 n m
@@ -62,7 +63,8 @@ WHERE Berechtigungen.id = Apps.id WHERE Berechtigung.id =
 AND Berechtigung_von_Apps.id = App.id Berechtigungen_von_Apps.berechtigung_id
 AND Apps.id =
 Berechtigungen_von_Apps.app_id;
-4. Appentwickler [ /5 BE]
+4. Appentwickler [ /6 BE]
+Betrachte die folgenden Tabellenschemata der Tabellen Appentwickler und App.
 Appentwickler (id: int [PS], name: varchar(255),
 gruendungsjahr: int)
 App (id: int [PS], appentwickler_id: int [FS],
@@ -82,5 +84,6 @@ FROM App, Appentwickler
 WHERE App.appentwickler_id = Appentwickler.id;
 Die beiden Tabellen werden über den Fremdschlüssel App.appentwickler_id und den Primärschlüssel Appentwickler.id
 verknüpft.
-Gesamt: [ /28 BE]
+Gesamt: [ /29 BE]
+Viel Erfolg! Franke
 4

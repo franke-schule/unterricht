@@ -14,6 +14,17 @@ previous = (old / 'Inf10-KA-Version1.tex').read_text(encoding='utf-8')
 previous = previous.split(r'\begin{document}', 1)[1].replace('\\kopf\n', '').lstrip('\n')
 previous = previous.replace('\\newpage\n\\sectiontitle{Für Notizen}\n\\gridfield{238mm}{}\n', '')
 previous = previous.replace(r'\gridfield{58mm}', r'\gridfield{70mm}', 1).replace(r'\gridfield{38mm}', r'\gridfield{45mm}', 1)
+previous = previous.replace('\\sectiontitle{2. Apps auf dem Handy\\bewertung{9}}', '\\sectiontitle{2. Apps auf dem Handy\\bewertung{11}}', 1)
+previous = previous.replace('\\sectiontitle{3. Berechtigungen und Apps\\bewertung{10}}', '\\sectiontitle{3. Berechtigungen und Apps\\bewertung{8}}\nBetrachte die Ausschnitte aus den Tabellen Berechtigung, Apps und Berechtigung\\_von\\_Apps.\\par\\vspace{1.5mm}', 1)
+previous = previous.replace('\\textbf{Beschreibe} die Veränderungen, die passieren müssen, damit die Tabellen (siehe Tabellenausschnitte Nr. 1) auf dem aktuellen Stand sind.', '\\textbf{Beschreibe} die Veränderungen, die passieren müssen, damit die Tabellen (siehe Tabellenausschnitte Nr. 1) auf dem aktuellen Stand sind, \\textbf{genau}.', 1)
+previous = previous.replace('\\sectiontitle{4. Appentwickler\\bewertung{5}}', '\\sectiontitle{4. Appentwickler\\bewertung{6}}\nBetrachte die folgenden Tabellenschemata der Tabellen Appentwickler und App.\\par\\vspace{1.5mm}', 1)
+previous = previous.replace('Gesamt:\\bewertung{28}', 'Gesamt:\\bewertung{29}', 1)
+previous = previous.replace(r'\gridfield{50mm}', r'\gridfield{45mm}', 1).replace(r'\gridfield{60mm}', r'\gridfield{55mm}', 1)
+previous = previous.replace('Eine Zeile entspricht', 'Ein Datensatz entspricht', 1)
+previous = previous.replace('Betrachte das obige Klassendiagramm mit den Klassen Berechtigungen, Berechtigungen-von-Apps und Apps (siehe Klassendiagramm Nr. 2). Es sind Fehler in diesem Klassendiagramm enthalten.\\par\\vspace{1.5mm}\n', '', 1)
+previous = previous.replace('{\\bfseries\\color{Blue}Klassendiagramm Nr. 2}\\par', 'Betrachte das folgende Klassendiagramm mit den Klassen Berechtigungen, Berechtigungen-von-Apps und Apps (siehe Klassendiagramm Nr. 2). Es sind Fehler in diesem Klassendiagramm enthalten.\\par\\vspace{1.5mm}\n{\\bfseries\\color{Blue}Klassendiagramm Nr. 2}\\par', 1)
+previous = previous.replace('\\fuss{3}', '\\par\\vspace{1mm}\\hfill{\\bfseries Viel Erfolg! Franke}\\par\n\\fuss{3}', 1)
+previous = previous.replace(r'\gridfield{55mm}', r'\gridfield{50mm}', 1)
 current = source.split('\\begin{document}\n\\kopf\n\\newpage\n', 1)[1]
 assert current == previous, 'Unbeabsichtigte Aufgabenänderung'
 hashes = json.loads((root / 'build/version1-hashes.json').read_text(encoding='utf-8'))
@@ -28,7 +39,7 @@ for suffix in ('', '-loesungen'):
         assert len(doc.pages) == 4
         pages = [page.extract_text() for page in doc.pages]
         cover = doc.pages[0]
-        expected = ('Musterlösung' if suffix else 'Kurzarbeit') + ' Informatik – Datenbanken Klasse 10 Datum: Name:'
+        expected = ('Musterlösung' if suffix else 'Kurzarbeit') + ' Informatik – Datenbanken Klasse 10 Datum: 27.10.2026 Name:'
         assert norm(pages[0]).replace('--', '–') == norm(expected), repr(pages[0])
         assert not cover.rects and not cover.images
         assert max(c['size'] for c in cover.chars) > 21
@@ -38,11 +49,15 @@ for suffix in ('', '-loesungen'):
             assert all(c['size'] > 13 for c in chars)
         assert norm(pages[1]).startswith('1.Grundwissen:')
         assert '2.AppsaufdemHandy' in norm(pages[1])
+        assert 'EinDatensatzentspricht' in norm(pages[1]) and 'EineZeileentspricht' not in norm(pages[1])
         assert norm(pages[2]).startswith('3.BerechtigungenundApps')
         assert norm(pages[3]).startswith('c)Korrigiere')
         assert '4.Appentwickler' in norm(pages[3])
+        assert norm(pages[3]).endswith('VielErfolg!Franke4')
+        text3 = norm(pages[2])
+        assert text3.index('BetrachtedasfolgendeKlassendiagramm') < text3.index('KlassendiagrammNr.2', text3.index('enthalten.'))
         assert 'FürNotizen' not in norm(''.join(pages))
-        assert re.findall(r'\[/([0-9]+)BE\]', norm(''.join(pages))) == ['4', '9', '10', '5', '28']
+        assert re.findall(r'\[/([0-9]+)BE\]', norm(''.join(pages))) == ['4', '11', '8', '6', '29']
         assert not re.search(r'\bJOIN\b', '\n'.join(pages), re.I)
         (root / (name + '.txt')).write_text('\n'.join(pages) + '\n', encoding='utf-8')
     log = (root / 'build' / (name + '.log')).read_text(encoding='utf-8', errors='replace')
@@ -56,6 +71,6 @@ with pdfplumber.open(root / 'build' / (stem + '.pdf')) as student, pdfplumber.op
             b = solution.pages[i].search(pattern)
             assert a and b and abs(a[0]['top'] - b[0]['top']) < .1, (i, phrase)
 
-result = {'fassung': stem, 'seiten': 4, 'deckblatt': 1, 'aufgabenbeginn': 2, 'notizseite': False, 'kopf_schrift_pt': {'titel': 22, 'daten': 14}, 'schreibfelder_mm': {'2b': 70, '2c': 45, '3a': 50, '3b': 55, '4a': 45, '4b': 60}, 'BE': [4, 9, 10, 5], 'gesamt_BE': 28, 'aufgabeninhalt_unveraendert': True, 'version1_unveraendert': True, 'layoutgleich': True, 'keine_ueberlaeufe': True}
+result = {'fassung': stem, 'seiten': 4, 'deckblatt': 1, 'aufgabenbeginn': 2, 'notizseite': False, 'kopf_schrift_pt': {'titel': 22, 'daten': 14}, 'schreibfelder_mm': {'2b': 70, '2c': 45, '3a': 45, '3b': 55, '4a': 45, '4b': 50}, 'BE': [4, 11, 8, 6], 'gesamt_BE': 29, 'aufgabeninhalt_wie_beauftragt_angepasst': True, 'version1_unveraendert': True, 'layoutgleich': True, 'keine_ueberlaeufe': True}
 (root / 'build/pruefergebnisse.json').write_text(json.dumps(result, ensure_ascii=False, indent=2) + '\n', encoding='utf-8')
 print(json.dumps(result, ensure_ascii=True))
