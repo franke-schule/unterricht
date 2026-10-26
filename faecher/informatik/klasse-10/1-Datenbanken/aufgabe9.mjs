@@ -1,7 +1,7 @@
 import { evaluateSemanticAnswer } from '../../klasse-11/1-Kuenstliche-Intelligenz/perzeptron/ui/semantic-answer.mjs?v=20261022-feedback-two-sentences';
 import { analyzeMultiTableSelect, classifyDescriptionResult, compareRelations, diagnoseSqlError, sqlTokens, validateSelectStatement } from './sql-lab-core.mjs?v=20260929b';
 import { SqlWorker, appendHints, renderRelation, renderServerFeedback, schemaCard } from './sql-lab.js?v=20261022-feedback-two-sentences';
-import { focusTabPanelStart, enableTabKeyboardNavigation, renderTabFlowNavigation, syncTabSemantics } from './tab-navigation.mjs?v=20261001a';
+import { appendSolutionDownloadFromTemplate, focusTabPanelStart, enableTabKeyboardNavigation, renderTabFlowNavigation, syncTabSemantics } from './tab-navigation.mjs?v=20261001a';
 import { JOIN_TASKS } from './aufgabe9-daten.mjs?v=20261014-a9';
 
 const STORAGE_KEY = 'inf10-insta-verbund-aufgabe9-v1';
@@ -87,6 +87,7 @@ function render() {
   if (state.tab === 'extra') renderExtra(panel);
   if (state.tab === 'quiz') renderQuiz(panel);
   if (state.tab === 'summary') renderSummary(panel);
+  if (state.tab === 'quiz' || state.tab === 'summary') appendSolutionDownloadFromTemplate(panel);
   if (state.tab === 'extra') { const nav = el('nav', 'tab-flow-navigation'); nav.setAttribute('aria-label', 'Zum Pflichtweg zurück'); [['count', 'Zurück: 3. Verbinden und zählen'], ['quiz', 'Weiter: 6. Abschlussquiz']].forEach(([id, label]) => { const button = el('button', 'primary-button tab-flow-button', label); button.type = 'button'; button.addEventListener('click', () => activate(id, { focusContent: true })); nav.append(button); }); panel.append(nav); }
   else if (state.tab !== 'summary') renderTabFlowNavigation(panel, { items: FLOW, currentId: state.tab, onNavigate: activate, isEnabled: (id) => id !== 'summary' || unlocked() });
 }

@@ -68,15 +68,15 @@ const DESCRIPTION_TASKS = [
   },
   {
     id: 'd-distinct', tab: 'distinct', tabLabel: 'Reiter 4', serverTaskId: 'inf9-db2-beschreibe-distinct',
-    title: 'Einstieg – Anweisung beschreiben', prompt: '**Beschreibe**, welche Wohnorte die Anweisung aus `users` ausgibt, was bei Dopplungen geschieht und ob sich `users` dabei ändert.',
+    title: 'Einstieg – Anweisung beschreiben', prompt: '**Beschreibe**, welche Daten die Anweisung aus `users` ausgibt und was bei Dopplungen geschieht.',
     sql: 'SELECT DISTINCT city\nFROM users',
     hints: ['city ist die Spalte mit dem Wohnort.', 'Vergleiche in Gedanken zwei Mitglieder aus derselben Stadt: Wie oft soll diese Stadt im Ergebnis stehen?', 'DISTINCT entfernt gleiche Werte aus der Ergebnisrelation; die Tabelle users bleibt erhalten.'],
-    aspects: ['Wohnorte/city aus users', 'Jeder verschiedene Wohnort nur einmal in der Ergebnisrelation', 'Ursprüngliche Tabelle nicht verändert bzw. keine Datensätze gelöscht'],
+    aspects: ['Tabelle users als Datenquelle', 'Wohnorte/city als ausgewählte Daten', 'Jeder verschiedene Wohnort nur einmal in der Ergebnisrelation'],
     model: 'Die Abfrage zeigt aus users jeden unterschiedlichen Wohnort genau einmal. Doppelte Wohnorte fehlen nur in der Ergebnisrelation; users wird nicht verändert.',
-    anchor: 'Unterscheide Ergebnisrelation und gespeicherte Tabelle.',
+    anchor: 'Prüfe die Datenquelle, die ausgewählte Spalte und die Wirkung von DISTINCT.',
     fallbacks: {
-      korrekt: 'Korrekt: Du hast erklärt, dass gleiche Wohnorte nur im Ergebnis zusammenfallen und users unverändert bleibt.',
-      partial: 'Teilweise korrekt: Prüfe noch, was DISTINCT nur im Ergebnis verändert und was mit users geschieht.',
+      korrekt: 'Korrekt: Du hast erklärt, dass Wohnorte aus users ausgegeben werden und jeder Wohnort nur einmal erscheint.',
+      partial: 'Teilweise korrekt: Prüfe die Datenquelle, die ausgewählte Spalte und was DISTINCT bei gleichen Wohnorten bewirkt.',
       incorrect: 'Noch nicht korrekt: Vergleiche zwei Mitglieder aus demselben Wohnort und unterscheide Ergebnis und Tabelle.'
     }
   },

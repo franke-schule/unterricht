@@ -48,6 +48,43 @@ Bewertungstests gehören unter `scaleway-functions/tests/`.
 
 ## Konfiguration auf Scaleway
 
+### Gemeinsame Bewertung von SQL-Beschreibungen
+
+Die verbindlichen Kriterien stehen in `manifest-datenbankaufgaben.txt`,
+Abschnitt 4.1. Jede SQL-Beschreibe-Aufgabe erhält in `source/tasks.js` ein
+`sqlDescription`-Objekt mit aufgabenbezogenen `aliases` und
+`requireUnchangedSource` (normalerweise `false`). Der bestehende Promptaufbau
+bindet die gemeinsamen Regeln automatisch ein. Die individuelle Rubrik legt
+weiterhin die Lernziele und die Punkte fest. Keine globalen Wortersetzungen im
+Schülertext und keine neue Bewertungspipeline verwenden.
+
+`tests/sql-description-criteria.test.js` prüft den Aufgabenbestand, die
+Bezeichnungen und den Server-Antwortweg mit simulierten Modellantworten.
+Für jede neue Aufgabe in `tests/fixtures/sql-description-cases.json` mindestens
+eine richtige, eine unvollständige und eine falsche synthetische Antwort mit
+fachlich geprüften Sollpunkten ergänzen. Diese lokalen Prüfungen belegen keine
+semantische Zuverlässigkeit des tatsächlichen KI-Modells.
+
+Nach Upload der aktuellen ZIP und erneuter Bereitstellung können die echten
+Modellantworten über den vorhandenen Endpunkt verglichen werden:
+
+```powershell
+node scaleway-functions/tests/sql-description-live.check.js --dry-run
+node scaleway-functions/tests/sql-description-live.check.js --live --runs 2 --out scaleway-functions/dist/sql-live-report.json
+```
+
+Ohne `--live` gibt es keine Netzwerk- oder Modellaufrufe. Die Vorschau nennt die
+Anzahl geplanter Aufrufe. `--task AUFGABENKENNUNG` begrenzt die Prüfung auf eine
+Aufgabe; `--url HTTPS-ENDPUNKT` wählt einen anderen Testserver. Der Bericht
+enthält echte Punkte und Rückmeldungen je Antwort und Durchlauf. Er wird bei
+jeder Antwort aktualisiert. Abweichungen und technische Fehler liefern einen
+Fehlerstatus; bei technischen Fehlern wird die Serie beendet. Zusätzlich zur
+Punktzahl müssen die Rückmeldungen fachlich geprüft werden. Nur synthetische
+Beispiele übertragen. Die zentrale Überarbeitung ist erst nach Bereitstellung
+und tatsächlicher Live-Prüfung online bestätigt.
+
+### Zugang und Laufzeit
+
 Bereits eingerichtet im Namespace:
 
 | Typ | Name | Wert |

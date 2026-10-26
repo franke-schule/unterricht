@@ -86,6 +86,68 @@ Barrierearmut, Rueckmeldungen und Abschlusspruefung gelten zusaetzlich.
     keine vollstaendige Musterloesung anzeigen.
 
 
+4.1 Verbindliche Kriterien fuer SQL-Beschreibungen
+-------------------------------------------------
+
+Diese Kriterien gelten fuer bestehende und zukuenftige Aufgaben, in denen
+Schuelerinnen und Schueler die Wirkung einer vorgegebenen SQL-Abfrage erklaeren.
+Sie gelten fuer Freitextbeschreibungen; die Syntaxpruefung eigener SQL-Eingaben
+bleibt davon unberuehrt.
+
+  - Bedeutung statt Wortlaut bewerten. Deutsche Spaltenbezeichnungen wie
+    Wohnort/city, Benutzername/username und Koerpergroesse/centimeters sind
+    gleichwertig, soweit das konkrete Tabellenschema diese Zuordnung belegt.
+    Weder SQL-Bezeichner noch deutsche Bezeichnung zusaetzlich verlangen.
+  - Die Wirkung einer Klausel genuegt: z. B. groesste zuerst fuer absteigende
+    Zahlensortierung, A bis Z fuer aufsteigende Textsortierung, jeder Wohnort
+    einmal fuer DISTINCT city. Schluesselwoerter und Fachbegriffe nur dann
+    ausdruecklich verlangen, wenn gerade ihre Benennung oder Schreibweise
+    ein ausgewiesenes Lernziel ist.
+  - Die gesamte Antwort zusammenhaengend lesen. Reihenfolge der Saetze und
+    Erwaehnung der Spalten ist frei. Keine Pflicht zu Signalwoertern wie nur,
+    einzige, danach oder Ergebnisrelation bei bereits eindeutiger Bedeutung.
+    Eine ausdruecklich falsche Aussage bleibt falsch.
+  - Nur die festgelegten Lernziele bepunkten. Die unveraenderte Ausgangstabelle
+    ist nur Pflicht, wenn sie im Arbeitsauftrag und in der Rubrik ausdruecklich
+    als Lernziel ausgewiesen ist. Danach keine staendige Wiederholung verlangen.
+    Korrekte freiwillige Ergaenzungen fuehren nicht zu Punktabzug.
+  - Verstaendliche Schreibfehler, Singular und Plural akzeptieren. Keine
+    zusaetzlichen Anforderungen an Laenge, konkrete Datensaetze oder NULL
+    erfinden, sofern diese nicht zum Arbeitsauftrag gehoeren.
+  - Fachliche Unterschiede erhalten: name ist nicht automatisch username;
+    die likende Person ist nicht die hochladende Person. Spaltennennung allein
+    erklaert weder Sortierung noch Filterung. Falsche Bedingungen, Richtungen,
+    Verknuepfungen und Widersprueche beim betroffenen Aspekt bewerten.
+  - Vor jedem Fehlhinweis pruefen, ob der Inhalt sinngemaess bereits enthalten
+    ist. Bereits erklaerte Aspekte niemals als fehlend kennzeichnen. Punktzahl
+    und Rueckmeldung muessen dieselben fehlenden oder falschen Aspekte abbilden.
+
+Technische Umsetzung fuer jede neue oder ueberarbeitete SQL-Beschreibe-Aufgabe:
+
+  - In scaleway-functions/source/tasks.js ein sqlDescription-Objekt mit
+    aliases und requireUnchangedSource hinterlegen. aliases ordnet nur in der
+    konkreten Abfrage verwendete Tabellen-/Spaltenbezeichner ihren eindeutigen
+    deutschen Bedeutungen zu. Bei Verbundabfragen Rollen und Tabellennamen
+    zur Disambiguierung verwenden. Keine globale Wortersetzung im Schuelertext.
+  - requireUnchangedSource ist normalerweise false; true nur bei dem oben
+    beschriebenen ausdruecklichen Lernziel. Die eigentliche Punkteverteilung
+    bleibt in expectedAspects und rubric der jeweiligen Aufgabe festgelegt.
+  - source/prompt.js bindet die gemeinsamen Kriterien automatisch fuer diese
+    markierten Aufgaben ein. Regeln nicht in jede Aufgabenrubrik kopieren;
+    bestehende Rubriken auf widersprechende Pflichtformulierungen pruefen.
+  - tests/sql-description-criteria.test.js prueft die vollstaendige Einbindung,
+    aufgabenbezogene Bezeichnungen und den vorhandenen Server-Antwortweg.
+    Neue SQL-Aufgaben ohne Konfiguration muessen bei der Bestandspruefung
+    auffallen; fuer jede Aufgabe positive, unvollstaendige und falsche Antworten
+    in tests/fixtures/sql-description-cases.json ergaenzen.
+  - Lokale Tests mit simulierten Modellantworten pruefen die Technik und den
+    Bewertungsvertrag, nicht die tatsaechliche semantische KI-Qualitaet.
+    Nach Bereitstellung die Vergleichsfaelle ueber den vorhandenen Endpunkt
+    mit tests/sql-description-live.check.js pruefen. Dabei nur synthetische
+    Beispiele nutzen, mehrere Durchlaeufe vergleichen und Fehlbewertungen
+    untersuchen. Aufruf und Grenzen stehen im Kopf der Pruefdatei.
+
+
 5. Wiederverwendung und Qualitaet
 ---------------------------------
 

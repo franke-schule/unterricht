@@ -1,0 +1,103 @@
+Musterlösung Informatik – Datenbanken
+Klasse 10 Datum: Name:
+1. Grundwissen: [ /4 BE]
+Vervollständige die Sätze, indem zu jedem Begriﬀ aus dem Kontext Datenbanken den passenden Begriﬀ aus dem
+Kontext Programmierung ﬁndest.
+Eine Spalte entspricht in der objektorientierten Programmierung einem Attribut .
+Eine Zeile entspricht in der objektorientierten Programmierung einem Objekt .
+Eine Tabelle entspricht in der objektorientierten Programmierung einer Klasse .
+Eine Zelle - außer in der ersten Zeile - entspricht in der objektorientierten Programmierung
+einem Attributwert.
+2. Apps auf dem Handy [ /9 BE]
+Klassendiagramm Nr. 1
+App Handy Benutzer
+n m
+ist installiert auf
+n 1
+gehört zu
+a) Ergänze das Klassendiagramm, indem du Beziehungen (zwischen den Klassen App und Handy bzw. Handy und
+Benutzer) ergänzt. Wähle sinnvolle Kardinalitäten und benenne jede Beziehungen eindeutig.
+Hinweis: Ein Handy gehört in diesem Szenario zu genau einer Person. Eine Person kann aber mehrere Handys haben.
+b) Benenne die Beziehungen zwischen den Klassen und begründe deine Entscheidung.
+App–Handy: n:m-Beziehung. Eine App kann auf mehreren Handys installiert sein; ein Handy kann mehrere Apps enthalten.
+Benutzer–Handy: 1:n-Beziehung. Eine Person kann mehrere Handys haben; jedes Handy gehört genau einer Person. Daher
+steht im Diagramm n bei Handy und 1 bei Benutzer.
+c) Erkläre bei welcher Beziehungsart eine Beziehungstabelle notwendig ist. Begründe deine Entscheidung.
+Eine Beziehungstabelle ist bei einer n:m-Beziehung notwendig. Ein einzelner Fremdschlüssel in einer der beiden Tabellen
+reicht für die vielen Zuordnungen in beiden Richtungen nicht aus. Jede Zeile der Beziehungstabelle verbindet über zwei
+Fremdschlüssel genau zwei Datensätze.
+1
+3. Berechtigungen und Apps [ /10 BE]
+Tabellenausschnitte Nr. 1
+Berechtigung
+id name
+1 Kamera
+2 Standort
+3 Fotos lesen
+Apps
+id name
+1 WhatsApp
+2 TikTok
+3 Instagram
+Berechtigungen_von_Apps
+app_id berechtigung_id
+1 1
+1 3
+2 1
+3 2
+3 3
+a) WhatsApp fragt beim Öﬀnen der App nach einer neuen Berechtigung "Standort". Du nimmst die Berechtigungsanfrage
+an.
+Beschreibe die Veränderungen, die passieren müssen, damit die Tabellen (siehe Tabellenausschnitte Nr. 1) auf dem
+aktuellen Stand sind.
+WhatsApp hat die id 1; Standort hat die id 2. In Berechtigungen_von_Apps wird eine neue Zeile mit app_id = 1 und
+berechtigung_id = 2 ergänzt. Beide Stammdatensätze existieren bereits; in Apps und Berechtigung sind keine neuen
+Zeilen erforderlich.
+Klassendiagramm Nr. 2
+Berechtigungen AppsBerechtigungen-von-Apps
+1 n n 1
+Betrachte das obige Klassendiagramm mit den Klassen Berechtigungen, Berechtigungen-von-Apps und Apps (siehe
+Klassendiagramm Nr. 2). Es sind Fehler in diesem Klassendiagramm enthalten.
+b) Skizziere die korrigierte Version des abgebildeten Klassendiagramm, sodass es den Sachverhalt korrekt darstellt.
+Berechtigungen Apps
+n m
+ist freigegeben für
+2
+c) Korrigiere die folgende SQL-Anweisung, indem du falsche Zeilen durchstreichst und in der zweiten Spalte korrigiert
+angibst.
+Vorgegebene SQL-Anweisung Korrektur
+SELECT * SELECT *
+FROM Berechtigung, Apps,
+Berechtigung_von_Apps
+FROM Berechtigung, Apps,
+Berechtigungen_von_Apps
+WHERE Berechtigungen.id = Apps.id
+AND Berechtigung_von_Apps.id = App.id
+WHERE Berechtigung.id =
+Berechtigungen_von_Apps.berechtigung_id
+AND Apps.id =
+Berechtigungen_von_Apps.app_id;
+4. Appentwickler [ /5 BE]
+Appentwickler (id: int [PS], name: varchar(255),
+gruendungsjahr: int)
+App (id: int [PS], appentwickler_id: int [FS],
+name: varchar(255), erscheinungsjahr: int,
+kategorie: varchar(255))
+Verwendete Abkürzungen: PS = Primärschlüssel, FS = Fremdschlüssel. App.appentwickler_id verweist auf Appentwickler.id.
+a) Beschreibe folgende SQL-Anweisung in eigenen Worten.
+SELECT COUNT(*)
+FROM App
+WHERE erscheinungsjahr > 2025
+Die Anweisung zählt die Apps, die nach dem Jahr 2025 erschienen sind, also ab 2026. Ausgegeben wird eine einzelne Zahl.
+Apps mit Erscheinungsjahr 2025 werden nicht mitgezählt.
+b) Formuliere eine SQL-Anweisung, die Namen der Apps zusammen mit den Namen der Appentwickler ausgibt, die die
+jeweilige App entwickelt haben.
+SELECT App.name, Appentwickler.name
+FROM App, Appentwickler
+WHERE App.appentwickler_id = Appentwickler.id;
+Die beiden Tabellen werden über den Fremdschlüssel App.appentwickler_id und den Primärschlüssel Appentwickler.id
+verknüpft.
+Gesamt: [ /28 BE]
+3
+Für Notizen
+4

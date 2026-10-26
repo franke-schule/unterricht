@@ -11,6 +11,31 @@ process.argv.pop();
 const pagePath = '/faecher/informatik/klasse-10/1-Datenbanken/aufgabe9.html';
 const dataFile = path.resolve(__dirname, '../aufgabe9-daten.mjs');
 
+async function checkSolutionDownload(page) {
+  const section = page.locator('#sql-panel .solution-download');
+  assert.equal(await section.count(), 1);
+  assert.equal(await section.locator('details').getAttribute('open'), null);
+  const link = section.locator('a[download]');
+  assert.equal(await link.getAttribute('href'), 'sicherungsblatt-aufgabe-9-loesungen.pdf');
+  assert.equal(await link.isVisible(), false);
+  await section.locator('summary').click();
+  await section.locator('input[name="solution-code"]').fill('FALSCH');
+  await section.getByRole('button', { name: 'Code prüfen' }).click();
+  assert.match(await section.locator('[aria-live="polite"]').innerText(), /nicht gültig/);
+  assert.equal(await link.isVisible(), false);
+  await section.locator('input[name="solution-code"]').fill('m4vn-x7j3');
+  await section.getByRole('button', { name: 'Code prüfen' }).click();
+  assert.equal(await link.isVisible(), true);
+  const downloadPromise = page.waitForEvent('download');
+  await link.click();
+  const download = await downloadPromise;
+  assert.equal(download.suggestedFilename(), 'sicherungsblatt-aufgabe-9-loesungen.pdf');
+  assert.equal(await download.failure(), null);
+  await section.locator('input[name="solution-code"]').fill('FALSCH');
+  await section.getByRole('button', { name: 'Code prüfen' }).click();
+  assert.equal(await link.isVisible(), false);
+}
+
 async function main() {
   await new Promise((resolve, reject) => { server.once('error', reject); server.listen(0, '127.0.0.1', resolve); });
   const origin = 'http://127.0.0.1:' + server.address().port;
@@ -33,6 +58,9 @@ async function main() {
     await page.waitForFunction(() => document.getElementById('data-status')?.classList.contains('success'), null, { timeout: 120000 });
     assert.equal(await page.locator('#sql-tabs .step-tab').count(), 6);
     assert.equal(await page.locator('#tab-summary').isDisabled(), true);
+    await page.click('#tab-quiz');
+    await checkSolutionDownload(page);
+    assert.equal(await page.locator('#tab-summary').isDisabled(), true);
     for (const task of JOIN_TASKS.filter((item) => item.type === 'sql')) {
       const tab = task.id.startsWith('Z') ? 'extra' : Number(task.id.slice(1)) <= 6 ? 'practice' : 'count';
       await page.click(`#tab-${tab}`);
@@ -51,7 +79,7 @@ async function main() {
       await page.click(`#tab-${tab}`);
       await page.fill(`#input-${task.id}`, task.model);
       await page.locator(`#task-${task.id} .primary-button`).first().click();
-      try { await page.waitForFunction((id) => document.querySelector(`#task-${id} .server-feedback.high`), task.id, { timeout: 10000 }); }
+      try { await page.waitForFunction((id) => document.querySelector(`#task-${id} .server-feedback.success`), task.id, { timeout: 10000 }); }
       catch (error) { throw new Error(`${task.id}: ${await page.locator(`#task-${task.id} .server-feedback`).allTextContents()} / calls=${calls.join(',')} / ${errors.join('; ')}`, { cause: error }); }
     }
     assert.equal(calls.length, 4);
@@ -65,6 +93,7 @@ async function main() {
     }
     await page.waitForFunction(() => document.getElementById('tab-summary')?.getAttribute('aria-selected') === 'true');
     assert.equal(await page.locator('#sql-panel .task-card').count(), 12);
+    await checkSolutionDownload(page);
     await page.goto(origin + '/faecher/informatik/klasse-10/index.html');
     await page.goto(origin + pagePath);
     await page.waitForFunction(() => document.getElementById('tab-summary')?.getAttribute('aria-selected') === 'true', null, { timeout: 120000 });
@@ -118,7 +147,7 @@ async function main() {
       await page.waitForFunction(() => document.getElementById('data-status')?.classList.contains('success'), null, { timeout: 30000 });
     }
     assert.deepEqual(errors, []);
-    console.log(JSON.stringify({ referenceSql: 21, descriptions: 4, mockedRequests: calls.length, summaryCards: 12, restored: true, invalidation: true, aliasJoin: true, wrongJoin: true, nestedSelectRequired: true, incorrectVersusPartial: true, duplicateFollowerCount: true, serverErrorRetry: true, responsive: [1366, 768, 390], keyboard: true, regressions: [5, 6, 7], errors }));
+    console.log(JSON.stringify({ referenceSql: 21, descriptions: 4, mockedRequests: calls.length, summaryCards: 12, solutionDownload: ['quiz-without-progress', 'summary', 'wrong-code', 'normalized-code', 'download'], restored: true, invalidation: true, aliasJoin: true, wrongJoin: true, nestedSelectRequired: true, incorrectVersusPartial: true, duplicateFollowerCount: true, serverErrorRetry: true, responsive: [1366, 768, 390], keyboard: true, regressions: [5, 6, 7], errors }));
   } finally { await browser.close(); await new Promise((resolve) => server.close(resolve)); }
 }
 main().catch((error) => { console.error(error); process.exitCode = 1; });

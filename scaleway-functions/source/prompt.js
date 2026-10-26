@@ -1,3 +1,28 @@
+// Nur explizit konfigurierte SQL-Beschreibe-Aufgaben erhalten diese Regeln.
+// Die Bezeichnungen stammen aus der jeweiligen Aufgabe, nicht aus Schülertext.
+function sqlDescriptionInstructions_(task) {
+  const config = task.sqlDescription;
+  if (!config) return '';
+  const aliases = Object.entries(config.aliases).map(function(entry) {
+    return '- ' + entry[0] + ': ' + entry[1].join('; ');
+  });
+  return [
+    'Gemeinsame Kriterien für SQL-Beschreibe-Aufgaben:',
+    'Bewerte ausschließlich die erwarteten fachlichen Aspekte der Aufgabe, jeweils im Zusammenhang der gesamten Antwort. Die folgenden Regeln legen fest, wie die Aufgabenrubrik sinngemäß auszulegen ist; sie fügen keine Bewertungspunkte hinzu.',
+    'Bedeutung statt Wortlaut: SQL-Bezeichner und fachlich gleichwertige deutsche Bezeichnungen zählen gleichermaßen. Verlange nicht beide. Die folgende Zuordnung gilt nur im Kontext dieser Abfrage; eindeutige weitere Umschreibungen, Singular, Plural und verständliche Schreibfehler sind ebenfalls zulässig. Es handelt sich nicht um eine abschließende Wortliste.',
+    aliases.join('\n'),
+    'Beurteile die erklärte Wirkung statt einer zeilenweisen SQL-Nacherzählung. Die Namen SELECT, FROM, ORDER BY, ASC, DESC, DISTINCT, LIMIT, WHERE, AS oder GROUP BY müssen nicht zusätzlich genannt werden, wenn ihre jeweils verlangte Wirkung richtig erklärt ist. Nur wenn der Arbeitsauftrag ausdrücklich die Schreibweise eines Bezeichners prüft, ist dessen genaue Schreibweise erforderlich.',
+    'Beispiele für gleichwertige Wirkungsbeschreibungen: „größte zuerst“ bedeutet absteigend bei einer Zahlenspalte, „A bis Z“ aufsteigend bei Texten, „jeder Wohnort einmal“ die Vermeidung doppelter Wohnorte und „für jede Person einzeln zählen“ eine entsprechende Gruppierung. Wende Beispiele nur an, wenn sie zur konkreten Abfrage passen; leite daraus keine zusätzlichen Pflichtaspekte ab.',
+    'Die Reihenfolge der Sätze und der Erwähnung von Spalten ist frei. Aussagen dürfen sich über mehrere Sätze ergänzen. Es sind keine Signalwörter wie „nur“, „einzige“, „danach“ oder „Ergebnisrelation“ erforderlich, wenn die Bedeutung eindeutig ist. Eine ausdrücklich falsche Reihenfolge der Verarbeitung bleibt dagegen falsch.',
+    config.requireUnchangedSource
+      ? 'Die unveränderte Ausgangstabelle ist in dieser Aufgabe ein ausdrücklich ausgewiesenes Lernziel und wird gemäß der Aufgabenrubrik bewertet. Eine sinngemäße Aussage wie „users bleibt gleich“ genügt; verlange nicht zusätzlich „es werden keine Datensätze gelöscht“.'
+      : 'Die unveränderte Ausgangstabelle ist kein Pflichtaspekt dieser Aufgabe. Weder das Weglassen noch das korrekte Ergänzen dieser Aussage führt zu Punktabzug oder einem Fehlhinweis. Verlange keine Wiederholung bereits erarbeiteter Grundsätze.',
+    'Korrekte Zusatzinformationen sind erlaubt, aber keine Voraussetzung für Punkte. Verlange keine zusätzlichen Namen, Zeilenzahlen, NULL-Erklärungen oder Fachbegriffe, die nicht zu den erwarteten Aspekten gehören.',
+    'Fachliche Grenzen bleiben bestehen: Eine Spalte nur zu nennen erklärt noch keine Sortierung oder Filterung. name und username, Ausgabespalten und Sortierspalten, Filterung und Sortierung, Ergebnis und gespeicherte Tabelle sowie hochladende, kommentierende und likende Personen sind nicht pauschal gleichbedeutend. Falsche Ausgabespalten, Richtungen, Bedingungen, Verknüpfungen und Widersprüche werden beim betroffenen Aspekt bewertet. Nicht allein wegen passender Schlüsselwörter Punkte vergeben.',
+    'Prüfe vor der Rückmeldung jeden angeblich fehlenden Aspekt noch einmal gegen die gesamte Schülerantwort und die gleichwertigen Bezeichnungen. Behaupte niemals, eine sinngemäß vorhandene Aussage fehle, und verlange keine zweite Formulierung desselben Inhalts. Punktzahl und Fehlhinweise müssen sich auf dieselben tatsächlich fehlenden oder falschen Aspekte beziehen.'
+  ].join('\n');
+}
+
 function feedbackStyleInstruction_(task) {
   const physics = isPhysicsTask_(task);
   return 'Die sichtbare Rückmeldung besteht insgesamt aus höchstens zwei kurzen Sätzen: Benenne zuerst den konkreten Fehler; ergänze nur bei Bedarf einen konkreten Tipp zur Behebung. Bei Code nenne die betroffene Methode oder Codezeile und die nötige Ersetzung oder Ergänzung; Syntax- und Typfehler haben Vorrang. Jeder missing-Eintrag enthält genau einen Satz, zusammen höchstens zwei. Keine Statuswiederholung, Lob-/Fehltabschnitte, allgemeinen Aufforderungen wie "Korrigiere dies" oder weiteren Erklärungen. strengths bleibt leer; feedback wiederholt höchstens dieselben Sätze aus missing und fügt nichts hinzu. Bei voller Punktzahl sind missing und strengths leer und feedback lautet exakt "Sehr gut, alles richtig". Keine vollständige Musterlösung; harmlose Zusatzaufrufe und andere Teilaufgaben nicht abwerten.' + (physics
@@ -54,6 +79,7 @@ function buildPrompt_(
         })
         .join('\n')
       : '',
+    sqlDescriptionInstructions_(task),
     isPhysicsTask_(task)
       ? 'Gleichwertige Größenbezeichnungen: Akzeptiere den ausgeschriebenen Namen einer physikalischen Größe ebenso wie ihr im Aufgabenkontext verwendetes Formelzeichen; verlange nicht beides. F_Z, F_ZP, FZ und FZP bezeichnen die Zentripetalkraft, unabhängig von Groß- und Kleinschreibung. α, alpha und Winkel alpha bezeichnen denselben, im Kontext gemeinten Winkel. Diese eindeutigen Aliasformen werden in der Schülerantwort vorab zu F_Z bzw. α vereinheitlicht. Ebenso sind z. B. Gewichtskraft und F_G/FG, Seilkraft und F_S/FS, Masse und m, Bahnradius und r, Bahngeschwindigkeit und v_B/vB sowie Winkelgeschwindigkeit und ω/omega gleichwertige Bezeichnungen. Beurteile die beschriebene Richtung, Veränderung oder Beziehung; eine bloße Nennung von Namen oder Formelzeichen genügt nicht. Falsche Aussagen und Widersprüche bleiben unabhängig von der Schreibweise falsch.'
       : '',

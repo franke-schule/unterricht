@@ -10,7 +10,7 @@
   <link rel="stylesheet" href="sql-lab.css?v=20261014-a9">
   <link rel="stylesheet" href="aufgabe9.css?v=20261014-a9">
   <script src="../../quiz-fragen-pruefen.js?v=20261006b"></script>
-  <script type="module" src="aufgabe9.mjs?v=20261022-feedback-two-sentences"></script>
+  <script type="module" src="aufgabe9.mjs?v=20261022-sicherungsblatt"></script>
 </head>
 <body class="redundancy-page sql-page instahub-joins-page" data-sql-module="instahub-joins">
   <div class="site-backdrop" aria-hidden="true"></div>
@@ -33,6 +33,25 @@
     <nav id="sql-tabs" class="step-tabs" aria-label="Lernschritte zum Verbund" role="tablist"></nav>
     <p id="summary-lock-reason" class="feedback hint" aria-live="polite">Die Auswertung bleibt gesperrt, bis alle zwölf Pflichtaufgaben korrekt geprüft und das Abschlussquiz bestanden sind.</p>
     <section id="sql-panel" class="step-panel" role="tabpanel" aria-live="off"></section>
+    <template id="solution-download-template">
+      <section class="solution-download" aria-labelledby="solution-download-title">
+        <h2 id="solution-download-title">Sicherungsblatt zu Aufgabe 9</h2>
+        <details class="solution-reveal">
+          <summary>Sicherungsblatt anzeigen</summary>
+          <form class="solution-code-form" onsubmit="unlockSolution(event, 'M4VN-X7J3', 'solution-download-link', 'solution-code-message')">
+            <label for="solution-code">Lehrercode eingeben</label>
+            <div class="solution-code-controls">
+              <input id="solution-code" name="solution-code" type="text" maxlength="9" autocomplete="off" autocapitalize="characters" spellcheck="false" required>
+              <button type="submit">Code prüfen</button>
+            </div>
+            <p id="solution-code-message" class="solution-code-message" aria-live="polite"></p>
+            <a id="solution-download-link" class="download-button" href="sicherungsblatt-aufgabe-9-loesungen.pdf" download hidden>
+              &#8595; Sicherungsblatt herunterladen
+            </a>
+          </form>
+        </details>
+      </section>
+    </template>
     <div class="summary-actions">
       <button id="reset-module" class="secondary-button" type="button">Modul neu beginnen</button>
       <a class="secondary-button" href="../index.html">Zur Aufgabenübersicht</a>

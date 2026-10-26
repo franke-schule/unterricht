@@ -1,6 +1,6 @@
 # Website von GitHub Pages zu netcup umziehen
 
-Stand: 21.10.2026. Diese Datei ist die Fortsetzungsanleitung für den laufenden Chat.
+Stand: 26.10.2026. Diese Datei ist die Fortsetzungsanleitung für den laufenden Chat.
 Sie dokumentiert den Plan; offene Punkte sind noch nicht ausgeführt oder bestätigt.
 
 ## Vorgehen im Chat
@@ -19,6 +19,7 @@ Sie dokumentiert den Plan; offene Punkte sind noch nicht ausgeführt oder bestä
 | --- | --- |
 | Repository | https://github.com/franke-schule/unterricht |
 | Arbeitsbranch | `main` |
+| GitHub-Pages-Quelle | Nutzerbestätigung am 25.10.2026: Deploy from a branch, `main`, `/(root)` |
 | Hosting | Hosting251092 – Webhosting 1000 |
 | Registrar der Domain | netcup; kein Registrarwechsel und kein Auth-Code notwendig |
 | Bisherige Website | GitHub Pages mit eigener Domain |
@@ -48,12 +49,28 @@ Die Werte der Secrets müssen weder ausgelesen noch erneut im Chat angegeben wer
 - [x] Schritt 5: Eigenes FTP-Konto mit auf Website-Ordner begrenztem Zugriff angelegt.
 - [x] Schritt 6: Drei Repository-Secrets auf GitHub angelegt.
 - [x] Schritt 7 begonnen: Nutzer hat das Anlegen/Starten des Testworkflows bestätigt.
-- [ ] Schritt 7 abgeschlossen: Grüner Workflow-Lauf UND ausgelieferte Testdatei bestätigt.
-- [ ] Schritte 8 bis 16: offen, siehe unten.
+- [x] Schritt 7 abgeschlossen: Nutzer hat am 25.10.2026 den erfolgreichen Verbindungstest bestätigt.
+- [x] Schritt 8 vorbereitet: Pages-Quelle bestätigt; Hauptworkflow lokal angelegt.
+- [x] Schritt 9a: Nutzer hat das Anlegen des Hauptworkflows auf GitHub bestätigt.
+- [x] Schritt 9b: Nutzer hat am 26.10.2026 den erfolgreichen Hauptupload und die angezeigte Website bestätigt.
+- [x] Schritt 10a: Nutzer hat am 26.10.2026 den erfolgreichen automatischen Lauf nach Aktivierung des Push-Triggers bestätigt.
+- [ ] Schritt 10b: Automatische Veröffentlichung einer erkennbaren Website-Änderung prüfen.
+- [ ] Schritte 11 bis 16: offen, siehe unten.
 
-**Unmittelbar nächster Schritt:** Nach Wiederherstellung des netcup-Webhostings
-Schritt 7 abschließen. Noch keine vollständige Website übertragen und keine
-produktiven DNS-Einträge ändern.
+**Unmittelbar nächster Schritt:** Schritt 10b: Im Repository-Root auf GitHub
+`netcup-push-test.html` mit dem sichtbaren Satz „Automatische Veröffentlichung funktioniert.“
+anlegen und direkt auf `main` committen. Ohne manuellen Start muss der Hauptworkflow
+laufen. Nach grünem Lauf die Datei unter der netcup-Standarddomain aufrufen und
+den Satz bestätigen lassen. Keine produktiven DNS-Einträge ändern.
+
+Der Hauptworkflow wurde zunächst ausschließlich manuell erfolgreich getestet.
+Der Push-Trigger für `main` wurde ebenfalls erfolgreich getestet. Er baut die Website
+mit `actions/jekyll-build-pages@v1`, passend zum vorhandenen Pages-Verfahren,
+und überträgt ein getrenntes Paket aus `faecher/`, `include/` und den vorhandenen
+HTML-/CSS-Quelldateien im Repository-Root. Root-Unterlagen, LNWs und Backendordner
+werden nicht hochgeladen. Die FTPS-Einstellungen entsprechen dem erfolgreichen
+Test. Der erfolgreiche Build und vollständige Upload wurden am 26.10.2026
+vom Nutzer bestätigt. Die lokale Umzugsdatei muss für den Workflow nicht mitveröffentlicht werden.
 
 ### Unterbrechung am 21.10.2026
 
@@ -83,8 +100,8 @@ Ein grüner Lauf allein bestätigt noch nicht, dass die Datei am richtigen
 öffentlich erreichbaren Ort liegt.
 
 Der im Chat vorgegebene Workflow liegt auf GitHub unter
-`.github/workflows/netcup-test.yml`. Sein lokales Vorhandensein wurde nicht
-bestätigt; er kann ausschließlich über die GitHub-Oberfläche erstellt worden sein.
+`.github/workflows/netcup-test.yml`. Am 25.10.2026 ist die Datei auch im lokalen
+Checkout vorhanden. Der genaue Inhalt wurde bei dieser Bestandsprüfung nicht erneut geprüft.
 Vor Änderungen daher Remote-Stand und lokale Änderungen prüfen und abgleichen.
 Keinen ungeprüften Pull über lokale Arbeiten ausführen.
 
@@ -315,8 +332,9 @@ funktionieren. Ein dokumentierter DNS-Rückweg ist weiterhin verfügbar.
    Branch und netcup-Deployment bleiben erhalten.
 2. Vor Entfernen der GitHub-Domainbindung sicherstellen, dass keine eigenen
    DNS-Einträge mehr auf dieses Pages-Angebot zeigen.
-3. Den kleinen Workflow `netcup-test.yml` und seine beiden bekannten
-   Test-HTML-Dateien entfernen, wenn nicht mehr benötigt. Die Statusdatei des
+3. Den kleinen Workflow `netcup-test.yml` sowie `netcup-test.html`,
+   `github-netcup-test.html` und `netcup-push-test.html` entfernen, wenn nicht mehr
+   benötigt. Die Statusdatei des
    Hauptdeployments erhalten; sie ermöglicht inkrementelle Übertragungen.
 4. Eine eigene Testsubdomain bei Bedarf als Testumgebung behalten oder gezielt
    entfernen. Nicht mehr verwendete Test-Origins aus Scaleway entfernen.
