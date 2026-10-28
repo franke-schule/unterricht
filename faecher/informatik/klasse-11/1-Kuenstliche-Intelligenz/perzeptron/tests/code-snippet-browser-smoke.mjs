@@ -32,6 +32,13 @@ try {
   await page.route('**/include/**', route => route.abort());
   await page.goto(url, { waitUntil: 'domcontentloaded' });
   await page.getByRole('button', { name: 'Einfach – mit Hilfen', exact: true }).click();
+  const helperWidth = () => page.locator('#code-snippets-help').evaluate(element => element.getBoundingClientRect().width);
+  const layoutWidth = () => page.locator('.task6-layout').evaluate(element => element.getBoundingClientRect().width);
+  assert.ok(await helperWidth() < await layoutWidth() / 2, 'Eingeklappte Hilfe bleibt in der Aufgabenspalte');
+  await page.locator('#code-snippets-help summary').click();
+  assert.ok(Math.abs(await helperWidth() - await layoutWidth()) < 2, 'Geöffnete Hilfe nutzt beide Spalten');
+  await page.locator('#code-snippets-help summary').click();
+  assert.ok(await helperWidth() < await layoutWidth() / 2, 'Zugeklappte Hilfe wird wieder schmal');
   await page.locator('#code-snippets-help summary').click();
   const bank = page.locator('#code-snippet-steps .step-order-bank');
   const slots = page.locator('#code-snippet-steps .formula-slot');
@@ -58,6 +65,7 @@ try {
   await page.reload({ waitUntil: 'domcontentloaded' });
   await slots.nth(0).waitFor();
   assert.equal(await page.locator('#code-snippets-help').getAttribute('open'), '');
+  assert.ok(Math.abs(await helperWidth() - await layoutWidth()) < 2, 'Wiederhergestellte offene Hilfe bleibt breit');
   assert.equal(await bank.locator('button').count(), 0);
   await page.locator('#check-code-snippets').click();
   assert.match(await feedback.textContent(), /^Richtig/);
@@ -79,9 +87,11 @@ try {
   assert.match(await feedback.textContent(), /^Richtig/);
   await page.locator('#change-variant').click();
   await page.getByRole('button', { name: 'Schwer – selbstständig', exact: true }).click();
+  assert.equal(await page.locator('#code-snippets-help').isVisible(), false, 'Sortierhilfe bleibt in schwerer Variante verborgen');
   await page.locator('#change-variant').click();
   await page.getByRole('button', { name: 'Einfach – mit Hilfen', exact: true }).click();
   assert.equal(await bank.locator('button').count(), 0);
+  assert.ok(Math.abs(await helperWidth() - await layoutWidth()) < 2, 'Offene Hilfe ist nach Variantenwechsel wieder breit');
 
   await page.setViewportSize({ width: 390, height: 844 });
   assert.ok(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth), 'Mobile Seite läuft über');

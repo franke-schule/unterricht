@@ -2,6 +2,9 @@
 .gravitation-page .physics-step-tabs [role="tab"] { min-width: 0; white-space: normal; hyphens: auto; overflow-wrap: anywhere; font-size: .88rem; line-height: 1.15; padding: .6rem .3rem; }
 .gravitation-page .physics-revision-panel { max-width: 100%; grid-template-columns: minmax(0, 1fr); }
 .gravitation-page .physics-task-card { margin-block: 1rem; }
+.grav-step-card { display: grid; gap: .35rem; min-width: 0; text-align: left; }
+.gravitation-page .step-order .cloze-token { max-width: 100%; white-space: normal; }
+.gravitation-page .drag-help { color: #64748b; font-size: .88rem; }
 .gravitation-page .task-fields { display: grid; grid-template-columns: minmax(0, 1fr); gap: .75rem; margin: .75rem 0; }
 .gravitation-page .grav-choice { display: grid; gap: .25rem; font-weight: 700; }
 .gravitation-page .grav-choice select { width: 100%; max-width: 100%; min-height: 44px; }

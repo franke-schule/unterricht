@@ -9,6 +9,14 @@
 .task6-page .task6-ide:focus-visible { outline:3px solid #f0a202; outline-offset:3px; }
 .task6-page .task6-tasks { min-width:0; max-height:calc(100vh - 2rem); overflow-y:auto; padding:0 .25rem .4rem 0; }
 .task6-page .task6-tasks .card { margin:0 0 1rem; }
+/* Erst geöffnet steht die Sortierhilfe unter beiden Arbeitsspalten. */
+@media(min-width:1151px){
+  .task6-layout:has(#tasks-einfach:not([hidden]) #code-snippets-help[open]) .task6-tasks,
+  .task6-layout:has(#tasks-einfach:not([hidden]) #code-snippets-help[open]) #tasks-einfach { display:contents; }
+  .task6-layout:has(#tasks-einfach:not([hidden]) #code-snippets-help[open]) .task6-ide { grid-column:1; grid-row:1 / span 4; }
+  .task6-layout:has(#tasks-einfach:not([hidden]) #code-snippets-help[open]) .task6-tasks .card { grid-column:2; }
+  .task6-layout:has(#tasks-einfach:not([hidden]) #code-snippets-help[open]) #code-snippets-help { grid-column:1 / -1; margin:0; }
+}
 .task6-page .ide-container { border:1px solid #b9d1df; border-radius:.85rem; overflow:hidden; background:#fff; }
 .task6-page .ide-container iframe { display:block; width:100%; min-height:690px; border:0; }
 .task6-page textarea { width:100%; }

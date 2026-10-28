@@ -1,0 +1,164 @@
+\documentclass[10pt,a4paper]{article}
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage[ngerman]{babel}
+\usepackage[a4paper,margin=14mm]{geometry}
+\usepackage{lmodern}
+\usepackage[table]{xcolor}
+\usepackage{tabularx}
+\usepackage{array}
+\usepackage{microtype}
+\usepackage{amssymb}
+\usepackage{tikz}
+\usetikzlibrary{arrows.meta}
+\newif\ifsolution
+\solutiontrue
+\pagestyle{empty}
+\setlength{\parindent}{0pt}
+\setlength{\parskip}{0pt}
+\renewcommand{\familydefault}{\sfdefault}
+\definecolor{Navy}{HTML}{17324D}
+\definecolor{Blue}{HTML}{3B6EA5}
+\definecolor{Gold}{HTML}{F3B33D}
+\definecolor{Ink}{HTML}{1E2935}
+\definecolor{Muted}{HTML}{617080}
+\definecolor{Line}{HTML}{D8E1E8}
+\color{Ink}
+\newcommand{\kopf}{%
+  \colorbox{Navy}{\parbox{\dimexpr\linewidth-2\fboxsep\relax}{%
+    \vspace{1.3mm}\color{white}
+    \begin{tabularx}{\linewidth}{@{}Xr@{}}
+      {\small\bfseries PHYSIK \textperiodcentered{} KLASSE 8} &
+      \colorbox{Gold}{\color{Navy}\small\bfseries\strut\ifsolution LÖSUNGEN\else ABFRAGE\fi}
+    \end{tabularx}
+    \vspace{0.9mm}
+    {\fontsize{16}{19}\selectfont\bfseries Elektrischer Strom \textperiodcentered{} U-I-Kennlinie}\par
+    \vspace{0.3mm}{\small Ungekühlter und gekühlter Eisendraht \textperiodcentered{} Messwerte und Steigung}\vspace{1.1mm}
+  }}\par\vspace{2mm}}
+\newcommand{\frage}[2]{%
+  \vspace{0.8mm}{\color{Blue}\bfseries\large #1 \textperiodcentered{} #2}\par
+  \vspace{0.4mm}{\color{Blue}\rule{\linewidth}{0.65pt}}\par\vspace{0.5mm}}
+\newcommand{\antwortfeld}[2]{%
+  \vspace{0.7mm}%
+  \begin{tikzpicture}[x=1mm,y=1mm]
+    \path[use as bounding box] (0,0) rectangle (181.5,-8*#1);
+    \ifsolution
+      \node[anchor=north west,text width=179mm,inner sep=0pt,align=left,
+        font=\small,text=Blue] at (0,-1) {#2};
+    \else
+      \foreach \i in {1,...,#1}{\draw[Line,line width=.55pt] (0,-8*\i) -- (181.5,-8*\i);}
+    \fi
+  \end{tikzpicture}\par}
+\newcommand{\wahl}[2]{%
+  \noindent\ifsolution\ifnum#1=1 $\boxtimes$\else $\square$\fi\else $\square$\fi\enspace #2\par}
+\newcommand{\fuss}[2]{%
+  \vfill{\color{Line}\rule{\linewidth}{0.5pt}}\par\vspace{1mm}
+  \begin{tabularx}{\linewidth}{@{}Xr@{}}
+    {\small\color{Muted}Klasse 8 \textperiodcentered{} Physik \textperiodcentered{} Elektrischer Strom} &
+    {\small\color{Muted}\ifsolution LÖSUNGEN\else #1\fi{} \textperiodcentered{} Seite #2 von 2}
+  \end{tabularx}}
+\newcommand{\kennlinie}{%
+  \begin{tikzpicture}[x=1mm,y=1mm]
+    \path[use as bounding box] (0,0) rectangle (170,-91);
+    % Plotbereich: 6 V breit, 3,0 A hoch; je 0,1 A ein feines Rasterfeld.
+    \begin{scope}[shift={(30,-77)}]
+      \draw[step=2.2,Line!70,line width=.22pt] (0,0) grid (78,72.6);
+      \draw[Ink,line width=.65pt,-{Stealth[length=2mm]}] (0,0)--(82,0);
+      \draw[Ink,line width=.65pt,-{Stealth[length=2mm]}] (0,0)--(0,71);
+      \foreach \x in {0,...,6}{
+        \draw[Ink] (13*\x,0)--(13*\x,-1.5);
+        \node[below=2pt,font=\scriptsize,text=Ink] at (13*\x,-1.5) {\x};
+      }
+      \foreach \i/\lab in {0/0,1/0{,}5,2/1{,}0,3/1{,}5,4/2{,}0,5/2{,}5,6/3{,}0}{
+        \draw[Ink] (0,11*\i)--(-1.5,11*\i);
+        \node[left=3pt,font=\scriptsize,text=Ink] at (-1.5,11*\i) {\lab};
+      }
+      \node[below=9pt,font=\small,text=Ink] at (39,0) {$U$ in V};
+      \node[rotate=90,font=\small,text=Ink] at (-22,33) {$I$ in A};
+      \ifsolution
+        % Ungekühlter Draht: glatte, zunehmend flachere Kennlinie.
+        \draw[Blue,line width=1pt] plot[smooth] coordinates { (0,0) (13,6.6) (26,11) (39,15.4) (52,17.6) (65,19.8) (78,22) };
+                \fill[Blue] (0,0) circle (1.15);
+        \fill[Blue] (13,6.6) circle (1.15);
+        \fill[Blue] (26,11) circle (1.15);
+        \fill[Blue] (39,15.4) circle (1.15);
+        \fill[Blue] (52,17.6) circle (1.15);
+        \fill[Blue] (65,19.8) circle (1.15);
+        \fill[Blue] (78,22) circle (1.15);
+        % Gekühlter Draht: Ursprungshalbgerade mit Kreuzsymbolen.
+        \draw[Blue,line width=1pt] (0,0)--(78,52.8);
+                \draw[Blue,line width=.8pt] (-1.25,-1.25)--(1.25,1.25);
+        \draw[Blue,line width=.8pt] (-1.25,1.25)--(1.25,-1.25);
+        \draw[Blue,line width=.8pt] (11.75,7.55)--(14.25,10.05);
+        \draw[Blue,line width=.8pt] (11.75,10.05)--(14.25,7.55);
+        \draw[Blue,line width=.8pt] (24.75,16.35)--(27.25,18.85);
+        \draw[Blue,line width=.8pt] (24.75,18.85)--(27.25,16.35);
+        \draw[Blue,line width=.8pt] (37.75,25.15)--(40.25,27.65);
+        \draw[Blue,line width=.8pt] (37.75,27.65)--(40.25,25.15);
+        \draw[Blue,line width=.8pt] (50.75,33.95)--(53.25,36.45);
+        \draw[Blue,line width=.8pt] (50.75,36.45)--(53.25,33.95);
+        \draw[Blue,line width=.8pt] (63.75,42.75)--(66.25,45.25);
+        \draw[Blue,line width=.8pt] (63.75,45.25)--(66.25,42.75);
+        \draw[Blue,line width=.8pt] (76.75,51.55)--(79.25,54.05);
+        \draw[Blue,line width=.8pt] (76.75,54.05)--(79.25,51.55);
+        \node[anchor=west,font=\scriptsize,text=Blue,fill=white,inner sep=1pt] at (79,20) {ungekühlt};
+        \node[anchor=west,font=\scriptsize,text=Blue,fill=white,inner sep=1pt] at (64,47.8) {gekühlt};
+        % Gro\ss{}es Steigungsdreieck an der gekühlten Ursprungshalbgeraden.
+        \draw[Blue,line width=1pt,dashed] (0,0)--(78,0)--(78,52.8)--cycle;
+        \node[font=\scriptsize,text=Blue,fill=white,inner sep=1pt] at (39,4) {$\Delta U=6\,\mathrm{V}$};
+        \node[rotate=90,font=\scriptsize,text=Blue,fill=white,inner sep=1pt] at (78,11) {$\Delta I=2{,}4\,\mathrm{A}$};
+      \else
+        \draw[Line,line width=.55pt] (0,0) rectangle (78,66);
+      \fi
+    \end{scope}
+  \end{tikzpicture}\par}
+
+\begin{document}
+\kopf
+\frage{1}{Grö\ss{}en und Einheiten}
+\textbf{Ergänze} die fehlenden Angaben zu den beiden physikalischen Grö\ss{}en.\par
+\vspace{0.5mm}
+\begin{tabularx}{\linewidth}{|>{\centering\arraybackslash}X|>{\centering\arraybackslash}X|>{\centering\arraybackslash}X|}
+\hline
+\textbf{Physikalische Grö\ss{}e} & \textbf{Formelzeichen} & \textbf{Einheit} \\
+\hline
+Elektrische Spannung & $U$ & Volt (V) \\
+\hline
+\ifsolution\textcolor{Blue}{Elektrische Stromstärke}\fi & $I$ & \ifsolution\textcolor{Blue}{Ampere (A)}\fi \\
+\hline
+\end{tabularx}
+\vspace{1mm}
+
+\frage{2}{Kennlinien zeichnen}
+\textbf{Trage} beide Messreihen in das gemeinsame Koordinatensystem ein und \textbf{kennzeichne} sie mit unterschiedlichen Punktsymbolen. \textbf{Zeichne} für den ungekühlten Draht eine glatte Kennlinie und für den gekühlten Draht eine Ursprungshalbgerade; \textbf{beschrifte} beide Kennlinien.\par
+\vspace{0.5mm}
+\begin{tabularx}{\linewidth}{|>{\centering\arraybackslash}X|>{\centering\arraybackslash}X|>{\centering\arraybackslash}X|}
+\hline
+\textbf{$U$ in V} & \textbf{$I$ in A (ungekühlt)} & \textbf{$I$ in A (gekühlt)} \\
+\hline
+    0 & 0 & 0 \\
+    1 & 0{,}3 & 0{,}4 \\
+    2 & 0{,}5 & 0{,}8 \\
+    3 & 0{,}7 & 1{,}2 \\
+    4 & 0{,}8 & 1{,}6 \\
+    5 & 0{,}9 & 2{,}0 \\
+    6 & 1{,}0 & 2{,}4 \\
+\hline
+\end{tabularx}
+\vspace{0.5mm}
+\kennlinie
+
+\fuss{ABFRAGE}{1}
+\newpage
+\frage{3}{Kennlinien beschreiben}
+\textbf{Beschreibe} den Verlauf beider Kennlinien bei zunehmender Spannung. \textbf{Begründe} anhand der Kennlinien, bei welcher Messreihe $U \sim I$ gilt.\par
+\antwortfeld{3}{Bei beiden Messreihen steigt die Stromstärke mit der Spannung. Die ungekühlte Kennlinie ist gekrümmt und wird zunehmend flacher; dort gilt keine Proportionalität. Die gekühlte Kennlinie ist eine Ursprungshalbgerade: Bei einer Verdopplung von 1 V auf 2 V verdoppelt sich die Stromstärke von 0,4 A auf 0,8 A. Deshalb gilt für die gekühlte Messreihe $U \sim I$.}
+
+\frage{4}{Steigung bestimmen}
+\textbf{Zeichne} ein möglichst gro\ss{}es Steigungsdreieck an der Ursprungshalbgeraden ein. \textbf{Bestimme} ihre Steigung und gib deinen Rechenweg sowie die Einheit an.\par
+\vspace{0.5mm}{\small Steigung: $\frac{\Delta I}{\Delta U}$}\par
+\antwortfeld{2}{$\frac{\Delta I}{\Delta U}=\frac{2{,}4\,\mathrm{A}}{6\,\mathrm{V}}=0{,}40\,\frac{\mathrm{A}}{\mathrm{V}}$}
+
+
+\fuss{ABFRAGE}{2}
+\end{document}

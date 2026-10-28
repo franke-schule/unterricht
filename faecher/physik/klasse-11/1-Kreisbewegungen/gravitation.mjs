@@ -2,6 +2,7 @@ import { setupPhysicsStepTabs } from './components/physics-step-tabs.mjs';
 import { createPhysicsTaskProgress } from './components/physics-task-progress.mjs';
 import { appendPhysicsText } from './components/physics-notation.mjs?v=20261022-force-indices';
 import { enableTokenDrag, wasDragged } from './components/token-drag.mjs';
+import { setupStepOrder } from './components/step-order.mjs';
 import { G, INITIAL, MIN_DISTANCE, MAX_DISTANCE, distance, force, validState, setDistance, moveBody, checkQuantity, parseQuantity } from './gravitation-model.mjs';
 
 // Lehrercode-Freigabe nach dem bestehenden Muster aus kettenkarussell.mjs.
@@ -461,6 +462,65 @@ function setupRatio(){
     if(level==='success')finish('A5');
   });
 }
+export const APPLICATION_STEP_TASKS = {
+  A1: {
+    n: 6,
+    order: ['accelerations', 'equal-acceleration', 'force', 'rounded', 'given', 'acceleration-law', 'law'],
+    cards: [
+      {id:'given', lines:['m_A = 150 g = 0,150 kg', 'M_E = 5,974·10²⁴ kg; r = R_E = 6,370·10⁶ m'], spoken:'Apfelmasse in Kilogramm umrechnen und Erdmasse sowie Mittelpunktabstand angeben'},
+      {id:'law', lines:['F = G · {{m_A · M_E|r²}}'], spoken:'Gravitationsgesetz: F gleich G mal Apfelmasse mal Erdmasse durch r zum Quadrat'},
+      {id:'force', lines:['F = 6,67430·10⁻¹¹ · {{0,150 · 5,974·10²⁴|(6,370·10⁶)²}} N', 'F ≈ 1,473951985 N'], spoken:'SI-Zahlenwerte in das Gravitationsgesetz einsetzen: Kraft ungefähr 1,473951985 Newton'},
+      {id:'acceleration-law', lines:['Mit der berechneten Kraft: a_A = {{F|m_A}} und a_E = {{F|M_E}}'], spoken:'Mit der berechneten Kraft die Beschleunigung des Apfels und der Erde jeweils als Kraft durch Masse bestimmen'},
+      {id:'accelerations', lines:['a_A ≈ {{1,473951985|0,150}} {{m/s²}} ≈ 9,826346567 {{m/s²}}', 'a_E ≈ {{1,473951985|5,974·10²⁴}} {{m/s²}} ≈ 2,467278180·10⁻²⁵ {{m/s²}}'], spoken:'Beschleunigung Apfel ungefähr 9,826346567 Meter pro Sekunde zum Quadrat, Erde ungefähr 2,467278180 mal zehn hoch minus 25 Meter pro Sekunde zum Quadrat'},
+      {id:'rounded', lines:['Endergebnisse mit zwei gültigen Ziffern:', 'F ≈ 1,5 N; a_A ≈ 9,8 {{m/s²}}; a_E ≈ 2,5·10⁻²⁵ {{m/s²}}'], spoken:'Erst die Endergebnisse auf zwei gültige Ziffern runden: 1,5 Newton, 9,8 und 2,5 mal zehn hoch minus 25 Meter pro Sekunde zum Quadrat'},
+      {id:'equal-acceleration', lines:['Aus gleichen Kraftbeträgen folgt: a_A = a_E.'], spoken:'Aus gleichen Kraftbeträgen folgt gleiche Beschleunigung von Apfel und Erde'},
+    ],
+    acceptedOrders: [
+      ['given', 'law', 'force', 'acceleration-law', 'accelerations', 'rounded'],
+      ['law', 'given', 'force', 'acceleration-law', 'accelerations', 'rounded'],
+    ],
+    distractorIds: ['equal-acceleration'],
+    distractorHint: 'Gleiche Kräfte bedeuten bei verschiedenen Massen nicht gleiche Beschleunigungen. Nutze für jeden Körper a = {{F|m}}.',
+    success: 'Richtig. Der Lösungsweg führt von der Gravitationskraft zu beiden Beschleunigungen. Übertrage die Endergebnisse mit Zahl und Einheit in die Eingabefelder.',
+  },
+  A2: {
+    n: 5,
+    order: ['ground', 'height-only', 'rounded', 'law', 'orbit', 'distances'],
+    cards: [
+      {id:'distances', lines:['r_O = (6370 + 400) km = 6,770·10⁶ m', 'r_B = 6370 km = 6,370·10⁶ m'], spoken:'Mittelpunktabstand im Orbit: Erdradius plus Höhe gleich 6,770 Millionen Meter; am Boden 6,370 Millionen Meter'},
+      {id:'law', lines:['F = G · {{M_E · m|r²}}; m = 62 kg'], spoken:'Gravitationsgesetz für die Astronautin mit der Masse 62 Kilogramm'},
+      {id:'orbit', lines:['Im Orbit: F_O = 6,67430·10⁻¹¹ · {{5,974·10²⁴ · 62|(6,770·10⁶)²}} N', 'F_O ≈ 539,3681457 N'], spoken:'Orbitkraft mit dem Mittelpunktabstand 6,770 Millionen Meter berechnen: ungefähr 539,3681457 Newton'},
+      {id:'ground', lines:['Am Boden: F_B = 6,67430·10⁻¹¹ · {{5,974·10²⁴ · 62|(6,370·10⁶)²}} N', 'F_B ≈ 609,2334871 N'], spoken:'Kraft am Boden mit dem Erdradius 6,370 Millionen Meter berechnen: ungefähr 609,2334871 Newton'},
+      {id:'rounded', lines:['Beide Endergebnisse mit zwei gültigen Ziffern:', 'F_O ≈ 5,4·10² N; F_B ≈ 6,1·10² N'], spoken:'Beide Kräfte auf zwei gültige Ziffern runden: im Orbit 5,4 mal zehn hoch zwei Newton, am Boden 6,1 mal zehn hoch zwei Newton'},
+      {id:'height-only', lines:['Im Orbit: r_O = h = 400 km = 4,00·10⁵ m'], spoken:'Als Mittelpunktabstand im Orbit nur die Höhe von 400 Kilometern verwenden'},
+    ],
+    acceptedOrders: [
+      ['distances', 'law', 'orbit', 'ground', 'rounded'],
+      ['law', 'distances', 'orbit', 'ground', 'rounded'],
+      ['distances', 'law', 'ground', 'orbit', 'rounded'],
+      ['law', 'distances', 'ground', 'orbit', 'rounded'],
+    ],
+    distractorIds: ['height-only'],
+    distractorHint: 'Der Abstand r beginnt im Erdmittelpunkt. Zur Höhe über der Oberfläche gehört deshalb noch der Erdradius.',
+    success: 'Richtig. Beide Kräfte werden mit dem jeweiligen Mittelpunktabstand berechnet. Übertrage die gerundeten Endergebnisse mit Zahl und Einheit in die Eingabefelder.',
+  },
+};
+function setupApplicationStepHelps(taskProgress) {
+  for (const [id, config] of Object.entries(APPLICATION_STEP_TASKS)) {
+    const prefix = id.toLowerCase();
+    const help = $(`card-${prefix}`).querySelector('.physics-help-stack details:last-child');
+    help.innerHTML = `<summary>Hilfe 3: Rechnung anordnen</summary><p><strong>Ordne</strong> die Rechenschritte in die richtige Reihenfolge.</p><p class="drag-help">Ziehe jede Karte in ein nummeriertes Feld oder tippe erst die Karte und dann das Feld an. Eine Karte bleibt übrig.</p><div id="${prefix}-steps" class="step-order" aria-label="Lösungsweg zu ${id} ordnen"></div><div class="cloze-actions"><button id="check-${prefix}-steps" class="physics-primary-button" type="button">Reihenfolge prüfen</button><button id="reset-${prefix}-steps" class="physics-primary-button secondary-button" type="button">Zurücksetzen</button></div><p id="${prefix}-steps-feedback" class="physics-feedback" role="status" aria-live="polite" hidden></p>`;
+    setupStepOrder({
+      ...config, containerId: `${prefix}-steps`, checkButtonId: `check-${prefix}-steps`, resetButtonId: `reset-${prefix}-steps`, feedbackId: `${prefix}-steps-feedback`,
+      renderCard: (element, item) => {
+        const content = document.createElement('span'); content.className = 'grav-step-card';
+        for (const line of item.lines) { const row = document.createElement('span'); appendPhysicsText(row, line); content.append(row); }
+        element.replaceChildren(content);
+      },
+      showFeedback: (node, level, message) => feedback(node.id, level, message),
+    }, taskProgress);
+  }
+}
 function buildApplications(){
   const earthMass=5.974e24,earthRadius=6370e3;
   const appleForce=G*earthMass*0.150/earthRadius**2;
@@ -771,6 +831,7 @@ if(typeof document!=='undefined'){
   ['tab-simulation','tab-law'].forEach(id=>$(id).addEventListener('click',()=>requestAnimationFrame(updateSimulation)));
   window.addEventListener('resize',updateSimulation);
   progress=createPhysicsTaskProgress('aufgabe8');
+  setupApplicationStepHelps(progress);
   progress.registerPart('simulation',()=>({...simulation}),saved=>{if(validState(saved)){simulation={...saved};updateSimulation();}});
   progress.registerPart('m2-observations',()=>Object.fromEntries(m2Cases.filter(item=>validM2Observation(item,m2Observations[item.id])).map(item=>[item.id,{...m2Observations[item.id]}])),saved=>{
     m2Cases.forEach(item=>{delete m2Observations[item.id];if(validM2Observation(item,saved?.[item.id]))m2Observations[item.id]={...saved[item.id]};});

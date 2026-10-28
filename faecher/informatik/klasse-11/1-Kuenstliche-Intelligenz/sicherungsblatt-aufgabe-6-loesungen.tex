@@ -42,10 +42,8 @@
   breaklines=false
 }
 % Mark only the lines completed by students in the simple variant.
-% The Java listing itself stays unchanged; markers occupy the left margin.
+% A continuous background highlights the completed code lines.
 \newif\ifsusline
-\newcommand{\studentmarker}[1]{%
-  \tikz[baseline=-0.2ex]{\fill[#1] (0,0) -- (0,1.4mm) -- (1.5mm,0.7mm) -- cycle;}}
 \newcommand{\studentlinemark}[1]{%
   \suslinefalse
   \ifnum\value{lstnumber}>1\relax
@@ -59,7 +57,9 @@
   \ifnum\value{lstnumber}>17\relax
     \ifnum\value{lstnumber}<21\relax\suslinetrue\fi
   \fi
-  \ifsusline\studentmarker{green}\fi}
+  \ifsusline
+    \rlap{\color{green!18}\rule[-2.5pt]{\linewidth}{11.5pt}}%
+  \fi}
 \newtcolorbox{methodbox}[3]{enhanced,
   colback=#2,colframe=#1,colbacktitle=#1,coltitle=white,
   boxrule=0.8pt,arc=1.5mm,left=3mm,right=3mm,top=2mm,bottom=2mm,
@@ -93,8 +93,8 @@ Gewichte und Schwellenwert bleiben dabei unverändert.\par}
 
 \begin{methodbox}{green}{safebg}{Klasse Perzeptron \(\cdot\) Trainieren\\
   \texttt{public void trainieren(Datenpunkt punkt)}\\[0.5mm]
-  \normalfont\footnotesize\studentmarker{white}\;In der einfachen Variante selbst ergänzt.}
-\begin{lstlisting}[style=java-sheet,numbers=left,firstnumber=1,numberstyle=\studentlinemark,numbersep=1.2mm,xleftmargin=3mm]
+  \normalfont\footnotesize\colorbox{green!18}{\rule{0pt}{1.5mm}\hspace{3mm}}\;Hinterlegt: in der einfachen Variante selbst ergänzt.}
+\begin{lstlisting}[style=java-sheet,numbers=left,firstnumber=1,numberstyle=\studentlinemark,numbersep=0pt]
 public void trainieren(Datenpunkt punkt) {
     double gewichtete_Summe =
         w_1 * punkt.gibEingabewertX1()
