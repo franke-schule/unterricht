@@ -20,6 +20,22 @@ function applyRuleBasedMinimum_(
 
   let ruleBasedEvaluation = null;
 
+  if (task === TASKS['inf9-db3-beschreibe-where']) {
+    ruleBasedEvaluation = evaluateInf9WhereDescriptionByRules_(answer, task);
+  }
+
+  if (task === TASKS['11-6-einfach-summe']) {
+    ruleBasedEvaluation = evaluateTrainingSumByRules_(answer, task);
+  }
+
+  if (task === TASKS['11-6-einfach-ausgabe']) {
+    ruleBasedEvaluation = evaluateTrainingOutputByRules_(answer, task);
+  }
+
+  if (task === TASKS['11-6-einfach-anpassung']) {
+    ruleBasedEvaluation = evaluateTrainingUpdatesByRules_(answer, task);
+  }
+
   if (task === TASKS.b) {
     ruleBasedEvaluation =
       evaluateTaskBByRules_(
@@ -72,6 +88,140 @@ function applyRuleBasedMinimum_(
   }
 
   return evaluation;
+}
+
+
+function evaluateInf9WhereDescriptionByRules_(answer, task) {
+  const text = normalizeGermanText_(answer);
+  const source = '(?:(?:(?:der )?tabelle )?users|(?:der )?(?:mitglieder|benutzer|nutzer)tabelle|(?:den )?(?:nutzer[n]?|benutzer[n]?|mitglied(?:er[n]?)?))';
+  const username = '(?:benutzername[n]?|username)';
+  const city = '(?:wohnort[e]?|stadt|staedte|city)';
+  const columns = '(?:' + username + ' und ' + city + '|' + city + ' und ' + username + ')';
+  const output = '(?:ausgegeben|angezeigt)';
+  // Ganze, eindeutig richtige Satzformen erkennen, keine bloße Stichwortsuche.
+  // Zusätzliche Aussagen, Negationen und unbekannte Formulierungen bleiben
+  // vollständig bei der KI; diese Regel vergibt nur sichere volle Punktzahl.
+  const descriptions = [
+    'es werden ' + columns + ' (?:aus|von) ' + source + ' ' + output + ',? (?:die|welche) in muenchen wohnen',
+    '(?:aus|von) ' + source + ' werden ' + columns + ' fuer (?:die )?mitglieder (?:aus|mit wohnort) muenchen ' + output,
+    'die daten kommen aus ' + source + '\\. fuer mitglieder aus muenchen werden ' + columns + ' ' + output
+  ];
+  const complete = new RegExp('^(?:' + descriptions.join('|') + ')\\.?(?: die tabelle users bleibt unveraendert\\.?)?$');
+  if (!complete.test(text)) return null;
+  return {
+    ok: true, points: task.maxPoints, maxPoints: task.maxPoints,
+    status: task.statusLabels.correct, strengths: [], missing: [],
+    feedback: 'Sehr gut, alles richtig'
+  };
+}
+
+
+function trainingMethodBodyForRules_(answer) {
+  // Gemeinsame, eng begrenzte Erkennung für die Schritte 2 bis 4.
+  // Kommentare und Literale dürfen keine Methode oder Lösung vortäuschen.
+  const tokens = String(answer).match(/\/\/[^\r\n]*|\/\*[\s\S]*?\*\/|"""[\s\S]*?"""|"(?:\\[\s\S]|[^"\\])*"|'(?:\\[\s\S]|[^'\\])*'|[A-Za-z_$][\w$]*|\s+|[^\s]/g) || [];
+  const code = tokens.filter(token => !/^\s+$/.test(token) && !token.startsWith('//') && !token.startsWith('/*'))
+    .map(token => /^["']/.test(token) ? 'LITERAL' : token).join(' ');
+  const methods = [...code.matchAll(/\bpublic void trainieren \( Datenpunkt punkt \) \{/g)];
+  if (methods.length !== 1) return null;
+  const body = code.slice(methods[0].index + methods[0][0].length);
+  let depth = 1;
+  for (let index = 0; index < body.length; index++) {
+    if (body[index] === '{') depth++;
+    if (body[index] === '}' && --depth === 0) return body.slice(0, index).trim();
+  }
+  return null;
+}
+
+
+function evaluateTrainingSumByRules_(answer, task) {
+  // Andere Rechenwege bleiben bei der semantischen Bewertung.
+  const body = trainingMethodBodyForRules_(answer);
+  if (body === null) return null;
+  const declaration = body.match(/^double gewichtete_Summe = ([^;{}]+) ;/);
+  if (!declaration) return null;
+
+  const products = input => {
+    const getter = `punkt . gibEingabewertX${input} ( )`;
+    return [`w_${input} * ${getter}`, `${getter} * w_${input}`];
+  };
+  const expressions = products(1).flatMap(first => products(2).flatMap(second =>
+    [`${first} + ${second}`, `${second} + ${first}`]));
+  if (!expressions.includes(declaration[1])) return null;
+
+  return {
+    ok: true, points: task.maxPoints, maxPoints: task.maxPoints,
+    status: task.statusLabels.correct, strengths: [], missing: [],
+    feedback: 'Sehr gut, alles richtig'
+  };
+}
+
+
+function evaluateTrainingOutputByRules_(answer, task) {
+  const body = trainingMethodBodyForRules_(answer);
+  if (body === null) return null;
+  // Schritt 2 wird hier nicht bewertet. Nur der direkt folgende,
+  // tatsächlich ausgeführte Ausgabeschritt darf die Erfolgserkennung auslösen.
+  const output = body.replace(/^double gewichtete_Summe = [^;{}]+ ; /, '');
+  const matched = output.match(/^int berechnete_ausgabe = 0 ; if \( (?:gewichtete_Summe > theta|theta < gewichtete_Summe) \) (?:\{ berechnete_ausgabe = 1 ; \}|berechnete_ausgabe = 1 ;)(?: else \{ berechnete_ausgabe = 0 ; \})?(?= |$)/);
+  if (!matched) return null;
+  const rest = output.slice(matched[0].length).trim();
+  // Keine nachträgliche Überschreibung und keine weiteren Ausgabezweige
+  // übergehen. Unbekannte Varianten bleiben bei der KI-Bewertung.
+  if (rest && (!rest.startsWith('int delta = punkt . gibLabel ( ) - berechnete_ausgabe ;') ||
+    /\bberechnete_ausgabe\b/.test(rest.replace('int delta = punkt . gibLabel ( ) - berechnete_ausgabe ;', '')))) return null;
+  return {
+    ok: true, points: task.maxPoints, maxPoints: task.maxPoints,
+    status: task.statusLabels.correct, strengths: [], missing: [],
+    feedback: 'Sehr gut, alles richtig'
+  };
+}
+
+
+function evaluateTrainingUpdatesByRules_(answer, task) {
+  const body = trainingMethodBodyForRules_(answer);
+  if (body === null) return null;
+  // Nur den bekannten, bedingungslos erreichten Aufbau nach Schritt 3
+  // erkennen. Frühere Rechenfehler sind nicht Teil dieser Teilaufgabe.
+  const prefix = body.match(/^double gewichtete_Summe = [^;{}]+ ; int berechnete_ausgabe = [01] ; (?:if \( gewichtete_Summe (?:>|> =|<|< =|= =|! =) theta \) \{ (?:berechnete_ausgabe = [01] ; )?\}(?: else \{ (?:berechnete_ausgabe = [01] ; )?\})? )?int delta = punkt \. gibLabel \( \) - berechnete_ausgabe ; /);
+  if (!prefix) return null;
+  let updates = body.slice(prefix[0].length);
+  // Die vorhandene reine Parameteranzeige ist erlaubt, weitere unbekannte
+  // Anweisungen könnten das Ergebnis überschreiben und bleiben ungeprüft.
+  updates = updates.replace(/ System \. out \. println \( LITERAL \+ w_1 \+ LITERAL \+ w_2 \+ LITERAL \+ theta \) ;$/, '');
+  updates = updates.replace(/\bthis \. (w_1|w_2|theta|lernrate)\b/g, '$1');
+
+  const products = factors => factors.length === 1 ? factors : factors.flatMap((factor, index) =>
+    products(factors.filter((_, other) => other !== index)).map(rest => `${factor} * ${rest}`));
+  const statements = (attribute, sign, factors) => products(factors).flatMap(term =>
+    [`${attribute} = ${attribute} ${sign} ${term}`, `${attribute} ${sign} = ${term}`]);
+  const validBlock = (block, branchDelta) => {
+    const entries = block.trim().split(';').map(statement => statement.trim());
+    if (entries.length !== 4 || entries.pop() !== '') return false;
+    const expected = ['w_1', 'w_2', 'theta'].map((attribute, index) => {
+      const factors = index < 2 ? ['lernrate', `punkt . gibEingabewertX${index + 1} ( )`] : ['lernrate'];
+      const generalSign = index < 2 ? '+' : '-';
+      const allowed = statements(attribute, generalSign, ['delta', ...factors]);
+      if (branchDelta !== null) {
+        const explicitSign = branchDelta === 1 ? generalSign : generalSign === '+' ? '-' : '+';
+        allowed.push(...statements(attribute, explicitSign, factors));
+      }
+      return new Set(allowed);
+    });
+    // Jedes Attribut genau einmal; keine lokalen Kopien, weiteren Aufrufe
+    // oder unbekannten Ausdrücke. Es wird kein Schülercode ausgeführt.
+    return expected.every(allowed => entries.filter(entry => allowed.has(entry)).length === 1);
+  };
+  const branches = updates.match(/^if \( delta = = 1 \) \{ ([^{}]*)\} else if \( delta = = - 1 \) \{ ([^{}]*)\}$/);
+  if (branches) {
+    if (!validBlock(branches[1], 1) || !validBlock(branches[2], -1)) return null;
+  } else if (!validBlock(updates, null)) return null;
+
+  return {
+    ok: true, points: task.maxPoints, maxPoints: task.maxPoints,
+    status: task.statusLabels.correct, strengths: [], missing: [],
+    feedback: 'Sehr gut, alles richtig'
+  };
 }
 
 

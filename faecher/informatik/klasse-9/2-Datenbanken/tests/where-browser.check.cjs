@@ -70,9 +70,12 @@ const references = [
     await check('simple',2,'SELECT * FROM users WHERE country = Deutschland','braucht einfache Anführungszeichen');
     await check('simple',2,"SELECT * FROM users WHERE land = 'Deutschland'",'hinter WHERE');
     await check('simple',2,"SELECT * FROM users WHERE country = 'Atlantis'",'Noch nicht korrekt:');
+    await check('simple',1,"SELECT * FROM users WHERE gender = 'female' AND id < 900000",'WHERE-Bedingung schließt auch passende Mitglieder aus');
+    await check('simple',1,"SELECT * FROM users AS u WHERE gender = 'female' AND 1=1",'Korrekt:');
+    await check('fast',17,"SELECT * FROM main.users WHERE email LIKE '%@instahub.test'",'Korrekt:');
     await page.locator('#tab-simple').click();await page.locator('#task-d-where textarea').fill('Die Tabelle users zeigt Benutzernamen und Wohnorte aus München.');
     await page.locator('#task-d-where button.primary-button').click();await page.waitForFunction(()=>document.querySelector('#task-d-where .server-feedback')?.textContent.includes('3 von 3 Punkten'));
-    assert.match(await page.locator('#task-d-where .server-feedback').textContent(),/korrekt/);
+    assert.match(await page.locator('#task-d-where .server-feedback').textContent(),/Sehr gut, alles richtig/);
     if(screenshotDir)await page.screenshot({path:join(screenshotDir,'where-aufgaben-desktop.png'),fullPage:true});
     await page.locator('#task-d-where textarea').fill('Die Tabelle users zeigt Benutzernamen und Wohnorte.');
     assert.equal(await page.locator('#task-d-where .server-feedback').textContent(),'','Eingabeänderung löscht alte Punkte');

@@ -197,7 +197,35 @@ public class Datenpunkt {
         <div id="tasks-einfach" hidden>
           <section class="card" aria-labelledby="sum-title"><h2 id="sum-title">2. Gewichtete Summe</h2><p><strong>Ab jetzt geht es um die Methode <code>trainieren</code>.</strong></p><p><strong>Ersetze</strong> den Platzhalter für <code>gewichtete_Summe</code> durch die gewichtete Summe der beiden Eingabewerte von <code>punkt</code>.</p><button type="button" class="primary-button" data-code-task="11-6-einfach-summe">Code zu Schritt 2 prüfen</button><div id="result-11-6-einfach-summe" class="feedback" aria-live="polite" hidden></div><details><summary>Hilfe 1</summary><p>Es gilt die Formel: Gewichtete Summe <code>a = w_1 * x_1 + w_2 * x_2</code>. Setze diese Formel in Programmcode um.</p></details><details><summary>Hilfe 2</summary><p>Schaue die Attribute der Klasse <code>Datenpunkt</code> in der Klasse <code>Datenpunkt</code> nach. Welche Attribute besitzt diese Klasse?</p></details><details><summary>Hilfe 3</summary><p>Die Methode empfängt einen Datenpunkt mit dem Namen <code>punkt</code> als Eingabeparameter.</p><p>Gib in Zeile 27 hinter dem Ist-Gleich-Zeichen (=) Folgendes ein: <code>punkt</code>.</p><p>Wenn du einen Punkt hinter dieses Objekt setzt, werden alle verfügbaren Methoden der Klasse <code>Datenpunkt</code> als Liste angezeigt. Wähle eine passende Methode aus.</p></details></section>
           <section class="card" aria-labelledby="output-title"><h2 id="output-title">3. Ausgabe bestimmen</h2><p><strong>Arbeite weiterhin in der Methode <code>trainieren</code>.</strong></p><p><strong>Ergänze</strong> beide Zweige der Treppenfunktion, damit <code>berechnete_ausgabe</code> bei Überschreiten des Schwellenwerts 1 und sonst 0 enthält.</p><button type="button" class="primary-button" data-code-task="11-6-einfach-ausgabe">Code zu Schritt 3 prüfen</button><div id="result-11-6-einfach-ausgabe" class="feedback" aria-live="polite" hidden></div><details><summary>Hilfe 1</summary><p>Überlege, in welchem Zweig die Ausgabe 1 sein muss.</p></details><details><summary>Hilfe 2</summary><p>Bei Gleichheit mit <code>theta</code> ist die Ausgabe 0. Nur bei größerer Summe ist sie 1.</p></details><details><summary>Hilfe 3</summary><p>Setze <code>berechnete_ausgabe</code> im <code>&gt;</code>-Zweig auf 1 und im anderen Zweig auf 0.</p></details></section>
-          <section class="card" aria-labelledby="adjust-title"><h2 id="adjust-title">4. Parameter anpassen</h2><p><strong>Ergänze</strong> die Anpassung von <code>w_1</code>, <code>w_2</code> und <code>theta</code> für <code>delta = 1</code> und <code>delta = -1</code>. Bei <code>delta = 0</code> bleiben alle drei Werte unverändert.</p><button type="button" class="primary-button" data-code-task="11-6-einfach-anpassung">Code zu Schritt 4 prüfen</button><div id="result-11-6-einfach-anpassung" class="feedback" aria-live="polite" hidden></div><details><summary>Hilfe 1</summary><p>Es gelten die Formeln:</p><ul><li>Gewichte: wᵢ neu = wᵢ alt + δ · α · xᵢ</li><li>Schwellenwert: θ neu = θ alt − δ · α</li></ul><p>Dabei steht δ für <code>delta</code>, α für <code>lernrate</code> und θ für <code>theta</code>. Verwende die Gewichtsformel für <code>w_1</code> mit <code>x_1</code> und für <code>w_2</code> mit <code>x_2</code>. Setze diese Formeln in Programmcode um.</p></details><details><summary>Hilfe 2</summary><p>Bei <code>delta = 1</code> wachsen die Gewichte entsprechend den Eingaben und <code>theta</code> sinkt; bei <code>delta = -1</code> kehren sich die Vorzeichen um.</p></details><details><summary>Hilfe 3</summary><p>Verwende bei jeder Änderung <code>lernrate</code> und die Getter von <code>punkt</code>. Prüfe besonders das Vorzeichen der Änderung von <code>theta</code>.</p></details></section>
+          <section class="card" aria-labelledby="adjust-title">
+            <h2 id="adjust-title">4. Parameter anpassen</h2><p><strong>Ergänze</strong> die Anpassung von <code>w_1</code>, <code>w_2</code> und <code>theta</code> für <code>delta = 1</code> und <code>delta = -1</code>. Bei <code>delta = 0</code> bleiben alle drei Werte unverändert.</p><button type="button" class="primary-button" data-code-task="11-6-einfach-anpassung">Code zu Schritt 4 prüfen</button><div id="result-11-6-einfach-anpassung" class="feedback" aria-live="polite" hidden></div>
+            <details>
+              <summary>Hilfe 1</summary>
+              <p><strong>Ohne <code>delta</code> als Faktor:</strong> Setze den Wert von <code>delta</code> bereits in die Formeln ein.</p>
+              <p>Im Zweig <code>delta == 1</code> gilt:</p>
+              <ul>
+                <li>w₁ neu = w₁ alt + lernrate · x₁</li>
+                <li>w₂ neu = w₂ alt + lernrate · x₂</li>
+                <li>theta neu = theta alt − lernrate</li>
+              </ul>
+              <p>Im Zweig <code>delta == -1</code> gilt:</p>
+              <ul>
+                <li>w₁ neu = w₁ alt − lernrate · x₁</li>
+                <li>w₂ neu = w₂ alt − lernrate · x₂</li>
+                <li>theta neu = theta alt + lernrate</li>
+              </ul>
+              <p>Dabei sind x₁ und x₂ die Eingabewerte von <code>punkt</code>; w₁ und w₂ heißen im Code <code>w_1</code> und <code>w_2</code>.</p>
+              <p><strong>Alternativ mit <code>delta</code> als Faktor:</strong> Verwende in beiden Zweigen dieselben Formeln:</p>
+              <ul>
+                <li>w₁ neu = w₁ alt + delta · lernrate · x₁</li>
+                <li>w₂ neu = w₂ alt + delta · lernrate · x₂</li>
+                <li>theta neu = theta alt − delta · lernrate</li>
+              </ul>
+              <p><strong>Tausche dann kein zusätzliches Vorzeichen:</strong> Das <code>+</code> vor <code>delta</code> bei den Gewichten und das <code>−</code> vor <code>delta</code> bei <code>theta</code> bleiben auch im Zweig <code>delta == -1</code> stehen. Der Faktor <code>delta = -1</code> kehrt das Vorzeichen der Änderung bereits um; die bisherigen Werte werden nicht negiert.</p>
+            </details>
+            <details><summary>Hilfe 2</summary><p>Prüfe im Zweig <code>delta == -1</code> die doppelte Verneinung: <code>theta - delta * lernrate</code> wird zu <code>theta - (-1) * lernrate</code>, also zu <code>theta + lernrate</code>. Mit <code>delta</code> bleibt das Minus vor <code>delta</code>; ohne <code>delta</code> steht hier ein Plus vor <code>lernrate</code>.</p></details>
+            <details><summary>Hilfe 3</summary><p>Verwende bei jeder Änderung <code>lernrate</code> und die Getter von <code>punkt</code>. Prüfe besonders das Vorzeichen der Änderung von <code>theta</code>.</p></details>
+          </section>
           <details class="card" id="code-snippets-help">
             <summary>Code-Schnipsel zum Sortieren</summary>
             <p><strong>Ordne</strong> die Code-Schnipsel den nummerierten Feldern in der Methode <code>trainieren</code> zu.</p>

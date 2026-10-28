@@ -169,6 +169,18 @@
   },
   {
     "taskId": "inf9-db3-beschreibe-where",
+    "kind": "correct",
+    "expectedPoints": 3,
+    "answer": "es werden benutzernamen und städte von users ausgegeben die in münchen wohnen"
+  },
+  {
+    "taskId": "inf9-db3-beschreibe-where",
+    "kind": "correct",
+    "expectedPoints": 3,
+    "answer": "es werden benutzernamen und städte von nutzern ausgegeben die in münchen wohnen"
+  },
+  {
+    "taskId": "inf9-db3-beschreibe-where",
     "kind": "partial",
     "expectedPoints": 2,
     "answer": "Aus users werden Benutzernamen und Wohnorte ausgegeben."

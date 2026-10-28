@@ -45,6 +45,39 @@ add('11-6-einfach-anpassung', 'beide Fehlerzweige mit unterschiedlicher Reihenfo
 add('11-6-einfach-anpassung', 'allgemeine Formel trotz offener früherer Schritte',
   'double gewichtete_Summe = 0; int berechnete_ausgabe = 0;\n' + delta + '\n' + updates, 5, '',
   'Diese allgemeine Formel erfüllt bei korrekter Verwendung alle fünf Aspekte');
+const deltaBranches = `if (delta == 1) {
+  w_1 = w_1 + delta * lernrate * punkt.gibEingabewertX1();
+  w_2 = w_2 + delta * lernrate * punkt.gibEingabewertX2();
+  theta = theta - delta * lernrate;
+} else if (delta == -1) {
+  w_1 = w_1 + delta * lernrate * punkt.gibEingabewertX1();
+  w_2 = w_2 + delta * lernrate * punkt.gibEingabewertX2();
+  theta = theta - delta * lernrate;
+}`;
+add('11-6-einfach-anpassung', 'identische Delta-Formeln in beiden Zweigen',
+  [sum, output, delta, deltaBranches].join('\n'), 5, '',
+  'theta alt + lernrate');
+add('11-6-einfach-anpassung', 'ausschließlich Theta im Minuszweig mit falschem Delta-Vorzeichen',
+  [sum, output, delta, deltaBranches.replace(/theta = theta - delta \* lernrate;\n}$/, 'theta = theta + delta * lernrate;\n}')].join('\n'), 4,
+  'Ersetze im Zweig delta == -1 theta = theta + delta * lernrate durch theta = theta - delta * lernrate.',
+  'sind das 4 von 5 Punkten');
+cases.push({
+  taskId: '11-6-einfach-anpassung',
+  name: 'gemeldeter Code: w_2 fehlt und negative Altwerte im Minuszweig',
+  body: [sum, output, delta, `if (delta == 1) {
+    w_1 = w_1 + delta * lernrate * punkt.gibEingabewertX1();
+    theta = theta - delta * lernrate;
+  } else if (delta == -1) {
+    w_1 = - w_1 - delta * lernrate * punkt.gibEingabewertX1();
+    theta = -theta + delta * lernrate;
+  }`].join('\n'),
+  expectedPoints: 2,
+  missing: [
+    'Bei delta = -1 sind die Vorzeichen der Gewichtsänderungen falsch; theta wird bei delta = -1 nicht um die Lernrate erhöht.',
+    'w_2 wird nicht angepasst.'
+  ],
+  ruleFragment: 'Benenne nur tatsächlich falsche Attribute'
+});
 add('11-6-einfach-anpassung', 'theta-Vorzeichen für beide Fehlerzeichen falsch',
   sum + '\n' + output + '\n' + delta + '\n' + updates.replace('theta -=', 'theta +='), 3,
   'Ersetze in trainieren theta += delta * lernrate durch theta -= delta * lernrate.',

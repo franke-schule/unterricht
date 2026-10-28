@@ -879,13 +879,53 @@ function featureIssue(task,analysis) {
   if (task.number===21 && (!tokens.some((token)=>token.value==='(') || !tokens.some((token)=>token.value===')'))) return {level:'partial',text:'Teilweise korrekt: Die Berliner Bedingung muss für beide Vornamen gelten. Fasse die beiden Namensbedingungen mit Klammern zusammen.'};
   return null;
 }
-function withEmailProbe(sql) {
-  const probe = USER_COLUMN_NAMES.map((column) => {
-    const value = column === 'email' ? "'probe@outside.example'" :
-      ['id', 'centimeters', 'is_active'].includes(column) ? '-999999' : "'__where_probe__'";
-    return `${value} AS ${quoteIdentifier(column)}`;
-  }).join(', ');
-  return `WITH users AS (SELECT ${probe})\n${sql}`;
+function withWhereProbes(task, sql) {
+  // Die bestehende E-Mail-Gegenprobe auf alle Filteraufgaben erweitern.
+  // Werte an der Vergleichsgrenze und Kombinationen erfüllter/nicht erfüllter
+  // Teilbedingungen prüfen; users und die angezeigten Ergebnisse bleiben gleich.
+  const choices = new Map();
+  const tokens = whereTokens(analyzeQuery(task.sql));
+  tokens.forEach((token, index) => {
+    const column = identifierValue(token)?.toLowerCase();
+    const operator = tokens[index + 1]?.value.toUpperCase();
+    const literal = tokens[index + 2];
+    if (!USER_COLUMN_NAMES.includes(column) || !['=', '<', '>', '<=', '>=', '!=', '<>', 'LIKE'].includes(operator) || !literal) return;
+    let values;
+    if (literal.type === 'number') {
+      const value = Number(literal.value);
+      values = column === 'is_active' ? [0, 1, null] : [value - 1, value, value + 1, null];
+    } else if (literal.type === 'string' && literal.value.startsWith("'")) {
+      const value = literal.value.slice(1, -1).replaceAll("''", "'");
+      if (column === 'birthday') {
+        // Nur gültige ISO-Daten: Monatssuche nicht durch künstliche,
+        // ungültige Datumszeichenfolgen fälschlich als falsch bewerten.
+        values = ['2003-01-03', '2007-03-01', '2007-03-31', '2007-04-03', null];
+        if (operator !== 'LIKE') {
+          const date = new Date(value + 'T00:00:00Z');
+          values.push(value, ...[-1, 1].map(days => new Date(date.getTime() + days * 86400000).toISOString().slice(0, 10)));
+        }
+      } else {
+        const stem = operator === 'LIKE' ? value.replaceAll('%', '').replaceAll('_', 'x') : value;
+        values = [stem, `x${stem}`, `${stem}x`, `x${stem}x`, '__anderer_wert__', '', null];
+      }
+    } else return;
+    choices.set(column, [...new Set([...(choices.get(column) || []), ...values])]);
+  });
+  let rows = [{}];
+  choices.forEach((values, column) => { rows = rows.flatMap(row => values.map(value => ({ ...row, [column]: value }))); });
+  const tuples = rows.map((row, index) => '(' + USER_COLUMN_NAMES.map(column => {
+    const fallback = column === 'id' ? 900000 + index : column === 'centimeters' ? 170 : column === 'is_active' ? 1 : `__${column}_${index}__`;
+    return sqlValue(Object.hasOwn(row, column) ? row[column] : fallback, column);
+  }).join(', ') + ')');
+  // main.users bezeichnet dieselbe Tabelle und muss auch an der Gegenprobe
+  // teilnehmen; SQL-Bezeichner bearbeiten, keine Texte oder Kommentare ersetzen.
+  const inputTokens = sqlTokens(sql);
+  for (let index = inputTokens.length - 3; index >= 0; index -= 1) {
+    if (identifierValue(inputTokens[index])?.toLowerCase() === 'main' && inputTokens[index + 1].value === '.' && identifierValue(inputTokens[index + 2])?.toLowerCase() === 'users') {
+      sql = sql.slice(0, inputTokens[index].start) + sql.slice(inputTokens[index + 2].start);
+    }
+  }
+  return `WITH users (${USER_COLUMN_NAMES.map(quoteIdentifier).join(', ')}) AS (VALUES ${tuples.join(', ')})\n${sql}`;
 }
 async function evaluate(task,analysis,actual) {
   const actualNames=actualColumns(analysis,actual), expectedNames=expectedColumns(task);
@@ -906,11 +946,16 @@ async function evaluate(task,analysis,actual) {
   }
   const issue=featureIssue(task,analysis); if (issue) return issue;
   const equal=compareRelations(actual,reference,{columnOrder:task.number!==19,columnLabels:false,rowOrder:false}).correct;
-  if (task.number===17 && equal) {
-    const probeActual=await cachedExec(withEmailProbe(analysis.source));
-    const probeReference=await cachedExec(withEmailProbe(task.sql));
-    if (!compareRelations(probeActual,probeReference,{columnOrder:true,columnLabels:false,rowOrder:false}).correct)
-      return {level:'hint',text:'Noch nicht korrekt: Alle E-Mail-Adressen passen derzeit, aber verlangt ist eine wirksame LIKE-Bedingung für die Endung `@instahub.test`.'};
+  if (equal) {
+    const probeActual=await cachedExec(withWhereProbes(task,analysis.source));
+    const probeReference=await cachedExec(withWhereProbes(task,task.sql));
+    if (!compareRelations(probeActual,probeReference,{columnOrder:task.number!==19,columnLabels:false,rowOrder:false}).correct) {
+      if (task.number===17) return {level:'hint',text:'Noch nicht korrekt: Alle E-Mail-Adressen passen derzeit, aber verlangt ist eine wirksame LIKE-Bedingung für die Endung `@instahub.test`.'};
+      const subset=probeActual.values.length===0 || relationSubset(probeActual,probeReference,actualNames,expectedNames);
+      return {level:'partial',text:subset
+        ? 'Teilweise korrekt: Deine WHERE-Bedingung schließt auch passende Mitglieder aus. Prüfe zusätzliche Einschränkungen und Vergleichsgrenzen.'
+        : 'Teilweise korrekt: Deine WHERE-Bedingung kann auch Mitglieder auswählen, die der Auftrag ausschließt. Prüfe Vergleichswerte, Muster und Verknüpfungen.'};
+    }
   }
   if (equal) return {level:'success',text:task.texts.ok,solved:true};
   const where=whereTokens(analysis), words=where.map(tokenKeyword);

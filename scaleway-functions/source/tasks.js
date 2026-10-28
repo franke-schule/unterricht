@@ -984,6 +984,7 @@ const TASKS = {
     codeAnalysisRules: [
       'Bewerte ausschließlich ausführbaren Code zur gewichteten Summe in trainieren, nicht punktKlassifizieren oder Kommentare.',
       'Erkenne äquivalente Hilfsvariablen und Rechenreihenfolgen an.',
+      'Auch double gewichtete_Summe = punkt.gibEingabewertX1()*w_1+punkt.gibEingabewertX2()*w_2; zu Beginn von trainieren erfüllt alle drei Aspekte und erhält 3 von 3 Punkten. Die Reihenfolge der Faktoren in jedem Produkt und die Reihenfolge der beiden Summanden sind gleichwertig; Leerzeichen sind nicht erforderlich.',
       'Prüfe einen Ganzzahlverlust ausschließlich im Rechenweg zur gewichteten Summe: int-Hilfsvariablen oder explizite (int)-Umwandlungen von Eingaben, Produkten oder Summe können Dezimalstellen verlieren. Eine Zuweisung eines double-Ausdrucks an int ohne Cast ist ein Typfehler.',
       'int berechnete_ausgabe = 0; ist korrekt und verursacht keinen Ganzzahlverlust der separat als double gespeicherten gewichteten Summe. Verlange für berechnete_ausgabe und delta kein double und ziehe dafür keine Punkte ab.',
       'Noch leere if-/else-Zweige der Ausgabe in Schritt 3 sowie offene Parameteranpassungen in Schritt 4 gehören nicht zu dieser Teilaufgabe. Sie führen weder zu Punktabzug noch zu Fehlhinweisen.',
@@ -1004,6 +1005,7 @@ const TASKS = {
     codeAnalysisRules: [
       'Prüfe den tatsächlich erreichten Wert von berechnete_ausgabe in trainieren für Summe > theta, Summe < theta und Summe == theta getrennt. Jeder Fall zählt genau einmal; gewichtete_Summe >= theta mit Ausgabe 1 im erfüllten Zweig verliert nur den Punkt für Gleichheit, wenn die anderen beiden Fälle stimmen. Dagegen ist theta >= gewichtete_Summe mit Ausgabe 0 im erfüllten Zweig korrekt.',
       'Akzeptiere funktional gleichwertige Vergleiche, vertauschte Zweige, den ternären Operator und int berechnete_ausgabe = 0; mit anschließendem if ohne else, wenn der erreichte Wert in allen drei Fällen stimmt. Ein ausdrückliches else oder eine erneute Zuweisung von 0 ist dann nicht erforderlich.',
+      'int berechnete_ausgabe = 0; if (gewichtete_Summe > theta) { berechnete_ausgabe = 1; } else { berechnete_ausgabe = 0; } ist vollständig korrekt und erhält 3 von 3 Punkten. Lies das tatsächlich geschriebene Vergleichszeichen: Bei diesem Code steht bereits >; behaupte nicht, dort stehe >=, und fordere keine Ersetzung.',
       'Ein in trainieren verwendetes Ergebnis von punktKlassifizieren(punkt.gibEingabewertX1(), punkt.gibEingabewertX2()) ist gleichwertig. Prüfe bei einem solchen Aufruf auch den tatsächlich vorhandenen Methodenkörper und die übergebenen Eingaben. Unaufgerufener Demonstrationscode in punktKlassifizieren allein löst Schritt 3 nicht.',
       'Verlange für berechnete_ausgabe oder delta kein double; sie sind keine reellwertigen Zwischenwerte der gewichteten Summe. Verlange weder return noch Konsolenausgabe in der void-Methode trainieren. Eine reine Konsolenausgabe ersetzt die Bestimmung von berechnete_ausgabe nicht.',
       'Kommentare, Java-Code in Zeichenketten, ein unbenutzter Hilfswert und feste Ausgaben unabhängig vom Schwellenvergleich belegen keine vollständige Lösung. Der unveränderte Startwert 0 erfüllt den Fall oberhalb von theta nicht.',
@@ -1024,6 +1026,8 @@ const TASKS = {
     codeAnalysisRules: [
       'Bewerte ausschließlich ausführbare Parameteranpassungen in trainieren für einen gegebenen Wert von delta. Frühere offene oder falsche Schritte zur Summe, Ausgabe oder Berechnung von delta mindern hier weder Punkte noch führen sie zu Fehlhinweisen. Kommentare und unbenutzte Methoden allein sind keine Anpassung.',
       'Akzeptiere getrennte Fehlerzweige und die allgemeine Delta-Formel ohne if: w_1 += delta * lernrate * punkt.gibEingabewertX1(); w_2 += delta * lernrate * punkt.gibEingabewertX2(); theta -= delta * lernrate;. Diese allgemeine Formel erfüllt bei korrekter Verwendung alle fünf Aspekte und erhält 5 von 5 Punkten.',
+      'Setze bei der Prüfung jedes Zweigs dessen delta-Wert ein: theta = theta - delta * lernrate bedeutet bei delta = -1 ausdrücklich theta alt + lernrate, also eine Erhöhung. Identische Formeln w_1 = w_1 + delta * lernrate * punkt.gibEingabewertX1(); w_2 = w_2 + delta * lernrate * punkt.gibEingabewertX2(); theta = theta - delta * lernrate; in beiden Zweigen delta == 1 und delta == -1 sind vollständig korrekt und erhalten 5 von 5 Punkten. Behaupte bei diesem Code nicht, theta werde im Minuszweig vermindert.',
+      'Steht ausschließlich im Zweig delta == -1 stattdessen theta = theta + delta * lernrate;, wird theta dort fälschlich vermindert. Bei ansonsten korrekten beiden Gewichten, korrektem Pluszweig und unverändertem Nullfall sind das 4 von 5 Punkten; benenne ausschließlich diese falsche theta-Zuweisung.',
       'Akzeptiere = alter Wert + Änderung, += bzw. -=, Hilfsvariablen, this.w_1/this.w_2/this.theta, umgestellte Produkte und eine beliebige Reihenfolge unabhängiger Parameteränderungen. Verlange keine bestimmte Variablenschreibweise und keinen zusätzlichen else-Zweig für delta = 0.',
       'Prüfe die Formeln mit Dezimalwerten, einer Lernrate ungleich 1 sowie negativen und nullwertigen Eingaben. Plus lernrate mal Eingabe bedeutet bei negativer Eingabe kein zwingendes numerisches Wachsen des Gewichts. Entscheidend ist die vorzeichenrichtige Formel, nicht eine pauschale Aussage über Wachsen oder Sinken.',
       'Die neuen Werte müssen in den Attributen w_1, w_2 und theta ankommen. Nur eine Änderung lokaler Kopien oder eine Konsolenausgabe genügt nicht. Die Lernrate darf nicht weggelassen oder fest auf 1 gesetzt werden; X1 und X2 dürfen nicht vertauscht werden.',
@@ -2085,7 +2089,7 @@ const TASKS = {
   'inf9-db3-beschreibe-where': {
     sqlDescription: {
       requireUnchangedSource: false,
-      aliases: { users: ['Mitgliedertabelle', 'Benutzertabelle'], username: ['Benutzername', 'Benutzernamen'], city: ['Wohnort', 'Stadt'] }
+      aliases: { users: ['Mitgliedertabelle', 'Benutzertabelle', 'Nutzertabelle', 'Nutzer', 'Nutzern', 'Benutzer', 'Benutzern', 'Mitglieder', 'Mitgliedern'], username: ['Benutzername', 'Benutzernamen'], city: ['Wohnort', 'Wohnorte', 'Stadt', 'Städte'] }
     },
     title: 'Informatik Klasse 9 – Datenbanken Aufgabe 3: WHERE beschreiben',
     grade: 9,
@@ -2094,17 +2098,19 @@ const TASKS = {
     instruction: 'Prüfe (1) Tabelle users/Mitgliedertabelle, (2) genau username und city als Benutzername und Wohnort, (3) nur Mitglieder aus München. 3 Punkte = korrekt, 1–2 = teilweise korrekt, 0 = noch nicht korrekt. Begründe knapp und konkret.',
     context: "SELECT username, city\nFROM users\nWHERE city = 'München'",
     expectedAspects: [
-      'Die Daten stammen aus der Tabelle users beziehungsweise der Mitgliedertabelle.',
+      'Die Daten stammen aus users beziehungsweise der Mitgliedertabelle; eine sinngemäße Beschreibung als Daten von Nutzern, Benutzern oder Mitgliedern genügt ebenfalls.',
       'Die Ausgabespalten sind genau username und city, also Benutzername und Wohnort.',
       'Nur Mitglieder mit Wohnort München werden ausgewählt.'
     ],
     rubric: [
-      'Ein Punkt für Tabelle users beziehungsweise Mitgliedertabelle.',
+      'Ein Punkt für users beziehungsweise Mitgliedertabelle als Datenquelle. „Von users“ oder „aus users“ genügt; das zusätzliche Wort Tabelle ist nicht erforderlich. „Von Nutzern“, „von Benutzern“ und „von Mitgliedern“ bezeichnen hier dieselbe Datenquelle und erfüllen diesen Punkt ebenfalls. Verlange dann weder users noch Mitgliedertabelle zusätzlich.',
       'Ein Punkt für genau Benutzername und Wohnort als Ausgabespalten.',
       'Ein Punkt für die Einschränkung auf Mitglieder mit Wohnort München.'
     ],
     feedbackHints: [
       'Akzeptiere sinngemäße Wörter und verständliche Rechtschreibfehler.',
+      'Bewertungsbeispiel für 3 von 3 Punkten: „es werden benutzernamen und städte von users ausgegeben die in münchen wohnen“. „Von users“ nennt bereits die Datenquelle; Benutzername und Stadt nennen die Ausgabespalten, und „die in München wohnen“ beschreibt die Einschränkung. Keiner dieser Aspekte fehlt.',
+      'Bewertungsbeispiel für 3 von 3 Punkten: „es werden benutzernamen und städte von nutzern ausgegeben die in münchen wohnen“. Nutzer beziehungsweise Nutzern ist in diesem Zusammenhang gleichwertig mit users oder Mitgliedertabelle; behaupte nicht, die Datenquelle sei falsch oder fehle.',
       'Weder Mitgliedernamen noch Zeilenzahl noch eine Aussage zur unveränderten Tabelle sind erforderlich.',
       'Bei Fehlern erkannte und fehlende Aspekte nennen, aber nicht die vollständige Musterbeschreibung.'
     ],
