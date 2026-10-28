@@ -1,4 +1,4 @@
-import { evaluateSemanticAnswer, evaluateCodeAnswer, renderCompactEvaluation } from './semantic-answer.mjs?v=20261022-feedback-two-sentences';
+import { evaluateSemanticAnswer, evaluateCodeAnswer, renderCompactEvaluation } from './semantic-answer.mjs?v=20261029-single-improvement';
 import { setupCodeSnippetOrder } from './code-snippet-order.mjs';
 
 const SERVER_URL = 'https://unterrichtkiichezbn4-ki-auswertung.functions.fnc.fr-par.scw.cloud/';
@@ -88,7 +88,7 @@ function renderEvaluation(box, result, fallbackKey) {
   box.hidden = false;
   const level = resultLevel(result);
   box.className = 'feedback ' + ['success','partial','error'][level];
-  renderCompactEvaluation(box, result);
+  renderCompactEvaluation(box, result, { maxHints: 1 });
 }
 function serverError(error) {
   const message = error?.message || 'Die Auswertung konnte nicht abgeschlossen werden.';

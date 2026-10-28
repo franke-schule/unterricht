@@ -54,6 +54,27 @@ test('ohne missing wird individueller Feedbacktext einmal als Stichpunkt verwend
   assert.equal(container.children[1].textContent, 'Ergänze die Ausgabe.');
 });
 
+test('Einzelhinweis zeigt bei mehreren Fehlern nur den nächsten Schritt und ersetzt ihn beim erneuten Prüfen', () => {
+  const container = box();
+  const first = 'Ergänze im Zweig delta == 1 die Anpassung von w_2.';
+  const next = 'Ersetze im Zweig delta == -1 das Plus vor delta bei theta durch ein Minus.';
+  renderCompactEvaluation(container, { ...partial, missing: [first + ' Prüfe auch theta.', next] }, { maxHints: 1 });
+  assert.deepEqual(container.children[1].children.map(item => item.textContent), [first]);
+  assert.doesNotMatch(container.textContent, /theta/);
+  renderCompactEvaluation(container, { ...partial, points: 2, missing: [next] }, { maxHints: 1 });
+  assert.deepEqual(container.children[1].children.map(item => item.textContent), [next]);
+  assert.doesNotMatch(container.textContent, /w_2/);
+  renderCompactEvaluation(container, { ...partial, points: 3 }, { maxHints: 1 });
+  assert.equal(container.textContent, '3 von 3 Punkten – Sehr gut, alles richtig');
+});
+
+test('Einzelhinweis begrenzt auch älteren Feedbacktext und erhält vollständige Code-Ersetzungen', () => {
+  const container = box();
+  const hint = 'Ersetze `theta = theta + delta * lernrate;` durch `theta = theta - delta * lernrate;`.';
+  renderCompactEvaluation(container, { ...partial, missing: [], feedback: hint + ' Ergänze w_2.' }, { maxHints: 1 });
+  assert.deepEqual(container.children[1].children.map(item => item.textContent), [hint]);
+});
+
 test('erneutes Prüfen ersetzt die vorherige Rückmeldung und behandelt Code/HTML sicher als Text', () => {
   const container = box();
   renderCompactEvaluation(container, partial);

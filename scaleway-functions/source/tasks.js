@@ -951,6 +951,7 @@ const TASKS = {
   },
 
   '11-6-klassifizieren': {
+    maxFeedbackHints: 1,
     title: 'Klasse 11 Aufgabe 6.2: punktKlassifizieren erklären',
     grade: 11,
     maxPoints: 4,
@@ -978,6 +979,7 @@ const TASKS = {
   },
 
   '11-6-einfach-summe': {
+    maxFeedbackHints: 1,
     title: 'Klasse 11 Aufgabe 6.2 einfach: gewichtete Summe', grade: 11, responseType: 'code', maxPoints: 3,
     instruction: 'Bewerte ausschließlich die gewichtete Summe in trainieren; spätere offene Schritte mindern die Punkte nicht.',
     codeAnalysisContext: 'Java-Klasse Perzeptron; trainieren(Datenpunkt punkt). Datenpunkt bietet gibEingabewertX1(), gibEingabewertX2() (double) und gibLabel() (int). w_1, w_2, theta und lernrate sind double. gewichtete_Summe speichert die reellwertige Summe als double. berechnete_ausgabe speichert erst in Schritt 3 die binäre Ausgabe 0 oder 1 und ist korrekt als int deklariert; auch delta ist int.',
@@ -999,6 +1001,7 @@ const TASKS = {
     statusLabels: { correct: 'korrekt', partial: 'teilweise korrekt', incorrect: 'noch nicht korrekt' }
   },
   '11-6-einfach-ausgabe': {
+    maxFeedbackHints: 1,
     title: 'Klasse 11 Aufgabe 6.2 einfach: Ausgabe', grade: 11, responseType: 'code', maxPoints: 3,
     instruction: 'Bewerte ausschließlich Schritt 3 in trainieren: die Zuordnung von Summe und Schwellenwert zur Ausgabe. Eine noch falsche oder offene Summenberechnung in Schritt 2 und offene Parameteranpassungen in Schritt 4 mindern hier weder Punkte noch führen sie zu Fehlhinweisen.',
     codeAnalysisContext: 'Java-Klasse Perzeptron; trainieren(Datenpunkt punkt). theta und gewichtete_Summe sind double. berechnete_ausgabe enthält nur 0 oder 1 und ist korrekt als int deklariert; delta ist ebenfalls int. Die vorhandene Methode punktKlassifizieren(double x_1, double x_2) berechnet w_1*x_1 + w_2*x_2 und liefert bei Summe > theta 1, sonst 0. Datenpunkt bietet gibEingabewertX1() und gibEingabewertX2().',
@@ -1020,6 +1023,7 @@ const TASKS = {
     statusLabels: { correct: 'korrekt', partial: 'teilweise korrekt', incorrect: 'noch nicht korrekt' }
   },
   '11-6-einfach-anpassung': {
+    maxFeedbackHints: 1,
     title: 'Klasse 11 Aufgabe 6.2 einfach: Parameter anpassen', grade: 11, responseType: 'code', maxPoints: 5,
     instruction: 'Bewerte ausschließlich die Parameteranpassung in trainieren, nicht frühere noch offene Teilschritte.',
     codeAnalysisContext: 'Java-Klasse Perzeptron; trainieren(Datenpunkt punkt). Für Schritt 4 ist delta der bereits bestimmte Fehler Label minus Ausgabe mit Werten -1, 0 oder 1. w_1, w_2, theta und lernrate sind double. Datenpunkt liefert beide Eingaben über gibEingabewertX1() und gibEingabewertX2() als double. int für berechnete_ausgabe und delta ist korrekt.',
@@ -1045,6 +1049,7 @@ const TASKS = {
     statusLabels: { correct: 'korrekt', partial: 'teilweise korrekt', incorrect: 'noch nicht korrekt' }
   },
   '11-6-schwer-trainieren': {
+    maxFeedbackHints: 1,
     title: 'Klasse 11 Aufgabe 6.2 schwer: trainieren', grade: 11, responseType: 'code', maxPoints: 6,
     instruction: 'Bewerte ausschließlich die vollständige Methode trainieren(Datenpunkt punkt).',
     codeAnalysisContext: 'Java-Klasse Perzeptron; void trainieren(Datenpunkt punkt). Datenpunkt bietet gibEingabewertX1(), gibEingabewertX2() (double) und gibLabel() (int). w_1, w_2, theta und lernrate sind double. Die vorhandene Methode punktKlassifizieren(double x_1, double x_2) berechnet double gewichtete_Summe = w_1*x_1 + w_2*x_2 und liefert bei Summe > theta 1, sonst 0, ohne Parameter zu ändern. int für die binäre Ausgabe und für delta ist korrekt; diese Größen sind nicht die reellwertige Summe.',

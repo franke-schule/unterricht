@@ -73,7 +73,7 @@ cases.push({
   }`].join('\n'),
   expectedPoints: 2,
   missing: [
-    'Bei delta = -1 sind die Vorzeichen der Gewichtsänderungen falsch; theta wird bei delta = -1 nicht um die Lernrate erhöht.',
+    'Ergänze im Zweig delta == 1 die Anpassung von w_2 mit lernrate und punkt.gibEingabewertX2().',
     'w_2 wird nicht angepasst.'
   ],
   ruleFragment: 'Benenne nur tatsächlich falsche Attribute'

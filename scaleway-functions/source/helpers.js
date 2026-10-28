@@ -114,7 +114,7 @@ function normalizeEvaluation_(
 }
 
 
-function compactFeedbackSentences_(values) {
+function compactFeedbackSentences_(values, maxSentences = 2) {
   const result = [];
   const seen = new Set();
   const segmenter = new Intl.Segmenter('de', { granularity: 'sentence' });
@@ -134,7 +134,7 @@ function compactFeedbackSentences_(values) {
       if (!key || seen.has(key) || /^(?:korrigiere dies|ueberarbeite deine antwort mithilfe der hinweise|pruefe (?:deinen code|deine antwort)(?: noch einmal)?)$/.test(key)) continue;
       seen.add(key);
       result.push(sentence);
-      if (result.length === 2) return result;
+      if (result.length === maxSentences) return result;
     }
   }
   return result;
@@ -160,7 +160,7 @@ function formatFinalEvaluation_(evaluation, task) {
     feedback = formatPhysicsFeedbackNotation_(feedback);
     for (let index = 0; index < missing.length; index++) missing[index] = formatPhysicsFeedbackNotation_(missing[index]);
   }
-  result.missing = compactFeedbackSentences_(missing.length ? missing : [feedback]);
+  result.missing = compactFeedbackSentences_(missing.length ? missing : [feedback], task.maxFeedbackHints === 1 ? 1 : 2);
   result.feedback = '';
   return result;
 }

@@ -59,7 +59,7 @@ test('6.2: Vergleichsfälle durchlaufen vollständigen Prompt und Ergebnisanzeig
     assert.equal(calls, 1, fixture.name);
     const result = JSON.parse(response.body).result;
     assert.equal(result.points, fixture.expectedPoints, fixture.name);
-    assert.deepEqual(result.missing, fixture.missing, fixture.name);
+    assert.deepEqual(result.missing, fixture.missing.slice(0, task.maxFeedbackHints || 2), fixture.name);
     assert.deepEqual(result.strengths, [], fixture.name);
     if (!fixture.missing.length) assert.equal(result.feedback, 'Sehr gut, alles richtig', fixture.name);
   }

@@ -68,7 +68,7 @@ export function evaluateSemanticAnswer(parameters) { return evaluate(parameters,
 export function evaluateCodeAnswer(parameters) { return evaluate(parameters, 'code'); }
 
 /** Gemeinsame, knappe Anzeige für Beschreibe- und Programmieraufgaben. */
-export function compactFeedbackSentences(values) {
+export function compactFeedbackSentences(values, maxSentences = 2) {
   const result = [];
   const seen = new Set();
   const segmenter = new Intl.Segmenter('de', { granularity: 'sentence' });
@@ -87,13 +87,13 @@ export function compactFeedbackSentences(values) {
       if (!key || seen.has(key) || /^(?:korrigiere dies|[uü]berarbeite deine antwort mithilfe der hinweise|pr[uü]fe (?:deinen code|deine antwort)(?: noch einmal)?)$/.test(key)) continue;
       seen.add(key);
       result.push(sentence);
-      if (result.length === 2) return result;
+      if (result.length === maxSentences) return result;
     }
   }
   return result;
 }
 
-export function renderCompactEvaluation(container, result, { appendText } = {}) {
+export function renderCompactEvaluation(container, result, { appendText, maxHints = 2 } = {}) {
   const document = container.ownerDocument;
   const complete = result.maxPoints > 0 && result.points === result.maxPoints;
   const heading = document.createElement('strong');
@@ -104,7 +104,7 @@ export function renderCompactEvaluation(container, result, { appendText } = {}) 
   const missing = Array.isArray(result.missing) ? result.missing : [];
   const values = missing.some(item => typeof item === 'string' && item.trim())
     ? missing : String(result.feedback || '').split(/\r?\n/);
-  const hints = compactFeedbackSentences(values);
+  const hints = compactFeedbackSentences(values, maxHints === 1 ? 1 : 2);
   if (!hints.length) hints.push('Ergänze die fehlenden Aspekte deiner Antwort und prüfe erneut.');
   const list = document.createElement('ul');
   for (const hint of hints) {
