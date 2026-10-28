@@ -73,7 +73,7 @@
         \draw[Ink] (0,11*\i)--(-1.5,11*\i);
         \node[left=3pt,font=\scriptsize,text=Ink] at (-1.5,11*\i) {\lab};
       }
-      \node[below=9pt,font=\small,text=Ink] at (39,0) {$U$ in V};
+      \node[anchor=north,font=\small,text=Ink] at (39,-9) {$U$ in V};
       \node[rotate=90,font=\small,text=Ink] at (-22,33) {$I$ in A};
       \ifsolution
         % Ungekühlter Draht: glatte, zunehmend flachere Kennlinie.
@@ -124,7 +124,7 @@
 \hline
 \ifsolution\textcolor{Blue}{Elektrische Spannung}\fi & $U$ & \ifsolution\textcolor{Blue}{Volt (V)}\fi \\
 \hline
-Elektrische Stromstärke & $I$ & Ampere (A) \\
+Elektrische Stromstärke & \ifsolution\textcolor{Blue}{$I$}\fi & \ifsolution\textcolor{Blue}{Ampere (A)}\fi \\
 \hline
 \end{tabularx}
 \vspace{1mm}
