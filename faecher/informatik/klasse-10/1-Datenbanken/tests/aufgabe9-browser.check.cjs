@@ -2,6 +2,7 @@
 const assert = require('node:assert/strict');
 const path = require('node:path');
 const os = require('node:os');
+const fs = require('node:fs');
 const { pathToFileURL } = require('node:url');
 const { chromium } = require(process.env.SCW_PLAYWRIGHT_PACKAGE || path.join(os.homedir(), '.cache/codex-runtimes/codex-primary-runtime/dependencies/node/node_modules/playwright'));
 
@@ -56,6 +57,80 @@ async function main() {
     const page = await context.newPage(); page.on('pageerror', (error) => errors.push(error.message));
     await page.goto(origin + pagePath, { waitUntil: 'domcontentloaded' });
     await page.waitForFunction(() => document.getElementById('data-status')?.classList.contains('success'), null, { timeout: 120000 });
+    assert.equal(await page.locator('#intro-frame-count').innerText(), 'Schritt 1 von 12');
+    assert.equal(await page.locator('#intro-photos-table tbody tr').count(), 6);
+    assert.equal(await page.locator('#intro-result-body tr').count(), 0);
+    assert.match(await page.locator('#intro-users-table caption').innerText(), /^users – Ausschnitt/);
+    assert.match(await page.locator('#intro-photos-table caption').innerText(), /^photos – Ausschnitt/);
+    assert.equal(await page.locator('#intro-sql').innerText(), 'SELECT users.username, photos.url\nFROM users, photos\nWHERE users.id = photos.user_id\n  AND users.id = 2\nORDER BY photos.id');
+    assert.equal(await page.getByText('Verfolge die Animation mit „Weiter“ und „Zurück“. Beobachte, welche Fotos zu Finn gehören und warum nur diese in der Ergebnisrelation erscheinen.').count(), 1);
+    assert.equal(await page.locator('.help-stack details').count(), 3);
+    const screenshotDir = path.join(os.tmpdir(), 'unterricht-aufgabe9-intro-screenshots');
+    fs.mkdirSync(screenshotDir, { recursive: true });
+    const advanceTo = async (target) => { while (Number((await page.locator('#intro-frame-count').innerText()).match(/Schritt (\d+)/)[1]) < target) await page.getByRole('button', { name: 'Einen Animationsschritt weiter' }).click(); };
+    for (const step of [2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12]) {
+      await page.getByRole('button', { name: 'Einen Animationsschritt weiter' }).click();
+      assert.equal(await page.locator('#intro-frame-count').innerText(), `Schritt ${step} von 12`);
+      assert.equal(await page.locator('#intro-result-body tr').count(), Math.max(0, Math.min(4, step - 5)));
+      if (step === 3) {
+        assert.equal(await page.locator('#intro-users-table tbody tr[data-row-id="2"]').getAttribute('class'), 'is-active');
+        assert.equal(await page.locator('#intro-photos-table tbody tr[data-row-id="7"] td:nth-child(2)').innerText(), '2');
+        assert.match(await page.locator('#intro-photos-table tbody tr[data-row-id="7"] td:nth-child(2)').getAttribute('class'), /is-selected/);
+      }
+      if (step === 9) assert.equal(await page.locator('#intro-result-note').innerText(), 'Der Wert in photos.user_id ist 2 und verweist damit auf Finn (users.id = 2).');
+      if ([3, 4, 8, 12].includes(step)) await page.screenshot({ path: path.join(screenshotDir, `desktop-step-${step}.png`), fullPage: true });
+    }
+    assert.equal(await page.getByRole('button', { name: 'Erneut abspielen' }).count(), 1);
+    assert.equal(await page.locator('#intro-result-body tr').count(), 4);
+    await page.getByRole('button', { name: 'Erneut abspielen' }).click();
+    assert.equal(await page.locator('#intro-frame-count').innerText(), 'Schritt 1 von 12');
+    await advanceTo(12);
+    await page.getByRole('button', { name: 'Einen Animationsschritt zurück' }).click();
+    assert.equal(await page.locator('#intro-result-body tr').count(), 4);
+    await page.getByRole('button', { name: 'Einen Animationsschritt zurück' }).click();
+    await page.getByRole('button', { name: 'Einen Animationsschritt zurück' }).click();
+    await page.getByRole('button', { name: 'Einen Animationsschritt zurück' }).click();
+    await page.getByRole('button', { name: 'Einen Animationsschritt zurück' }).click();
+    await page.getByRole('button', { name: 'Einen Animationsschritt zurück' }).click();
+    await page.getByRole('button', { name: 'Einen Animationsschritt zurück' }).click();
+    assert.equal(await page.locator('#intro-frame-count').innerText(), 'Schritt 5 von 12');
+    assert.equal(await page.locator('#intro-result-body tr').count(), 0);
+    await page.evaluate(() => { const stored = JSON.parse(localStorage.getItem('inf10-insta-verbund-aufgabe9-v1')); stored.answers = { P1: 'bleibt erhalten' }; localStorage.setItem('inf10-insta-verbund-aufgabe9-v1', JSON.stringify(stored)); });
+    await page.reload({ waitUntil: 'domcontentloaded' });
+    await page.waitForFunction(() => document.getElementById('data-status')?.classList.contains('success'), null, { timeout: 120000 });
+    assert.equal(await page.locator('#intro-frame-count').innerText(), 'Schritt 5 von 12');
+    await page.evaluate(() => { const stored = JSON.parse(localStorage.getItem('inf10-insta-verbund-aufgabe9-v1')); stored.introStep = 99; localStorage.setItem('inf10-insta-verbund-aufgabe9-v1', JSON.stringify(stored)); });
+    await page.reload({ waitUntil: 'domcontentloaded' });
+    await page.waitForFunction(() => document.getElementById('data-status')?.classList.contains('success'), null, { timeout: 120000 });
+    assert.equal(await page.locator('#intro-frame-count').innerText(), 'Schritt 1 von 12');
+    assert.equal(await page.evaluate(() => JSON.parse(localStorage.getItem('inf10-insta-verbund-aufgabe9-v1')).answers.P1), 'bleibt erhalten');
+    await page.evaluate(() => { const stored = JSON.parse(localStorage.getItem('inf10-insta-verbund-aufgabe9-v1')); delete stored.introStep; stored.answers.P1 = 'alter Speicherstand ohne Intro-Schritt'; localStorage.setItem('inf10-insta-verbund-aufgabe9-v1', JSON.stringify(stored)); });
+    await page.reload({ waitUntil: 'domcontentloaded' });
+    await page.waitForFunction(() => document.getElementById('data-status')?.classList.contains('success'), null, { timeout: 120000 });
+    assert.equal(await page.locator('#intro-frame-count').innerText(), 'Schritt 1 von 12');
+    await page.click('#tab-practice');
+    assert.equal(await page.locator('#input-P1').inputValue(), 'alter Speicherstand ohne Intro-Schritt');
+    await page.click('#tab-intro');
+    assert.equal(await page.locator('#intro-frame-count').innerText(), 'Schritt 1 von 12');
+    for (const width of [1366, 390]) {
+      await page.setViewportSize({ width, height: 800 });
+      if (Number((await page.locator('#intro-frame-count').innerText()).match(/Schritt (\d+)/)[1]) !== 1) await page.getByRole('button', { name: 'Erneut abspielen' }).click();
+      await advanceTo(3); await page.screenshot({ path: path.join(screenshotDir, `${width === 390 ? 'phone' : 'desktop'}-step-3.png`), fullPage: true });
+      await advanceTo(4);
+      await page.screenshot({ path: path.join(screenshotDir, `${width === 390 ? 'phone' : 'desktop'}-step-4.png`), fullPage: true });
+      await advanceTo(8); await page.screenshot({ path: path.join(screenshotDir, `${width === 390 ? 'phone' : 'desktop'}-step-8.png`), fullPage: true });
+      await advanceTo(12); await page.screenshot({ path: path.join(screenshotDir, `${width === 390 ? 'phone' : 'desktop'}-step-12.png`), fullPage: true });
+      if (width === 390) { const metrics = await page.evaluate(() => ({ page: document.documentElement.scrollWidth, viewport: document.documentElement.clientWidth })); assert.ok(metrics.page <= metrics.viewport + 2, `Smartphone Intro: Seitenscroll ${JSON.stringify(metrics)}`); }
+    }
+    await page.getByRole('button', { name: 'Erneut abspielen' }).click();
+    await advanceTo(8);
+    await page.click('#tab-practice');
+    await page.click('#tab-intro');
+    assert.equal(await page.locator('#intro-frame-count').innerText(), 'Schritt 8 von 12');
+    assert.equal(await page.locator('#intro-result-body tr').count(), 3);
+    await page.emulateMedia({ reducedMotion: 'reduce' });
+    assert.ok(await page.locator('.sql9-intro').evaluate((node) => parseFloat(getComputedStyle(node.querySelector('.intro-explanation')).transitionDuration)) <= 0.00002);
+    await page.emulateMedia({ reducedMotion: 'no-preference' });
     assert.equal(await page.locator('#sql-tabs .step-tab').count(), 6);
     assert.equal(await page.locator('#tab-summary').isDisabled(), true);
     await page.click('#tab-quiz');
@@ -146,8 +221,15 @@ async function main() {
       await page.goto(origin + `/faecher/informatik/klasse-10/1-Datenbanken/aufgabe${number}.html`, { waitUntil: 'domcontentloaded' });
       await page.waitForFunction(() => document.getElementById('data-status')?.classList.contains('success'), null, { timeout: 30000 });
     }
+    await page.goto(origin + pagePath, { waitUntil: 'domcontentloaded' });
+    await page.waitForFunction(() => document.getElementById('data-status')?.classList.contains('success'), null, { timeout: 120000 });
+    page.once('dialog', (dialog) => dialog.accept());
+    await page.click('#reset-module');
+    await page.waitForFunction(() => document.getElementById('data-status')?.classList.contains('success'), null, { timeout: 120000 });
+    assert.equal(await page.locator('#intro-frame-count').innerText(), 'Schritt 1 von 12');
+    assert.equal(await page.evaluate(() => localStorage.getItem('inf10-insta-verbund-aufgabe9-v1')), null);
     assert.deepEqual(errors, []);
-    console.log(JSON.stringify({ referenceSql: 21, descriptions: 4, mockedRequests: calls.length, summaryCards: 12, solutionDownload: ['quiz-without-progress', 'summary', 'wrong-code', 'normalized-code', 'download'], restored: true, invalidation: true, aliasJoin: true, wrongJoin: true, nestedSelectRequired: true, incorrectVersusPartial: true, duplicateFollowerCount: true, serverErrorRetry: true, responsive: [1366, 768, 390], keyboard: true, regressions: [5, 6, 7], errors }));
+    console.log(JSON.stringify({ intro: 'steps-1-to-12-back-repeat-storage-invalid-step-legacy-values', screenshots: screenshotDir, referenceSql: 21, descriptions: 4, mockedRequests: calls.length, summaryCards: 12, solutionDownload: ['quiz-without-progress', 'summary', 'wrong-code', 'normalized-code', 'download'], restored: true, invalidation: true, aliasJoin: true, wrongJoin: true, nestedSelectRequired: true, incorrectVersusPartial: true, duplicateFollowerCount: true, serverErrorRetry: true, responsive: [1366, 768, 390], keyboard: true, regressions: [5, 6, 7], errors }));
   } finally { await browser.close(); await new Promise((resolve) => server.close(resolve)); }
 }
 main().catch((error) => { console.error(error); process.exitCode = 1; });

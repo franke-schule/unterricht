@@ -72,7 +72,7 @@ Die Werte der Secrets müssen weder ausgelesen noch erneut im Chat angegeben wer
 - [x] Schritt 9a: Nutzer hat das Anlegen des Hauptworkflows auf GitHub bestätigt.
 - [x] Schritt 9b: Nutzer hat am 26.10.2026 den erfolgreichen Hauptupload und die angezeigte Website bestätigt.
 - [x] Schritt 10a: Nutzer hat am 26.10.2026 den erfolgreichen automatischen Lauf nach Aktivierung des Push-Triggers bestätigt.
-- [ ] Schritt 10b: Automatische Veröffentlichung einer erkennbaren Website-Änderung prüfen; auf Nutzerwunsch vorerst zurückgestellt.
+- [x] Schritt 10b: Screenshot zeigt automatisch erfolgreichen netcup-Lauf #13 für Commit `379bae4` (Create netcup-push-test.html) und erfolgreichen Pages-Lauf #239; unabhängiger Abruf bestätigt den erwarteten Testtext auf der neuen Domain.
 - [x] Schritt 11a: Nutzer meldet eine Zertifikatswarnung auf der HTTPS-Standarddomain; gültiges HTTPS ist dort nicht bestätigt.
 - [x] Schritt 11b: Nutzer bestätigt den bisherigen Dokumentenstamm `franke-schule.de/httpdocs`.
 - [x] Schritt 13a vorgezogen: Nutzer bestätigt nach Dokumentenstammänderung die Lernmodul-Website unter `http://franke-schule.de/`.
@@ -84,19 +84,24 @@ Die Werte der Secrets müssen weder ausgelesen noch erneut im Chat angegeben wer
 - [x] Schritt 15a: Nutzer hat die Origin ergänzt; unabhängige OPTIONS-Nachprüfung am 29.10.2026 bestätigt HTTP 204 mit passender Origin sowohl für `https://franke-schule.de` als auch für `https://www.florian-franke.org`.
 - [x] Schritt 15b: Nutzer bestätigt am 29.10.2026 die angezeigte KI-Bewertung in Aufgabe 5.2 unter der neuen Domain.
 - [x] Schritt 15c: Nutzer bestätigt die erfolgreiche Sicherungsblatt-Freischaltung und den PDF-Download zu Aufgabe 5.2.
-- [ ] Schritt 15d: Lokale Speicherung der Eingaben nach Neuladen unter der neuen Domain prüfen.
-- [ ] Schritte 11 bis 16: offen, siehe unten.
+- [x] Schritt 15d: Nutzer bestätigt am 29.10.2026, dass der eingegebene Text nach Neuladen erhalten bleibt.
+- [x] Geprüfte Hauptfunktionen: Website, HTTPS, Weiterleitungen, KI, Sicherungsblatt-Download, lokale Speicherung und Veröffentlichung nach Push.
+- [ ] Schritt 16a: Nicht mehr benötigte Datei `netcup-push-test.html` gezielt auf GitHub entfernen und den automatischen Abgleich abwarten.
+- [ ] Weitere Betriebspunkte: vorhandene Testartefakte sichten und aufräumen; Backups, DNS-Sicherung und Zertifikatserneuerung dokumentieren, soweit noch nicht erfolgt.
 
-**Unmittelbar nächster Schritt:** Im Browser unter
-`https://franke-schule.de/faecher/informatik/klasse-11/1-Kuenstliche-Intelligenz/aufgabe5-2.html`
-erneut den Reiter „6 Delta-Lernregel“ öffnen. Bei „Kurz erklären“ einen
-erkennbaren Testtext eingeben oder den vorhandenen Text ergänzen und mit F5
-neu laden. Bestätigen lassen, dass der Text im selben Browser und derselben
-Domain wieder erscheint. Falls nötig, Reiter 6 erneut auswählen. Eine weitere
-KI-Prüfung ist dafür nicht erforderlich. Lehrercode-Felder gehören nicht zum
-gespeicherten Aufgabenstand und sind kein geeignetes Prüffeld. Anschließend
-stehen noch allgemeine Funktionsprüfungen, der zurückgestellte Push-Inhaltstest
-und abschließende Betriebsdokumentation/Aufräumen aus.
+**Unmittelbar nächster Schritt:** Auf GitHub ausschließlich die entbehrliche
+Testdatei `netcup-push-test.html` im Repository-Root löschen und direkt auf
+`main` committen. Den automatischen netcup-Lauf abwarten. Der Hauptworkflow
+`netcup-deploy.yml`, seine Secrets und seine Server-Statusdatei bleiben erhalten.
+Anschließend prüfen, ob die Testdatei auf der neuen Website entfernt wurde.
+Die produktiven Lernmodule, `CNAME` und GitHub Pages nicht ändern.
+
+Veröffentlichungsnachweis am 29.10.2026: Vor Anlage lieferte die neue Domain
+unter dem Testpfad HTTP 404. Nach dem Commit und dem erfolgreichen automatischen
+Lauf liefert `https://franke-schule.de/netcup-push-test.html` den erwarteten Satz
+„Automatische Veröffentlichung funktioniert.“. Der Screenshot belegt zugleich
+den weiterhin erfolgreichen parallelen Pages-Build. Es wurde kein manueller
+FTP-Upload für diesen Nachweis benötigt.
 
 Aktuelle unabhängige Prüfung am 29.10.2026 am vorhandenen Scaleway-Endpunkt,
 ohne Modellaufruf und mit IPv4:
