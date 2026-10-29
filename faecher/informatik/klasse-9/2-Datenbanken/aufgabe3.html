@@ -11,7 +11,7 @@
     <link rel="stylesheet" href="../../klasse-10/1-Datenbanken/sql-lab.css?v=20261010-tabs">
     <link rel="stylesheet" href="aufgabe3.css?v=20261021">
     <script src="../../quiz-fragen-pruefen.js?v=20261006b"></script>
-    <script type="module" src="aufgabe3.js?v=20261029-where-nachpruefung"></script>
+    <script type="module" src="aufgabe3.js?v=20261029-sicherungsblatt"></script>
   </head>
   <body class="redundancy-page sql-page sql9-page">
     <div class="site-backdrop" aria-hidden="true"></div>
@@ -38,6 +38,26 @@
 
       <nav id="sql-tabs" class="step-tabs" aria-label="Lernschritte zum Filtern mit WHERE" role="tablist"></nav>
       <section id="sql-panel" class="step-panel" role="tabpanel"></section>
+
+      <template id="solution-download-template">
+        <section class="solution-download" aria-labelledby="solution-download-title">
+          <h2 id="solution-download-title">Sicherungsblatt zu Aufgabe 3</h2>
+          <details class="solution-reveal">
+            <summary>Sicherungsblatt anzeigen</summary>
+            <form class="solution-code-form" onsubmit="unlockSolution(event, 'M8KR-4TM7', 'solution-download-link', 'solution-code-message')">
+              <label for="solution-code">Lehrercode eingeben</label>
+              <div class="solution-code-controls">
+                <input id="solution-code" name="solution-code" type="text" maxlength="9" autocomplete="off" autocapitalize="characters" spellcheck="false" required>
+                <button class="secondary-button" type="submit">Code prüfen</button>
+              </div>
+              <p id="solution-code-message" class="solution-code-message" aria-live="polite"></p>
+              <a id="solution-download-link" class="download-button" href="sicherungsblatt-aufgabe-3-loesungen.pdf" download hidden>
+                &#8595; Sicherungsblatt herunterladen
+              </a>
+            </form>
+          </details>
+        </section>
+      </template>
 
       <div class="summary-actions">
         <button id="reset-module" class="secondary-button" type="button">Modul neu beginnen</button>

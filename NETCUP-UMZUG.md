@@ -1,6 +1,6 @@
 # Lernmodul-Website auf netcup unter franke-schule.de betreiben
 
-Stand: 26.10.2026. Diese Datei ist die Fortsetzungsanleitung für den laufenden Chat.
+Stand: 29.10.2026. Diese Datei ist die Fortsetzungsanleitung für den laufenden Chat.
 Sie dokumentiert den Plan; offene Punkte sind noch nicht ausgeführt oder bestätigt.
 
 ## Verbindliche Zieländerung vom 26.10.2026
@@ -81,25 +81,44 @@ Die Werte der Secrets müssen weder ausgelesen noch erneut im Chat angegeben wer
 - [x] Schritt 14c: Nutzer hat den Schalter aktiviert; unabhängige Serverprüfung am 26.10.2026 bestätigt HTTP 301 auf `https://franke-schule.de/` und dort HTTP 200 mit gültiger TLS-Verbindung.
 - [x] Browsernachprüfung: Nutzer bestätigt nach privatem Fenster die korrekte HTTPS-Weiterleitung.
 - [x] Schritt 14d: Nutzer bestätigt die Weiterleitung von www auf `https://franke-schule.de/` nach Setzen der bevorzugten Domain.
-- [ ] Schritt 15a: In Scaleway `AI_ALLOWED_ORIGINS` um die neue HTTPS-Origin ergänzen, falls noch nicht vorhanden; bisherige Werte erhalten.
+- [x] Schritt 15a: Nutzer hat die Origin ergänzt; unabhängige OPTIONS-Nachprüfung am 29.10.2026 bestätigt HTTP 204 mit passender Origin sowohl für `https://franke-schule.de` als auch für `https://www.florian-franke.org`.
+- [x] Schritt 15b: Nutzer bestätigt am 29.10.2026 die angezeigte KI-Bewertung in Aufgabe 5.2 unter der neuen Domain.
+- [x] Schritt 15c: Nutzer bestätigt die erfolgreiche Sicherungsblatt-Freischaltung und den PDF-Download zu Aufgabe 5.2.
+- [ ] Schritt 15d: Lokale Speicherung der Eingaben nach Neuladen unter der neuen Domain prüfen.
 - [ ] Schritte 11 bis 16: offen, siehe unten.
 
-**Unmittelbar nächster Schritt:** Scaleway Console → Serverless Compute → Functions
-öffnen, den Namespace mit `ki-auswertung` und dann Namespace settings auswählen.
-In Environment variables `AI_ALLOWED_ORIGINS` suchen und, falls noch nicht vorhanden,
-`,https://franke-schule.de` an den bestehenden Wert anhängen (ohne Slash am Ende).
-Alle bisherigen Einträge erhalten, insbesondere die Origins von `florian-franke.org`.
-Ist der Wert leer, ausschließlich die neue Origin ohne vorangestelltes Komma setzen;
-bei fehlender Variable oder abweichender Maske zunächst klären, ob sie direkt an
-der Function statt am Namespace konfiguriert ist. Funktionsvariablen überschreiben
-gleichnamige Namespace-Variablen. Nur diese Konfiguration bearbeiten, keinen Code
-oder ZIP hochladen. Speichern/validieren; die vorhandenen bereitstehenden Functions
-werden laut Scaleway-Dokumentation nach Namespace-Variablenänderungen neu bereitgestellt.
-Auf Ready warten. Danach folgt ein echter Test im Browser auf der neuen Domain.
+**Unmittelbar nächster Schritt:** Im Browser unter
+`https://franke-schule.de/faecher/informatik/klasse-11/1-Kuenstliche-Intelligenz/aufgabe5-2.html`
+erneut den Reiter „6 Delta-Lernregel“ öffnen. Bei „Kurz erklären“ einen
+erkennbaren Testtext eingeben oder den vorhandenen Text ergänzen und mit F5
+neu laden. Bestätigen lassen, dass der Text im selben Browser und derselben
+Domain wieder erscheint. Falls nötig, Reiter 6 erneut auswählen. Eine weitere
+KI-Prüfung ist dafür nicht erforderlich. Lehrercode-Felder gehören nicht zum
+gespeicherten Aufgabenstand und sind kein geeignetes Prüffeld. Anschließend
+stehen noch allgemeine Funktionsprüfungen, der zurückgestellte Push-Inhaltstest
+und abschließende Betriebsdokumentation/Aufräumen aus.
 
-Eine kostenlose OPTIONS-Voranfrage an den vorhandenen Scaleway-Endpunkt mit
-Origin `https://franke-schule.de` ist nach 20 Sekunden ohne Antwort abgelaufen.
-Das belegt keinen CORS-Fehler und erlaubt keine Aussage über die aktuelle Allowlist.
+Aktuelle unabhängige Prüfung am 29.10.2026 am vorhandenen Scaleway-Endpunkt,
+ohne Modellaufruf und mit IPv4:
+
+- GET liefert HTTP 200, `ok: true`, `configured: true`,
+  `evaluationEnabled: true`, `taskCount: 84`.
+- OPTIONS mit Origin `https://franke-schule.de`, gewünschter Methode POST und
+  Header content-type lieferte zunächst HTTP 403 mit `errorCode: ORIGIN_NOT_ALLOWED`.
+- Nach der vom Nutzer bestätigten Änderung liefert die identische Voranfrage
+  HTTP 204 und `Access-Control-Allow-Origin: https://franke-schule.de`.
+- Auch für `https://www.florian-franke.org` liefert OPTIONS weiterhin HTTP 204
+  mit exakt passendem Access-Control-Allow-Origin. Die bisherige Freigabe bleibt wirksam.
+- Damit sind Serveraktivierung und Domainfreigabe geprüft. Anschließend hat
+  der Nutzer auch den vollständigen Browserlauf mit echter Modellantwort in
+  Aufgabe 5.2 bestätigt. Das belegt die technische KI-Anbindung für diese Aufgabe,
+  nicht die fachliche Qualität aller Bewertungen oder Tests aller Aufgaben.
+- Die ältere Voranfrage vom 26.10. lief ohne Antwort ab; sie war kein Beleg
+  für einen CORS-Fehler. Die aktuelle Antwort liefert nun einen konkreten Befund.
+
+Falls der Nutzer die Namespace-Variable bereits geändert hat, zusätzlich die
+gleichnamige Variable direkt an der Function prüfen (sie hat Vorrang) und die
+Übernahme der Konfiguration nach erneuter Bereitstellung/Ready verifizieren.
 
 Unabhängige Prüfung am 26.10.2026: Beide HTTP-Hostnamen erreichen dieselbe IPv6
 `2a03:4000:6d:2e96::25:1092`; www antwortet mit 301 auf seine HTTPS-Variante.

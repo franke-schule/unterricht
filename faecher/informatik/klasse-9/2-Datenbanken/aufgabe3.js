@@ -1,7 +1,7 @@
 // Aufgabe 3 – Datensätze filtern mit WHERE (Informatik 9).
 import { classifyDescriptionResult, compareRelations, isValidScriptServerUrl, missingTextQuote, normalizeRelation, parseDelimited, sqlTokens, validateSelectStatement } from '../../klasse-10/1-Datenbanken/sql-lab-core.mjs?v=20260929b';
 import { evaluateSemanticAnswer, renderCompactEvaluation } from '../../klasse-11/1-Kuenstliche-Intelligenz/perzeptron/ui/semantic-answer.mjs?v=20261022-feedback-two-sentences';
-import { enableTabKeyboardNavigation, focusTabPanelStart, renderTabFlowNavigation, syncTabSemantics } from '../../klasse-10/1-Datenbanken/tab-navigation.mjs?v=20260906a';
+import { appendSolutionDownloadFromTemplate, enableTabKeyboardNavigation, focusTabPanelStart, renderTabFlowNavigation, syncTabSemantics } from '../../klasse-10/1-Datenbanken/tab-navigation.mjs?v=20260906a';
 const STORAGE_KEY = 'informatik9-datenbanken-aufgabe3-where-v1';
 const NEUTRAL_SQL_PLACEHOLDER = 'SELECT ...\nFROM ...';
 const SCRIPT_SERVER_URL = 'https://unterrichtkiichezbn4-ki-auswertung.functions.fnc.fr-par.scw.cloud/';
@@ -1341,7 +1341,7 @@ function renderQuiz(panel) {
     check:()=>{const selected=new Set(quizSelection(question)),correct=question.options.every(([id,,right])=>selected.has(id)===right),some=question.options.some(([id,,right])=>right&&selected.has(id));
       return {result:correct?'correct':some?'mixed':'wrong',text:correct?'Korrekt: Alle richtigen Aussagen dieser Frage sind markiert.':some?`Teilweise korrekt: Mindestens eine Markierung stimmt. ${question.hint}`:`Noch nicht korrekt: Prüfe die Aussagen noch einmal. ${question.hint}`};}
   })),buttonClass:'primary-button',rowClass:'action-row',levels:{high:'success',medium:'partial',low:'hint'},onAllCorrect:()=>form.requestSubmit()});
-  card.append(form);panel.append(card,overviewSlot,renderSummary());showFeedback();refresh();
+  card.append(form);panel.append(card,overviewSlot,renderSummary());appendSolutionDownloadFromTemplate(panel);showFeedback();refresh();
 }
 function checkQuiz() {
   const open=FINAL_QUIZ.map((question,index)=>quizSelection(question).length?null:index+1).filter(Boolean);

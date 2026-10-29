@@ -1,0 +1,227 @@
+\documentclass[10pt,a4paper]{article}
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage[ngerman]{babel}
+\usepackage[a4paper,left=12mm,right=12mm,top=12mm,bottom=9mm]{geometry}
+\usepackage{lmodern}
+\usepackage[table]{xcolor}
+\usepackage{tabularx}
+\usepackage{array}
+\usepackage{microtype}
+\usepackage[most]{tcolorbox}
+\pagestyle{empty}
+\setlength{\parindent}{0pt}
+\setlength{\parskip}{0pt}
+\setlength{\tabcolsep}{3pt}
+\renewcommand{\familydefault}{\sfdefault}
+\linespread{1.0}\selectfont
+\renewcommand{\arraystretch}{1.02}
+\definecolor{Navy}{HTML}{17324D}
+\definecolor{Blue}{HTML}{3B6EA5}
+\definecolor{Sky}{HTML}{EAF3FA}
+\definecolor{Mint}{HTML}{E8F5EF}
+\definecolor{Gold}{HTML}{F3B33D}
+\definecolor{Ink}{HTML}{1E2935}
+\definecolor{Muted}{HTML}{617080}
+\definecolor{Line}{HTML}{D8E1E8}
+\definecolor{CodeBg}{HTML}{F5F7F9}
+\color{Ink}
+\newcommand{\sectiontitle}[1]{%
+  \vspace{.3mm}{\color{Blue}\bfseries\large #1}\par
+  \vspace{.2mm}{\color{Blue}\rule{\linewidth}{.65pt}}\par\vspace{.3mm}}
+\newcommand{\sqlkw}[1]{\textcolor{Blue}{\bfseries #1}}
+\newcommand{\sqlbox}[1]{%
+  \begin{tcolorbox}[colback=CodeBg,colframe=Line,arc=1.3mm,boxrule=.55pt,
+    left=2.2mm,right=2.2mm,top=.5mm,bottom=.5mm,boxsep=0pt]
+  {\ttfamily\fontsize{9.4}{11.2}\selectfont #1}
+  \end{tcolorbox}}
+\newcommand{\workbox}[1]{%
+  \begin{tcolorbox}[colback=Sky,colframe=Blue,arc=1.2mm,boxrule=.55pt,
+    left=2mm,right=2mm,top=.35mm,bottom=.35mm,boxsep=0pt]
+  {\fontsize{9.2}{11}\selectfont\hyphenpenalty=10000\exhyphenpenalty=10000\textcolor{Blue}{\bfseries Arbeitsauftrag:} #1}
+  \end{tcolorbox}}
+\newcommand{\pageheader}{%
+  \colorbox{Navy}{\parbox{\dimexpr\linewidth-2\fboxsep\relax}{%
+    \vspace{1.5mm}\color{white}\begin{tabularx}{\linewidth}{@{}Xr@{}}
+    {\small\bfseries INFORMATIK \textperiodcentered{} KLASSE 9} &
+    \colorbox{Gold}{\color{Navy}\small\bfseries\strut LÖSUNGEN}
+    \end{tabularx}
+    \vspace{1mm}{\fontsize{17}{20}\selectfont\bfseries
+    Aufgabe 3 -- Datensätze filtern mit WHERE}\par
+    \vspace{.6mm}{\large Sicherungsblatt}\vspace{1.5mm}}}}
+\newcommand{\pagefooter}[1]{%
+  \vfill{\color{Line}\rule{\linewidth}{.5pt}}\par\vspace{1mm}
+  \begin{tabularx}{\linewidth}{@{}Xc r@{}}
+  {\small\color{Muted}Klasse 9 \textperiodcentered{} Datenbanken} &
+  {\small\color{Muted}#1 / 2} &
+  {\small\color{Muted}Sicherungsblatt \textperiodcentered{} Aufgabe 3}
+  \end{tabularx}}
+\newcommand{\merkebox}[1]{%
+  \begin{tcolorbox}[colback=Mint,colframe=Blue,arc=2mm,boxrule=.8pt,
+    left=3mm,right=3mm,top=1.5mm,bottom=1.5mm]
+  \textcolor{Blue}{\bfseries Merke}\par\vspace{.5mm}
+  {\fontsize{9.6}{11.6}\selectfont #1}
+  \end{tcolorbox}}
+\newcommand{\smallcaption}[1]{{\small\color{Muted}#1}\par\vspace{.5mm}}
+\newcommand{\miniresult}[2]{%
+  {\fontsize{8.6}{10.2}\selectfont
+  \begin{tabular}{|>{\ttfamily\bfseries}l|}\hline
+  \rowcolor{Sky}#1\\\hline
+  #2\\\hline
+  \end{tabular}}}
+\begin{document}
+\pageheader\par
+\tcbset{before skip=1mm,after skip=1mm}
+\sectiontitle{1 \textperiodcentered{} Von users zur gefilterten Ergebnisrelation}
+\begin{minipage}[t]{.38\linewidth}\vspace{0pt}
+\smallcaption{Ausschnitt aus users (6 von 317 Zeilen; 3 von 18 Spalten)}
+{\fontsize{8.6}{10.2}\selectfont\begin{tabularx}{\linewidth}{|>{\ttfamily\bfseries}p{7mm}|>{\ttfamily}X|>{\raggedright\arraybackslash}p{19mm}|}\hline
+\rowcolor{Sky}id & username & city\\\hline
+1 & zornigerfotograf & Schwerin\\\hline
+2 & wanderwut\_finn & München\\\hline
+3 & bergcoder & Zürich\\\hline
+4 & koch\_kicker & Berlin\\\hline
+8 & theaterwut\_oscar & Leipzig\\\hline
+34 & gartenlinse & Berlin\\\hline
+\end{tabularx}}
+\smallcaption{Ergebnisrelation dieses Ausschnitts (2 von 6 Zeilen)}
+{\fontsize{8.6}{10.2}\selectfont\begin{tabular}{|>{\ttfamily\bfseries}l|>{\ttfamily}l|}\hline
+\rowcolor{Sky}username & city\\\hline koch\_kicker & Berlin\\\hline gartenlinse & Berlin\\\hline\end{tabular}}
+\end{minipage}\hfill
+\begin{minipage}[t]{.60\linewidth}\vspace{0pt}
+\workbox{Zeige die Benutzernamen und Wohnorte der Mitglieder aus Berlin.}
+\smallcaption{SQL-Anweisung}
+\sqlbox{\sqlkw{SELECT} username, city\par\sqlkw{FROM} users\par\sqlkw{WHERE} city = 'Berlin'}
+\smallcaption{Allgemeine Form}
+\sqlbox{\sqlkw{SELECT} Spaltenname\par\sqlkw{FROM} tabellenname\par\sqlkw{WHERE} Bedingung}
+\end{minipage}\par\vspace{.1mm}
+{\fontsize{9}{10.5}\selectfont Dies sind die Berliner Treffer im gezeigten Ausschnitt, nicht alle Berliner Mitglieder der Datenbank.}\par\vspace{.1mm}
+\merkebox{WHERE wählt die Zeilen aus, die eine Bedingung erfüllen. Diese Auswahl hei\ss{}t Selektion. Die gespeicherte Tabelle bleibt unverändert.}
+
+\sectiontitle{2 \textperiodcentered{} Einfache Bedingungen: Texte und Zahlen}
+\begin{minipage}[t]{.49\linewidth}
+\workbox{Liste die Daten aller weiblichen Mitglieder auf.}
+\smallcaption{SQL-Anweisung}
+\sqlbox{\sqlkw{SELECT} *\par\sqlkw{FROM} users\par\sqlkw{WHERE} gender = 'female'}
+\smallcaption{Ausschnitt: 1 von 148 Zeilen, 3 von 18 Spalten}
+{\fontsize{8.6}{10.2}\selectfont\begin{tabular}{|>{\ttfamily\bfseries}c|l|>{\ttfamily}l|}\hline
+\rowcolor{Sky}id & name & gender\\\hline
+151 & Mia Sonntag & female\\\hline
+\ldots & \ldots & \ldots\\\hline
+\end{tabular}}
+\end{minipage}\hfill
+\begin{minipage}[t]{.49\linewidth}
+\workbox{Gib alle Mitglieder aus, die kleiner als 1,80 m sind.}
+\smallcaption{SQL-Anweisung}
+\sqlbox{\sqlkw{SELECT} *\par\sqlkw{FROM} users\par\sqlkw{WHERE} centimeters < 180}
+\smallcaption{Ausschnitt: 1 von 245 Zeilen, 3 von 18 Spalten}
+{\fontsize{8.6}{10.2}\selectfont\begin{tabular}{|>{\ttfamily\bfseries}c|l|>{\ttfamily}l|}\hline
+\rowcolor{Sky}id & name & centimeters\\\hline
+1 & Noah Schneider & 168\\\hline
+\ldots & \ldots & \ldots\\\hline
+\end{tabular}}
+\end{minipage}\par\vspace{.3mm}
+\merkebox{Textwerte stehen in einfachen Anführungszeichen, Zahlen nicht. \texttt{< 180} schlie\ss{}t genau 180 cm aus, \texttt{<= 180} schlie\ss{}t sie ein.}
+
+\sectiontitle{3 \textperiodcentered{} Vergleiche und Datumswerte}
+\smallcaption{Vergleichsoperatoren}
+{\fontsize{9}{10.5}\selectfont
+\begin{tabularx}{\linewidth}{|*{6}{>{\centering\arraybackslash}X|}}\hline
+\rowcolor{Sky}\texttt{=} gleich & \texttt{<} kleiner als & \texttt{>} grö\ss{}er als & \texttt{<=} kleiner oder gleich & \texttt{>=} grö\ss{}er oder gleich & \texttt{!=} / \texttt{<>} ungleich\\\hline
+\end{tabularx}}\par\vspace{.3mm}
+\begin{minipage}[t]{.49\linewidth}
+\workbox{Finde das Mitglied, das am 17.09.2007 geboren wurde. Gib den vollständigen Datensatz aus.}
+\smallcaption{SQL-Anweisung}
+\sqlbox{\sqlkw{SELECT} *\par\sqlkw{FROM} users\par\sqlkw{WHERE} birthday = '2007-09-17'}
+\smallcaption{Ergebnisrelation: 1 Zeile; 3 von 18 Spalten gezeigt}
+{\fontsize{8.6}{10.2}\selectfont\begin{tabular}{|>{\ttfamily\bfseries}c|l|>{\ttfamily}l|}\hline
+\rowcolor{Sky}id & name & birthday\\\hline
+5 & Ben Neumann & 2007-09-17\\\hline
+\end{tabular}}
+\end{minipage}\hfill
+\begin{minipage}[t]{.49\linewidth}
+\workbox{Gib die Namen aller Mitglieder aus, die nicht in Leipzig wohnen.}
+\smallcaption{SQL-Anweisung}
+\sqlbox{\sqlkw{SELECT} name\par\sqlkw{FROM} users\par\sqlkw{WHERE} city != 'Leipzig'}
+\smallcaption{Ausschnitt: 1 von 305 Zeilen}
+\miniresult{name}{Noah Schneider\\\ldots}
+\end{minipage}\par\vspace{.3mm}
+{\fontsize{9}{10.5}\selectfont Datumswerte stehen im Format 'JJJJ-MM-TT'. NULL bedeutet: kein Wert eingetragen. Ein normaler Vergleich mit NULL erfüllt die WHERE-Bedingung nicht. Deshalb fehlt bei city != 'Leipzig' auch das Mitglied ohne eingetragenen Wohnort.}
+\pagefooter{1}
+
+\newpage
+\pageheader\par
+\tcbset{before skip=.6mm,after skip=.6mm}
+\sectiontitle{4 \textperiodcentered{} Muster suchen mit LIKE}
+\begin{minipage}[t]{.30\linewidth}\vspace{0pt}
+\workbox{Zeige alle Mitglieder, deren Vorname mit B beginnt.}
+\smallcaption{SQL-Anweisung}
+\sqlbox{\sqlkw{SELECT} *\par\sqlkw{FROM} users\par\sqlkw{WHERE} name \sqlkw{LIKE} 'B\%'}
+\smallcaption{Ergebnisrelation: 1 Zeile; 3 von 18 Spalten gezeigt}
+{\fontsize{8.6}{10.2}\selectfont\begin{tabularx}{\linewidth}{|>{\ttfamily\bfseries}c|X|X|}\hline
+\rowcolor{Sky}id & name & username\\\hline 5 & Ben Neumann & modegamer\_ben\\\hline\end{tabularx}}
+\end{minipage}\hfill
+\begin{minipage}[t]{.36\linewidth}\vspace{0pt}
+\workbox{Zeige alle Mitglieder, deren Benutzername die Zeichenfolge \glqq{}fuchs\grqq{} enthält.}
+\smallcaption{SQL-Anweisung}
+\sqlbox{\sqlkw{SELECT} *\par\sqlkw{FROM} users\par\sqlkw{WHERE} username \sqlkw{LIKE} '\%fuchs\%'}
+\smallcaption{Ausschnitt: 1 von 7 Zeilen; 3 von 18 Spalten}
+{\fontsize{8.6}{10.2}\selectfont\begin{tabularx}{\linewidth}{|>{\ttfamily\bfseries}c|X|X|}\hline
+\rowcolor{Sky}id & name & username\\\hline 33 & Yannick Vogt & reisefuchs\_yannick\\\hline \ldots & \ldots & \ldots\\\hline\end{tabularx}}
+\end{minipage}\hfill
+\begin{minipage}[t]{.32\linewidth}\vspace{0pt}
+\workbox{Gib die Namen aller Mitglieder aus, die im März Geburtstag haben.}
+\smallcaption{SQL-Anweisung}
+\sqlbox{\sqlkw{SELECT} name\par\sqlkw{FROM} users\par\sqlkw{WHERE} birthday \sqlkw{LIKE} '\%-03-\%'}
+\smallcaption{Ausschnitt: 1 von 34 Zeilen}
+\miniresult{name}{Timo Reichert\\\ldots}
+\end{minipage}\par\vspace{.3mm}
+\smallcaption{Muster im Vergleich}
+{\fontsize{8.8}{10.4}\selectfont\begin{tabularx}{\linewidth}{|>{\ttfamily}l|X|}\hline
+\rowcolor{Sky}name \sqlkw{LIKE} 'B\%' & beginnt mit B\\\hline
+name \sqlkw{LIKE} '\%berg' & endet mit berg\\\hline
+username \sqlkw{LIKE} '\%fuchs\%' & enthält fuchs\\\hline
+\end{tabularx}}
+\par\vspace{.2mm}
+\merkebox{LIKE vergleicht mit einem Muster. \% steht für beliebig viele Zeichen, auch für kein Zeichen. Die Position von \% bestimmt, wo weitere Zeichen stehen dürfen.}
+{\fontsize{9}{10.5}\selectfont name enthält Vor- und Nachnamen, username den Benutzernamen. '\%-03-\%' sucht März an der Monatsposition; '\%03\%' wäre zu ungenau.}\par\vspace{.3mm}
+
+\sectiontitle{5 \textperiodcentered{} Bedingungen verknüpfen mit AND und OR}
+\begin{minipage}[t]{.49\linewidth}
+\workbox{Finde alle Mitglieder aus Berlin, deren Vorname Lina lautet.}
+\smallcaption{SQL-Anweisung}
+\sqlbox{\sqlkw{SELECT} *\par\sqlkw{FROM} users\par\sqlkw{WHERE} name \sqlkw{LIKE} 'Lina \%'\par\hspace{2mm}\sqlkw{AND} city = 'Berlin'}
+\smallcaption{Ergebnisrelation: 1 Zeile; 3 von 18 Spalten gezeigt}
+{\fontsize{8.6}{10.2}\selectfont\begin{tabular}{|>{\ttfamily\bfseries}c|l|l|}\hline
+\rowcolor{Sky}id & name & city\\\hline 196 & Lina Gerstenberg & Berlin\\\hline\end{tabular}}
+\end{minipage}\hfill
+\begin{minipage}[t]{.49\linewidth}
+\workbox{Liste alle Mitglieder auf, deren Vorname Lina oder Felix lautet.}
+\smallcaption{SQL-Anweisung}
+\sqlbox{\sqlkw{SELECT} *\par\sqlkw{FROM} users\par\sqlkw{WHERE} name \sqlkw{LIKE} 'Lina \%'\par\hspace{2mm}\sqlkw{OR} name \sqlkw{LIKE} 'Felix \%'}
+\smallcaption{Ausschnitt: 2 von 8 Zeilen; 3 von 18 Spalten}
+{\fontsize{8.6}{10.2}\selectfont\begin{tabular}{|>{\ttfamily\bfseries}c|l|l|}\hline
+\rowcolor{Sky}id & name & city\\\hline 6 & Felix Zimmermann & Hannover\\\hline 153 & Lina Eichinger & Saarbrücken\\\hline \ldots & \ldots & \ldots\\\hline\end{tabular}}
+\end{minipage}\par\vspace{.3mm}
+\merkebox{AND verlangt, dass beide Bedingungen erfüllt sind. Bei OR genügt mindestens eine Bedingung; auch beide dürfen erfüllt sein. Jede Teilbedingung muss vollständig sein.}
+{\fontsize{9}{10.5}\selectfont Das Leerzeichen vor \% in 'Lina \%' und 'Felix \%' begrenzt die Suche auf den vollständigen Vornamen.}\par\vspace{.3mm}
+
+\sectiontitle{6 \textperiodcentered{} Klammern und Klauselreihenfolge}
+\begin{minipage}[t]{.49\linewidth}\vspace{0pt}
+\workbox{Zeige alle Mitglieder aus Berlin, deren Vorname Lina oder Hailey lautet.}
+\smallcaption{SQL-Anweisung}
+\sqlbox{\sqlkw{SELECT} *\par\sqlkw{FROM} users\par\sqlkw{WHERE} (name \sqlkw{LIKE} 'Lina \%'\par\hspace{2mm}\sqlkw{OR} name \sqlkw{LIKE} 'Hailey \%')\par\hspace{2mm}\sqlkw{AND} city = 'Berlin'}
+\smallcaption{Ergebnisrelation: 2 Zeilen; 3 von 18 Spalten gezeigt}
+{\fontsize{8.6}{10.2}\selectfont\begin{tabular}{|>{\ttfamily\bfseries}c|l|l|}\hline
+\rowcolor{Sky}id & name & city\\\hline 196 & Lina Gerstenberg & Berlin\\\hline 200 & Hailey Kronenberg & Berlin\\\hline\end{tabular}}\par\vspace{.2mm}
+\end{minipage}\hfill
+\begin{minipage}[t]{.49\linewidth}\vspace{0pt}
+\smallcaption{Bekannte Klauselreihenfolge}
+{\fontsize{10}{12}\selectfont\textcolor{Blue}{\bfseries SELECT $\rightarrow$ FROM $\rightarrow$ WHERE $\rightarrow$ ORDER BY $\rightarrow$ LIMIT}}\par\vspace{.3mm}
+\smallcaption{SQL-Anweisung}
+\sqlbox{\sqlkw{SELECT} username, centimeters\par\sqlkw{FROM} users\par\sqlkw{WHERE} centimeters < 180\par\sqlkw{ORDER BY} centimeters DESC\par\sqlkw{LIMIT} 5}
+{\fontsize{9}{10.5}\selectfont Zuerst werden passende Zeilen ausgewählt, danach werden sie für die Ausgabe sortiert und begrenzt.}
+\merkebox{AND bindet stärker als OR. Die Klammern sorgen hier dafür, dass die Stadtbedingung für beide Vornamen gilt.}
+\end{minipage}
+\pagefooter{2}
+\end{document}

@@ -18,6 +18,13 @@ function applyRuleBasedMinimum_(
     if (getterEvaluation) return getterEvaluation;
   }
 
+  if (task === TASKS['11-6-klassifizieren']) {
+    const description = evaluateClassificationDescriptionByRules_(answer, task);
+    // Bei eindeutig erkannten Antworten auch einen falschen Hinweis trotz
+    // gleicher Punktzahl korrigieren, nicht nur eine zu niedrige Punktzahl.
+    if (description) return description;
+  }
+
   let ruleBasedEvaluation = null;
 
   if (task === TASKS['inf9-db3-beschreibe-where']) {
@@ -107,6 +114,39 @@ function evaluateInf9WhereDescriptionByRules_(answer, task) {
     'die daten kommen aus ' + source + '\\. fuer mitglieder aus muenchen werden ' + columns + ' ' + output
   ];
   const complete = new RegExp('^(?:' + descriptions.join('|') + ')\\.?(?: die tabelle users bleibt unveraendert\\.?)?$');
+  if (!complete.test(text)) return null;
+  return {
+    ok: true, points: task.maxPoints, maxPoints: task.maxPoints,
+    status: task.statusLabels.correct, strengths: [], missing: [],
+    feedback: 'Sehr gut, alles richtig'
+  };
+}
+
+
+function evaluateClassificationDescriptionByRules_(answer, task) {
+  const text = normalizeGermanText_(answer).replace(/\b([xw])_([12])\b/g, '$1$2');
+  // Wie bei der SQL-Beschreibung nur eindeutig richtige vollständige
+  // Satzformen erkennen. Eine einzelne Aussage über unveränderte Gewichte
+  // genügt nicht für volle Punkte; unklare oder zusätzliche Aussagen bleiben
+  // bei der semantischen Bewertung.
+  const calculation = 'x1 wird mit w1 multipliziert,? x2 (?:wird )?mit w2(?: multipliziert)? und (?:dann |anschliessend )?addiert';
+  const decision = '(?:anschliessend |danach )?wird (?:ueberprueft|geprueft),? ob die (?:gewichtete )?summe (?:groesser ist als theta|groesser als theta ist)\\. (?:dann )?wird 1 (?:ausgegeben|zurueckgegeben) und sonst 0';
+  const unchanged = '(?:(?:die )?gewichte werden (?:dabei )?nicht (?:angepasst|veraendert|geaendert)|(?:die )?gewichte bleiben (?:dabei )?(?:unveraendert|gleich)|(?:punktklassifizieren|die methode) (?:veraendert|aendert) die gewichte nicht)';
+  const stepDescription = 'die methode berechnet die gewichtete summe, indem die eingaben mit (?:den )?(?:jeweiligen )?gewichten multipliziert werden und die produkte addiert werden und wendet die (?:step|treppen)[- ]?funktion an, um die ausgabe 0 oder 1 zu erzeugen';
+  const explicitThreshold = 'bei einer (?:gewichteten )?summe groesser als theta wird 1 (?:ausgegeben|zurueckgegeben), sonst 0';
+  const stepAnswer = new RegExp('^' + stepDescription + '[,.] ' + unchanged + '\\.(?: (' + explicitThreshold + ')\\.?)?$').exec(text);
+  if (stepAnswer) {
+    const thresholdExplained = Boolean(stepAnswer[1]);
+    const hint = 'Ergänze, wann die Step-Funktion beim Vergleich der gewichteten Summe mit theta die 1 statt der 0 liefert.';
+    return {
+      ok: true, points: thresholdExplained ? task.maxPoints : task.maxPoints - 1, maxPoints: task.maxPoints,
+      status: thresholdExplained ? task.statusLabels.correct : task.statusLabels.partial,
+      strengths: [], missing: thresholdExplained ? [] : [hint],
+      feedback: thresholdExplained ? 'Sehr gut, alles richtig' : hint
+    };
+  }
+  const complete = new RegExp('^(?:' + calculation + '\\. ' + decision + '\\. ' + unchanged +
+    '|' + unchanged + '\\. ' + calculation + '\\. ' + decision + ')\\.?$');
   if (!complete.test(text)) return null;
   return {
     ok: true, points: task.maxPoints, maxPoints: task.maxPoints,

@@ -18,7 +18,7 @@ const QUIZ = [
   { question:'3. Was gilt, wenn die gewichtete Summe genau `theta` entspricht?', options:['Die Ausgabe ist 1.','Die Ausgabe ist 0.','`delta` ist unabhängig vom Label immer 0.','Die Gewichte werden sofort verändert.'], correct:[1], explanation:'Der Vergleich verwendet `>`. Bei Gleichheit ist die Ausgabe 0; erst das Label entscheidet über `delta`.' },
   { question:'4. Welche Änderungen gelten bei `delta = -1`?', options:['Für jedes Gewicht gilt: neuer Wert = alter Wert − α · Eingabe.','`theta` wird um α erhöht.','Jedes Gewicht wird unabhängig von der Eingabe um genau 1 kleiner.','Das Label wird in 1 geändert.'], correct:[0,1], explanation:'Bei `delta = -1` werden die gewichteten Lernschritte abgezogen und `theta` um α erhöht. Das Label wird nicht geändert.' }
 ];
-const state = { activationRule: 'strict', variant: null, description: '', quiz: QUIZ.map(() => []), quizSummary: false };
+const state = { activationRule: 'strict', variant: null, description: '', quiz: QUIZ.map(() => []), quizSummary: false, quizOpen: false };
 let readSnippetOrder;
 let restoreSnippetOrder;
 
@@ -36,6 +36,7 @@ function restore() {
     if (typeof saved.description === 'string') state.description = saved.description.slice(0,600);
     if (Array.isArray(saved.quiz)) state.quiz = QUIZ.map((_,i) => Array.isArray(saved.quiz[i]) ? saved.quiz[i].filter(v => Number.isInteger(v) && v >= 0 && v < 4) : []);
     if (saved.quizSummary === true && saved.activationRule === 'strict') state.quizSummary = true;
+    state.quizOpen = saved.quizOpen === true;
     restoreSnippetOrder?.(saved.snippetOrder);
     document.querySelector('#code-snippets-help').open = saved.snippetsOpen === true;
   } catch { /* Beschädigte oder gesperrte Speicherung beeinträchtigt die Aufgabe nicht. */ }
@@ -48,12 +49,28 @@ function choose(variant) {
     document.querySelector('#ide-' + name).hidden = name !== variant;
     document.querySelector('#tasks-' + name).hidden = name !== variant;
   }
+  document.querySelector('#quiz-navigation').hidden = false;
+  renderQuizVisibility();
   save();
 }
 function showChoice() {
   document.querySelector('#variant-choice').hidden = false;
   document.querySelector('#work-area').hidden = true;
+  document.querySelector('#quiz-navigation').hidden = true;
+  document.querySelector('#final-quiz').hidden = true;
   document.querySelector('#variant-title').focus?.();
+}
+function renderQuizVisibility() {
+  document.querySelector('#final-quiz').hidden = !state.quizOpen;
+  const button = document.querySelector('#toggle-quiz');
+  button.setAttribute('aria-expanded', String(state.quizOpen));
+  button.textContent = state.quizOpen ? 'Abschlussquiz ausblenden' : 'Abschlussquiz öffnen';
+}
+function toggleQuiz() {
+  state.quizOpen = !state.quizOpen;
+  renderQuizVisibility();
+  save();
+  if (state.quizOpen) document.querySelector('#quiz-title').focus();
 }
 function guardIdeReset(frameId, variant) {
   const frame = document.querySelector('#' + frameId);
@@ -193,6 +210,7 @@ guardIdeReset('frame-einfach','einfach');
 guardIdeReset('frame-schwer','schwer');
 document.querySelectorAll('[data-choose]').forEach(button => button.addEventListener('click',() => choose(button.dataset.choose)));
 document.querySelector('#change-variant').addEventListener('click',showChoice);
+document.querySelector('#toggle-quiz').addEventListener('click',toggleQuiz);
 document.querySelector('#description').addEventListener('input',event => { state.description = event.target.value; save(); });
 document.querySelector('#check-description').addEventListener('click',checkDescription);
 document.querySelectorAll('[data-code-task]').forEach(button => button.addEventListener('click',() => checkCode(button)));
