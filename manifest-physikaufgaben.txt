@@ -117,6 +117,13 @@ Verbindliche Muster für Rückmeldungen:
 5. Automatisiertes Feedback
 --------------------------
 
+  - Neue und gezielt umgestellte Beschreibe-Aufgaben verwenden die
+    kriterienbasierte Bewertung nach manifest-allgemein.txt Abschnitt 0.1
+    und KI-FEEDBACK-MIGRATION.md: Punkte aus Einzelurteilen und genau ein
+    nächster Verbesserungsschritt (maxHints: 1), auch in Wiederholungsquizzen.
+    Belege bleiben wörtliche Ausschnitte der Originalantwort; gleichwertige
+    Größennamen und Formelzeichen werden fachlich anerkannt. Die folgende
+    Zweisatzgrenze bleibt für noch nicht umgestellte Bestandsaufgaben bestehen.
   - Für alle KI-gestützten Beschreibe-Aufgaben einschließlich der
     Wiederholungsquizze gilt das gemeinsame kompakte Feedbackformat:
     Punktzahl und insgesamt höchstens zwei kurze, konkrete Sätze.

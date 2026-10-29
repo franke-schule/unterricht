@@ -115,7 +115,7 @@ storage/photos/2/10.webp\\\hline
 \end{minipage}\par
 \merkebox{\texttt{users.id = photos.user\_id} verbindet passende Datensätze. Die zusätzliche Bedingung \texttt{users.username = 'wanderwut\_finn'} wählt daraus die Fotos dieses Mitglieds aus.}
 \sectiontitle{2 \textperiodcentered{} Eine Verbundabfrage beschreiben (\textnormal{P2})}
-\workbox{\textbf{Beschreibe} in eigenen Worten, welche Informationen diese Abfrage ausgibt und warum nur bestimmte Fotos erscheinen.}
+\workbox{\textbf{Beschreibe} in eigenen Worten, welche Informationen diese Abfrage ausgibt und warum nur bestimmte Fotos erscheinen. \textbf{Erkläre} auch die Sortierung.}
 \smallcaption{Vorgegebene SQL-Anweisung}
 \sqlbox{\sqlkw{SELECT} users.username, photos.description\par
 \sqlkw{FROM} users, photos\par
@@ -123,23 +123,11 @@ storage/photos/2/10.webp\\\hline
 \hspace*{2em}\sqlkw{AND} users.city = 'Hamburg'\par
 \sqlkw{ORDER BY} users.username, photos.id}
 \smallcaption{Mögliche Beschreibung}
-Die Abfrage zeigt Benutzernamen und Beschreibungen der Fotos, die Mitglieder aus Hamburg hochgeladen haben. Die Mitglieds-ID wird mit der user\_id des Fotos verbunden; pro passendem Foto erscheint eine Zeile. Sortiert wird zuerst nach Benutzername und dann nach Foto-ID.\par\vspace{1.5mm}
-\sectiontitle{3 \textperiodcentered{} Verknüpfung und zwei Filter unterscheiden (\textnormal{P5})}
-\workbox{\textbf{Beschreibe} in eigenen Worten, welche Kommentare diese Abfrage zeigt und was die beiden Bedingungen zusätzlich zur Verknüpfung auswählen.}
-\smallcaption{Vorgegebene SQL-Anweisung}
-\sqlbox{\sqlkw{SELECT} users.username, comments.body\par
-\sqlkw{FROM} users, comments\par
-\sqlkw{WHERE} users.id = comments.user\_id\par
-\hspace*{2em}\sqlkw{AND} users.city = 'Hamburg'\par
-\hspace*{2em}\sqlkw{AND} comments.body \sqlkw{LIKE} '\%Foto\%'\par
-\sqlkw{ORDER BY} users.username, comments.id}
-\smallcaption{Mögliche Beschreibung}
-Die Abfrage zeigt Benutzernamen und Texte von Kommentaren, die Mitglieder aus Hamburg geschrieben haben und deren Text \glqq{}Foto\grqq{} enthält. Die user\_id des Kommentars wird mit der ID der verfassenden Person verbunden. Sortiert wird zuerst nach Benutzername und dann nach Kommentar-ID.\par
-
+Die Abfrage zeigt Benutzernamen und Beschreibungen der Fotos, die Mitglieder aus Hamburg hochgeladen haben. Die Mitglieds-ID wird mit der user\_id des Fotos verbunden; pro passendem Foto erscheint eine Zeile. Sortiert wird nach Benutzername von A bis Z, bei gleichem Benutzernamen nach Foto-ID aufsteigend.\par\vspace{1.5mm}
 \pagefooter{1}
 \newpage
 \pageheader\par
-\sectiontitle{4 \textperiodcentered{} Drei Tabellen verbinden (\textnormal{P6})}
+\sectiontitle{3 \textperiodcentered{} Drei Tabellen verbinden (\textnormal{P6})}
 \workbox{\textbf{Liste} Benutzername und Beschreibung der Fotos mit dem Hashtag travelgram auf. Sortiere nach Benutzername und Foto-ID.}
 \smallcaption{SQL-Anweisung}
 \sqlbox{\sqlkw{SELECT} users.username, photos.description\par
@@ -149,7 +137,7 @@ Die Abfrage zeigt Benutzernamen und Texte von Kommentaren, die Mitglieder aus Ha
 \hspace*{2em}\sqlkw{AND} tags.name = 'travelgram'\par
 \sqlkw{ORDER BY} users.username, photos.id}
 {\small \texttt{users.id = photos.user\_id} ordnet das Foto der hochladenden Person zu. \texttt{photos.id = tags.photo\_id} verbindet es mit seinen Hashtag-Zeilen. \texttt{tags.name = 'travelgram'} wählt den gesuchten Hashtag aus.}\par\vspace{2mm}
-\sectiontitle{5 \textperiodcentered{} Passende Kommentare zählen (\textnormal{P7})}
+\sectiontitle{4 \textperiodcentered{} Passende Kommentare zählen (\textnormal{P7})}
 \workbox{\textbf{Ermittle} die Anzahl der von wanderwut\_finn geschriebenen Kommentare. Gib eine Spalte anzahl\_kommentare aus.}
 \begin{minipage}[t]{.70\linewidth}
 \smallcaption{SQL-Anweisung}
@@ -167,28 +155,5 @@ Die Abfrage zeigt Benutzernamen und Texte von Kommentaren, die Mitglieder aus Ha
 \end{tabular}}
 \end{minipage}\par
 \merkebox{\texttt{COUNT(comments.id)} zählt die passenden Kommentar-Datensätze. \texttt{comments.user\_id} bezeichnet die Person, die den Kommentar geschrieben hat.}
-\sectiontitle{6 \textperiodcentered{} Für jedes Mitglied getrennt zählen (\textnormal{P9})}
-\workbox{\textbf{Ermittle} für jedes Mitglied aus Leipzig mit mindestens einem Foto den Benutzernamen und die Anzahl seiner hochgeladenen Fotos. Sortiere nach Fotoanzahl absteigend, dann nach Benutzername.}
-\smallcaption{SQL-Anweisung}
-\sqlbox{\sqlkw{SELECT} users.username, \sqlkw{COUNT}(photos.id) \sqlkw{AS} anzahl\_fotos\par
-\sqlkw{FROM} users, photos\par
-\sqlkw{WHERE} users.id = photos.user\_id\par
-\hspace*{2em}\sqlkw{AND} users.city = 'Leipzig'\par
-\sqlkw{GROUP BY} users.id, users.username\par
-\sqlkw{ORDER BY} anzahl\_fotos \sqlkw{DESC}, users.username}
-\begin{minipage}[t]{.49\linewidth}
-\smallcaption{Ergebnisrelation (erste 3 von 11 Zeilen)}
-{\fontsize{8.6}{10.2}\selectfont
-\begin{tabular}{|>{\ttfamily}l|>{\ttfamily}r|}\hline
-\rowcolor{Sky}\textbf{username} & \textbf{anzahl\_fotos}\\\hline
-zwerglaeuferin & 9\\\hline
-fragephilosophin & 7\\\hline
-theaterwut\_oscar & 6\\\hline
-\end{tabular}}
-\end{minipage}\hfill
-\begin{minipage}[t]{.49\linewidth}
-{\small Die Abfrage berücksichtigt nur Mitglieder aus Leipzig mit mindestens einem Foto. Die größten Fotoanzahlen stehen zuerst; bei gleicher Anzahl entscheidet der Benutzername.}
-\end{minipage}\par\vspace{1mm}
-\merkebox{\texttt{GROUP BY users.id, users.username} bildet aus den verbundenen Fotozeilen für jedes Mitglied eine eigene Gruppe. \texttt{COUNT(photos.id)} zählt innerhalb jeder Gruppe. Ohne passenden Fotoeintrag erscheint das Mitglied bei diesem Verbund nicht.}
 \pagefooter{2}
 \end{document}

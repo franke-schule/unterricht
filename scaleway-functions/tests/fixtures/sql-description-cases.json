@@ -2,13 +2,20 @@
   {
     "taskId": "inf10-db-a9-p2",
     "kind": "correct",
-    "expectedPoints": 4,
-    "answer": "Aus der Mitglieder- und Fototabelle werden Benutzername und Fotobeschreibung gezeigt. Jedes Foto ist der Person zugeordnet, die es hochgeladen hat. Es erscheinen nur Fotos von Mitgliedern, die in Hamburg wohnen, mit einer Ergebniszeile pro passendem Foto. Gemeint ist der Wohnort der Person, nicht der Aufnahmeort."
+    "expectedPoints": 5,
+    "answer": "Aus der Mitglieder- und Fototabelle werden Benutzername und Fotobeschreibung gezeigt. Jedes Foto ist der Person zugeordnet, die es hochgeladen hat. Es erscheinen nur Fotos von Mitgliedern, die in Hamburg wohnen, mit einer Ergebniszeile pro passendem Foto. Gemeint ist der Wohnort der Person, nicht der Aufnahmeort. Sortiert wird zuerst nach Benutzername von A bis Z, bei gleichem Benutzernamen nach Foto-ID aufsteigend."
   },
   {
     "taskId": "inf10-db-a9-p2",
     "kind": "partial",
     "expectedPoints": 2,
+    "criterionStatuses": [
+      "correct",
+      "correct",
+      "missing",
+      "missing",
+      "missing"
+    ],
     "answer": "Ausgegeben werden Benutzername und Fotobeschreibung. Die Verknüpfung ordnet jedes Foto der Person zu, die es hochgeladen hat."
   },
   {
@@ -20,13 +27,20 @@
   {
     "taskId": "inf10-db-a9-p5",
     "kind": "correct",
-    "expectedPoints": 4,
-    "answer": "Die Abfrage zeigt Benutzernamen mit ihren Kommentartexten. Ein Kommentar wird über die Benutzerkennung seiner verfassenden Person zugeordnet. Diese Person muss in Hamburg wohnen und der Kommentartext muss Foto enthalten."
+    "expectedPoints": 5,
+    "answer": "Die Abfrage zeigt Benutzernamen mit ihren Kommentartexten. Ein Kommentar wird über die Benutzerkennung seiner verfassenden Person zugeordnet. Diese Person muss in Hamburg wohnen und der Kommentartext muss Foto enthalten. Sortiert wird zuerst nach Benutzername von A bis Z, bei gleichem Benutzernamen nach Kommentar-ID aufsteigend."
   },
   {
     "taskId": "inf10-db-a9-p5",
     "kind": "partial",
     "expectedPoints": 2,
+    "criterionStatuses": [
+      "correct",
+      "correct",
+      "missing",
+      "missing",
+      "missing"
+    ],
     "answer": "Die Ausgabe enthält Benutzernamen und Kommentartexte. Die Verknüpfung ordnet jeden Kommentar seiner verfassenden Person zu."
   },
   {
@@ -38,13 +52,20 @@
   {
     "taskId": "inf10-db-a9-p8",
     "kind": "correct",
-    "expectedPoints": 4,
-    "answer": "Ausgegeben werden Benutzername und Fotobeschreibung. Die Benutzerkennung im Like verweist auf die Person, der das Foto gefällt. Die Fotokennung im Like verbindet es mit dem zugehörigen Foto. Ausgewählt ist das Foto mit der Kennung 10."
+    "expectedPoints": 5,
+    "answer": "Ausgegeben werden Benutzername und Fotobeschreibung. Die Benutzerkennung im Like verweist auf die Person, der das Foto gefällt. Die Fotokennung im Like verbindet es mit dem zugehörigen Foto. Ausgewählt ist das Foto mit der Kennung 10. Die Benutzernamen werden von A bis Z sortiert."
   },
   {
     "taskId": "inf10-db-a9-p8",
     "kind": "partial",
     "expectedPoints": 2,
+    "criterionStatuses": [
+      "correct",
+      "missing",
+      "missing",
+      "correct",
+      "missing"
+    ],
     "answer": "Ausgegeben werden Benutzername und Fotobeschreibung. Die Auswahl ist auf das Foto mit der Kennung 10 beschränkt."
   },
   {
@@ -56,13 +77,20 @@
   {
     "taskId": "inf10-db-a9-p11",
     "kind": "correct",
-    "expectedPoints": 4,
-    "answer": "Die Ausgabe enthält für jedes Mitglied den Benutzernamen und seine Kommentaranzahl. Die Kommentare werden über die Benutzerkennung ihrer verfassenden Person zugeordnet. Es erscheinen nur Mitglieder aus Leipzig, die mindestens einen Kommentar geschrieben haben. Für jede Person wird eine eigene Gruppe gebildet und darin werden ihre Kommentare gezählt."
+    "expectedPoints": 5,
+    "answer": "Die Ausgabe enthält für jedes Mitglied den Benutzernamen und seine Kommentaranzahl. Die Kommentare werden über die Benutzerkennung ihrer verfassenden Person zugeordnet. Es erscheinen nur Mitglieder aus Leipzig, die mindestens einen Kommentar geschrieben haben. Für jede Person wird eine eigene Gruppe gebildet und darin werden ihre Kommentare gezählt. Sortiert wird zuerst nach Kommentaranzahl absteigend, bei gleicher Anzahl nach Benutzername von A bis Z."
   },
   {
     "taskId": "inf10-db-a9-p11",
     "kind": "partial",
     "expectedPoints": 2,
+    "criterionStatuses": [
+      "correct",
+      "missing",
+      "missing",
+      "correct",
+      "missing"
+    ],
     "answer": "Ausgegeben werden Benutzernamen und die Kommentaranzahl je Mitglied. Dazu wird für jedes Mitglied eine eigene Gruppe gebildet und die Zahl der Kommentare darin gezählt."
   },
   {
@@ -261,6 +289,13 @@
     "taskId": "inf10-db-a9-p8",
     "kind": "partial",
     "expectedPoints": 3,
+    "criterionStatuses": [
+      "correct",
+      "wrong_role",
+      "correct",
+      "correct",
+      "missing"
+    ],
     "answer": "Ausgegeben werden Benutzername und Fotobeschreibung. likes.user_id bezeichnet die hochladende Person. likes.photo_id ordnet den Like dem Foto zu. photos.id beschränkt die Ausgabe auf Foto 10."
   },
   {
@@ -291,6 +326,13 @@
     "taskId": "inf10-db-a9-p11",
     "kind": "partial",
     "expectedPoints": 2,
+    "criterionStatuses": [
+      "wrong_total",
+      "correct",
+      "correct",
+      "wrong_grouping",
+      "missing"
+    ],
     "answer": "Ausgegeben werden Benutzername und eine einzige Gesamtzahl der Kommentare aller ausgewählten Mitglieder. Die Kommentare werden ihren Verfassern zugeordnet. Ausgewählt sind nur Mitglieder aus Leipzig, die mindestens einen Kommentar geschrieben haben. Die Gruppierung fasst alle diese Personen zu einer einzigen Gruppe zusammen."
   },
   {
@@ -338,49 +380,205 @@
   {
     "taskId": "inf10-db-a9-p2",
     "kind": "correct",
-    "expectedPoints": 4,
-    "answer": "Zu jedem Foto, das ein Hamburger Mitglied hochgeladen hat, stehen dessen Benutzername und die Fotobeschreibung in einer Ergebniszeile. Hamburg ist der Wohnort dieses Mitglieds."
+    "expectedPoints": 5,
+    "answer": "Zu jedem Foto, das ein Hamburger Mitglied hochgeladen hat, stehen dessen Benutzername und die Fotobeschreibung in einer Ergebniszeile. Hamburg ist der Wohnort dieses Mitglieds. Sortiert wird zuerst nach Benutzername von A bis Z, bei gleichem Benutzernamen nach Foto-ID aufsteigend."
   },
   {
     "taskId": "inf10-db-a9-p2",
     "kind": "correct",
-    "expectedPoints": 4,
-    "answer": "Zu jedem Foto, das ein Hamburger Mitglied hochgeladen hat, stehen dessen Benutzername und die Fotobeschreibung in einer Ergebniszeile. Hamburg ist der Wohnort dieses Mitglieds. Die Ausgangstabellen bleiben unverändert."
+    "expectedPoints": 5,
+    "answer": "Zu jedem Foto, das ein Hamburger Mitglied hochgeladen hat, stehen dessen Benutzername und die Fotobeschreibung in einer Ergebniszeile. Hamburg ist der Wohnort dieses Mitglieds. Die Ausgangstabellen bleiben unverändert. Sortiert wird zuerst nach Benutzername von A bis Z, bei gleichem Benutzernamen nach Foto-ID aufsteigend."
   },
   {
     "taskId": "inf10-db-a9-p5",
     "kind": "correct",
-    "expectedPoints": 4,
-    "answer": "Man sieht Benutzernamen und die Texte der Kommentare, die diese Personen geschrieben haben. Diese Personen wohnen in Hamburg und der Kommentartext enthält Foto."
+    "expectedPoints": 5,
+    "answer": "Man sieht Benutzernamen und die Texte der Kommentare, die diese Personen geschrieben haben. Diese Personen wohnen in Hamburg und der Kommentartext enthält Foto. Sortiert wird zuerst nach Benutzername von A bis Z, bei gleichem Benutzernamen nach Kommentar-ID aufsteigend."
   },
   {
     "taskId": "inf10-db-a9-p5",
     "kind": "correct",
-    "expectedPoints": 4,
-    "answer": "Man sieht Benutzernamen und die Texte der Kommentare, die diese Personen geschrieben haben. Diese Personen wohnen in Hamburg und der Kommentartext enthält Foto. Die Ausgangstabellen bleiben unverändert."
+    "expectedPoints": 5,
+    "answer": "Man sieht Benutzernamen und die Texte der Kommentare, die diese Personen geschrieben haben. Diese Personen wohnen in Hamburg und der Kommentartext enthält Foto. Die Ausgangstabellen bleiben unverändert. Sortiert wird zuerst nach Benutzername von A bis Z, bei gleichem Benutzernamen nach Kommentar-ID aufsteigend."
   },
   {
     "taskId": "inf10-db-a9-p8",
     "kind": "correct",
-    "expectedPoints": 4,
-    "answer": "Die Ausgabe zeigt Benutzernamen und eine Fotobeschreibung. Die Likes verbinden die Personen, denen das Foto gefällt, mit dem betreffenden Foto. Die Benutzerkennung im Like gehört der likenden Person, die Fotokennung dem gelikten Foto. Ausgewählt ist Foto 10."
+    "expectedPoints": 5,
+    "answer": "Die Ausgabe zeigt Benutzernamen und eine Fotobeschreibung. Die Likes verbinden die Personen, denen das Foto gefällt, mit dem betreffenden Foto. Die Benutzerkennung im Like gehört der likenden Person, die Fotokennung dem gelikten Foto. Ausgewählt ist Foto 10. Die Benutzernamen werden von A bis Z sortiert."
   },
   {
     "taskId": "inf10-db-a9-p8",
     "kind": "correct",
-    "expectedPoints": 4,
-    "answer": "Die Ausgabe zeigt Benutzernamen und eine Fotobeschreibung. Die Likes verbinden die Personen, denen das Foto gefällt, mit dem betreffenden Foto. Die Benutzerkennung im Like gehört der likenden Person, die Fotokennung dem gelikten Foto. Ausgewählt ist Foto 10. Die Ausgangstabellen bleiben unverändert."
+    "expectedPoints": 5,
+    "answer": "Die Ausgabe zeigt Benutzernamen und eine Fotobeschreibung. Die Likes verbinden die Personen, denen das Foto gefällt, mit dem betreffenden Foto. Die Benutzerkennung im Like gehört der likenden Person, die Fotokennung dem gelikten Foto. Ausgewählt ist Foto 10. Die Ausgangstabellen bleiben unverändert. Die Benutzernamen werden von A bis Z sortiert."
   },
   {
     "taskId": "inf10-db-a9-p11",
     "kind": "correct",
-    "expectedPoints": 4,
-    "answer": "Für jedes Mitglied erscheinen Benutzername und die Zahl seiner Kommentare. Ein Kommentar wird der Person zugeordnet, die ihn geschrieben hat. Ausgewählt sind Leipziger Mitglieder mit wenigstens einem Kommentar. Die Kommentare werden für jede Person getrennt gezählt."
+    "expectedPoints": 5,
+    "answer": "Für jedes Mitglied erscheinen Benutzername und die Zahl seiner Kommentare. Ein Kommentar wird der Person zugeordnet, die ihn geschrieben hat. Ausgewählt sind Leipziger Mitglieder mit wenigstens einem Kommentar. Die Kommentare werden für jede Person getrennt gezählt. Sortiert wird zuerst nach Kommentaranzahl absteigend, bei gleicher Anzahl nach Benutzername von A bis Z."
   },
   {
     "taskId": "inf10-db-a9-p11",
     "kind": "correct",
+    "expectedPoints": 5,
+    "answer": "Für jedes Mitglied erscheinen Benutzername und die Zahl seiner Kommentare. Ein Kommentar wird der Person zugeordnet, die ihn geschrieben hat. Ausgewählt sind Leipziger Mitglieder mit wenigstens einem Kommentar. Die Kommentare werden für jede Person getrennt gezählt. Die Ausgangstabellen bleiben unverändert. Sortiert wird zuerst nach Kommentaranzahl absteigend, bei gleicher Anzahl nach Benutzername von A bis Z."
+  },
+  {
+    "taskId": "inf10-db-a9-p2",
+    "kind": "partial",
     "expectedPoints": 4,
-    "answer": "Für jedes Mitglied erscheinen Benutzername und die Zahl seiner Kommentare. Ein Kommentar wird der Person zugeordnet, die ihn geschrieben hat. Ausgewählt sind Leipziger Mitglieder mit wenigstens einem Kommentar. Die Kommentare werden für jede Person getrennt gezählt. Die Ausgangstabellen bleiben unverändert."
+    "answer": "Aus der Mitglieder- und Fototabelle werden Benutzername und Fotobeschreibung gezeigt. Jedes Foto ist der Person zugeordnet, die es hochgeladen hat. Es erscheinen nur Fotos von Mitgliedern, die in Hamburg wohnen, mit einer Ergebniszeile pro passendem Foto. Gemeint ist der Wohnort der Person, nicht der Aufnahmeort.",
+    "criterionStatuses": [
+      "correct",
+      "correct",
+      "correct",
+      "correct",
+      "missing"
+    ]
+  },
+  {
+    "taskId": "inf10-db-a9-p5",
+    "kind": "partial",
+    "expectedPoints": 4,
+    "answer": "Die Abfrage zeigt Benutzernamen mit ihren Kommentartexten. Ein Kommentar wird über die Benutzerkennung seiner verfassenden Person zugeordnet. Diese Person muss in Hamburg wohnen und der Kommentartext muss Foto enthalten.",
+    "criterionStatuses": [
+      "correct",
+      "correct",
+      "correct",
+      "correct",
+      "missing"
+    ]
+  },
+  {
+    "taskId": "inf10-db-a9-p8",
+    "kind": "partial",
+    "expectedPoints": 4,
+    "answer": "Ausgegeben werden Benutzername und Fotobeschreibung. Die Benutzerkennung im Like verweist auf die Person, der das Foto gefällt. Die Fotokennung im Like verbindet es mit dem zugehörigen Foto. Ausgewählt ist das Foto mit der Kennung 10.",
+    "criterionStatuses": [
+      "correct",
+      "correct",
+      "correct",
+      "correct",
+      "missing"
+    ]
+  },
+  {
+    "taskId": "inf10-db-a9-p11",
+    "kind": "partial",
+    "expectedPoints": 4,
+    "answer": "Die Ausgabe enthält für jedes Mitglied den Benutzernamen und seine Kommentaranzahl. Die Kommentare werden über die Benutzerkennung ihrer verfassenden Person zugeordnet. Es erscheinen nur Mitglieder aus Leipzig, die mindestens einen Kommentar geschrieben haben. Für jede Person wird eine eigene Gruppe gebildet und darin werden ihre Kommentare gezählt.",
+    "criterionStatuses": [
+      "correct",
+      "correct",
+      "correct",
+      "correct",
+      "missing"
+    ]
+  },
+  {
+    "taskId": "inf10-db-a9-p2",
+    "kind": "partial",
+    "expectedPoints": 4,
+    "answer": "Zu jedem Foto, das ein Hamburger Mitglied hochgeladen hat, stehen dessen Benutzername und die Fotobeschreibung in einer Ergebniszeile. Hamburg ist der Wohnort dieses Mitglieds.",
+    "criterionStatuses": [
+      "correct",
+      "correct",
+      "correct",
+      "correct",
+      "missing"
+    ]
+  },
+  {
+    "taskId": "inf10-db-a9-p2",
+    "kind": "partial",
+    "expectedPoints": 4,
+    "answer": "Zu jedem Foto, das ein Hamburger Mitglied hochgeladen hat, stehen dessen Benutzername und die Fotobeschreibung in einer Ergebniszeile. Hamburg ist der Wohnort dieses Mitglieds. Die Ausgangstabellen bleiben unverändert.",
+    "criterionStatuses": [
+      "correct",
+      "correct",
+      "correct",
+      "correct",
+      "missing"
+    ]
+  },
+  {
+    "taskId": "inf10-db-a9-p5",
+    "kind": "partial",
+    "expectedPoints": 4,
+    "answer": "Man sieht Benutzernamen und die Texte der Kommentare, die diese Personen geschrieben haben. Diese Personen wohnen in Hamburg und der Kommentartext enthält Foto.",
+    "criterionStatuses": [
+      "correct",
+      "correct",
+      "correct",
+      "correct",
+      "missing"
+    ]
+  },
+  {
+    "taskId": "inf10-db-a9-p5",
+    "kind": "partial",
+    "expectedPoints": 4,
+    "answer": "Man sieht Benutzernamen und die Texte der Kommentare, die diese Personen geschrieben haben. Diese Personen wohnen in Hamburg und der Kommentartext enthält Foto. Die Ausgangstabellen bleiben unverändert.",
+    "criterionStatuses": [
+      "correct",
+      "correct",
+      "correct",
+      "correct",
+      "missing"
+    ]
+  },
+  {
+    "taskId": "inf10-db-a9-p8",
+    "kind": "partial",
+    "expectedPoints": 4,
+    "answer": "Die Ausgabe zeigt Benutzernamen und eine Fotobeschreibung. Die Likes verbinden die Personen, denen das Foto gefällt, mit dem betreffenden Foto. Die Benutzerkennung im Like gehört der likenden Person, die Fotokennung dem gelikten Foto. Ausgewählt ist Foto 10.",
+    "criterionStatuses": [
+      "correct",
+      "correct",
+      "correct",
+      "correct",
+      "missing"
+    ]
+  },
+  {
+    "taskId": "inf10-db-a9-p8",
+    "kind": "partial",
+    "expectedPoints": 4,
+    "answer": "Die Ausgabe zeigt Benutzernamen und eine Fotobeschreibung. Die Likes verbinden die Personen, denen das Foto gefällt, mit dem betreffenden Foto. Die Benutzerkennung im Like gehört der likenden Person, die Fotokennung dem gelikten Foto. Ausgewählt ist Foto 10. Die Ausgangstabellen bleiben unverändert.",
+    "criterionStatuses": [
+      "correct",
+      "correct",
+      "correct",
+      "correct",
+      "missing"
+    ]
+  },
+  {
+    "taskId": "inf10-db-a9-p11",
+    "kind": "partial",
+    "expectedPoints": 4,
+    "answer": "Für jedes Mitglied erscheinen Benutzername und die Zahl seiner Kommentare. Ein Kommentar wird der Person zugeordnet, die ihn geschrieben hat. Ausgewählt sind Leipziger Mitglieder mit wenigstens einem Kommentar. Die Kommentare werden für jede Person getrennt gezählt.",
+    "criterionStatuses": [
+      "correct",
+      "correct",
+      "correct",
+      "correct",
+      "missing"
+    ]
+  },
+  {
+    "taskId": "inf10-db-a9-p11",
+    "kind": "partial",
+    "expectedPoints": 4,
+    "answer": "Für jedes Mitglied erscheinen Benutzername und die Zahl seiner Kommentare. Ein Kommentar wird der Person zugeordnet, die ihn geschrieben hat. Ausgewählt sind Leipziger Mitglieder mit wenigstens einem Kommentar. Die Kommentare werden für jede Person getrennt gezählt. Die Ausgangstabellen bleiben unverändert.",
+    "criterionStatuses": [
+      "correct",
+      "correct",
+      "correct",
+      "correct",
+      "missing"
+    ]
   }
 ]

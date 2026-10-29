@@ -69,6 +69,14 @@ Meldung behandeln. Kein JSONP und keine Eingabeuebertragung in einer URL.
 4. Rueckmeldungsregeln
 ----------------------
 
+  - Neue Beschreibe- und Programmieraufgaben verwenden ausschliesslich die
+    kriterienbasierte Bewertung nach manifest-allgemein.txt Abschnitt 0.1.
+    Technischer Vertrag, Vorlagen und Bestandsmigration stehen in
+    KI-FEEDBACK-MIGRATION.md. responseType: 'code' und feedbackCriteria
+    verwenden fuer KI-Codepruefungen denselben Serverweg; Codebelege stammen
+    woertlich aus dem aktuellen IDE-Code und werden im Kontrollfluss bewertet.
+    Reine Kommentare, Zeichenketten und unerreichbarer Code genuegen nicht.
+    Bestehende deterministische Pruefer beibehalten und Kriterien zuordnen.
   - Auswertungsergebnis direkt bei der Teilaufgabe anzeigen.
   - aria-live="polite" verwenden.
   - Serverfehler, unvollstaendige Eingabe und fachlich falsche Antwort
@@ -77,8 +85,10 @@ Meldung behandeln. Kein JSONP und keine Eingabeuebertragung in einer URL.
   - Bestehende Funktionsnamen und Result-Strukturen beibehalten, wenn nur der
     Seiteninhalt erweitert wird.
   - Finale Rueckmeldungen ueber die gemeinsame Anzeige renderCompactEvaluation
-    ausgeben: volle Punktzahl mit "Sehr gut, alles richtig", sonst hoechstens
-    zwei kurze Saetze insgesamt. Bei Fehlern nur Punktzahl, kein Statuszusatz;
+    ausgeben: volle Punktzahl mit "Sehr gut, alles richtig", sonst genau einen
+    naechsten Verbesserungsschritt (maxHints: 1). Fuer noch nicht umgestellte
+    Bestandsaufgaben bleiben hoechstens zwei kurze Saetze zulaessig.
+    Bei Fehlern nur Punktzahl, kein Statuszusatz;
     danach konkreter Fehler und bei Bedarf ein konkreter Tipp. Allgemeine
     Aufforderungen wie "Korrigiere dies" entfallen. Bei Code Syntax- und Typfehler
     zuerst benennen und die konkrete Stelle samt Ersetzung oder Ergaenzung
@@ -95,6 +105,8 @@ Zusaetzlich zur allgemeinen Checkliste:
   [ ] Jeder Pruefbutton verwendet den richtigen Teilaufgaben-Key.
   [ ] Erfolgs-, Fehler- und Servermeldungen erscheinen am richtigen Feld.
   [ ] Normale und lange Antworten wurden getestet.
+  [ ] Kriterien und Codebelege, gleichwertige Loesungen, Kontrollflussfehler
+      und genau ein naechster Schritt wurden geprueft; Migration dokumentiert.
   [ ] Scaleway-Quellen, Tests und Upload-ZIP sind aktuell; apps-script/ blieb
       unveraendert. Ausstehende Bereitstellung ist bei der Uebergabe genannt.
   [ ] Sicherungsblatt- und Lehrercode-Regeln aus manifest-allgemein.txt gelten.

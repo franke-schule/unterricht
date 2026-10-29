@@ -1,8 +1,8 @@
-import { evaluateSemanticAnswer } from '../../klasse-11/1-Kuenstliche-Intelligenz/perzeptron/ui/semantic-answer.mjs?v=20261022-feedback-two-sentences';
+import { evaluateSemanticAnswer } from '../../klasse-11/1-Kuenstliche-Intelligenz/perzeptron/ui/semantic-answer.mjs?v=20261029-single-improvement';
 import { analyzeMultiTableSelect, classifyDescriptionResult, compareRelations, diagnoseSqlError, sqlTokens, validateSelectStatement } from './sql-lab-core.mjs?v=20260929b';
-import { SqlWorker, appendHints, renderRelation, renderServerFeedback, schemaCard } from './sql-lab.js?v=20261022-feedback-two-sentences';
+import { SqlWorker, appendHints, renderRelation, renderServerFeedback, schemaCard } from './sql-lab.js?v=20261029-criterion-feedback';
 import { appendSolutionDownloadFromTemplate, focusTabPanelStart, enableTabKeyboardNavigation, renderTabFlowNavigation, syncTabSemantics } from './tab-navigation.mjs?v=20261001a';
-import { JOIN_TASKS } from './aufgabe9-daten.mjs?v=20261014-a9';
+import { JOIN_TASKS } from './aufgabe9-daten.mjs?v=20261029-ordering';
 
 const STORAGE_KEY = 'inf10-insta-verbund-aufgabe9-v1';
 const SCRIPT_SERVER_URL = 'https://unterrichtkiichezbn4-ki-auswertung.functions.fnc.fr-par.scw.cloud/';
@@ -44,22 +44,25 @@ let databaseReady = false;
 
 function el(tag, className = '', value) { const node = document.createElement(tag); node.className = className; if (value !== undefined) node.textContent = value; return node; }
 function richText(tag, value, className = '') { const node = el(tag, className); const parts = value.split(/\*\*(.*?)\*\*/g); parts.forEach((part, index) => node.append(index % 2 ? el('strong', '', part) : document.createTextNode(part))); return node; }
-function save() { try { localStorage.setItem(STORAGE_KEY, JSON.stringify({ tab: state.tab, introStep: state.introStep, answers: state.answers, completed: state.completed, quiz: state.quiz, quizPassed: state.quizPassed })); } catch { /* Ohne Speicher bleibt das Modul bedienbar. */ } }
+function save() { try { localStorage.setItem(STORAGE_KEY, JSON.stringify({ tab: state.tab, introStep: state.introStep, answers: state.answers, completed: state.completed, assessmentVersions: Object.fromEntries(REQUIRED.filter((task) => task.assessmentVersion).map((task) => [task.id, task.assessmentVersion])), quiz: state.quiz, quizPassed: state.quizPassed })); } catch { /* Ohne Speicher bleibt das Modul bedienbar. */ } }
 function selected(questionIndex) { return Array.isArray(state.quiz[questionIndex]) ? state.quiz[questionIndex] : []; }
 function quizCorrect(questionIndex) { const actual = [...new Set(selected(questionIndex))].sort(); const right = QUIZ[questionIndex].options.filter((option) => option[2]).map((option) => option[0]).sort(); return actual.length === right.length && actual.every((value, index) => value === right[index]); }
 function allRequiredDone() { return REQUIRED.every((task) => state.completed[task.id] === state.answers[task.id] && Boolean(state.answers[task.id]?.trim())); }
 function unlocked() { return allRequiredDone() && state.quizPassed && QUIZ.every((_, index) => quizCorrect(index)); }
 function restore() {
   try {
-    const saved = JSON.parse(localStorage.getItem(STORAGE_KEY) || '{}');
+    const savedText = localStorage.getItem(STORAGE_KEY);
+    if (savedText === null) return;
+    const saved = JSON.parse(savedText);
     if (!saved || typeof saved !== 'object' || Array.isArray(saved)) return;
     if (saved.answers && typeof saved.answers === 'object' && !Array.isArray(saved.answers)) for (const [id, value] of Object.entries(saved.answers)) if (ALL_TASKS.has(id) && typeof value === 'string' && value.length <= 20000) state.answers[id] = value;
-    if (saved.completed && typeof saved.completed === 'object' && !Array.isArray(saved.completed)) for (const task of REQUIRED) if (typeof saved.completed[task.id] === 'string' && saved.completed[task.id] === state.answers[task.id] && saved.completed[task.id].trim()) state.completed[task.id] = saved.completed[task.id];
+    if (saved.completed && typeof saved.completed === 'object' && !Array.isArray(saved.completed)) for (const task of REQUIRED) if ((!task.assessmentVersion || saved.assessmentVersions?.[task.id] === task.assessmentVersion) && typeof saved.completed[task.id] === 'string' && saved.completed[task.id] === state.answers[task.id] && saved.completed[task.id].trim()) state.completed[task.id] = saved.completed[task.id];
     if (saved.quiz && typeof saved.quiz === 'object' && !Array.isArray(saved.quiz)) QUIZ.forEach((question, index) => { const values = saved.quiz[index]; if (Array.isArray(values)) state.quiz[index] = [...new Set(values.filter((value) => typeof value === 'string' && question.options.some(([id]) => id === value)))]; });
     state.quizPassed = saved.quizPassed === true && QUIZ.every((_, index) => quizCorrect(index));
     state.introStep = Number.isInteger(saved.introStep) && saved.introStep >= 1 && saved.introStep <= 12 ? saved.introStep : 1;
     if (TABS.some(([id]) => id === saved.tab)) state.tab = saved.tab;
     if (state.tab === 'summary' && !unlocked()) state.tab = 'quiz';
+    save(); // Geänderte Rubrikfreigaben einmalig im vorhandenen Stand bereinigen.
   } catch { /* Beschädigter oder gesperrter Speicher ist optional. */ }
 }
 function updateUnlock() {
@@ -289,8 +292,8 @@ async function checkDescription(task, card) {
     const result = await evaluateSemanticAnswer({ serverUrl: SCRIPT_SERVER_URL, taskId: `inf10-db-a9-${task.id.toLowerCase()}`, answer });
     if (input.value.trim() !== answer) return;
     const feedback = classifyDescriptionResult(result);
-    if (feedback.level === 'error' || !['korrekt', 'teilweise korrekt', 'noch nicht korrekt'].includes(feedback.status) || !Number.isInteger(feedback.points) || feedback.maxPoints !== 4 || feedback.points < 0 || feedback.points > 4 || (feedback.status === 'korrekt') !== (feedback.points === 4)) throw new Error('Ungültige Auswertung');
-    state.server[task.id] = feedback; if (feedback.points === 4 && feedback.status === 'korrekt') state.completed[task.id] = input.value; else delete state.completed[task.id];
+    if (feedback.level === 'error' || !['korrekt', 'teilweise korrekt', 'noch nicht korrekt'].includes(feedback.status) || !Number.isInteger(feedback.points) || feedback.maxPoints !== task.maxPoints || feedback.points < 0 || feedback.points > task.maxPoints || (feedback.status === 'korrekt') !== (feedback.points === task.maxPoints)) throw new Error('Ungültige Auswertung');
+    state.server[task.id] = feedback; if (feedback.points === task.maxPoints && feedback.status === 'korrekt') state.completed[task.id] = input.value; else delete state.completed[task.id];
   } catch { if (input.value.trim() !== answer) return; delete state.completed[task.id]; state.server[task.id] = { level: 'error', text: 'Die Auswertung ist gerade nicht erreichbar. Deine Eingabe bleibt erhalten; versuche es erneut.' }; }
   finally { button.disabled = false; if (input.value.trim() === answer) { save(); renderFeedback(task, card); updateUnlock(); if (unlocked()) activate('summary', { focusContent: true }); } }
 }

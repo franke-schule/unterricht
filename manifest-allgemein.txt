@@ -81,6 +81,67 @@ Prosa entfallen. Die gemeinsame Anzeige verwendet renderCompactEvaluation;
 serverseitig bleibt der interne Bewertungsvertrag kompatibel.
 
 
+0.1 Kriterienbasierte Bewertung: verbindlicher Standard ab 29.10.2026
+-------------------------------------------------------------------
+
+Alle neuen Beschreibe- und Programmieraufgaben erzeugen ihr automatisiertes
+Feedback kriterienbasiert. Das gilt fachuebergreifend, auch fuer
+Wiederholungsquizze. Bei Aufgaben mit vorhandener deterministischer Pruefung
+diese weiterverwenden und deren Einzelpruefungen den Kriterien zuordnen;
+dafuer keine zusaetzliche KI-Auswertung einfuehren.
+
+Bestehende Aufgaben schrittweise bei einer gezielten Ueberarbeitung ihrer
+Bewertung umstellen. Dieser Standard ist kein Auftrag zur Gesamtmigration.
+Der lokale Stand, Referenzen und die technische Checkliste stehen zentral
+in KI-FEEDBACK-MIGRATION.md im Wurzelordner. Vor einer neuen Aufgabe oder
+Umstellung lesen und nach jeder Umstellung aktualisieren.
+
+Verbindliche Prinzipien:
+
+  - Vor dem Bau konkrete, fachlich pruefbare Kriterien festlegen. Auftrag,
+    Kontext, Musterloesung, Hilfen, erwartete Aspekte, Rubrik und Bepunktung
+    muessen zusammenpassen. Kein wesentlicher verlangter Teil darf fehlen.
+    Bewusste didaktische Auslassungen im Auftrag kenntlich machen; bei
+    Unklarheiten insbesondere ueber Lernziele und Punkte rueckfragen.
+  - Fachliche Bedeutung bzw. funktional gleichwertigen Code anerkennen.
+    Dieselbe Aussage oder Codepassage darf mehrere Kriterien belegen.
+    Keine zusaetzlichen Saetze, Schluesselwoerter oder Loesungsformen erzwingen.
+  - Fuer KI-Aufgaben feedbackCriteria und maxFeedbackHints: 1 in
+    scaleway-functions/source/tasks.js konfigurieren. Pro Kriterium genau
+    ein Punkt; maxPoints, expectedAspects, rubric und feedbackCriteria haben
+    dieselbe Anzahl und fachliche Zuordnung. Bei gewuenschter anderer
+    Gewichtung zuerst den gemeinsamen Vertrag gezielt erweitern und testen.
+  - Das Modell liefert ausschliesslich Einzelurteile mit vorgegebenem Status
+    und woertlichen Text- bzw. Codebelegen. Der Server prueft den Vertrag,
+    berechnet die Punkte und waehlt genau einen hinterlegten Hinweis zum
+    ersten offenen Kriterium. Ein einzelner freier Modellhinweis oder nur
+    maxFeedbackHints: 1 gilt noch nicht als kriterienbasierte Bewertung.
+  - Alle erfuellten Kriterien zaehlen sofort, auch wenn fruehere offen sind.
+    Die Reihenfolge der Kriterien bestimmt nur den naechsten Hinweis.
+    Bei Code relevante Syntax-/Typ- und Kontrollflussprobleme zuerst
+    beruecksichtigen; keine pauschale Nullwertung unabhaengiger Aspekte.
+  - Bei Teilpunkten genau eine konkrete Handlungsanweisung anzeigen,
+    moeglichst als 'Schritt N von M'; kein zweiter Fehler und keine komplette
+    Musterloesung. Bei voller Punktzahl nur Punkte und den Erfolgssatz
+    'Sehr gut, alles richtig'. renderCompactEvaluation mit maxHints: 1
+    verwenden. Die aeltere Zweisatzregel in Abschnitt 0 bzw. 7 bleibt nur
+    fuer noch nicht umgestellte Bestandsaufgaben bestehen.
+  - Jede Pruefung bezieht sich auf die aktuelle Eingabe. Nach Bearbeitung
+    veraltete Rueckmeldungen entfernen, nach Rubrikaenderungen betroffene
+    alte Freigaben/Bewertungscaches gezielt ungueltig machen. Eingaben und
+    andere Fortschritte erhalten; keinen getrennten Schrittzaehler speichern.
+  - Unvollstaendige oder ungueltige Modellantworten sind technische Fehler
+    ohne Schuelerpunkte. Belegkontrolle beweist nicht die fachliche Richtigkeit
+    des Modellurteils; diese bleibt mit synthetischen Vergleichsantworten
+    gegen das tatsaechlich bereitgestellte Modell zu pruefen.
+  - Positive, unvollstaendige, falsche und gleichwertig formulierte Loesungen,
+    jeden offenen Schritt, Belegfehler und erneute Bearbeitung testen.
+    Bei Code ausserdem Kontrollfluss, Kommentare/Zeichenketten und
+    funktional gleichwertige Varianten pruefen. Neue Aufgaben ohne
+    feedbackCriteria duerfen den Bestandstest nicht bestehen; der eingefrorene
+    Legacy-Bestand darf nur durch weitere Umstellungen verkleinert werden.
+
+
 1. Ordner, Dateinamen und Menues
 --------------------------------
 
@@ -472,7 +533,9 @@ zusaetzlich eine konkrete Textmeldung anzeigen.
 Bei KI-Feedback keine parallelen Abschnitte fuer Staerken und Fehlendes
 ausgeben. Fuer die finale Anzeige gilt renderCompactEvaluation: volle
 Punktzahl mit dem festgelegten Erfolgssatz, sonst hoechstens zwei konkrete,
-deduplizierte Handlungsanweisungen.
+deduplizierte Handlungsanweisungen bei noch nicht umgestellten Aufgaben.
+Fuer neue und umgestellte Beschreibe-/Programmieraufgaben gilt Abschnitt 0.1:
+genau ein naechster Verbesserungsschritt.
 
 Feedback-Buttons bei Multiple-Choice-Fragen:
 
@@ -513,6 +576,9 @@ Vor Abschluss mindestens pruefen:
   [ ] Bei KI-Feedback: Scaleway-Aufgaben und passende Tests sind enthalten;
       Build, Tests und ZIP sind aktuell, apps-script/ blieb unveraendert.
       Noch ausstehender Upload und Live-Pruefung sind klar benannt.
+  [ ] Neue/umgestellte Beschreibe- und Programmieraufgaben: Kriterien,
+      Einzelbelege, Punkte und genau ein naechster Schritt stimmen ueberein;
+      KI-FEEDBACK-MIGRATION.md und Legacy-Bestand sind aktuell.
   [ ] Sicherungsblatt-Download ist anfangs verborgen.
   [ ] Lehrercode stimmt mit der Dekodierdatei ueberein.
   [ ] Neue PDFs wurden gebaut, gerendert und visuell geprueft.

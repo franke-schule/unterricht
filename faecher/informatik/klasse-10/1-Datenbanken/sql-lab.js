@@ -1,4 +1,4 @@
-import { evaluateSemanticAnswer, renderCompactEvaluation } from '../../klasse-11/1-Kuenstliche-Intelligenz/perzeptron/ui/semantic-answer.mjs?v=20261022-feedback-two-sentences';
+import { evaluateSemanticAnswer, renderCompactEvaluation } from '../../klasse-11/1-Kuenstliche-Intelligenz/perzeptron/ui/semantic-answer.mjs?v=20261029-single-improvement';
 import { analyzeMultiTableSelect, classifyDescriptionResult, compareRelations, diagnoseMultiTableError, diagnoseSqlError, diagnoseSqlTask, explainSqlError, flexibleReferenceSql, isValidScriptServerUrl, normalizeRelation, parseDelimited, validateSelectStatement } from './sql-lab-core.mjs?v=20260929b';
 import { MENU_QUIZ, MENU_TABLES, MENU_TABLE_NAMES, MENU_TABLE_SCHEMAS, buildMenuCombinations, menuRelation } from './menue-kreuzprodukt-daten.mjs?v=20260929a';
 import { SONG_PLAYLIST_PAIRS, SONG_VERBUND_COLUMN_GROUPS, SONG_VERBUND_COLUMNS, SONG_VERBUND_QUIZ, SONG_VERBUND_SQL, SONG_VERBUND_TABLE_NAMES, SONG_VERBUND_TABLE_SCHEMAS, SONG_VERBUND_TABLES, SONG_VERBUND_VISIBLE_TEXT, evaluateFirstConnection, evaluateQuizQuestion, evaluateSecondConnection } from './song-verbund-daten.mjs?v=20260929a';
@@ -320,7 +320,7 @@ export function renderServerFeedback(task, card, providedFeedback = state.server
   card.querySelector('.server-feedback')?.remove(); const feedback = providedFeedback; if (!feedback) return;
   const level = Number.isFinite(feedback.points) && feedback.maxPoints > 0 ? feedback.points === feedback.maxPoints ? 'success' : feedback.points > 0 ? 'partial' : 'error' : feedback.level; const box = element('section', `result server-feedback${level === 'loading' ? '' : ` ${level}`}`); box.setAttribute('aria-live', 'polite');
   if (Number.isFinite(feedback.points) && feedback.maxPoints > 0) {
-    renderCompactEvaluation(box, { ...feedback, feedback: feedback.text });
+    renderCompactEvaluation(box, { ...feedback, feedback: feedback.text }, { maxHints: task.maxFeedbackHints === 1 ? 1 : 2 });
   } else box.append(element('p', '', feedback.text));
   card.append(box);
 }

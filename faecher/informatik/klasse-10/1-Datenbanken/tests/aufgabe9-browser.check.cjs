@@ -49,7 +49,7 @@ async function main() {
       const request = route.request(); const url = request.url();
       if (url === 'https://unterrichtkiichezbn4-ki-auswertung.functions.fnc.fr-par.scw.cloud/') {
         const body = request.postDataJSON(); calls.push(body.taskId); const fail = failNext; failNext = false;
-        return route.fulfill({ status: fail ? 503 : 200, contentType: 'application/json', headers: { 'Access-Control-Allow-Origin': origin }, body: JSON.stringify({ type: 'GEMINI_EVALUATION_RESULT', requestId: body.requestId, result: fail ? { ok: false, message: 'Testfehler' } : { ok: true, points: 4, maxPoints: 4, status: 'korrekt', strengths: ['Simulierter fachlicher Aspekt'], missing: [], feedback: 'Simulierte Rückmeldung.' } }) });
+        return route.fulfill({ status: fail ? 503 : 200, contentType: 'application/json', headers: { 'Access-Control-Allow-Origin': origin }, body: JSON.stringify({ type: 'GEMINI_EVALUATION_RESULT', requestId: body.requestId, result: fail ? { ok: false, message: 'Testfehler' } : { ok: true, points: 5, maxPoints: 5, status: 'korrekt', strengths: ['Simulierter fachlicher Aspekt'], missing: [], feedback: 'Simulierte Rückmeldung.' } }) });
       }
       if (url.startsWith(origin + '/')) return route.continue();
       return route.abort();
@@ -174,7 +174,7 @@ async function main() {
     await page.waitForFunction(() => document.getElementById('tab-summary')?.getAttribute('aria-selected') === 'true', null, { timeout: 120000 });
     assert.equal(await page.locator('#sql-panel .task-card').count(), 12);
     await page.click('#tab-practice');
-    await page.fill('#input-P2', 'Die Abfrage zeigt Benutzernamen und Beschreibungen der Fotos, die Mitglieder aus Hamburg hochgeladen haben. Die Mitglieds-ID wird mit der user_id des Fotos verbunden; pro passendem Foto erscheint eine Zeile.');
+    await page.fill('#input-P2', 'Die Abfrage zeigt Benutzernamen und Beschreibungen der Fotos, die Mitglieder aus Hamburg hochgeladen haben. Die Mitglieds-ID wird mit der user_id des Fotos verbunden; pro passendem Foto erscheint eine Zeile. Sortiert wird zuerst nach Benutzername von A bis Z und bei gleichem Benutzernamen nach Foto-ID aufsteigend.');
     failNext = true;
     await page.locator('#task-P2 .primary-button').first().click();
     await page.waitForFunction(() => document.querySelector('#task-P2 .server-feedback.error'));

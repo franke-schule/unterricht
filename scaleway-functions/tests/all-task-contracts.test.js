@@ -13,8 +13,10 @@ test('Alle Aufgaben behalten ihre Kennung, den Eingabetyp und das Ergebnisformat
   }, fetchImpl: async () => {
     modelCalls++;
     return { ok: true, status: 200, text: async () => JSON.stringify({ choices: [{ finish_reason: 'stop',
-      message: { content: JSON.stringify({ points: 0, maxPoints: expectedTask.maxPoints,
-        status: 'noch nicht korrekt', strengths: [], missing: ['Testaspekt fehlt.'], feedback: 'Technische Testantwort.' }) }
+      message: { content: JSON.stringify(expectedTask.feedbackCriteria
+        ? { criteria: Object.fromEntries(expectedTask.feedbackCriteria.map(criterion => [criterion.id, { status: 'missing', evidence: [] }])) }
+        : { points: 0, maxPoints: expectedTask.maxPoints,
+          status: 'noch nicht korrekt', strengths: [], missing: ['Testaspekt fehlt.'], feedback: 'Technische Testantwort.' }) }
     }] }) };
   } });
   for (const [taskId, task] of Object.entries(core.TASKS)) {

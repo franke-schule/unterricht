@@ -68,6 +68,9 @@ Barrierearmut, Rueckmeldungen und Abschlusspruefung gelten zusaetzlich.
 4. Beschreibe-Aufgaben
 -----------------------
 
+  - Neue und gezielt umgestellte Aufgaben verwenden die kriterienbasierte
+    Bewertung mit genau einem naechsten Schritt nach manifest-allgemein.txt
+    Abschnitt 0.1. Referenz und Umstellungsstand: KI-FEEDBACK-MIGRATION.md.
   - Die bestehende Scaleway-Pipeline und die vorhandenen Bewertungsrubriken
     wiederverwenden. Neue KI-Aufgaben automatisch in
     scaleway-functions/source/tasks.js eintragen, testen und die Upload-ZIP
@@ -111,6 +114,15 @@ bleibt davon unberuehrt.
     ist nur Pflicht, wenn sie im Arbeitsauftrag und in der Rubrik ausdruecklich
     als Lernziel ausgewiesen ist. Danach keine staendige Wiederholung verlangen.
     Korrekte freiwillige Ergaenzungen fuehren nicht zu Punktabzug.
+  - Beim Festlegen der Rubrik alle im Auftrag verlangten Wirkungen der
+    konkreten Abfrage abgleichen: Ausgabe, Verknuepfung, Filter, DISTINCT,
+    Gruppierung/Aggregation, HAVING, Sortierung und Begrenzung, soweit
+    vorhanden und Teil des Auftrags. Soll die ganze Abfrage beschrieben
+    werden, ORDER BY nicht stillschweigend auslassen. Sortierspalten,
+    Vorrang, Richtung und das Verhalten bei gleichen Werten beruecksichtigen;
+    ohne DESC gilt ASC. Eine bewusst eingeschraenkte Beschreibung im
+    Arbeitsauftrag ausdruecklich eingrenzen. Kriterienzahl, Musterbeschreibung
+    und maximale Punktzahl gemeinsam anpassen.
   - Verstaendliche Schreibfehler, Singular und Plural akzeptieren. Keine
     zusaetzlichen Anforderungen an Laenge, konkrete Datensaetze oder NULL
     erfinden, sofern diese nicht zum Arbeitsauftrag gehoeren.
@@ -124,6 +136,11 @@ bleibt davon unberuehrt.
 
 Technische Umsetzung fuer jede neue oder ueberarbeitete SQL-Beschreibe-Aufgabe:
 
+  - feedbackCriteria und maxFeedbackHints: 1 neben sqlDescription verwenden;
+    erwartete Aspekte, Rubrik und Punkte eins zu eins zuordnen. Die bestehende
+    kriterienbasierte Scaleway-Auswertung wiederverwenden; keine freie
+    Gesamtpunktzahl aus dem Modell uebernehmen. Seitenpruefung und
+    Freischaltung lesen die maximale Punktzahl aus der Aufgabenkonfiguration.
   - In scaleway-functions/source/tasks.js ein sqlDescription-Objekt mit
     aliases und requireUnchangedSource hinterlegen. aliases ordnet nur in der
     konkreten Abfrage verwendete Tabellen-/Spaltenbezeichner ihren eindeutigen

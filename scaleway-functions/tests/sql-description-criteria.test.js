@@ -34,6 +34,12 @@ test('Bestandsprüfung: jede SQL-Beschreibung, auch künftig hinzugefügte SELEC
     const task = core.TASKS[fixture.taskId];
     assert.ok(task?.sqlDescription, fixture.taskId);
     assert.ok(Number.isInteger(fixture.expectedPoints));
+    if (task.feedbackCriteria) {
+      const statuses = fixture.criterionStatuses || task.feedbackCriteria.map(() => fixture.kind === 'correct' ? 'correct' : 'missing');
+      assert.equal(statuses.length, task.feedbackCriteria.length);
+      assert.equal(statuses.filter(status => status === 'correct').length, fixture.expectedPoints);
+      statuses.forEach((status, index) => assert.ok(status === 'correct' || Object.hasOwn(task.feedbackCriteria[index].issues, status)));
+    }
     assert.ok(fixture.answer.length >= 10 && fixture.answer.length <= core.MAX_ANSWER_LENGTH);
     assert.equal(fixture.kind, fixture.expectedPoints === task.maxPoints ? 'correct' : fixture.expectedPoints === 0 ? 'incorrect' : 'partial');
   }
@@ -120,11 +126,16 @@ test('alle Vergleichsfälle durchlaufen die bestehende Serveranbindung mit simul
     assert.ok(sent.messages[1].content.includes(heading));
     assert.ok(sent.messages[1].content.endsWith(current.answer));
     const full = current.expectedPoints === task.maxPoints;
-    return { ok: true, text: async () => JSON.stringify({ choices: [{ finish_reason: 'stop', message: {
-      content: JSON.stringify({ points: current.expectedPoints, maxPoints: task.maxPoints,
+    const statuses = task.feedbackCriteria && (current.criterionStatuses || task.feedbackCriteria.map(() => full ? 'correct' : 'missing'));
+    const model = statuses
+      ? { criteria: Object.fromEntries(task.feedbackCriteria.map((criterion, index) => [criterion.id,
+        { status: statuses[index], evidence: statuses[index] === 'correct' || statuses[index].startsWith('wrong_') ? [current.answer] : [] }])) }
+      : { points: current.expectedPoints, maxPoints: task.maxPoints,
         status: full ? 'korrekt' : current.expectedPoints > 0 ? 'teilweise korrekt' : 'noch nicht korrekt',
         strengths: [], missing: full ? [] : ['Ein simulierter fachlicher Aspekt fehlt.'],
-        feedback: full ? 'Sehr gut, alles richtig' : 'Ein simulierter fachlicher Aspekt fehlt.' })
+        feedback: full ? 'Sehr gut, alles richtig' : 'Ein simulierter fachlicher Aspekt fehlt.' };
+    return { ok: true, text: async () => JSON.stringify({ choices: [{ finish_reason: 'stop', message: {
+      content: JSON.stringify(model)
     } }] }) };
   } });
   for (const [index, fixture] of cases.entries()) {
@@ -135,6 +146,11 @@ test('alle Vergleichsfälle durchlaufen die bestehende Serveranbindung mit simul
     const result = JSON.parse(response.body).result;
     assert.equal(result.points, fixture.expectedPoints, fixture.taskId);
     assert.equal(result.maxPoints, core.TASKS[fixture.taskId].maxPoints);
+    if (core.TASKS[fixture.taskId].feedbackCriteria && result.points < result.maxPoints) {
+      assert.equal(result.missing.length, 1);
+      const count = core.TASKS[fixture.taskId].feedbackCriteria.length;
+      assert.match(result.missing[0], new RegExp(`^Schritt \\d+ von ${count}`));
+    }
     if (result.points === result.maxPoints) {
       assert.equal(result.feedback, 'Sehr gut, alles richtig');
       assert.deepEqual(result.missing, []);

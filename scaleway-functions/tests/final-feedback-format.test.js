@@ -53,15 +53,24 @@ test('alle Beschreibe- und Codeprompts in Inf9, Inf10 und Inf11 enthalten diesel
   }
 });
 
-test('6.2: Alle fünf Teilaufgaben fordern genau einen nächsten Verbesserungsschritt bei vollständiger Bewertung', async () => {
+test('Konfigurierte Aufgaben liefern genau einen nächsten Verbesserungsschritt bei vollständiger Bewertung', async () => {
   const { createHandler } = require('../handler');
   const { compactFeedbackSentences } = await import('../../faecher/informatik/klasse-11/1-Kuenstliche-Intelligenz/perzeptron/ui/semantic-answer.mjs');
-  const ids = ['11-6-klassifizieren', '11-6-einfach-summe', '11-6-einfach-ausgabe', '11-6-einfach-anpassung', '11-6-schwer-trainieren'];
+  const ids = ['11-6-klassifizieren', '11-6-einfach-summe', '11-6-einfach-ausgabe', '11-6-einfach-anpassung', '11-6-schwer-trainieren',
+    'inf10-db-a9-p2', 'inf10-db-a9-p5', 'inf10-db-a9-p8', 'inf10-db-a9-p11'];
   assert.deepEqual(Object.entries(core.TASKS).filter(([, task]) => task.maxFeedbackHints === 1).map(([id]) => id), ids);
   for (const taskId of ids) {
     const task = core.TASKS[taskId];
     const first = 'Ergänze den ersten noch fehlenden Rechenschritt.';
     const missing = [first + ' Ergänze außerdem die Gewichtsänderung.', 'Korrigiere auch theta.'];
+    const input = task.sqlDescription ? 'Ausgegeben werden Benutzername und Fotobeschreibung beziehungsweise Kommentartext oder Anzahl.'
+      : task.feedbackCriteria ? 'x1 wird mit w1 multipliziert und x2 mit w2.'
+      : 'public class Perzeptron { public void trainieren(Datenpunkt punkt) { } }';
+    const modelResult = task.feedbackCriteria
+      ? { criteria: Object.fromEntries(task.feedbackCriteria.map((criterion, index) => [criterion.id,
+        { status: index === 0 ? 'correct' : 'missing', evidence: index === 0 ? [input] : [] }])) }
+      : { points: 1, maxPoints: task.maxPoints, status: task.statusLabels.partial,
+        strengths: [], missing, feedback: missing.join(' ') };
     let calls = 0;
     const handle = createHandler({ rateLimit: Infinity, env: {
       AI_API_KEY: 'mock-only', AI_PROJECT_ID: '11111111-1111-1111-1111-111111111111',
@@ -70,26 +79,27 @@ test('6.2: Alle fünf Teilaufgaben fordern genau einen nächsten Verbesserungssc
       calls++;
       const prompt = JSON.parse(options.body).messages[1].content;
       assert.match(prompt, /genau eine konkrete Verbesserung pro Prüfung/);
-      assert.match(prompt, /Syntax- oder Typfehler/);
+      if (!task.feedbackCriteria) assert.match(prompt, /Syntax- oder Typfehler/);
       assert.match(prompt, /Bewerte trotzdem alle Aspekte für die Punktzahl/);
       return { ok: true, status: 200, async text() {
-        return JSON.stringify({ choices: [{ finish_reason: 'stop', message: { content: JSON.stringify({
-          points: 1, maxPoints: task.maxPoints, status: task.statusLabels.partial,
-          strengths: [], missing, feedback: missing.join(' ')
-        }) } }] });
+        return JSON.stringify({ choices: [{ finish_reason: 'stop', message: { content: JSON.stringify(modelResult) } }] });
       } };
     } });
     const codeTask = task.responseType === 'code';
     const response = await handle({ httpMethod: 'POST', path: '/', headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ requestId: 'single_hint_' + taskId, taskId, requestType: codeTask ? 'code' : 'text',
-        [codeTask ? 'code' : 'answer']: 'public class Perzeptron { public void trainieren(Datenpunkt punkt) { } }' }) });
+        [codeTask ? 'code' : 'answer']: input }) });
     assert.equal(response.statusCode, 200, taskId);
     assert.equal(calls, 1);
     const result = JSON.parse(response.body).result;
     assert.equal(result.points, 1);
     assert.equal(result.maxPoints, task.maxPoints);
-    assert.deepEqual(result.missing, [first]);
-    assert.deepEqual(result.missing, compactFeedbackSentences(missing, 1));
+    if (task.feedbackCriteria) {
+      assert.deepEqual(result.missing, [`Schritt 2 von ${task.feedbackCriteria.length} – ${task.feedbackCriteria[1].label}: ${task.feedbackCriteria[1].issues.missing}`]);
+    } else {
+      assert.deepEqual(result.missing, [first]);
+      assert.deepEqual(result.missing, compactFeedbackSentences(missing, 1));
+    }
     assert.equal(result.feedback, '');
   }
 });

@@ -86,15 +86,33 @@ Die Werte der Secrets müssen weder ausgelesen noch erneut im Chat angegeben wer
 - [x] Schritt 15c: Nutzer bestätigt die erfolgreiche Sicherungsblatt-Freischaltung und den PDF-Download zu Aufgabe 5.2.
 - [x] Schritt 15d: Nutzer bestätigt am 29.10.2026, dass der eingegebene Text nach Neuladen erhalten bleibt.
 - [x] Geprüfte Hauptfunktionen: Website, HTTPS, Weiterleitungen, KI, Sicherungsblatt-Download, lokale Speicherung und Veröffentlichung nach Push.
-- [ ] Schritt 16a: Nicht mehr benötigte Datei `netcup-push-test.html` gezielt auf GitHub entfernen und den automatischen Abgleich abwarten.
-- [ ] Weitere Betriebspunkte: vorhandene Testartefakte sichten und aufräumen; Backups, DNS-Sicherung und Zertifikatserneuerung dokumentieren, soweit noch nicht erfolgt.
+- [x] Schritt 16a: Lösch-Commit `c4c756c3be71650a7b615240b8735c4c1130587f` wurde erfolgreich automatisch zu netcup synchronisiert; unabhängige Prüfung bestätigt HTTP 404 für die gelöschte Testdatei.
+- [x] Technische Einrichtung unter `https://franke-schule.de/` abgeschlossen; bestehende Konfiguration von `florian-franke.org` bleibt erhalten.
+- [ ] Optionale weitere Betriebspunkte: ältere Verbindungstest-Artefakte sichten und bei Bedarf entfernen; Backups, DNS-Sicherung und Zertifikatserneuerung dokumentieren, soweit noch nicht erfolgt. Diese Punkte sind bisher nicht bestätigt und werden nicht als erledigt ausgegeben.
 
-**Unmittelbar nächster Schritt:** Auf GitHub ausschließlich die entbehrliche
-Testdatei `netcup-push-test.html` im Repository-Root löschen und direkt auf
-`main` committen. Den automatischen netcup-Lauf abwarten. Der Hauptworkflow
-`netcup-deploy.yml`, seine Secrets und seine Server-Statusdatei bleiben erhalten.
-Anschließend prüfen, ob die Testdatei auf der neuen Website entfernt wurde.
-Die produktiven Lernmodule, `CNAME` und GitHub Pages nicht ändern.
+**Aktueller Abschlussstand:** Die technische Einrichtung ist abgeschlossen.
+Der netcup-Lauf
+`https://github.com/franke-schule/unterricht/actions/runs/40864781018` ist mit
+`completed / success` beendet. Der Testpfad
+`https://franke-schule.de/netcup-push-test.html` liefert danach HTTP 404.
+Damit ist auch die automatische Entfernung einer in GitHub gelöschten,
+vom Hauptworkflow verwalteten Datei nachgewiesen. Keine weitere Löschung
+dieser Datei verlangen. Der normale Betrieb erfolgt über Commits/Pushes nach main.
+Falls der Nutzer weitere Einrichtung wünscht, nur die oben offen benannten
+Betriebspunkte fortsetzen. Der parallele Pages-Lauf ist
+`https://github.com/franke-schule/unterricht/actions/runs/40864780661`.
+Der Hauptworkflow, seine Secrets, seine Server-Statusdatei, die produktiven
+Lernmodule, `CNAME` und GitHub Pages bleiben erhalten.
+
+Historische erste Nachprüfung vor dem endgültigen Lösch-Commit am 29.10.2026:
+Raw-Datei in main und netcup-Testpfad
+liefern beide HTTP 200 mit Länge 143. Die Startseite liefert weiterhin HTTP 200.
+GitHub Actions zeigt zuletzt einen erfolgreichen main-Lauf zum Merge-Commit
+`8a1b8e558eacbf13e1c882dc505985eae55cb7f1`, danach in der Historie den erfolgreichen
+Create-Commit `379bae4`. Unter den letzten vier Läufen ist kein eigener
+Lösch-Commit sichtbar. Das belegt keine gestörte Synchronisierung: Die Datei ist
+auch im derzeit ausgelieferten GitHub-Quellstand noch vorhanden. Die konkrete
+Ursache (z. B. noch nicht bestätigter Commit oder spätere Wiederaufnahme) ist offen.
 
 Veröffentlichungsnachweis am 29.10.2026: Vor Anlage lieferte die neue Domain
 unter dem Testpfad HTTP 404. Nach dem Commit und dem erfolgreichen automatischen

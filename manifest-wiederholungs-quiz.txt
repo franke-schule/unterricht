@@ -162,6 +162,11 @@ Prüfen und Rückmeldung je Aufgabe (kein Abgabe-Button am Ende):
 3. Beschreibe-Aufgaben
 ----------------------
 
+  - Für neue und gezielt umgestellte Beschreibe-Aufgaben gilt die
+    kriterienbasierte Bewertung mit genau einem nächsten Verbesserungsschritt
+    nach manifest-allgemein.txt Abschnitt 0.1 und KI-FEEDBACK-MIGRATION.md.
+    Die Wertung des ersten Versuchs bleibt davon getrennt; der Hinweis
+    bezieht sich immer auf die zuletzt geprüfte aktuelle Antwort.
   - Zwei bis drei Beschreibe-Aufgaben pro Quiz, jede zu einem anderen
     Lernziel des Moduls und mit möglichst wenig Überschneidung.
   - Jede Aufgabe nennt eine konkrete Situation und verlangt drei bis vier
@@ -198,7 +203,10 @@ Einträge auf dem Skriptserver, je Beschreibe-Aufgabe:
     Musterlösung ausgeben), context (Unterrichtsinhalte aus dem Modul und
     der Aufgabentext wörtlich), expectedAspects (Anzahl = maxPoints), rubric
     (gleichwertige Formulierungen und ausdrücklich nicht zu wertende
-    Fehlvorstellungen), feedbackHints, statusLabels.
+    Fehlvorstellungen), feedbackHints, statusLabels, feedbackCriteria und
+    maxFeedbackHints: 1. Die Kriterien entsprechen den Aspekten eins zu eins;
+    Punkte und sichtbarer Hinweis werden serverseitig berechnet. Hinweise
+    über die bestehende Anzeige mit maxHints: 1 ausgeben.
   scaleway-functions/tests/
     passende Tests für Aufgaben-IDs, Rubriken und die Client-Anbindung.
 

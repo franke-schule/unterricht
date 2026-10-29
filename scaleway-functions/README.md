@@ -48,6 +48,81 @@ Bewertungstests gehören unter `scaleway-functions/tests/`.
 
 ## Konfiguration auf Scaleway
 
+### Kriterienweise Rückmeldung in Inf11 KI Aufgabe 6.2, Teilaufgabe 1
+
+`11-6-klassifizieren` verwendet `feedbackCriteria` aus `source/tasks.js`.
+Das Modell liefert ausschließlich vier Einzelurteile unter `criteria`, je
+mit einem vorgegebenen Status und wörtlichen Belegstellen aus der aktuellen
+Antwort. `scaleway-client.js` erzeugt dafür das passende JSON-Schema und prüft
+Vollständigkeit, Statuswerte und das tatsächliche Vorkommen jedes Zitats.
+Erfundene Belege oder das frühere freie Punkte-/Feedbackformat werden als
+technischer Bewertungsfehler zurückgewiesen, ohne Schülerpunkte anzuzeigen.
+
+`source/rules.js` zählt die erfüllten Kriterien und wählt den ersten noch
+offenen Schritt in der Reihenfolge Multiplikation, Addition,
+Schwellenvergleich, unveränderte Gewichte. Der einzelne sichtbare Hinweis
+stammt aus den Aufgabenangaben, nicht aus frei erzeugter Modellprosa.
+Spätere erfüllte Kriterien zählen sofort; es gibt keinen gespeicherten
+Schrittzähler, der nach einer Änderung veralten könnte. Eindeutige Aussagen
+über unveränderte Gewichte werden zusätzlich unabhängig vom Wortlaut der
+übrigen Erklärung geprüft. Bei Widersprüchen oder unklaren Aussagen wird
+diese lokale Übersteuerung nicht verwendet.
+
+Der Browser erhält weiterhin die bisherige Ergebnishülle. Aufgaben ohne
+`feedbackCriteria` behalten ihren bisherigen internen Modellvertrag. Die Prüfungen in
+`tests/task6-2-klassifizieren.test.js` verwenden simulierte Modellurteile;
+sie prüfen das Schema, die Belegkontrolle und die Auswahl des nächsten
+Schritts, nicht die allgemeine semantische Genauigkeit des KI-Modells.
+Nach Upload der aktuellen ZIP und erneuter Bereitstellung sind die Beispiele
+zusätzlich mit dem tatsächlich konfigurierten Modell auf der Website zu prüfen.
+
+### Kriterienweise Rückmeldung in Inf10 DB Aufgabe 9
+
+Die vier Beschreibe-Aufgaben P2, P5, P8 und P11 verwenden dieselbe
+`feedbackCriteria`-Auswertung wie die oben beschriebene Inf11-Aufgabe.
+Jeweils fünf Kriterien ergeben höchstens fünf Punkte. Ausgabe,
+Zuordnung und Auswahlbedingungen werden getrennt beurteilt; bei P2 folgt
+die Bedeutung einer Ergebniszeile, bei P11 die Gruppierung/Zählung je Mitglied.
+Bei allen vier Aufgaben ist die Sortierung das fünfte Kriterium, einschließlich
+Richtung und gegebenenfalls weiterer Sortierspalten bei Gleichheit.
+Ein Satz darf mehrere Kriterien erfüllen, insbesondere individuelle
+Kommentaranzahl und Zählung je Mitglied bei P11. Die vorhandenen Rubriken
+und die Regeln für sinngleiche SQL-Beschreibungen bleiben maßgeblich.
+
+Das Modell unterscheidet fehlende, teilweise erklärte und falsche Aspekte
+anhand aufgabenbezogener Statuswerte. Der Server zählt die erfüllten Kriterien
+und zeigt genau einen vorgegebenen Hinweis zum ersten offenen Kriterium
+(`Schritt N von 5`). Bei einer erneuten Prüfung zählt immer die aktuelle
+Antwort. Die Website verwirft Rückmeldungen nach einer Textänderung und
+speichert keinen separaten Schrittzähler. Alte Freigaben aus der
+Vier-Punkte-Rubrik werden anhand von `assessmentVersion` gezielt verworfen;
+Eingaben und andere Fortschritte bleiben erhalten. Andere SQL-Aufgaben behalten
+ihre bisherige Anzeige.
+
+`tests/aufgabe9-criteria.test.js` prüft die Einzelurteile, Belege,
+typische Fehlertypen und die Schrittfolge mit simulierten Modellantworten.
+`faecher/informatik/klasse-10/1-Datenbanken/tests/aufgabe9-criteria-browser.check.cjs`
+prüft den gesamten lokalen Server-/Browserweg, Bearbeitung, Speicherung und
+Smartphone-Anzeige ohne externe Modellaufrufe. Diese Tests belegen keine
+semantische Trefferquote des echten Modells. Zur Veröffentlichung müssen
+sowohl die aktuelle Function-ZIP hochgeladen und erneut bereitgestellt als
+auch die geänderten Website-Dateien veröffentlicht werden.
+
+### Neue Aufgaben und weitere Umstellungen
+
+Für neue Beschreibe- und Programmieraufgaben ist der Kriterienvertrag
+verbindlich (`manifest-allgemein.txt`, Abschnitt 0.1). Der gemeinsame
+Codeprompt unterstützt `responseType: 'code'` zusammen mit `feedbackCriteria`
+und wörtlichen Codebelegen. Bestehende Codeaufgaben sind damit noch nicht
+automatisch umgestellt. Neue Kriterienaufgaben verwenden denselben
+Scaleway-Transport und dieselbe Ergebnisanzeige mit `maxHints: 1`.
+
+Die zentrale Übersicht [KI-FEEDBACK-MIGRATION.md](../KI-FEEDBACK-MIGRATION.md)
+enthält bereits umgestellte und teilweise vorbereitete Aufgaben, den
+technischen Vertrag und die Checkliste. Der Bestandstest
+`tests/criterion-feedback-contract.test.js` kontrolliert neue Aufgaben,
+Kriterienkonfiguration und Dokumentation gegen den eingefrorenen Altbestand.
+
 ### Gemeinsame Bewertung von SQL-Beschreibungen
 
 Die verbindlichen Kriterien stehen in `manifest-datenbankaufgaben.txt`,

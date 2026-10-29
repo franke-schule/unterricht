@@ -57,9 +57,9 @@ test('Inf10: die einzelnen Rubriken akzeptieren deutsche Beschreibungen von Ausg
 test('Inf10: verständliche Personen- und Fotozuordnungen genügen ohne wörtliche Schlüsselgleichungen', () => {
   for (const id of ['p2', 'p5', 'p8', 'p11']) {
     const task = core.TASKS['inf10-db-a9-' + id];
-    assert.equal(task.expectedAspects.length, 4);
-    assert.equal(task.rubric.length, 4);
-    assert.equal(task.maxPoints, 4);
+    assert.equal(task.expectedAspects.length, 5);
+    assert.equal(task.rubric.length, 5);
+    assert.equal(task.maxPoints, 5);
     assert.match(task.rubric.join(' '), /nicht.*(?:wörtlich|zusätzlich)|ohne.*(?:Spaltennamen|Schlüsselgleichung)/);
   }
   assert.match(core.TASKS['inf10-db-a9-p8'].rubric.join(' '), /Verwechslung mit der hochladenden Person bleibt falsch/);

@@ -332,6 +332,14 @@ Sondern eher:
 Die vollständige Lösung soll nicht automatisch beim ersten Fehlversuch angezeigt
 werden.
 
+Für alle neuen Beschreibe- und Programmieraufgaben ist kriterienbasierte
+Bewertung mit genau einem nächsten Verbesserungsschritt verbindlich.
+Maßgeblich ist `manifest-allgemein.txt` Abschnitt 0.1. Vor der Konzeption
+`KI-FEEDBACK-MIGRATION.md` im Wurzelordner lesen: Dort stehen der
+Umstellungsstand, technische Vorlagen und die Checkliste für weitere Aufgaben.
+Bestehende Aufgaben werden schrittweise bei einer gezielten Überarbeitung
+ihrer Bewertung umgestellt; keine ungefragte Gesamtmigration auslösen.
+
 
 # 8. Design und UI
 
