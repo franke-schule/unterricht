@@ -86,7 +86,7 @@ function render() {
   const number = TABS.findIndex(([id]) => id === state.tab) + 1;
   panel.append(heading(number, TABS[number - 1][1], state.tab === 'extra' ? 'Vertiefen' : state.tab === 'quiz' || state.tab === 'summary' ? 'Sichern' : 'Üben'));
   if (state.tab === 'intro') renderIntro(panel);
-  if (state.tab === 'practice') JOIN_TASKS.filter((task) => task.required && Number(task.id.slice(1)) <= 6).forEach((task) => panel.append(renderTask(task)));
+  if (state.tab === 'practice') renderPractice(panel);
   if (state.tab === 'count') renderCount(panel);
   if (state.tab === 'extra') renderExtra(panel);
   if (state.tab === 'quiz') renderQuiz(panel);
@@ -174,6 +174,29 @@ function renderIntro(panel) {
   }
   const change = (direction) => { state.introStep = direction > 0 && state.introStep === 12 ? 1 : Math.max(1, Math.min(12, state.introStep + direction)); save(); update(); };
   previous.addEventListener('click', () => change(-1)); next.addEventListener('click', () => change(1)); update();
+}
+function renderPractice(panel) {
+  JOIN_TASKS.filter((task) => task.required && Number(task.id.slice(1)) <= 6).forEach((task) => {
+    if (task.id === 'P2') {
+      const info = el('section', 'scenario-card accent');
+      info.append(el('h3', '', 'Kurz erklärt: Nach zwei Attributen sortieren'));
+      const example = el('pre', 'given-sql'); example.append(el('code', '', 'ORDER BY users.city, users.username'));
+      info.append(example, el('p', '', 'Hier wird zuerst nach Stadt sortiert; nur bei gleicher Stadt entscheidet der Benutzername über die Reihenfolge. Ohne Zusatz gilt für jedes Attribut ASC (aufsteigend: A bis Z bzw. kleine Zahlen zuerst); DESC direkt hinter einem Attribut kehrt dessen Sortierrichtung um.'));
+      panel.append(info);
+    }
+    if (task.id === 'P3') {
+      const distinct = el('section', 'scenario-card accent');
+      distinct.append(el('h3', '', 'Wiederholung: Doppelte Ergebniszeilen mit DISTINCT vermeiden'));
+      const distinctExample = el('pre', 'given-sql'); distinctExample.append(el('code', '', 'SELECT DISTINCT users.city\nFROM users'));
+      distinct.append(distinctExample, el('p', '', 'Auch wenn mehrere Mitglieder in derselben Stadt wohnen, erscheint jede Stadt hier nur einmal. DISTINCT steht direkt hinter SELECT und entfernt doppelte Ergebniszeilen; bei mehreren ausgewählten Attributen muss die gesamte Kombination übereinstimmen.'));
+      const like = el('section', 'scenario-card accent');
+      like.append(el('h3', '', 'Wiederholung: Textmuster mit LIKE und % suchen'));
+      const likeExample = el('pre', 'given-sql'); likeExample.append(el('code', '', "SELECT photos.description\nFROM photos\nWHERE photos.description LIKE '%Wald%'"));
+      like.append(likeExample, el('p', '', 'Diese Abfrage findet Beschreibungen, die „Wald“ enthalten: LIKE vergleicht den Text mit einem Muster in einfachen Anführungszeichen, und % steht für beliebig viele Zeichen – auch für kein Zeichen. Mit \'Wald%\' muss der Text mit „Wald“ beginnen, mit \'%Wald\' muss er damit enden.'));
+      panel.append(distinct, like);
+    }
+    panel.append(renderTask(task));
+  });
 }
 function renderCount(panel) {
   JOIN_TASKS.filter((task) => ['P7', 'P8'].includes(task.id)).forEach((task) => panel.append(renderTask(task)));

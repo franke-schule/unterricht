@@ -4,7 +4,7 @@
 **/*[Mm]aterial*/
 
 # Lokale Leistungsnachweise
-/faecher/LNWs/
+**/LNWs/
 
 # Lokale Claude-Code-Berechtigungen (maschinenspezifisch)
 /.claude/settings.local.json
