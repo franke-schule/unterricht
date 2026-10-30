@@ -41,7 +41,7 @@ function harness(fetchImpl) {
     clearTimeout: id => timers.delete(id) });
   const helper = fs.readFileSync(path.resolve(__dirname, '../../faecher/informatik/klasse-11/1-Kuenstliche-Intelligenz/perzeptron/ui/semantic-answer.mjs'), 'utf8').replace(/^export /gm, '');
   vm.runInContext(helper, context);
-  vm.runInContext('globalThis.scwTestModule = { evaluateSemanticAnswer, evaluateCodeAnswer, renderCompactEvaluation };', context);
+  vm.runInContext('globalThis.scwTestModule = { evaluateSemanticAnswer, evaluateCodeAnswer, renderCompactEvaluation, observeIdeCodeChanges(frame, id, callback) { globalThis.codeChanged = callback; return () => {}; } };', context);
   vm.runInContext(script.replace(/import\('[^']+'\)/g, 'Promise.resolve(scwTestModule)'), context);
   return { elements, state, timers, context };
 }
@@ -129,6 +129,21 @@ test('Doppelklick wird abgefangen; Fehler geben den Prüfbutton für einen erneu
   finish();
   await retry;
   assert.equal(calls, 2);
+});
+
+test('IDE-Änderung entfernt sichtbares Feedback und verwirft eine verspätete Codebewertung', async () => {
+  let finish;
+  const h = harness((url, options) => new Promise(resolve => { finish = () => resolve({ ok: true, json: async () => responseFor(options) }); }));
+  const running = h.context.submitCode('10-3a');
+  await Promise.resolve();
+  h.state.code = 'Robot dudu = new Robot(1, 1, 8, 8);';
+  h.context.codeChanged();
+  assert.equal(h.elements['result-10-3a'].hidden, true);
+  finish();
+  await running;
+  assert.equal(h.elements['result-10-3a'].hidden, true);
+  assert.equal(h.elements['result-10-3a'].children.length, 0);
+  assert.equal(h.elements['button-10-3a'].disabled, false);
 });
 
 test('Falsche requestId und Punktegrenzen werden nicht als gültige Codebewertung angezeigt', async () => {

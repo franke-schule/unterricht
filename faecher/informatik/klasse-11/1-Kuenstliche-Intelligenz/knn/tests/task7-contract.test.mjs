@@ -37,7 +37,7 @@ assert.deepEqual([...topbar.matchAll(/<a class="back-link" href="([^"]*)">([^<]*
 ]);
 assert.match(html, /<body class="perceptron-page knn-page">/);
 assert.match(html, /knn\/task7\.css\?v=20261003a/);
-assert.match(html, /knn\/ui\/task7\.mjs\?v=20261022-feedback-two-sentences/);
+assert.match(html, /knn\/ui\/task7\.mjs\?v=20261029-criteria-v1/);
 assert.match(html, /perzeptron\/task5\.css\?v=20261010-tabs/);
 ['knn/task7.css', 'knn/ui/task7.mjs', 'perzeptron/task5.css', 'knn/ui/card-slots.mjs', 'knn/ui/knn-plot.mjs', 'knn/logic/knn.mjs', 'knn/data/shirts.mjs', 'knn/data/task7.mjs', 'perzeptron/ui/semantic-answer.mjs', 'perzeptron/logic/perceptron.mjs']
   .forEach((path) => assert.ok(existsSync(new URL('../../' + path, import.meta.url)), path + ' fehlt'));
@@ -78,7 +78,7 @@ assert.doesNotMatch(ui, /solution-download|solution-code|unlockSolution/);
 // Skriptserver, Speicherung und Wiederverwendung
 assert.match(ui, /'11-7-1'/);
 assert.match(ui, /informatik11-knn-aufgabe7-v1/);
-assert.match(ui, /from "\.\.\/\.\.\/perzeptron\/ui\/semantic-answer\.mjs\?v=20261022-feedback-two-sentences"/);
+assert.match(ui, /from "\.\.\/\.\.\/perzeptron\/ui\/semantic-answer\.mjs\?v=20261029-criteria-v1"/);
 assert.match(ui, /from '\.\.\/\.\.\/perzeptron\/logic\/perceptron\.mjs'/);
 assert.match(html, /<textarea id="apply-answer" maxlength="600"/);
 assert.match(html, /id="apply-counter"/);

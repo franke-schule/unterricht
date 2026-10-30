@@ -703,7 +703,19 @@ class Hund {
 
   <script>
     const SCRIPT_SERVER_URL = 'https://unterrichtkiichezbn4-ki-auswertung.functions.fnc.fr-par.scw.cloud/';
-const SCW_TASK_POINTS = {"2b":6};
+const SCW_TASK_POINTS = {"2b":5};
+const SCW_ASSESSMENT_VERSIONS = {"2b":"20261029-criteria-v1"};
+const SCW_REQUEST_VERSIONS = new Map();
+Object.keys(SCW_TASK_POINTS).forEach((taskId) => {
+  const input = document.getElementById("answer-" + taskId);
+  input?.addEventListener("input", () => {
+    const requestKey = taskId + ":" + SCW_ASSESSMENT_VERSIONS[taskId];
+    SCW_REQUEST_VERSIONS.set(requestKey, (SCW_REQUEST_VERSIONS.get(requestKey) || 0) + 1);
+    const resultBox = document.getElementById("result-" + taskId);
+    resultBox?.replaceChildren();
+    if (resultBox) resultBox.hidden = true;
+  });
+});
     function updateCharacterCount(taskId) {
       const textarea =
         document.getElementById(
@@ -731,6 +743,9 @@ async function submitAnswer(taskId) {
     textarea.focus(); return;
   }
   const serverTaskId = taskId;
+  const requestKey = taskId + ":" + SCW_ASSESSMENT_VERSIONS[taskId];
+  const requestVersion = (SCW_REQUEST_VERSIONS.get(requestKey) || 0) + 1;
+  SCW_REQUEST_VERSIONS.set(requestKey, requestVersion);
   button.disabled = true;
   textarea.disabled = true;
   button.textContent = 'Antwort wird geprüft …';
@@ -738,11 +753,12 @@ async function submitAnswer(taskId) {
   resultBox.className = 'result';
   resultBox.textContent = 'Deine Antwort wird ausgewertet.';
   try {
-    const { evaluateSemanticAnswer, renderCompactEvaluation } = await import('../../klasse-11/1-Kuenstliche-Intelligenz/perzeptron/ui/semantic-answer.mjs?v=20261022-feedback-two-sentences');
+    const { evaluateSemanticAnswer, renderCompactEvaluation } = await import('../../klasse-11/1-Kuenstliche-Intelligenz/perzeptron/ui/semantic-answer.mjs?v=20261029-criteria-v1');
     const result = await evaluateSemanticAnswer({ serverUrl: SCRIPT_SERVER_URL, taskId: serverTaskId,
       answer, expectedMaxPoints: SCW_TASK_POINTS[serverTaskId] });
+    if (requestVersion !== SCW_REQUEST_VERSIONS.get(requestKey) || textarea.value.trim() !== answer) return;
     showEvaluation(resultBox, result, renderCompactEvaluation);
-  } catch (error) { showError(resultBox, error.message || 'Die Auswertung konnte nicht abgeschlossen werden.'); }
+  } catch (error) { if (requestVersion === SCW_REQUEST_VERSIONS.get(requestKey) && textarea.value.trim() === answer) showError(resultBox, error.message || 'Die Auswertung konnte nicht abgeschlossen werden.'); }
   finally {
     button.disabled = false; textarea.disabled = false;
     button.textContent = 'Antwort erneut prüfen';

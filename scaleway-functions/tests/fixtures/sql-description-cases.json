@@ -109,6 +109,11 @@
     "taskId": "sql-b2-3",
     "kind": "partial",
     "expectedPoints": 2,
+    "criterionStatuses": [
+      "correct",
+      "correct",
+      "missing"
+    ],
     "answer": "Aus users werden die Benutzernamen und Geburtsdaten ausgegeben."
   },
   {
@@ -127,6 +132,11 @@
     "taskId": "inf9-db2-beschreibe-projektion",
     "kind": "partial",
     "expectedPoints": 2,
+    "criterionStatuses": [
+      "correct",
+      "correct",
+      "missing"
+    ],
     "answer": "Die Abfrage gibt aus users die Benutzernamen aus."
   },
   {
@@ -145,6 +155,11 @@
     "taskId": "inf9-db2-beschreibe-sortierung",
     "kind": "partial",
     "expectedPoints": 1,
+    "criterionStatuses": [
+      "correct",
+      "missing",
+      "missing"
+    ],
     "answer": "Die Abfrage zeigt aus users Benutzernamen und Körpergrößen."
   },
   {
@@ -163,6 +178,11 @@
     "taskId": "inf9-db2-beschreibe-distinct",
     "kind": "partial",
     "expectedPoints": 2,
+    "criterionStatuses": [
+      "correct",
+      "correct",
+      "missing"
+    ],
     "answer": "Die Abfrage zeigt die Wohnorte aus der Mitgliedertabelle."
   },
   {
@@ -181,6 +201,11 @@
     "taskId": "inf9-db2-beschreibe-limit",
     "kind": "partial",
     "expectedPoints": 1,
+    "criterionStatuses": [
+      "correct",
+      "missing",
+      "missing"
+    ],
     "answer": "Die Abfrage gibt aus users die Benutzernamen aus."
   },
   {
@@ -211,6 +236,11 @@
     "taskId": "inf9-db3-beschreibe-where",
     "kind": "partial",
     "expectedPoints": 2,
+    "criterionStatuses": [
+      "correct",
+      "correct",
+      "missing"
+    ],
     "answer": "Aus users werden Benutzernamen und Wohnorte ausgegeben."
   },
   {
@@ -229,6 +259,11 @@
     "taskId": "sql-b3-1",
     "kind": "partial",
     "expectedPoints": 2,
+    "criterionStatuses": [
+      "correct",
+      "correct",
+      "missing"
+    ],
     "answer": "Aus users wird die kleinste Körpergröße ermittelt."
   },
   {
@@ -247,6 +282,11 @@
     "taskId": "sql-b3-3",
     "kind": "partial",
     "expectedPoints": 1,
+    "criterionStatuses": [
+      "correct",
+      "missing",
+      "missing"
+    ],
     "answer": "Die Abfrage zeigt aus users sämtliche Spalten."
   },
   {
@@ -271,7 +311,12 @@
     "taskId": "inf9-db2-beschreibe-sortierung",
     "kind": "partial",
     "expectedPoints": 2,
-    "answer": "Aus users werden Benutzernamen und Körpergrößen angezeigt und nach Körpergröße sortiert, kleinste zuerst."
+    "answer": "Aus users werden Benutzernamen und Körpergrößen angezeigt und nach Körpergröße sortiert, kleinste zuerst.",
+    "criterionStatuses": [
+      "correct",
+      "correct",
+      "wrong_relation"
+    ]
   },
   {
     "taskId": "inf9-db2-beschreibe-distinct",
@@ -283,7 +328,12 @@
     "taskId": "inf9-db2-beschreibe-distinct",
     "kind": "partial",
     "expectedPoints": 2,
-    "answer": "Aus users werden die Wohnorte ausgegeben. DISTINCT löscht dafür dauerhaft die doppelten Datensätze aus users."
+    "answer": "Aus users werden die Wohnorte ausgegeben. DISTINCT löscht dafür dauerhaft die doppelten Datensätze aus users.",
+    "criterionStatuses": [
+      "correct",
+      "correct",
+      "wrong_relation"
+    ]
   },
   {
     "taskId": "inf10-db-a9-p8",
@@ -302,25 +352,45 @@
     "taskId": "sql-b2-3",
     "kind": "partial",
     "expectedPoints": 2,
-    "answer": "Aus users werden Benutzernamen und Geburtsdaten ausgegeben, aber nur von Personen, die in Berlin wohnen."
+    "answer": "Aus users werden Benutzernamen und Geburtsdaten ausgegeben, aber nur von Personen, die in Berlin wohnen.",
+    "criterionStatuses": [
+      "correct",
+      "correct",
+      "wrong_relation"
+    ]
   },
   {
     "taskId": "inf9-db2-beschreibe-limit",
     "kind": "partial",
     "expectedPoints": 2,
-    "answer": "Die Abfrage zeigt aus users die Spalten Benutzername und Wohnort. Sie sortiert nach Benutzername von A bis Z und gibt davon die ersten drei Zeilen aus."
+    "answer": "Die Abfrage zeigt aus users die Spalten Benutzername und Wohnort. Sie sortiert nach Benutzername von A bis Z und gibt davon die ersten drei Zeilen aus.",
+    "criterionStatuses": [
+      "missing",
+      "correct",
+      "correct"
+    ]
   },
   {
     "taskId": "inf9-db3-beschreibe-where",
     "kind": "partial",
     "expectedPoints": 2,
-    "answer": "Die Abfrage zeigt Benutzernamen und Wohnorte aus der Mitgliedertabelle. Sie wählt nur Personen aus, die in Berlin wohnen."
+    "answer": "Die Abfrage zeigt Benutzernamen und Wohnorte aus der Mitgliedertabelle. Sie wählt nur Personen aus, die in Berlin wohnen.",
+    "criterionStatuses": [
+      "correct",
+      "correct",
+      "wrong_relation"
+    ]
   },
   {
     "taskId": "sql-b3-1",
     "kind": "partial",
     "expectedPoints": 2,
-    "answer": "Aus der Mitgliedertabelle wird die größte Körpergröße ermittelt. Die Ergebnisspalte heißt kleinste_Groesse."
+    "answer": "Aus der Mitgliedertabelle wird die größte Körpergröße ermittelt. Die Ergebnisspalte heißt kleinste_Groesse.",
+    "criterionStatuses": [
+      "correct",
+      "wrong_relation",
+      "correct"
+    ]
   },
   {
     "taskId": "inf10-db-a9-p11",
@@ -339,7 +409,12 @@
     "taskId": "sql-b3-3",
     "kind": "partial",
     "expectedPoints": 1,
-    "answer": "Aus users werden sämtliche Angaben eines Mitglieds ausgegeben. Die Mitglieder werden nach Registrierungsdatum von alt nach neu sortiert. LIMIT 1 entfernt die erste Zeile und zeigt dann die übrigen Zeilen."
+    "answer": "Aus users werden sämtliche Angaben eines Mitglieds ausgegeben. Die Mitglieder werden nach Registrierungsdatum von alt nach neu sortiert. LIMIT 1 entfernt die erste Zeile und zeigt dann die übrigen Zeilen.",
+    "criterionStatuses": [
+      "correct",
+      "wrong_relation",
+      "wrong_relation"
+    ]
   },
   {
     "taskId": "sql-b2-3",

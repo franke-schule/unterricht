@@ -100,6 +100,9 @@ function buildPrompt_(
         })
         .join('\n')
       : '',
+    task.criteriaFairnessRules && task.criteriaFairnessRules.length
+      ? 'Zusätzliche fachliche Rubrikgrenzen (weiterhin beachten):\n' + task.criteriaFairnessRules.map(item => '- ' + item).join('\n')
+      : '',
     '',
     task.feedbackHints
       ? 'Hinweise für die Rückmeldung:\n' + task.feedbackHints
@@ -190,6 +193,9 @@ function buildCodePrompt_(
       task.rubric
         ? 'Bewertungsrubrik:\n' + task.rubric.map(function(item, index) { return (index + 1) + '. ' + item; }).join('\n')
         : '',
+    task.criteriaFairnessRules && task.criteriaFairnessRules.length
+      ? 'Zusätzliche fachliche Rubrikgrenzen (weiterhin beachten):\n' + task.criteriaFairnessRules.map(item => '- ' + item).join('\n')
+      : '',
       '',
       'Bewerte jeden erwarteten Aspekt mit höchstens einem Punkt. Bewerte fachlich wohlwollend, aber nicht beliebig.',
       'Prüfe ausschließlich die genannten Aspekte und Bedingungen. Erfinde keine zusätzlichen Anforderungen. Vergib nur für tatsächlich belegte Aspekte Punkte; strengths und missing müssen zu diesen Aspekten und zur Punktzahl passen.',

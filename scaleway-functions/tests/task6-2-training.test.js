@@ -16,6 +16,28 @@ function classCode(body) {
     () => 'public void trainieren(Datenpunkt punkt) {\n' + body + '\n}');
 }
 
+// Explizite fachliche Einzelurteile zu den festen Vergleichsfällen. Die
+// Modellantworten bleiben simuliert; die Rechenkontrollen unten sind unabhängig.
+function criterionTruth(fixture, task) {
+  if (fixture.expectedPoints === task.maxPoints) return task.feedbackCriteria.map(() => true);
+  const partial = {
+    'nur Gleichheitsfall falsch': [true, true, false],
+    'offene Ausgabe bleibt konstant 0': [false, true, true],
+    'ausschließlich Theta im Minuszweig mit falschem Delta-Vorzeichen': [true, true, true, false, true],
+    'gemeldeter Code: w_2 fehlt und negative Altwerte im Minuszweig': [false, true, false, false, true],
+    'theta-Vorzeichen für beide Fehlerzeichen falsch': [true, false, true, false, true],
+    'else führt bei delta 0 die negative Anpassung aus': [true, true, true, true, false],
+    'Lernrate fehlt in allen Anpassungen': [false, false, false, false, true],
+    'Anpassungen vollständig offen': [false, false, false, false, true],
+    'delta umgekehrt, anschließende Formeln korrekt': [true, true, false, true, true, true],
+    'Gleichheitsfehler bei sonst korrektem Training': [true, false, true, true, true, true],
+    'falsches theta-Vorzeichen als einziger Fehler': [true, true, true, true, false, true],
+    'leere Trainingsmethode trotz vollständigem Demonstrationscode': [false, false, false, false, false, true]
+  };
+  assert.ok(partial[fixture.name], 'Fachliche Einzelurteile fehlen: ' + fixture.name);
+  return partial[fixture.name];
+}
+
 test('6.2: Jede verbleibende Codeaufgabe hat eine getrennte Rubrik und den passenden Seitenbutton', () => {
   for (const [id, points] of [['11-6-einfach-ausgabe', 3], ['11-6-einfach-anpassung', 5], ['11-6-schwer-trainieren', 6]]) {
     const task = core.TASKS[id];
@@ -33,6 +55,11 @@ test('6.2: Vergleichsfälle durchlaufen vollständigen Prompt und Ergebnisanzeig
   for (const fixture of cases) {
     const task = core.TASKS[fixture.taskId];
     const code = classCode(fixture.body);
+    const truth = criterionTruth(fixture, task);
+    assert.equal(truth.filter(Boolean).length, fixture.expectedPoints, fixture.name);
+    const controlled = { criteria: Object.fromEntries(task.feedbackCriteria.map((criterion, index) =>
+      [criterion.id, { status: truth[index] ? 'correct' : 'missing',
+        evidence: truth[index] ? [fixture.body || 'public void trainieren(Datenpunkt punkt) {'] : [] }])) };
     let calls = 0;
     const handle = createHandler({ rateLimit: Infinity, env: {
       AI_API_KEY: 'mock-only', AI_PROJECT_ID: '11111111-1111-1111-1111-111111111111',
@@ -43,12 +70,7 @@ test('6.2: Vergleichsfälle durchlaufen vollständigen Prompt und Ergebnisanzeig
       assert.ok(prompt.includes(fixture.ruleFragment), fixture.name);
       assert.ok(prompt.endsWith(code + '\nENDE SCHUELERCODE'), fixture.name);
       return { ok: true, status: 200, async text() {
-        return JSON.stringify({ choices: [{ finish_reason: 'stop', message: { content: JSON.stringify({
-          points: fixture.expectedPoints, maxPoints: task.maxPoints,
-          status: fixture.expectedPoints === task.maxPoints ? 'korrekt' : 'teilweise korrekt',
-          strengths: [], missing: fixture.missing,
-          feedback: fixture.missing.join(' ') || 'Sehr gut, alles richtig'
-        }) } }] });
+        return JSON.stringify({ choices: [{ finish_reason: 'stop', message: { content: JSON.stringify(controlled) } }] });
       } };
     } });
     const response = await handle({ httpMethod: 'POST', path: '/',
@@ -59,7 +81,10 @@ test('6.2: Vergleichsfälle durchlaufen vollständigen Prompt und Ergebnisanzeig
     assert.equal(calls, 1, fixture.name);
     const result = JSON.parse(response.body).result;
     assert.equal(result.points, fixture.expectedPoints, fixture.name);
-    assert.deepEqual(result.missing, fixture.missing.slice(0, task.maxFeedbackHints || 2), fixture.name);
+    const next = truth.findIndex(correct => !correct);
+    assert.deepEqual(result.missing, next < 0 ? [] : [
+      `Schritt ${next + 1} von ${task.maxPoints} – ${task.feedbackCriteria[next].label}: ${task.feedbackCriteria[next].issues.missing}`
+    ], fixture.name);
     assert.deepEqual(result.strengths, [], fixture.name);
     if (!fixture.missing.length) assert.equal(result.feedback, 'Sehr gut, alles richtig', fixture.name);
   }

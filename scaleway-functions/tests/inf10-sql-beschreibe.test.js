@@ -43,15 +43,15 @@ test('Inf10: alle SQL-Beschreibe-Aufgaben der Webseiten sind mit den zentralen K
 test('Inf10: die einzelnen Rubriken akzeptieren deutsche Beschreibungen von Ausgabe, Filter, Minimum und Sortierung', () => {
   const filter = core.TASKS['sql-b2-3'];
   assert.match(filter.expectedAspects[1], /Benutzernamen.*Geburtstage.*Geburtsdaten/);
-  assert.match(filter.rubric.join(' '), /ohne city, WHERE/);
+  assert.match(filter.criteriaFairnessRules.join(' '), /ohne city, WHERE/);
   const minimum = core.TASKS['sql-b3-1'];
   assert.match(minimum.context, /AS kleinste_groesse/);
   assert.ok(minimum.sqlDescription.aliases.kleinste_groesse.includes('kleinste_Groesse'));
-  assert.match(minimum.rubric.join(' '), /ohne MIN oder centimeters/);
-  assert.match(minimum.rubric.join(' '), /ohne AS/);
+  assert.match(minimum.criteriaFairnessRules.join(' '), /ohne MIN oder centimeters/);
+  assert.match(minimum.criteriaFairnessRules.join(' '), /ohne AS/);
   const latest = core.TASKS['sql-b3-3'];
-  assert.match(latest.rubric.join(' '), /ohne created_at oder DESC/);
-  assert.match(latest.rubric.join(' '), /ohne LIMIT/);
+  assert.match(latest.criteriaFairnessRules.join(' '), /ohne created_at oder DESC/);
+  assert.match(latest.criteriaFairnessRules.join(' '), /ohne LIMIT/);
 });
 
 test('Inf10: verständliche Personen- und Fotozuordnungen genügen ohne wörtliche Schlüsselgleichungen', () => {
@@ -60,8 +60,8 @@ test('Inf10: verständliche Personen- und Fotozuordnungen genügen ohne wörtlic
     assert.equal(task.expectedAspects.length, 5);
     assert.equal(task.rubric.length, 5);
     assert.equal(task.maxPoints, 5);
-    assert.match(task.rubric.join(' '), /nicht.*(?:wörtlich|zusätzlich)|ohne.*(?:Spaltennamen|Schlüsselgleichung)/);
+    assert.match((task.criteriaFairnessRules || task.rubric).join(' '), /nicht.*(?:wörtlich|zusätzlich)|ohne.*(?:Spaltennamen|Schlüsselgleichung)/);
   }
-  assert.match(core.TASKS['inf10-db-a9-p8'].rubric.join(' '), /Verwechslung mit der hochladenden Person bleibt falsch/);
-  assert.match(core.TASKS['inf10-db-a9-p11'].rubric.join(' '), /Gesamtzahl.*erfüllt weder/);
+  assert.match((core.TASKS['inf10-db-a9-p8'].criteriaFairnessRules || core.TASKS['inf10-db-a9-p8'].rubric).join(' '), /Verwechslung mit der hochladenden Person bleibt falsch/);
+  assert.match((core.TASKS['inf10-db-a9-p11'].criteriaFairnessRules || core.TASKS['inf10-db-a9-p11'].rubric).join(' '), /Gesamtzahl.*erfüllt weder/);
 });

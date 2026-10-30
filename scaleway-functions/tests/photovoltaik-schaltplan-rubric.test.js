@@ -27,18 +27,23 @@ test('Photovoltaik-Schaltplanrubrik enthält genau die vier geforderten Aspekte'
 
 test('Photovoltaik-Aufgabe erfüllt den Scaleway-Serververtrag und gibt Statusstufen zurück', async () => {
   let points = 4;
+  const answer = 'Eine ausführliche Testbeschreibung des Solarzellenkreises.';
+  const task = core.TASKS[taskId];
   const handle = createHandler({ rateLimit: Infinity, env: {
     AI_API_KEY: 'local-test-only', AI_PROJECT_ID: '11111111-1111-1111-1111-111111111111',
     AI_MODEL: 'local-test-model', AI_EVALUATION_ENABLED: 'true'
   }, fetchImpl: async () => ({ ok: true, status: 200, text: async () => JSON.stringify({ choices: [{ finish_reason: 'stop',
-    message: { content: JSON.stringify({ points, maxPoints: 4, status: points === 4 ? 'korrekt' : points ? 'teilweise korrekt' : 'noch nicht korrekt', strengths: points ? ['Erkannter Aspekt.'] : [], missing: points < 4 ? ['Ein Aspekt fehlt.'] : [], feedback: 'Gezielter Hinweis.' }) }
+    message: { content: JSON.stringify({ criteria: Object.fromEntries(task.feedbackCriteria.map((criterion, index) => {
+      const correct = points === 4 || points === 2 && [0, 3].includes(index);
+      return [criterion.id, { status: correct ? 'correct' : 'missing', evidence: correct ? [answer] : [] }];
+    })) }) }
   }] }) }) });
 
   for (const [index, expectedStatus, expectedPoints] of [[1, 'korrekt', 4], [2, 'teilweise korrekt', 2], [3, 'noch nicht korrekt', 0]]) {
     points = expectedPoints;
     const requestId = `pv_contract_${index}`;
     const response = await handle({ httpMethod: 'POST', path: '/', headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ requestId, taskId, requestType: 'text', answer: 'Eine ausführliche Testbeschreibung des Solarzellenkreises.' }) });
+      body: JSON.stringify({ requestId, taskId, requestType: 'text', answer }) });
     assert.equal(response.statusCode, 200);
     const payload = JSON.parse(response.body);
     assert.equal(payload.requestId, requestId);
@@ -53,7 +58,7 @@ test('Photovoltaik-Aufgabe erfüllt den Scaleway-Serververtrag und gibt Statusst
 
 test('Semantische Freitextkarte verarbeitet korrekte, teilweise, kurze und nicht erreichbare Antworten', async () => {
   class Element {
-    constructor() { this.listeners = {}; this.dataset = {}; this.children = []; this.value = 'Eine ausreichend lange Beschreibung des Solarzellenkreises.'; }
+    constructor() { this.listeners = {}; this.dataset = {}; this.children = []; this.disabled = false; this.value = 'Eine ausreichend lange Beschreibung des Solarzellenkreises.'; }
     addEventListener(name, callback) { this.listeners[name] = callback; }
     append(...items) { this.children.push(...items); }
     replaceChildren(...items) { this.children = items; }

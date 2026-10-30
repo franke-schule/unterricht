@@ -2961,3 +2961,521 @@ const TASKS = {
   },
 
 };
+
+// Kriterienmigration: Hinweise sind wörtlich aus docs/ki-feedback-migration-plan.md.
+// Die erwarteten Aspekte und aufgabenspezifischen Fairnessregeln bleiben bei
+// den jeweiligen Taskdefinitionen; dieses Overlay schaltet den Vertrag um.
+const CRITERION_HINTS = {
+  'sql-b2-3': [
+    'Prüfe, aus welcher Tabelle die Abfrage liest.',
+    'Sieh nach, welche zwei Angaben direkt hinter SELECT stehen.',
+    'Erkläre die Bedingung hinter WHERE in eigenen Worten.'
+  ],
+  'inf9-db2-beschreibe-projektion': [
+    'Prüfe den Tabellennamen hinter FROM.',
+    'Nenne die erste ausgewählte Angabe hinter SELECT.',
+    'Nenne auch die zweite ausgewählte Angabe hinter SELECT.'
+  ],
+  'inf9-db2-beschreibe-sortierung': [
+    'Prüfe, aus welcher Tabelle welche Angaben ausgegeben werden.',
+    'Sieh nach, nach welcher Angabe ORDER BY ordnet.',
+    'Erkläre, in welcher Richtung die Werte angeordnet werden.'
+  ],
+  'inf9-db2-beschreibe-distinct': [
+    'Prüfe die Datenquelle hinter FROM.',
+    'Sieh nach, welche Angabe hinter SELECT steht.',
+    'Erkläre, was DISTINCT mit mehrfach vorkommenden Werten macht.'
+  ],
+  'inf9-db2-beschreibe-limit': [
+    'Prüfe, welche Spalte aus welcher Tabelle ausgewählt wird.',
+    'Erkläre die Sortierrichtung von ORDER BY.',
+    'Verbinde LIMIT mit der vorherigen Sortierung: Welche Zeilen bleiben übrig?'
+  ],
+  'inf9-db3-beschreibe-where': [
+    'Prüfe die Tabelle hinter FROM.',
+    'Nenne beide Angaben hinter SELECT.',
+    'Erkläre, welche Datensätze die WHERE-Bedingung durchlässt.'
+  ],
+  'sql-b3-1': [
+    'Prüfe, auf welche Tabelle sich FROM bezieht.',
+    'Erkläre die Wirkung von MIN auf die Körpergrößen.',
+    'Prüfe, welche Überschrift AS der Ergebnisspalte gibt.'
+  ],
+  'sql-b3-3': [
+    'Prüfe, welche Angaben das Sternchen auswählt und aus welcher Tabelle.',
+    'Erkläre die Reihenfolge nach dem Registrierungsdatum.',
+    'Verbinde LIMIT 1 mit der Reihenfolge: Welcher Datensatz bleibt?'
+  ],
+  'inf10-db-a1-primaerschluessel': [
+    'Erkläre, wozu ein eindeutiger Schlüssel für einen einzelnen Datensatz dient.',
+    'Überlege, weshalb Name oder Geburtstag als Schlüssel unsicher sein können.',
+    'Nenne beide Bedingungen, die ein Primärschlüsselwert erfüllen muss.'
+  ],
+  'inf10-db-a2-aufteilung': [
+    'Vergleiche, wie oft dieselben Benutzerdaten in einer gemeinsamen Fototabelle stehen.',
+    'Erkläre, wie viele Stellen bei einer Änderung der Benutzerdaten bearbeitet werden müssen.',
+    'Beschreibe, welcher Widerspruch durch die Aufteilung vermieden wird.'
+  ],
+  'inf10-a3-quiz-foto-beschreibung': [
+    'Prüfe, welcher Fremdschlüsselwert zum Benutzer gehört.',
+    'Erkläre, auf welchen Datensatz dieser Fremdschlüssel verweist.',
+    'Unterscheide den Schlüssel des Fotos vom Verweis auf die Person.'
+  ],
+  'inf10-a3-quiz-regal-beschreibung': [
+    'Betrachte, wie viele Bücher in einem Regal stehen können.',
+    'Prüfe, zu wie vielen Regalen ein einzelnes Buch gehört.',
+    'Ordne die Kardinalitätszahlen den richtigen Enden der Beziehung zu.'
+  ],
+  '10-2a': [
+    'Erzeuge den Roboter an einer Position innerhalb seiner Welt.',
+    'Wiederhole Legen und Gehen, bis die Reihe vor der Wand endet.',
+    'Prüfe vor jedem Schritt, ob der Weg zur Wand noch frei ist.',
+    'Lege auf den vorgesehenen Feldern Ziegel ab.',
+    'Bewege den Roboter innerhalb der Wiederholung weiter.',
+    'Prüfe die Reihenfolge der Befehle am letzten Feld vor der Wand.'
+  ],
+  '10-2b': [
+    'Bearbeite auch die übrigen drei Randseiten.',
+    'Wiederhole die Arbeit entlang jeder einzelnen Seite bis zur Wand.',
+    'Drehe den Roboter an jeder erreichten Ecke passend weiter.',
+    'Sorge dafür, dass alle vier Seiten durchlaufen werden.',
+    'Prüfe, ob Legen und Gehen auf jeder Seite in der passenden Reihenfolge stehen.',
+    'Prüfe den letzten Schritt vor jeder Wand und das Ende der Wiederholung.'
+  ],
+  '10-2c': [
+    'Prüfe die Ziegelzahl auf jedem Mauerfeld.',
+    'Führe den Roboter auf einer Spur neben den hohen Stapeln.',
+    'Wiederhole das Belegen der Felder entlang einer Seite.',
+    'Bearbeite auch die restlichen Randseiten.',
+    'Prüfe Drehung und Spurwechsel an jeder Ecke.',
+    'Prüfe, ob der nächste Schritt ohne Wand- oder Höhenkollision möglich ist.'
+  ],
+  '10-3a': [
+    'Deklariere eine Objektvariable mit dem geforderten Namen und Typ.',
+    'Weise dieser Variablen ein neu erzeugtes Robot-Objekt zu.',
+    'Prüfe die vier Konstruktorwerte, besonders Weltbreite und Welthöhe.'
+  ],
+  '10-3b': [
+    'Prüfe Länge und Breite der belegten Grundfläche.',
+    'Prüfe die Höhe jedes der fünfzehn Stapel.',
+    'Nutze Wiederholungen für Reihen und Felder statt nur einzelne Befehle.',
+    'Lege Ziegel vom Nachbarfeld aus; prüfe dabei das Hindernis vor dem Roboter.',
+    'Prüfe den Übergang von einer Reihe zur nächsten auf Lücken und Doppelbelegung.',
+    'Kontrolliere den vollständigen Weg innerhalb der 12-mal-12-Welt.'
+  ],
+  '10-5a': [
+    'Ergänze in Tier die beiden Attribute und eine passende Datenausgabe.',
+    'Leite Hund von Tier ab und ergänze nur sein eigenes Attribut.',
+    'Prüfe die Unterklassen Katze und Delfin samt jeweils eigenem Attribut.',
+    'Ordne die drei zusätzlichen Methoden ihren Klassen zu.',
+    'Prüfe, welche Unterklassen `zeigeDaten()` überschreiben sollen.',
+    'Prüfe Klammern, Typen und die Position der Attribute im Klassenrumpf.'
+  ],
+  '10-5b': [
+    'Erzeuge Objekte aller vier verlangten Klassen.',
+    'Weise den Objekten ihre Werte mit der Punktnotation zu.',
+    'Rufe Datenausgabe und die je passenden Spezialmethoden auf.',
+    'Zeige mindestens einen Aufruf über eine Variable vom Typ Tier mit Unterklassenobjekt.',
+    'Prüfe, ob jede aufgerufene Methode am statischen Variablentyp verfügbar ist.'
+  ],
+  '10-5c': [
+    'Ergänze eine neue Unterklasse von Tier mit eigener Eigenschaft oder Methode.',
+    'Ergänze eine neue Unterklasse von Hund mit eigener Eigenschaft oder Methode.',
+    'Nutze geerbte Attribute, statt sie in den neuen Klassen erneut anzulegen.',
+    'Erzeuge beide neuen Objekte im Hauptprogramm und benutze ihre Methoden.'
+  ],
+  '11-6-einfach-summe': [
+    'Lies beide Eingaben über die passenden Getter von `punkt`.',
+    'Prüfe die Zuordnung jeder Eingabe zu ihrem Gewicht und addiere die Produkte.',
+    'Bewahre die reellwertige Summe ohne Abschneiden auf eine Ganzzahl.'
+  ],
+  '11-6-einfach-ausgabe': [
+    'Prüfe den Ausgabewert oberhalb des Schwellenwerts.',
+    'Prüfe den Ausgabewert unterhalb des Schwellenwerts.',
+    'Behandle die Gleichheit mit dem Schwellenwert im passenden Zweig.'
+  ],
+  '11-6-einfach-anpassung': [
+    'Prüfe bei `delta = 1` beide Gewichte mit ihrer jeweiligen Eingabe.',
+    'Prüfe bei `delta = 1` das Vorzeichen der Schwellenwertänderung.',
+    'Prüfe bei `delta = -1` beide Gewichte mit ihrer jeweiligen Eingabe.',
+    'Prüfe bei `delta = -1` das Vorzeichen der Schwellenwertänderung.',
+    'Sorge dafür, dass bei `delta = 0` alle Parameter unverändert bleiben.'
+  ],
+  '11-6-schwer-trainieren': [
+    'Bewahre die gewichtete Summe ohne Ganzzahlverlust auf.',
+    'Prüfe den strikten Schwellenwertvergleich und den Gleichheitsfall.',
+    'Bilde `delta` aus Zielwert und berechneter Ausgabe in richtiger Reihenfolge.',
+    'Passe jedes Gewicht mit der zugehörigen Eingabe an.',
+    'Prüfe das Vorzeichen der Änderung von `theta`.',
+    'Bei fehlerfreier Ausgabe dürfen die Parameter nicht verändert werden.'
+  ],
+  '11-6-0-4a-code': [
+    'Rufe `gibAlter()` am verlangten Hundobjekt auf.',
+    'Gib den tatsächlichen Rückgabewert ausführbar aus.',
+    'Prüfe Klammern und Reihenfolge des Getteraufrufs nach der Objekterzeugung.'
+  ],
+  '11-6-0-5a-code': [
+    'Verändere `petersHund` durch einen erreichbaren Setteraufruf.',
+    'Setze den neuen Wert nach dem vorgegebenen älteren Setteraufruf.',
+    'Gib danach den aktuellen Getterwert von `petersHund` aus.',
+    'Gib auch den aktuellen Getterwert von `inasHund` aus, ohne sie zuvor zu verändern.'
+  ],
+  '11-6-0-5b-code': [
+    'Rufe `setzeDaten` am verlangten Objekt auf.',
+    'Prüfe Reihenfolge und Werte der beiden Setterargumente.',
+    'Rufe danach `zeigeDaten()` für dasselbe Objekt auf.',
+    'Prüfe, ob beide gesetzten Werte bis zur Anzeige bestehen bleiben.'
+  ],
+  '11-6-1-if-code': [
+    'Ergänze im markierten zweiten Abschnitt einen ausführbaren `if`-Block.',
+    'Vergleiche die zweite Summe strikt mit dem zweiten Schwellenwert.',
+    'Setze die zweite Ausgabe im zutreffenden Zweig.'
+  ],
+  '11-6-1-ifelse-code': [
+    'Ergänze im markierten Abschnitt beide Zweige.',
+    'Prüfe, welcher Zweig bei Gleichheit ausgeführt wird.',
+    'Setze in jedem Zweig den passenden Ausgabewert.'
+  ],
+  '11-6-1-elseif-code': [
+    'Prüfe die Textausgabe für `delta_uebung == 1`.',
+    'Ergänze einen zweiten bedingten Zweig für den negativen Delta-Wert.',
+    'Prüfe den Text im abschließenden `else` und dass nur ein Zweig läuft.'
+  ],
+  '11-6-1-for-code': [
+    'Prüfe Start, Schrittweite und Endbedingung des Zählers.',
+    'Sorge für genau vier Datenpunkt-Zeilen.',
+    'Nutze in der Ausgabe den aktuellen Zähler statt fester Zahlen.'
+  ],
+  'b': [
+    'Erkläre, was die erste Programmzeile erzeugt und wo es gespeichert wird.',
+    'Unterscheide die drei Zahlen des Konstruktors nach ihrer Wirkung.',
+    'Erkläre die Wirkung des `move`-Aufrufs.',
+    'Prüfe die Wirkung von `setFillColor`.',
+    'Beschreibe, was `destroy()` mit dem Kreis macht.'
+  ],
+  'c': [
+    'Prüfe, welche Konstruktorzahl die waagerechte Lage verändert.',
+    'Prüfe, welche Konstruktorzahl die senkrechte Lage verändert.',
+    'Prüfe, welche Konstruktorzahl die Größe verändert.',
+    'Verändere die erste Zahl von `move` einzeln und beschreibe die Verschiebung.',
+    'Verändere die zweite Zahl von `move` einzeln und beschreibe die Verschiebung.'
+  ],
+  '2b': [
+    'Erkläre den ersten Konstruktoraufruf mit Objekt und Werten.',
+    'Vergleiche den zweiten Konstruktoraufruf mit dem ersten.',
+    'Prüfe, auf welches Objekt der erste `zeigeDaten`-Aufruf wirkt.',
+    'Prüfe, auf welches Objekt der zweite `zeigeDaten`-Aufruf wirkt.',
+    'Erkläre die Wirkung des `belle`-Aufrufs beim richtigen Hund.'
+  ],
+  '1a': [
+    'Prüfe, welches Objekt `new Kiste()` erzeugt.',
+    'Erkläre die Rolle der Variablen `block`.',
+    'Prüfe, welches Objekt `new Ball(100)` erzeugt.',
+    'Erkläre die Rolle der Variablen `ball1`.',
+    'Erkläre, wohin die Zahl beim Konstruktoraufruf übergeben wird.'
+  ],
+  '1b': [
+    'Verfolge die 100 vom Aufruf zum Ball-Konstruktor.',
+    'Prüfe, welche Variable im Konstruktor diesen Wert empfängt.',
+    'Erkläre die Wirkung von `startX` auf die Kreisposition.',
+    'Nenne den Fachbegriff für `startX` in der Konstruktordeklaration.',
+    'Unterscheide den übergebenen Wert vom Parameternamen.'
+  ],
+  '1c': [
+    'Erkläre, was eine Klasse für ihre Objekte festlegt.',
+    'Ordne Ball und Kiste als Baupläne ein.',
+    'Erkläre, was beim Erzeugen eines Objekts entsteht.',
+    'Ordne `ball1` zum erzeugten Ballobjekt zu.',
+    'Ordne `block` zum erzeugten Kisteobjekt zu.'
+  ],
+  '1f': [
+    'Erkläre die Beziehung zwischen Ball und Actor bei `extends`.',
+    'Ordne Ball als Ober- oder Unterklasse ein.',
+    'Prüfe, welches Verhalten Ball von Actor übernehmen kann.',
+    'Erkläre die Rolle von `act()` im Actor-Ablauf.',
+    'Überlege, weshalb gemeinsames Actor-Verhalten nicht erneut geschrieben werden muss.'
+  ],
+  '10-4a': [
+    'Prüfe, welche Objekte das Hauptprogramm erzeugt.',
+    'Erkläre, wofür die Werte in den Konstruktoraufrufen stehen.',
+    'Vergleiche den Variablentyp mit der tatsächlichen Objektklasse.',
+    'Beschreibe die Wirkung der wiederholten `zeigeInfos()`-Aufrufe.'
+  ],
+  '10-4c': [
+    'Finde eine Artikel-Variable, die auf ein Unterklassenobjekt verweist.',
+    'Prüfe, welche `zeigeInfos()`-Version beim Methodenaufruf ausgeführt wird.',
+    'Erkläre die Funktion von `extends` in einer Unterklasse.',
+    'Prüfe die Aufgabe von `super(...)` im Konstruktor.',
+    'Erkläre, wie Überschreiben und Oberklassenvariable zusammenwirken.'
+  ],
+  '10-6b': [
+    'Bestimme Typ und Art des Werts von `maximaleVersuche`.',
+    'Prüfe den Typ von `kiste` und worauf die Variable verweist.',
+    'Prüfe den Typ von `ball` und worauf die Variable verweist.',
+    'Unterscheide einfachen Werttyp und Klassentyp mit Objekterzeugung.'
+  ],
+  '10-6e': [
+    'Prüfe, was die Variable `kiste` bezeichnet.',
+    'Zerlege den Ausdruck an der Punktnotation.',
+    'Ordne `rotate` der Klasse des tatsächlichen Objekts zu.',
+    'Unterscheide Argument 45 vom Parameter `angleDeg`.',
+    'Beschreibe die sichtbare Wirkung des Aufrufs.'
+  ],
+  '11-3a-f': [
+    'Vergleiche zunächst alle verfügbaren Merkmale.',
+    'Bestimme für jedes Merkmal das passende Gütemaß.',
+    'Erkläre die Auswahl des nächsten Knotens.',
+    'Beschreibe, wie die Daten nach diesem Knoten aufgeteilt werden.',
+    'Erkläre, wann und für welche Teilgruppen das Verfahren weitergeht.'
+  ],
+  'inf11-a3a-quiz-informationsgewinn-beschreibung': [
+    'Zähle die Fehler vor dem Aufteilen anhand des häufigeren Labels.',
+    'Zähle die Fehler in jeder der beiden Teilmengen getrennt.',
+    'Addiere die beiden Fehlerzahlen nach dem Aufteilen.',
+    'Bilde die Differenz zwischen Fehlerzahl vorher und nachher.'
+  ],
+  'inf11-a3a-quiz-attributwahl-beschreibung': [
+    'Prüfe, ob die vorgeschlagene Zahl beide Labels und alle Teilmengen berücksichtigt.',
+    'Vergleiche für jedes Attribut die Gesamtfehler vor und nach dem Aufteilen.',
+    'Erkläre, nach welchem Vergleich das Merkmal gewählt wird.'
+  ],
+  'inf11-a3a-quiz-vorgehen-beschreibung': [
+    'Beschreibe die Äste nach den Werten des gewählten Merkmals.',
+    'Prüfe, wann aus einer Teilgruppe ein Blatt wird.',
+    'Bestimme für gemischte Teilgruppen die Güte der übrigen Merkmale neu.',
+    'Erkläre, wann die weitere Aufteilung endet.'
+  ],
+  '11-4-1': [
+    'Beschreibe den tatsächlich entstandenen ersten Split.',
+    'Prüfe, ob ein einziger Split alle Trainingsfische trennen kann.',
+    'Schlage eine weitere sinnvolle Aufteilung vor.'
+  ],
+  '11-4-2': [
+    'Vergleiche die Trainingsfehler bei den verschiedenen Baumtiefen.',
+    'Vergleiche die Testgenauigkeit für Tiefe eins bis drei.',
+    'Erkläre, ob weniger Trainingsfehler hier bessere Testgenauigkeit bedeuten.'
+  ],
+  '11-4-3': [
+    'Vergleiche zuerst die Testgenauigkeit beider Bäume.',
+    'Prüfe, ob dieselben Testfische falsch eingeordnet werden.',
+    'Erkläre, welche Information die Gesamtgenauigkeit nicht zeigt.'
+  ],
+  '11-7-1': [
+    'Bestimme Abstände mit beiden Merkmalen des neuen Punkts.',
+    'Wähle genau die fünf kleinsten Abstände.',
+    'Zähle die Shirtgrößen unter diesen Nachbarn.',
+    'Ordne die Mehrheitsgröße dem neuen Punkt zu.'
+  ],
+  '11-8-1': [
+    'Nenne die zu wählende Nachbarzahl.',
+    'Begründe die Wahl mit allen fünf Validierungsfällen.',
+    'Vergleiche das Ergebnis mit den übrigen angegebenen k-Werten.'
+  ],
+  'inf11-cod-a1-ascii-unicode': [
+    'Prüfe Bitzahl und Anzahl der ASCII-Zeichen.',
+    'Nenne eine konkrete Grenze des ASCII-Zeichenvorrats.',
+    'Erkläre, wofür Unicode Zeichenkennungen bereitstellt.',
+    'Vergleiche die ersten 128 Zeichen beider Systeme.',
+    'Unterscheide Zeichennummer und Speicherform am Beispiel UTF-8.'
+  ],
+  '11-5-1': [
+    'Prüfe, welche Parameter beim Training verändert werden.',
+    'Vergleiche Sollwert und berechnete Ausgabe als Auslöser der Änderung.',
+    'Erkläre, worin das Trainingsergebnis gespeichert ist.',
+    'Grenze Rechenregeln von menschlichem Verstehen ab.'
+  ],
+  'inf9-dfd-zylinder-beschreibung': [
+    'Verfolge den Höhenwert in beide Zweige.',
+    'Prüfe die Reihenfolge von Quadrieren und Multiplizieren in jedem Zweig.',
+    'Erkläre, welcher Wert bei `minus` von welchem abgezogen wird.'
+  ],
+  'inf9-dfd-fehlersuche-gewinnspiel': [
+    'Vergleiche das Zeichen im Vergleichsknoten mit dem Wortlaut der Gewinnregel.',
+    'Teste den Grenzfall mit der Losnummer 70.',
+    'Ändere nur den Vergleich, der diesen Grenzfall falsch behandelt.'
+  ],
+  'ph11-photovoltaik-schaltplan-beschreibung': [
+    'Ordne die Solarzelle als Quelle im geschlossenen Stromkreis ein.',
+    'Beschreibe die Rolle des veränderlichen Widerstands bei den Messungen.',
+    'Prüfe Einbauort und Messgröße des Amperemeters.',
+    'Prüfe Einbauort und Messgröße des Voltmeters.'
+  ],
+  'ph11-kreisbewegungen-bewegung-diagramm-beschreibung': [
+    'Lies im ersten Zeitabschnitt Anfangs- und Endgeschwindigkeit ab.',
+    'Prüfe, ob die Geschwindigkeit im zweiten Abschnitt steigt oder konstant bleibt.',
+    'Vergleiche im dritten Abschnitt Anfangs- und Endgeschwindigkeit.',
+    'Prüfe den Verlauf im vierten Abschnitt.',
+    'Beschreibe die Änderung bis zum Stillstand im letzten Abschnitt.'
+  ],
+  'ph11-kreisbewegungen-kraeftegleichgewicht-beschreibung': [
+    'Prüfe die resultierende Kraft auf den ruhenden Körper.',
+    'Prüfe die resultierende Kraft beim Auto mit konstanter Geschwindigkeit.',
+    'Vergleiche Betrag und Richtung der Kräfte am jeweils selben Körper.',
+    'Erkläre die Auswirkung der Kraftsumme auf den Bewegungszustand.'
+  ],
+  'ph11-wdh2-quiz-crashtest-beschreibung': [
+    'Beschreibe beide Kräfte zwischen Auto und Wand mit Richtung und Betrag.',
+    'Prüfe, an welchen Körpern diese beiden Kräfte angreifen.',
+    'Bestimme die resultierende Kraft und Bewegungsänderung des Autos.',
+    'Vergleiche damit die Kräfte am Fallschirmspringer bei konstanter Sinkgeschwindigkeit.'
+  ],
+  'ph11-kreisbewegungen-zentripetalkraft-beschreibung': [
+    'Setze den Anfang des Geschwindigkeitspfeils an den Körper.',
+    'Prüfe seine Richtung relativ zur Kreisbahn.',
+    'Setze auch den Anfang des Kraftpfeils an den Körper.',
+    'Prüfe, wohin der Kraftpfeil zeigt.',
+    'Beschreibe die Richtung der Kraft relativ zum Radius.'
+  ],
+  'ph11-zentripetalkraft-herleitung-dv': [
+    'Verschiebe die beiden Geschwindigkeitsvektoren parallel an denselben Anfangspunkt.',
+    'Verbinde danach die beiden Pfeilspitzen.',
+    'Prüfe die Pfeilrichtung der Differenz von v₁ zu v₂.'
+  ],
+  'ph11-zentripetalkraft-herleitung-naeherung': [
+    'Prüfe, wie nah die Punkte bei sehr kleinem Zeitintervall beieinander liegen.',
+    'Vergleiche dann den kurzen Kreisbogen mit der direkten Strecke.'
+  ],
+  'ph11-zentripetalkraft-herleitung-aehnlichkeit': [
+    'Prüfe, weshalb beide betrachteten Dreiecke jeweils gleichschenklig sind.',
+    'Vergleiche die Winkel zwischen den Radien und zwischen den Geschwindigkeiten.',
+    'Nenne einen passenden Ähnlichkeitssatz und begründe ihn.'
+  ],
+  'ph11-a3-quiz-karussell-beschreibung': [
+    'Vergleiche den Drehwinkel beider Kinder pro Zeit.',
+    'Begründe den Winkelvergleich mit ihrer gemeinsamen Drehung.',
+    'Vergleiche die Wege der Kinder pro Zeit.',
+    'Beziehe den unterschiedlichen Radius in die Weg- oder Formelbetrachtung ein.'
+  ],
+  'ph11-a3-quiz-ursache-beschreibung': [
+    'Beschreibe, was sich an der Geschwindigkeit trotz konstantem Betrag ändert.',
+    'Überlege, was für diese Richtungsänderung erforderlich ist.',
+    'Bestimme Richtung und Angriffspunkt dieser Kraft.'
+  ],
+  'ph11-a3-quiz-schnur-beschreibung': [
+    'Vergleiche die Bahn nach dem Reißen mit der vorherigen Kreisbahn.',
+    'Richte die anschließende Bewegung nach der momentanen Geschwindigkeit aus.',
+    'Erkläre, welche Kraft nach dem Reißen fehlt und was Trägheit bewirkt.'
+  ],
+  'ph11-a4-quiz-hammerwurf-beschreibung': [
+    'Beschreibe die momentane Geschwindigkeitsrichtung an der Kugel.',
+    'Prüfe die Kraftrichtung des gespannten Seils auf die Kugel.',
+    'Vergleiche die Flugrichtung direkt nach dem Loslassen mit der momentanen Geschwindigkeit.',
+    'Erkläre, warum die Kreisbahn ohne Seilzug endet.'
+  ],
+  'ph11-a4-quiz-radius-beschreibung': [
+    'Prüfe Bens Aussage bei festgehaltener Winkelgeschwindigkeit.',
+    'Begründe die Radiuswirkung in diesem Fall über Bahngeschwindigkeit oder Formel.',
+    'Prüfe dieselbe Aussage bei festgehaltener Bahngeschwindigkeit.',
+    'Begründe die andere Radiuswirkung über Richtungsänderung oder Formel.'
+  ],
+  'ph11-a4-quiz-seil-beschreibung': [
+    'Ordne die beiden entgegengesetzten Kräfte als Paar ein.',
+    'Prüfe, ob die Kräfte am selben Körper angreifen.',
+    'Bestimme die resultierende Kraft und Bewegungsänderung der Kugel.'
+  ],
+  'ph11-a4-und-experiment-quiz-experiment-beschreibung': [
+    'Beschreibe eine sichere waagerechte Befestigung mit Sensor außerhalb der Achse.',
+    'Nenne die veränderte und die konstant gehaltene Größe.',
+    'Ordne dem Beschleunigungssensor die passende Messgröße zu.',
+    'Ordne dem Drehratensensor die passende Messgröße zu.'
+  ],
+  'ph11-a4-und-experiment-quiz-kraft-beschreibung': [
+    'Verbinde radiale Kraft und Beschleunigung mit Newtons zweitem Gesetz.',
+    'Erkläre die Umrechnung des gemessenen Beschleunigungswerts bei bekannter Masse.',
+    'Begründe, wie die konstante Masse den Verlauf gegenüber ω beeinflusst.'
+  ],
+  'ph11-a4-und-experiment-quiz-diagramme-beschreibung': [
+    'Prüfe, ob Diagramm A näherungsweise eine Ursprungsgerade zeigt.',
+    'Leite daraus den Zusammenhang mit dem Quadrat von ω ab.',
+    'Vergleiche damit Form und Aussage von Diagramm B.',
+    'Erkläre die Rolle des konstanten Radius in der Formel.'
+  ],
+  'ph11-a5-quiz-kurve-beschreibung': [
+    'Bestimme die reale seitliche Kraft zwischen Reifen und Fahrbahn.',
+    'Erkläre ihre Richtung und Wirkung auf das Auto.',
+    'Nenne die auf die Kugel wirkenden realen Kräfte.',
+    'Beschreibe die nach innen gerichtete resultierende Kraft und ihre Wirkung.'
+  ],
+  'ph11-a5-quiz-naesse-beschreibung': [
+    'Vergleiche die Haftreibungszahl bei trockener und nasser Straße.',
+    'Prüfe, wie sich dadurch die maximal mögliche Haftreibung ändert.',
+    'Vergleiche diesen Grenzwert mit der weiterhin benötigten Kurvenkraft.',
+    'Leite eine rechtzeitige Anpassung der Geschwindigkeit ab.'
+  ],
+  'ph11-a5-quiz-masse-beschreibung': [
+    'Prüfe, ob die Masse allein die behauptete Grenzgeschwindigkeit festlegt.',
+    'Vergleiche die benötigte Kraft bei größerer Masse.',
+    'Vergleiche zugleich die maximal verfügbare Haftreibung.',
+    'Setze beide Größen in der Grenzbedingung zueinander und beachte die Modellannahmen.'
+  ],
+  'ph11-haftreibung-kurvenfahrt-gefahren': [
+    'Vergleiche benötigte Zentripetalkraft mit maximaler Haftreibung.',
+    'Prüfe die Wirkung höherer Geschwindigkeit in der Kraftformel.',
+    'Prüfe die Wirkung eines engeren Kurvenradius.',
+    'Prüfe, wie Nässe oder Eis die verfügbare Haftreibung verändert.',
+    'Leite aus Geschwindigkeit und Radius eine Fahrregel ab.',
+    'Leite aus den Kontaktbedingungen eine weitere vorsichtige Fahrregel ab.'
+  ],
+  'ph11-haftreibung-kurvenfahrt-massenunabhaengigkeit': [
+    'Schreibe die benötigte Zentripetalkraft mit Masse auf.',
+    'Schreibe die maximal mögliche Haftreibung mit Masse auf.',
+    'Vergleiche den gemeinsamen Faktor beider Seiten.',
+    'Formuliere die daraus folgende Geschwindigkeitsgrenze.',
+    'Nenne die Voraussetzungen, unter denen dieser Vergleich gilt.'
+  ],
+  'ph11-kettenkarussell-winkelgeschwindigkeit': [
+    'Prüfe die benötigte Kraft bei schnellerer Drehung.',
+    'Vergleiche den Auslenkwinkel vor und nach der Änderung.',
+    'Prüfe, wie sich dadurch der Bahnradius verändert.',
+    'Vergleiche die Seilkraft in beiden Zuständen.',
+    'Prüfe, welche Größen durch die schnellere Drehung nicht verändert werden.'
+  ],
+  'ph11-kettenkarussell-zwei-sitzreihen': [
+    'Vergleiche die Abstände beider Sitzreihen zur Drehachse.',
+    'Nutze das Verhältnis von radialer zu vertikaler Kraft für den Winkelvergleich.',
+    'Leite daraus die stärker ausgelenkte Sitzreihe ab.'
+  ]
+};
+
+const WRONG_RELATION_HINT = 'Prüfe die Richtung der Bedingung oder Beziehung im Arbeitsauftrag.';
+const SQL_RELATION_HINTS = {
+  'inf9-db2-beschreibe-sortierung': { 3: 'Prüfe, ob ASC und DESC dieselbe Reihenfolge ergeben.' },
+  'sql-b3-3': { 2: 'Prüfe, ob ASC und DESC dieselbe Reihenfolge ergeben.' },
+  'inf10-a3-quiz-foto-beschreibung': { 2: 'Unterscheide den Primärschlüssel des Fotos vom Fremdschlüssel zum Benutzer.' },
+  'inf10-a3-quiz-regal-beschreibung': { 3: WRONG_RELATION_HINT }
+};
+const REDUCED_STYLE_TASKS = new Set(['b', 'c', '2b', '1a', '1b', '1c', '1f']);
+
+for (const [id, hints] of Object.entries(CRITERION_HINTS)) {
+  const task = TASKS[id];
+  if (!task) throw new Error(`Kriterienmigration: unbekannte Task-ID ${id}`);
+  const previousRubric = (task.rubric || []).filter(rule =>
+    !/\b(?:strengths|missing|feedback|rückmeldung|punktzahl|volle\s+\d+\s+punkte|bei\s+\d+\s+punkten|korrekt\s*=|partial\s*=)/i.test(rule));
+  if (REDUCED_STYLE_TASKS.has(id)) {
+    task.maxPoints = 5;
+    task.expectedAspects = task.expectedAspects.slice(0, 5);
+  }
+  if (hints.length !== task.expectedAspects.length || hints.length !== task.maxPoints) {
+    throw new Error(`Kriterienmigration: Kriterienzahl passt nicht für ${id}`);
+  }
+  task.maxFeedbackHints = 1;
+  task.statusLabels = task.statusLabels || { correct: 'korrekt', partial: 'teilweise korrekt', incorrect: 'noch nicht korrekt' };
+  task.feedbackCriteria = hints.map((missing, index) => ({
+    id: `aspect_${index + 1}`,
+    label: `Aspekt ${index + 1}`,
+    issues: {
+      missing,
+      ...(task.responseType === 'code'
+        ? { wrong_logic: missing }
+        : { wrong_relation: SQL_RELATION_HINTS[id]?.[index + 1] || missing })
+    }
+  }));
+  task.rubric = task.expectedAspects.map((aspect, index) => `Ein Punkt für Aspekt ${index + 1}: ${aspect}`);
+  if (task.responseType === 'code') {
+    // Bisherige Abgrenzungen bleiben Teil des Codekontexts; alte Rubrikzeilen
+    // werden als Zusatzregeln erhalten und konkurrieren nicht mit der 1-Punkt-Rubrik.
+    task.codeAnalysisRules = [...(task.codeAnalysisRules || []), ...previousRubric];
+  } else {
+    task.criteriaFairnessRules = previousRubric;
+  }
+}

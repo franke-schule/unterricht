@@ -17,7 +17,8 @@ const env = {
   AI_ALLOWED_ORIGINS: 'https://unterricht.example'
 };
 const fixture = { points: 0, maxPoints: 6, status: 'noch unvollstaendig', strengths: [], missing: ['Begründung fehlt.'], feedback: 'Erkläre die Wirkung genauer.' };
-function modelResponse(evaluation = fixture, overrides = {}) {
+const missingCriteria = task => ({ criteria: Object.fromEntries(task.feedbackCriteria.map(criterion => [criterion.id, { status: 'missing', evidence: [] }])) });
+function modelResponse(evaluation = missingCriteria(core.TASKS.b), overrides = {}) {
   return { ok: true, status: 200, async text() {
     return JSON.stringify({ choices: [{ finish_reason: 'stop', message: { content: JSON.stringify(evaluation) }, ...overrides }] });
   } };
@@ -61,7 +62,7 @@ test('Echte POST-Struktur, Projekt-URL, Schema und vorhandenes Feedbackformat', 
   assert.equal(body(response).requestId, 'test_request_01');
   assert.equal(body(response).type, core.RESULT_MESSAGE_TYPE);
   assert.equal(body(response).result.ok, true);
-  assert.equal(body(response).result.maxPoints, 6);
+  assert.equal(body(response).result.maxPoints, 5);
   assert.equal(observed.length, 1);
   assert.equal(observed[0].url, `https://api.scaleway.ai/${env.AI_PROJECT_ID}/v1/chat/completions`);
   assert.equal(observed[0].options.headers.Authorization, 'Bearer ' + env.AI_API_KEY);
@@ -70,7 +71,8 @@ test('Echte POST-Struktur, Projekt-URL, Schema und vorhandenes Feedbackformat', 
   assert.equal(sent.model, env.AI_MODEL);
   assert.equal(sent.response_format.type, 'json_schema');
   assert.equal(sent.response_format.json_schema.schema.additionalProperties, false);
-  assert.deepEqual(sent.response_format.json_schema.schema.properties.maxPoints.enum, [6]);
+  assert.deepEqual(sent.response_format.json_schema.schema.required, ['criteria']);
+  assert.deepEqual(sent.response_format.json_schema.schema.properties.criteria.required, core.TASKS.b.feedbackCriteria.map(criterion => criterion.id));
   assert.equal('store' in sent, false);
   assert.equal(sent.messages[1].content, core.buildPrompt_(core.TASKS.b, 'Ich weiß die Antwort noch nicht.'));
 });
@@ -79,8 +81,7 @@ test('Codeauswertung nutzt Programmcode und liefert passende Ergebnishülle', as
   const taskId = Object.keys(core.TASKS).find(id => core.TASKS[id].responseType === 'code');
   const task = core.TASKS[taskId];
   let prompt;
-  const value = { ...fixture, maxPoints: task.maxPoints };
-  if (task.statusLabels) value.status = task.statusLabels.incorrect;
+  const value = missingCriteria(task);
   const handle = createHandler({ env, fetchImpl: async (url, options) => {
     prompt = JSON.parse(options.body).messages[1].content;
     return modelResponse(value);
@@ -89,7 +90,7 @@ test('Codeauswertung nutzt Programmcode und liefert passende Ergebnishülle', as
   assert.equal(response.statusCode, 200);
   assert.equal(body(response).type, core.CODE_RESULT_MESSAGE_TYPE);
   assert.match(prompt, /BEGINN SCHUELERCODE/);
-  assert.match(prompt, /statische Codeanalyse/);
+  assert.match(prompt, /statisch/);
   const wrong = await handle(post({ taskId, code: undefined }));
   assert.equal(wrong.statusCode, 400);
 });
@@ -151,6 +152,15 @@ test('CORS erlaubt nur konfigurierte Origins und passende Voranfragen', async ()
 });
 
 test('Modellfehler und Timeouts werden ohne Secrets/Antwortinhalte zurückgegeben', async () => {
+  const firstId = core.TASKS.b.feedbackCriteria[0].id;
+  const unknownStatus = missingCriteria(core.TASKS.b);
+  unknownStatus.criteria[firstId].status = 'frei erfundener Status';
+  const inventedEvidence = missingCriteria(core.TASKS.b);
+  inventedEvidence.criteria[firstId] = { status: 'correct', evidence: ['Diese Belegstelle steht nicht in der Eingabe.'] };
+  const missingCriterion = missingCriteria(core.TASKS.b);
+  delete missingCriterion.criteria[firstId];
+  const emptyPositiveEvidence = missingCriteria(core.TASKS.b);
+  emptyPositiveEvidence.criteria[firstId] = { status: 'correct', evidence: [] };
   const cases = [
     [async () => ({ ok: false, status: 429 }), 429, 'MODEL_RATE_LIMIT'],
     [async () => ({ ok: false, status: 401 }), 503, 'MODEL_AUTHENTICATION'],
@@ -163,7 +173,12 @@ test('Modellfehler und Timeouts werden ohne Secrets/Antwortinhalte zurückgegebe
     [async () => modelResponse({ ...fixture, maxPoints: 100 }), 502, 'INVALID_MODEL_RESPONSE'],
     [async () => modelResponse({ ...fixture, feedback: '' }), 502, 'INVALID_MODEL_RESPONSE'],
     [async () => modelResponse({ ...fixture, missing: [null] }), 502, 'INVALID_MODEL_RESPONSE'],
-    [async () => modelResponse({ ...fixture, extra: true }), 502, 'INVALID_MODEL_RESPONSE']
+    [async () => modelResponse({ ...fixture, extra: true }), 502, 'INVALID_MODEL_RESPONSE'],
+    [async () => modelResponse(unknownStatus), 502, 'INVALID_MODEL_RESPONSE'],
+    [async () => modelResponse(inventedEvidence), 502, 'INVALID_MODEL_RESPONSE'],
+    [async () => modelResponse(missingCriterion), 502, 'INVALID_MODEL_RESPONSE'],
+    [async () => modelResponse(emptyPositiveEvidence), 502, 'INVALID_MODEL_RESPONSE'],
+    [async () => modelResponse({ ...missingCriteria(core.TASKS.b), points: 5 }), 502, 'INVALID_MODEL_RESPONSE']
   ];
   for (const [fetchImpl, status, errorCode] of cases) {
     const response = await createHandler({ env, fetchImpl })(post());

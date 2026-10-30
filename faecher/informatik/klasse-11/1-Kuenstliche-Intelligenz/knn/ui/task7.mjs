@@ -1,5 +1,5 @@
 import { normaliseNumber } from '../../perzeptron/logic/perceptron.mjs';
-import { evaluateSemanticAnswer, renderCompactEvaluation } from "../../perzeptron/ui/semantic-answer.mjs?v=20261022-feedback-two-sentences";
+import { evaluateSemanticAnswer, renderCompactEvaluation } from "../../perzeptron/ui/semantic-answer.mjs?v=20261029-criteria-v1";
 import { SHIRT_SYMBOLS, SHIRT_TRAINING } from '../data/shirts.mjs';
 import { BLANK_IDS, COMPARE_A, COMPARE_B, COMPARE_P, EXPECTED, N1, N2, N5, PAIR_A, PAIR_B, STOP_H, STOP_K } from '../data/task7.mjs';
 import { euclidean, formatDecimal, withinTolerance } from '../logic/knn.mjs';
@@ -733,21 +733,25 @@ function setupExplanation() {
   const textarea = $('#apply-answer');
   const counter = $('#apply-counter');
   const update = () => { counter.textContent = textarea.value.length + ' von 600 Zeichen'; };
-  textarea.addEventListener('input', () => { state.r5.text = textarea.value; update(); saveState(); });
+  let requestId = 0;
+  textarea.addEventListener('input', () => { state.r5.text = textarea.value; update(); requestId++; feedback('apply-answer-feedback', '', ''); const checkButton = $('#check-apply-answer'); checkButton.disabled = false; checkButton.textContent = 'Antwort erneut prüfen'; saveState(); });
   textarea.value = state.r5.text;
   update();
   $('#check-apply-answer').addEventListener('click', async () => {
     const answer = textarea.value.trim();
+    const currentRequest = ++requestId;
     if (answer.length < 30) { feedback('apply-answer-feedback', 'error', 'Erläutere die Schritte noch etwas genauer, damit deine Antwort sinnvoll ausgewertet werden kann.'); textarea.focus(); return; }
     const button = $('#check-apply-answer');
     button.disabled = true;
     feedback('apply-answer-feedback', '', 'Deine Erläuterung wird mit dem Erwartungshorizont verglichen.');
     try {
       const result = await evaluateSemanticAnswer({ serverUrl: SERVER_URL, taskId: TASK_ID, answer });
+      if (currentRequest !== requestId || textarea.value.trim() !== answer) return;
       const kind = result.points === result.maxPoints ? 'success' : result.points > 0 ? 'partial' : 'error';
       feedback('apply-answer-feedback', kind, '');
       renderCompactEvaluation($('#apply-answer-feedback'), result);
     } catch (error) {
+      if (currentRequest !== requestId || textarea.value.trim() !== answer) return;
       const unknown = error.message === 'Diese Aufgabe ist auf dem Auswertungsserver nicht bekannt.';
       feedback('apply-answer-feedback', 'error', unknown ? 'Für Aufgabe 7 ist noch keine aktuelle Serverversion bereitgestellt. Bitte informiere deine Lehrkraft.' : error.message);
     } finally { button.disabled = false; }

@@ -1,6 +1,6 @@
 import { setupPhysicsStepTabs } from "./components/physics-step-tabs.mjs";
 import { createPhysicsTaskProgress } from "./components/physics-task-progress.mjs?v=20260930a";
-import { setupPhysicsSemanticTask } from "./components/physics-semantic-task.mjs?v=20261022-force-indices";
+import { setupPhysicsSemanticTask } from "./components/physics-semantic-task.mjs?v=20261029-criteria-v1";
 import { enableTokenDrag, wasDragged } from "./components/token-drag.mjs";
 import { appendPhysicsText, createIndexedSymbol, physicsTextSpan } from "./components/physics-notation.mjs?v=20261022-force-indices";
 import { angleAtCycleElapsed, angleAtElapsed, angularSpeed, circleVectors, clamp, elapsedInCycle, frequencyFromPeriod, sectorPath, shuffleIncorrect, tangentialSpeed } from "./components/circle-kinematics.mjs";

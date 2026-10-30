@@ -100,8 +100,7 @@ test('6.2: Server korrigiert die gemeldete KI-Fehlbewertung im Antwortpfad (Mock
     assert.ok(prompt.includes(userCode.trim()));
     return { ok: true, status: 200, async text() {
       return JSON.stringify({ choices: [{ finish_reason: 'stop', message: { content: JSON.stringify({
-        points: 0, maxPoints: 3, status: 'noch nicht korrekt', strengths: [],
-        missing: wrongEvaluation.missing, feedback: wrongEvaluation.feedback
+        criteria: Object.fromEntries(task.feedbackCriteria.map(criterion => [criterion.id, { status: 'missing', evidence: [] }]))
       }) } }] });
     } };
   } });

@@ -1,8 +1,10 @@
-import { evaluateSemanticAnswer, evaluateCodeAnswer, renderCompactEvaluation } from './semantic-answer.mjs?v=20261029-single-improvement';
+import { evaluateSemanticAnswer, evaluateCodeAnswer, observeIdeCodeChanges, renderCompactEvaluation } from './semantic-answer.mjs?v=20261029-criteria-v1';
 import { setupCodeSnippetOrder } from './code-snippet-order.mjs';
 
 const SERVER_URL = 'https://unterrichtkiichezbn4-ki-auswertung.functions.fnc.fr-par.scw.cloud/';
 const STORAGE_KEY = 'informatik11-ki-aufgabe6-v1';
+const CODE_TASK_MAX_POINTS = { '11-6-einfach-summe':3, '11-6-einfach-ausgabe':3, '11-6-einfach-anpassung':5, '11-6-schwer-trainieren':6 };
+const CODE_ASSESSMENT_VERSIONS = Object.fromEntries(Object.keys(CODE_TASK_MAX_POINTS).map(taskId => [taskId, '20261029-criteria-v1']));
 const SOLUTION_CODE = 'M6QS-D4B7';
 const IDE_IDS = { einfach: 'Java11Aufgabe6Einfach', schwer: 'Java11Aufgabe6Schwer' };
 const FALLBACK = {
@@ -19,6 +21,8 @@ const QUIZ = [
   { question:'4. Welche Änderungen gelten bei `delta = -1`?', options:['Für jedes Gewicht gilt: neuer Wert = alter Wert − α · Eingabe.','`theta` wird um α erhöht.','Jedes Gewicht wird unabhängig von der Eingabe um genau 1 kleiner.','Das Label wird in 1 geändert.'], correct:[0,1], explanation:'Bei `delta = -1` werden die gewichteten Lernschritte abgezogen und `theta` um α erhöht. Das Label wird nicht geändert.' }
 ];
 const state = { activationRule: 'strict', variant: null, description: '', quiz: QUIZ.map(() => []), quizSummary: false, quizOpen: false };
+let descriptionRequestVersion = 0;
+const codeRequestVersions = new Map();
 let readSnippetOrder;
 let restoreSnippetOrder;
 
@@ -115,12 +119,13 @@ function serverError(error) {
 }
 async function checkDescription() {
   const answer = document.querySelector('#description').value.trim();
+  const requestVersion = ++descriptionRequestVersion;
   const box = resultBox('description');
   if (answer.length < 35) return showMessage(box,'Beschreibe die Rechnung und die Entscheidung noch etwas genauer, damit deine Antwort sinnvoll ausgewertet werden kann.');
   const button = document.querySelector('#check-description'); button.disabled = true;
   showMessage(box,'Deine Beschreibung wird überprüft.','partial');
-  try { renderEvaluation(box,await evaluateSemanticAnswer({serverUrl:SERVER_URL,taskId:'11-6-klassifizieren',answer}), 'description'); }
-  catch(error) { showMessage(box,serverError(error)); }
+  try { const result = await evaluateSemanticAnswer({serverUrl:SERVER_URL,taskId:'11-6-klassifizieren',answer,expectedMaxPoints:4}); if (requestVersion === descriptionRequestVersion && document.querySelector('#description').value.trim() === answer) renderEvaluation(box,result,'description'); }
+  catch(error) { if (requestVersion === descriptionRequestVersion && document.querySelector('#description').value.trim() === answer) showMessage(box,serverError(error)); }
   finally { button.disabled = false; }
 }
 function getCode() {
@@ -133,17 +138,20 @@ function getCode() {
   return file.getText();
 }
 function codeRequest(taskId, code) {
-  return evaluateCodeAnswer({ serverUrl: SERVER_URL, taskId, code });
+  return evaluateCodeAnswer({ serverUrl: SERVER_URL, taskId, code, expectedMaxPoints: CODE_TASK_MAX_POINTS[taskId] });
 }
 async function checkCode(button) {
   const taskId = button.dataset.codeTask, box = resultBox(taskId);
   let code;
   try { code = getCode(); } catch(error) { return showMessage(box,error.message); }
+  const requestKey = `${taskId}:${CODE_ASSESSMENT_VERSIONS[taskId]}`;
+  const requestVersion = (codeRequestVersions.get(requestKey) || 0) + 1;
+  codeRequestVersions.set(requestKey, requestVersion);
   if (code.length > 12000) return showMessage(box,'Dein Programmcode ist zu lang für die automatische Auswertung.');
   button.disabled = true;
   showMessage(box,'Der aktuelle Stand von `Perzeptron.java` wird analysiert.','partial');
-  try { renderEvaluation(box,await codeRequest(taskId,code),taskId); }
-  catch(error) { showMessage(box,serverError(error)); }
+  try { const result = await codeRequest(taskId,code); if (codeRequestVersions.get(requestKey) === requestVersion && getCode() === code) renderEvaluation(box,result,taskId); }
+  catch(error) { try { if (codeRequestVersions.get(requestKey) === requestVersion && getCode() === code) showMessage(box,serverError(error)); } catch {} }
   finally { button.disabled = false; }
 }
 function buildQuiz() {
@@ -208,10 +216,18 @@ document.querySelector('#code-snippets-help').addEventListener('toggle', save);
 buildQuiz();
 guardIdeReset('frame-einfach','einfach');
 guardIdeReset('frame-schwer','schwer');
+for (const variant of Object.keys(IDE_IDS)) observeIdeCodeChanges(document.querySelector('#frame-' + variant), IDE_IDS[variant], () => {
+  for (const taskId of Object.keys(CODE_TASK_MAX_POINTS)) {
+    const requestKey = `${taskId}:${CODE_ASSESSMENT_VERSIONS[taskId]}`;
+    codeRequestVersions.set(requestKey, (codeRequestVersions.get(requestKey) || 0) + 1);
+    const box = resultBox(taskId);
+    if (box) { box.replaceChildren(); box.hidden = true; }
+  }
+});
 document.querySelectorAll('[data-choose]').forEach(button => button.addEventListener('click',() => choose(button.dataset.choose)));
 document.querySelector('#change-variant').addEventListener('click',showChoice);
 document.querySelector('#toggle-quiz').addEventListener('click',toggleQuiz);
-document.querySelector('#description').addEventListener('input',event => { state.description = event.target.value; save(); });
+document.querySelector('#description').addEventListener('input',event => { descriptionRequestVersion += 1; state.description = event.target.value; const box = resultBox('description'); box.replaceChildren(); box.hidden = true; save(); });
 document.querySelector('#check-description').addEventListener('click',checkDescription);
 document.querySelectorAll('[data-code-task]').forEach(button => button.addEventListener('click',() => checkCode(button)));
 document.querySelector('#quiz-form').addEventListener('change',event => { if (event.target.matches('input[type="checkbox"]')) { state.quiz = QUIZ.map((_,i) => selected(i)); save(); } });

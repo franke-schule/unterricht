@@ -103,9 +103,8 @@ test('Server korrigiert die gemeldete 2/3-Antwort und entfernt den falschen Tabe
     assert.ok(prompt.includes('„Von users“ oder „aus users“ genügt'));
     assert.ok(prompt.includes('„Von Nutzern“, „von Benutzern“ und „von Mitgliedern“'));
     return { ok: true, text: async () => JSON.stringify({ choices: [{ finish_reason: 'stop', message: {
-      content: JSON.stringify({ points: 2, maxPoints: 3, status: 'teilweise korrekt', strengths: [],
-        missing: [submittedAnswer === usersInOwnWords ? "Die Datenquelle ist nicht korrekt, es muss 'users' oder 'Mitgliedertabelle' heißen." : 'Erwähne die Tabelle users oder Mitgliedertabelle.'],
-        feedback: 'Erwähne die Tabelle users oder Mitgliedertabelle.' })
+      content: JSON.stringify({ criteria: Object.fromEntries(core.TASKS[id].feedbackCriteria.map(criterion =>
+        [criterion.id, { status: 'missing', evidence: [] }])) })
     } }] }) };
   } });
   for (const answer of [reportedAnswer, usersInOwnWords]) {

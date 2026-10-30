@@ -70,7 +70,11 @@
       setFlag: (name) => {
         flags[name] = true;
         write();
-      }
+      },
+      clearFlag: (name) => {
+        delete flags[name];
+        write();
+      },
     };
   };
 })();

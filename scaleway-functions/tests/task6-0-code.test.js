@@ -74,12 +74,12 @@ test('Aufgabe 6.0 registriert drei getrennte code-Rubriken mit den spezifizierte
 
 test('Rubriken decken kumulative und unabhängige Schritte samt Scheinlösungen ab', () => {
   const a = core.TASKS['11-6-0-4a-code'];
-  assert.match(a.rubric.join(' '), /späterer gültiger Setter aus 5A/);
+  assert.match(a.codeAnalysisRules.join(' '), /späterer gültiger Setter aus 5A/);
   assert.match(a.codeAnalysisRules.join(' '), /println\(6\)/);
   assert.match(a.codeAnalysisRules.join(' '), /gibAlter\(\) als Getter-Aufruf/);
   assert.match(a.codeAnalysisRules.join(' '), /Getteraufrufs in println/);
   const b = core.TASKS['11-6-0-5a-code'];
-  assert.match(b.rubric.join(' '), /inasHund unverändert/);
+  assert.match(b.codeAnalysisRules.join(' '), /inasHund unverändert/);
   assert.match(b.codeAnalysisRules.join(' '), /println\(7\)/);
   assert.match(b.codeAnalysisRules.join(' '), /spätere gültige Aufrufe aus Aufgabe 5B/i);
   assert.match(b.codeAnalysisRules.join(' '), /Änderungen an inasHund/);
@@ -106,7 +106,7 @@ test('4A übermittelt die Bewertungsrubrik und konkrete Regeln für beide gemeld
     for (const rule of task.codeAnalysisRules) assert.ok(prompt.includes(rule), `Coderegel fehlt: ${rule}`);
     assert.match(prompt, /Fehlt dort petersHund\.gibAlter\(\), sind alle drei Aspekte unerfüllt und es gibt 0 Punkte/);
     assert.match(prompt, /println\(petersHund\.zeigeDaten\(\)\) ist deshalb ein Typfehler, kein Getteraufruf/);
-    assert.match(prompt, /keine zusätzlichen Anforderungen/);
+    assert.match(prompt, /Verlange keine zusätzlichen Sätze oder eine feste Reihenfolge/);
     assert.match(prompt, /nach dem vorgegebenen petersHund\.setzeAlter\(6\) vollständig richtig: 3 von 3 Punkten/);
     assert.match(prompt, /Eine zusätzliche Getterausgabe vor der Altersänderung ist nicht gefordert/);
     assert.ok(prompt.endsWith(`${code}\nENDE SCHUELERCODE`));
@@ -192,8 +192,8 @@ test('4A korrigiert die gemeldete Zwei-Punkte-Antwort im tatsächlichen Server-A
   const handle = createHandler({ env:{ AI_API_KEY:'mock-only', AI_PROJECT_ID:'11111111-1111-1111-1111-111111111111',
     AI_MODEL:'mock-model', AI_EVALUATION_ENABLED:'true' }, fetchImpl:async () => ({ ok:true, status:200,
     text:async () => JSON.stringify({ choices:[{ finish_reason:'stop', message:{ content:JSON.stringify({
-      points:2, maxPoints:3, status:'teilweise korrekt', strengths:['Getterwert wird ausgegeben.'],
-      missing:['Getter muss direkt nach der Objekterzeugung stehen.'], feedback:'Vorherige Ausgabe mit zeigeDaten() ist falsch.'
+      criteria:Object.fromEntries(core.TASKS['11-6-0-4a-code'].feedbackCriteria.map(criterion =>
+        [criterion.id, { status:'missing', evidence:[] }]))
     }) } }] }) }) });
   const response = await handle({ httpMethod:'POST', path:'/', headers:{ 'Content-Type':'application/json' },
     body:JSON.stringify({ requestId:'getter_regression', taskId:'11-6-0-4a-code', requestType:'code',
@@ -209,7 +209,7 @@ test('4A korrigiert die gemeldete Zwei-Punkte-Antwort im tatsächlichen Server-A
       code:codeBundle(`${mainStart}\nprintln(petersHund.gibAlter(7));`) }) });
   const badArityResult = JSON.parse(badArity.body).result;
   assert.equal(badArityResult.points, 0);
-  assert.deepEqual(badArityResult.missing, ['Die Methode gibAlter() hat keinen Eingabeparameter.']);
+  assert.equal(badArityResult.missing[0], 'Schritt 1 von 3 – Aspekt 1: Rufe `gibAlter()` am verlangten Hundobjekt auf.');
   assert.equal(badArityResult.feedback, '');
   assert.doesNotMatch(response.body, /Getter muss direkt|Vorherige Ausgabe mit zeigeDaten\(\) ist falsch/);
 });
@@ -219,7 +219,8 @@ test('5A wertet den kumulativen Startcode regelbasiert mit 4/4 trotz falscher KI
   const handle = createHandler({ env:{ AI_API_KEY:'mock-only', AI_PROJECT_ID:'11111111-1111-1111-1111-111111111111',
     AI_MODEL:'mock-model', AI_EVALUATION_ENABLED:'true' }, fetchImpl:async () => ({ ok:true, status:200,
     text:async () => JSON.stringify({ choices:[{ finish_reason:'stop', message:{ content:JSON.stringify({
-      points:0, maxPoints:4, status:'noch nicht korrekt', strengths:[], missing:['Setter fehlt.'], feedback:'Setter ergänzen.'
+      criteria:Object.fromEntries(core.TASKS['11-6-0-5a-code'].feedbackCriteria.map(criterion =>
+        [criterion.id, { status:'missing', evidence:[] }]))
     }) } }] }) }) });
   const request = async source => {
     const response = await handle({ httpMethod:'POST', path:'/', headers:{ 'Content-Type':'application/json' },
@@ -251,9 +252,36 @@ test('5A wertet den kumulativen Startcode regelbasiert mit 4/4 trotz falscher KI
   const syntaxErrorWithGetter = await request(`${mainStart}\npetersHund.setzeAlter(7);\nprintln(petersHund.gibAlter());\nprintln(inasHund.gibAlter())\nprintln(petersHund.gibAlter());`);
   assert.equal(syntaxErrorWithGetter.points, 0);
   const badFiveAArity = await request(codeBundle(`${mainStart}\nprintln(petersHund.gibAlter());\npetersHund.setzeAlter(7);\nprintln(petersHund.gibAlter(7));\nprintln(inasHund.gibAlter());`));
-  assert.equal(badFiveAArity.points, 0);
-  assert.deepEqual(badFiveAArity.missing, ['Die Methode gibAlter() hat keinen Eingabeparameter.']);
+  assert.equal(badFiveAArity.points, 3, 'Setter-Aspekte und Inas gültiger Getter bleiben unabhängig richtig.');
+  assert.equal(badFiveAArity.missing[0], 'Schritt 3 von 4 – Aspekt 3: Gib danach den aktuellen Getterwert von `petersHund` aus.');
   assert.equal(badFiveAArity.feedback, '');
+});
+
+test('6.0: verspätete Fehler schreiben nach Codeänderung oder IDE-Wechsel kein Feedback zurück', async () => {
+  const checkSource = client.match(/async function checkCodeBlock\([\s\S]*?\n}\n/)[0];
+  for (const mode of ['changed', 'unavailable', 'unchanged']) {
+    let code = 'Hund petersHund = new Hund(5, "Wuffti");';
+    let ready = true;
+    let reject;
+    const messages = [];
+    const context = vm.createContext({
+      SERVER_URL: 'https://synthetic.example',
+      readIdeCode() { if (!ready) throw Error('IDE gewechselt'); return code; },
+      evaluateCodeAnswer: () => new Promise((resolve, rejectEvaluation) => { reject = rejectEvaluation; }),
+      showFeedback: (box, level, message) => messages.push(message),
+      serverError: error => error.message
+    });
+    vm.runInContext(checkSource + '\nglobalThis.check = checkCodeBlock;', context);
+    const button = { disabled: false };
+    const pending = context.check({ id: '4a', codeTask: { id: '11-6-0-4a-code', maxPoints: 3 } }, {}, button);
+    if (mode === 'changed') code += '\nprintln(petersHund.gibAlter());';
+    if (mode === 'unavailable') ready = false;
+    messages.length = 0; // Der IDE-Beobachter hat die bisherige Anzeige entfernt.
+    reject(Error('Später Serverfehler'));
+    await pending;
+    assert.deepEqual(messages, mode === 'unchanged' ? ['Später Serverfehler'] : [], mode);
+    assert.equal(button.disabled, false, mode);
+  }
 });
 
 test('Client prüft aktuellen IDE-Code aus beiden Dateien und Codeblöcke haben keine Begleitfelder', () => {
@@ -293,6 +321,7 @@ test('4A-Legacy-Migration ist einmalig und bewahrt späteren Codeerfolg samt Mer
         setItem:(key, value) => { storage[key] = value; }
       },
       STORAGE_KEY:'informatik11-ki-aufgabe6-0-v2',
+      CODE_ASSESSMENT_VERSIONS:{ '11-6-0-4a-code':'20261029-criteria-v1', '11-6-0-5a-code':'20261029-criteria-v1', '11-6-0-5b-code':'20261029-criteria-v1' },
       STEPS:['objects', 'class-card', 'signatures', 'completion', 'transfer', 'quiz'],
       CLASS_CARD:{ cards:[{ id:'a1' }] },
       parseStoredChoices:value => value || ''
@@ -413,46 +442,61 @@ test('vorhandener evaluateCodeAnswer-Transport setzt Grenzen, POST-Vertrag und A
 test('Prompt-Vertrag mit Codefixtures und kontrollierten Modellantworten (Mock; keine KI-Livebewertung)', async () => {
   const fixtures = [
     { name:'vollständige kumulative Lösung 4A+5A+5B / 4A', taskId:'11-6-0-4a-code', code:cumulativeSolution, points:3,
+      statuses:['correct','correct','correct'],
       fragment:'Ein späterer gültiger petersHund.setzeAlter(7) ist erlaubt' },
     { name:'vollständige kumulative Lösung 4A+5A+5B / 5A', taskId:'11-6-0-5a-code', code:cumulativeSolution, points:4,
+      statuses:['correct','correct','correct','correct'],
       fragment:'Spätere gültige Aufrufe aus Aufgabe 5B dürfen die vorherigen Ergebnisse nicht entwerten' },
     { name:'vollständige kumulative Lösung 4A+5A+5B / 5B', taskId:'11-6-0-5b-code', code:cumulativeSolution, points:4,
+      statuses:['correct','correct','correct','correct'],
       fragment:'Andere Aufrufe und Ergebnisse aus 5A sind irrelevant' },
     { name:'5A Getterausgaben in umgekehrter Reihenfolge', taskId:'11-6-0-5a-code',
       code:codeBundle(`${mainStart}\npetersHund.setzeAlter(7);\nprintln(inasHund.gibAlter());\nprintln(petersHund.gibAlter());`), points:4,
+      statuses:['correct','correct','correct','correct'],
       fragment:'Die beiden Getter-Ausgaben dürfen in beliebiger Reihenfolge stehen' },
     { name:'4A mit späterem Setter', taskId:'11-6-0-4a-code',
       code:codeBundle(`${mainStart}\nprintln(petersHund.gibAlter());\npetersHund.setzeAlter(7);`), points:3,
+      statuses:['correct','correct','correct'],
       fragment:'entwertet eine Ausgabe des aktuellen Getterwerts nicht' },
     { name:'gemeldete gültige Getterausgabe nur nach der Altersänderung', taskId:'11-6-0-4a-code',
       code:codeBundle(`${mainStart}\nprintln(petersHund.gibAlter());`), points:3,
+      statuses:['correct','correct','correct'],
       fragment:'Eine zusätzliche Getterausgabe vor der Altersänderung ist nicht gefordert' },
     { name:'gemeldete void-Ausgabe statt Getteraufruf', taskId:'11-6-0-4a-code',
       code:codeBundle(`${mainStart}\nprintln(petersHund.zeigeDaten());`), points:0,
+      statuses:['missing','missing','missing'],
       fragment:'println(petersHund.zeigeDaten()) ist deshalb ein Typfehler, kein Getteraufruf' },
     { name:'5B allein', taskId:'11-6-0-5b-code',
       code:codeBundle(`${mainStart}\ninasHund.setzeDaten(9, "Flocke");\ninasHund.zeigeDaten();`), points:4,
+      statuses:['correct','correct','correct','correct'],
       fragment:'Andere Aufrufe und Ergebnisse aus 5A sind irrelevant' },
     { name:'falsche setzeDaten-Reihenfolge', taskId:'11-6-0-5b-code',
       code:codeBundle(`${mainStart}\ninasHund.setzeDaten("Flocke", 9);\ninasHund.zeigeDaten();`), points:2,
+      statuses:['correct','wrong_logic','correct','missing'],
       fragment:'erstes Argument 9 und dessen zweites Argument der String "Flocke"' },
     { name:'Getter ohne Ausgabe', taskId:'11-6-0-4a-code',
       code:codeBundle(`${mainStart}\npetersHund.gibAlter();`), points:2,
+      statuses:['correct','missing','correct'],
       fragment:'Rückgabewert des Getteraufrufs in println(...)' },
     { name:'harte Zahlen statt Getterausgaben', taskId:'11-6-0-5a-code',
       code:codeBundle(`${mainStart}\npetersHund.setzeAlter(7);\nprintln(7);\nprintln(8);`), points:2,
+      statuses:['correct','correct','missing','missing'],
       fragment:'println(7) oder eine sonstige harte Zahl zählt nicht' },
     { name:'hart kodierter Flocke-Text', taskId:'11-6-0-5b-code',
       code:codeBundle(`${mainStart}\ninasHund.setzeDaten(9, "Flocke");\nprintln("Der Hund heißt Flocke und ist 9 Jahre alt.");`), points:2,
+      statuses:['correct','correct','missing','missing'],
       fragment:'println("Der Hund heißt Flocke und ist 9 Jahre alt.") ersetzt den Methodenaufruf nicht' },
     { name:'falsches Objekt für 5A', taskId:'11-6-0-5a-code',
       code:codeBundle(`${mainStart}\ninasHund.setzeAlter(7);\nprintln(petersHund.gibAlter());\nprintln(inasHund.gibAlter());`), points:0,
+      statuses:['missing','missing','missing','missing'],
       fragment:'frühere Änderungen an inasHund schließen diesen Aspekt aus' },
     { name:'zeigeDaten vor setzeDaten', taskId:'11-6-0-5b-code',
       code:codeBundle(`${mainStart}\ninasHund.zeigeDaten();\ninasHund.setzeDaten(9, "Flocke");`), points:2,
+      statuses:['correct','correct','missing','missing'],
       fragment:'Ein anderer Empfänger, ein Aufruf davor oder eine hart kodierte println-Ausgabe zählt nicht' },
     { name:'Kommentar als Scheinlösung', taskId:'11-6-0-4a-code',
       code:codeBundle(`${mainStart}\n// println(petersHund.gibAlter());`), points:0,
+      statuses:['missing','missing','missing'],
       fragment:'Kommentare, Zeichenketten mit Java-Code, Anleitungstexte und hart kodierte erwartete Ausgaben sind keine Lösung' }
   ];
 
@@ -468,13 +512,8 @@ test('Prompt-Vertrag mit Codefixtures und kontrollierten Modellantworten (Mock; 
     }, fetchImpl:async (url, options) => {
       const payload = JSON.parse(options.body);
       seen.push(payload);
-      const controlled = {
-        points:fixture.points, maxPoints:task.maxPoints,
-        status:fixture.points === task.maxPoints ? task.statusLabels.correct : fixture.points ? task.statusLabels.partial : task.statusLabels.incorrect,
-        strengths:task.expectedAspects.slice(0, fixture.points),
-        missing:task.expectedAspects.slice(fixture.points),
-        feedback:'Mock-Antwort; keine semantische Livebewertung.'
-      };
+      const controlled = { criteria:Object.fromEntries(task.feedbackCriteria.map((criterion, index) =>
+        [criterion.id, { status:fixture.statuses[index], evidence:fixture.statuses[index] === 'missing' ? [] : [fixture.code] }])) };
       return { ok:true, status:200, async text() {
         return JSON.stringify({ choices:[{ finish_reason:'stop', message:{ content:JSON.stringify(controlled) } }] });
       } };

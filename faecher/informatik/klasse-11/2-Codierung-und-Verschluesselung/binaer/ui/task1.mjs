@@ -1,4 +1,4 @@
-import { evaluateSemanticAnswer, renderCompactEvaluation } from "../../../1-Kuenstliche-Intelligenz/perzeptron/ui/semantic-answer.mjs?v=20261022-feedback-two-sentences";
+import { evaluateSemanticAnswer, renderCompactEvaluation } from "../../../1-Kuenstliche-Intelligenz/perzeptron/ui/semantic-answer.mjs?v=20261029-criteria-v1";
 import { ASCII_STEPS, COUNTER_MAX, EXPECTED, ROWS, SPEEDS, UNICODE_STEPS } from '../data/task1.mjs';
 import { bitsToValue, carryCount, evaluateRow, evaluateTarget, gainsPlace, termsOf, toBits } from '../logic/binary.mjs';
 import { formatCodePoint, inspect } from '../logic/chars.mjs';
@@ -664,21 +664,25 @@ function setupExplanation() {
   const textarea = $('#compare-answer');
   const counter = $('#compare-counter');
   const update = () => { counter.textContent = textarea.value.length + ' von 600 Zeichen'; };
-  textarea.addEventListener('input', () => { state.r5.text = textarea.value; update(); saveState(); });
+  let requestId = 0;
+  textarea.addEventListener('input', () => { state.r5.text = textarea.value; update(); requestId++; feedback('compare-answer-feedback', '', ''); const checkButton = $('#check-compare-answer'); checkButton.disabled = false; checkButton.textContent = 'Antwort erneut prüfen'; saveState(); });
   textarea.value = state.r5.text;
   update();
   $('#check-compare-answer').addEventListener('click', async () => {
     const answer = textarea.value.trim();
+    const currentRequest = ++requestId;
     if (answer.length < 30) { feedback('compare-answer-feedback', 'error', 'Beschreibe den Unterschied noch etwas ausführlicher, damit deine Antwort sinnvoll ausgewertet werden kann.'); textarea.focus(); return; }
     const button = $('#check-compare-answer');
     button.disabled = true;
     feedback('compare-answer-feedback', '', 'Deine Beschreibung wird mit dem Erwartungshorizont verglichen.');
     try {
       const result = await evaluateSemanticAnswer({ serverUrl: SERVER_URL, taskId: TASK_ID, answer });
+      if (currentRequest !== requestId || textarea.value.trim() !== answer) return;
       const kind = result.points === result.maxPoints ? 'success' : result.points > 0 ? 'partial' : 'error';
       feedback('compare-answer-feedback', kind, '');
       renderCompactEvaluation($('#compare-answer-feedback'), result);
     } catch (error) {
+      if (currentRequest !== requestId || textarea.value.trim() !== answer) return;
       const unknown = error.message === 'Diese Aufgabe ist auf dem Auswertungsserver nicht bekannt.';
       feedback('compare-answer-feedback', 'error', unknown ? 'Für diese Aufgabe ist noch keine aktuelle Serverversion bereitgestellt. Bitte informiere deine Lehrkraft.' : error.message);
     } finally { button.disabled = false; }

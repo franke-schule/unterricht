@@ -67,6 +67,45 @@ async function evaluate({ serverUrl = SCW_FUNCTION_URL, taskId, answer, code,
 export function evaluateSemanticAnswer(parameters) { return evaluate(parameters, 'text'); }
 export function evaluateCodeAnswer(parameters) { return evaluate(parameters, 'code'); }
 
+/** Observe edits in the existing embedded IDE, including models created after reset. */
+export function observeIdeCodeChanges(frame, ideId, onChange) {
+  const subscriptions = new Map();
+  let previousModels = null;
+  let stopped = false;
+  let timer;
+  const attach = () => {
+    clearTimeout(timer);
+    if (stopped) return;
+    const ide = frame?.contentWindow?.online_ide_access?.getIDE?.(ideId)?.ide;
+    const files = ide?.getCurrentWorkspace?.()?.getFiles?.();
+    if (Array.isArray(files)) {
+      const currentModels = new Set(files.map((file) => file?.getMonacoModel?.()).filter((model) => model && typeof model.onDidChangeContent === 'function'));
+      currentModels.forEach((model) => {
+        if (!subscriptions.has(model)) {
+          const subscription = model.onDidChangeContent(() => { if (!stopped) onChange(); });
+          if (subscription?.dispose) subscriptions.set(model, subscription);
+        }
+      });
+      if (previousModels && (previousModels.size !== currentModels.size || [...previousModels].some((model) => !currentModels.has(model)))) onChange();
+      previousModels = currentModels;
+      subscriptions.forEach((subscription, model) => {
+        if (!currentModels.has(model)) { subscription.dispose(); subscriptions.delete(model); }
+      });
+    }
+    if (!stopped) timer = setTimeout(attach, 500);
+  };
+  frame?.addEventListener('load', attach);
+  attach();
+  return () => {
+    if (stopped) return;
+    stopped = true;
+    clearTimeout(timer);
+    frame?.removeEventListener('load', attach);
+    subscriptions.forEach((subscription) => subscription.dispose());
+    subscriptions.clear();
+  };
+}
+
 /** Gemeinsame, knappe Anzeige für Beschreibe- und Programmieraufgaben. */
 export function compactFeedbackSentences(values, maxSentences = 2) {
   const result = [];
@@ -93,7 +132,7 @@ export function compactFeedbackSentences(values, maxSentences = 2) {
   return result;
 }
 
-export function renderCompactEvaluation(container, result, { appendText, maxHints = 2 } = {}) {
+export function renderCompactEvaluation(container, result, { appendText, maxHints = 1 } = {}) {
   const document = container.ownerDocument;
   const complete = result.maxPoints > 0 && result.points === result.maxPoints;
   const heading = document.createElement('strong');

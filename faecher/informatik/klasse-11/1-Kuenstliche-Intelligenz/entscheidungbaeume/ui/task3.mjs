@@ -9,7 +9,7 @@ import {
   moveSubtree,
   setNodeAtPath,
 } from "../logic/decision-tree.mjs";
-import { evaluateSemanticAnswer, renderCompactEvaluation } from "./semantic-answer.mjs?v=20261022-feedback-two-sentences";
+import { evaluateSemanticAnswer, renderCompactEvaluation } from "./semantic-answer.mjs?v=20261029-criteria-v1";
 import { renderTreeEdges } from "./tree-edges.mjs?v=20260820d";
 
 const STORAGE_KEY = "informatik11-fish-tree-task3-v1";
@@ -784,19 +784,24 @@ function renderSemanticResult(result) {
   }
 }
 
+let algorithmRequestId = 0;
 async function checkAlgorithm() {
   const textarea = document.querySelector("#algorithm-answer");
   const button = document.querySelector("#check-algorithm");
   const box = document.querySelector("#algorithm-feedback");
   const answer = textarea.value.trim();
+  const currentRequest = ++algorithmRequestId;
   if (answer.length < 30) {
     box.hidden = false; box.className = "fish-semantic-feedback error"; box.textContent = "Bitte formuliere eine etwas ausführlichere Antwort, damit sie sinnvoll ausgewertet werden kann."; textarea.focus(); return;
   }
-  button.disabled = true; textarea.disabled = true; button.textContent = "Antwort wird geprüft …";
+  button.disabled = true; button.textContent = "Antwort wird geprüft …";
   box.hidden = false; box.className = "fish-semantic-feedback"; box.textContent = "Deine Antwort wird mit dem Erwartungshorizont verglichen.";
-  try { renderSemanticResult(await evaluateSemanticAnswer({ serverUrl: SCRIPT_SERVER_URL, taskId: SEMANTIC_TASK_ID, answer })); }
-  catch (error) { box.className = "fish-semantic-feedback error"; box.textContent = error.message; }
-  finally { button.disabled = false; textarea.disabled = false; button.textContent = "Antwort erneut überprüfen"; }
+  try {
+    const result = await evaluateSemanticAnswer({ serverUrl: SCRIPT_SERVER_URL, taskId: SEMANTIC_TASK_ID, answer });
+    if (currentRequest === algorithmRequestId && textarea.value.trim() === answer) renderSemanticResult(result);
+  } catch (error) {
+    if (currentRequest === algorithmRequestId && textarea.value.trim() === answer) { box.className = "fish-semantic-feedback error"; box.textContent = error.message; }
+  } finally { if (currentRequest === algorithmRequestId) { button.disabled = false; button.textContent = "Antwort erneut überprüfen"; } }
 }
 
 function renderQuiz() {
@@ -990,6 +995,10 @@ document.querySelector("#algorithm-answer").value = state.algorithm;
 document.querySelector("#algorithm-count").textContent = `${state.algorithm.length} von 3000 Zeichen`;
 document.querySelector("#algorithm-answer").addEventListener("input", (event) => {
   state.algorithm = event.target.value;
+  algorithmRequestId++;
+  const feedback = document.querySelector("#algorithm-feedback");
+  feedback.replaceChildren(); feedback.hidden = true;
+  const checkButton = document.querySelector('#check-algorithm'); checkButton.disabled = false; checkButton.textContent = 'Antwort erneut überprüfen';
   state.algorithmComplete = false;
   document.querySelector("#algorithm-count").textContent = `${event.target.value.length} von 3000 Zeichen`;
   saveState();

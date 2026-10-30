@@ -1,4 +1,4 @@
-import { evaluateSemanticAnswer, renderCompactEvaluation } from "../../../../informatik/klasse-11/1-Kuenstliche-Intelligenz/perzeptron/ui/semantic-answer.mjs?v=20261022-feedback-two-sentences";
+import { evaluateSemanticAnswer, renderCompactEvaluation } from "../../../../informatik/klasse-11/1-Kuenstliche-Intelligenz/perzeptron/ui/semantic-answer.mjs?v=20261029-criteria-v1";
 import { appendPhysicsText } from "./physics-notation.mjs?v=20261022-force-indices";
 
 const MAX_LENGTH = 3000;
@@ -9,7 +9,7 @@ function renderSemanticResult(container, result) {
   container.hidden = false;
   container.className = "physics-semantic-feedback";
   container.dataset.status = result.status || "noch nicht korrekt";
-  renderCompactEvaluation(container, result, { appendText: appendPhysicsText });
+  renderCompactEvaluation(container, result, { appendText: appendPhysicsText, maxHints: 1 });
 }
 
 /**
@@ -45,9 +45,20 @@ export function setupPhysicsSemanticTask({
 
   textarea.addEventListener("input", updateCounter);
   updateCounter();
+  let requestVersion = 0;
+  textarea.addEventListener("input", () => {
+    requestVersion += 1;
+    feedback.replaceChildren();
+    feedback.hidden = true;
+    feedback.className = "physics-semantic-feedback";
+    feedback.dataset.status = "";
+    button.disabled = false;
+    button.textContent = "Antwort prüfen";
+  });
 
   button.addEventListener("click", async () => {
     const answer = textarea.value.trim();
+    const submittedVersion = ++requestVersion;
     if (answer.length < minimumLength) {
       if (typeof feedbackBuilder === "function") {
         renderSemanticResult(feedback, {
@@ -70,7 +81,6 @@ export function setupPhysicsSemanticTask({
     }
 
     button.disabled = true;
-    textarea.disabled = true;
     button.textContent = "Antwort wird geprüft …";
     feedback.hidden = false;
     feedback.className = "physics-semantic-feedback";
@@ -83,8 +93,10 @@ export function setupPhysicsSemanticTask({
         taskId,
         answer,
       });
+      if (submittedVersion !== requestVersion || textarea.value.trim() !== answer) return;
       renderSemanticResult(feedback, result);
     } catch (error) {
+      if (submittedVersion !== requestVersion || textarea.value.trim() !== answer) return;
       if (typeof feedbackBuilder === "function") {
         feedback.replaceChildren();
         feedback.hidden = false;
@@ -103,9 +115,10 @@ export function setupPhysicsSemanticTask({
       feedback.dataset.status = "noch nicht korrekt";
       feedback.textContent = error.message;
     } finally {
-      button.disabled = false;
-      textarea.disabled = false;
-      button.textContent = "Antwort erneut prüfen";
+      if (submittedVersion === requestVersion) {
+        button.disabled = false;
+        button.textContent = "Antwort erneut prüfen";
+      }
     }
   });
 }

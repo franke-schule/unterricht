@@ -1,5 +1,5 @@
 import { createForceArrowGrid } from "./components/point-vector-grid.mjs?v=20260930a";
-import { setupPhysicsSemanticTask } from "./components/physics-semantic-task.mjs?v=20261022-force-indices";
+import { setupPhysicsSemanticTask } from "./components/physics-semantic-task.mjs?v=20261029-criteria-v1";
 import { setupPhysicsStepTabs } from "./components/physics-step-tabs.mjs";
 import { enableTokenDrag, wasDragged } from "./components/token-drag.mjs";
 import { appendPhysicsText, physicsTextSpan } from "./components/physics-notation.mjs?v=20261022-force-indices";

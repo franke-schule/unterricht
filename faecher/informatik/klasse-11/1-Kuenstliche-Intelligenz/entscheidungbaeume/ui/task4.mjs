@@ -1,5 +1,5 @@
 import { FISH_DEPTH_RESULTS, numberMatches, percentageMatches } from "../logic/fish-depth.mjs";
-import { evaluateSemanticAnswer, renderCompactEvaluation } from "./semantic-answer.mjs?v=20261022-feedback-two-sentences";
+import { evaluateSemanticAnswer, renderCompactEvaluation } from "./semantic-answer.mjs?v=20261029-criteria-v1";
 
 const SCRIPT_SERVER_URL = "https://unterrichtkiichezbn4-ki-auswertung.functions.fnc.fr-par.scw.cloud/";
 const MAX_LENGTH = 3000;
@@ -110,6 +110,7 @@ async function checkSemanticTask(config) {
   const button = document.querySelector(`#${config.buttonId}`);
   const feedback = document.querySelector(`#${config.feedbackId}`);
   const answer = textarea.value.trim();
+  const currentRequest = config.requestId = (config.requestId || 0) + 1;
   const note = config.noteId ? document.querySelector(`#${config.noteId}`) : null;
   if (note) { note.hidden = false; note.textContent = DEPTH_NOTE; }
   if (answer.length < 30) {
@@ -120,20 +121,17 @@ async function checkSemanticTask(config) {
     return;
   }
   button.disabled = true;
-  textarea.disabled = true;
   button.textContent = "Antwort wird geprüft …";
   feedback.hidden = false;
   feedback.className = "fish-semantic-feedback";
   feedback.textContent = "Deine Antwort wird mit dem Erwartungshorizont verglichen.";
   try {
-    renderSemanticResult(feedback, await evaluateSemanticAnswer({ serverUrl: SCRIPT_SERVER_URL, taskId: config.taskId, answer }));
+    const result = await evaluateSemanticAnswer({ serverUrl: SCRIPT_SERVER_URL, taskId: config.taskId, answer });
+    if (currentRequest === config.requestId && textarea.value.trim() === answer) renderSemanticResult(feedback, result);
   } catch (error) {
-    feedback.className = "fish-semantic-feedback error";
-    feedback.textContent = error.message;
+    if (currentRequest === config.requestId && textarea.value.trim() === answer) { feedback.className = "fish-semantic-feedback error"; feedback.textContent = error.message; }
   } finally {
-    button.disabled = false;
-    textarea.disabled = false;
-    button.textContent = "Antwort erneut überprüfen";
+    if (currentRequest === config.requestId) { button.disabled = false; button.textContent = "Antwort erneut überprüfen"; }
   }
 }
 
@@ -141,7 +139,13 @@ function setupSemanticTask(config) {
   const textarea = document.querySelector(`#${config.answerId}`);
   const counter = document.querySelector(`#${config.countId}`);
   const updateCounter = () => { counter.textContent = `${textarea.value.length} von ${MAX_LENGTH} Zeichen`; };
-  textarea.addEventListener("input", updateCounter);
+  textarea.addEventListener("input", () => {
+    updateCounter();
+    config.requestId = (config.requestId || 0) + 1;
+    const feedback = document.querySelector(`#${config.feedbackId}`);
+    feedback.replaceChildren(); feedback.hidden = true;
+    const button = document.querySelector(`#${config.buttonId}`); button.disabled = false; button.textContent = 'Antwort erneut überprüfen';
+  });
   document.querySelector(`#${config.buttonId}`).addEventListener("click", () => checkSemanticTask(config));
   updateCounter();
 }

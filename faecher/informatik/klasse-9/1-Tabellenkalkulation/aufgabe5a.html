@@ -785,31 +785,33 @@ const TASKS = {
           '2a': { serverTaskId: 'inf9-dfd-zylinder-beschreibung' }
         };
 
+const describeRequestIds = Object.create(null);
+
 async function submitDescription(taskId) {
   const textarea = document.getElementById('answer-' + taskId);
   const button = document.getElementById('button-' + taskId);
   const resultBox = document.getElementById('result-' + taskId);
   if (!textarea || !button || !resultBox || button.disabled) return;
   const answer = textarea.value.trim();
+  const requestId = describeRequestIds[taskId] = (describeRequestIds[taskId] || 0) + 1;
   if (answer.length < 10 || answer.length > 3000) {
     showError(resultBox, answer.length < 10 ? 'Bitte formuliere eine etwas ausführlichere Antwort.' : 'Bitte kürze deine Antwort auf höchstens 3000 Zeichen.');
     textarea.focus(); return;
   }
   const serverTaskId = TASKS[taskId]?.serverTaskId;
   button.disabled = true;
-  textarea.disabled = true;
   button.textContent = 'Beschreibung wird geprüft …';
   resultBox.hidden = false;
   resultBox.className = 'result';
   resultBox.textContent = 'Deine Beschreibung wird ausgewertet.';
   try {
-    const { evaluateSemanticAnswer, renderCompactEvaluation } = await import('../../klasse-11/1-Kuenstliche-Intelligenz/perzeptron/ui/semantic-answer.mjs?v=20261022-feedback-two-sentences');
+    const { evaluateSemanticAnswer, renderCompactEvaluation } = await import('../../klasse-11/1-Kuenstliche-Intelligenz/perzeptron/ui/semantic-answer.mjs?v=20261029-criteria-v1');
     const result = await evaluateSemanticAnswer({ serverUrl: SCRIPT_SERVER_URL, taskId: serverTaskId,
       answer, expectedMaxPoints: SCW_TASK_POINTS[serverTaskId] });
-    showEvaluation(resultBox, result, renderCompactEvaluation);
-  } catch (error) { showError(resultBox, error.message || 'Die Auswertung konnte nicht abgeschlossen werden.'); }
+    if (requestId === describeRequestIds[taskId] && textarea.value.trim() === answer) showEvaluation(resultBox, result, renderCompactEvaluation);
+  } catch (error) { if (requestId === describeRequestIds[taskId] && textarea.value.trim() === answer) showError(resultBox, error.message || 'Die Auswertung konnte nicht abgeschlossen werden.'); }
   finally {
-    button.disabled = false; textarea.disabled = false;
+    if (requestId === describeRequestIds[taskId]) button.disabled = false;
     button.textContent = 'Beschreibung erneut prüfen';
   }
 }
@@ -825,6 +827,9 @@ function showError(resultBox, message) {
           resultBox.className = 'result error';
           resultBox.textContent = message;
         }
+
+        const answer2a = document.getElementById('answer-2a');
+        answer2a.addEventListener('input', () => { describeRequestIds['2a'] = (describeRequestIds['2a'] || 0) + 1; const box = document.getElementById('result-2a'); box.replaceChildren(); box.hidden = true; const button = document.getElementById('button-2a'); button.disabled = false; button.textContent = 'Beschreibung erneut prüfen'; });
 
         document.getElementById('button-2a').addEventListener('click', function () {
           submitDescription('2a');

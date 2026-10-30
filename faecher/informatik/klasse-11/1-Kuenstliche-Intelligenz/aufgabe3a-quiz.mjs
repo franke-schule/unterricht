@@ -1,5 +1,5 @@
 import { enableTokenDrag, wasDragged } from "../../../physik/klasse-11/1-Kreisbewegungen/components/token-drag.mjs";
-import { evaluateSemanticAnswer, renderCompactEvaluation } from "./perzeptron/ui/semantic-answer.mjs?v=20261022-feedback-two-sentences";
+import { evaluateSemanticAnswer, renderCompactEvaluation } from "./perzeptron/ui/semantic-answer.mjs?v=20261029-criteria-v1";
 
 // Wiederholungs-Quiz zu Aufgabe 3a: nicht verlinkte Seite, jede Aufgabe mit eigenem Prüfen-Button.
 // Eigenständig aufgebaut (Vorlage: Physik 11, aufgabe3-quiz.mjs), damit der Test ohne Reste
@@ -35,6 +35,7 @@ const DESCRIBE_TASKS = [
     prompt: "Beschreibe, wie du nach dem ersten Knoten weiter vorgehst, bis der Entscheidungsbaum fertig ist.",
   },
 ];
+DESCRIBE_TASKS.forEach((task) => { task.assessmentVersion = "20261029-criteria-v1"; });
 const DESCRIBE_MAX_POINTS = DESCRIBE_TASKS.reduce((sum, task) => sum + task.maxPoints, 0);
 
 // Aufgabe 1: Lückentext mit Wortkarten, Bedienung über die vorhandene Komponente token-drag.mjs.
@@ -159,6 +160,7 @@ const DEFAULT_STATE = {
   // true, solange die Markierungen des letzten Prüfens zur aktuellen Eingabe passen.
   checked: { cloze: false, sort: false, mc: Object.fromEntries(MC_QUESTIONS.map((question) => [question.id, false])) },
   // Gewertet wird der erste Prüfversuch jeder Aufgabe; null = noch nicht geprüft.
+  assessmentVersions: Object.fromEntries(DESCRIBE_TASKS.map((task) => [task.id, task.assessmentVersion])),
   first: {
     cloze: null,
     sort: null,
@@ -203,6 +205,7 @@ function loadState() {
       fresh.first.mc[question.id] = clampPoints(saved.first?.mc?.[question.id], 1);
     });
     DESCRIBE_TASKS.forEach((task) => {
+      if (saved.assessmentVersions?.[task.id] !== task.assessmentVersion) return;
       const ai = saved.ai?.[task.id];
       if (isPlainObject(ai) && Number.isFinite(ai.points) && typeof saved.aiText?.[task.id] === "string") {
         fresh.ai[task.id] = ai;
@@ -640,7 +643,8 @@ function checkDescription(task) {
 
 async function evaluateDescription(task, text) {
   try {
-    const result = await evaluateSemanticAnswer({ serverUrl: SCRIPT_SERVER_URL, taskId: task.taskId, answer: text.trim() });
+    const result = await evaluateSemanticAnswer({ serverUrl: SCRIPT_SERVER_URL, taskId: task.taskId, answer: text.trim(), expectedMaxPoints: task.maxPoints });
+    if (state.texts[task.id] !== text) { describePending[task.id] = false; renderDescribe(task); updateProgress(); return; }
     const points = clampPoints(Number(result.points) || 0, task.maxPoints);
     state.ai[task.id] = {
       status: result.status || "noch nicht korrekt",
@@ -654,6 +658,7 @@ async function evaluateDescription(task, text) {
     if (state.first.describe[task.id] === null) state.first.describe[task.id] = points;
     saveState();
   } catch (error) {
+    if (state.texts[task.id] !== text) { describePending[task.id] = false; renderDescribe(task); updateProgress(); return; }
     describeErrors[task.id] = error.message || "Der Auswertungsserver war nicht erreichbar";
   }
   describePending[task.id] = false;
@@ -666,7 +671,7 @@ function setupDescribeTask(task) {
   const textarea = document.getElementById(`describe-${task.id}`);
   const counter = document.getElementById(`describe-${task.id}-count`);
   const updateCounter = () => { counter.textContent = `${textarea.value.length} von 3000 Zeichen`; };
-  textarea.addEventListener("input", () => { state.texts[task.id] = textarea.value; updateCounter(); saveState(); updateProgress(); });
+  textarea.addEventListener("input", () => { state.texts[task.id] = textarea.value; delete state.ai[task.id]; state.aiText[task.id] = ""; delete describeErrors[task.id]; renderDescribe(task); updateCounter(); saveState(); updateProgress(); });
   document.getElementById(`check-${task.id}`).addEventListener("click", () => checkDescription(task));
   textarea.value = state.texts[task.id];
   updateCounter();

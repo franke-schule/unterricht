@@ -97,7 +97,8 @@ test('6.2 Schritt 4: Server korrigiert die konkrete falsche Theta-Rückmeldung (
     assert.ok(JSON.parse(options.body).messages[1].content.includes(reportedCode.trim()));
     return { ok: true, status: 200, async text() {
       return JSON.stringify({ choices: [{ finish_reason: 'stop', message: {
-        content: JSON.stringify(wrongEvaluation)
+        content: JSON.stringify({ criteria: Object.fromEntries(task.feedbackCriteria.map((criterion, index) =>
+          [criterion.id, { status: index === 3 ? 'wrong_logic' : 'correct', evidence: ['theta = theta - delta * lernrate;'] }])) })
       } }] });
     } };
   } });

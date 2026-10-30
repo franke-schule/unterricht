@@ -1,6 +1,6 @@
 // Aufgabe 3 – Datensätze filtern mit WHERE (Informatik 9).
 import { classifyDescriptionResult, compareRelations, isValidScriptServerUrl, missingTextQuote, normalizeRelation, parseDelimited, sqlTokens, validateSelectStatement } from '../../klasse-10/1-Datenbanken/sql-lab-core.mjs?v=20260929b';
-import { evaluateSemanticAnswer, renderCompactEvaluation } from '../../klasse-11/1-Kuenstliche-Intelligenz/perzeptron/ui/semantic-answer.mjs?v=20261022-feedback-two-sentences';
+import { evaluateSemanticAnswer, renderCompactEvaluation } from '../../klasse-11/1-Kuenstliche-Intelligenz/perzeptron/ui/semantic-answer.mjs?v=20261029-criteria-v1';
 import { appendSolutionDownloadFromTemplate, enableTabKeyboardNavigation, focusTabPanelStart, renderTabFlowNavigation, syncTabSemantics } from '../../klasse-10/1-Datenbanken/tab-navigation.mjs?v=20260906a';
 const STORAGE_KEY = 'informatik9-datenbanken-aufgabe3-where-v1';
 const NEUTRAL_SQL_PLACEHOLDER = 'SELECT ...\nFROM ...';
@@ -566,7 +566,7 @@ const INTRO_EXPECTED = [
 let introRows = INTRO_EXPECTED.map(([id,username,city])=>({id,username,city}));
 let memberCount = 317;
 
-const state = {tab:'intro', introStep:1, answers:{}, feedback:{}, solved:{}, descriptionAnswers:{}, descriptionFeedback:{}, quiz:{}, quizFeedback:null, quizPassed:false};
+const state = {assessmentVersion:'20261029-criteria-v1', tab:'intro', introStep:1, answers:{}, feedback:{}, solved:{}, descriptionAnswers:{}, descriptionFeedback:{}, quiz:{}, quizFeedback:null, quizPassed:false};
 const results = {};
 const running = new Set();
 const revisions = new Map();
@@ -594,7 +594,7 @@ function restore() {
     if (isPlainObject(saved.feedback)) for (const [id,value] of Object.entries(saved.feedback)) if (TASK_BY_ID.has(id) && validFeedback(value)) state.feedback[id]=value;
     if (isPlainObject(saved.solved)) for (const [id,value] of Object.entries(saved.solved)) if (TASK_BY_ID.has(id) && value===true) state.solved[id]=true;
     if (isPlainObject(saved.descriptionAnswers) && typeof saved.descriptionAnswers[DESCRIPTION_TASK.id]==='string') state.descriptionAnswers[DESCRIPTION_TASK.id]=saved.descriptionAnswers[DESCRIPTION_TASK.id];
-    if (isPlainObject(saved.descriptionFeedback) && validDescriptionFeedback(saved.descriptionFeedback[DESCRIPTION_TASK.id])) state.descriptionFeedback[DESCRIPTION_TASK.id]=saved.descriptionFeedback[DESCRIPTION_TASK.id];
+    if (saved.assessmentVersion===state.assessmentVersion && isPlainObject(saved.descriptionFeedback) && validDescriptionFeedback(saved.descriptionFeedback[DESCRIPTION_TASK.id])) state.descriptionFeedback[DESCRIPTION_TASK.id]=saved.descriptionFeedback[DESCRIPTION_TASK.id];
     if (isPlainObject(saved.quiz)) for (const q of FINAL_QUIZ) if (Array.isArray(saved.quiz[q.id])) state.quiz[q.id]=saved.quiz[q.id].filter((id)=>q.options.some(([option])=>option===id));
     if (validFeedback(saved.quizFeedback)) state.quizFeedback=saved.quizFeedback;
     state.quizPassed=saved.quizPassed===true;
@@ -1071,7 +1071,7 @@ function renderDescriptionFeedback(task, box) {
   const level = Number.isInteger(feedback.points) ? feedback.points === 3 ? 'success' : feedback.points > 0 ? 'partial' : 'error' : feedback.level;
   box.className = `result server-feedback ${level}`;
   if (Number.isInteger(feedback.points)) {
-    renderCompactEvaluation(box, { ...feedback, maxPoints: 3, feedback: feedback.text });
+    renderCompactEvaluation(box, { ...feedback, maxPoints: 3, feedback: feedback.text }, { maxHints: 1 });
   } else box.append(element('p', '', feedback.text));
 }
 

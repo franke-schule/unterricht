@@ -1,7 +1,7 @@
 // Aufgabe 2 – Erste SQL-Abfragen (Informatik 9).
 // Seitengerüst nach klasse-9/2-Datenbanken/aufgabe1.js, SQL-Labor nach klasse-10/1-Datenbanken/sql-lab.js.
 import { classifyDescriptionResult, compareRelations, isValidScriptServerUrl, missingTextQuote, normalizeRelation, parseDelimited, sqlTokens, validateSelectStatement } from '../../klasse-10/1-Datenbanken/sql-lab-core.mjs?v=20260929b';
-import { evaluateSemanticAnswer, renderCompactEvaluation } from '../../klasse-11/1-Kuenstliche-Intelligenz/perzeptron/ui/semantic-answer.mjs?v=20261022-feedback-two-sentences';
+import { evaluateSemanticAnswer, renderCompactEvaluation } from '../../klasse-11/1-Kuenstliche-Intelligenz/perzeptron/ui/semantic-answer.mjs?v=20261029-criteria-v1';
 import { appendSolutionDownloadFromTemplate, enableTabKeyboardNavigation, focusTabPanelStart, renderTabFlowNavigation, syncTabSemantics } from '../../klasse-10/1-Datenbanken/tab-navigation.mjs?v=20260906a';
 
 // Speicherschlüssel trotz Umbenennung beibehalten, damit bestehende Lernstände erhalten bleiben.
@@ -485,7 +485,7 @@ const QUIZ_BY_ID = new Map(FINAL_QUIZ.map((question) => [question.id, question])
 // Zustand und Speicherung
 // ---------------------------------------------------------------------------
 
-const state = { tab: 'intro', introStep: 1, answers: {}, feedback: {}, solved: {}, descriptionAnswers: {}, descriptionFeedback: {}, youngest: { username: '', age: '', feedback: null }, quiz: {}, quizFeedback: null, quizPassed: false };
+const state = { assessmentVersion: '20261029-criteria-v1', tab: 'intro', introStep: 1, answers: {}, feedback: {}, solved: {}, descriptionAnswers: {}, descriptionFeedback: {}, youngest: { username: '', age: '', feedback: null }, quiz: {}, quizFeedback: null, quizPassed: false };
 const results = {}; // Ergebnisrelationen werden nicht gespeichert (zu groß).
 const running = new Set();
 const descriptionRequests = new Map();
@@ -565,7 +565,7 @@ function restore() {
     if (isPlainObject(saved.feedback)) for (const [id, feedback] of Object.entries(saved.feedback)) if (TASK_BY_ID.has(id) && validFeedback(feedback)) state.feedback[id] = { level: feedback.level, text: feedback.text };
     if (isPlainObject(saved.solved)) for (const [id, done] of Object.entries(saved.solved)) if (TASK_BY_ID.has(id) && done === true) state.solved[id] = true;
     if (isPlainObject(saved.descriptionAnswers)) for (const [id, answer] of Object.entries(saved.descriptionAnswers)) if (DESCRIPTION_BY_ID.has(id) && typeof answer === 'string') state.descriptionAnswers[id] = answer;
-    if (isPlainObject(saved.descriptionFeedback)) for (const [id, feedback] of Object.entries(saved.descriptionFeedback)) if (DESCRIPTION_BY_ID.has(id) && validDescriptionFeedback(feedback)) state.descriptionFeedback[id] = { ...feedback, strengths: feedback.strengths || [], missing: feedback.missing || [] };
+    if (saved.assessmentVersion === state.assessmentVersion && isPlainObject(saved.descriptionFeedback)) for (const [id, feedback] of Object.entries(saved.descriptionFeedback)) if (DESCRIPTION_BY_ID.has(id) && validDescriptionFeedback(feedback)) state.descriptionFeedback[id] = { ...feedback, strengths: feedback.strengths || [], missing: feedback.missing || [] };
     if (isPlainObject(saved.youngest)) {
       if (typeof saved.youngest.username === 'string') state.youngest.username = saved.youngest.username;
       if (typeof saved.youngest.age === 'string') state.youngest.age = saved.youngest.age;
@@ -1078,7 +1078,7 @@ function renderDescriptionFeedback(task, box) {
   const level = Number.isInteger(feedback.points) ? feedback.points === 3 ? 'success' : feedback.points > 0 ? 'partial' : 'error' : feedback.level;
   box.className = `result server-feedback ${level}`;
   if (Number.isInteger(feedback.points)) {
-    renderCompactEvaluation(box, { ...feedback, maxPoints: 3, feedback: feedback.text });
+    renderCompactEvaluation(box, { ...feedback, maxPoints: 3, feedback: feedback.text }, { maxHints: 1 });
   } else box.append(element('p', '', feedback.text));
 }
 

@@ -16,8 +16,8 @@ test('Kettenkarussell-Aufgabe 4 bewertet fünf Veränderungen ohne Kettenlänge 
   assert.match(task.context, /interaktives Kräfteparallelogramm/);
   assert.match(task.expectedAspects[4], /Kettenlänge ist nicht erforderlich/);
   assert.match(task.expectedAspects[4], /Masse m und Gewichtskraft FG unverändert/);
-  assert.match(task.rubric.join(' '), /keine Auswirkung auf die Masse/);
-  assert.match(task.rubric.join(' '), /Für den Radiuspunkt genügt die Aussage/);
+  assert.match(task.criteriaFairnessRules.join(' '), /keine Auswirkung auf die Masse/);
+  assert.match(task.criteriaFairnessRules.join(' '), /Für den Radiuspunkt genügt die Aussage/);
 });
 
 test('gemeldete Antworten erhalten zuverlässig 5/5 bzw. 4/5; nur die Seilkraft ist offen', () => {
@@ -66,15 +66,14 @@ test('Server korrigiert die tatsächlich gemeldete Drei-Punkte-Antwort mit falsc
     AI_API_KEY: 'mock-only', AI_PROJECT_ID: '11111111-1111-1111-1111-111111111111',
     AI_MODEL: 'mock-model', AI_EVALUATION_ENABLED: 'true'
   }, fetchImpl: async () => ({ ok: true, status: 200, text: async () => JSON.stringify({ choices: [{ finish_reason: 'stop', message: { content: JSON.stringify({
-    points: 3, maxPoints: 5, status: 'teilweise korrekt', strengths: [],
-    missing: ['Erwähne die Seilkraft FS und den Grund, warum der Radius r größer wird.', 'Erwähne die unveränderte Masse m.'], feedback: 'Masse fehlt.'
+    criteria: Object.fromEntries(TASKS[taskId].feedbackCriteria.map(criterion => [criterion.id, { status: 'missing', evidence: [] }]))
   }) } }] }) }) });
   const response = await handle({ httpMethod: 'POST', path: '/', headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ requestId: 'kettenkarussell_missing_rope', taskId, requestType: 'text', answer: withoutRope }) });
   assert.equal(response.statusCode, 200);
   const result = JSON.parse(response.body).result;
   assert.equal(result.points, 4);
-  assert.deepEqual(result.missing, ['Die Veränderung der Seilkraft F_S fehlt; vergleiche die Länge ihres Kraftpfeils bei größerer Winkelgeschwindigkeit.']);
+  assert.deepEqual(result.missing, ['Schritt 4 von 5 – Aspekt 4: Vergleiche die Seilkraft in beiden Zuständen.']);
   assert.equal(result.feedback, '');
 });
 
@@ -85,5 +84,5 @@ test('Kettenkarussell-Aufgabe 5 erlaubt die Begründung über das Kräfteverhäl
   assert.match(task.expectedAspects[1], /Verhältnis tan α/);
   assert.match(task.expectedAspects[1], /ohne ausdrücklich genannt/);
   assert.doesNotMatch(task.expectedAspects.join(' '), /Massenunabhängigkeit|Besetzung|Kettenlänge|absolut/);
-  assert.match(task.rubric.join(' '), /Ein absolut größeres FZ darf ohne gleiche Vergleichsmassen nicht/);
+  assert.match(task.criteriaFairnessRules.join(' '), /Ein absolut größeres FZ darf ohne gleiche Vergleichsmassen nicht/);
 });

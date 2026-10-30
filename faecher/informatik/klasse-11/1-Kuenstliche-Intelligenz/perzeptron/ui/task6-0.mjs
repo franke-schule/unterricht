@@ -1,10 +1,11 @@
 import { mountClassCard, evaluateClassCard, parseStoredChoices } from '../../../../klasse-10/2-Modellierung-und-Programmierung-Online-IDE/klassendiagramm.mjs?v=20261021-compact';
-import { evaluateCodeAnswer, renderCompactEvaluation } from './semantic-answer.mjs?v=20261022-feedback-two-sentences';
+import { evaluateCodeAnswer, observeIdeCodeChanges, renderCompactEvaluation } from './semantic-answer.mjs?v=20261029-criteria-v1';
 import { unlockSolution } from '../../../../klasse-10/1-Datenbanken/tab-navigation.mjs';
 
 const STORAGE_KEY = 'informatik11-ki-aufgabe6-0-v2';
 const SERVER_URL = 'https://unterrichtkiichezbn4-ki-auswertung.functions.fnc.fr-par.scw.cloud/';
 const IDE_ID = 'Java11Aufgabe6_0HundV2';
+const CODE_ASSESSMENT_VERSIONS = { '11-6-0-4a-code':'20261029-criteria-v1', '11-6-0-5a-code':'20261029-criteria-v1', '11-6-0-5b-code':'20261029-criteria-v1' };
 const STEPS = ['objects', 'class-card', 'signatures', 'completion', 'transfer', 'quiz'];
 const CLASS_CARD = {
   key: 'hund', className: 'Hund', attributeSlots: 2, methodSlots: 5, compact: true,
@@ -135,6 +136,13 @@ function readSaved() {
   if (!value || typeof value !== 'object' || Array.isArray(value)) value = { fields:{}, flags:{} };
   value.fields = value.fields && typeof value.fields === 'object' && !Array.isArray(value.fields) ? value.fields : {};
   value.flags = value.flags && typeof value.flags === 'object' && !Array.isArray(value.flags) ? value.flags : {};
+  for (const [taskId, version] of Object.entries(CODE_ASSESSMENT_VERSIONS)) {
+    const versionFlag = `assessment-${taskId}-${version}`;
+    if (value.flags[versionFlag] !== true) {
+      if (taskId === '11-6-0-4a-code') { delete value.flags['block-4a']; delete value.flags['remember-4']; }
+      value.flags[versionFlag] = true;
+    }
+  }
   // 4A used to be a dropdown-only check; invalidate it once, then preserve code success.
   const migrationKey = 'migration-4a-code-v1';
   if (value.flags[migrationKey] !== true) {
@@ -234,7 +242,7 @@ function renderCodeEvaluation(block, result) {
   const box = document.getElementById('task-' + block.id).querySelector('[aria-live="polite"]');
   box.hidden = false;
   box.className = 'feedback ' + level;
-  renderCompactEvaluation(box, result);
+  renderCompactEvaluation(box, result, { maxHints: 1 });
 }
 async function checkCodeBlock(block, result, button) {
   let code;
@@ -245,12 +253,16 @@ async function checkCodeBlock(block, result, button) {
   showFeedback(result, 'partial', 'Der aktuelle Programmcode wird für diesen Aufgabenteil ausgewertet.');
   try {
     const evaluation = await evaluateCodeAnswer({ serverUrl:SERVER_URL, taskId:block.codeTask.id, code, expectedMaxPoints:block.codeTask.maxPoints });
+    if (readIdeCode() !== code) return;
     renderCodeEvaluation(block, evaluation);
     if (evaluation.points === evaluation.maxPoints && block.id === '4a') {
       savedInputs?.setFlag('block-4a');
       if (savedInputs?.hasFlag('block-4b')) reveal('remember-4');
     }
-  } catch (error) { showFeedback(result, 'error', serverError(error)); }
+  } catch (error) {
+    try { if (readIdeCode() !== code) return; } catch { return; }
+    showFeedback(result, 'error', serverError(error));
+  }
   finally { button.disabled = false; }
 }
 function checkBlock(block, fields, result, button) {
@@ -327,6 +339,7 @@ setupQuiz();
 buildSummary();
 document.getElementById('solution-code-form').addEventListener('submit', event => unlockSolution(event, 'M3WP-D8B2', 'solution-download-link', 'solution-code-message'));
 savedInputs = window.persistTaskInputs(STORAGE_KEY, 'input:not([name="solution-code"]), select, textarea');
+observeIdeCodeChanges(document.getElementById('frame-hund'), IDE_ID, () => { for (const block of BLOCKS.filter(item => item.codeTask)) { const result=document.querySelector('#task-'+block.id+' [aria-live="polite"]'); if(result){result.replaceChildren();result.hidden=true;} } savedInputs?.clearFlag('block-4a'); savedInputs?.clearFlag('remember-4'); const remembered=document.getElementById('remember-4'); if(remembered)remembered.hidden=true; });
 showStep(STEPS.includes(document.getElementById('active-tab').value) ? document.getElementById('active-tab').value : 'objects');
 restoreFlags();
 document.getElementById('reset-progress').addEventListener('click', () => {

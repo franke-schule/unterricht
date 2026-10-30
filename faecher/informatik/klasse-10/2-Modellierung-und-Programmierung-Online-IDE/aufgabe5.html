@@ -1449,6 +1449,17 @@ const IDE_ID =
       'Java10Aufgabe5Tiere';
 const MAX_CODE_LENGTH =
       12000;
+let scwCodeRevision = 0;
+import('../../klasse-11/1-Kuenstliche-Intelligenz/perzeptron/ui/semantic-answer.mjs?v=20261029-criteria-v1').then(({ observeIdeCodeChanges }) => {
+  observeIdeCodeChanges(document.getElementById('ide-5'), IDE_ID, () => {
+    scwCodeRevision += 1;
+    for (const taskId of Object.keys(SCW_TASK_POINTS)) {
+      const box = document.getElementById('result-' + taskId);
+      box?.replaceChildren();
+      if (box) box.hidden = true;
+    }
+  });
+});
     function restoreCodeButton(pending) {
       pending.button.disabled =
         false;
@@ -1702,6 +1713,7 @@ async function submitCode(taskId) {
       }
 
 
+  const submittedCodeRevision = scwCodeRevision;
   button.dataset.defaultLabel = button.textContent.trim();
   button.disabled = true;
   button.textContent = 'Programm wird geprüft …';
@@ -1709,11 +1721,15 @@ async function submitCode(taskId) {
   resultBox.className = 'result';
   resultBox.textContent = 'Der aktuelle Programmcode wird ausgewertet.';
   try {
-    const { evaluateCodeAnswer, renderCompactEvaluation } = await import('../../klasse-11/1-Kuenstliche-Intelligenz/perzeptron/ui/semantic-answer.mjs?v=20261022-feedback-two-sentences');
+    const { evaluateCodeAnswer, renderCompactEvaluation } = await import('../../klasse-11/1-Kuenstliche-Intelligenz/perzeptron/ui/semantic-answer.mjs?v=20261029-criteria-v1');
     const result = await evaluateCodeAnswer({ serverUrl: SCRIPT_SERVER_URL, taskId, code,
       expectedMaxPoints: SCW_TASK_POINTS[taskId] });
+    if (submittedCodeRevision !== scwCodeRevision || getAllProgramCode() !== code) return;
     showEvaluation(resultBox, result, renderCompactEvaluation);
-  } catch (error) { showError(resultBox, error.message || 'Die Auswertung konnte nicht abgeschlossen werden.'); }
+   } catch (error) {
+    try { if (submittedCodeRevision !== scwCodeRevision || getAllProgramCode() !== code) return; } catch { return; }
+    showError(resultBox, error.message || 'Die Auswertung konnte nicht abgeschlossen werden.');
+  }
   finally { restoreCodeButton({ button }); }
 }
 

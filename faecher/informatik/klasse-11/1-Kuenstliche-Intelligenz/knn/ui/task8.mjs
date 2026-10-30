@@ -1,5 +1,5 @@
 import { normaliseNumber } from '../../perzeptron/logic/perceptron.mjs';
-import { evaluateSemanticAnswer, renderCompactEvaluation } from "../../perzeptron/ui/semantic-answer.mjs?v=20261022-feedback-two-sentences";
+import { evaluateSemanticAnswer, renderCompactEvaluation } from "../../perzeptron/ui/semantic-answer.mjs?v=20261029-criteria-v1";
 import { SHIRT_CLASSES, SHIRT_SYMBOLS, SHIRT_TRAINING } from '../data/shirts.mjs';
 import {
   EXPECTED, HEFT_VALIDATION, HOUSES, HOUSE_AREAS, HOUSE_K, LARGE_K_PERSONS, OPEN_CELLS, OUTLIER_POINT, REGRESSION,
@@ -617,21 +617,25 @@ function setupJustification() {
   const textarea = $('#validation-answer');
   const counter = $('#validation-counter');
   const update = () => { counter.textContent = textarea.value.length + ' von 600 Zeichen'; };
-  textarea.addEventListener('input', () => { state.r3.text = textarea.value; update(); saveState(); });
+  let requestId = 0;
+  textarea.addEventListener('input', () => { state.r3.text = textarea.value; update(); requestId++; feedback('validation-answer-feedback', '', ''); const checkButton = $('#check-validation-answer'); checkButton.disabled = false; checkButton.textContent = 'Antwort erneut prüfen'; saveState(); });
   textarea.value = state.r3.text;
   update();
   $('#check-validation-answer').addEventListener('click', async () => {
     const answer = textarea.value.trim();
+    const currentRequest = ++requestId;
     if (answer.length < 30) { feedback('validation-answer-feedback', 'error', 'Begründe deine Wahl noch etwas genauer, damit deine Antwort sinnvoll ausgewertet werden kann.'); textarea.focus(); return; }
     const button = $('#check-validation-answer');
     button.disabled = true;
     feedback('validation-answer-feedback', '', 'Deine Begründung wird mit dem Erwartungshorizont verglichen.');
     try {
       const result = await evaluateSemanticAnswer({ serverUrl: SERVER_URL, taskId: TASK_ID, answer });
+      if (currentRequest !== requestId || textarea.value.trim() !== answer) return;
       const kind = result.points === result.maxPoints ? 'success' : result.points > 0 ? 'partial' : 'error';
       feedback('validation-answer-feedback', kind, '');
       renderCompactEvaluation($('#validation-answer-feedback'), result);
     } catch (error) {
+      if (currentRequest !== requestId || textarea.value.trim() !== answer) return;
       const unknown = error.message === 'Diese Aufgabe ist auf dem Auswertungsserver nicht bekannt.';
       feedback('validation-answer-feedback', 'error', unknown ? 'Für Aufgabe 8 ist noch keine aktuelle Serverversion bereitgestellt. Bitte informiere deine Lehrkraft.' : error.message);
     } finally { button.disabled = false; }

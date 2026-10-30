@@ -1,4 +1,4 @@
-import { evaluateSemanticAnswer } from '../../klasse-11/1-Kuenstliche-Intelligenz/perzeptron/ui/semantic-answer.mjs?v=20261029-single-improvement';
+import { evaluateSemanticAnswer } from '../../klasse-11/1-Kuenstliche-Intelligenz/perzeptron/ui/semantic-answer.mjs?v=20261029-criteria-v1';
 import { analyzeMultiTableSelect, classifyDescriptionResult, compareRelations, diagnoseSqlError, sqlTokens, validateSelectStatement } from './sql-lab-core.mjs?v=20260929b';
 import { SqlWorker, appendHints, renderRelation, renderServerFeedback, schemaCard } from './sql-lab.js?v=20261029-criterion-feedback';
 import { appendSolutionDownloadFromTemplate, focusTabPanelStart, enableTabKeyboardNavigation, renderTabFlowNavigation, syncTabSemantics } from './tab-navigation.mjs?v=20261001a';
@@ -289,12 +289,12 @@ async function checkDescription(task, card) {
   const answer = input.value.trim(); if (answer.length < 10) { state.server[task.id] = { level: 'error', text: 'Bitte formuliere eine etwas ausführlichere Antwort.' }; renderFeedback(task, card); return; }
   button.disabled = true; state.server[task.id] = { level: 'loading', text: 'Deine Erklärung wird geprüft …' }; renderFeedback(task, card);
   try {
-    const result = await evaluateSemanticAnswer({ serverUrl: SCRIPT_SERVER_URL, taskId: `inf10-db-a9-${task.id.toLowerCase()}`, answer });
+    const result = await evaluateSemanticAnswer({ serverUrl: SCRIPT_SERVER_URL, taskId: `inf10-db-a9-${task.id.toLowerCase()}`, answer, expectedMaxPoints: task.maxPoints });
     if (input.value.trim() !== answer) return;
     const feedback = classifyDescriptionResult(result);
     if (feedback.level === 'error' || !['korrekt', 'teilweise korrekt', 'noch nicht korrekt'].includes(feedback.status) || !Number.isInteger(feedback.points) || feedback.maxPoints !== task.maxPoints || feedback.points < 0 || feedback.points > task.maxPoints || (feedback.status === 'korrekt') !== (feedback.points === task.maxPoints)) throw new Error('Ungültige Auswertung');
     state.server[task.id] = feedback; if (feedback.points === task.maxPoints && feedback.status === 'korrekt') state.completed[task.id] = input.value; else delete state.completed[task.id];
-  } catch { if (input.value.trim() !== answer) return; delete state.completed[task.id]; state.server[task.id] = { level: 'error', text: 'Die Auswertung ist gerade nicht erreichbar. Deine Eingabe bleibt erhalten; versuche es erneut.' }; }
+  } catch (error) { if (input.value.trim() !== answer) return; delete state.completed[task.id]; state.server[task.id] = { level: 'error', text: error?.message || 'Die Auswertung konnte nicht abgeschlossen werden. Deine Eingabe bleibt erhalten; versuche es erneut.' }; }
   finally { button.disabled = false; if (input.value.trim() === answer) { save(); renderFeedback(task, card); updateUnlock(); if (unlocked()) activate('summary', { focusContent: true }); } }
 }
 function renderQuiz(panel) {

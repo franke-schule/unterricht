@@ -56,8 +56,7 @@ test('alle Beschreibe- und Codeprompts in Inf9, Inf10 und Inf11 enthalten diesel
 test('Konfigurierte Aufgaben liefern genau einen nächsten Verbesserungsschritt bei vollständiger Bewertung', async () => {
   const { createHandler } = require('../handler');
   const { compactFeedbackSentences } = await import('../../faecher/informatik/klasse-11/1-Kuenstliche-Intelligenz/perzeptron/ui/semantic-answer.mjs');
-  const ids = ['11-6-klassifizieren', '11-6-einfach-summe', '11-6-einfach-ausgabe', '11-6-einfach-anpassung', '11-6-schwer-trainieren',
-    'inf10-db-a9-p2', 'inf10-db-a9-p5', 'inf10-db-a9-p8', 'inf10-db-a9-p11'];
+  const ids = Object.keys(core.TASKS);
   assert.deepEqual(Object.entries(core.TASKS).filter(([, task]) => task.maxFeedbackHints === 1).map(([id]) => id), ids);
   for (const taskId of ids) {
     const task = core.TASKS[taskId];

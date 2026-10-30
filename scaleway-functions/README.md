@@ -1,21 +1,30 @@
 # Scaleway-Testserver für die Unterrichtswebsite
 
-Stand 18.10.2026: Maßgebliche Quellen sind ausschließlich die JavaScript-Dateien
+Stand 29.10.2026: Maßgebliche Quellen sind ausschließlich die JavaScript-Dateien
 unter `scaleway-functions/source/`. `apps-script/` bleibt als unverändertes
 Google-Archiv erhalten und wird weder für neue Aufgaben gepflegt noch zum Bau
 oder Betrieb von Scaleway benötigt. Es gilt `manifest-allgemein.txt`, Abschnitt 0.
 
-Inf9 Datenbanken Aufgabe 2 wurde lokal einschließlich Sicherungsblatt entfernt.
-Das aktuelle ZIP enthält 71 Bewertungsaufgaben; ausschließlich die vier
-Bewertungskennungen dieses Moduls wurden aus dem bisherigen lokalen Bestand
-von 75 entfernt. Die Bewertungsroute `11-5-1` für Modul 5.2 bleibt erhalten.
-Der Live-Healthcheck meldet noch 75 Aufgaben; leere Prüfanfragen für alle vier
-entfernten Kennungen lieferten `INPUT_TOO_SHORT`, ohne Modellaufruf.
-Die Online-Löschung steht aus: Die verantwortliche Person lädt das ZIP in die
-Function `ki-auswertung` hoch und stellt sie erneut bereit. Anschließend müssen
-die vier Kennungen `UNKNOWN_TASK` liefern. Gleiche Aufgabenzahlen vor der
-Bereinigung belegen allein keine vollständige Übereinstimmung des Live-Codes;
-ein aktueller Live-Quellcodeexport liegt hier nicht vor.
+Der lokale Bestand enthält 84 Bewertungsaufgaben. Die ausdrücklich beauftragte
+Gesamtmigration ergänzt bei den 79 zuvor offenen Aufgaben den vollständigen
+Kriterienvertrag: Einzelurteile mit Originalbelegen, serverseitig berechnete
+Punkte und genau ein fester nächster Hinweis. Alle 19 Codeaufgaben verwenden
+denselben Vertrag. Bei `b`, `c`, `2b`, `1a`, `1b`, `1c` und `1f` entfallen auf
+Entscheidung der Lehrkraft die bisherigen Stil-/Beobachtungs-Metapunkte;
+diese Aufgaben besitzen nun jeweils fünf fachliche Punkte.
+
+Die [Ausgangsliste](../docs/ki-feedback-offene-aufgaben-2026-10-29.md),
+[Spezifikation](../docs/ki-feedback-migration-plan.md) und der
+[Prüfbericht](../docs/ki-feedback-migration-pruefung.md) dokumentieren Umfang,
+Kriterien und Nachweise. Der aktuelle Überblick steht in
+[KI-FEEDBACK-MIGRATION.md](../KI-FEEDBACK-MIGRATION.md).
+
+Die Online-Umstellung ist durch einen lokalen Build nicht bestätigt:
+Die aktuelle ZIP muss in die Function `ki-auswertung` hochgeladen und erneut
+bereitgestellt werden; außerdem sind die geänderten Website-Dateien zu
+veröffentlichen. Danach folgen fachliche Vergleichstests gegen das tatsächlich
+eingesetzte Modell. Eine gleiche Aufgabenzahl allein beweist keinen gleichen
+Quell- oder Bewertungsstand.
 
 Die späteren Chat-Schritt-Abschnitte dokumentieren die historische Migration
 vom 10.10.2026. Angaben zur Google-Bereitstellung und damalige Uploadstände
@@ -96,8 +105,8 @@ und zeigt genau einen vorgegebenen Hinweis zum ersten offenen Kriterium
 Antwort. Die Website verwirft Rückmeldungen nach einer Textänderung und
 speichert keinen separaten Schrittzähler. Alte Freigaben aus der
 Vier-Punkte-Rubrik werden anhand von `assessmentVersion` gezielt verworfen;
-Eingaben und andere Fortschritte bleiben erhalten. Andere SQL-Aufgaben behalten
-ihre bisherige Anzeige.
+Eingaben und andere Fortschritte bleiben erhalten. Seit der Gesamtmigration
+zeigen auch die übrigen SQL-Beschreibungen genau einen nächsten Hinweis.
 
 `tests/aufgabe9-criteria.test.js` prüft die Einzelurteile, Belege,
 typische Fehlertypen und die Schrittfolge mit simulierten Modellantworten.
@@ -113,8 +122,8 @@ auch die geänderten Website-Dateien veröffentlicht werden.
 Für neue Beschreibe- und Programmieraufgaben ist der Kriterienvertrag
 verbindlich (`manifest-allgemein.txt`, Abschnitt 0.1). Der gemeinsame
 Codeprompt unterstützt `responseType: 'code'` zusammen mit `feedbackCriteria`
-und wörtlichen Codebelegen. Bestehende Codeaufgaben sind damit noch nicht
-automatisch umgestellt. Neue Kriterienaufgaben verwenden denselben
+und wörtlichen Codebelegen. Die 19 bestehenden Codeaufgaben wurden mit der
+Gesamtmigration ausdrücklich umgestellt. Neue Kriterienaufgaben verwenden denselben
 Scaleway-Transport und dieselbe Ergebnisanzeige mit `maxHints: 1`.
 
 Die zentrale Übersicht [KI-FEEDBACK-MIGRATION.md](../KI-FEEDBACK-MIGRATION.md)

@@ -8,14 +8,14 @@ const core = require('../evaluation-core');
 const physicsTasks = Object.entries(core.TASKS).filter(([id]) => id.startsWith('ph11-'));
 const physicsRoot = path.resolve(__dirname, '../../faecher/physik/klasse-11/1-Kreisbewegungen');
 
-test('alle registrierten Physik-Aufgaben erhalten konkrete fachliche Hinweise im Zweisatzformat', () => {
+test('alle registrierten Physik-Aufgaben verwenden belegte Einzelkriterien und einen nächsten Hinweis', () => {
   assert.ok(physicsTasks.length > 0);
   for (const [id, task] of physicsTasks) {
     const prompt = core.buildPrompt_(task, 'Eine fachliche Beschreibung der beobachteten Bewegung.');
     assert.match(prompt, /insgesamt aus höchstens zwei kurzen Sätzen/, id);
-    assert.match(prompt, /Bei Physik benenne die konkret falsche Größe, Richtung, Zuordnung oder Beziehung/, id);
-    assert.match(prompt, /Zahlenwert, Einheit und gültige Ziffern/, id);
-    assert.match(prompt, /\{\{F_Z\}\}.*\{\{F\|m\}\}.*\{\{m\/s²\}\}/, id);
+    assert.match(prompt, /Kriterienweise Belegprüfung statt Gesamturteil/, id);
+    assert.match(prompt, /In Physik sind ausgeschriebene Größen und eindeutige Formelzeichen gleichwertig/, id);
+    assert.match(prompt, /Zitiere immer die unveränderte Schülerantwort/, id);
     for (const points of [0, 1, task.maxPoints]) {
       const result = core.formatFinalEvaluation_({ points, maxPoints: task.maxPoints,
         strengths: ['Ein Teil stimmt.'], missing: ['Die Kraftrichtung stimmt nicht. Richte die Kraft zum Kreismittelpunkt aus. Ein dritter Satz entfällt.'],
@@ -25,7 +25,7 @@ test('alle registrierten Physik-Aufgaben erhalten konkrete fachliche Hinweise im
         assert.deepEqual(result.missing, [], id);
         assert.equal(result.feedback, 'Sehr gut, alles richtig', id);
       } else {
-        assert.deepEqual(result.missing, ['Die Kraftrichtung stimmt nicht.', 'Richte die Kraft zum Kreismittelpunkt aus.'], id);
+        assert.deepEqual(result.missing, ['Die Kraftrichtung stimmt nicht.'], id);
         assert.equal(result.feedback, '', id);
       }
     }
@@ -44,7 +44,7 @@ test('sämtliche Physik-KI-Renderer einschließlich Wiederholungsquizzen verwend
   }
 });
 
-test('Physik-Feedback zeigt nur Punkte und zwei Sätze mit echten Indizes und Brüchen', async () => {
+test('Physik-Feedback zeigt nur Punkte und einen Hinweis mit echten Indizes und Brüchen', async () => {
   const { renderCompactEvaluation } = await import('../../faecher/informatik/klasse-11/1-Kuenstliche-Intelligenz/perzeptron/ui/semantic-answer.mjs');
   const { appendPhysicsText } = await import('../../faecher/physik/klasse-11/1-Kreisbewegungen/components/physics-notation.mjs');
   class Element {
@@ -63,10 +63,10 @@ test('Physik-Feedback zeigt nur Punkte und zwei Sätze mit echten Indizes und Br
   try {
     const box = new Element('div');
     renderCompactEvaluation(box, { points: 1, maxPoints: 4, status: 'teilweise korrekt',
-      strengths: ['Unnötiges Lob.'], missing: ['Prüfe die Richtung von {{F_Z}}. Nutze {{F|m}} mit der Einheit {{m/s²}}. Dritter Satz.'],
+      strengths: ['Unnötiges Lob.'], missing: ['Prüfe die Richtung von {{F_Z}} mithilfe von {{F|m}} mit der Einheit {{m/s²}}. Dritter Satz.'],
       feedback: 'Überflüssiger Absatz.' }, { appendText: appendPhysicsText });
     assert.equal(box.children[0].textContent, '1 von 4 Punkten');
-    assert.equal(box.children[1].children.length, 2);
+    assert.equal(box.children[1].children.length, 1);
     assert.doesNotMatch(box.textContent, /teilweise korrekt|Dritter Satz|Unnötiges Lob|Überflüssiger Absatz|\{\{/);
     assert.equal(descendants(box).find(node => node.tagName === 'sub').textContent, 'Z');
     assert.equal(descendants(box).filter(node => node.className === 'physics-fraction').length, 2);

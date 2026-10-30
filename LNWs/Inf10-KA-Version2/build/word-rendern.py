@@ -4,7 +4,7 @@ Windows has no bundled LibreOffice; native Word performs only the conversion
 step. All page rasterization and output handling remains in render_docx.py.
 """
 from pathlib import Path
-import importlib.util, os, sys, tempfile
+import argparse, importlib.util, os, sys, tempfile
 
 root = Path(__file__).resolve().parent.parent
 temp_root = (root / 'build/word-render-tmp').resolve()
@@ -17,8 +17,13 @@ os.environ['PATH'] = str(poppler) + os.pathsep + os.environ['PATH']
 spec = importlib.util.spec_from_file_location('render_docx', skill / 'render_docx.py')
 renderer = importlib.util.module_from_spec(spec)
 spec.loader.exec_module(renderer)
-pdf = root / 'build/word-loesungen-pruefung.pdf'
+parser = argparse.ArgumentParser()
+parser.add_argument('--docx', type=Path, default=root / 'Inf10-KA-Version2-loesungen.docx')
+parser.add_argument('--pdf', type=Path, default=root / 'build/word-loesungen-pruefung.pdf')
+parser.add_argument('--output', type=Path, default=root / 'build/word-render')
+args = parser.parse_args()
+pdf = args.pdf.resolve()
 assert pdf.is_file()
 renderer.convert_to_pdf = lambda *args, **kwargs: (str(pdf), 'Native Word PDF export')
-sys.argv = ['render_docx.py', str(root / 'Inf10-KA-Version2-loesungen.docx'), '--output_dir', str(root / 'build/word-render'), '--dpi', '120']
+sys.argv = ['render_docx.py', str(args.docx.resolve()), '--output_dir', str(args.output.resolve()), '--dpi', '120']
 renderer.main()

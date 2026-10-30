@@ -1,4 +1,4 @@
-import { evaluateSemanticAnswer, renderCompactEvaluation } from '../../klasse-11/1-Kuenstliche-Intelligenz/perzeptron/ui/semantic-answer.mjs?v=20261029-single-improvement';
+import { evaluateSemanticAnswer, renderCompactEvaluation } from '../../klasse-11/1-Kuenstliche-Intelligenz/perzeptron/ui/semantic-answer.mjs?v=20261029-criteria-v1';
 import { analyzeMultiTableSelect, classifyDescriptionResult, compareRelations, diagnoseMultiTableError, diagnoseSqlError, diagnoseSqlTask, explainSqlError, flexibleReferenceSql, isValidScriptServerUrl, normalizeRelation, parseDelimited, validateSelectStatement } from './sql-lab-core.mjs?v=20260929b';
 import { MENU_QUIZ, MENU_TABLES, MENU_TABLE_NAMES, MENU_TABLE_SCHEMAS, buildMenuCombinations, menuRelation } from './menue-kreuzprodukt-daten.mjs?v=20260929a';
 import { SONG_PLAYLIST_PAIRS, SONG_VERBUND_COLUMN_GROUPS, SONG_VERBUND_COLUMNS, SONG_VERBUND_QUIZ, SONG_VERBUND_SQL, SONG_VERBUND_TABLE_NAMES, SONG_VERBUND_TABLE_SCHEMAS, SONG_VERBUND_TABLES, SONG_VERBUND_VISIBLE_TEXT, evaluateFirstConnection, evaluateQuizQuestion, evaluateSecondConnection } from './song-verbund-daten.mjs?v=20260929a';
@@ -297,30 +297,32 @@ async function runTask(task, card, input = card.querySelector('.sql-input'), but
   input.disabled = false; button.disabled = false; save(); renderTaskFeedback(task, card);
 }
 function renderDescribeTask(card, task) {
-  const label = element('label', 'sql-label', 'Deine Erklärung'); label.htmlFor = `input-${task.id}`; const input = document.createElement('textarea'); input.id = label.htmlFor; input.className = 'description-input'; input.maxLength = 1200; input.value = state.answers[task.id] || ''; input.addEventListener('input', () => { state.answers[task.id] = input.value; delete state.server[task.id]; save(); renderServerFeedback(task, card); }); card.append(label, input); const actions = element('div', 'action-row'); const button = element('button', 'primary-button', 'Erklärung prüfen'); button.type = 'button'; button.addEventListener('click', () => submitDescription(task, input, card)); actions.append(button); card.append(actions); renderServerFeedback(task, card);
+  const label = element('label', 'sql-label', 'Deine Erklärung'); label.htmlFor = `input-${task.id}`; const input = document.createElement('textarea'); input.id = label.htmlFor; input.className = 'description-input'; input.maxLength = 1200; input.value = state.answers[task.id] || ''; input.addEventListener('input', () => { state.answers[task.id] = input.value; describeRequestVersions[task.id] = (describeRequestVersions[task.id] || 0) + 1; button.disabled = false; button.textContent = 'Erklärung erneut prüfen'; delete state.server[task.id]; save(); renderServerFeedback(task, card); }); card.append(label, input); const actions = element('div', 'action-row'); const button = element('button', 'primary-button', 'Erklärung prüfen'); button.type = 'button'; button.addEventListener('click', () => submitDescription(task, input, card)); actions.append(button); card.append(actions); renderServerFeedback(task, card);
 }
 function renderTaskFeedback(task, card) { card.querySelectorAll('.sql-feedback, .result-relation').forEach((node) => node.remove()); const feedback = state.feedback[task.id]; if (feedback) { const box = element('p', `feedback ${feedback.level} sql-feedback`, feedback.text); box.setAttribute('aria-live', 'polite'); card.append(box); } if (state.results[task.id]) card.append(renderRelation(state.results[task.id])); }
 export function renderRelation(relation, options = {}) { const columns = options.columns || relation.columns; const formatValue = options.formatValue || ((value) => value === null ? 'NULL' : String(value)); const shell = element('section', `table-shell result-relation${options.columnGroups?.length ? ' has-column-groups' : ''}`); shell.setAttribute('aria-label', options.label || 'Ergebnisrelation der SQL-Anfrage'); shell.setAttribute('aria-live', 'polite'); const caption = element('div', 'table-caption'); caption.append(element('strong', '', options.title || 'Ergebnisrelation'), element('span', '', relation.values.length > 100 ? `100 von ${relation.values.length} Zeilen angezeigt` : `${relation.values.length} Zeile(n)`)); shell.append(caption); if (!relation.values.length) { shell.append(element('p', 'empty-result', 'Die Abfrage ist gültig, liefert aber keine Datensätze.')); return shell; } const scroll = element('div', 'table-scroll'); scroll.tabIndex = 0; scroll.setAttribute('aria-label', 'Ergebnisrelation horizontal und vertikal scrollen'); const table = element('table', `data-table${columns.length <= 3 ? ' compact' : ''}`); const cap = element('caption', 'visually-hidden', options.caption || 'Ergebnis deiner SQL-Abfrage'); table.append(cap); const head = document.createElement('thead'); if (options.columnGroups?.length) { options.columnGroups.forEach(({ columns: groupColumns }) => { const group = document.createElement('colgroup'); group.span = groupColumns.length; table.append(group); }); const groupRow = document.createElement('tr'); options.columnGroups.forEach(({ table: tableName, columns: groupColumns }) => { const th = element('th', 'relation-group-heading', tableName); th.colSpan = groupColumns.length; th.scope = 'colgroup'; groupRow.append(th); }); head.append(groupRow); } const row = document.createElement('tr'); columns.forEach((column) => { const th = element('th', '', column); th.scope = 'col'; row.append(th); }); head.append(row); const body = document.createElement('tbody'); relation.values.slice(0, 100).forEach((values) => { const tr = document.createElement('tr'); values.forEach((value, index) => tr.append(element('td', '', formatValue(value, index)))); body.append(tr); }); table.append(head, body); scroll.append(table); shell.append(scroll); return shell; }
 
+const describeRequestVersions = Object.create(null);
 async function submitDescription(task, input, card) {
   const button = card.querySelector('.primary-button');
   if (button.disabled) return;
   const answer = input.value.trim();
+  const requestVersion = describeRequestVersions[task.id] = (describeRequestVersions[task.id] || 0) + 1;
   if (answer.length < 10) { state.server[task.id] = { level: 'error', text: 'Bitte formuliere eine etwas ausführlichere Antwort.' }; save(); renderServerFeedback(task, card); input.focus(); return; }
   if (!isValidScriptServerUrl(SCRIPT_SERVER_URL)) { state.server[task.id] = { level: 'error', text: 'Der Auswertungsserver ist nicht korrekt eingerichtet.' }; save(); renderServerFeedback(task, card); return; }
-  button.disabled = true; input.disabled = true; button.textContent = 'Erklärung wird geprüft …';
+  button.disabled = true; button.textContent = 'Erklärung wird geprüft …';
   state.server[task.id] = { level: 'loading', text: 'Deine Erklärung wird ausgewertet.' }; renderServerFeedback(task, card);
   try {
     const result = await evaluateSemanticAnswer({ serverUrl: SCRIPT_SERVER_URL, taskId: task.serverTaskId, answer });
-    state.server[task.id] = classifyDescriptionResult(result);
-  } catch (error) { state.server[task.id] = { level: 'error', text: error.message || 'Die Auswertung konnte nicht abgeschlossen werden.' }; }
-  finally { input.disabled = false; button.disabled = false; button.textContent = 'Erklärung erneut prüfen'; save(); renderServerFeedback(task, card); }
+    if (requestVersion === describeRequestVersions[task.id] && input.value.trim() === answer) state.server[task.id] = classifyDescriptionResult(result);
+  } catch (error) { if (requestVersion === describeRequestVersions[task.id] && input.value.trim() === answer) state.server[task.id] = { level: 'error', text: error.message || 'Die Auswertung konnte nicht abgeschlossen werden.' }; }
+  finally { if (requestVersion === describeRequestVersions[task.id]) { button.disabled = false; button.textContent = 'Erklärung erneut prüfen'; save(); renderServerFeedback(task, card); } }
 }
 export function renderServerFeedback(task, card, providedFeedback = state.server[task.id]) {
   card.querySelector('.server-feedback')?.remove(); const feedback = providedFeedback; if (!feedback) return;
   const level = Number.isFinite(feedback.points) && feedback.maxPoints > 0 ? feedback.points === feedback.maxPoints ? 'success' : feedback.points > 0 ? 'partial' : 'error' : feedback.level; const box = element('section', `result server-feedback${level === 'loading' ? '' : ` ${level}`}`); box.setAttribute('aria-live', 'polite');
   if (Number.isFinite(feedback.points) && feedback.maxPoints > 0) {
-    renderCompactEvaluation(box, { ...feedback, feedback: feedback.text }, { maxHints: task.maxFeedbackHints === 1 ? 1 : 2 });
+    renderCompactEvaluation(box, { ...feedback, feedback: feedback.text }, { maxHints: 1 });
   } else box.append(element('p', '', feedback.text));
   card.append(box);
 }

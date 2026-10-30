@@ -12,7 +12,8 @@ const scriptStart = transformed.indexOf('<script>', transformed.indexOf('</main>
 const script = transformed.slice(scriptStart, transformed.indexOf('</script>', scriptStart));
 
 function element(ownerDocument) {
-  return { ownerDocument, value: '', disabled: false, hidden: true, className: '', children: [],
+  return { ownerDocument, value: '', disabled: false, hidden: true, className: '', children: [], listeners: {},
+    addEventListener(type, handler) { this.listeners[type] = handler; },
     set textContent(value) { this.text = String(value); this.children = []; },
     get textContent() { return this.text || ''; },
     appendChild(child) { this.children.push(child); }, append(...items) { this.children.push(...items); },
@@ -37,7 +38,7 @@ function harness(fetchImpl) {
 function resultFor(options, extra = {}) {
   const request = JSON.parse(options.body);
   return { type: 'GEMINI_EVALUATION_RESULT', requestId: request.requestId,
-    result: { ok: true, points: 6, maxPoints: 6, status: 'korrekt', strengths: ['Vollständig'],
+    result: { ok: true, points: 5, maxPoints: 5, status: 'korrekt', strengths: ['Vollständig'],
       missing: [], feedback: 'Die Erklärung passt.', ...extra } };
 }
 
@@ -67,7 +68,7 @@ test('3000 Zeichen werden im POST-Body übertragen; vorhandene Anzeige verarbeit
     const body = JSON.parse(call.options.body);
     assert.equal(body.taskId, taskId);
     assert.equal(body.answer.length, 3000);
-    assert.equal(h.elements['result-' + taskId].children[0].textContent, '6 von 6 Punkten – Sehr gut, alles richtig');
+    assert.equal(h.elements['result-' + taskId].children[0].textContent, '5 von 5 Punkten – Sehr gut, alles richtig');
     assert.equal(h.elements['button-' + taskId].disabled, false);
     assert.equal(h.elements['answer-' + taskId].disabled, false);
   }
@@ -88,6 +89,22 @@ test('Doppelklick erzeugt keine zweite Anfrage; beide Aufgaben können getrennt 
   await Promise.all([first, second]);
   assert.equal(h.elements['button-b'].disabled, false);
   assert.equal(h.elements['button-c'].disabled, false);
+});
+
+test('Textänderung entfernt Rückmeldung und verwirft verspätete Bewertung der vorherigen Antwort', async () => {
+  let finish;
+  const h = harness((url, options) => new Promise(resolve => { finish = () => resolve({ ok: true, json: async () => resultFor(options) }); }));
+  h.elements['answer-b'].value = 'Eine ausreichend lange erste Antwort.';
+  const running = h.context.submitAnswer('b');
+  await Promise.resolve();
+  h.elements['answer-b'].value = 'Eine inzwischen überarbeitete Antwort.';
+  h.elements['answer-b'].listeners.input();
+  assert.equal(h.elements['result-b'].hidden, true);
+  finish();
+  await running;
+  assert.equal(h.elements['result-b'].hidden, true);
+  assert.equal(h.elements['result-b'].children.length, 0);
+  assert.equal(h.elements['button-b'].disabled, false);
 });
 
 test('Ungültige Eingabe führt vor dem Versand zu einer Rückmeldung', async () => {

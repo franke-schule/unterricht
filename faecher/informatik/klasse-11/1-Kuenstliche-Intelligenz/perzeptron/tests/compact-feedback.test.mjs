@@ -41,10 +41,16 @@ test('Teilpunkte zeigen nur konkrete Stichpunkte, keine Stärken und keine doppe
   assert.equal(container.hidden, false);
 });
 
-test('höchstens zwei unterschiedliche Hinweise, leere und doppelte Einträge entfallen', () => {
+test('expliziter Zweihinweis-Legacyfall entfernt leere und doppelte Einträge', () => {
   const container = box();
-  renderCompactEvaluation(container, { ...partial, missing: ['', '- Korrigiere den Aufruf.', 'Korrigiere den Aufruf.', 'Ergänze die Ausgabe.', 'Dritter Hinweis.'] });
+  renderCompactEvaluation(container, { ...partial, missing: ['', '- Korrigiere den Aufruf.', 'Korrigiere den Aufruf.', 'Ergänze die Ausgabe.', 'Dritter Hinweis.'] }, { maxHints: 2 });
   assert.deepEqual(container.children[1].children.map(item => item.textContent), ['Korrigiere den Aufruf.', 'Ergänze die Ausgabe.']);
+});
+
+test('gemeinsamer Standard zeigt genau einen nächsten Hinweis', () => {
+  const container = box();
+  renderCompactEvaluation(container, { ...partial, missing: ['Erster Schritt.', 'Zweiter Schritt.'] });
+  assert.deepEqual(container.children[1].children.map(item => item.textContent), ['Erster Schritt.']);
 });
 
 test('ohne missing wird individueller Feedbacktext einmal als Stichpunkt verwendet', () => {

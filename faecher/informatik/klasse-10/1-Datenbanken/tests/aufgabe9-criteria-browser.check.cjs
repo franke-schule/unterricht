@@ -15,7 +15,7 @@ async function main() {
   await new Promise((resolve, reject) => { server.once('error', reject); server.listen(0, '127.0.0.1', resolve); });
   const origin = 'http://127.0.0.1:' + server.address().port;
   let browser;
-  const errors = []; let calls = 0; let model; let legacyResponse = false;
+  const errors = []; let calls = 0; let model; let legacyResponse = false; let technicalError = false;
   const handle = createHandler({ rateLimit: Infinity, env: {
     AI_API_KEY: 'mock', AI_PROJECT_ID: '11111111-1111-1111-1111-111111111111', AI_MODEL: 'gpt-oss-120b', AI_EVALUATION_ENABLED: 'true'
   }, fetchImpl: async () => ({ ok: true, status: 200, text: async () => JSON.stringify({ choices: [{ finish_reason: 'stop', message: { content: JSON.stringify(model) } }] }) }) });
@@ -26,6 +26,13 @@ async function main() {
       const request = route.request(); const url = request.url();
       if (url === 'https://unterrichtkiichezbn4-ki-auswertung.functions.fnc.fr-par.scw.cloud/') {
         calls++;
+        if (technicalError) {
+          technicalError = false;
+          return route.fulfill({ status: 502, contentType: 'application/json', headers: { 'Access-Control-Allow-Origin': origin }, body: JSON.stringify({
+            type: 'GEMINI_EVALUATION_RESULT', requestId: request.postDataJSON().requestId,
+            result: { ok: false, message: 'Das Modell hat keine gültige Bewertung geliefert. Bitte versuche es erneut.' }
+          }) });
+        }
         if (legacyResponse) {
           legacyResponse = false;
           return route.fulfill({ status: 200, contentType: 'application/json', headers: { 'Access-Control-Allow-Origin': origin }, body: JSON.stringify({
@@ -60,6 +67,13 @@ async function main() {
     await page.locator('#task-P2 .primary-button').first().click();
     await page.waitForFunction(() => document.querySelector('#task-P2 .server-feedback.error'));
     assert.doesNotMatch(await page.locator('#task-P2 .server-feedback').innerText(), /4 von 4/);
+    assert.match(await page.locator('#task-P2 .server-feedback').innerText(), /unerwartetes Format/);
+    technicalError = true;
+    await page.locator('#task-P2 .primary-button').first().click();
+    await page.waitForFunction(() => document.querySelector('#task-P2 .server-feedback')?.textContent.includes('Das Modell hat keine gültige Bewertung geliefert.'));
+    assert.equal(await page.locator('#input-P2').inputValue(), facts.P2.slice(0, 4).join(' '));
+    const failed = await page.evaluate(() => JSON.parse(localStorage.getItem('inf10-insta-verbund-aufgabe9-v1')));
+    assert.equal(failed.completed.P2, undefined);
     for (const [id, quotes] of Object.entries(facts)) {
       const task = core.TASKS['inf10-db-a9-' + id.toLowerCase()];
       await page.click('#tab-' + (Number(id.slice(1)) <= 6 ? 'practice' : 'count'));
@@ -86,7 +100,7 @@ async function main() {
         }
       }
     }
-    assert.equal(calls, 25);
+    assert.equal(calls, 26);
     // Eine frühere korrekte Bearbeitung darf nach einer Textänderung nicht weiter freischalten.
     await page.fill('#input-P11', facts.P11[0]);
     assert.equal(await page.locator('#task-P11 .server-feedback').count(), 0);
@@ -110,7 +124,7 @@ async function main() {
     assert.equal(restored.completed.P2, facts.P2.join(' '));
     assert.equal(restored.assessmentVersions.P2, '20261029-ordering');
     assert.deepEqual(errors, []);
-    console.log('A9: 26 simulierte Serverprüfungen; ein nächster Schritt, aktuelle Punkte, Bearbeitung/Speicherung und Smartphone-Anzeige erfolgreich.');
+    console.log('A9: 27 simulierte Serverprüfungen; Fehlerursachen, ein nächster Schritt, aktuelle Punkte, Bearbeitung/Speicherung und Smartphone-Anzeige erfolgreich.');
   } finally { await browser?.close(); await new Promise(resolve => server.close(resolve)); }
 }
 main().catch(error => { console.error(error); process.exitCode = 1; });

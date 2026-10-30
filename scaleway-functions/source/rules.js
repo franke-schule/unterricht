@@ -7,6 +7,10 @@ function applyRuleBasedMinimum_(
   task,
   answer
 ) {
+  if (task.feedbackCriteria && evaluation.criteria) {
+    return evaluateCriterionFeedback_(applyTaskCriterionRules_(evaluation, task, answer), task, answer);
+  }
+
   if (task === TASKS['ph11-kettenkarussell-winkelgeschwindigkeit']) {
     const changes = evaluateKettenkarussellChangesByRules_(answer, task);
     if (changes) return changes;
@@ -16,10 +20,6 @@ function applyRuleBasedMinimum_(
   if (task === TASKS['11-6-0-4a-code'] || task === TASKS['11-6-0-5a-code']) {
     const getterEvaluation = evaluateDogGetterByRules_(answer, task);
     if (getterEvaluation) return getterEvaluation;
-  }
-
-  if (task.feedbackCriteria && evaluation.criteria) {
-    return evaluateCriterionFeedback_(evaluation, task, answer);
   }
 
   let ruleBasedEvaluation = null;
@@ -92,6 +92,34 @@ function applyRuleBasedMinimum_(
   }
 
   return evaluation;
+}
+
+function applyTaskCriterionRules_(evaluation, task, answer) {
+  const criteria = { ...evaluation.criteria };
+  const mark = (correct, indexes) => {
+    if (!Array.isArray(correct) || correct.length !== indexes.length) return;
+    correct.forEach((isCorrect, index) => {
+      criteria[task.feedbackCriteria[indexes[index]].id] = {
+        status: isCorrect ? 'correct' : 'missing',
+        evidence: []
+      };
+    });
+  };
+  const markAll = () => mark(task.feedbackCriteria.map(() => true), task.feedbackCriteria.map((_, index) => index));
+
+  if (task === TASKS['ph11-kettenkarussell-winkelgeschwindigkeit']) {
+    const result = evaluateKettenkarussellChangesByRules_(answer, task);
+    if (result?.criterionCorrect) mark(result.criterionCorrect, result.criterionCorrect.map((_, index) => index));
+  }
+  if (task === TASKS['11-6-0-4a-code'] || task === TASKS['11-6-0-5a-code']) {
+    const result = evaluateDogGetterByRules_(answer, task);
+    if (result?.criterionCorrect) mark(result.criterionCorrect, result.criterionCorrect.map((_, index) => index));
+  }
+  if (task === TASKS['inf9-db3-beschreibe-where'] && evaluateInf9WhereDescriptionByRules_(answer, task)) markAll();
+  if (task === TASKS['11-6-einfach-summe'] && evaluateTrainingSumByRules_(answer, task)) markAll();
+  if (task === TASKS['11-6-einfach-ausgabe'] && evaluateTrainingOutputByRules_(answer, task)) markAll();
+  if (task === TASKS['11-6-einfach-anpassung'] && evaluateTrainingUpdatesByRules_(answer, task)) markAll();
+  return { ...evaluation, criteria };
 }
 
 
@@ -308,7 +336,8 @@ function evaluateKettenkarussellChangesByRules_(answer, task) {
     status: points === task.maxPoints ? task.statusLabels.correct : task.statusLabels.partial,
     strengths: [],
     missing: points === 5 ? [] : ['Die Veränderung der Seilkraft F_S fehlt; vergleiche die Länge ihres Kraftpfeils bei größerer Winkelgeschwindigkeit.'],
-    feedback: points === 5 ? 'Sehr gut, alles richtig' : ''
+    feedback: points === 5 ? 'Sehr gut, alles richtig' : '',
+    criterionCorrect: [true, true, true, increased('rope'), massConstant && weightConstant]
   };
 }
 
@@ -370,6 +399,7 @@ function evaluateDogGetterByRules_(answer, task) {
   let voidInPrint = false;
   let voidCall = null;
   let wrongGetterArity = false;
+  const wrongGetterReceivers = new Set();
   let peterSetterAfterStarter = false;
   let setterSevenAfterStarter = false;
   let peterValueSeven = false;
@@ -390,6 +420,7 @@ function evaluateDogGetterByRules_(answer, task) {
     if (receiver && !declared.has(receiver[1])) return null;
     if (/^(?:println \( )?(?:petersHund|inasHund) \. gibAlter \( (?:- )?\d+ \)(?: \))?$/.test(text)) {
       wrongGetterArity = true;
+      if (receiver) wrongGetterReceivers.add(receiver[1]);
       continue;
     }
     if (/^(?:petersHund|inasHund) \. (?:zeigeDaten|belle|gibAlter) \( \)$/.test(text)) {
@@ -432,11 +463,20 @@ function evaluateDogGetterByRules_(answer, task) {
   }
 
   if (wrongGetterArity) {
+    // Ein Typfehler am Getter entwertet nicht die unabhängigen Setter oder
+    // einen gültigen Getter am anderen Objekt.
+    const criterionCorrect = task === TASKS['11-6-0-5a-code']
+      ? [peterSetterAfterStarter, setterSevenAfterStarter,
+        peterValueSeven && peterPrintedAfterSeven && !wrongGetterReceivers.has('petersHund'),
+        peterValueSeven && inaPrintedAfterSeven && !inaChangedBeforeBoth && !wrongGetterReceivers.has('inasHund')]
+      : [getter, printed, false];
+    const points = criterionCorrect.filter(Boolean).length;
     return {
-      ok: true, points: 0, maxPoints: task.maxPoints,
-      status: task.statusLabels.incorrect, strengths: [],
+      ok: true, points, maxPoints: task.maxPoints,
+      status: points === task.maxPoints ? task.statusLabels.correct : points ? task.statusLabels.partial : task.statusLabels.incorrect, strengths: [],
       missing: ['Die Methode gibAlter() hat keinen Eingabeparameter.'],
-      feedback: 'Die Methode gibAlter() hat keinen Eingabeparameter.'
+      feedback: 'Die Methode gibAlter() hat keinen Eingabeparameter.',
+      criterionCorrect
     };
   }
 
@@ -463,7 +503,13 @@ function evaluateDogGetterByRules_(answer, task) {
       ok: true, points, maxPoints: task.maxPoints,
       status: points === task.maxPoints ? task.statusLabels.correct : points ? task.statusLabels.partial : task.statusLabels.incorrect,
       strengths, missing: missing.slice(0, 2),
-      feedback: missing.slice(0, 2).join(' ')
+      feedback: missing.slice(0, 2).join(' '),
+      criterionCorrect: [
+        peterSetterAfterStarter,
+        setterSevenAfterStarter,
+        peterValueSeven && peterPrintedAfterSeven && !voidOutput,
+        peterValueSeven && inaPrintedAfterSeven && !inaChangedBeforeBoth && !voidOutput
+      ]
     };
   }
 
@@ -486,7 +532,8 @@ function evaluateDogGetterByRules_(answer, task) {
     strengths, missing,
     feedback: points === task.maxPoints
       ? 'Korrekt. Du gibst den Rückgabewert von petersHund.gibAlter() mit println(...) aus. Vorherige Aufrufe von zeigeDaten() oder setzeAlter(...) sind erlaubt; der Getter muss nicht direkt nach der Objekterzeugung stehen.'
-      : missing.join(' ')
+      : missing.join(' '),
+    criterionCorrect: [getter, printed, getter && !voidOutput]
   };
 }
 
