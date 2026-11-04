@@ -5,7 +5,7 @@ const fs = require('node:fs');
 const path = require('node:path');
 const vm = require('node:vm');
 const core = require('../evaluation-core');
-const { createHandler } = require('../handler');
+const { createHandler } = require('./fixtures/authorized-handler');
 const { cases } = require('./fixtures/task6-2-training-cases');
 
 const html = fs.readFileSync(path.resolve(__dirname,

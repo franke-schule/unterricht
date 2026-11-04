@@ -83,7 +83,7 @@ Die vollständige [Ausgangsliste der 79 offenen Aufgaben](docs/ki-feedback-offen
 | `11-7-1` | Klasse 11 Aufgabe 7: KNN am Schulshirt-Beispiel erläutern | 4 |
 | `11-8-1` | Klasse 11 Aufgabe 8: Wahl von k mit Validierungsdaten begründen | 3 |
 | `inf11-cod-a1-ascii-unicode` | Informatik Klasse 11 – Codierung Aufgabe 1: ASCII und Unicode vergleichen | 5 |
-| `11-5-1` | Klasse 11 Aufgabe 5.2: Lernen eines Perzeptrons erklären | 4 |
+| `11-5-1` | Klasse 11 Aufgabe 5.2: Lernen eines Perzeptrons erklären | 3 |
 | `ph11-kreisbewegungen-bewegung-diagramm-beschreibung` | Physik Klasse 11 – Aufgabe 6a: Bewegung in Diagrammen beschreiben | 5 |
 | `ph11-kreisbewegungen-kraeftegleichgewicht-beschreibung` | Physik Klasse 11 – Aufgabe 5: Kräfte vergleichen und begründen | 4 |
 | `ph11-wdh2-quiz-crashtest-beschreibung` | Physik Klasse 11 – Test zu Wiederholung 2: Kräfte beim Crashtest beschreiben | 4 |

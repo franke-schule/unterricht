@@ -7,7 +7,7 @@ const path = require('node:path');
 const vm = require('node:vm');
 const core = require('../evaluation-core');
 const { extractFunction } = require('../migrate-website');
-const { createHandler } = require('../handler');
+const { createHandler } = require('./fixtures/authorized-handler');
 
 const repo = path.resolve(__dirname, '../..');
 const clientPath = path.join(repo, 'faecher/informatik/klasse-11/1-Kuenstliche-Intelligenz/perzeptron/ui/task6-0.mjs');
@@ -402,7 +402,7 @@ test('HTML-Startprojekt behält die sieben Sollzeilen und verwendet println', ()
 
 test('vorhandener evaluateCodeAnswer-Transport setzt Grenzen, POST-Vertrag und Antwortformat durch', async () => {
   const sourcePath = path.join(repo, 'faecher/informatik/klasse-11/1-Kuenstliche-Intelligenz/perzeptron/ui/semantic-answer.mjs');
-  const source = fs.readFileSync(sourcePath, 'utf8').replace(/^export /gm, '');
+  const source = fs.readFileSync(sourcePath, 'utf8').replace(/^import .*ai-access.*;\r?\n/m, '').replace(/^export /gm, '');
   let request;
   const context = vm.createContext({
     URL, AbortController, crypto: require('node:crypto').webcrypto,
@@ -415,6 +415,7 @@ test('vorhandener evaluateCodeAnswer-Transport setzt Grenzen, POST-Vertrag und A
       } }) };
     }
   });
+  Object.assign(context, require('./fixtures/authorized-handler').clientGlobals);
   vm.runInContext(source + '\nglobalThis.testEvaluateCodeAnswer = evaluateCodeAnswer;', context);
   const code = '// ===== Datei: Hauptprogramm.java =====\nprintln(petersHund.gibAlter());\n// ===== Datei: Hund.java =====\npublic class Hund {}';
   const result = await context.testEvaluateCodeAnswer({ taskId: taskIds[0][0], code, expectedMaxPoints: 3 });

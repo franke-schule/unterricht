@@ -94,7 +94,7 @@ body.sql9-page.sql-page:not(.menu-cross-product-page) .step-tabs { grid-template
 }
 
 @media (max-width: 860px) {
-  body.sql9-page.sql-page:not(.menu-cross-product-page) .step-tabs { grid-template-columns: repeat(7, 170px); }
+  body.sql9-page.sql-page:not(.menu-cross-product-page) .step-tabs { grid-template-columns: repeat(2, minmax(0, 1fr)); }
 }
 
 @media (max-width: 650px) {

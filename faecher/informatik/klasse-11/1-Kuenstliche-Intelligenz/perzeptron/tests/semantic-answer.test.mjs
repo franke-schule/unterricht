@@ -1,5 +1,7 @@
 import assert from 'node:assert/strict';
-import { evaluateSemanticAnswer, evaluateCodeAnswer, SCW_FUNCTION_URL } from '../ui/semantic-answer.mjs';
+import { evaluateSemanticAnswer as evaluateText, evaluateCodeAnswer as evaluateCode, SCW_FUNCTION_URL } from '../ui/semantic-answer.mjs';
+const evaluateSemanticAnswer = parameters => evaluateText({ ...parameters, accessPassword: 'Lokaler-Test' });
+const evaluateCodeAnswer = parameters => evaluateCode({ ...parameters, accessPassword: 'Lokaler-Test' });
 const originalFetch = globalThis.fetch;
 try {
   let requests = 0;
@@ -9,7 +11,10 @@ try {
     assert.equal(new URL(url).search, '');
     assert.equal(options.method, 'POST');
     assert.equal(options.credentials, 'omit');
+    assert.equal(options.headers['X-AI-Password'], Buffer.from('Lokaler-Test').toString('base64'));
     const request = JSON.parse(options.body);
+    assert.equal(request.accessPassword, undefined);
+    assert.equal(request.password, undefined);
     const type = request.requestType === 'code' ? 'GEMINI_CODE_EVALUATION_RESULT' : 'GEMINI_EVALUATION_RESULT';
     return { ok: true, json: async () => ({ type, requestId: request.requestId,
       result: { ok: true, points: 2, maxPoints: 3, status: 'teilweise korrekt', strengths: [], missing: ['Ein Aspekt fehlt.'], feedback: 'Ergänze den Aspekt.' } }) };

@@ -3,7 +3,7 @@ const test = require('node:test');
 const assert = require('node:assert/strict');
 const core = require('../evaluation-core');
 const { TASKS } = core;
-const { createHandler } = require('../handler');
+const { createHandler } = require('./fixtures/authorized-handler');
 
 const taskId = 'ph11-kettenkarussell-winkelgeschwindigkeit';
 const fullAnswer = 'Bei größerem omega wird die Zentripetalkraft größer, auch der Winkel wird größer und der Radius r vergrößert sich ebenfalls. Die Seilkraft wird auch größer, aber die Gewichtskraft bleibt gleich, weil Winkelgeschwindigkeit keine Auswirkung auf die Masse des Körpers hat also somit auch keine auf die Gewichtskraft.';

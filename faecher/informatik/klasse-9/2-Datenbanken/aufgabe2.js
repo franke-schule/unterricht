@@ -1,13 +1,14 @@
-// Aufgabe 2 – Erste SQL-Abfragen (Informatik 9).
+import { bindSolutionCodePersistence, readSplitProgress } from './sql9-progress-migration.mjs';
+// Aufgabe 2 – Erste SQL-Abfragen: SELECT und ORDER BY (Informatik 9).
 // Seitengerüst nach klasse-9/2-Datenbanken/aufgabe1.js, SQL-Labor nach klasse-10/1-Datenbanken/sql-lab.js.
 import { classifyDescriptionResult, compareRelations, isValidScriptServerUrl, missingTextQuote, normalizeRelation, parseDelimited, sqlTokens, validateSelectStatement } from '../../klasse-10/1-Datenbanken/sql-lab-core.mjs?v=20260929b';
 import { evaluateSemanticAnswer, renderCompactEvaluation } from '../../klasse-11/1-Kuenstliche-Intelligenz/perzeptron/ui/semantic-answer.mjs?v=20261029-criteria-v1';
 import { appendSolutionDownloadFromTemplate, enableTabKeyboardNavigation, focusTabPanelStart, renderTabFlowNavigation, syncTabSemantics } from '../../klasse-10/1-Datenbanken/tab-navigation.mjs?v=20260906a';
 
 // Speicherschlüssel trotz Umbenennung beibehalten, damit bestehende Lernstände erhalten bleiben.
-const STORAGE_KEY = 'informatik9-datenbanken-aufgabe3-v1';
+const STORAGE_KEY = 'informatik9-datenbanken-aufgabe2-select-order-v2';
 const LEGACY_STORAGE_KEY = 'informatik9-datenbanken-aufgabe2-v1';
-const MIGRATION_MARKER = 'informatik9-datenbanken-aufgabe3-migration-v1';
+const MIGRATION_MARKER = `${STORAGE_KEY}-migration-done`;
 const NEUTRAL_SQL_PLACEHOLDER = 'SELECT ...\nFROM ...';
 const SCRIPT_SERVER_URL = 'https://unterrichtkiichezbn4-ki-auswertung.functions.fnc.fr-par.scw.cloud/';
 // nach USERS_TABLE_SCHEMAS in klasse-10/1-Datenbanken/sql-lab.js, wortgleich
@@ -27,9 +28,7 @@ const TABS = [
   ['intro', 'Einführung: SELECT und FROM', 'Entdecken', 'Wie funktioniert eine Abfrage?'],
   ['projection', 'Spalten auswählen', 'Anwenden', 'Spalten auswählen'],
   ['orderBy', 'Sortieren mit ORDER BY', 'Verstehen und anwenden', 'Sortieren mit ORDER BY'],
-  ['distinct', 'Doppelte Werte vermeiden: DISTINCT', 'Verstehen und anwenden', 'Doppelte Werte vermeiden: DISTINCT'],
-  ['limit', 'Zeilen begrenzen: LIMIT', 'Verstehen und anwenden', 'Zeilen begrenzen: LIMIT'],
-  ['fast', 'Für die Schnellen', 'Übertragen', 'Für die Schnellen: alles kombinieren'],
+  ['fast', 'Für die Schnellen', 'Übertragen', 'Für die Schnellen'],
   ['quiz', 'Abschlussquiz', 'Sichern', 'Abschlussquiz und Zusammenfassung']
 ];
 const FEEDBACK_LEVELS = ['success', 'partial', 'hint', 'error'];
@@ -64,34 +63,6 @@ const DESCRIPTION_TASKS = [
       korrekt: 'Korrekt: Du hast die ausgewählten Daten und die absteigende Sortierung nach Größe richtig beschrieben.',
       partial: 'Teilweise korrekt: Die Daten oder die Sortierung stimmen bereits. Prüfe die Sortierspalte und DESC.',
       incorrect: 'Noch nicht korrekt: Lies SELECT, FROM und ORDER BY einzeln und achte auf DESC.'
-    }
-  },
-  {
-    id: 'd-distinct', tab: 'distinct', tabLabel: 'Reiter 4', serverTaskId: 'inf9-db2-beschreibe-distinct',
-    title: 'Einstieg – Anweisung beschreiben', prompt: '**Beschreibe**, welche Daten die Anweisung aus `users` ausgibt und was bei Dopplungen geschieht.',
-    sql: 'SELECT DISTINCT city\nFROM users',
-    hints: ['city ist die Spalte mit dem Wohnort.', 'Vergleiche in Gedanken zwei Mitglieder aus derselben Stadt: Wie oft soll diese Stadt im Ergebnis stehen?', 'DISTINCT entfernt gleiche Werte aus der Ergebnisrelation; die Tabelle users bleibt erhalten.'],
-    aspects: ['Tabelle users als Datenquelle', 'Wohnorte/city als ausgewählte Daten', 'Jeder verschiedene Wohnort nur einmal in der Ergebnisrelation'],
-    model: 'Die Abfrage zeigt aus users jeden unterschiedlichen Wohnort genau einmal. Doppelte Wohnorte fehlen nur in der Ergebnisrelation; users wird nicht verändert.',
-    anchor: 'Prüfe die Datenquelle, die ausgewählte Spalte und die Wirkung von DISTINCT.',
-    fallbacks: {
-      korrekt: 'Korrekt: Du hast erklärt, dass Wohnorte aus users ausgegeben werden und jeder Wohnort nur einmal erscheint.',
-      partial: 'Teilweise korrekt: Prüfe die Datenquelle, die ausgewählte Spalte und was DISTINCT bei gleichen Wohnorten bewirkt.',
-      incorrect: 'Noch nicht korrekt: Vergleiche zwei Mitglieder aus demselben Wohnort und unterscheide Ergebnis und Tabelle.'
-    }
-  },
-  {
-    id: 'd-limit', tab: 'limit', tabLabel: 'Reiter 5', serverTaskId: 'inf9-db2-beschreibe-limit',
-    title: 'Einstieg – Anweisung beschreiben', prompt: '**Beschreibe** in eigenen Worten, was diese Anweisung auswählt und wodurch die Reihenfolge entsteht.',
-    sql: 'SELECT username\nFROM users\nORDER BY username\nLIMIT 3',
-    hints: ['Welche Spalte steht hinter SELECT?', 'ORDER BY username ordnet die Benutzernamen; ohne Richtungsangabe gilt aufsteigend.', 'LIMIT 3 lässt nach dem Sortieren nur die ersten drei Ergebniszeilen stehen.'],
-    aspects: ['username aus users als einzige Ausgabespalte', 'Alphabetisch/aufsteigend nach username sortiert', 'Danach nur die ersten drei Zeilen/Benutzernamen'],
-    model: 'Die Abfrage ordnet die Benutzernamen aus users alphabetisch und zeigt davon die ersten drei.',
-    anchor: 'Überlege, ob zuerst sortiert oder zuerst begrenzt wird.',
-    fallbacks: {
-      korrekt: 'Korrekt: Du hast die alphabetische Sortierung und die anschließende Begrenzung auf drei Benutzernamen richtig beschrieben.',
-      partial: 'Teilweise korrekt: Prüfe noch, welche Spalte ausgegeben wird und ob zuerst sortiert oder begrenzt wird.',
-      incorrect: 'Noch nicht korrekt: Lies SELECT, ORDER BY und LIMIT nacheinander und beschreibe die Wirkung jeder Klausel.'
     }
   }
 ];
@@ -266,69 +237,6 @@ const TASKS = [
     ]
   }),
   task({
-    id: 't7', number: 7, tab: 'distinct', prompt: 'Aus welchen unterschiedlichen Wohnorten stammen die Mitglieder? **Gib** jeden Wohnort nur einmal aus.',
-    select: 'DISTINCT city', tail: 'FROM users', requireDistinct: true,
-    texts: {
-      ok: 'Korrekt: Die Mitglieder stammen aus 46 verschiedenen Wohnorten. Die 47. Zeile NULL ist kein Ort: Beim Konto admin ist kein Wohnort eingetragen.',
-      cols: TEXT_CITY_COLUMNS,
-      noDistinct: (c) => `Teilweise korrekt: Die Spalte stimmt. Deine Ergebnisrelation hat aber ${c.n} Zeilen, weil viele Wohnorte mehrfach vorkommen. Gesucht ist jeder Wohnort nur einmal – welches Schlüsselwort entfernt Dopplungen?`
-    },
-    hints: [
-      'Der Wohnort steht in der Spalte city.',
-      'Jeder Wohnort soll nur einmal vorkommen. Das Schlüsselwort dafür steht direkt hinter SELECT.',
-      { sql: 'SELECT DISTINCT …\nFROM users', after: 'Ergänze die Spalte.' }
-    ]
-  }),
-  task({
-    id: 't8', number: 8, tab: 'distinct', prompt: '**Korrigiere** die gezeigte Anweisung, damit jedes Land nur einmal erscheint. **Gib** die vollständige korrigierte Anweisung neu ein.',
-    correctionSql: 'SELECT name, country\nFROM users',
-    select: 'DISTINCT country', tail: 'FROM users', requireDistinct: true,
-    texts: {
-      ok: 'Korrekt: DISTINCT country zeigt jedes Land nur einmal; die Tabelle users bleibt unverändert.',
-      cols: (c) => (c.cols.includes('name')
-        ? 'Noch nicht korrekt: Mit name erhältst du wieder eine Zeile pro Mitglied, weil fast jeder Name anders ist. Gesucht ist nur die Spalte mit den Ländern.'
-        : `Noch nicht korrekt: Gesucht ist nur die Spalte mit den Ländern. Deine Ergebnisrelation enthält ${c.list}.`),
-      noDistinct: () => 'Teilweise korrekt: Du gibst Länder aus, aber gleiche Länder erscheinen noch mehrfach. Prüfe die Spaltenauswahl und DISTINCT.'
-    },
-    hints: [
-      'Es sollen Länder ausgegeben werden, keine Namen von Mitgliedern.',
-      'Wenn name mit ausgewählt wird, können die Länder mehrfach im Ergebnis stehen.',
-      'Wähle nur country und setze DISTINCT direkt hinter SELECT.'
-    ]
-  }),
-  task({
-    id: 't9', number: 9, tab: 'limit', prompt: '**Zeige** nur 3 Mitglieder an.',
-    select: '*', tail: 'FROM users\nLIMIT 3', projection: 'anyThree', limit: 3,
-    extra: ['Jede Abfrage, die genau drei Datensätze aus users ausgibt, ist richtig.'],
-    texts: {
-      ok: 'Korrekt: Deine Ergebnisrelation zeigt genau 3 Mitglieder. LIMIT 3 gibt die ersten drei Zeilen aus – welche das sind, hängt von der Reihenfolge ab.',
-      distinct: () => 'Teilweise korrekt: Lass DISTINCT weg – gesucht sind drei Mitglieder, nicht drei verschiedene Werte.',
-      noLimit: (c) => `Teilweise korrekt: Deine Ergebnisrelation hat ${c.n} Zeilen. Gesucht sind nur 3 Mitglieder. Mit welchem Schlüsselwort legst du fest, wie viele Zeilen ausgegeben werden?`
-    },
-    hints: [
-      'Sieh in die Karte „Kurz erklärt“: Welches Schlüsselwort begrenzt die Anzahl der Zeilen?',
-      'LIMIT steht am Ende der Abfrage, dahinter die Anzahl der Zeilen.',
-      { sql: 'SELECT *\nFROM users\nLIMIT …', after: 'Ergänze die Anzahl.' }
-    ]
-  }),
-  task({
-    id: 't10', number: 10, tab: 'limit', prompt: '**Zeige** nur die 4 jüngsten Mitglieder an.',
-    select: '*', tail: 'FROM users\nORDER BY birthday DESC\nLIMIT 4', projection: 'any', requireAny: ['username', 'name'],
-    order: { column: 'birthday', dir: 'DESC' }, limit: 4, extra: [TEXT_ALL_MEMBERS_EXTRA],
-    texts: {
-      ok: 'Korrekt: Die vier jüngsten Mitglieder sind gartenlesemaus, gartencoderin, codekickemmi und modereiselio. Erst sortiert ORDER BY birthday DESC die spätesten Geburtsdaten nach oben, dann behält LIMIT 4 nur die ersten vier Zeilen.',
-      cols: () => 'Noch nicht korrekt: Gesucht sind Mitglieder. Gib alle Spalten (SELECT *) aus oder mindestens den Benutzernamen oder den Namen.',
-      noOrder: () => 'Teilweise korrekt: Du gibst 4 Mitglieder aus, aber nicht die jüngsten: Ohne Sortierung nimmt LIMIT einfach die ersten vier Zeilen der Tabelle. Sortiere vorher nach dem Geburtsdatum.',
-      dir: () => 'Teilweise korrekt: Das sind die ältesten Mitglieder – und admin ohne Geburtsdatum (NULL). Aufsteigend sortiert stehen die frühesten Geburtsdaten oben. Die Jüngsten haben das späteste Datum: Welche Richtung brauchst du?',
-      noLimit: (c) => `Teilweise korrekt: Die Sortierung stimmt – ganz oben stehen die jüngsten Mitglieder. Du gibst aber alle ${c.n} Zeilen aus. Begrenze die Ausgabe auf 4 Zeilen.`
-    },
-    hints: [
-      'Du brauchst zwei Schritte: zuerst sortieren, dann die Anzahl der Zeilen begrenzen.',
-      'Die Jüngsten haben das späteste Geburtsdatum. Sortiere so, dass es oben steht, und setze LIMIT ans Ende.',
-      { sql: 'SELECT *\nFROM users\nORDER BY birthday …\nLIMIT …', after: 'Ergänze die Sortierrichtung und die Anzahl.' }
-    ]
-  }),
-  task({
     id: 't11', number: 11, tab: 'fast', prompt: '**Kehre** die Reihenfolge der Tabelle `users` um.',
     select: '*', tail: 'FROM users\nORDER BY id DESC', order: { column: 'id', dir: 'DESC' },
     texts: {
@@ -345,22 +253,6 @@ const TASKS = [
     ]
   }),
   task({
-    id: 't12', number: 12, tab: 'fast', prompt: '**Gib** alle Wohnorte ohne Dopplungen in alphabetischer Reihenfolge aus.',
-    select: 'DISTINCT city', tail: 'FROM users\nORDER BY city', requireDistinct: true, order: { column: 'city', dir: 'ASC' },
-    texts: {
-      ok: 'Korrekt: Jeder Wohnort steht genau einmal da, alphabetisch geordnet. NULL steht ganz oben, weil beim Konto admin kein Wohnort eingetragen ist.',
-      cols: TEXT_CITY_COLUMNS,
-      noDistinct: (c) => `Teilweise korrekt: Die Wohnorte sind sortiert, kommen aber mehrfach vor – deine Ergebnisrelation hat ${c.n} Zeilen. Welches Schlüsselwort entfernt Dopplungen?`,
-      noOrder: () => 'Teilweise korrekt: Jeder Wohnort kommt nur einmal vor, aber die Liste ist noch nicht alphabetisch. Ergänze eine Sortierung.',
-      dir: () => 'Teilweise korrekt: DESC sortiert von Z nach A. Alphabetisch heißt aufsteigend.'
-    },
-    hints: [
-      'Du brauchst zwei Schlüsselwörter: eines gegen Dopplungen und eines zum Sortieren.',
-      'DISTINCT steht direkt hinter SELECT, ORDER BY in einer eigenen Zeile am Ende.',
-      { sql: 'SELECT DISTINCT city\nFROM users\nORDER BY …' }
-    ]
-  }),
-  task({
     id: 't13', number: 13, tab: 'fast', prompt: '**Gib** Benutzername und Wohnort aller Mitglieder aus, alphabetisch sortiert nach Wohnort.',
     select: 'username, city', tail: 'FROM users\nORDER BY city', columnOrder: false, order: { column: 'city', dir: 'ASC' },
     texts: {
@@ -374,45 +266,10 @@ const TASKS = [
       'Sortiere mit ORDER BY nach der Spalte mit dem Wohnort. Alphabetisch ist die Voreinstellung.',
       { sql: 'SELECT username, city\nFROM users\nORDER BY …' }
     ]
-  }),
-  task({
-    id: 't14', number: 14, tab: 'fast', prompt: '**Zeige** Benutzername und Größe der 4 größten Mitglieder an.',
-    select: 'username, centimeters', tail: 'FROM users\nORDER BY centimeters DESC\nLIMIT 4', columnOrder: false,
-    order: { column: 'centimeters', dir: 'DESC' }, limit: 4,
-    texts: {
-      ok: 'Korrekt: Die vier größten Mitglieder sind turmriese_max, frageriese, reiseriese_elias und wanderriese_taro – alle 195 cm groß. Bei gleicher Größe ist jede Reihenfolge richtig.',
-      cols: (c) => `Noch nicht korrekt: Gesucht sind genau zwei Spalten: Benutzername und Größe. Deine Ergebnisrelation enthält ${c.list}.`,
-      noOrder: () => 'Teilweise korrekt: Ohne Sortierung nimmt LIMIT einfach die ersten Zeilen der Tabelle. Sortiere vorher nach der Größe.',
-      dir: () => 'Teilweise korrekt: Aufsteigend sortiert stehen admin ohne Größe (NULL) und die kleinsten Mitglieder oben. Die größten sollen oben stehen.',
-      noLimit: (c) => `Teilweise korrekt: Die Sortierung stimmt, aber du gibst alle ${c.n} Zeilen aus. Gesucht sind nur die 4 größten.`
-    },
-    hints: [
-      'Zuerst sortieren, dann die Anzahl begrenzen – wie bei den 4 jüngsten Mitgliedern in Aufgabe 10.',
-      'Die Größe steht in centimeters. Die größte Zahl soll oben stehen.',
-      { sql: 'SELECT username, centimeters\nFROM users\nORDER BY centimeters …\nLIMIT …' }
-    ]
-  }),
-  task({
-    id: 't15', number: 15, tab: 'fast', prompt: '**Korrigiere** die Anweisung, damit sie Benutzername und Geburtsdatum der 3 jüngsten Mitglieder ausgibt.',
-    select: 'username, birthday', tail: 'FROM users\nORDER BY birthday DESC\nLIMIT 3', columnOrder: false,
-    order: { column: 'birthday', dir: 'DESC' }, limit: 3,
-    initialSql: 'SELECT username, birthday\nFROM users\nLIMIT 3\nORDER BY birthday',
-    texts: {
-      ok: 'Korrekt: LIMIT steht jetzt am Ende, und DESC holt die spätesten Geburtsdaten nach oben. Die drei jüngsten Mitglieder sind gartenlesemaus, gartencoderin und codekickemmi.',
-      cols: (c) => `Noch nicht korrekt: Gesucht sind genau zwei Spalten: Benutzername und Geburtsdatum. Deine Ergebnisrelation enthält ${c.list}.`,
-      noOrder: () => 'Teilweise korrekt: Ohne Sortierung nimmt LIMIT die ersten Zeilen der Tabelle. Sortiere vorher nach dem Geburtsdatum.',
-      dir: () => 'Teilweise korrekt: Die Reihenfolge der Klauseln stimmt jetzt. Aufsteigend sortiert stehen aber admin ohne Geburtsdatum und die ältesten Mitglieder oben. Welche Richtung brauchst du für die jüngsten?',
-      noLimit: (c) => `Teilweise korrekt: Die Sortierung stimmt, aber du gibst alle ${c.n} Zeilen aus. Gesucht sind nur die 3 jüngsten.`
-    },
-    hints: [
-      'Die Anweisung enthält zwei Fehler. Führe sie einmal aus und lies die Rückmeldung.',
-      'Ein Fehler betrifft die Reihenfolge der Klauseln, der andere die Sortierrichtung.',
-      'LIMIT gehört ans Ende. Die Jüngsten haben das späteste Geburtsdatum – sortiere absteigend.'
-    ]
   })
 ];
 const TASK_BY_ID = new Map(TASKS.map((item) => [item.id, item]));
-const TAB_TASKS = { projection: ['t1', 't2', 't3'], orderBy: ['t4', 't5', 't6'], distinct: ['t7', 't8'], limit: ['t9', 't10'], fast: ['t11', 't12', 't13', 't14', 't15'] };
+const TAB_TASKS = { projection: ['t1', 't2', 't3'], orderBy: ['t4', 't5', 't6'], fast: ['t11', 't13'] };
 
 const YOUNGEST = {
   username: 'gartenlesemaus',
@@ -457,26 +314,6 @@ const FINAL_QUIZ = [
       ['c', 'ORDER BY username sortiert die Benutzernamen alphabetisch von A nach Z.', true],
       ['d', 'ORDER BY ändert die Reihenfolge der Zeilen in der Tabelle users dauerhaft.', false]
     ]
-  },
-  {
-    id: 'q4', prompt: 'Was bewirkt diese Abfrage?', sql: 'SELECT DISTINCT city\nFROM users',
-    hint: 'DISTINCT entfernt Dopplungen nur in der Ergebnisrelation. Jeder Wohnort erscheint einmal – egal, wie viele Mitglieder dort wohnen.',
-    options: [
-      ['a', 'Jeder Wohnort erscheint in der Ergebnisrelation nur einmal.', true],
-      ['b', 'Doppelte Zeilen werden aus der Tabelle users gelöscht.', false],
-      ['c', 'Es werden nur Mitglieder ausgegeben, deren Wohnort in der Tabelle nur einmal vorkommt.', false],
-      ['d', 'Die Ergebnisrelation hat weniger Zeilen als die Tabelle users.', true]
-    ]
-  },
-  {
-    id: 'q5', prompt: 'Du möchtest die 4 jüngsten Mitglieder anzeigen. Welche Abfrage ist richtig?',
-    hint: 'LIMIT steht immer am Ende. Die Jüngsten haben das späteste Geburtsdatum, deshalb sortierst du absteigend.',
-    options: [
-      ['a', 'SELECT *\nFROM users\nORDER BY birthday DESC\nLIMIT 4', true, true],
-      ['b', 'SELECT *\nFROM users\nLIMIT 4\nORDER BY birthday DESC', false, true],
-      ['c', 'SELECT *\nFROM users\nORDER BY birthday\nLIMIT 4', false, true],
-      ['d', 'SELECT *\nFROM users\nLIMIT 4', false, true]
-    ]
   }
 ];
 const QUIZ_BY_ID = new Map(FINAL_QUIZ.map((question) => [question.id, question]));
@@ -509,72 +346,25 @@ function validDescriptionFeedback(value) {
 }
 
 function restore() {
-  try {
-    let raw = localStorage.getItem(STORAGE_KEY);
-    let saved = null;
-    try { saved = raw ? JSON.parse(raw) : null; } catch { /* Beschädigter Stand darf die Migration nicht verhindern. */ }
-    const hasCurrentState = isPlainObject(saved) &&
-      ['answers', 'feedback', 'solved', 'quiz', 'descriptionAnswers', 'descriptionFeedback'].some((key) => isPlainObject(saved[key]) && Object.keys(saved[key]).length > 0) ||
-      (isPlainObject(saved) && (saved.tab !== undefined || saved.introStep !== undefined || saved.quizPassed !== undefined || saved.quizFeedback !== undefined || saved.youngest !== undefined));
-    const currentValid = isPlainObject(saved) && hasCurrentState &&
-      (saved.tab === undefined || TABS.some(([id]) => id === saved.tab)) &&
-      (saved.introStep === undefined || (Number.isInteger(saved.introStep) && saved.introStep >= 1 && saved.introStep <= INTRO_STEPS.length)) &&
-      (saved.answers === undefined || isPlainObject(saved.answers)) &&
-      (saved.answers === undefined || Object.entries(saved.answers).every(([id, value]) => TASK_BY_ID.has(id) && typeof value === 'string')) &&
-      (saved.feedback === undefined || (isPlainObject(saved.feedback) && Object.entries(saved.feedback).every(([id, value]) => TASK_BY_ID.has(id) && validFeedback(value)))) &&
-      (saved.solved === undefined || (isPlainObject(saved.solved) && Object.entries(saved.solved).every(([id, value]) => TASK_BY_ID.has(id) && value === true))) &&
-      (saved.descriptionAnswers === undefined || (isPlainObject(saved.descriptionAnswers) && Object.entries(saved.descriptionAnswers).every(([id, value]) => DESCRIPTION_BY_ID.has(id) && typeof value === 'string'))) &&
-      (saved.descriptionFeedback === undefined || (isPlainObject(saved.descriptionFeedback) && Object.entries(saved.descriptionFeedback).every(([id, value]) => DESCRIPTION_BY_ID.has(id) && validDescriptionFeedback(value)))) &&
-      (saved.quiz === undefined || (isPlainObject(saved.quiz) && FINAL_QUIZ.every((question) => saved.quiz[question.id] === undefined || (Array.isArray(saved.quiz[question.id]) && saved.quiz[question.id].every((value) => question.options.some(([id]) => id === value)))))) &&
-      (saved.youngest === undefined || (isPlainObject(saved.youngest) && (saved.youngest.username === undefined || typeof saved.youngest.username === 'string') && (saved.youngest.age === undefined || typeof saved.youngest.age === 'string') && (saved.youngest.feedback === undefined || saved.youngest.feedback === null || YOUNGEST_KINDS.includes(saved.youngest.feedback)))) &&
-      (saved.quizPassed === undefined || typeof saved.quizPassed === 'boolean') &&
-      (saved.quizFeedback === undefined || saved.quizFeedback === null || validFeedback(saved.quizFeedback));
-    if (currentValid) localStorage.setItem(MIGRATION_MARKER, 'done');
-    if (!currentValid && !localStorage.getItem(MIGRATION_MARKER)) {
-      const legacy = JSON.parse(localStorage.getItem(LEGACY_STORAGE_KEY) || 'null');
-      const validLegacy = isPlainObject(legacy) &&
-        ['intro', 'projection', 'orderBy', 'distinct', 'limit', 'fast', 'quiz'].includes(legacy.tab) &&
-        Number.isInteger(legacy.introStep) && legacy.introStep >= 1 && legacy.introStep <= INTRO_STEPS.length &&
-        isPlainObject(legacy.answers) && isPlainObject(legacy.feedback) && isPlainObject(legacy.solved) &&
-        isPlainObject(legacy.youngest) && isPlainObject(legacy.quiz) &&
-        (legacy.quizPassed === undefined || typeof legacy.quizPassed === 'boolean');
-      if (validLegacy) {
-        saved = {
-          tab: legacy.tab,
-          introStep: legacy.introStep,
-          answers: Object.fromEntries(Object.entries(legacy.answers).filter(([id, value]) => TASK_BY_ID.has(id) && typeof value === 'string')),
-          feedback: Object.fromEntries(Object.entries(legacy.feedback).filter(([id, value]) => TASK_BY_ID.has(id) && validFeedback(value))),
-          solved: Object.fromEntries(Object.entries(legacy.solved).filter(([id, value]) => TASK_BY_ID.has(id) && value === true)),
-          youngest: {
-            username: typeof legacy.youngest.username === 'string' ? legacy.youngest.username : '',
-            age: typeof legacy.youngest.age === 'string' ? legacy.youngest.age : '',
-            feedback: YOUNGEST_KINDS.includes(legacy.youngest.feedback) ? legacy.youngest.feedback : null,
-          },
-          quiz: Object.fromEntries(FINAL_QUIZ.map((question) => [question.id, Array.isArray(legacy.quiz[question.id]) ? legacy.quiz[question.id].filter((value) => question.options.some(([id]) => id === value)) : []])),
-          quizFeedback: validFeedback(legacy.quizFeedback) ? legacy.quizFeedback : null,
-          quizPassed: legacy.quizPassed === true,
-        };
-        localStorage.setItem(STORAGE_KEY, JSON.stringify(saved));
-      }
-      localStorage.setItem(MIGRATION_MARKER, 'done');
-    }
-    if (!isPlainObject(saved)) return;
-    if (TABS.some(([id]) => id === saved.tab)) state.tab = saved.tab;
-    if (Number.isInteger(saved.introStep) && saved.introStep >= 1 && saved.introStep <= INTRO_STEPS.length) state.introStep = saved.introStep;
-    if (isPlainObject(saved.answers)) for (const [id, answer] of Object.entries(saved.answers)) if (TASK_BY_ID.has(id) && typeof answer === 'string') state.answers[id] = answer;
-    if (isPlainObject(saved.feedback)) for (const [id, feedback] of Object.entries(saved.feedback)) if (TASK_BY_ID.has(id) && validFeedback(feedback)) state.feedback[id] = { level: feedback.level, text: feedback.text };
-    if (isPlainObject(saved.solved)) for (const [id, done] of Object.entries(saved.solved)) if (TASK_BY_ID.has(id) && done === true) state.solved[id] = true;
-    if (isPlainObject(saved.descriptionAnswers)) for (const [id, answer] of Object.entries(saved.descriptionAnswers)) if (DESCRIPTION_BY_ID.has(id) && typeof answer === 'string') state.descriptionAnswers[id] = answer;
-    if (saved.assessmentVersion === state.assessmentVersion && isPlainObject(saved.descriptionFeedback)) for (const [id, feedback] of Object.entries(saved.descriptionFeedback)) if (DESCRIPTION_BY_ID.has(id) && validDescriptionFeedback(feedback)) state.descriptionFeedback[id] = { ...feedback, strengths: feedback.strengths || [], missing: feedback.missing || [] };
-    if (isPlainObject(saved.youngest)) {
-      if (typeof saved.youngest.username === 'string') state.youngest.username = saved.youngest.username;
-      if (typeof saved.youngest.age === 'string') state.youngest.age = saved.youngest.age;
-      if (YOUNGEST_KINDS.includes(saved.youngest.feedback)) state.youngest.feedback = saved.youngest.feedback;
-    }
-    if (isPlainObject(saved.quiz)) FINAL_QUIZ.forEach((question) => { if (Array.isArray(saved.quiz[question.id])) state.quiz[question.id] = saved.quiz[question.id].filter((value) => question.options.some(([id]) => id === value)); });
-    if (validFeedback(saved.quizFeedback)) state.quizFeedback = { level: saved.quizFeedback.level, text: saved.quizFeedback.text };
-    state.quizPassed = saved.quizPassed === true;
-  } catch { /* Speicherstand ist optional. */ }
+  const saved = readSplitProgress(STORAGE_KEY, MIGRATION_MARKER, 'select', TASKS, DESCRIPTION_TASKS, TABS, INTRO_STEPS.length);
+  if (!saved) return;
+  if (TABS.some(([id]) => id === saved.tab)) state.tab = saved.tab;
+  if (Number.isInteger(saved.introStep) && saved.introStep >= 1 && saved.introStep <= INTRO_STEPS.length) state.introStep = saved.introStep;
+  if (isPlainObject(saved.answers)) for (const [id, answer] of Object.entries(saved.answers)) if (TASK_BY_ID.has(id) && typeof answer === 'string') state.answers[id] = answer;
+  if (isPlainObject(saved.feedback)) for (const [id, feedback] of Object.entries(saved.feedback)) if (TASK_BY_ID.has(id) && validFeedback(feedback)) state.feedback[id] = feedback;
+  if (isPlainObject(saved.solved)) for (const [id, done] of Object.entries(saved.solved)) if (TASK_BY_ID.has(id) && done === true) state.solved[id] = true;
+  if (isPlainObject(saved.descriptionAnswers)) for (const [id, answer] of Object.entries(saved.descriptionAnswers)) if (DESCRIPTION_BY_ID.has(id) && typeof answer === 'string') state.descriptionAnswers[id] = answer;
+  if (saved.assessmentVersion === state.assessmentVersion && isPlainObject(saved.descriptionFeedback)) for (const [id, feedback] of Object.entries(saved.descriptionFeedback)) if (DESCRIPTION_BY_ID.has(id) && validDescriptionFeedback(feedback)) state.descriptionFeedback[id] = feedback;
+  if (isPlainObject(saved.youngest)) {
+    if (typeof saved.youngest.username === 'string') state.youngest.username = saved.youngest.username;
+    if (typeof saved.youngest.age === 'string') state.youngest.age = saved.youngest.age;
+    if (YOUNGEST_KINDS.includes(saved.youngest.feedback)) state.youngest.feedback = saved.youngest.feedback;
+  }
+  if (isPlainObject(saved.quiz)) FINAL_QUIZ.forEach((question) => { if (Array.isArray(saved.quiz[question.id])) state.quiz[question.id] = saved.quiz[question.id].filter((value) => question.options.some(([id]) => id === value)); });
+  if (validFeedback(saved.quizFeedback)) state.quizFeedback = saved.quizFeedback;
+  state.quizPassed = saved.quizPassed === true;
+  if (typeof saved.solutionCode === 'string') state.solutionCode = saved.solutionCode;
+  state.solutionUnlocked = saved.solutionUnlocked === true;
 }
 
 function isTabComplete(id) {
@@ -1148,7 +938,7 @@ async function submitDescription(task, input, button, output) {
 
 function renderTask(taskConfig) {
   const card = element('section', 'task-card sql-task'); card.id = `task-${taskConfig.id}`;
-  card.append(element('h3', '', `Aufgabe ${taskConfig.number}`), paragraph(taskConfig.prompt));
+  card.append(element('h3', '', `Aufgabe ${TASKS.indexOf(taskConfig) + 1}`), paragraph(taskConfig.prompt));
   // nach renderSqlTask in klasse-10/1-Datenbanken/sql-lab.js, angepasst: eigene Prüflogik, Hilfen über appendHints
   const label = element('label', 'sql-label', 'Deine vollständige SQL-Anweisung'); label.htmlFor = `input-${taskConfig.id}`;
   const input = document.createElement('textarea'); input.id = label.htmlFor; input.className = 'sql-input'; input.spellcheck = false; input.placeholder = NEUTRAL_SQL_PLACEHOLDER;
@@ -1332,7 +1122,8 @@ function orderByCard() {
     exampleTable('ORDER BY centimeters', columns, [['zornigerfotograf', '168'], ['bergcoder', '174'], ['wanderwut_finn', '183']]),
     exampleTable('ORDER BY centimeters DESC', columns, [['wanderwut_finn', '183'], ['bergcoder', '174'], ['zornigerfotograf', '168']])
   );
-  card.append(row, paragraph('**NULL** bedeutet: In diesem Feld ist kein Wert eingetragen. Beim Sortieren mit ASC steht NULL ganz oben, mit DESC ganz unten.'));
+  card.insertBefore(row, card.children[1]);
+  card.append(paragraph('**NULL** bedeutet: In diesem Feld ist kein Wert eingetragen. Beim Sortieren mit ASC steht NULL ganz oben, mit DESC ganz unten.'));
   return card;
 }
 
@@ -1367,11 +1158,12 @@ function renderTaskTab(panel) {
     orderBy: orderByCard,
     distinct: distinctCard,
     limit: limitCard,
-    fast: () => { const card = element('div', 'scenario-card'); card.append(element('p', '', 'Hier kombinierst du alles, was du gelernt hast: SELECT, FROM, ORDER BY, DISTINCT und LIMIT.')); return card; }
+    fast: () => element('div', 'scenario-card')
   }[state.tab];
   const descriptionTask = DESCRIPTION_BY_TAB.get(state.tab);
+  if (state.tab === 'orderBy') panel.append(introCard());
   if (descriptionTask) panel.append(renderDescriptionTask(descriptionTask));
-  panel.append(introCard());
+  if (state.tab !== 'fast' && state.tab !== 'orderBy') panel.append(introCard());
   TAB_TASKS[state.tab].forEach((id) => { const taskConfig = TASK_BY_ID.get(id); panel.append(renderTask(taskConfig)); renderTaskOutput(taskConfig); });
 }
 
@@ -1515,7 +1307,7 @@ function quizSelection(question) { return Array.isArray(state.quiz[question.id])
 
 function renderQuiz(panel) {
   const card = element('section', 'task-card sql-task');
-  card.append(element('h3', '', 'Fünf Fragen zu einfachen SQL-Abfragen'), paragraph('**Kreuze** alle richtigen Antworten an. Bei manchen Fragen sind mehrere Antworten richtig.'));
+  card.append(element('h3', '', 'Abschlussquiz'), paragraph('**Kreuze** alle richtigen Antworten an. Bei manchen Fragen sind mehrere Antworten richtig.'));
   const form = element('form', 'final-quiz'); form.id = 'final-quiz'; form.noValidate = true;
   const feedback = element('p', 'feedback sql-quiz-feedback'); feedback.setAttribute('aria-live', 'polite');
   const showFeedback = () => { feedback.className = `feedback ${state.quizFeedback ? state.quizFeedback.level : ''} sql-quiz-feedback`; feedback.textContent = state.quizFeedback ? state.quizFeedback.text : ''; };
@@ -1531,9 +1323,9 @@ function renderQuiz(panel) {
       input.addEventListener('change', () => {
         const selected = quizSelection(question).filter((value) => value !== id);
         state.quiz[question.id] = input.checked ? [...selected, id] : selected;
-        state.quizFeedback = null; save(); showFeedback();
+        state.quizFeedback = null; state.quizPassed = false; save(); showFeedback(); refreshOverview(); updateTabMarks();
       });
-      const content = element('span'); content.append(isSql ? element('code', 'quiz-sql', text) : document.createTextNode(text));
+      const content = element('span'); if (isSql) content.append(element('code', 'quiz-sql', text)); else richText(content, text);
       label.append(input, content); choices.append(label);
     });
     field.append(choices); form.append(field);
@@ -1556,25 +1348,24 @@ function renderQuiz(panel) {
   });
   card.append(form); panel.append(card, overviewSlot, renderSummary());
   appendSolutionDownloadFromTemplate(panel);
+  bindSolutionCodePersistence(panel, state, save);
   showFeedback(); refreshOverview();
 }
 
 function checkQuiz() {
-  const open = FINAL_QUIZ.map((question, index) => (quizSelection(question).length ? null : index + 1)).filter(Boolean);
-  if (open.length) { state.quizFeedback = { level: 'hint', text: `Beantworte zuerst alle Fragen. Noch ohne Kreuz: Frage ${open.join(', ')}.` }; save(); return; }
-  const correct = FINAL_QUIZ.map((question) => { const chosen = new Set(quizSelection(question)); return question.options.every(([id, , right]) => chosen.has(id) === right); });
+  const correct = FINAL_QUIZ.map((question) => {
+    const chosen = new Set(quizSelection(question));
+    return question.options.every(([id, , right]) => chosen.has(id) === right);
+  });
   const amount = correct.filter(Boolean).length;
-  if (amount === FINAL_QUIZ.length) { state.quizPassed = true; state.quizFeedback = { level: 'success', text: 'Korrekt: Alle fünf Fragen stimmen. Unten findest du jetzt die Übersicht über alle Aufgaben mit Lösung.' }; }
-  else {
-    const wrong = FINAL_QUIZ.map((question, index) => (correct[index] ? null : index + 1)).filter(Boolean);
-    const hints = FINAL_QUIZ.filter((question, index) => !correct[index]).map((question) => question.hint).join(' ');
-    state.quizFeedback = amount
-      ? { level: 'partial', text: `Teilweise korrekt: ${amount} von ${FINAL_QUIZ.length} Fragen stimmen. Prüfe Frage ${wrong.join(', ')} noch einmal. ${hints}` }
-      : { level: 'hint', text: `Noch nicht korrekt: Prüfe Frage ${wrong.join(', ')} noch einmal. ${hints}` };
-  }
+  state.quizPassed = amount === FINAL_QUIZ.length;
+  state.quizFeedback = state.quizPassed
+    ? { level: 'success', text: 'Korrekt: Alle Fragen stimmen. Unten findest du jetzt die Übersicht über die Aufgaben mit Lösungen.' }
+    : amount > 0
+      ? { level: 'partial', text: `Teilweise korrekt: ${amount} von ${FINAL_QUIZ.length} Fragen stimmen. Prüfe die übrigen Fragen erneut.` }
+      : { level: 'hint', text: 'Noch nicht korrekt: Prüfe die Fragen mit den Hinweisen direkt darunter.' };
   save();
 }
-
 function renderOverview() {
   const overview = element('section', 'short-summary sql-quiz-overview'); overview.setAttribute('aria-labelledby', 'sql9-overview-title');
   const title = element('h3', '', 'Übersicht: alle Aufgaben mit Lösung'); title.id = 'sql9-overview-title'; overview.append(title);
@@ -1587,7 +1378,7 @@ function renderOverview() {
   });
   TASKS.forEach((taskConfig) => {
     const item = document.createElement('li');
-    item.append(element('strong', '', `Aufgabe ${taskConfig.number}: `)); richText(item, taskConfig.prompt);
+    item.append(element('strong', '', `Aufgabe ${TASKS.indexOf(taskConfig) + 1}: `)); richText(item, taskConfig.prompt);
     if (taskConfig.correctionSql) item.append(element('p', '', 'Fehlerhafte Anweisung:'), sqlBlock(taskConfig.correctionSql));
     item.append(element('p', '', taskConfig.correctionSql ? 'Korrigierte Anweisung:' : 'Lösung:'), sqlBlock(`SELECT ${taskConfig.select}\n${taskConfig.tail}`));
     taskConfig.extra.forEach((line) => {
@@ -1602,7 +1393,7 @@ function renderOverview() {
     const entry = document.createElement('li'); entry.append(element('strong', '', question.prompt));
     if (question.sql) entry.append(sqlBlock(question.sql));
     const answers = document.createElement('ul');
-    question.options.filter(([, , right]) => right).forEach(([, text, , isSql]) => { const answer = document.createElement('li'); answer.append(isSql ? element('code', 'quiz-sql', text) : document.createTextNode(text)); answers.append(answer); });
+    question.options.filter(([, , right]) => right).forEach(([, text, , isSql]) => { const answer = document.createElement('li'); if (isSql) answer.append(element('code', 'quiz-sql', text)); else richText(answer, text); answers.append(answer); });
     entry.append(answers); questions.append(entry);
   });
   quizItem.append(questions); list.append(quizItem);
@@ -1611,19 +1402,12 @@ function renderOverview() {
 }
 
 function renderSummary() {
-  const summary = element('section', 'short-summary'); summary.setAttribute('aria-labelledby', 'sql9-summary-title');
-  const title = element('h3', '', 'Merke: Einfache SQL-Abfragen'); title.id = 'sql9-summary-title';
-  const list = element('dl', 'aggregate-list');
-  [['SELECT', 'wählt die Spalten aus (Projektion); * steht für alle Spalten'], ['FROM', 'nennt die Tabelle'], ['ORDER BY Spalte', 'sortiert die Ergebnisrelation: ASC aufsteigend (Voreinstellung), DESC absteigend'], ['SELECT DISTINCT', 'gibt jeden Wert nur einmal aus'], ['LIMIT n', 'gibt höchstens n Zeilen aus und steht immer am Ende']]
-    .forEach(([term, meaning]) => list.append(element('dt', '', term), element('dd', '', meaning)));
-  summary.append(title, list, element('p', '', 'Reihenfolge der Klauseln:'), sqlBlock('SELECT DISTINCT Spalte1, Spalte2\nFROM Tabellenname\nORDER BY Spalte DESC\nLIMIT 10'), element('p', '', 'Eine Abfrage verändert die Tabelle nicht. Sie erzeugt eine neue Tabelle: die Ergebnisrelation. NULL bedeutet, dass kein Wert eingetragen ist.'));
+  const summary = element('section', 'short-summary');
+  summary.setAttribute('aria-labelledby', 'sql9-summary-title');
+  const title = element('h3', '', 'Merke'); title.id = 'sql9-summary-title';
+  summary.append(title, paragraph('FROM nennt die Tabelle. SELECT bestimmt die Ausgabespalten; diese Spaltenauswahl heißt Projektion. `SELECT *` gibt alle Spalten aus. ORDER BY sortiert die Ergebnisrelation: ASC aufsteigend (Voreinstellung), DESC absteigend. Die gespeicherte Tabelle bleibt unverändert.'));
   return summary;
 }
-
-// ---------------------------------------------------------------------------
-// Start
-// ---------------------------------------------------------------------------
-
 async function rerunSavedTasks() {
   for (const taskConfig of TASKS) if (state.feedback[taskConfig.id]) await runTask(taskConfig, { auto: true });
 }
@@ -1633,7 +1417,7 @@ async function init() {
   render();
   document.getElementById('reset-module').addEventListener('click', () => {
     if (window.confirm('Möchtest du alle SQL-Eingaben und den Fortschritt dieser Aufgabe zurücksetzen?')) {
-      try { localStorage.removeItem(STORAGE_KEY); } catch { /* Ohne Speicher weiter nutzbar. */ }
+      try { localStorage.setItem(MIGRATION_MARKER, 'done'); localStorage.removeItem(STORAGE_KEY); } catch { /* Ohne Speicher weiter nutzbar. */ }
       location.reload();
     }
   });

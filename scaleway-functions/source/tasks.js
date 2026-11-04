@@ -1183,16 +1183,15 @@ const TASKS = {
     grade:
       11,
     maxPoints:
-      4,
+      3,
     instruction:
-      'Bewerte eine kurze fachliche Erklärung zum Training eines einzelnen Perzeptrons. Anerkenne eigene, sinngleiche Formulierungen. Wesentlich sind die Anpassung von Gewichten und gegebenenfalls Schwellenwert, die Abweichung zwischen Soll- und Ist-Ausgabe, die Speicherung des Gelernten in den Parametern sowie die klare Abgrenzung von Bewusstsein oder menschlichem Verständnis. Gib bei fehlenden Aspekten nur Hinweise, keine vollständige Musterlösung.',
+      'Bewerte eine kurze fachliche Erklärung zum Training eines einzelnen Perzeptrons. Anerkenne sinngleiche Formulierungen und bewerte die drei Aspekte unabhängig. Für Aspekt 1 und 3 ist die Nennung des Schwellenwerts optional, wenn die Aussage zu den Gewichten fachlich richtig ist. Beispiel: „Beim Training passt das Perzeptron seine Gewichte an. In den angepassten Gewichten ist das Gelernte gespeichert.“ erfüllt Aspekt 1 und 3. Aspekt 2 fehlt in diesem Beispiel.',
     program:
-      'Kontext: Das Perzeptron berechnet eine Ausgabe f(a), vergleicht sie mit dem Zielwert t und verwendet δ = t − f(a). Bei Fehlern passt es Gewichte w_i und den Schwellenwert θ nach festen Rechenregeln an. Es ist ein linearer Klassifikator und besitzt kein Bewusstsein.',
+      'Kontext: Das Perzeptron berechnet eine Ausgabe f(a), vergleicht sie mit dem Zielwert t und verwendet δ = t − f(a). Bei Fehlern passt es Gewichte w_i und den Schwellenwert θ nach festen Rechenregeln an.',
     expectedAspects: [
-      'Beim Training werden Gewichte und bei Bedarf auch der Schwellenwert verändert.',
+      'Beim Training werden die Gewichte angepasst. Der Schwellenwert kann ergänzend genannt werden.',
       'Die Anpassung beruht auf der Abweichung zwischen Zielwert beziehungsweise Soll-Ausgabe t und berechneter Ist-Ausgabe f(a).',
-      'Das Gelernte steckt in den angepassten Gewichten und dem Schwellenwert beziehungsweise Parametern.',
-      'Das Perzeptron entwickelt dabei weder Bewusstsein noch menschliches Verständnis, sondern folgt festen Rechenregeln.'
+      'Das Gelernte steckt in den angepassten Gewichten beziehungsweise den gelernten Modellparametern. Der Schwellenwert kann ergänzend genannt werden.'
     ]
   },
 
@@ -3281,8 +3280,7 @@ const CRITERION_HINTS = {
   '11-5-1': [
     'Prüfe, welche Parameter beim Training verändert werden.',
     'Vergleiche Sollwert und berechnete Ausgabe als Auslöser der Änderung.',
-    'Erkläre, worin das Trainingsergebnis gespeichert ist.',
-    'Grenze Rechenregeln von menschlichem Verstehen ab.'
+    'Erkläre, worin das Trainingsergebnis gespeichert ist.'
   ],
   'inf9-dfd-zylinder-beschreibung': [
     'Verfolge den Höhenwert in beide Zweige.',

@@ -57,6 +57,61 @@ Bewertungstests gehören unter `scaleway-functions/tests/`.
 
 ## Konfiguration auf Scaleway
 
+### Serverseitiger Unterrichtspasswortschutz (live auf `franke-schule.de`, 04.11.2026)
+
+Jeder Auswertungs-POST benötigt jetzt den Header `X-AI-Password`. Sein Wert ist
+das mit UTF-8 und anschließend Base64 kodierte Unterrichtspasswort. Base64 dient
+nur dem Transport von Sonderzeichen; HTTPS schützt die Übertragung. Der Handler
+prüft den Header vor dem Modellaufruf gegen den Secret **`AI_ACCESS_PASSWORD_HASH`**.
+Fehlender/falscher Zugang führt zu HTTP 401 (`AUTH_REQUIRED`), fehlende/defekte
+Secret-Konfiguration zu HTTP 503 (`AUTH_CONFIGURATION`). Es gibt keine Sperre
+nach Passwortfehlversuchen. Die vorhandene Bremse für autorisierte Modellaufrufe
+bleibt erhalten. Es ist kein globales Tages- oder Kostenlimit eingebaut.
+
+Den Prüfwert lokal mit `node scaleway-functions/create-access-password-hash.js`
+erzeugen. Passwort zweimal verdeckt eingeben, vollständige ausgegebene Zeile als
+Secret hinterlegen. Jedes nicht leere Passwort bis 256 UTF-8-Bytes ohne
+Steuerzeichen ist möglich. Format:
+`scrypt$v1$32768$8$1$<16-Byte-Salt als Hex>$<64-Byte-Prüfwert als Hex>`.
+Prüfwert und Passwort nicht ins Repository, in Testanfragen im Chat oder ins ZIP
+aufnehmen. Der API-Schlüssel `AI_API_KEY` bleibt ein eigener Secret.
+
+Der gemeinsame Browser-Helfer fragt das Passwort in einem nativen Dialog ab und
+merkt es nur im Arbeitsspeicher bis zum Seitenwechsel/Neuladen. HTTP 401 verwirft
+die gemerkte Eingabe; der nächste bewusste Prüfklick fragt erneut. Das Passwort
+wird nie Teil des Modellprompts oder der gespeicherten Aufgabenantwort.
+
+Zusätzliche Prüfungen:
+
+```powershell
+node --test scaleway-functions/tests/access-password.test.js scaleway-functions/tests/access-password-hash.test.js
+node scaleway-functions/tests/access-password-browser.check.js
+& ./scaleway-functions/package-access-update.ps1
+```
+
+Die letzte Anweisung baut zwei getrennte Pakete unter `dist/`:
+`ki-auswertung-passwortschutz.zip` für die Function und
+`website-passwortschutz.zip` mit ausschließlich drei zentralen Website-Dateien
+unter ihren bisherigen `faecher/`-Pfaden. Daneben stehen SHA256-Dateien und
+`passwortschutz-bereitstellung.json`. Andere parallele Moduländerungen sind
+nicht Teil dieses Website-Pakets. Die bestehenden Imports bleiben erhalten;
+beim Rollout Hosting-/Browser-Caches aktualisieren und mit **Strg+F5** neu laden.
+Eine alte, gecachte Clientfassung erhält HTTP 401 und muss neu geladen werden.
+
+`GET /health` und `OPTIONS` bleiben ohne Passwort verfügbar. Der neue Healthcheck
+meldet `accessProtection: "password-v1"` und `accessConfigured: true/false`.
+`configured` setzt jetzt sowohl Modell- als auch Passwortkonfiguration voraus.
+Diese Angaben beweisen noch keine erfolgreiche Passwort- oder Modellprüfung.
+
+Vor Upload den bisherigen Function-Code sichern und die vorhandenen Live-Aufgaben
+mit dem lokalen Bewertungsbestand abgleichen. Während des Rollouts
+`AI_EVALUATION_ENABLED=false` setzen, Server und Website veröffentlichen, CORS
+und abgewiesene Zugriffe prüfen, danach wieder aktivieren und kontrollierte Text-
+und Codefälle testen. Alte PowerShell-/Browserskripte brauchen ebenfalls den neuen
+Header; keine Klartextpasswörter in Skripte oder die Shell-Historie schreiben.
+Bei Störungen die KI deaktivieren; keine ungeschützte Serverfassung reaktivieren.
+Ausführlicher Ablauf: [SCALEWAY-PASSWORTSCHUTZ.md](../SCALEWAY-PASSWORTSCHUTZ.md).
+
 ### Kriterienweise Rückmeldung in Inf11 KI Aufgabe 6.2, Teilaufgabe 1
 
 `11-6-klassifizieren` verwendet `feedbackCriteria` aus `source/tasks.js`.

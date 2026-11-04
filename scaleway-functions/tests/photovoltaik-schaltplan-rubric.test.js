@@ -2,7 +2,7 @@
 const test = require('node:test');
 const assert = require('node:assert/strict');
 const core = require('../evaluation-core');
-const { createHandler } = require('../handler');
+const { createHandler } = require('./fixtures/authorized-handler');
 const { pathToFileURL } = require('node:url');
 
 let semanticTaskPromise;

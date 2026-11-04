@@ -3,7 +3,7 @@
 const test = require('node:test');
 const assert = require('node:assert/strict');
 const core = require('../evaluation-core');
-const { createHandler } = require('../handler');
+const { createHandler } = require('./fixtures/authorized-handler');
 const cases = require('./fixtures/sql-description-cases.json');
 const entries = Object.entries(core.TASKS).filter(([, task]) => task.sqlDescription);
 const heading = 'Gemeinsame Kriterien für SQL-Beschreibe-Aufgaben:';

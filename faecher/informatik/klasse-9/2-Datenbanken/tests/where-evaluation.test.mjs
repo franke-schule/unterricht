@@ -18,14 +18,22 @@ insert.free();
 
 // Dieselben Aufgaben und dieselbe Auswertung wie auf der Seite, mit der
 // vorhandenen SQL-Engine; weder Modellantworten noch Sollurteile simulieren.
-const source = await readFile(new URL('../aufgabe3.js', import.meta.url), 'utf8');
-const context = vm.createContext({ compareRelations, normalizeRelation, sqlTokens,
-  USER_COLUMN_NAMES: headers, database: { exec: async sql => normalizeRelation(db.exec(sql)) } });
-vm.runInContext(source.slice(source.indexOf('const TASKS ='), source.indexOf('const TASK_BY_ID')) +
-  source.slice(source.indexOf('function quoteIdentifier('), source.indexOf('function taskCard(')) +
-  '\nglobalThis.checks = { tasks: TASKS, analyzeQuery, evaluate };', context);
-const { tasks, analyzeQuery, evaluate } = context.checks;
-const judge = async (task, sql) => evaluate(task, analyzeQuery(sql), normalizeRelation(db.exec(sql)));
+async function checksFor(number) {
+  const source = await readFile(new URL(`../aufgabe${number}.js`, import.meta.url), 'utf8');
+  const context = vm.createContext({ compareRelations, normalizeRelation, sqlTokens,
+    USER_COLUMN_NAMES: headers, database: { exec: async sql => normalizeRelation(db.exec(sql)) } });
+  vm.runInContext(source.slice(source.indexOf('const TASKS ='), source.indexOf('const TASK_BY_ID')) +
+    source.slice(source.indexOf('function quoteIdentifier('), source.indexOf('function taskCard(')) +
+    '\nglobalThis.checks = { tasks: TASKS, analyzeQuery, evaluate };', context);
+  return context.checks;
+}
+const fourth = await checksFor(4);
+const fifth = await checksFor(5);
+const tasks = [...fourth.tasks, ...fifth.tasks].sort((a, b) => a.number - b.number);
+const judge = async (task, sql) => {
+  const checks = fourth.tasks.some(({ id }) => id === task.id) && task.number < 7 || task.number >= 13 && task.number <= 16 ? fourth : fifth;
+  return checks.evaluate(task, checks.analyzeQuery(sql), normalizeRelation(db.exec(sql)));
+};
 
 test.after(() => db.close());
 

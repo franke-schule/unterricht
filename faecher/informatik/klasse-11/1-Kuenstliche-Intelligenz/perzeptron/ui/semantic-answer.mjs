@@ -1,5 +1,7 @@
 // Vorlage für den vorhandenen gemeinsamen semantic-answer.mjs-Helfer.
 // Endpunkt öffentlich, IAM-API-Key ausschließlich als Secret in der Function.
+import { encodeAccessPassword, forgetAccessPassword, getAccessPassword } from './ai-access.mjs?v=20261104-password-v1';
+
 export const SCW_FUNCTION_URL = 'https://unterrichtkiichezbn4-ki-auswertung.functions.fnc.fr-par.scw.cloud/';
 const DEFAULT_TIMEOUT = 130000;
 
@@ -11,7 +13,7 @@ export function isValidScriptServerUrl(value) {
 }
 
 async function evaluate({ serverUrl = SCW_FUNCTION_URL, taskId, answer, code,
-  timeout = DEFAULT_TIMEOUT, expectedMaxPoints }, requestType) {
+  timeout = DEFAULT_TIMEOUT, expectedMaxPoints, accessPassword }, requestType) {
   if (!isValidScriptServerUrl(serverUrl)) throw new Error('Der Auswertungsserver ist nicht korrekt eingerichtet.');
   const input = requestType === 'code' ? code : answer;
   const maximum = requestType === 'code' ? 12000 : 3000;
@@ -25,12 +27,15 @@ async function evaluate({ serverUrl = SCW_FUNCTION_URL, taskId, answer, code,
   if (typeof taskId !== 'string' || !taskId.trim()) throw new Error('Die Aufgabenkennung fehlt.');
   if (!Number.isFinite(timeout) || timeout <= 0) throw new Error('Die konfigurierte Wartezeit ist ungültig.');
 
+  const password = accessPassword === undefined ? await getAccessPassword() : accessPassword;
+  const passwordHeader = encodeAccessPassword(password);
+
   const requestId = globalThis.crypto?.randomUUID?.() || `${Date.now().toString(36)}-${Math.random().toString(36).slice(2)}`;
   const controller = new AbortController();
   const timer = setTimeout(() => controller.abort(), timeout);
   try {
     const response = await fetch(SCW_FUNCTION_URL, {
-      method: 'POST', headers: { 'Content-Type': 'application/json' },
+      method: 'POST', headers: { 'Content-Type': 'application/json', 'X-AI-Password': passwordHeader },
       credentials: 'omit', referrerPolicy: 'no-referrer', cache: 'no-store',
       signal: controller.signal,
       body: JSON.stringify({ requestId, taskId, requestType,
@@ -38,8 +43,10 @@ async function evaluate({ serverUrl = SCW_FUNCTION_URL, taskId, answer, code,
     });
     let payload;
     try { payload = await response.json(); } catch {
+      if (response.status === 401) forgetAccessPassword(password);
       throw new Error('Der Server hat keine lesbare Auswertung zurückgegeben.');
     }
+    if (response.status === 401) forgetAccessPassword(password);
     const result = payload?.result;
     if (!response.ok || result?.ok !== true) throw new Error(typeof result?.message === 'string'
       ? result.message.slice(0, 500) : 'Die Auswertung konnte nicht abgeschlossen werden. Bitte versuche es erneut.');

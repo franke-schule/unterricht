@@ -4,7 +4,7 @@ const assert = require('node:assert/strict');
 const fs = require('node:fs');
 const path = require('node:path');
 const core = require('../evaluation-core');
-const { createHandler } = require('../handler');
+const { createHandler } = require('./fixtures/authorized-handler');
 
 const taskId = '11-6-einfach-ausgabe';
 const task = core.TASKS[taskId];

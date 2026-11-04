@@ -47,13 +47,13 @@
     \colorbox{Gold}{\color{Navy}\small\bfseries\strut LÖSUNGEN}
     \end{tabularx}
     \vspace{1mm}{\fontsize{17}{20}\selectfont\bfseries
-    Aufgabe 2 -- Erste SQL-Abfragen}\par
+    Aufgabe 2 -- Erste SQL-Abfragen: SELECT und ORDER BY}\par
     \vspace{.6mm}{\large Sicherungsblatt}\vspace{1.5mm}}}}
 \newcommand{\pagefooter}[1]{%
   \vfill{\color{Line}\rule{\linewidth}{.5pt}}\par\vspace{1mm}
   \begin{tabularx}{\linewidth}{@{}Xc r@{}}
   {\small\color{Muted}Klasse 9 \textperiodcentered{} Datenbanken} &
-  {\small\color{Muted}#1 / 2} &
+  {\small\color{Muted}#1 / 1} &
   {\small\color{Muted}Sicherungsblatt \textperiodcentered{} Aufgabe 2}
   \end{tabularx}}
 \newcommand{\merkebox}[1]{%
@@ -151,68 +151,4 @@ fragezornriese & 194\\\hline
 \vspace{.2mm}
 \merkebox{ORDER BY centimeters DESC sortiert absteigend: gro\ss{}e Werte stehen oben. Ohne DESC gilt ASC (aufsteigend).}
 \pagefooter{1}
-
-\newpage
-\pageheader\par
-\sectiontitle{4 \textperiodcentered{} Dopplungen vermeiden mit DISTINCT}
-\begin{minipage}[t]{.48\linewidth}
-\workbox{Zeige die Geschlechtsangaben aller Mitglieder an.}
-\smallcaption{SQL-Anweisung}
-\sqlbox{\sqlkw{SELECT} gender\par\sqlkw{FROM} users}
-\smallcaption{Ergebnisrelation (Ausschnitt aus 317 Zeilen)}
-{\fontsize{8.6}{10.2}\selectfont
-\begin{tabular}{|>{\ttfamily\bfseries}l|}\hline
-\rowcolor{Sky}gender\\\hline
-male\\\hline male\\\hline male\\\hline \ldots\\\hline
-\end{tabular}}
-\end{minipage}\hfill
-\begin{minipage}[t]{.48\linewidth}
-\workbox{Zeige jede unterschiedliche Geschlechtsangabe nur einmal an.}
-\smallcaption{SQL-Anweisung}
-\sqlbox{\sqlkw{SELECT} \sqlkw{DISTINCT} gender\par\sqlkw{FROM} users}
-\smallcaption{Ergebnisrelation (4 Zeilen)}
-{\fontsize{8.6}{10.2}\selectfont
-\begin{tabular}{|>{\ttfamily\bfseries}l|}\hline
-\rowcolor{Sky}gender\\\hline
-male\\\hline female\\\hline diverse\\\hline NULL\\\hline
-\end{tabular}}\par\vspace{.5mm}
-{\small\color{Muted}NULL steht für das Konto admin ohne Eintrag.}
-\par\vspace{.4mm}
-\smallcaption{Allgemeine Form}
-\sqlbox{\sqlkw{SELECT} \sqlkw{DISTINCT} Spaltenname\par\sqlkw{FROM} tabellenname}
-\end{minipage}\par
-\vspace{1mm}
-\merkebox{DISTINCT steht direkt hinter SELECT. Gleiche Werte erscheinen in der Ergebnisrelation nur einmal; die Tabelle users bleibt unverändert. NULL bedeutet: kein Wert eingetragen.}
-
-\sectiontitle{5 \textperiodcentered{} Zeilen begrenzen mit LIMIT}
-\begin{minipage}[t]{.48\linewidth}
-\workbox{Zeige die Usernames der ersten drei Mitglieder an.}
-\smallcaption{SQL-Anweisung}
-\sqlbox{\sqlkw{SELECT} username\par\sqlkw{FROM} users\par\sqlkw{LIMIT} 3}
-\smallcaption{Ergebnisrelation (3 Zeilen)}
-\miniresult{username}{zornigerfotograf\\wanderwut\_finn\\bergcoder}
-\vspace{.5mm}\par
-{\fontsize{9.2}{11}\selectfont LIMIT 3 zeigt höchstens drei Zeilen; ohne Sortierung hängt die Auswahl von der vorhandenen Reihenfolge ab.}
-\end{minipage}\hfill
-\begin{minipage}[t]{.48\linewidth}
-\workbox{Zeige die Usernames und Geburtsdaten der vier jüngsten Mitglieder an.}
-\smallcaption{SQL-Anweisung}
-\sqlbox{\sqlkw{SELECT} username, birthday\par\sqlkw{FROM} users\par\sqlkw{ORDER BY} birthday DESC\par\sqlkw{LIMIT} 4}
-\smallcaption{Ergebnisrelation (4 Zeilen)}
-{\fontsize{8.6}{10.2}\selectfont
-\begin{tabular}{|>{\ttfamily\bfseries}l|>{\ttfamily}l|}\hline
-\rowcolor{Sky}username & birthday\\\hline
-gartenlesemaus & 2010-07-07\\\hline
-gartencoderin & 2010-06-28\\\hline
-codekickemmi & 2010-06-22\\\hline
-modereiselio & 2010-06-15\\\hline
-\end{tabular}}\par\vspace{.5mm}
-{\fontsize{9.2}{11}\selectfont Erst sortiert ORDER BY die spätesten Geburtsdaten nach oben; danach zeigt LIMIT die ersten vier Zeilen.}
-\end{minipage}\par
-\vspace{.4mm}
-\smallcaption{Allgemeine Form}
-\sqlbox{\sqlkw{SELECT} Spaltenname\par\sqlkw{FROM} tabellenname\par\sqlkw{LIMIT} Anzahl}
-\vspace{1mm}
-\merkebox{Reihenfolge der Klauseln: SELECT (gegebenenfalls mit DISTINCT) $\rightarrow$ FROM $\rightarrow$ ORDER BY $\rightarrow$ LIMIT.}
-\pagefooter{2}
 \end{document}

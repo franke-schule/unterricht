@@ -29,7 +29,8 @@ function harness(fetchImpl) {
     window: { crypto: { randomUUID } }, URL, AbortController, fetch: fetchImpl,
     setTimeout: callback => { timers.set(++timerCount, callback); return timerCount; },
     clearTimeout: id => timers.delete(id) });
-  const helper = fs.readFileSync(path.resolve(__dirname, '../../faecher/informatik/klasse-11/1-Kuenstliche-Intelligenz/perzeptron/ui/semantic-answer.mjs'), 'utf8').replace(/^export /gm, '');
+  const helper = fs.readFileSync(path.resolve(__dirname, '../../faecher/informatik/klasse-11/1-Kuenstliche-Intelligenz/perzeptron/ui/semantic-answer.mjs'), 'utf8').replace(/^import .*ai-access.*;\r?\n/m, '').replace(/^export /gm, '');
+  Object.assign(context, require('./fixtures/authorized-handler').clientGlobals);
   vm.runInContext(helper, context);
   vm.runInContext('globalThis.scwTestModule = { evaluateSemanticAnswer, evaluateCodeAnswer, renderCompactEvaluation };', context);
   vm.runInContext(script.replace(/import\('[^']+'\)/g, 'Promise.resolve(scwTestModule)'), context);
@@ -82,7 +83,7 @@ test('Doppelklick erzeugt keine zweite Anfrage; beide Aufgaben können getrennt 
   const first = h.context.submitAnswer('b');
   await h.context.submitAnswer('b');
   const second = h.context.submitAnswer('c');
-  await Promise.resolve();
+  await new Promise(resolve => setImmediate(resolve));
   assert.equal(pending.length, 2);
   assert.notEqual(JSON.parse(pending[0].options.body).requestId, JSON.parse(pending[1].options.body).requestId);
   for (const call of pending) call.resolve({ ok: true, json: async () => resultFor(call.options) });
@@ -96,7 +97,7 @@ test('Textänderung entfernt Rückmeldung und verwirft verspätete Bewertung der
   const h = harness((url, options) => new Promise(resolve => { finish = () => resolve({ ok: true, json: async () => resultFor(options) }); }));
   h.elements['answer-b'].value = 'Eine ausreichend lange erste Antwort.';
   const running = h.context.submitAnswer('b');
-  await Promise.resolve();
+  await new Promise(resolve => setImmediate(resolve));
   h.elements['answer-b'].value = 'Eine inzwischen überarbeitete Antwort.';
   h.elements['answer-b'].listeners.input();
   assert.equal(h.elements['result-b'].hidden, true);
@@ -142,7 +143,7 @@ test('Timeout bricht die Anfrage ab und ermöglicht erneutes Prüfen', async () 
     options.signal.addEventListener('abort', () => reject(new Error('abgebrochen')))));
   h.elements['answer-c'].value = 'Eine erfundene Antwort.';
   const evaluation = h.context.submitAnswer('c');
-  await Promise.resolve();
+  await new Promise(resolve => setImmediate(resolve));
   [...h.timers.values()][0]();
   await evaluation;
   assert.match(h.elements['result-c'].textContent, /zu lange gedauert/);

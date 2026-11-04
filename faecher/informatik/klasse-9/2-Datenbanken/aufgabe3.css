@@ -1,10 +1,8 @@
-/* Aufgabe 3 – Datensätze filtern mit WHERE (Informatik 9). Alle Regeln unter .sql9-page.
+/* Aufgabe 2 – Erste SQL-Abfragen (Informatik 9). Alle Regeln unter .sql9-page.
    Farben: --db-* aus klasse-10/1-Datenbanken/redundanzen.css und die Werte aus sql-lab.css (#dcecf7, #123c6b, #fff8dc, #e1ad32). */
 
 /* Sieben Reiter; spezifischer als die Grundregel in sql-lab.css für .sql-page .step-tabs */
-body.sql9-page.sql-page:not(.menu-cross-product-page) .step-tabs { display: grid; grid-template-columns: repeat(7, minmax(0, 1fr)); overflow: visible; }
-body.sql9-page.sql-page:not(.menu-cross-product-page) .step-tab { min-width: 0; }
-body.sql9-page.sql-page:not(.menu-cross-product-page) .step-tab small { white-space: normal; overflow-wrap: anywhere; }
+body.sql9-page.sql-page:not(.menu-cross-product-page) .step-tabs { grid-template-columns: repeat(7, minmax(120px, 1fr)); }
 
 /* Leere Rückmeldungen (aria-live-Bereiche) brauchen keinen Platz */
 .sql9-page .feedback:empty { min-height: 0; margin: 0 !important; }
@@ -41,12 +39,6 @@ body.sql9-page.sql-page:not(.menu-cross-product-page) .step-tab small { white-sp
 .sql9-page .sql9-intro-task { margin: 0; }
 .sql9-page .sql9-intro-schema { display: block; width: max-content; min-width: 100%; margin-bottom: 6px; color: #244d78; white-space: nowrap; }
 .sql9-page .sql9-intro-table { min-width: 0; overflow-x: auto; }
-.sql9-page .sql9-intro-stage { overflow: hidden; }
-.sql9-page .sql9-intro-table .table-scroll { overflow: auto; }
-.sql9-page .sql9-snippet-table tr.is-checking { outline: 2px solid #2458c7; outline-offset: -2px; }
-.sql9-page .sql9-snippet-table tr.is-leaving { animation: where-row-leave 700ms ease-in forwards; }
-.sql9-page .sql9-intro-hint[hidden] { display: none; }
-@keyframes where-row-leave { to { transform: translateX(115%); opacity: 0; } }
 .sql9-page .sql9-snippet-label { margin: 0 0 4px; color: #315170; font-size: 0.82rem; font-weight: 800; }
 
 /* Ausschnitt aus users und Ergebnisrelation */
@@ -116,5 +108,4 @@ body.sql9-page.sql-page:not(.menu-cross-product-page) .step-tab small { white-sp
 
 @media (prefers-reduced-motion: reduce) {
   .sql9-page .sql9-result-cells td.is-current { animation: none; }
-  .sql9-page .sql9-snippet-table tr.is-leaving { animation: none; }
 }

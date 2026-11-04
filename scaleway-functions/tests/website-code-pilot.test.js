@@ -39,7 +39,8 @@ function harness(fetchImpl) {
     window: { crypto: { randomUUID } }, URL, AbortController, fetch: fetchImpl,
     setTimeout: callback => { timers.set(++timerCount, callback); return timerCount; },
     clearTimeout: id => timers.delete(id) });
-  const helper = fs.readFileSync(path.resolve(__dirname, '../../faecher/informatik/klasse-11/1-Kuenstliche-Intelligenz/perzeptron/ui/semantic-answer.mjs'), 'utf8').replace(/^export /gm, '');
+  const helper = fs.readFileSync(path.resolve(__dirname, '../../faecher/informatik/klasse-11/1-Kuenstliche-Intelligenz/perzeptron/ui/semantic-answer.mjs'), 'utf8').replace(/^import .*ai-access.*;\r?\n/m, '').replace(/^export /gm, '');
+  Object.assign(context, require('./fixtures/authorized-handler').clientGlobals);
   vm.runInContext(helper, context);
   vm.runInContext('globalThis.scwTestModule = { evaluateSemanticAnswer, evaluateCodeAnswer, renderCompactEvaluation, observeIdeCodeChanges(frame, id, callback) { globalThis.codeChanged = callback; return () => {}; } };', context);
   vm.runInContext(script.replace(/import\('[^']+'\)/g, 'Promise.resolve(scwTestModule)'), context);
@@ -117,7 +118,7 @@ test('Doppelklick wird abgefangen; Fehler geben den Prüfbutton für einen erneu
       json: async () => responseFor(options, { ok: false, message: 'Bitte warte eine Minute.' }) }); });
   });
   const running = h.context.submitCode('10-3a');
-  await Promise.resolve();
+  await new Promise(resolve => setImmediate(resolve));
   await h.context.submitCode('10-3a');
   assert.equal(calls, 1);
   finish();
@@ -125,7 +126,7 @@ test('Doppelklick wird abgefangen; Fehler geben den Prüfbutton für einen erneu
   assert.equal(h.elements['result-10-3a'].textContent, 'Bitte warte eine Minute.');
   assert.equal(h.elements['button-10-3a'].disabled, false);
   const retry = h.context.submitCode('10-3a');
-  await Promise.resolve();
+  await new Promise(resolve => setImmediate(resolve));
   finish();
   await retry;
   assert.equal(calls, 2);
@@ -135,7 +136,7 @@ test('IDE-Änderung entfernt sichtbares Feedback und verwirft eine verspätete C
   let finish;
   const h = harness((url, options) => new Promise(resolve => { finish = () => resolve({ ok: true, json: async () => responseFor(options) }); }));
   const running = h.context.submitCode('10-3a');
-  await Promise.resolve();
+  await new Promise(resolve => setImmediate(resolve));
   h.state.code = 'Robot dudu = new Robot(1, 1, 8, 8);';
   h.context.codeChanged();
   assert.equal(h.elements['result-10-3a'].hidden, true);
@@ -160,7 +161,7 @@ test('Timeout beendet die Codeanfrage und stellt den ursprünglichen Button wied
   const h = harness((url, options) => new Promise((resolve, reject) =>
     options.signal.addEventListener('abort', () => reject(new Error('abgebrochen')))));
   const running = h.context.submitCode('10-3a');
-  await Promise.resolve();
+  await new Promise(resolve => setImmediate(resolve));
   [...h.timers.values()][0]();
   await running;
   assert.match(h.elements['result-10-3a'].textContent, /zu lange gedauert/);

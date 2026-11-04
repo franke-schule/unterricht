@@ -54,7 +54,7 @@ test('alle Beschreibe- und Codeprompts in Inf9, Inf10 und Inf11 enthalten diesel
 });
 
 test('Konfigurierte Aufgaben liefern genau einen nächsten Verbesserungsschritt bei vollständiger Bewertung', async () => {
-  const { createHandler } = require('../handler');
+  const { createHandler } = require('./fixtures/authorized-handler');
   const { compactFeedbackSentences } = await import('../../faecher/informatik/klasse-11/1-Kuenstliche-Intelligenz/perzeptron/ui/semantic-answer.mjs');
   const ids = Object.keys(core.TASKS);
   assert.deepEqual(Object.entries(core.TASKS).filter(([, task]) => task.maxFeedbackHints === 1).map(([id]) => id), ids);

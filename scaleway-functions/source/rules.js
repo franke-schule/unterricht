@@ -670,15 +670,7 @@ function evaluatePerceptronLearningByRules_(answer, maxPoints) {
   } else {
     missing.push('Ergänze, wo das Gelernte im Modell gespeichert ist.');
   }
-  const deniesAwareness = containsAny_(text, ['kein bewusstsein', 'nicht bewusst', 'kein verstaendnis', 'kein verständnis', 'versteht nicht', 'nicht menschlich', 'feste regel', 'algorithmus']);
-  const falseAwareness = containsAny_(text, ['entwickelt bewusstsein', 'hat bewusstsein', 'versteht seine fehler bewusst', 'versteht seine fehler bewusst']);
-  if (deniesAwareness && !falseAwareness) {
-    points++;
-    strengths.push('Du grenzt die Regelanpassung von Bewusstsein und Verständnis ab.');
-  } else {
-    missing.push('Grenze die feste Rechenregel von Bewusstsein oder menschlichem Verständnis ab.');
-  }
-  return createFishRuleEvaluation_(points, maxPoints, strengths, missing, points === maxPoints ? 'Du erklärst fachlich vollständig, wie das Perzeptron Parameter anpasst und wo sein Lernen begrenzt ist.' : 'Ergänze die noch fehlenden Aspekte zu Fehlervergleich, Parametern oder der Abgrenzung von Bewusstsein.');
+  return createFishRuleEvaluation_(points, maxPoints, strengths, missing, points === maxPoints ? 'Du erklärst, wie das Perzeptron seine Parameter anpasst und wo das Gelernte steckt.' : missing[0]);
 }
 
 

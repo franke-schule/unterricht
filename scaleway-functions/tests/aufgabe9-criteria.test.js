@@ -2,7 +2,7 @@
 const test = require('node:test');
 const assert = require('node:assert/strict');
 const core = require('../evaluation-core');
-const { createHandler } = require('../handler');
+const { createHandler } = require('./fixtures/authorized-handler');
 const { evaluationSchema, validateEvaluation } = require('../scaleway-client');
 const facts = require('./fixtures/aufgabe9-criterion-facts');
 const fixtureCases = require('./fixtures/sql-description-cases.json');

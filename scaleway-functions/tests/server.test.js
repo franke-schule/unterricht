@@ -8,12 +8,14 @@ const vm = require('node:vm');
 const core = require('../evaluation-core');
 const { createHandler } = require('../handler');
 const { readConfig, validateEvaluation } = require('../scaleway-client');
+const { TEST_PASSWORD_HASH, TEST_PASSWORD_HEADER } = require('./fixtures/authorized-handler');
 
 const env = {
   AI_API_KEY: 'test-secret-never-return',
   AI_PROJECT_ID: '11111111-1111-1111-1111-111111111111',
   AI_MODEL: 'mistral-small-3.2-24b-instruct-2506',
   AI_EVALUATION_ENABLED: 'true',
+  AI_ACCESS_PASSWORD_HASH: TEST_PASSWORD_HASH,
   AI_ALLOWED_ORIGINS: 'https://unterricht.example'
 };
 const fixture = { points: 0, maxPoints: 6, status: 'noch unvollstaendig', strengths: [], missing: ['Begründung fehlt.'], feedback: 'Erkläre die Wirkung genauer.' };
@@ -24,7 +26,7 @@ function modelResponse(evaluation = missingCriteria(core.TASKS.b), overrides = {
   } };
 }
 function post(request = {}) {
-  return { httpMethod: 'POST', path: '/', headers: { 'Content-Type': 'application/json' },
+  return { httpMethod: 'POST', path: '/', headers: { 'Content-Type': 'application/json', 'X-AI-Password': TEST_PASSWORD_HEADER },
     body: JSON.stringify({ requestId: 'test_request_01', taskId: 'b', answer: 'Ich weiß die Antwort noch nicht.', ...request }) };
 }
 const body = response => JSON.parse(response.body);

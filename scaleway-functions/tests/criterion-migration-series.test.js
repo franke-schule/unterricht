@@ -132,7 +132,7 @@ test('Erkannte Getter-Codeformen können lokale Teilkriterien trotz überschätz
     { code: code(`${start}\nprintln(petersHund.zeigeDaten());`), expected: 0 },
     { code: code(`${start}\nprintln(petersHund.gibAlter());\nprintln(petersHund.gibAlter(7));`), expected: 2 }
   ];
-  const handle = require('../handler').createHandler({ rateLimit: Infinity, env: {
+  const handle = require('./fixtures/authorized-handler').createHandler({ rateLimit: Infinity, env: {
     AI_API_KEY: 'mock', AI_PROJECT_ID: '11111111-1111-1111-1111-111111111111', AI_MODEL: 'mock-model', AI_EVALUATION_ENABLED: 'true'
   }, fetchImpl: async (url, options) => {
     const sent = JSON.parse(options.body);

@@ -2,7 +2,7 @@
 const test = require('node:test');
 const assert = require('node:assert/strict');
 const core = require('../evaluation-core');
-const { createHandler } = require('../handler');
+const { createHandler } = require('./fixtures/authorized-handler');
 const id = 'inf9-db3-beschreibe-where';
 const reportedAnswer = 'es werden benutzernamen und städte von users ausgegeben die in münchen wohnen';
 const usersInOwnWords = 'es werden benutzernamen und städte von nutzern ausgegeben die in münchen wohnen';

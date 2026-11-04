@@ -1,11 +1,16 @@
-// Aufgabe 3 – Datensätze filtern mit WHERE (Informatik 9).
+import { bindSolutionCodePersistence, readSplitProgress } from './sql9-progress-migration.mjs';
+// Aufgabe 3 – Dopplungen vermeiden und Zeilen begrenzen (Informatik 9).
+// Seitengerüst nach klasse-9/2-Datenbanken/aufgabe1.js, SQL-Labor nach klasse-10/1-Datenbanken/sql-lab.js.
 import { classifyDescriptionResult, compareRelations, isValidScriptServerUrl, missingTextQuote, normalizeRelation, parseDelimited, sqlTokens, validateSelectStatement } from '../../klasse-10/1-Datenbanken/sql-lab-core.mjs?v=20260929b';
 import { evaluateSemanticAnswer, renderCompactEvaluation } from '../../klasse-11/1-Kuenstliche-Intelligenz/perzeptron/ui/semantic-answer.mjs?v=20261029-criteria-v1';
 import { appendSolutionDownloadFromTemplate, enableTabKeyboardNavigation, focusTabPanelStart, renderTabFlowNavigation, syncTabSemantics } from '../../klasse-10/1-Datenbanken/tab-navigation.mjs?v=20260906a';
-const STORAGE_KEY = 'informatik9-datenbanken-aufgabe3-where-v1';
+
+// Speicherschlüssel trotz Umbenennung beibehalten, damit bestehende Lernstände erhalten bleiben.
+const STORAGE_KEY = 'informatik9-datenbanken-aufgabe3-distinct-limit-v2';
+const LEGACY_STORAGE_KEY = 'informatik9-datenbanken-aufgabe2-v1';
+const MIGRATION_MARKER = `${STORAGE_KEY}-migration-done`;
 const NEUTRAL_SQL_PLACEHOLDER = 'SELECT ...\nFROM ...';
 const SCRIPT_SERVER_URL = 'https://unterrichtkiichezbn4-ki-auswertung.functions.fnc.fr-par.scw.cloud/';
-
 // nach USERS_TABLE_SCHEMAS in klasse-10/1-Datenbanken/sql-lab.js, wortgleich
 const USERS_TABLE_SCHEMAS = Object.freeze([
   Object.freeze({ table: 'users', columns: Object.freeze([
@@ -18,594 +23,288 @@ const USERS_TABLE_SCHEMAS = Object.freeze([
 ]);
 const USER_COLUMN_NAMES = USERS_TABLE_SCHEMAS[0].columns.map(([name]) => name);
 
-
+// [id, Label, Kicker, Überschrift]
 const TABS = [
-  ['intro', 'Einführung: Wie filtert WHERE?', 'Entdecken', 'Wie filtert WHERE?'],
-  ['simple', 'Einfache Bedingungen', 'Verstehen und anwenden', 'Einfache Bedingungen'],
-  ['compare', 'Vergleichen mit WHERE', 'Anwenden', 'Vergleichen mit WHERE'],
-  ['like', 'Muster suchen mit LIKE', 'Anwenden', 'Muster suchen mit LIKE'],
-  ['combine', 'Bedingungen verknüpfen', 'Anwenden', 'Bedingungen verknüpfen'],
+  ['distinct', 'Doppelte Werte vermeiden: DISTINCT', 'Entdecken und anwenden', 'Doppelte Werte vermeiden: DISTINCT'],
+  ['limit', 'Zeilen begrenzen: LIMIT', 'Verstehen und anwenden', 'Zeilen begrenzen: LIMIT'],
   ['fast', 'Für die Schnellen', 'Übertragen', 'Für die Schnellen'],
   ['quiz', 'Abschlussquiz', 'Sichern', 'Abschlussquiz und Zusammenfassung']
 ];
 const FEEDBACK_LEVELS = ['success', 'partial', 'hint', 'error'];
 const DESCRIPTION_LEVELS = ['high', 'medium', 'low', 'error'];
 const DESCRIPTION_STATUSES = ['korrekt', 'teilweise korrekt', 'noch nicht korrekt'];
-const DESCRIPTION_TASK = {
-  id: 'd-where', tab: 'simple', tabLabel: 'Reiter 2', serverTaskId: 'inf9-db3-beschreibe-where',
-  title: 'Einstieg – Anweisung beschreiben', prompt: '**Beschreibe** in eigenen Worten, welche Daten diese SQL-Anweisung ausgibt.',
-  sql: "SELECT username, city\nFROM users\nWHERE city = 'München'",
-  hints: ['Lies zuerst FROM: Aus welcher Tabelle kommen die Daten?', 'Welche beiden Spalten nennt SELECT? Welche Bedingung steht hinter WHERE?', "Die Spalten heißen username und city. Überlege, welche Mitglieder die Bedingung city = 'München' erfüllen."],
-  model: 'Die Abfrage liest aus der Tabelle users nur die Mitglieder mit Wohnort München aus und zeigt deren Benutzernamen und Wohnort.',
-  fallbacks: {
-    korrekt: 'Korrekt: Du hast die Tabelle, beide Ausgabespalten und den Wohnort München richtig beschrieben.',
-    partial: 'Teilweise korrekt: Ein Teil deiner Beschreibung stimmt. Prüfe noch Tabelle, Ausgabespalten und die Bedingung für München.',
-    incorrect: 'Noch nicht korrekt: Lies FROM, SELECT und WHERE einzeln und beschreibe ihre Wirkung.'
+const YOUNGEST_KINDS = ['empty', 'correct', 'ageWrong', 'admin', 'oldest', 'wrong'];
+
+const DESCRIPTION_TASKS = [
+  {
+    id: 'd-distinct', tab: 'distinct', tabLabel: 'Reiter 1', serverTaskId: 'inf9-db2-beschreibe-distinct',
+    title: 'Einstieg – Anweisung beschreiben', prompt: '**Beschreibe**, welche Daten die Anweisung aus `users` ausgibt und was bei Dopplungen geschieht.',
+    sql: 'SELECT DISTINCT city\nFROM users',
+    hints: ['city ist die Spalte mit dem Wohnort.', 'Vergleiche in Gedanken zwei Mitglieder aus derselben Stadt: Wie oft soll diese Stadt im Ergebnis stehen?', 'DISTINCT entfernt gleiche Werte aus der Ergebnisrelation; die Tabelle users bleibt erhalten.'],
+    aspects: ['Tabelle users als Datenquelle', 'Wohnorte/city als ausgewählte Daten', 'Jeder verschiedene Wohnort nur einmal in der Ergebnisrelation'],
+    model: 'Die Abfrage zeigt aus users jeden unterschiedlichen Wohnort genau einmal. Doppelte Wohnorte fehlen nur in der Ergebnisrelation; users wird nicht verändert.',
+    anchor: 'Prüfe die Datenquelle, die ausgewählte Spalte und die Wirkung von DISTINCT.',
+    fallbacks: {
+      korrekt: 'Korrekt: Du hast erklärt, dass Wohnorte aus users ausgegeben werden und jeder Wohnort nur einmal erscheint.',
+      partial: 'Teilweise korrekt: Prüfe die Datenquelle, die ausgewählte Spalte und was DISTINCT bei gleichen Wohnorten bewirkt.',
+      incorrect: 'Noch nicht korrekt: Vergleiche zwei Mitglieder aus demselben Wohnort und unterscheide Ergebnis und Tabelle.'
+    }
+  },
+  {
+    id: 'd-limit', tab: 'limit', tabLabel: 'Reiter 2', serverTaskId: 'inf9-db2-beschreibe-limit',
+    title: 'Einstieg – Anweisung beschreiben', prompt: '**Beschreibe** in eigenen Worten, was diese Anweisung auswählt und wodurch die Reihenfolge entsteht.',
+    sql: 'SELECT username\nFROM users\nORDER BY username\nLIMIT 3',
+    hints: ['Welche Spalte steht hinter SELECT?', 'ORDER BY username ordnet die Benutzernamen; ohne Richtungsangabe gilt aufsteigend.', 'LIMIT 3 lässt nach dem Sortieren nur die ersten drei Ergebniszeilen stehen.'],
+    aspects: ['username aus users als einzige Ausgabespalte', 'Alphabetisch/aufsteigend nach username sortiert', 'Danach nur die ersten drei Zeilen/Benutzernamen'],
+    model: 'Die Abfrage ordnet die Benutzernamen aus users alphabetisch und zeigt davon die ersten drei.',
+    anchor: 'Überlege, ob zuerst sortiert oder zuerst begrenzt wird.',
+    fallbacks: {
+      korrekt: 'Korrekt: Du hast die alphabetische Sortierung und die anschließende Begrenzung auf drei Benutzernamen richtig beschrieben.',
+      partial: 'Teilweise korrekt: Prüfe noch, welche Spalte ausgegeben wird und ob zuerst sortiert oder begrenzt wird.',
+      incorrect: 'Noch nicht korrekt: Lies SELECT, ORDER BY und LIMIT nacheinander und beschreibe die Wirkung jeder Klausel.'
+    }
   }
+];
+const DESCRIPTION_BY_ID = new Map(DESCRIPTION_TASKS.map((item) => [item.id, item]));
+const DESCRIPTION_BY_TAB = new Map(DESCRIPTION_TASKS.map((item) => [item.tab, item]));
+
+// ---------------------------------------------------------------------------
+// Einführung (Reiter 1)
+// ---------------------------------------------------------------------------
+
+const TEXT_NO_LIMIT_EXPECTED = (c) => `Teilweise korrekt: Deine Ergebnisrelation hat nur ${c.n} Zeilen, gesucht sind alle passenden Zeilen. Entferne LIMIT.`;
+const TEXT_CITY_COLUMNS = (c) => `Noch nicht korrekt: Gesucht ist nur die Spalte mit den Wohnorten. Deine Ergebnisrelation enthält ${c.list}. Sieh im Tabellenschema nach, wie diese Spalte heißt.`;
+const TEXT_ALL_MEMBERS_EXTRA = 'Statt * ist auch eine Spaltenauswahl richtig, die die Mitglieder erkennbar macht.';
+
+function task(config) {
+  return { projection: 'exact', columnOrder: true, requireAny: [], requireAll: [], requireDistinct: false, order: null, limit: null, initialSql: '', extra: [], ...config };
+}
+
+const TASKS = [
+  task({
+    id: 't7', number: 7, tab: 'distinct', prompt: 'Aus welchen unterschiedlichen Wohnorten stammen die Mitglieder? **Gib** jeden Wohnort nur einmal aus.',
+    select: 'DISTINCT city', tail: 'FROM users', requireDistinct: true,
+    texts: {
+      ok: 'Korrekt: Die Mitglieder stammen aus 46 verschiedenen Wohnorten. Die 47. Zeile NULL ist kein Ort: Beim Konto admin ist kein Wohnort eingetragen.',
+      cols: TEXT_CITY_COLUMNS,
+      noDistinct: (c) => `Teilweise korrekt: Die Spalte stimmt. Deine Ergebnisrelation hat aber ${c.n} Zeilen, weil viele Wohnorte mehrfach vorkommen. Gesucht ist jeder Wohnort nur einmal – welches Schlüsselwort entfernt Dopplungen?`
+    },
+    hints: [
+      'Der Wohnort steht in der Spalte city.',
+      'Jeder Wohnort soll nur einmal vorkommen. Das Schlüsselwort dafür steht direkt hinter SELECT.',
+      { sql: 'SELECT DISTINCT …\nFROM users', after: 'Ergänze die Spalte.' }
+    ]
+  }),
+  task({
+    id: 't8', number: 8, tab: 'distinct', prompt: '**Korrigiere** die gezeigte Anweisung, damit jedes Land nur einmal erscheint. **Gib** die vollständige korrigierte Anweisung neu ein.',
+    correctionSql: 'SELECT name, country\nFROM users',
+    select: 'DISTINCT country', tail: 'FROM users', requireDistinct: true,
+    texts: {
+      ok: 'Korrekt: DISTINCT country zeigt jedes Land nur einmal; die Tabelle users bleibt unverändert.',
+      cols: (c) => (c.cols.includes('name')
+        ? 'Noch nicht korrekt: Mit name erhältst du wieder eine Zeile pro Mitglied, weil fast jeder Name anders ist. Gesucht ist nur die Spalte mit den Ländern.'
+        : `Noch nicht korrekt: Gesucht ist nur die Spalte mit den Ländern. Deine Ergebnisrelation enthält ${c.list}.`),
+      noDistinct: () => 'Teilweise korrekt: Du gibst Länder aus, aber gleiche Länder erscheinen noch mehrfach. Prüfe die Spaltenauswahl und DISTINCT.'
+    },
+    hints: [
+      'Es sollen Länder ausgegeben werden, keine Namen von Mitgliedern.',
+      'Wenn name mit ausgewählt wird, können die Länder mehrfach im Ergebnis stehen.',
+      'Wähle nur country und setze DISTINCT direkt hinter SELECT.'
+    ]
+  }),
+  task({
+    id: 't9', number: 9, tab: 'limit', prompt: '**Zeige** nur 3 Mitglieder an.',
+    select: '*', tail: 'FROM users\nLIMIT 3', projection: 'anyThree', limit: 3,
+    extra: ['Jede Abfrage, die genau drei Datensätze aus users ausgibt, ist richtig.'],
+    texts: {
+      ok: 'Korrekt: Deine Ergebnisrelation zeigt genau 3 Mitglieder. LIMIT 3 gibt die ersten drei Zeilen aus – welche das sind, hängt von der Reihenfolge ab.',
+      distinct: () => 'Teilweise korrekt: Lass DISTINCT weg – gesucht sind drei Mitglieder, nicht drei verschiedene Werte.',
+      noLimit: (c) => `Teilweise korrekt: Deine Ergebnisrelation hat ${c.n} Zeilen. Gesucht sind nur 3 Mitglieder. Mit welchem Schlüsselwort legst du fest, wie viele Zeilen ausgegeben werden?`
+    },
+    hints: [
+      'Sieh in die Karte „Kurz erklärt“: Welches Schlüsselwort begrenzt die Anzahl der Zeilen?',
+      'LIMIT steht am Ende der Abfrage, dahinter die Anzahl der Zeilen.',
+      { sql: 'SELECT *\nFROM users\nLIMIT …', after: 'Ergänze die Anzahl.' }
+    ]
+  }),
+  task({
+    id: 't10', number: 10, tab: 'limit', prompt: '**Zeige** nur die 4 jüngsten Mitglieder an.',
+    select: '*', tail: 'FROM users\nORDER BY birthday DESC\nLIMIT 4', projection: 'any', requireAny: ['username', 'name'],
+    order: { column: 'birthday', dir: 'DESC' }, limit: 4, extra: [TEXT_ALL_MEMBERS_EXTRA],
+    texts: {
+      ok: 'Korrekt: Die vier jüngsten Mitglieder sind gartenlesemaus, gartencoderin, codekickemmi und modereiselio. Erst sortiert ORDER BY birthday DESC die spätesten Geburtsdaten nach oben, dann behält LIMIT 4 nur die ersten vier Zeilen.',
+      cols: () => 'Noch nicht korrekt: Gesucht sind Mitglieder. Gib alle Spalten (SELECT *) aus oder mindestens den Benutzernamen oder den Namen.',
+      noOrder: () => 'Teilweise korrekt: Du gibst 4 Mitglieder aus, aber nicht die jüngsten: Ohne Sortierung nimmt LIMIT einfach die ersten vier Zeilen der Tabelle. Sortiere vorher nach dem Geburtsdatum.',
+      dir: () => 'Teilweise korrekt: Das sind die ältesten Mitglieder – und admin ohne Geburtsdatum (NULL). Aufsteigend sortiert stehen die frühesten Geburtsdaten oben. Die Jüngsten haben das späteste Datum: Welche Richtung brauchst du?',
+      noLimit: (c) => `Teilweise korrekt: Die Sortierung stimmt – ganz oben stehen die jüngsten Mitglieder. Du gibst aber alle ${c.n} Zeilen aus. Begrenze die Ausgabe auf 4 Zeilen.`
+    },
+    hints: [
+      'Du brauchst zwei Schritte: zuerst sortieren, dann die Anzahl der Zeilen begrenzen.',
+      'Die Jüngsten haben das späteste Geburtsdatum. Sortiere so, dass es oben steht, und setze LIMIT ans Ende.',
+      { sql: 'SELECT *\nFROM users\nORDER BY birthday …\nLIMIT …', after: 'Ergänze die Sortierrichtung und die Anzahl.' }
+    ]
+  }),
+  task({
+    id: 't12', number: 12, tab: 'fast', prompt: '**Gib** alle Wohnorte ohne Dopplungen in alphabetischer Reihenfolge aus.',
+    select: 'DISTINCT city', tail: 'FROM users\nORDER BY city', requireDistinct: true, order: { column: 'city', dir: 'ASC' },
+    texts: {
+      ok: 'Korrekt: Jeder Wohnort steht genau einmal da, alphabetisch geordnet. NULL steht ganz oben, weil beim Konto admin kein Wohnort eingetragen ist.',
+      cols: TEXT_CITY_COLUMNS,
+      noDistinct: (c) => `Teilweise korrekt: Die Wohnorte sind sortiert, kommen aber mehrfach vor – deine Ergebnisrelation hat ${c.n} Zeilen. Welches Schlüsselwort entfernt Dopplungen?`,
+      noOrder: () => 'Teilweise korrekt: Jeder Wohnort kommt nur einmal vor, aber die Liste ist noch nicht alphabetisch. Ergänze eine Sortierung.',
+      dir: () => 'Teilweise korrekt: DESC sortiert von Z nach A. Alphabetisch heißt aufsteigend.'
+    },
+    hints: [
+      'Du brauchst zwei Schlüsselwörter: eines gegen Dopplungen und eines zum Sortieren.',
+      'DISTINCT steht direkt hinter SELECT, ORDER BY in einer eigenen Zeile am Ende.',
+      { sql: 'SELECT DISTINCT city\nFROM users\nORDER BY …' }
+    ]
+  }),
+  task({
+    id: 't14', number: 14, tab: 'fast', prompt: '**Zeige** Benutzername und Größe der 4 größten Mitglieder an.',
+    select: 'username, centimeters', tail: 'FROM users\nORDER BY centimeters DESC\nLIMIT 4', columnOrder: false,
+    order: { column: 'centimeters', dir: 'DESC' }, limit: 4,
+    texts: {
+      ok: 'Korrekt: Die vier größten Mitglieder sind turmriese_max, frageriese, reiseriese_elias und wanderriese_taro – alle 195 cm groß. Bei gleicher Größe ist jede Reihenfolge richtig.',
+      cols: (c) => `Noch nicht korrekt: Gesucht sind genau zwei Spalten: Benutzername und Größe. Deine Ergebnisrelation enthält ${c.list}.`,
+      noOrder: () => 'Teilweise korrekt: Ohne Sortierung nimmt LIMIT einfach die ersten Zeilen der Tabelle. Sortiere vorher nach der Größe.',
+      dir: () => 'Teilweise korrekt: Aufsteigend sortiert stehen admin ohne Größe (NULL) und die kleinsten Mitglieder oben. Die größten sollen oben stehen.',
+      noLimit: (c) => `Teilweise korrekt: Die Sortierung stimmt, aber du gibst alle ${c.n} Zeilen aus. Gesucht sind nur die 4 größten.`
+    },
+    hints: [
+      'Zuerst sortieren, dann die Anzahl begrenzen – wie bei den 4 jüngsten Mitgliedern in Aufgabe 10.',
+      'Die Größe steht in centimeters. Die größte Zahl soll oben stehen.',
+      { sql: 'SELECT username, centimeters\nFROM users\nORDER BY centimeters …\nLIMIT …' }
+    ]
+  }),
+  task({
+    id: 't15', number: 15, tab: 'fast', prompt: '**Korrigiere** die Anweisung, damit sie Benutzername und Geburtsdatum der 3 jüngsten Mitglieder ausgibt.',
+    select: 'username, birthday', tail: 'FROM users\nORDER BY birthday DESC\nLIMIT 3', columnOrder: false,
+    order: { column: 'birthday', dir: 'DESC' }, limit: 3,
+    initialSql: 'SELECT username, birthday\nFROM users\nLIMIT 3\nORDER BY birthday',
+    texts: {
+      ok: 'Korrekt: LIMIT steht jetzt am Ende, und DESC holt die spätesten Geburtsdaten nach oben. Die drei jüngsten Mitglieder sind gartenlesemaus, gartencoderin und codekickemmi.',
+      cols: (c) => `Noch nicht korrekt: Gesucht sind genau zwei Spalten: Benutzername und Geburtsdatum. Deine Ergebnisrelation enthält ${c.list}.`,
+      noOrder: () => 'Teilweise korrekt: Ohne Sortierung nimmt LIMIT die ersten Zeilen der Tabelle. Sortiere vorher nach dem Geburtsdatum.',
+      dir: () => 'Teilweise korrekt: Die Reihenfolge der Klauseln stimmt jetzt. Aufsteigend sortiert stehen aber admin ohne Geburtsdatum und die ältesten Mitglieder oben. Welche Richtung brauchst du für die jüngsten?',
+      noLimit: (c) => `Teilweise korrekt: Die Sortierung stimmt, aber du gibst alle ${c.n} Zeilen aus. Gesucht sind nur die 3 jüngsten.`
+    },
+    hints: [
+      'Die Anweisung enthält zwei Fehler. Führe sie einmal aus und lies die Rückmeldung.',
+      'Ein Fehler betrifft die Reihenfolge der Klauseln, der andere die Sortierrichtung.',
+      'LIMIT gehört ans Ende. Die Jüngsten haben das späteste Geburtsdatum – sortiere absteigend.'
+    ]
+  })
+];
+const TASK_BY_ID = new Map(TASKS.map((item) => [item.id, item]));
+const TAB_TASKS = { distinct: ['t7', 't8'], limit: ['t9', 't10'], fast: ['t12', 't14', 't15'] };
+
+const YOUNGEST = {
+  username: 'gartenlesemaus',
+  fullName: 'elena heidenkamp',
+  birthYear: 2010,
+  birthMonth: 7,
+  birthDay: 7
 };
-const DESCRIPTION_BY_ID = new Map([[DESCRIPTION_TASK.id, DESCRIPTION_TASK]]);
-const TASKS = 
-[
-  {
-    "id": "t1",
-    "number": 1,
-    "block": "A",
-    "prompt": "**Liste** die Daten aller weiblichen Mitglieder auf.",
-    "sql": "SELECT * FROM users WHERE gender = 'female'",
-    "select": "*",
-    "tail": "FROM users\nWHERE gender = 'female'",
-    "hints": [
-      "Achte auf die Spalte mit dem Geschlecht.",
-      "Das gesuchte Geschlecht steht als Textwert in gender.",
-      "Ergänze eine Bedingung der Form `WHERE gender = '…'`. Für alle Daten brauchst du hinter SELECT den Stern."
-    ],
-    "texts": {
-      "ok": "Korrekt: Du zeigst alle Spalten der weiblichen Mitglieder.",
-      "partial": "Teilweise korrekt: Einige passende Daten erscheinen. Prüfe, ob du alle Spalten und alle weiblichen Mitglieder ausgibst.",
-      "wrong": "Noch nicht korrekt: Prüfe die Spalte gender und den Textwert für weiblich."
-    },
-    "whereColumn": "gender",
-    "projection": "*",
-    "like": false,
-    "join": ""
-  },
-  {
-    "id": "t2",
-    "number": 2,
-    "block": "A",
-    "prompt": "**Gib** alle Mitglieder aus Deutschland aus.",
-    "sql": "SELECT * FROM users WHERE country = 'Deutschland'",
-    "select": "*",
-    "tail": "FROM users\nWHERE country = 'Deutschland'",
-    "hints": [
-      "Suche im Schema die Spalte für das Land.",
-      "Der gespeicherte Landeswert ist ein Textwert.",
-      "Nutze `WHERE country = 'Deutschland'` und wähle alle Spalten."
-    ],
-    "texts": {
-      "ok": "Korrekt: Du zeigst alle Daten der Mitglieder aus Deutschland.",
-      "partial": "Teilweise korrekt: Prüfe, ob nur Mitglieder aus Deutschland erscheinen und ob alle Spalten vorhanden sind.",
-      "wrong": "Noch nicht korrekt: Das Land steht in country; der Textwert braucht einfache Anführungszeichen."
-    },
-    "whereColumn": "country",
-    "projection": "*",
-    "like": false,
-    "join": ""
-  },
-  {
-    "id": "t3",
-    "number": 3,
-    "block": "A",
-    "prompt": "**Zeige** den vollständigen Datensatz von Mia Sonntag an.",
-    "sql": "SELECT * FROM users WHERE name = 'Mia Sonntag'",
-    "select": "*",
-    "tail": "FROM users\nWHERE name = 'Mia Sonntag'",
-    "hints": [
-      "Der vollständige Name steht in einer Spalte.",
-      "Prüfe name, nicht username.",
-      "Die Bedingung lautet `WHERE name = 'Mia Sonntag'`; für den vollständigen Datensatz fehlen dir noch alle Ausgabespalten."
-    ],
-    "texts": {
-      "ok": "Korrekt: Du zeigst den vollständigen Datensatz von Mia Sonntag.",
-      "partial": "Teilweise korrekt: Du findest Mia Sonntag, aber prüfe, ob wirklich alle Spalten des Datensatzes erscheinen.",
-      "wrong": "Noch nicht korrekt: Vergleiche den vollständigen Namen in name mit dem gesuchten Textwert."
-    },
-    "whereColumn": "name",
-    "projection": "*",
-    "like": false,
-    "join": ""
-  },
-  {
-    "id": "t4",
-    "number": 4,
-    "block": "B",
-    "prompt": "**Gib** alle Mitglieder aus, die kleiner als 1,80 m sind.",
-    "sql": "SELECT * FROM users WHERE centimeters < 180",
-    "select": "*",
-    "tail": "FROM users\nWHERE centimeters < 180",
-    "hints": [
-      "Die Größen stehen als Zentimeterzahlen in der Tabelle.",
-      "1,80 m sind 180 cm; genau 180 cm zählt bei ‚kleiner als‘ nicht mit.",
-      "Verwende `WHERE centimeters < 180` und gib den vollständigen Datensatz aus."
-    ],
-    "texts": {
-      "ok": "Korrekt: Du zeigst die vollständigen Datensätze der Mitglieder unter 180 cm.",
-      "partial": "Teilweise korrekt: Prüfe die Grenze: Genau 180 cm gehört nicht dazu, und alle Spalten sollen erscheinen.",
-      "wrong": "Noch nicht korrekt: Vergleiche centimeters mit 180, nicht mit 1,80."
-    },
-    "whereColumn": "centimeters",
-    "projection": "*",
-    "like": false,
-    "join": ""
-  },
-  {
-    "id": "t5",
-    "number": 5,
-    "block": "B",
-    "prompt": "**Finde** das Mitglied, das am 17.09.2007 geboren wurde. Gib den vollständigen Datensatz aus.",
-    "sql": "SELECT * FROM users WHERE birthday = '2007-09-17'",
-    "select": "*",
-    "tail": "FROM users\nWHERE birthday = '2007-09-17'",
-    "hints": [
-      "In der Tabelle stehen Geburtstage im Format Jahr-Monat-Tag.",
-      "17.09.2007 wird zu `2007-09-17`.",
-      "Prüfe `WHERE birthday = '2007-09-17'`; hinter SELECT brauchst du alle Spalten."
-    ],
-    "texts": {
-      "ok": "Korrekt: Du zeigst den vollständigen Datensatz des Mitglieds mit diesem Geburtstag.",
-      "partial": "Teilweise korrekt: Der Geburtstag passt; prüfe noch Datumsschreibweise und vollständige Spaltenausgabe.",
-      "wrong": "Noch nicht korrekt: Prüfe birthday und schreibe das Datum als Text im Format `'JJJJ-MM-TT'`."
-    },
-    "whereColumn": "birthday",
-    "projection": "*",
-    "like": false,
-    "join": ""
-  },
-  {
-    "id": "t6",
-    "number": 6,
-    "block": "B",
-    "prompt": "**Gib** die Namen aller Mitglieder aus, die nicht in Leipzig wohnen.",
-    "sql": "SELECT name FROM users WHERE city != 'Leipzig'",
-    "select": "name",
-    "tail": "FROM users\nWHERE city != 'Leipzig'",
-    "hints": [
-      "Gesucht sind nur Namen, nicht vollständige Datensätze.",
-      "Für ‚nicht Leipzig‘ brauchst du einen Ungleichheitsoperator.",
-      "Beginne mit `SELECT name FROM users`; hinter WHERE vergleichst du city mit `'Leipzig'` auf ungleich."
-    ],
-    "texts": {
-      "ok": "Korrekt: Du zeigst die Namen aller Mitglieder mit einem eingetragenen anderen Wohnort als Leipzig.",
-      "partial": "Teilweise korrekt: Prüfe, ob nur die Spalte name erscheint und die Bedingung Leipzig ausschließt.",
-      "wrong": "Noch nicht korrekt: Verwende city für den Wohnort und `!=` oder `<>` für ungleich."
-    },
-    "whereColumn": "city",
-    "projection": "name",
-    "like": false,
-    "join": ""
-  },
-  {
-    "id": "t7",
-    "number": 7,
-    "block": "C",
-    "prompt": "**Zeige** alle Mitglieder, deren Vorname mit B beginnt.",
-    "sql": "SELECT * FROM users WHERE name LIKE 'B%'",
-    "select": "*",
-    "tail": "FROM users\nWHERE name LIKE 'B%'",
-    "hints": [
-      "In name steht der Vorname am Anfang des vollständigen Namens.",
-      "Ein B am Anfang und beliebige Zeichen danach lassen sich mit LIKE suchen.",
-      "Der Anfang des Musters ist `LIKE 'B%'`; ergänze die passende Spalte und gib alle Spalten aus."
-    ],
-    "texts": {
-      "ok": "Korrekt: Du zeigst vollständige Datensätze mit einem Vornamen, der mit B beginnt.",
-      "partial": "Teilweise korrekt: Prüfe, ob B nur am Anfang stehen darf und ob alle Spalten ausgegeben werden.",
-      "wrong": "Noch nicht korrekt: Das Muster für ‚beginnt mit B‘ braucht B vor dem Prozentzeichen."
-    },
-    "whereColumn": "name",
-    "projection": "*",
-    "like": true,
-    "join": ""
-  },
-  {
-    "id": "t8",
-    "number": 8,
-    "block": "C",
-    "prompt": "**Zeige** alle Mitglieder, deren Benutzername die Zeichenfolge „fuchs“ enthält.",
-    "sql": "SELECT * FROM users WHERE username LIKE '%fuchs%'",
-    "select": "*",
-    "tail": "FROM users\nWHERE username LIKE '%fuchs%'",
-    "hints": [
-      "Gesucht wird im Benutzernamen, nicht im vollständigen Namen.",
-      "Vor und nach fuchs dürfen weitere Zeichen stehen.",
-      "Verwende für username das Muster `'%fuchs%'`; gib alle Spalten aus."
-    ],
-    "texts": {
-      "ok": "Korrekt: Du zeigst vollständige Datensätze mit fuchs an beliebiger Stelle im Benutzernamen.",
-      "partial": "Teilweise korrekt: Prüfe, ob das Muster vor und nach fuchs weitere Zeichen erlaubt.",
-      "wrong": "Noch nicht korrekt: Vergleiche username mit LIKE; für ‚enthält‘ brauchst du Prozentzeichen an beiden Seiten."
-    },
-    "whereColumn": "username",
-    "projection": "*",
-    "like": true,
-    "join": ""
-  },
-  {
-    "id": "t9",
-    "number": 9,
-    "block": "C",
-    "prompt": "**Gib** die Namen aller Mitglieder aus, die im März Geburtstag haben.",
-    "sql": "SELECT name FROM users WHERE birthday LIKE '%-03-%'",
-    "select": "name",
-    "tail": "FROM users\nWHERE birthday LIKE '%-03-%'",
-    "hints": [
-      "Der Monat steht in birthday zwischen den beiden Bindestrichen.",
-      "Ein Märzdatum hat im mittleren Teil `-03-`.",
-      "Wähle nur name und nutze für birthday ein LIKE-Muster mit `-03-` in der Mitte."
-    ],
-    "texts": {
-      "ok": "Korrekt: Du zeigst nur die Namen der Mitglieder mit Geburtstag im März.",
-      "partial": "Teilweise korrekt: Prüfe, ob du nur Namen ausgibst und die 03 genau an der Monatsposition suchst.",
-      "wrong": "Noch nicht korrekt: Suche im Datumsfeld birthday nach dem Monatsteil `-03-`, nicht nach irgendeiner 03."
-    },
-    "whereColumn": "birthday",
-    "projection": "name",
-    "like": true,
-    "join": ""
-  },
-  {
-    "id": "t10",
-    "number": 10,
-    "block": "D",
-    "prompt": "**Finde** alle Mitglieder aus Berlin, deren Vorname Lina lautet.",
-    "sql": "SELECT * FROM users WHERE name LIKE 'Lina %' AND city = 'Berlin'",
-    "select": "*",
-    "tail": "FROM users\nWHERE name LIKE 'Lina %' AND city = 'Berlin'",
-    "hints": [
-      "Hier müssen Vorname und Wohnort gleichzeitig passen.",
-      "Verbinde die Bedingung für name und die für city mit AND.",
-      "Die Teile lauten `name LIKE 'Lina %'` und `city = 'Berlin'`; verbinde sie hinter WHERE."
-    ],
-    "texts": {
-      "ok": "Korrekt: Du zeigst alle Berliner Mitglieder mit Vornamen Lina.",
-      "partial": "Teilweise korrekt: Prüfe, ob wirklich beide Bedingungen zugleich gelten und alle Daten erscheinen.",
-      "wrong": "Noch nicht korrekt: Für beide Bedingungen brauchst du vollständige Vergleiche, verbunden mit AND."
-    },
-    "whereColumn": "name",
-    "projection": "*",
-    "like": true,
-    "join": "AND"
-  },
-  {
-    "id": "t11",
-    "number": 11,
-    "block": "D",
-    "prompt": "**Liste** alle weiblichen Mitglieder aus Leipzig auf.",
-    "sql": "SELECT * FROM users WHERE gender = 'female' AND city = 'Leipzig'",
-    "select": "*",
-    "tail": "FROM users\nWHERE gender = 'female' AND city = 'Leipzig'",
-    "hints": [
-      "Geschlecht und Wohnort müssen zugleich stimmen.",
-      "Die beiden Spalten heißen gender und city.",
-      "Verbinde `gender = 'female'` mit `city = 'Leipzig'` durch AND."
-    ],
-    "texts": {
-      "ok": "Korrekt: Du zeigst vollständige Datensätze aller weiblichen Mitglieder aus Leipzig.",
-      "partial": "Teilweise korrekt: Prüfe, ob nur Datensätze erscheinen, die beide Bedingungen erfüllen.",
-      "wrong": "Noch nicht korrekt: OR wäre hier zu weit; verknüpfe zwei vollständige Bedingungen mit AND."
-    },
-    "whereColumn": "gender",
-    "projection": "*",
-    "like": false,
-    "join": "AND"
-  },
-  {
-    "id": "t12",
-    "number": 12,
-    "block": "D",
-    "prompt": "**Liste** alle Mitglieder auf, deren Vorname Lina oder Felix lautet.",
-    "sql": "SELECT * FROM users WHERE name LIKE 'Lina %' OR name LIKE 'Felix %'",
-    "select": "*",
-    "tail": "FROM users\nWHERE name LIKE 'Lina %' OR name LIKE 'Felix %'",
-    "hints": [
-      "Hier genügt einer der beiden Vornamen.",
-      "OR verbindet zwei vollständige Bedingungen für name.",
-      "Formuliere für Lina und Felix je einen eigenen `name LIKE`-Vergleich und verbinde sie mit OR."
-    ],
-    "texts": {
-      "ok": "Korrekt: Du zeigst alle Mitglieder mit Vornamen Lina oder Felix.",
-      "partial": "Teilweise korrekt: Prüfe, ob Mitglieder beider Vornamen erscheinen und alle Spalten da sind.",
-      "wrong": "Noch nicht korrekt: Nach OR muss wieder eine vollständige Bedingung stehen, nicht nur der zweite Textwert."
-    },
-    "whereColumn": "name",
-    "projection": "*",
-    "like": true,
-    "join": "OR"
-  },
-  {
-    "id": "t13",
-    "number": 13,
-    "block": "A",
-    "prompt": "**Wähle** alle Mitglieder aus, die in Schwerin wohnen.",
-    "sql": "SELECT * FROM users WHERE city = 'Schwerin'",
-    "select": "*",
-    "tail": "FROM users\nWHERE city = 'Schwerin'",
-    "hints": [
-      "Suche die Spalte für den Wohnort.",
-      "Der Wohnort ist ein Textwert in city.",
-      "Ergänze `WHERE city = 'Schwerin'` und wähle sämtliche Spalten."
-    ],
-    "texts": {
-      "ok": "Korrekt: Du zeigst vollständige Datensätze aus Schwerin.",
-      "partial": "Teilweise korrekt: Prüfe, ob ausschließlich Schwerin und alle Spalten erfasst sind.",
-      "wrong": "Noch nicht korrekt: Vergleiche city mit dem Textwert `'Schwerin'`."
-    },
-    "whereColumn": "city",
-    "projection": "*",
-    "like": false,
-    "join": ""
-  },
-  {
-    "id": "t14",
-    "number": 14,
-    "block": "A",
-    "prompt": "**Wähle** alle Mitglieder mit der Rolle `user` aus.",
-    "sql": "SELECT * FROM users WHERE role = 'user'",
-    "select": "*",
-    "tail": "FROM users\nWHERE role = 'user'",
-    "hints": [
-      "Die Rolle steht in der Spalte role.",
-      "`user` ist hier ein Textwert.",
-      "Nutze `WHERE role = 'user'` und gib alle Spalten aus."
-    ],
-    "texts": {
-      "ok": "Korrekt: Du zeigst vollständige Datensätze mit der Rolle user.",
-      "partial": "Teilweise korrekt: Prüfe, ob die Rolle genau user lautet und alle Daten erscheinen.",
-      "wrong": "Noch nicht korrekt: Vergleiche role mit `'user'` in einfachen Anführungszeichen."
-    },
-    "whereColumn": "role",
-    "projection": "*",
-    "like": false,
-    "join": ""
-  },
-  {
-    "id": "t15",
-    "number": 15,
-    "block": "B",
-    "prompt": "**Liste** alle Mitglieder auf, deren Profil aktiviert ist. Der Wert 1 in `is_active` bedeutet „aktiviert“.",
-    "sql": "SELECT * FROM users WHERE is_active = 1",
-    "select": "*",
-    "tail": "FROM users\nWHERE is_active = 1",
-    "hints": [
-      "Die Aktivierung ist als Zahl gespeichert.",
-      "1 bedeutet aktiviert, 0 nicht aktiviert.",
-      "Prüfe `WHERE is_active = 1`; für alle Daten brauchst du hinter SELECT den Stern."
-    ],
-    "texts": {
-      "ok": "Korrekt: Du zeigst vollständige Datensätze der aktivierten Mitglieder.",
-      "partial": "Teilweise korrekt: Prüfe, ob du den Zahlenwert 1 verwendest und alle Spalten zeigst.",
-      "wrong": "Noch nicht korrekt: Vergleiche is_active mit der Zahl 1, ohne Text-Anführungszeichen."
-    },
-    "whereColumn": "is_active",
-    "projection": "*",
-    "like": false,
-    "join": ""
-  },
-  {
-    "id": "t16",
-    "number": 16,
-    "block": "B",
-    "prompt": "**Zeige** alle Mitglieder aus München. **Lies** die Anzahl an der Ergebnisrelation ab.",
-    "sql": "SELECT * FROM users WHERE city = 'München'",
-    "select": "*",
-    "tail": "FROM users\nWHERE city = 'München'",
-    "hints": [
-      "Gesucht sind alle Datensätze aus einer Stadt.",
-      "Filtere über city; die Anzahl steht an der Ergebnisrelation.",
-      "Verwende `WHERE city = 'München'` und wähle alle Spalten. COUNT brauchst du nicht."
-    ],
-    "texts": {
-      "ok": "Korrekt: Die Ergebnisrelation zeigt alle Münchner Mitglieder; ihre Zeilenanzahl ist die gesuchte Anzahl.",
-      "partial": "Teilweise korrekt: Prüfe, ob die Zeilen nur München enthalten und alle Spalten angezeigt werden.",
-      "wrong": "Noch nicht korrekt: Filtere city nach `'München'`; die Anzahl kannst du danach ablesen."
-    },
-    "whereColumn": "city",
-    "projection": "*",
-    "like": false,
-    "join": ""
-  },
-  {
-    "id": "t17",
-    "number": 17,
-    "block": "C",
-    "prompt": "**Zeige** alle Mitglieder mit einer E-Mail-Adresse, die auf `@instahub.test` endet.",
-    "sql": "SELECT * FROM users WHERE email LIKE '%@instahub.test'",
-    "select": "*",
-    "tail": "FROM users\nWHERE email LIKE '%@instahub.test'",
-    "hints": [
-      "Gesucht wird die Endung einer E-Mail-Adresse.",
-      "Bei einer Endung steht `%` vor dem bekannten Text.",
-      "Nutze für email ein LIKE-Muster, das mit `%` beginnt und mit `@instahub.test` endet."
-    ],
-    "texts": {
-      "ok": "Korrekt: Alle Mitglieder erfüllen derzeit dieses E-Mail-Muster; die wirksame LIKE-Bedingung ist trotzdem Teil der Abfrage.",
-      "partial": "Teilweise korrekt: Die Ergebnisrelation kann alle Mitglieder enthalten. Prüfe trotzdem, ob du email mit einem Endungsmuster filterst.",
-      "wrong": "Noch nicht korrekt: Eine Abfrage ohne wirksames `WHERE email LIKE` zeigt zwar dieselben Zeilen, erfüllt aber die verlangte Mustersuche nicht."
-    },
-    "whereColumn": "email",
-    "projection": "*",
-    "like": true,
-    "join": ""
-  },
-  {
-    "id": "t18",
-    "number": 18,
-    "block": "C",
-    "prompt": "**Gib** die Namen aller Mitglieder aus, deren vollständiger Name mit der Zeichenfolge „Schmidt“ endet.",
-    "sql": "SELECT name FROM users WHERE name LIKE '%Schmidt'",
-    "select": "name",
-    "tail": "FROM users\nWHERE name LIKE '%Schmidt'",
-    "hints": [
-      "Die bekannte Zeichenfolge steht am Ende des vollständigen Namens.",
-      "Vor Schmidt dürfen beliebige Zeichen stehen, auch direkt anschließend.",
-      "Wähle nur name; für die Endung steht `%` vor `Schmidt`."
-    ],
-    "texts": {
-      "ok": "Korrekt: Du zeigst Namen mit der Endung Schmidt; auch Goldschmidt kann deshalb passen.",
-      "partial": "Teilweise korrekt: Prüfe die Position von `%` und ob nur name ausgegeben wird.",
-      "wrong": "Noch nicht korrekt: Gesucht ist die Zeichenfolge am Ende des vollständigen Namens, nicht nur ein exakt gleicher Nachname."
-    },
-    "whereColumn": "name",
-    "projection": "name",
-    "like": true,
-    "join": ""
-  },
-  {
-    "id": "t19",
-    "number": 19,
-    "block": "D",
-    "prompt": "**Gib** Benutzernamen und Geburtsdatum aller weiblichen Mitglieder aus, die kleiner als 1,60 m sind.",
-    "sql": "SELECT username, birthday FROM users WHERE gender = 'female' AND centimeters < 160",
-    "select": "username, birthday",
-    "tail": "FROM users\nWHERE gender = 'female' AND centimeters < 160",
-    "hints": [
-      "Du brauchst zwei Ausgabespalten und zwei Bedingungen.",
-      "160 cm ist die Grenze; genau 160 cm zählt nicht mit.",
-      "Wähle username und birthday; verbinde `gender = 'female'` mit `centimeters < 160` durch AND."
-    ],
-    "texts": {
-      "ok": "Korrekt: Du zeigst Benutzername und Geburtstag aller weiblichen Mitglieder unter 160 cm.",
-      "partial": "Teilweise korrekt: Prüfe beide Ergebnisspalten und ob Geschlecht und Größenvergleich zugleich gelten.",
-      "wrong": "Noch nicht korrekt: `centimeters < 160` und `gender = 'female'` müssen mit AND verbunden werden."
-    },
-    "whereColumn": "gender",
-    "projection": "username, birthday",
-    "like": false,
-    "join": "AND"
-  },
-  {
-    "id": "t20",
-    "number": 20,
-    "block": "D",
-    "prompt": "**Liste** alle Mitglieder auf, deren Vorname Felix lautet und die nicht aus Berlin kommen.",
-    "sql": "SELECT * FROM users WHERE name LIKE 'Felix %' AND city != 'Berlin'",
-    "select": "*",
-    "tail": "FROM users\nWHERE name LIKE 'Felix %' AND city != 'Berlin'",
-    "hints": [
-      "Vorname und Ausschluss von Berlin müssen beide gelten.",
-      "Nutze für den Vornamen ein Anfangsmuster in name.",
-      "Verbinde `name LIKE 'Felix %'` mit `city != 'Berlin'` durch AND."
-    ],
-    "texts": {
-      "ok": "Korrekt: Du zeigst vollständige Datensätze der Felixe außerhalb Berlins.",
-      "partial": "Teilweise korrekt: Prüfe, ob Berliner Felixe ausgeschlossen und alle anderen passenden Felixe enthalten sind.",
-      "wrong": "Noch nicht korrekt: Verknüpfe die vollständige Namensbedingung mit dem Ungleichheitsvergleich für city durch AND."
-    },
-    "whereColumn": "name",
-    "projection": "*",
-    "like": true,
-    "join": "AND"
-  },
-  {
-    "id": "t21",
-    "number": 21,
-    "block": "D",
-    "prompt": "Eine Bekannte aus Berlin heißt mit Vornamen Lina oder Hailey. **Liste** alle passenden Datensätze auf.",
-    "sql": "SELECT * FROM users WHERE (name LIKE 'Lina %' OR name LIKE 'Hailey %') AND city = 'Berlin'",
-    "select": "*",
-    "tail": "FROM users\nWHERE (name LIKE 'Lina %' OR name LIKE 'Hailey %') AND city = 'Berlin'",
-    "hints": [
-      "Beide möglichen Vornamen müssen mit Berlin kombiniert werden.",
-      "Fasse zuerst die beiden Namensbedingungen mit OR zusammen.",
-      "Setze Klammern um die beiden vollständigen `name LIKE`-Bedingungen und verbinde die Klammer mit `city = 'Berlin'` durch AND."
-    ],
-    "texts": {
-      "ok": "Korrekt: Du zeigst die Berliner Mitglieder mit Vornamen Lina oder Hailey.",
-      "partial": "Teilweise korrekt: Prüfe, ob die Wohnortbedingung für beide Vornamen gilt.",
-      "wrong": "Noch nicht korrekt: Ohne passende Klammern kann ein Vorname auch außerhalb Berlins durchrutschen."
-    },
-    "whereColumn": "name",
-    "projection": "*",
-    "like": true,
-    "join": "OR"
-  }
-]
-;
-const TASK_BY_ID = new Map(TASKS.map((task) => [task.id, task]));
-const TAB_TASKS = { simple: ['t1','t2','t3'], compare: ['t4','t5','t6'], like: ['t7','t8','t9'], combine: ['t10','t11','t12'], fast: Array.from({length:9},(_,i)=>`t${i+13}`) };
 
+// ---------------------------------------------------------------------------
+// Abschlussquiz (Reiter 7)
+// ---------------------------------------------------------------------------
+
+// Optionen: [id, Text, richtig]; sql: true stellt den Text als SQL-Block dar.
 const FINAL_QUIZ = [
-  {id:'q1', prompt:'Was geschieht bei einer lesenden Abfrage mit WHERE und SELECT?', hint:'Unterscheide die Ergebnisrelation von der gespeicherten Tabelle und Zeilen von Spalten.', options:[
-    ['a','WHERE wählt passende Zeilen für die Ergebnisrelation.',true], ['b','SELECT legt die Ausgabespalten fest.',true], ['c','WHERE löscht nicht passende Datensätze aus users.',false], ['d','SELECT verändert die gespeicherten Werte in users.',false]]},
-  {id:'q2', prompt:'Welche Aussagen zu Vergleichen in users stimmen?', hint:'Prüfe die Grenze 180 cm und die Schreibweise von Textwerten.', options:[
-    ['a','`centimeters < 180` schließt genau 180 cm aus.',true], ['b','`centimeters <= 180` schließt genau 180 cm ein.',true], ['c','`city = Berlin` ist ein korrekter Textvergleich ohne Anführungszeichen.',false], ['d','In centimeters steht die Größe in Metern.',false]]},
-  {id:'q3', prompt:'Welche LIKE-Muster passen zur genannten Suche?', hint:'Die Stelle des Prozentzeichens zeigt, wo weitere Zeichen stehen dürfen.', options:[
-    ['a',"`name LIKE 'B%'` sucht Namen, die mit B beginnen.",true], ['b',"`username LIKE '%fuchs%'` sucht fuchs an beliebiger Stelle.",true], ['c',"`name LIKE 'B%'` sucht B an jeder Stelle des Namens.",false], ['d',"`name LIKE '%berg'` sucht Namen, die mit berg beginnen.",false]]},
-  {id:'q4', prompt:'Welche Aussagen über AND und OR stimmen?', hint:'Vergleiche ‚beide‘ mit ‚mindestens eine, möglicherweise beide‘.', options:[
-    ['a','Bei AND müssen beide Bedingungen erfüllt sein.',true], ['b','Bei OR genügt mindestens eine Bedingung; auch beide dürfen stimmen.',true], ['c','OR erlaubt genau eine wahre Bedingung.',false], ['d','AND genügt schon bei einer wahren Bedingung.',false]]},
-  {id:'q5', prompt:'Welche Bedingung sucht Lina oder Hailey aus Berlin?', hint:'Die Stadtbedingung muss für beide Vornamen gelten. Setze Klammern um die beiden Namensbedingungen.', options:[
-    ['a',"WHERE (name LIKE 'Lina %' OR name LIKE 'Hailey %')\n  AND city = 'Berlin'",true,true],
-    ['b',"WHERE name LIKE 'Lina %' OR name LIKE 'Hailey %'\n  AND city = 'Berlin'",false,true],
-    ['c',"WHERE (name LIKE 'Lina %' AND name LIKE 'Hailey %')\n  OR city = 'Berlin'",false,true],
-    ['d',"WHERE name LIKE 'Lina %' OR 'Hailey %'\n  AND city = 'Berlin'",false,true]]}
+  {
+    id: 'q4', prompt: 'Was bewirkt diese Abfrage?', sql: 'SELECT DISTINCT city\nFROM users',
+    hint: 'DISTINCT entfernt Dopplungen nur in der Ergebnisrelation. Jeder Wohnort erscheint einmal – egal, wie viele Mitglieder dort wohnen.',
+    options: [
+      ['a', 'Jeder Wohnort erscheint in der Ergebnisrelation nur einmal.', true],
+      ['b', 'Doppelte Zeilen werden aus der Tabelle users gelöscht.', false],
+      ['c', 'Es werden nur Mitglieder ausgegeben, deren Wohnort in der Tabelle nur einmal vorkommt.', false],
+      ['d', 'Die Ergebnisrelation hat weniger Zeilen als die Tabelle users.', true]
+    ]
+  },
+  {
+    id: 'q-limit', prompt: 'Welche Aussagen zu LIMIT stimmen?',
+    hint: 'LIMIT begrenzt nur die Ergebnisrelation; für eine bestimmte Reihenfolge brauchst du ORDER BY.',
+    options: [
+      ['a', '`LIMIT 3` gibt höchstens drei Ergebniszeilen aus.', true],
+      ['b', 'Bei `ORDER BY birthday DESC` und `LIMIT 4` werden zuerst die Geburtstage sortiert und dann vier Zeilen ausgegeben.', true],
+      ['c', '`LIMIT 3` löscht alle weiteren Zeilen aus `users`.', false],
+      ['d', 'Ohne `ORDER BY` sind mit `LIMIT 3` immer die drei jüngsten Mitglieder gemeint.', false]
+    ]
+  },
+  {
+    id: 'q5', prompt: 'Du möchtest die 4 jüngsten Mitglieder anzeigen. Welche Abfrage ist richtig?',
+    hint: 'LIMIT steht immer am Ende. Die Jüngsten haben das späteste Geburtsdatum, deshalb sortierst du absteigend.',
+    options: [
+      ['a', 'SELECT *\nFROM users\nORDER BY birthday DESC\nLIMIT 4', true, true],
+      ['b', 'SELECT *\nFROM users\nLIMIT 4\nORDER BY birthday DESC', false, true],
+      ['c', 'SELECT *\nFROM users\nORDER BY birthday\nLIMIT 4', false, true],
+      ['d', 'SELECT *\nFROM users\nLIMIT 4', false, true]
+    ]
+  }
 ];
-const INTRO_PHASES = ['1 · Auftrag','2 · Tabelle wählen','3 · Zeilen prüfen','4 · Ergebnis bilden'];
-const INTRO_EXPLANATIONS = [
-  'Welche Mitglieder dieses Ausschnitts wohnen in Berlin?',
-  'FROM users nennt die Tabelle, aus der die Daten stammen.',
-  "WHERE city = 'Berlin' prüft jetzt jede Zeile des Ausschnitts.",
-  ...Array.from({length:6},(_,i)=>[3,5].includes(i) ? 'Bedingung erfüllt: Dieser Datensatz bleibt in der gefilterten Ansicht.' : 'Bedingung nicht erfüllt: Dieser Datensatz wird aus der gefilterten Ansicht entfernt.'),
-  'Nach WHERE bleiben im Ausschnitt die beiden Berliner Datensätze übrig.',
-  'SELECT username, city bestimmt die beiden Spalten der Ergebnisrelation.',
-  'WHERE wählt Zeilen aus. Diese Auswahl heißt Selektion; SELECT wählt die Ausgabespalten.'
-];
-const INTRO_EXPECTED = [
-  ['1','zornigerfotograf','Schwerin'],['2','wanderwut_finn','München'],['3','bergcoder','Zürich'],
-  ['4','koch_kicker','Berlin'],['8','theaterwut_oscar','Leipzig'],['34','gartenlinse','Berlin']
-];
-let introRows = INTRO_EXPECTED.map(([id,username,city])=>({id,username,city}));
-let memberCount = 317;
+const QUIZ_BY_ID = new Map(FINAL_QUIZ.map((question) => [question.id, question]));
 
-const state = {assessmentVersion:'20261029-criteria-v1', tab:'intro', introStep:1, answers:{}, feedback:{}, solved:{}, descriptionAnswers:{}, descriptionFeedback:{}, quiz:{}, quizFeedback:null, quizPassed:false};
-const results = {};
+// ---------------------------------------------------------------------------
+// Zustand und Speicherung
+// ---------------------------------------------------------------------------
+
+const state = { assessmentVersion: '20261029-criteria-v1', tab: 'distinct', answers: {}, feedback: {}, solved: {}, descriptionAnswers: {}, descriptionFeedback: {}, youngest: { username: '', age: '', feedback: null }, quiz: {}, quizFeedback: null, quizPassed: false };
+const results = {}; // Ergebnisrelationen werden nicht gespeichert (zu groß).
 const running = new Set();
-const revisions = new Map();
 const descriptionRequests = new Map();
 let tabRevision = 0;
 let database;
 let databaseReady = false;
-function save() { try { localStorage.setItem(STORAGE_KEY, JSON.stringify(state)); } catch { /* Speicher optional. */ } }
-function isPlainObject(value) { return Boolean(value) && typeof value==='object' && !Array.isArray(value); }
-function validFeedback(value) { return isPlainObject(value) && FEEDBACK_LEVELS.includes(value.level) && typeof value.text==='string'; }
+
+function save() {
+  try { localStorage.setItem(STORAGE_KEY, JSON.stringify(state)); } catch { /* Ohne Speicher bleibt das Modul bedienbar. */ }
+}
+
+function isPlainObject(value) { return Boolean(value) && typeof value === 'object' && !Array.isArray(value); }
+function validFeedback(value) { return isPlainObject(value) && FEEDBACK_LEVELS.includes(value.level) && typeof value.text === 'string'; }
 function validDescriptionFeedback(value) {
-  return isPlainObject(value) && DESCRIPTION_LEVELS.includes(value.level) && typeof value.text==='string' &&
-    (value.points===undefined || (Number.isInteger(value.points) && value.points>=0 && value.points<=3)) &&
-    (value.maxPoints===undefined || value.maxPoints===3) &&
-    (value.status===undefined || DESCRIPTION_STATUSES.includes(value.status)) &&
-    (value.strengths===undefined || (Array.isArray(value.strengths) && value.strengths.every((s)=>typeof s==='string'))) &&
-    (value.missing===undefined || (Array.isArray(value.missing) && value.missing.every((s)=>typeof s==='string')));
+  return isPlainObject(value) && DESCRIPTION_LEVELS.includes(value.level) && typeof value.text === 'string' &&
+    (value.points === undefined || (Number.isInteger(value.points) && value.points >= 0 && value.points <= 3)) &&
+    (value.maxPoints === undefined || value.maxPoints === 3) &&
+    (value.status === undefined || DESCRIPTION_STATUSES.includes(value.status)) &&
+    (value.strengths === undefined || (Array.isArray(value.strengths) && value.strengths.every((text) => typeof text === 'string'))) &&
+    (value.missing === undefined || (Array.isArray(value.missing) && value.missing.every((text) => typeof text === 'string')));
 }
+
 function restore() {
-  try {
-    const saved=JSON.parse(localStorage.getItem(STORAGE_KEY)||'null'); if (!isPlainObject(saved)) return;
-    if (TABS.some(([id])=>id===saved.tab)) state.tab=saved.tab;
-    if (Number.isInteger(saved.introStep) && saved.introStep>=1 && saved.introStep<=12) state.introStep=saved.introStep;
-    if (isPlainObject(saved.answers)) for (const [id,value] of Object.entries(saved.answers)) if (TASK_BY_ID.has(id) && typeof value==='string') state.answers[id]=value;
-    if (isPlainObject(saved.feedback)) for (const [id,value] of Object.entries(saved.feedback)) if (TASK_BY_ID.has(id) && validFeedback(value)) state.feedback[id]=value;
-    if (isPlainObject(saved.solved)) for (const [id,value] of Object.entries(saved.solved)) if (TASK_BY_ID.has(id) && value===true) state.solved[id]=true;
-    if (isPlainObject(saved.descriptionAnswers) && typeof saved.descriptionAnswers[DESCRIPTION_TASK.id]==='string') state.descriptionAnswers[DESCRIPTION_TASK.id]=saved.descriptionAnswers[DESCRIPTION_TASK.id];
-    if (saved.assessmentVersion===state.assessmentVersion && isPlainObject(saved.descriptionFeedback) && validDescriptionFeedback(saved.descriptionFeedback[DESCRIPTION_TASK.id])) state.descriptionFeedback[DESCRIPTION_TASK.id]=saved.descriptionFeedback[DESCRIPTION_TASK.id];
-    if (isPlainObject(saved.quiz)) for (const q of FINAL_QUIZ) if (Array.isArray(saved.quiz[q.id])) state.quiz[q.id]=saved.quiz[q.id].filter((id)=>q.options.some(([option])=>option===id));
-    if (validFeedback(saved.quizFeedback)) state.quizFeedback=saved.quizFeedback;
-    state.quizPassed=saved.quizPassed===true;
-  } catch { /* Defekter oder gesperrter Speicher. */ }
+  const saved = readSplitProgress(STORAGE_KEY, MIGRATION_MARKER, 'select', TASKS, DESCRIPTION_TASKS, TABS, 0);
+  if (!saved) return;
+  if (TABS.some(([id]) => id === saved.tab)) state.tab = saved.tab;
+  if (isPlainObject(saved.answers)) for (const [id, answer] of Object.entries(saved.answers)) if (TASK_BY_ID.has(id) && typeof answer === 'string') state.answers[id] = answer;
+  if (isPlainObject(saved.feedback)) for (const [id, feedback] of Object.entries(saved.feedback)) if (TASK_BY_ID.has(id) && validFeedback(feedback)) state.feedback[id] = feedback;
+  if (isPlainObject(saved.solved)) for (const [id, done] of Object.entries(saved.solved)) if (TASK_BY_ID.has(id) && done === true) state.solved[id] = true;
+  if (isPlainObject(saved.descriptionAnswers)) for (const [id, answer] of Object.entries(saved.descriptionAnswers)) if (DESCRIPTION_BY_ID.has(id) && typeof answer === 'string') state.descriptionAnswers[id] = answer;
+  if (saved.assessmentVersion === state.assessmentVersion && isPlainObject(saved.descriptionFeedback)) for (const [id, feedback] of Object.entries(saved.descriptionFeedback)) if (DESCRIPTION_BY_ID.has(id) && validDescriptionFeedback(feedback)) state.descriptionFeedback[id] = feedback;
+  if (isPlainObject(saved.youngest)) {
+    if (typeof saved.youngest.username === 'string') state.youngest.username = saved.youngest.username;
+    if (typeof saved.youngest.age === 'string') state.youngest.age = saved.youngest.age;
+    if (YOUNGEST_KINDS.includes(saved.youngest.feedback)) state.youngest.feedback = saved.youngest.feedback;
+  }
+  if (isPlainObject(saved.quiz)) FINAL_QUIZ.forEach((question) => { if (Array.isArray(saved.quiz[question.id])) state.quiz[question.id] = saved.quiz[question.id].filter((value) => question.options.some(([id]) => id === value)); });
+  if (validFeedback(saved.quizFeedback)) state.quizFeedback = saved.quizFeedback;
+  state.quizPassed = saved.quizPassed === true;
+  if (typeof saved.solutionCode === 'string') state.solutionCode = saved.solutionCode;
+  state.solutionUnlocked = saved.solutionUnlocked === true;
 }
+
 function isTabComplete(id) {
-  if (id==='intro') return state.introStep===12;
-  if (id==='quiz') return state.quizPassed;
-  if (id==='simple') return Boolean(state.descriptionFeedback[DESCRIPTION_TASK.id]?.points===3) && TAB_TASKS.simple.every((task)=>state.solved[task]);
-  return TAB_TASKS[id]?.every((task)=>state.solved[task]) || false;
+  if (id === 'intro') return false;
+  if (id === 'quiz') return state.quizPassed;
+  const done = TAB_TASKS[id].every((taskId) => state.solved[taskId]);
+  const descriptionDone = DESCRIPTION_BY_TAB.has(id) && state.descriptionFeedback[DESCRIPTION_BY_TAB.get(id).id]?.status === 'korrekt' && state.descriptionFeedback[DESCRIPTION_BY_TAB.get(id).id]?.points === 3;
+  return id === 'orderBy' ? done && descriptionDone && state.youngest.feedback === 'correct' : DESCRIPTION_BY_TAB.has(id) ? done && descriptionDone : done;
 }
+
+// ---------------------------------------------------------------------------
+// DOM-Hilfen
+// ---------------------------------------------------------------------------
 
 function element(tag, className, text) {
   const node = document.createElement(tag);
@@ -627,6 +326,9 @@ function richText(parent, text) {
 function paragraph(text, className) { return richText(element('p', className), text); }
 function sqlBlock(text) { const pre = element('pre', 'given-sql'); pre.append(element('code', '', text)); return pre; }
 
+// ---------------------------------------------------------------------------
+// SQL-Worker (nach SqlWorker in klasse-10/1-Datenbanken/sql-lab.js, angepasst: nur Modus users-full, CSV-Pfad relativ zu klasse-10)
+// ---------------------------------------------------------------------------
 
 class SqlWorker {
   constructor() { this.nextId = 0; this.pending = new Map(); }
@@ -638,7 +340,6 @@ class SqlWorker {
     const response = await fetch(new URL('../../klasse-10/1-Datenbanken/users.csv', import.meta.url));
     if (!response.ok) throw new Error('users.csv konnte nicht geladen werden.');
     const [headers, ...data] = parseDelimited(await response.text());
-    this.csvRows = data.map((row)=>Object.fromEntries(headers.map((header,index)=>[header,row[index]])));
     const schema = headers.map((name) => `${quoteIdentifier(name)} ${['id', 'centimeters', 'is_active'].includes(name) ? 'INTEGER' : 'TEXT'}`).join(', ');
     const statements = [`CREATE TABLE users (${schema})`];
     data.forEach((row) => statements.push(`INSERT INTO users (${headers.map(quoteIdentifier).join(', ')}) VALUES (${headers.map((header, index) => sqlValue(row[index], header)).join(', ')})`));
@@ -670,6 +371,9 @@ async function cachedExec(sqlText) {
   return execCache.get(sqlText);
 }
 
+// ---------------------------------------------------------------------------
+// Lokale Analyse der Schülerabfrage (auf Basis von sqlTokens)
+// ---------------------------------------------------------------------------
 
 function splitGroups(tokens) {
   const groups = [[]];
@@ -748,6 +452,9 @@ function analyzeQuery(sql) {
   return analysis;
 }
 
+// ---------------------------------------------------------------------------
+// Fehler- und Ergebnisdiagnose
+// ---------------------------------------------------------------------------
 
 const GERMAN_COLUMN_HINTS = {
   benutzername: 'username', nutzername: 'username', benutzer: 'username',
@@ -816,15 +523,15 @@ function diagnoseError(error, sql) {
     const englishHint = english ? ` Die Spaltennamen sind englisch – gemeint ist vermutlich ${english}.` : '';
     if (clause === 'WHERE') {
       const quoteHint = missingTextQuote(sql, name);
-      if (quoteHint) return `Noch nicht korrekt: ${name} ist ein Textwert und braucht einfache Anführungszeichen.${englishHint}`;
-      return `Noch nicht korrekt: Die Spalte ${name} hinter WHERE gibt es in users nicht. Prüfe den englischen Spaltennamen im Schema.${englishHint}`;
+      if (quoteHint) return `${quoteHint}${englishHint}`;
+      return `Noch nicht korrekt: Die Spalte ${name} hinter WHERE gibt es in users nicht. Prüfe den Spaltennamen oder den Textwert.${englishHint}`;
     }
-    return `Noch nicht korrekt: Die Spalte ${name} hinter ${clause} gibt es in users nicht. Prüfe den englischen Spaltennamen im Schema.${english ? ` Die Spaltennamen sind englisch – gemeint ist vermutlich ${english}.` : ''}`;
+    return `Noch nicht korrekt: Die Spalte ${name} hinter ${clause} gibt es in der Tabelle users nicht. Sieh im Tabellenschema nach, wie die Spalte heißt.${english ? ` Die Spaltennamen sind englisch – gemeint ist vermutlich ${english}.` : ''}`;
   }
-  return 'Noch nicht korrekt: SQL konnte die Abfrage nicht ausführen. Prüfe die markierte Klausel und ihre Schreibweise.';
+  return 'Noch nicht korrekt: SQL versteht deine Abfrage nicht. Prüfe die Schreibweise der Schlüsselwörter, die Kommas zwischen den Spalten und die Reihenfolge der Klauseln.';
 }
 
-
+// nach valueKey und rowKey in klasse-10/1-Datenbanken/sql-lab-core.mjs (dort nicht exportiert)
 function valueKey(value) { return value === null ? '__NULL__' : `${typeof value}:${String(value)}`; }
 function rowKey(row) { return row.map(valueKey).join('\u001f'); }
 function columnIndex(relation, name) { return relation.columns.findIndex((column) => column.toLowerCase() === name.toLowerCase()); }
@@ -841,6 +548,58 @@ function sameMultiset(left, right) {
   return [...counts.values()].every((count) => count === 0);
 }
 
+function requireAnyOk(taskConfig, analysis) {
+  if (!analysis.columns) return false;
+  const has = (name) => analysis.columns.includes('*') || analysis.columns.includes(name);
+  if (taskConfig.requireAny.length && !taskConfig.requireAny.some(has)) return false;
+  return taskConfig.requireAll.every(has);
+}
+
+function projectedColumns(analysis) {
+  return analysis.columns ? analysis.columns.flatMap((name) => name === '*' ? USER_COLUMN_NAMES : [name]) : null;
+}
+
+// Referenz je Aufgabe; bei projection 'any' wird sie mit der Spaltenliste der Schülerin oder des Schülers neu gebaut.
+function referenceSql(taskConfig, analysis) {
+  if (taskConfig.projection === 'any') return analysis.columns ? `SELECT ${analysis.columns.join(', ')}\n${taskConfig.tail}` : null;
+  return `SELECT ${taskConfig.select}\n${taskConfig.tail}`;
+}
+
+async function isCorrect(taskConfig, analysis, actual) {
+  if (taskConfig.projection === 'anyThree') {
+    if (!analysis.columns || actual.values.length !== 3) return false;
+    if (analysis.distinct && analysis.distinctToken) {
+      const withoutDistinctSql = `${analysis.source.slice(0, analysis.distinctToken.start)}${analysis.source.slice(analysis.distinctToken.end)}`;
+      const withoutDistinct = await cachedExec(withoutDistinctSql);
+      if (!compareRelations(actual, withoutDistinct, { columnOrder: true, rowOrder: true }).correct) return false;
+    }
+    const full = await cachedExec(`SELECT ${analysis.columns.join(', ')}\nFROM users`);
+    const counts = new Map();
+    full.values.forEach((row) => counts.set(rowKey(row), (counts.get(rowKey(row)) || 0) + 1));
+    return actual.values.every((row) => { const key = rowKey(row); const left = counts.get(key) || 0; if (!left) return false; counts.set(key, left - 1); return true; });
+  }
+  if (taskConfig.projection === 'any' && !requireAnyOk(taskConfig, analysis)) return false;
+  const sql = referenceSql(taskConfig, analysis);
+  if (!sql) return false;
+  const reference = await cachedExec(sql);
+  const options = { columnOrder: taskConfig.projection === 'any' ? true : taskConfig.columnOrder, columnLabels: false, rowOrder: false };
+  if (!taskConfig.order) return compareRelations(actual, reference, options).correct;
+  const actualIndex = projectedColumns(analysis)?.findIndex((column) => column.toLowerCase() === taskConfig.order.column.toLowerCase()) ?? -1;
+  const referenceIndex = columnIndex(reference, taskConfig.order.column);
+  if (actualIndex < 0 || referenceIndex < 0) return compareRelations(actual, reference, { ...options, rowOrder: true }).correct;
+  // Bei Gleichstand zählt jede Reihenfolge: Nur die Folge der Sortierwerte muss übereinstimmen (NULL gleich NULL).
+  if (!compareRelations(actual, reference, options).correct) return false;
+  return actual.values.length === reference.values.length && actual.values.every((row, index) => row[actualIndex] === reference.values[index][referenceIndex]);
+}
+
+function actualColumnNames(analysis, actual) {
+  const selected = projectedColumns(analysis);
+  if (selected && (!actual.columns.length || selected.length === actual.columns.length)) return selected;
+  if (actual.columns.length) return actual.columns;
+  return [];
+}
+
+function rowCountText(count, limit) { return `Teilweise korrekt: Deine Ergebnisrelation hat ${count} Zeilen, gesucht sind genau ${limit}. Prüfe die Zahl hinter LIMIT.`; }
 
 function relationSubset(actual, expected, actualNames, expectedNames) {
   if (!actualNames || !expectedNames || actualNames.length !== actual.columns.length || expectedNames.length !== expected.columns.length || !sameSet(actualNames, expectedNames)) return false;
@@ -850,135 +609,103 @@ function relationSubset(actual, expected, actualNames, expectedNames) {
   return actual.values.every((row) => { const rowKey = key(row, actualNames); const remaining = counts.get(rowKey) || 0; if (!remaining) return false; counts.set(rowKey, remaining - 1); return true; });
 }
 
-
-function expectedColumns(task) { return task.projection==='*' ? USER_COLUMN_NAMES : task.projection.split(',').map((value)=>value.trim().toLowerCase()); }
-function actualColumns(analysis, actual) {
-  if (!analysis.columns) return actual.columns.map((value)=>value.toLowerCase());
-  const names=analysis.columns.flatMap((value)=>value==='*' ? USER_COLUMN_NAMES : [value]);
-  return names.length===actual.columns.length ? names : actual.columns.map((value)=>value.toLowerCase());
-}
-function whereTokens(analysis) {
-  if (analysis.whereIndex<0) return [];
-  const end=analysis.tokens.findIndex((token,index)=>index>analysis.whereIndex && ['ORDER','GROUP','HAVING','LIMIT'].includes(tokenKeyword(token)));
-  return analysis.tokens.slice(analysis.whereIndex+1,end<0?undefined:end);
-}
-function featureIssue(task,analysis) {
-  const tokens=whereTokens(analysis);
-  const words=tokens.map(tokenKeyword);
-  const column=task.whereColumn;
-  const hasColumn=tokens.some((token)=>identifierValue(token)?.toLowerCase()===column);
-  const hasComparison=tokens.some((token)=>['=','<','>','<=','>=','<>','!='].includes(token.value));
-  const hasLike=words.includes('LIKE');
-  if (!tokens.length || !hasColumn || (!hasComparison && !hasLike)) return {level:'hint',text:`Noch nicht korrekt: Die Aufgabe verlangt eine wirksame WHERE-Bedingung auf ${column}. Prüfe, welche Zeilen ausgewählt werden sollen.`};
-  if (task.like && !hasLike) return {level:'hint',text:`Noch nicht korrekt: Die Aufgabe verlangt eine wirksame WHERE-Bedingung auf ${column}. Prüfe, welche Zeilen ausgewählt werden sollen.`};
-  if (task.number===17) {
-    const pattern=tokens.find((token)=>token.type==='string' && token.value.startsWith("'"));
-    if (!pattern || !pattern.value.toLowerCase().endsWith("@instahub.test'")) return {level:'hint',text:'Noch nicht korrekt: Alle E-Mail-Adressen passen derzeit, aber verlangt ist eine wirksame LIKE-Bedingung für die Endung `@instahub.test`.'};
-  }
-  if (task.join && !words.includes(task.join)) return {level:'partial',text:task.texts.partial};
-  if (task.number===21 && (!tokens.some((token)=>token.value==='(') || !tokens.some((token)=>token.value===')'))) return {level:'partial',text:'Teilweise korrekt: Die Berliner Bedingung muss für beide Vornamen gelten. Fasse die beiden Namensbedingungen mit Klammern zusammen.'};
-  return null;
-}
-function withWhereProbes(task, sql) {
-  // Die bestehende E-Mail-Gegenprobe auf alle Filteraufgaben erweitern.
-  // Werte an der Vergleichsgrenze und Kombinationen erfüllter/nicht erfüllter
-  // Teilbedingungen prüfen; users und die angezeigten Ergebnisse bleiben gleich.
-  const choices = new Map();
-  const tokens = whereTokens(analyzeQuery(task.sql));
-  tokens.forEach((token, index) => {
-    const column = identifierValue(token)?.toLowerCase();
-    const operator = tokens[index + 1]?.value.toUpperCase();
-    const literal = tokens[index + 2];
-    if (!USER_COLUMN_NAMES.includes(column) || !['=', '<', '>', '<=', '>=', '!=', '<>', 'LIKE'].includes(operator) || !literal) return;
-    let values;
-    if (literal.type === 'number') {
-      const value = Number(literal.value);
-      values = column === 'is_active' ? [0, 1, null] : [value - 1, value, value + 1, null];
-    } else if (literal.type === 'string' && literal.value.startsWith("'")) {
-      const value = literal.value.slice(1, -1).replaceAll("''", "'");
-      if (column === 'birthday') {
-        // Nur gültige ISO-Daten: Monatssuche nicht durch künstliche,
-        // ungültige Datumszeichenfolgen fälschlich als falsch bewerten.
-        values = ['2003-01-03', '2007-03-01', '2007-03-31', '2007-04-03', null];
-        if (operator !== 'LIKE') {
-          const date = new Date(value + 'T00:00:00Z');
-          values.push(value, ...[-1, 1].map(days => new Date(date.getTime() + days * 86400000).toISOString().slice(0, 10)));
-        }
-      } else {
-        const stem = operator === 'LIKE' ? value.replaceAll('%', '').replaceAll('_', 'x') : value;
-        values = [stem, `x${stem}`, `${stem}x`, `x${stem}x`, '__anderer_wert__', '', null];
-      }
-    } else return;
-    choices.set(column, [...new Set([...(choices.get(column) || []), ...values])]);
+function expectedColumnNames(taskConfig, analysis) {
+  if (taskConfig.projection === 'any' || taskConfig.projection === 'anyThree') return projectedColumns(analysis);
+  return taskConfig.select.replace(/^DISTINCT\s+/i, '').split(',').flatMap((name) => {
+    const column = stripQuotes(name.trim()).toLowerCase();
+    return column === '*' ? USER_COLUMN_NAMES : [column];
   });
-  let rows = [{}];
-  choices.forEach((values, column) => { rows = rows.flatMap(row => values.map(value => ({ ...row, [column]: value }))); });
-  const tuples = rows.map((row, index) => '(' + USER_COLUMN_NAMES.map(column => {
-    const fallback = column === 'id' ? 900000 + index : column === 'centimeters' ? 170 : column === 'is_active' ? 1 : `__${column}_${index}__`;
-    return sqlValue(Object.hasOwn(row, column) ? row[column] : fallback, column);
-  }).join(', ') + ')');
-  // main.users bezeichnet dieselbe Tabelle und muss auch an der Gegenprobe
-  // teilnehmen; SQL-Bezeichner bearbeiten, keine Texte oder Kommentare ersetzen.
-  const inputTokens = sqlTokens(sql);
-  for (let index = inputTokens.length - 3; index >= 0; index -= 1) {
-    if (identifierValue(inputTokens[index])?.toLowerCase() === 'main' && inputTokens[index + 1].value === '.' && identifierValue(inputTokens[index + 2])?.toLowerCase() === 'users') {
-      sql = sql.slice(0, inputTokens[index].start) + sql.slice(inputTokens[index + 2].start);
+}
+
+function missingExpectedComma(taskConfig, analysis, columns) {
+  const required = new Set(taskConfig.projection === 'any' ? [...taskConfig.requireAny, ...taskConfig.requireAll] : expectedColumnNames(taskConfig, analysis) || []);
+  return analysis.implicitAliases.some(({ column, alias }) => required.has(column) && required.has(alias) && !columns.includes(alias));
+}
+
+async function distinctlessResult(analysis) {
+  if (!analysis.distinct || !analysis.distinctToken) return null;
+  const sql = `${analysis.source.slice(0, analysis.distinctToken.start)}${analysis.source.slice(analysis.distinctToken.end)}`;
+  return cachedExec(sql);
+}
+
+async function evaluate(taskConfig, analysis, actual) {
+  const names = actualColumnNames(analysis, actual);
+  const context = { n: actual.values.length, count: names.length, cols: names.map((name) => name.toLowerCase()), list: names.join(', '), ist: analysis.orderBy[0]?.column };
+  if (await isCorrect(taskConfig, analysis, actual)) return { level: 'success', text: taskConfig.texts.ok, solved: true };
+  const fallback = { level: 'hint', text: 'Noch nicht korrekt: Vergleiche deine Ergebnisrelation mit der Aufgabe: Stimmen die Spalten, die Anzahl der Zeilen und ihre Reihenfolge?' };
+  const partial = (text) => ({ level: 'partial', text });
+  if (taskConfig.projection === 'anyThree') {
+    if (!analysis.columns) return fallback;
+    if (analysis.distinct) {
+      const withoutDistinct = await distinctlessResult(analysis);
+      if (withoutDistinct && !compareRelations(actual, withoutDistinct, { columnOrder: true, rowOrder: true }).correct) return partial(taskConfig.texts.distinct(context));
+    }
+    const full = await cachedExec(`SELECT ${analysis.columns.join(', ')}\nFROM users`);
+    if (analysis.limit !== null && analysis.limit !== taskConfig.limit) return partial(rowCountText(context.n, taskConfig.limit));
+    if (context.n === 0) return partial('Teilweise korrekt: Die Spalten passen, aber deine Abfrage liefert keine Zeilen. Prüfe, ob eine zusätzliche Bedingung alle Mitglieder ausschließt.');
+    if (context.n !== taskConfig.limit) {
+      if (analysis.limit !== null && analysis.limit !== taskConfig.limit) return partial(rowCountText(context.n, taskConfig.limit));
+      if (analysis.limit === null && context.n > taskConfig.limit) return partial(taskConfig.texts.noLimit(context));
+      return partial('Teilweise korrekt: Die Spalten passen, aber die ausgegebenen Zeilen stimmen noch nicht mit der Aufgabe überein. Prüfe zusätzliche Einschränkungen oder Zusammenfassungen.');
+    }
+    if (!relationSubset(actual, full, projectedColumns(analysis), projectedColumns(analysis))) return partial('Teilweise korrekt: Die Spalten passen, aber die ausgegebenen Zeilen stimmen noch nicht mit der Aufgabe überein. Prüfe zusätzliche Einschränkungen oder Zusammenfassungen.');
+    return fallback;
+  }
+  if (taskConfig.projection === 'any' && !analysis.columns) return fallback;
+  const reference = taskConfig.projection === 'any' ? null : await cachedExec(`SELECT ${taskConfig.select}\n${taskConfig.tail}`);
+  const expected = taskConfig.projection === 'any' ? await cachedExec(referenceSql(taskConfig, analysis)) : reference;
+  const selected = projectedColumns(analysis);
+  const expectedNames = expectedColumnNames(taskConfig, analysis);
+  const columnsWrong = taskConfig.projection === 'any' ? !requireAnyOk(taskConfig, analysis) : !sameMultiset(context.cols, expectedNames || []);
+  if (analysis.implicitAliases.length && missingExpectedComma(taskConfig, analysis, context.cols)) {
+    return { level: 'hint', text: 'Noch nicht korrekt: Zwischen zwei gewünschten Spalten fehlt ein Komma. SQL liest das zweite Wort sonst als Alias der ersten Spalte.' };
+  }
+  if (columnsWrong) return { level: 'hint', text: taskConfig.texts.cols(context) };
+  if (taskConfig.limit === null && analysis.limit !== null) return partial(TEXT_NO_LIMIT_EXPECTED(context));
+  if (context.n === 0) return partial('Teilweise korrekt: Die Spalten passen, aber deine Abfrage liefert keine Zeilen. Prüfe, ob eine zusätzliche Bedingung alle Mitglieder ausschließt.');
+  const rowsMatch = compareRelations(actual, expected, { columnOrder: taskConfig.projection === 'any' ? true : taskConfig.columnOrder, columnLabels: false, rowOrder: false }).correct;
+  const isSubset = relationSubset(actual, expected, selected, expectedNames);
+  if (taskConfig.requireDistinct && !analysis.distinct) {
+    const hasDuplicates = actual.values.some((row, index) => actual.values.slice(0, index).some((other) => rowKey(row) === rowKey(other)));
+    if (hasDuplicates) return partial(taskConfig.texts.noDistinct(context));
+  }
+  if (!taskConfig.requireDistinct && analysis.distinct) {
+    const withoutDistinct = await distinctlessResult(analysis);
+    if (withoutDistinct && compareRelations(withoutDistinct, expected, { columnOrder: taskConfig.projection === 'any' ? true : taskConfig.columnOrder, columnLabels: false, rowOrder: false }).correct) {
+      return partial('Teilweise korrekt: Die Spalten stimmen. DISTINCT entfernt aber Zeilen, die hier gebraucht werden – gesucht sind alle Mitglieder, nicht nur verschiedene Werte. Lass DISTINCT weg.');
     }
   }
-  return `WITH users (${USER_COLUMN_NAMES.map(quoteIdentifier).join(', ')}) AS (VALUES ${tuples.join(', ')})\n${sql}`;
-}
-async function evaluate(task,analysis,actual) {
-  const actualNames=actualColumns(analysis,actual), expectedNames=expectedColumns(task);
-  const required=new Set(expectedNames);
-  if (analysis.implicitAliases.some(({column,alias})=>required.has(column)&&required.has(alias)&&!actualNames.includes(alias)))
-    return {level:'hint',text:'Noch nicht korrekt: Zwischen zwei gewünschten Spalten fehlt ein Komma. SQL liest das zweite Wort sonst als Alias der ersten Spalte.'};
-  if (!sameMultiset(actualNames,expectedNames)) {
-    if ((actualNames.includes('name') && expectedNames.includes('username')) || (actualNames.includes('username') && expectedNames.includes('name')))
-      return {level:'hint',text:'Noch nicht korrekt: name enthält den vollständigen Namen, username den Benutzernamen. Prüfe, welche Spalte die Aufgabe verlangt.'};
-    const extra=task.projection==='*' ? ' Für einen vollständigen Datensatz fehlen noch Spalten.' : '';
-    return {level:'hint',text:`Noch nicht korrekt: Die ausgegebenen Spalten passen noch nicht. Vergleiche SELECT mit dem Arbeitsauftrag und dem Schema.${extra}`};
+  if (!rowsMatch && isSubset && taskConfig.limit === null && analysis.limit !== null) return partial(TEXT_NO_LIMIT_EXPECTED(context));
+  if (!rowsMatch && taskConfig.limit !== null && context.n !== taskConfig.limit) {
+    if (analysis.limit === null && (taskConfig.order && analysis.orderBy[0]?.column === taskConfig.order.column && analysis.orderBy[0]?.dir === taskConfig.order.dir)) return partial(taskConfig.texts.noLimit(context));
+    if (analysis.limit !== null && analysis.limit !== taskConfig.limit) return partial(rowCountText(context.n, taskConfig.limit));
   }
-  if (analysis.limit!==null) return {level:'partial',text:'Teilweise korrekt: Deine Ergebnisrelation ist begrenzt. Gesucht sind alle passenden Mitglieder; entferne LIMIT.'};
-  const reference=await cachedExec(task.sql);
-  if (analysis.distinct) {
-    const without=await cachedExec(`${analysis.source.slice(0,analysis.distinctToken.start)}${analysis.source.slice(analysis.distinctToken.end)}`);
-    if (without.values.length>actual.values.length) return {level:'partial',text:'Teilweise korrekt: DISTINCT entfernt hier benötigte Zeilen. Gesucht sind alle passenden Mitglieder.'};
-  }
-  const issue=featureIssue(task,analysis); if (issue) return issue;
-  const equal=compareRelations(actual,reference,{columnOrder:task.number!==19,columnLabels:false,rowOrder:false}).correct;
-  if (equal) {
-    const probeActual=await cachedExec(withWhereProbes(task,analysis.source));
-    const probeReference=await cachedExec(withWhereProbes(task,task.sql));
-    if (!compareRelations(probeActual,probeReference,{columnOrder:task.number!==19,columnLabels:false,rowOrder:false}).correct) {
-      if (task.number===17) return {level:'hint',text:'Noch nicht korrekt: Alle E-Mail-Adressen passen derzeit, aber verlangt ist eine wirksame LIKE-Bedingung für die Endung `@instahub.test`.'};
-      const subset=probeActual.values.length===0 || relationSubset(probeActual,probeReference,actualNames,expectedNames);
-      return {level:'partial',text:subset
-        ? 'Teilweise korrekt: Deine WHERE-Bedingung schließt auch passende Mitglieder aus. Prüfe zusätzliche Einschränkungen und Vergleichsgrenzen.'
-        : 'Teilweise korrekt: Deine WHERE-Bedingung kann auch Mitglieder auswählen, die der Auftrag ausschließt. Prüfe Vergleichswerte, Muster und Verknüpfungen.'};
+  if (!rowsMatch && isSubset) {
+    if (context.n < expected.values.length && ['t1', 't2', 't3', 't4', 't5', 't6', 't11', 't13'].includes(taskConfig.id)) {
+      if (taskConfig.limit !== null && analysis.limit !== null && analysis.limit !== taskConfig.limit) return partial(rowCountText(context.n, taskConfig.limit));
+      return partial('Teilweise korrekt: Die Spalten passen, aber es fehlen Mitglieder. Prüfe, ob deine Abfrage die Zeilen unnötig einschränkt.');
     }
+    return partial('Teilweise korrekt: Die Spalten passen, aber die ausgegebenen Zeilen stimmen noch nicht mit der Aufgabe überein. Prüfe zusätzliche Einschränkungen oder Zusammenfassungen.');
   }
-  if (equal) return {level:'success',text:task.texts.ok,solved:true};
-  const where=whereTokens(analysis), words=where.map(tokenKeyword);
-  if (task.number===4 && where.some((token)=>token.value==='<=') && where.some((token)=>token.value==='180')) return {level:'partial',text:'Teilweise korrekt: Prüfe die Grenze und den Vergleichsoperator. ‚Kleiner als‘ schließt den Grenzwert aus.'};
-  if ((task.number===4 || task.number===19) && where.some((token)=>token.value==='1.80' || token.value==='1.60')) return {level:'hint',text:'Noch nicht korrekt: centimeters speichert Zentimeter. Wandle Meter vor dem Vergleich um.'};
-  if (task.number===12 && words.includes('AND') && !words.includes('OR')) return {level:'partial',text:'Teilweise korrekt: Hier genügt einer der beiden Vornamen. Prüfe, ob OR statt AND gebraucht wird.'};
-  if ([10,11,19,20].includes(task.number) && words.includes('OR') && !words.includes('AND')) return {level:'partial',text:'Teilweise korrekt: Beide Bedingungen müssen zugleich gelten. Prüfe, ob AND statt OR gebraucht wird.'};
-  if (task.number===21 && words.includes('OR') && words.includes('AND') && !where.some((token)=>token.value==='(')) return {level:'partial',text:'Teilweise korrekt: Die Berliner Bedingung muss für beide Vornamen gelten. Fasse die beiden Namensbedingungen mit Klammern zusammen.'};
-  if (task.like) {
-    const pattern=where.find((token)=>token.type==='string' && token.value.startsWith("'"))?.value || '';
-    if (task.number===9 && pattern.includes('%03%')) return {level:'partial',text:"Teilweise korrekt: Suche die 03 an der Monatsposition zwischen den Bindestrichen; `'%03%'` trifft auch andere Datumsteile."};
-    if (task.number===8 && !(pattern.startsWith("'%") && pattern.endsWith("%'"))) return {level:'partial',text:'Teilweise korrekt: Prüfe die Position der Prozentzeichen. Bei ‚enthält‘ dürfen vor und nach dem Suchtext Zeichen stehen.'};
-    if ([7,10,12,20,21].includes(task.number) && pattern.startsWith("'%")) return {level:'partial',text:'Teilweise korrekt: Bei ‚beginnt mit‘ steht das Prozentzeichen nach dem bekannten Anfang.'};
-    if ([17,18].includes(task.number) && !pattern.startsWith("'%")) return {level:'partial',text:'Teilweise korrekt: Bei ‚endet mit‘ steht das Prozentzeichen vor der bekannten Endung.'};
+  if (!rowsMatch && taskConfig.limit !== null && context.n !== taskConfig.limit && analysis.limit !== null && analysis.limit !== taskConfig.limit) return partial(rowCountText(context.n, taskConfig.limit));
+  if (taskConfig.order) {
+    const first = analysis.orderBy[0];
+    if (!first) return partial(taskConfig.texts.noOrder(context));
+    if (first.quoted) return partial("Teilweise korrekt: Hinter ORDER BY steht ein Textwert. Sortiere nach der Spalte ohne einfache Anführungszeichen.");
+    if (first.column !== taskConfig.order.column) return partial(taskConfig.texts.wrongCol ? taskConfig.texts.wrongCol(context) : `Teilweise korrekt: Du sortierst nach ${first.column}. Die Aufgabe verlangt eine Sortierung nach ${taskConfig.order.column}. Prüfe die Spalte hinter ORDER BY.`);
+    if (first.dir !== taskConfig.order.dir) return partial(taskConfig.texts.dir(context));
   }
-  if (task.number===5 && actual.values.length===0) return {level:'hint',text:"Noch nicht korrekt: birthday speichert Datumswerte als `'JJJJ-MM-TT'`. Prüfe Jahr, Monat und Tag."};
-  if (!actual.values.length && reference.values.length) return {level:'hint',text:task.texts.wrong};
-  const subset=relationSubset(actual,reference,actualNames,expectedNames);
-  if (subset && actual.values.length<reference.values.length) return {level:'partial',text:'Teilweise korrekt: Es fehlen passende Mitglieder. Prüfe, ob eine zusätzliche Bedingung zu viele Zeilen ausschließt.'};
-  if (actual.values.length>reference.values.length) return {level:'partial',text:'Teilweise korrekt: Es erscheinen zu viele Mitglieder. Prüfe die WHERE-Bedingung.'};
-  if (actual.values.length===reference.values.length) return {level:'partial',text:'Teilweise korrekt: Die Zeilenzahl stimmt, aber es sind nicht dieselben Mitglieder. Prüfe den Vergleichswert und die Bedingung.'};
-  return {level:'hint',text:task.texts.wrong};
+  if (taskConfig.limit !== null) {
+    if (analysis.limit === null) return partial(taskConfig.texts.noLimit(context));
+    if (context.n !== taskConfig.limit) return partial(rowCountText(context.n, taskConfig.limit));
+  } else if (analysis.limit !== null) return partial(TEXT_NO_LIMIT_EXPECTED(context));
+  if (!rowsMatch) return partial('Teilweise korrekt: Die Spalten passen, aber die ausgegebenen Zeilen stimmen noch nicht mit der Aufgabe überein. Prüfe zusätzliche Einschränkungen oder Zusammenfassungen.');
+  return fallback;
 }
+
+// ---------------------------------------------------------------------------
+// Ausführen und Anzeigen einer SQL-Aufgabe
+// ---------------------------------------------------------------------------
 
 function taskCard(taskConfig) { return document.getElementById(`task-${taskConfig.id}`); }
 
@@ -1009,21 +736,18 @@ function renderTaskOutput(taskConfig) {
 async function runTask(taskConfig, { auto = false } = {}) {
   if (running.has(taskConfig.id)) return;
   const sqlText = state.answers[taskConfig.id] || '';
-  if (!sqlText.trim()) { applyFeedback(taskConfig,'hint','Noch nicht korrekt: Schreibe zuerst eine SELECT-Abfrage in das Eingabefeld.'); return; }
   const check = validateSelectStatement(sqlText);
-  if (!check.ok) { applyFeedback(taskConfig, 'hint', 'Noch nicht korrekt: Hier ist genau eine lesende SELECT-Abfrage erlaubt.'); return; }
+  if (!check.ok) { applyFeedback(taskConfig, 'hint', check.message); return; }
   if (!databaseReady) { applyFeedback(taskConfig, 'hint', 'Warte bitte, bis die Tabelle users vollständig geladen ist.', { persist: false }); return; }
   running.add(taskConfig.id);
-  const revision = revisions.get(taskConfig.id) || 0;
-  const activeTabRevision = tabRevision;
   if (auto) renderTaskOutput(taskConfig);
-  else { const box=taskCard(taskConfig)?.querySelector('.sql-feedback'); if(box){box.className='feedback hint sql-feedback';box.textContent='Die Abfrage wird ausgeführt …';} }
+  else applyFeedback(taskConfig, 'hint', 'Die Abfrage wird ausgeführt …', { persist: false });
   try {
     const actual = await database.exec(check.sql);
     const verdict = await evaluate(taskConfig, analyzeQuery(check.sql), actual);
-    if ((state.answers[taskConfig.id] || '') === sqlText && revisions.get(taskConfig.id) === revision && tabRevision === activeTabRevision) applyFeedback(taskConfig, verdict.level, verdict.text, { solved: verdict.solved === true, relation: actual });
+    if ((state.answers[taskConfig.id] || '') === sqlText) applyFeedback(taskConfig, verdict.level, verdict.text, { solved: verdict.solved === true, relation: actual });
   } catch (error) {
-    if ((state.answers[taskConfig.id] || '') === sqlText && revisions.get(taskConfig.id) === revision && tabRevision === activeTabRevision) applyFeedback(taskConfig, 'error', diagnoseError(error, check.sql));
+    if ((state.answers[taskConfig.id] || '') === sqlText) applyFeedback(taskConfig, 'error', diagnoseError(error, check.sql));
   } finally {
     running.delete(taskConfig.id);
     renderTaskOutput(taskConfig);
@@ -1037,7 +761,7 @@ function renderRelation(relation) {
   const caption = element('div', 'table-caption');
   caption.append(element('strong', '', 'Ergebnisrelation'), element('span', '', `${relation.values.length} Zeile(n)`));
   shell.append(caption);
-  if (!relation.values.length) { shell.append(element('p', 'empty-result', 'Die Abfrage ist gültig, liefert aber keine Zeilen.')); return shell; }
+  if (!relation.values.length) { shell.append(element('p', 'empty-result', 'Die Abfrage ist gültig, liefert aber keine Datensätze.')); return shell; }
   const scroll = element('div', 'table-scroll'); scroll.tabIndex = 0; scroll.setAttribute('aria-label', 'Ergebnisrelation horizontal und vertikal scrollen');
   const table = element('table', `data-table${relation.columns.length <= 3 ? ' compact' : ''}`);
   table.append(element('caption', 'visually-hidden', 'Ergebnis deiner SQL-Abfrage'));
@@ -1107,7 +831,7 @@ async function submitDescription(task, input, button, output) {
     save(); renderDescriptionFeedback(task, output); input.focus(); return;
   }
   if (!isValidScriptServerUrl(SCRIPT_SERVER_URL)) {
-    state.descriptionFeedback[task.id] = { level: 'error', text: 'Die Auswertung konnte nicht abgeschlossen werden. Bitte versuche es erneut.' };
+    state.descriptionFeedback[task.id] = { level: 'error', text: 'Der Auswertungsserver ist nicht korrekt eingerichtet.' };
     save(); renderDescriptionFeedback(task, output); return;
   }
   const requestId = (descriptionRequests.get(task.id) || 0) + 1;
@@ -1128,7 +852,7 @@ async function submitDescription(task, input, button, output) {
     state.descriptionFeedback[task.id] = classified;
   } catch (error) {
     if (!stillCurrent()) return;
-    state.descriptionFeedback[task.id] = { level: 'error', text: 'Die Auswertung konnte nicht abgeschlossen werden. Bitte versuche es erneut.' };
+    state.descriptionFeedback[task.id] = { level: 'error', text: error.message || 'Die Auswertung konnte nicht abgeschlossen werden. Bitte versuche es erneut.' };
   } finally {
     if (stillCurrent()) {
       input.disabled = false; button.disabled = false; button.textContent = 'Erklärung prüfen';
@@ -1141,39 +865,104 @@ async function submitDescription(task, input, button, output) {
 
 function renderTask(taskConfig) {
   const card = element('section', 'task-card sql-task'); card.id = `task-${taskConfig.id}`;
-  card.append(element('h3', '', `Aufgabe ${taskConfig.number}`), paragraph(taskConfig.prompt));
+  card.append(element('h3', '', `Aufgabe ${TASKS.indexOf(taskConfig) + 1}`), paragraph(taskConfig.prompt));
   // nach renderSqlTask in klasse-10/1-Datenbanken/sql-lab.js, angepasst: eigene Prüflogik, Hilfen über appendHints
   const label = element('label', 'sql-label', 'Deine vollständige SQL-Anweisung'); label.htmlFor = `input-${taskConfig.id}`;
   const input = document.createElement('textarea'); input.id = label.htmlFor; input.className = 'sql-input'; input.spellcheck = false; input.placeholder = NEUTRAL_SQL_PLACEHOLDER;
   const hasSavedAnswer = Object.prototype.hasOwnProperty.call(state.answers, taskConfig.id);
-  input.value = hasSavedAnswer ? state.answers[taskConfig.id] : '';
-
+  input.value = hasSavedAnswer ? state.answers[taskConfig.id] : (taskConfig.correctionSql ? '' : taskConfig.initialSql);
+  if (!hasSavedAnswer && taskConfig.initialSql) { state.answers[taskConfig.id] = taskConfig.initialSql; save(); }
   const resetOutput = () => {
     const wasSolved = Boolean(state.solved[taskConfig.id]);
-    revisions.set(taskConfig.id, (revisions.get(taskConfig.id)||0)+1);
     delete state.feedback[taskConfig.id]; delete state.solved[taskConfig.id]; delete results[taskConfig.id];
     save(); renderTaskOutput(taskConfig);
     if (wasSolved) updateTabMarks();
   };
   input.addEventListener('input', () => { state.answers[taskConfig.id] = input.value; resetOutput(); });
   input.addEventListener('keydown', (event) => { if ((event.ctrlKey || event.metaKey) && event.key === 'Enter') { event.preventDefault(); runTask(taskConfig); } });
-
+  if (taskConfig.correctionSql) card.append(element('p', 'sql-label', 'Fehlerhafte Anweisung'), sqlBlock(taskConfig.correctionSql));
   card.append(label, input);
   appendHints(card, taskConfig.hints);
   const actions = element('div', 'action-row');
-  const run = element('button', 'primary-button sql9-run', 'Abfrage prüfen'); run.type = 'button'; run.disabled = !databaseReady;
+  const run = element('button', 'primary-button sql9-run', 'Abfrage ausführen und prüfen'); run.type = 'button'; run.disabled = !databaseReady;
   run.addEventListener('click', () => runTask(taskConfig));
   actions.append(run);
+  if (taskConfig.initialSql && !taskConfig.correctionSql) {
+    const reset = element('button', 'secondary-button', 'Ursprungsanweisung wiederherstellen'); reset.type = 'button';
+    reset.addEventListener('click', () => { input.value = taskConfig.initialSql; state.answers[taskConfig.id] = taskConfig.initialSql; resetOutput(); input.focus(); });
+    actions.append(reset);
+  }
   actions.append(element('span', 'shortcut-hint', 'Strg/Cmd + Enter'));
   card.append(actions);
   const output = element('div', 'sql9-task-output');
   const feedback = element('p', 'feedback sql-feedback'); feedback.setAttribute('aria-live', 'polite');
   output.append(feedback, element('div', 'sql9-relation-slot'));
   card.append(output);
-
+  if (taskConfig.id === 't6') card.append(renderYoungest());
   return card;
 }
 
+// ---------------------------------------------------------------------------
+// Zusatzteil Aufgabe 6: jüngstes Mitglied
+// ---------------------------------------------------------------------------
+
+function youngestAge() {
+  const now = new Date();
+  const month = now.getMonth() + 1;
+  const before = month < YOUNGEST.birthMonth || (month === YOUNGEST.birthMonth && now.getDate() < YOUNGEST.birthDay);
+  return now.getFullYear() - YOUNGEST.birthYear - (before ? 1 : 0);
+}
+function normalizeName(value) { return value.trim().toLowerCase().replace(/^@+/, '').replace(/\s+/g, ' ').trim(); }
+function youngestFeedback(kind) {
+  const texts = {
+    empty: ['hint', 'Noch nicht korrekt: Fülle beide Felder aus.'],
+    correct: ['success', `Korrekt: Das jüngste Mitglied ist gartenlesemaus (Elena Heidenkamp), geboren am 7. Juli 2010. Heute ist sie ${youngestAge()} Jahre alt. Bei aufsteigender Sortierung steht sie ganz unten, weil sie das späteste Geburtsdatum hat.`],
+    ageWrong: ['partial', 'Teilweise korrekt: Das Mitglied stimmt. Prüfe das Alter: Wie viele Jahre liegen zwischen dem 7. Juli 2010 und heute? Achte darauf, ob der Geburtstag in diesem Jahr schon war.'],
+    admin: ['hint', 'Noch nicht korrekt: admin steht zwar ganz oben, hat aber kein Geburtsdatum (NULL). Bei aufsteigender Sortierung steht das jüngste Mitglied am Ende der Liste.'],
+    oldest: ['hint', 'Noch nicht korrekt: zornigeracket ist das älteste Mitglied mit Geburtsdatum. Je jünger ein Mitglied ist, desto später ist sein Geburtsdatum – bei aufsteigender Sortierung steht es ganz unten.'],
+    wrong: ['hint', 'Noch nicht korrekt: Das ist nicht das jüngste Mitglied. Scrolle in deiner sortierten Ergebnisrelation bis ganz nach unten: Dort steht das späteste Geburtsdatum.']
+  };
+  return texts[kind];
+}
+function classifyYoungest() {
+  const name = normalizeName(state.youngest.username);
+  const age = state.youngest.age.trim();
+  if (!name || !age) return 'empty';
+  if (name === YOUNGEST.username || name === YOUNGEST.fullName) return /^\d+$/.test(age) && Number(age) === youngestAge() ? 'correct' : 'ageWrong';
+  if (name === 'admin') return 'admin';
+  if (name === 'zornigeracket') return 'oldest';
+  return 'wrong';
+}
+function renderYoungestFeedback(box) {
+  const entry = state.youngest.feedback ? youngestFeedback(state.youngest.feedback) : null;
+  box.className = `feedback ${entry ? entry[0] : ''} sql9-youngest-feedback`;
+  box.textContent = entry ? entry[1] : '';
+}
+function renderYoungest() {
+  const wrapper = element('div', 'sql9-youngest');
+  wrapper.append(paragraph('**Gib** an, wer das jüngste Mitglied ist und wie alt es heute ist.'));
+  const feedback = element('p', 'feedback sql9-youngest-feedback'); feedback.setAttribute('aria-live', 'polite');
+  const clearFeedback = () => { const hadCorrect = state.youngest.feedback === 'correct'; state.youngest.feedback = null; save(); renderYoungestFeedback(feedback); if (hadCorrect) updateTabMarks(); };
+  [['youngest-name', 'Benutzername des jüngsten Mitglieds', 'username', null], ['youngest-age', 'Alter heute (in Jahren)', 'age', 'numeric']].forEach(([id, text, key, mode]) => {
+    const row = element('div', 'gap-row');
+    const label = element('label', '', text); label.htmlFor = id;
+    const input = document.createElement('input'); input.id = id; input.className = 'gap-input'; input.type = 'text'; input.autocomplete = 'off'; input.spellcheck = false;
+    if (mode) input.inputMode = mode;
+    input.value = state.youngest[key];
+    input.addEventListener('input', () => { state.youngest[key] = input.value; clearFeedback(); });
+    row.append(label, input); wrapper.append(row);
+  });
+  const actions = element('div', 'action-row');
+  const check = element('button', 'primary-button', 'Antwort prüfen'); check.type = 'button';
+  check.addEventListener('click', () => { state.youngest.feedback = classifyYoungest(); save(); renderYoungestFeedback(feedback); updateTabMarks(); });
+  actions.append(check); wrapper.append(actions, feedback);
+  renderYoungestFeedback(feedback);
+  return wrapper;
+}
+
+// ---------------------------------------------------------------------------
+// Tabs und Seitenaufbau
+// ---------------------------------------------------------------------------
 
 function updateTabMarks() { TABS.forEach(([id]) => document.getElementById(`tab-${id}`)?.classList.toggle('is-complete', isTabComplete(id))); }
 function tabIndex(id) { return TABS.findIndex(([tabId]) => tabId === id); }
@@ -1218,13 +1007,15 @@ function render({ focusContent = false } = {}) {
   panel.setAttribute('aria-labelledby', `tab-${state.tab}`);
   if (state.tab !== 'intro' && state.tab !== 'quiz') panel.append(schemaCard(USERS_TABLE_SCHEMAS));
   panel.append(stepHeading(state.tab));
-  if (state.tab === 'intro') renderIntro(panel);
-  else if (state.tab === 'quiz') renderQuiz(panel);
+  if (state.tab === 'quiz') renderQuiz(panel);
   else renderTaskTab(panel);
   renderTabFlowNavigation(panel, { items: TABS.map(([id, label]) => ({ id, label })), currentId: state.tab, onNavigate: activateTab });
   if (focusContent) focusTabPanelStart(panel);
 }
 
+// ---------------------------------------------------------------------------
+// Reiter 2 bis 6
+// ---------------------------------------------------------------------------
 
 function exampleTable(caption, columns, rows, className = '') {
   const table = element('table', `data-table sql9-mini-table${className ? ` ${className}` : ''}`);
@@ -1240,148 +1031,226 @@ function exampleTable(caption, columns, rows, className = '') {
 
 function explainCard(title) { const card = element('section', 'scenario-card aggregate-intro'); card.append(element('h3', '', title)); return card; }
 
+function orderByCard() {
+  const card = explainCard('Kurz erklärt: Sortieren mit ORDER BY');
+  card.append(
+    element('p', '', 'Die Werbekunden möchten Listen, die nach Namen, Größe oder Alter geordnet sind. Dafür hängst du ORDER BY an die Abfrage an.'),
+    sqlBlock('SELECT Spalte1, Spalte2, …\nFROM Tabellenname\nORDER BY Spaltenname [ASC | DESC]')
+  );
+  const list = element('dl', 'aggregate-list');
+  [['ASC', 'aufsteigend: A bis Z, klein nach groß, früh nach spät'], ['DESC', 'absteigend: Z bis A, groß nach klein, spät nach früh'], ['[ ] und |', 'Eckige Klammern bedeuten: kann weggelassen werden. | bedeutet: oder. Ohne Angabe gilt ASC.']]
+    .forEach(([term, meaning]) => list.append(element('dt', '', term), element('dd', '', meaning)));
+  card.append(list);
+  const row = element('div', 'sql9-example-row sql9-example-row-three');
+  const columns = ['username', 'centimeters'];
+  row.append(
+    exampleTable('ohne ORDER BY', columns, [['zornigerfotograf', '168'], ['wanderwut_finn', '183'], ['bergcoder', '174']]),
+    exampleTable('ORDER BY centimeters', columns, [['zornigerfotograf', '168'], ['bergcoder', '174'], ['wanderwut_finn', '183']]),
+    exampleTable('ORDER BY centimeters DESC', columns, [['wanderwut_finn', '183'], ['bergcoder', '174'], ['zornigerfotograf', '168']])
+  );
+  card.append(row, paragraph('**NULL** bedeutet: In diesem Feld ist kein Wert eingetragen. Beim Sortieren mit ASC steht NULL ganz oben, mit DESC ganz unten.'));
+  return card;
+}
 
-function explainContent(tab) {
-  const card=explainCard({simple:'Kurz erklärt: WHERE und Gleichheit',compare:'Kurz erklärt: Vergleichen mit WHERE',like:'Kurz erklärt: Muster suchen',combine:'Kurz erklärt: Bedingungen verknüpfen'}[tab]);
-  if (tab==='simple') card.append(paragraph("In `users` hat jedes Mitglied einen Wohnort. Mit `WHERE city = 'München'` gelangen nur Zeilen mit diesem Wohnort in die Ergebnisrelation. `WHERE` ist die Bedingung für die Zeilenauswahl; `=` vergleicht auf Gleichheit. Text- und Datumswerte stehen in einfachen Anführungszeichen, Spaltennamen nicht. Die Ausgabespalten hinter `SELECT` müssen nicht die Spalten aus `WHERE` sein."),sqlBlock("SELECT username, city\nFROM users\nWHERE city = 'München'"));
-  if (tab==='compare') card.append(paragraph('`centimeters < 180` trifft eine Größe von 175 cm, aber nicht 180 cm. `centimeters <= 180` trifft auch 180 cm.'),paragraph("Die Größen sind in Zentimetern gespeichert. `=` bedeutet gleich, `<` kleiner als, `>` größer als, `<=` höchstens, `>=` mindestens und `<>` oder `!=` ungleich. Für ein Datum verwende das Format `'JJJJ-MM-TT'`, zum Beispiel `'2007-09-17'."),paragraph('Beim Konto admin ist kein Wohnort eingetragen (`NULL`). Ein normaler Vergleich mit `NULL` erfüllt diese WHERE-Bedingung nicht; admin erscheint deshalb hier nicht.'));
-  if (tab==='like') card.append(paragraph("`'B%'` trifft Ben Neumann, weil sein Name mit B beginnt. `'%berg'` trifft Carl Seidenberg, weil der vollständige Name mit berg endet. `'%berg%'` trifft auch Theo Bergmeister, weil berg irgendwo im Namen steht."),paragraph('Mit `LIKE` vergleichst du einen Text mit einem Muster. `%` steht für beliebig viele Zeichen, auch für kein Zeichen. Seine Position bestimmt, ob du Anfang, Ende oder eine Stelle im Inneren suchst.'),paragraph("In `name` steht erst der Vorname, dann der Nachname. In `JJJJ-MM-TT` steht der Monat zwischen den Bindestrichen; `LIKE '%-03-%'` sucht März, `'%03%'` wäre zu ungenau."));
-  if (tab==='combine') {
-    card.append(sqlBlock("WHERE gender = 'male'"),sqlBlock("WHERE city = 'Berlin'"),sqlBlock("WHERE gender = 'male' AND city = 'Berlin'"),paragraph('Die erste Bedingung trifft alle männlichen Mitglieder, die zweite alle Berliner. Mit AND bleiben nur die Datensätze übrig, die beide Bedingungen erfüllen. Mit OR genügt mindestens eine Bedingung; auch beide dürfen erfüllt sein.'));
-    card.append(exampleTable('AND und OR im Vergleich',['Mitglied','Ergebnis'],[['männlich/Berlin','AND und OR'],['männlich/Leipzig','nur OR'],['weiblich/Berlin','nur OR'],['weiblich/Leipzig','keines']]));
-  }
+function distinctCard() {
+  const card = explainCard('Kurz erklärt: Doppelte Werte vermeiden mit DISTINCT');
+  card.append(
+    element('p', '', 'Die Werbekunden fragen: Aus welchen Orten und Ländern kommen unsere Mitglieder? In einer Spalte kommen oft viele gleiche Werte vor. Mit DISTINCT direkt hinter SELECT wird jeder Wert nur einmal ausgegeben.'),
+    sqlBlock('SELECT DISTINCT Spalte1, Spalte2, …\nFROM Tabellenname')
+  );
+  const row = element('div', 'sql9-example-row sql9-example-row-two');
+  const left = element('div', 'sql9-example'); left.append(sqlBlock('SELECT gender\nFROM users'), exampleTable('Ergebnisrelation ohne DISTINCT', ['gender'], [['male'], ['male'], ['male'], ['male'], ['male'], ['male'], ['…']]), element('p', 'sql9-example-count', '317 Zeilen'));
+  const right = element('div', 'sql9-example'); right.append(sqlBlock('SELECT DISTINCT gender\nFROM users'), exampleTable('Ergebnisrelation mit DISTINCT', ['gender'], [['male'], ['female'], ['diverse'], ['NULL']]), element('p', 'sql9-example-count', '4 Zeilen'));
+  row.append(left, right);
+  card.insertBefore(row, card.children[1]); card.append(element('p', '', 'DISTINCT verändert die Tabelle users nicht. Es entfernt die Dopplungen nur in der Ergebnisrelation. NULL erscheint als eigener Wert: Beim Konto admin ist kein Geschlecht eingetragen.'));
   return card;
 }
-function bracketCard() {
-  const card=explainCard('Klammern bei AND und OR');
-  card.append(paragraph('Wenn AND und OR gemeinsam vorkommen, bindet AND stärker. Klammern machen deutlich, was zuerst zusammengehört: `(Vorname Lina OR Vorname Hailey) AND Wohnort Berlin`. Jede Teilbedingung muss vollständig sein.'),sqlBlock("SELECT *\nFROM users\nWHERE (name LIKE 'Lina %' OR name LIKE 'Hailey %')\n  AND city = 'Berlin'"));
+
+function limitCard() {
+  const card = explainCard('Kurz erklärt: Zeilen begrenzen mit LIMIT');
+  card.append(
+    element('p', '', 'Für eine Vorschau auf dem Handy reichen den Werbekunden wenige Zeilen. Bei einem langsamen Netz dauert es außerdem, bis alle 317 Mitglieder angezeigt werden. Mit LIMIT legst du fest, wie viele Zeilen höchstens ausgegeben werden.'),
+    sqlBlock('SELECT username\nFROM users\nLIMIT 25'),
+    element('p', '', 'Diese Abfrage zeigt die ersten 25 Benutzernamen. LIMIT steht immer am Ende der Abfrage – auch hinter ORDER BY:'),
+    sqlBlock('SELECT …\nFROM …\nORDER BY …\nLIMIT …')
+  );
+  const row = element('div', 'sql9-example-row sql9-example-row-two');
+  const columns = ['username', 'birthday'];
+  const sorted = [
+    ['gartenlesemaus', '2010-07-07'],
+    ['gartencoderin', '2010-06-28'],
+    ['codekickemmi', '2010-06-22'],
+    ['modereiselio', '2010-06-15'],
+    ['pixelprins', '2010-06-14']
+  ];
+  const before = element('div', 'sql9-example');
+  before.append(
+    sqlBlock('SELECT username, birthday\nFROM users\nORDER BY birthday DESC'),
+    exampleTable('Ergebnisrelation ohne LIMIT', columns, [...sorted, ['…', '…']]),
+    element('p', 'sql9-example-count', '317 Zeilen')
+  );
+  const after = element('div', 'sql9-example');
+  after.append(
+    sqlBlock('SELECT username, birthday\nFROM users\nORDER BY birthday DESC\nLIMIT 4'),
+    exampleTable('Ergebnisrelation mit LIMIT 4', columns, sorted.slice(0, 4)),
+    element('p', 'sql9-example-count', '4 Zeilen')
+  );
+  row.append(before, after);
+  card.insertBefore(row, card.children[1]);
   return card;
 }
+
 function renderTaskTab(panel) {
-  if (state.tab==='simple') panel.append(renderDescriptionTask(DESCRIPTION_TASK));
-  if (state.tab==='fast') {
-    const headings={13:'A · Einfache Bedingungen',15:'B · Vergleichen',17:'C · Muster suchen',19:'D · Bedingungen verknüpfen'};
-    TAB_TASKS.fast.forEach((id)=>{ const task=TASK_BY_ID.get(id); if (headings[task.number]) panel.append(element('h3','',headings[task.number])); if (task.number===21) panel.append(bracketCard()); panel.append(renderTask(task)); renderTaskOutput(task); });
-  } else {
-    panel.append(explainContent(state.tab),paragraph('Die Ergebnisrelation zeigt die Daten dieser Abfrage; sie ändert users nicht.','sql9-quiet-note'));
-    TAB_TASKS[state.tab].forEach((id)=>{ const task=TASK_BY_ID.get(id); panel.append(renderTask(task)); renderTaskOutput(task); });
-  }
+  const introCard = {
+    projection: () => { const card = element('div', 'scenario-card'); card.append(paragraph('Im InstaHub-Datenbanklabor fragst du eine echte Tabelle `users` mit 317 Mitgliedern ab. Die Daten stimmen nicht mit deinem eigenen InstaHub überein.'), paragraph('**Tippe** deine Abfrage ein und **klicke** auf „Abfrage ausführen und prüfen“. Darunter erscheint die Ergebnisrelation deiner Abfrage.')); return card; },
+    orderBy: orderByCard,
+    distinct: distinctCard,
+    limit: limitCard,
+    fast: () => element('div', 'scenario-card')
+  }[state.tab];
+  const descriptionTask = DESCRIPTION_BY_TAB.get(state.tab);
+  if (state.tab === 'distinct') panel.append(paragraph('Zwei Mitglieder können denselben Wohnort haben. Untersuche, wie du jeden Wohnort einmal ausgibst und anschließend die Anzahl der Ergebniszeilen begrenzt.'));
+  if (state.tab === 'distinct' || state.tab === 'limit') panel.append(introCard());
+  if (descriptionTask) panel.append(renderDescriptionTask(descriptionTask));
+  if (state.tab !== 'fast' && state.tab !== 'distinct' && state.tab !== 'limit') panel.append(introCard());
+  TAB_TASKS[state.tab].forEach((id) => { const taskConfig = TASK_BY_ID.get(id); panel.append(renderTask(taskConfig)); renderTaskOutput(taskConfig); });
 }
 
-function introTable(rows,columns,caption,currentIndex=-1,leaving=false) {
-  const wrap=element('div','sql9-intro-table');
-  const scroll=element('div','table-scroll'); scroll.tabIndex=0; scroll.setAttribute('aria-label',caption);
-  const table=element('table','data-table sql9-snippet-table'); table.append(element('caption','',caption));
-  const head=document.createElement('thead'),hr=document.createElement('tr'); columns.forEach((column)=>{const th=element('th','',column);th.scope='col';hr.append(th);});head.append(hr);
-  const body=document.createElement('tbody');
-  rows.forEach((row,index)=>{const tr=document.createElement('tr');tr.dataset.rowId=row.id;if (index===currentIndex) tr.className=leaving?'is-leaving':'is-checking';columns.forEach((column)=>tr.append(element('td','',row[column])));body.append(tr);});
-  table.append(head,body);scroll.append(table);wrap.append(scroll);return wrap;
-}
-function renderIntro(panel) {
-  const card=element('section','task-card sql9-intro');
-  const assignment=paragraph('**Klicke** dich durch die Animation. Beobachte, welche Datensätze in die Ergebnisrelation gelangen und welche ausgefiltert werden.');
-  const heading=element('div','sql9-intro-heading'),progress=element('div','sql9-intro-progress');progress.setAttribute('aria-label','Ablauf der Erklärung');
-  const phases=INTRO_PHASES.map((text)=>{const span=element('span','',text);progress.append(span);return span;});
-  const stepper=element('div','intro-stepper'); stepper.setAttribute('role','group');stepper.setAttribute('aria-label','Animation durchklicken');
-  const prev=element('button','secondary-button','Zurück');prev.type='button';prev.id='intro-prev';
-  const count=element('span');count.id='intro-frame-count';count.setAttribute('aria-live','polite');
-  const next=element('button','primary-button','Weiter');next.type='button';next.id='intro-next';stepper.append(prev,count,next);heading.append(progress,stepper);
-  const workspace=element('div','sql9-intro-workspace'),visual=element('div','sql9-intro-visual'),resultCard=element('div','sql9-result-card');
-  const explanation=element('p','intro-explanation');explanation.setAttribute('aria-live','polite');
-  const statement=element('pre','given-sql sql9-intro-sql'),stage=element('div','sql9-intro-stage');
-  const permanence=element('p','sql9-intro-hint','Ausgefilterte Datensätze fehlen nur im Abfrageergebnis. Die Tabelle users bleibt unverändert.');
-  const result=element('div','sql9-result-body'),resultNote=element('p','sql9-result-note');
-  visual.append(explanation,statement,stage,permanence); resultCard.append(element('h3','','Ergebnisrelation dieses Ausschnitts'),result,resultNote);
-  workspace.append(visual,resultCard);const memo=element('div');card.append(assignment,heading,workspace,memo);panel.append(card);
-  const update=(oldStep=null)=>{
-    const step=state.introStep,phase=step===1?1:step===2?2:step<=9?3:4;
-    phases.forEach((span,index)=>{span.className=index+1===phase?'is-active':index+1<phase?'is-complete':'';span.textContent=INTRO_PHASES[index];if(index+1===phase)span.setAttribute('aria-current','step');else span.removeAttribute('aria-current');});
-    count.textContent=`Schritt ${step} von 12`;prev.disabled=step===1;next.textContent=step===12?'Erneut abspielen':'Weiter';
-    explanation.textContent=step>=4&&step<=9?(introRows[step-4]?.city==='Berlin'?'Bedingung erfüllt: Dieser Datensatz bleibt in der gefilterten Ansicht.':'Bedingung nicht erfüllt: Dieser Datensatz wird aus der gefilterten Ansicht entfernt.'):INTRO_EXPLANATIONS[step-1];
-    const code=element('code');[['select','SELECT username, city'],['from','FROM users'],['where',"WHERE city = 'Berlin'"]].forEach(([key,line])=>code.append(element('span',(step===2&&key==='from')||(step>=3&&step<=10&&key==='where')||(step===11&&key==='select')?'is-active-clause':'',line)));statement.replaceChildren(code);
-    stage.replaceChildren();result.replaceChildren();permanence.hidden=step<4;
-    const current=step>=4&&step<=9?step-4:-1;
-    const processed=step>=10?6:Math.max(0,step-4);
-    const visible=introRows.filter((row,index)=>index>=processed||row.city==='Berlin');
-    const leaving=current>=0&&introRows[current]?.city!=='Berlin'&&oldStep===step-1;
-    stage.append(introTable(visible,['id','username','city'],`Ausschnitt aus users (6 von ${memberCount} Mitgliedern)`,visible.findIndex((row)=>row.id===introRows[current]?.id),leaving));
-    if (leaving && !matchMedia('(prefers-reduced-motion: reduce)').matches) {
-      const row=stage.querySelector('.is-leaving');
-      row?.addEventListener('animationend',()=>{if(state.introStep===step)row.remove();},{once:true});
-    } else if (leaving) stage.querySelector('.is-leaving')?.remove();
-    if (step>=10) result.append(introTable(introRows.filter((row)=>row.city==='Berlin'),step>=11?['username','city']:['id','username','city'],step>=11?'Ergebnisrelation des Ausschnitts':'Gefilterter Zwischenstand des Ausschnitts'));
-    else result.append(element('p','sql9-result-empty','–'));
-    resultNote.textContent=step>=11?'SELECT username, city bestimmt die beiden Spalten der Ergebnisrelation.':step>=10?'Nach WHERE bleiben im Ausschnitt die beiden Berliner Datensätze übrig.':'';
-    memo.replaceChildren();if(step===12){const box=element('section','short-summary sql9-intro-memo');box.append(element('h3','','Merke: Selektion'),paragraph('WHERE wählt die Zeilen aus, die eine Bedingung erfüllen. Diese Auswahl heißt Selektion. SELECT legt fest, welche Spalten ausgegeben werden. Die gespeicherte Tabelle bleibt bei dieser Abfrage unverändert.'));memo.append(box);}
-  };
-  prev.addEventListener('click',()=>{state.introStep=Math.max(1,state.introStep-1);save();update();updateTabMarks();});
-  next.addEventListener('click',()=>{const old=state.introStep;state.introStep=old===12?1:old+1;save();update(old);updateTabMarks();});
-  update();
-}
+// ---------------------------------------------------------------------------
+// Reiter 1 – Einführung (Design nach klasse-11/1-Kuenstliche-Intelligenz/aufgabe3.html, #split-intro)
+// ---------------------------------------------------------------------------
 
 function quizSelection(question) { return Array.isArray(state.quiz[question.id]) ? state.quiz[question.id] : []; }
+
 function renderQuiz(panel) {
-  const card=element('section','task-card sql-task');card.append(element('h3','','Abschlussquiz und Zusammenfassung'),paragraph('**Kreuze** bei jeder Frage alle richtigen Antworten an. Es können mehrere Antworten richtig sein.'));
-  const form=element('form','final-quiz');form.id='final-quiz';form.noValidate=true;
-  const feedback=element('p','feedback sql-quiz-feedback');feedback.setAttribute('aria-live','polite');
-  const showFeedback=()=>{feedback.className=`feedback ${state.quizFeedback?.level||''} sql-quiz-feedback`;feedback.textContent=state.quizFeedback?.text||'';};
-  FINAL_QUIZ.forEach((question,index)=>{
-    const field=document.createElement('fieldset'),legend=document.createElement('legend');legend.append(element('span','',String(index+1)),document.createTextNode(question.prompt));field.append(legend);
-    const choices=element('div','choice-list');question.options.forEach(([id,text,,isSql])=>{
-      const label=element('label','choice-option'),input=document.createElement('input');input.type='checkbox';input.name=`sql9-final-${question.id}`;input.value=id;input.checked=quizSelection(question).includes(id);
-      input.addEventListener('change',()=>{const selected=quizSelection(question).filter((value)=>value!==id);state.quiz[question.id]=input.checked?[...selected,id]:selected;state.quizFeedback=null;save();showFeedback();});
-      const content=element('span');content.append(isSql?element('code','quiz-sql',text):document.createTextNode(text));label.append(input,content);choices.append(label);
-    });field.append(choices);form.append(field);
+  const card = element('section', 'task-card sql-task');
+  card.append(element('h3', '', 'Abschlussquiz'), paragraph('**Kreuze** alle richtigen Antworten an. Bei manchen Fragen sind mehrere Antworten richtig.'));
+  const form = element('form', 'final-quiz'); form.id = 'final-quiz'; form.noValidate = true;
+  const feedback = element('p', 'feedback sql-quiz-feedback'); feedback.setAttribute('aria-live', 'polite');
+  const showFeedback = () => { feedback.className = `feedback ${state.quizFeedback ? state.quizFeedback.level : ''} sql-quiz-feedback`; feedback.textContent = state.quizFeedback ? state.quizFeedback.text : ''; };
+  // nach renderFinalQuiz in klasse-10/1-Datenbanken/sql-lab.js, angepasst: SQL-Blöcke in Frage und Antwort, Rückmeldung als dauerhafter aria-live-Bereich
+  FINAL_QUIZ.forEach((question, index) => {
+    const field = document.createElement('fieldset'); const legend = document.createElement('legend');
+    legend.append(element('span', '', String(index + 1)), document.createTextNode(question.prompt)); field.append(legend);
+    if (question.sql) field.append(sqlBlock(question.sql));
+    const choices = element('div', 'choice-list');
+    question.options.forEach(([id, text, , isSql]) => {
+      const label = element('label', 'choice-option'); const input = document.createElement('input');
+      input.type = 'checkbox'; input.name = `sql9-final-${question.id}`; input.value = id; input.checked = quizSelection(question).includes(id);
+      input.addEventListener('change', () => {
+        const selected = quizSelection(question).filter((value) => value !== id);
+        state.quiz[question.id] = input.checked ? [...selected, id] : selected;
+        state.quizFeedback = null; state.quizPassed = false; save(); showFeedback(); refreshOverview(); updateTabMarks();
+      });
+      const content = element('span'); if (isSql) content.append(element('code', 'quiz-sql', text)); else richText(content, text);
+      label.append(input, content); choices.append(label);
+    });
+    field.append(choices); form.append(field);
   });
-  const actions=element('div','action-row'),submit=element('button','primary-button','Quiz prüfen');submit.type='submit';actions.append(submit);form.append(actions,feedback);
-  const overviewSlot=element('div','sql9-overview-slot');const refresh=()=>{overviewSlot.replaceChildren();if(state.quizPassed)overviewSlot.append(renderOverview());};
-  form.addEventListener('submit',(event)=>{event.preventDefault();checkQuiz();showFeedback();refresh();updateTabMarks();});
-  window.addQuizQuestionChecks?.({questions:FINAL_QUIZ.map((question,index)=>({
-    fieldset:form.querySelectorAll('fieldset')[index],solution:question.options.filter(([, ,right])=>right).map(([id])=>id),
-    check:()=>{const selected=new Set(quizSelection(question)),correct=question.options.every(([id,,right])=>selected.has(id)===right),some=question.options.some(([id,,right])=>right&&selected.has(id));
-      return {result:correct?'correct':some?'mixed':'wrong',text:correct?'Korrekt: Alle richtigen Aussagen dieser Frage sind markiert.':some?`Teilweise korrekt: Mindestens eine Markierung stimmt. ${question.hint}`:`Noch nicht korrekt: Prüfe die Aussagen noch einmal. ${question.hint}`};}
-  })),buttonClass:'primary-button',rowClass:'action-row',levels:{high:'success',medium:'partial',low:'hint'},onAllCorrect:()=>form.requestSubmit()});
-  card.append(form);panel.append(card,overviewSlot,renderSummary());appendSolutionDownloadFromTemplate(panel);showFeedback();refresh();
+  const actions = element('div', 'action-row'); const submit = element('button', 'primary-button', 'Quiz prüfen'); submit.type = 'submit'; actions.append(submit); form.append(actions, feedback);
+  const overviewSlot = element('div', 'sql9-overview-slot');
+  const refreshOverview = () => { overviewSlot.replaceChildren(); if (state.quizPassed) overviewSlot.append(renderOverview()); };
+  form.addEventListener('submit', (event) => { event.preventDefault(); checkQuiz(); showFeedback(); refreshOverview(); updateTabMarks(); });
+  // Jede Quizfrage lässt sich zusätzlich einzeln prüfen (../quiz-fragen-pruefen.js).
+  window.addQuizQuestionChecks?.({
+    questions: FINAL_QUIZ.map((question, index) => ({
+      fieldset: form.querySelectorAll('fieldset')[index],
+      solution: question.options.filter(([, , right]) => right).map(([id]) => id),
+      hint: question.hint,
+      check: question.id === 'q-limit' ? () => { const selected = new Set(quizSelection(question)); const correct = question.options.every(([id, , right]) => selected.has(id) === right); const some = question.options.some(([id, , right]) => right && selected.has(id)); return { result: correct ? 'correct' : some ? 'mixed' : 'wrong', text: correct ? 'Korrekt: Beide Wirkungen von LIMIT sind richtig markiert.' : some ? 'Teilweise korrekt: Prüfe noch die Reihenfolge von ORDER BY und LIMIT.' : 'Noch nicht korrekt: LIMIT begrenzt nur die Ergebniszeilen und verändert `users` nicht.' }; } : undefined,
+    })),
+    buttonClass: 'primary-button',
+    rowClass: 'action-row',
+    levels: { high: 'success', medium: 'partial', low: 'hint' },
+    onAllCorrect: () => form.requestSubmit(),
+  });
+  card.append(form); panel.append(card, overviewSlot, renderSummary());
+  appendSolutionDownloadFromTemplate(panel);
+  bindSolutionCodePersistence(panel, state, save);
+  showFeedback(); refreshOverview();
 }
+
 function checkQuiz() {
-  const open=FINAL_QUIZ.map((question,index)=>quizSelection(question).length?null:index+1).filter(Boolean);
-  if(open.length){state.quizFeedback={level:'hint',text:`Beantworte zuerst alle Fragen. Noch ohne Kreuz: Frage ${open.join(', ')}.`};save();return;}
-  const amount=FINAL_QUIZ.filter((question)=>{const chosen=new Set(quizSelection(question));return question.options.every(([id,,right])=>chosen.has(id)===right);}).length;
-  if(amount===5){state.quizPassed=true;state.quizFeedback={level:'success',text:'Korrekt: Alle fünf Fragen stimmen. Unten findest du jetzt die Übersicht über die Pflichtaufgaben mit Lösungen.'};}
-  else if(amount)state.quizFeedback={level:'partial',text:`Teilweise korrekt: ${amount} von 5 Fragen stimmen. Prüfe die übrigen Fragen erneut.`};
-  else state.quizFeedback={level:'hint',text:'Noch nicht korrekt: Prüfe die fünf Fragen mit den Hinweisen direkt darunter.'};
+  const correct = FINAL_QUIZ.map((question) => {
+    const chosen = new Set(quizSelection(question));
+    return question.options.every(([id, , right]) => chosen.has(id) === right);
+  });
+  const amount = correct.filter(Boolean).length;
+  state.quizPassed = amount === FINAL_QUIZ.length;
+  state.quizFeedback = state.quizPassed
+    ? { level: 'success', text: 'Korrekt: Alle Fragen stimmen. Unten findest du jetzt die Übersicht über die Aufgaben mit Lösungen.' }
+    : amount > 0
+      ? { level: 'partial', text: `Teilweise korrekt: ${amount} von ${FINAL_QUIZ.length} Fragen stimmen. Prüfe die übrigen Fragen erneut.` }
+      : { level: 'hint', text: 'Noch nicht korrekt: Prüfe die Fragen mit den Hinweisen direkt darunter.' };
   save();
 }
 function renderOverview() {
-  const overview=element('section','short-summary sql-quiz-overview');overview.setAttribute('aria-labelledby','sql9-overview-title');
-  const title=element('h3','','Übersicht: alle Pflichtaufgaben mit Lösung');title.id='sql9-overview-title';overview.append(title);
-  const describe=element('div');describe.append(element('h4','',DESCRIPTION_TASK.title),paragraph(DESCRIPTION_TASK.prompt),sqlBlock(DESCRIPTION_TASK.sql),element('p','',DESCRIPTION_TASK.model));overview.append(describe);
-  const list=document.createElement('ol');TASKS.filter((task)=>task.number<=12).forEach((task)=>{const item=document.createElement('li');richText(item,task.prompt);item.append(sqlBlock(task.sql.replace(/ FROM /i,'\nFROM ').replace(/ WHERE /i,'\nWHERE ')));list.append(item);});overview.append(list);
-  const fast=element('details');fast.append(element('summary','','Für die Schnellen – Lösungen'));const fastList=document.createElement('ol');fastList.start=13;TASKS.filter((task)=>task.number>12).forEach((task)=>{const item=document.createElement('li');richText(item,task.prompt);item.append(sqlBlock(task.sql.replace(/ FROM /i,'\nFROM ').replace(/ WHERE /i,'\nWHERE ')));fastList.append(item);});fast.append(fastList);overview.append(fast);
-  const quiz=element('section');quiz.append(element('h4','','Abschlussquiz – Lösungen'));const questions=document.createElement('ol');FINAL_QUIZ.forEach((question)=>{const item=document.createElement('li');item.append(element('strong','',question.prompt));const answers=document.createElement('ul');question.options.filter(([, ,right])=>right).forEach(([,text,,isSql])=>{const li=document.createElement('li');li.append(isSql?element('code','quiz-sql',text):document.createTextNode(text));answers.append(li);});item.append(answers);questions.append(item);});quiz.append(questions);overview.append(quiz);return overview;
+  const overview = element('section', 'short-summary sql-quiz-overview'); overview.setAttribute('aria-labelledby', 'sql9-overview-title');
+  const title = element('h3', '', 'Übersicht: alle Aufgaben mit Lösung'); title.id = 'sql9-overview-title'; overview.append(title);
+  const list = document.createElement('ol');
+  DESCRIPTION_TASKS.forEach((task) => {
+    const item = document.createElement('li');
+    item.append(element('strong', '', `${task.tabLabel}: ${task.title}. `)); richText(item, task.prompt);
+    item.append(sqlBlock(task.sql), element('p', '', `Musterbeschreibung: ${task.model}`));
+    list.append(item);
+  });
+  TASKS.forEach((taskConfig) => {
+    const item = document.createElement('li');
+    item.append(element('strong', '', `Aufgabe ${TASKS.indexOf(taskConfig) + 1}: `)); richText(item, taskConfig.prompt);
+    if (taskConfig.correctionSql) item.append(element('p', '', 'Fehlerhafte Anweisung:'), sqlBlock(taskConfig.correctionSql));
+    item.append(element('p', '', taskConfig.correctionSql ? 'Korrigierte Anweisung:' : 'Lösung:'), sqlBlock(`SELECT ${taskConfig.select}\n${taskConfig.tail}`));
+    taskConfig.extra.forEach((line) => {
+      if (line === 'youngest') item.append(element('p', '', `Jüngstes Mitglied: gartenlesemaus (Elena Heidenkamp), geboren am 7. Juli 2010, heute ${youngestAge()} Jahre alt.`));
+      else item.append(element('p', '', line));
+    });
+    list.append(item);
+  });
+  const quizItem = document.createElement('li'); quizItem.append(element('strong', '', 'Abschlussquiz'));
+  const questions = document.createElement('ol');
+  FINAL_QUIZ.forEach((question) => {
+    const entry = document.createElement('li'); entry.append(element('strong', '', question.prompt));
+    if (question.sql) entry.append(sqlBlock(question.sql));
+    const answers = document.createElement('ul');
+    question.options.filter(([, , right]) => right).forEach(([, text, , isSql]) => { const answer = document.createElement('li'); if (isSql) answer.append(element('code', 'quiz-sql', text)); else richText(answer, text); answers.append(answer); });
+    entry.append(answers); questions.append(entry);
+  });
+  quizItem.append(questions); list.append(quizItem);
+  overview.append(list);
+  return overview;
 }
+
 function renderSummary() {
-  const summary=element('section','short-summary');summary.setAttribute('aria-labelledby','sql9-summary-title');const title=element('h3','','Merke: Filtern mit WHERE');title.id='sql9-summary-title';summary.append(title);
-  const texts=[
-    'FROM nennt die Tabelle. WHERE wählt Zeilen nach einer Bedingung aus; diese Auswahl heißt Selektion. SELECT bestimmt die Ausgabespalten. Die gespeicherte Tabelle bleibt unverändert.',
-    "Text und Datum stehen in einfachen Anführungszeichen; Zahlen nicht. Größen in users sind Zentimeter, Datumswerte stehen als `'JJJJ-MM-TT'`.",
-    '`LIKE` vergleicht mit einem Muster. `%` steht für beliebig viele Zeichen, auch für kein Zeichen: `B%` sucht einen Anfang, `%berg` eine Endung und `%berg%` eine Stelle im Inneren.',
-    'AND verlangt beide Bedingungen. OR verlangt mindestens eine, auch beide sind möglich. Klammern steuern die Verbindung, wenn AND und OR gemeinsam vorkommen.',
-    'Ein nicht eingetragener Wert ist NULL. Ein normaler Vergleich mit NULL erfüllt die WHERE-Bedingung nicht.'
-  ];texts.forEach((text)=>summary.append(paragraph(text)));
-  summary.append(sqlBlock('SELECT username, centimeters\nFROM users\nWHERE centimeters < 180\nORDER BY centimeters DESC\nLIMIT 5'),element('p','','Zuerst werden passende Zeilen ausgewählt, danach werden sie für die Ausgabe sortiert und begrenzt.'));return summary;
+  const summary = element('section', 'short-summary');
+  summary.setAttribute('aria-labelledby', 'sql9-summary-title');
+  const title = element('h3', '', 'Merke'); title.id = 'sql9-summary-title';
+  summary.append(title, paragraph('DISTINCT steht direkt hinter SELECT und zeigt gleiche Werte in der Ergebnisrelation nur einmal. LIMIT begrenzt die Anzahl der Ergebniszeilen und steht am Ende. Soll eine bestimmte Auswahl zuerst erscheinen, sortiere mit ORDER BY vor LIMIT. Die gespeicherte Tabelle bleibt unverändert.'));
+  return summary;
 }
-async function rerunSavedTasks() {for(const task of TASKS) if(state.feedback[task.id]) await runTask(task,{auto:true});}
+async function rerunSavedTasks() {
+  for (const taskConfig of TASKS) if (state.feedback[taskConfig.id]) await runTask(taskConfig, { auto: true });
+}
+
 async function init() {
-  restore();render();
-  document.getElementById('reset-module').addEventListener('click',()=>{if(window.confirm('Möchtest du alle SQL-Eingaben und den Fortschritt dieser Aufgabe zurücksetzen?')){tabRevision+=1;descriptionRequests.set(DESCRIPTION_TASK.id,(descriptionRequests.get(DESCRIPTION_TASK.id)||0)+1);try{localStorage.removeItem(STORAGE_KEY);}catch{}location.reload();}});
-  window.addEventListener('beforeunload',()=>database?.close());const status=document.getElementById('data-status');
+  restore();
+  render();
+  document.getElementById('reset-module').addEventListener('click', () => {
+    if (window.confirm('Möchtest du alle SQL-Eingaben und den Fortschritt dieser Aufgabe zurücksetzen?')) {
+      try { localStorage.setItem(MIGRATION_MARKER, 'done'); localStorage.removeItem(STORAGE_KEY); } catch { /* Ohne Speicher weiter nutzbar. */ }
+      location.reload();
+    }
+  });
+  window.addEventListener('beforeunload', () => database?.close());
+  const status = document.getElementById('data-status');
   try {
-    database=new SqlWorker();await database.init();databaseReady=true;memberCount=database.csvRows.length;
-    const expected=INTRO_EXPECTED.every(([id,username,city])=>database.csvRows.some((row)=>row.id===id&&row.username===username&&row.city===city));
-    if(!expected){const berlin=database.csvRows.filter((row)=>row.city==='Berlin').slice(0,2);const others=database.csvRows.filter((row)=>row.city!=='Berlin').slice(0,4);if(berlin.length===2&&others.length===4)introRows=[...others,...berlin].map(({id,username,city})=>({id,username,city}));}
-    if(state.tab==='intro')render();status.textContent='Die Tabelle users ist geladen. Du kannst SQL-Abfragen ausführen.';status.className='feedback success';status.setAttribute('aria-busy','false');
-    document.querySelectorAll('.sql9-run').forEach((button)=>{button.disabled=false;});await rerunSavedTasks();
-  } catch(error){status.textContent='Die Übungsdaten konnten nicht geladen werden. Bitte lade die Seite neu.';status.className='feedback error';status.setAttribute('aria-busy','false');console.error(error);}
+    database = new SqlWorker();
+    await database.init();
+    databaseReady = true;
+    status.textContent = 'Die Tabelle users ist geladen. Du kannst SQL-Abfragen ausführen.'; status.className = 'feedback success'; status.setAttribute('aria-busy', 'false');
+    document.querySelectorAll('.sql9-run').forEach((button) => { button.disabled = false; });
+    await rerunSavedTasks();
+  } catch (error) {
+    status.textContent = 'Die Übungsdaten konnten nicht geladen werden. Bitte lade die Seite neu.'; status.className = 'feedback error'; status.setAttribute('aria-busy', 'false');
+    console.error(error);
+  }
 }
-document.addEventListener('DOMContentLoaded',init);
+document.addEventListener('DOMContentLoaded', init);
