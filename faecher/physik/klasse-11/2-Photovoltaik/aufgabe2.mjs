@@ -1,12 +1,13 @@
 import { normalizeStoredSeries, resistanceFromSlider, solveOperatingPoint } from "./aufgabe2-model.mjs";
 import { setupPhysicsStepTabs } from "../1-Kreisbewegungen/components/physics-step-tabs.mjs";
 import { createPhysicsTaskProgress } from "../1-Kreisbewegungen/components/physics-task-progress.mjs";
+import { createSliderCommitAdapter } from "./aufgabe2-slider.mjs";
 
 const $ = (id) => document.getElementById(id);
 const slider = $("resistance"), colorSelect = $("color"), openSwitch = $("open-circuit");
 const progress = createPhysicsTaskProgress("photovoltaik-aufgabe2");
 const tabs = setupPhysicsStepTabs();
-let running = false, series = [], currentSeries = null, nextId = 1, markers = {};
+let running = false, restoring = false, series = [], currentSeries = null, nextId = 1, markers = {};
 const colors = { Weiß: "#d7a300", Rot: "#bd3b32", Grün: "#27814c", Gelb: "#ae8612", Blau: "#316fb2" };
 const symbols = ["circle", "square", "triangle", "diamond", "cross", "hexagon"];
 
@@ -19,11 +20,13 @@ function updateReadings() {
   $("current").textContent = `${fmt(p.current * 1000)} mA`;
   $("power").textContent = `${fmt(p.power * 1000)} mW`;
   $("resistance-value").textContent = openSwitch.checked ? "∞ (Leerlauf)" : ohms(p.resistance);
-  $("dial").setAttribute("transform", `rotate(${Number(slider.value) * 0.24 - 120} 584 23)`);
-  $("open-gap").toggleAttribute("hidden", !openSwitch.checked);
-  $("closed-bridge").toggleAttribute("hidden", openSwitch.checked);
+  const tip = 427 - 66 * (Number(slider.value) / 1000) ** 3, top = tip + 12;
+  $("wiper-feed").setAttribute("d", `M349 38V5H${top}`);
+  $("wiper").setAttribute("d", `M${top} 5L${tip} 26m0 0 1-8m-1 8 7-4`);
+  $("dial").setAttribute("cx", String(top));
   const body = document.querySelector(".pv-apparatus");
   body.dataset.color = colorSelect.value.toLowerCase();
+  body.dataset.open = String(openSwitch.checked);
   renderGraphs();
 }
 
@@ -39,8 +42,8 @@ function recordPoint() {
   const setting = { slider: Number(slider.value), open: openSwitch.checked };
   const point = { ...pointNow(), ...setting };
   const prior = currentSeries.points.findIndex((item) => sameSetting(item, setting));
-  if (prior >= 0) currentSeries.points[prior] = point;
-  else currentSeries.points.push(point);
+  if (prior >= 0) return;
+  currentSeries.points.push(point);
   if (markers[currentSeries.id]) markers[currentSeries.id] = currentSeries.points.reduce((winner, item) => item.power > winner.power ? item : winner);
   renderAll();
 }
@@ -60,7 +63,9 @@ function renderSeriesControls() {
   else if (currentSeries) select.value = String(currentSeries.id);
 }
 function axisSvg(kind) {
-  const width = 520, height = 340, left = 60, right = 490, top = 35, bottom = 285;
+  const compact = window.matchMedia("(max-width:600px)").matches;
+  const tablet = window.matchMedia("(max-width:940px)").matches;
+  const width = compact ? 340 : tablet ? 520 : 700, height = 205, left = compact ? 42 : 48, right = compact ? 320 : tablet ? 490 : 665, top = 20, bottom = 158;
   const xmax = 1.15, ymax = kind === "current" ? 12 : 10;
   const x = (u) => left + u / xmax * (right - left), y = (v) => bottom - v / ymax * (bottom - top);
   let grid = "";
@@ -87,11 +92,15 @@ function renderGraph(kind) {
   const live = pointNow(), liveX = x(live.voltage), liveY = y(isPower ? live.power * 1000 : live.current * 1000);
   data += `<circle cx="${liveX}" cy="${liveY}" r="8" fill="none" stroke="#111" stroke-width="2"><title>Aktueller Arbeitspunkt</title></circle><text x="${Math.min(liveX + 9, a.right - 112)}" y="${Math.max(liveY - 10, a.top + 12)}" class="graph-point-label">Aktueller Punkt</text>`;
   const chosen = series.find((item) => String(item.id) === $("selected-series").value), mark = markers[chosen?.id];
-  if (isPower && mark) data += `<path d="M${x(mark.voltage)} ${y(mark.power * 1000) - 12}l8 14h-16z" fill="#111"><title>Bester gemessener Punkt</title></path>`;
+  if (isPower && mark) {
+    const mx = x(mark.voltage), my = y(mark.power * 1000);
+    data += `<path d="M${mx} ${my - 12}l8 14h-16z" fill="#111"><title>Bester gemessener Punkt</title></path><text x="${Math.min(mx + 12, a.right - 145)}" y="${Math.max(my - 13, a.top + 12)}" class="graph-point-label">Bester gemessener Punkt</text>`;
+  }
   const x2 = a.right + 14, y2 = a.top - 10;
-  return `<svg viewBox="0 0 ${a.width} ${a.height}" role="img" aria-label="${isPower ? "Leistungs-Spannungs-Diagramm" : "Strom-Spannungs-Diagramm"}; Spannung U von 0 bis 1,15 V, ${isPower ? "Leistung P von 0 bis 10 mW" : "Stromstärke I von 0 bis 12 mA"}."><defs><marker id="arrow-${kind}" markerWidth="9" markerHeight="9" refX="7" refY="4" orient="auto"><path d="M0 0L0 8L8 4z" fill="#263d53"/></marker></defs>${a.grid}<line x1="${a.left}" y1="${a.bottom}" x2="${x2}" y2="${a.bottom}" class="graph-axis" marker-end="url(#arrow-${kind})"/><line x1="${a.left}" y1="${a.bottom}" x2="${a.left}" y2="${y2}" class="graph-axis" marker-end="url(#arrow-${kind})"/>${data}<text x="${a.right}" y="${a.bottom + 44}" text-anchor="end" class="graph-axis-title">U (V)</text><text x="75" y="18" class="graph-axis-title">${isPower ? "P (mW)" : "I (mA)"}</text></svg>`;
+  return `<svg viewBox="0 0 ${a.width} ${a.height}" role="img" aria-label="${isPower ? "Leistungs-Spannungs-Diagramm" : "Strom-Spannungs-Diagramm"}; Spannung U von 0 bis 1,15 V, ${isPower ? "Leistung P von 0 bis 10 mW" : "Stromstärke I von 0 bis 12 mA"}."><defs><marker id="arrow-${kind}" markerWidth="9" markerHeight="9" refX="7" refY="4" orient="auto"><path d="M0 0L0 8L8 4z" fill="#263d53"/></marker></defs>${a.grid}<line x1="${a.left}" y1="${a.bottom}" x2="${x2}" y2="${a.bottom}" class="graph-axis" marker-end="url(#arrow-${kind})"/><line x1="${a.left}" y1="${a.bottom}" x2="${a.left}" y2="${y2}" class="graph-axis" marker-end="url(#arrow-${kind})"/>${data}<text x="${a.right}" y="${a.bottom + 39}" text-anchor="end" class="graph-axis-title">U (V)</text><text x="75" y="16" class="graph-axis-title">${isPower ? "P (mW)" : "I (mA)"}</text></svg>`;
 }
 function renderGraphs() { $("ui-graph").innerHTML = renderGraph("current"); $("pu-graph").innerHTML = renderGraph("power"); }
+window.addEventListener("resize", renderGraphs);
 function renderTable() {
   const host = $("measurements"); host.replaceChildren(); let total = 0;
   series.forEach((item) => item.points.forEach((p) => {
@@ -112,10 +121,9 @@ function mppQuality(item, best) {
 function renderSelectedMpp() {
   const chosen = series.find((item) => String(item.id) === $("selected-series").value);
   const best = chosen && markers[chosen.id];
-  $("definition").hidden = !best;
   if (!best) { $("mpp-result").textContent = ""; $("analysis-feedback").textContent = ""; return; }
   const quality = mppQuality(chosen, best);
-  $("mpp-result").textContent = `Bester gemessener Punkt: U = ${fmt(best.voltage)} V, I = ${fmt(best.current * 1000)} mA, P = ${fmt(best.power * 1000)} mW. ${quality}`;
+  $("mpp-result").textContent = `Bester gemessener Punkt: U = ${fmt(best.voltage)} V, I = ${fmt(best.current * 1000)} mA, P = ${fmt(best.power * 1000)} mW.`;
   $("analysis-feedback").textContent = quality;
 }
 function renderAll() { updateReadings(); renderSeriesControls(); renderTable(); renderSelectedMpp(); renderGraphs(); progress.save(); }
@@ -186,11 +194,24 @@ function evaluateQuiz() {
 }
 
 renderQuiz();
-$("start-measurement").addEventListener("click", () => { running = true; $("measurement-status").textContent = "Messung läuft: Änderungen des Widerstands werden erfasst."; if (!currentSeries) createSeries(colorSelect.value); if (!currentSeries.points.length) recordPoint(); progress.save(); });
+$("start-measurement").addEventListener("click", () => { running = true; $("measurement-status").textContent = "Messung läuft: Beim Loslassen des Schiebereglers wird ein Messpunkt aufgenommen."; if (!currentSeries) createSeries(colorSelect.value); progress.save(); });
 $("stop-measurement").addEventListener("click", () => { running = false; $("measurement-status").textContent = "Messung gestoppt."; progress.save(); });
-slider.addEventListener("input", () => { updateReadings(); if (running) recordPoint(); progress.save(); });
-openSwitch.addEventListener("change", () => { updateReadings(); if (running) recordPoint(); progress.save(); });
-colorSelect.addEventListener("change", () => { createSeries(colorSelect.value); updateReadings(); if (running) recordPoint(); progress.save(); });
+const sliderCommit = createSliderCommitAdapter({
+  getValue: () => slider.value,
+  onPreview: updateReadings,
+  onCommit: () => { if (running) recordPoint(); },
+  isRestoring: () => restoring,
+});
+slider.addEventListener("pointerdown", () => sliderCommit.pointerdown());
+window.addEventListener("pointerup", () => sliderCommit.pointerup());
+window.addEventListener("pointercancel", () => sliderCommit.pointercancel());
+slider.addEventListener("keydown", (event) => sliderCommit.keydown(event));
+slider.addEventListener("keyup", (event) => sliderCommit.keyup(event));
+slider.addEventListener("blur", () => sliderCommit.blur());
+slider.addEventListener("input", () => sliderCommit.input());
+slider.addEventListener("change", () => sliderCommit.change());
+openSwitch.addEventListener("change", () => { updateReadings(); progress.save(); });
+colorSelect.addEventListener("change", () => { if (!restoring) createSeries(colorSelect.value); updateReadings(); progress.save(); });
 $("selected-series").addEventListener("change", () => {
   renderSelectedMpp(); renderGraphs(); progress.save();
 });
@@ -215,6 +236,7 @@ progress.registerPart("quiz", () => ({ answers: questions.map((q) => q.answerSet
   updateQuizStatus();
 });
 // Radio/checkbox states are created before restoring; all handlers above are active.
+restoring = true;
 progress.restore();
-if (!series.length) createSeries(colorSelect.value);
+restoring = false;
 updateReadings(); renderAll();
