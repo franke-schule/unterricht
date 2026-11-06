@@ -1,0 +1,91 @@
+<!doctype html>
+<html lang="de">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="robots" content="noindex, nofollow">
+  <title>Virtuelles Experiment – Maximum Power Point | Physik 11</title>
+  <link rel="stylesheet" href="../../../../styles.css?v=20261017">
+  <link rel="stylesheet" href="../1-Kreisbewegungen/bewegung-koerpern.css?v=20260831c">
+  <link rel="stylesheet" href="aufgabe1.css?v=20261018b">
+  <link rel="stylesheet" href="aufgabe2.css?v=20261106b">
+  <script src="../../../informatik/quiz-fragen-pruefen.js?v=20261022-feedback-two-sentences"></script>
+  <script type="module" src="aufgabe2.mjs?v=20261106a"></script>
+</head>
+<body class="physics-revision-page photovoltaik-page">
+  <div class="site-backdrop" aria-hidden="true"></div>
+  <main class="page-shell physics-revision-shell">
+    <nav class="topbar" aria-label="Navigation"><a class="back-link" href="../index.html">Zur Aufgabenübersicht</a><a class="back-link" href="../../../../index.html">Startseite</a></nav>
+    <header class="physics-revision-hero"><p class="eyebrow">Photovoltaik</p><h1>Virtuelles Experiment – den Maximum Power Point untersuchen</h1><p class="module-task-number"><strong>Aufgabe 2</strong></p><p>Miss Spannung und Stromstärke bei verschiedenen Widerständen und finde den besten gemessenen Leistungspunkt.</p></header>
+    <div class="physics-step-tabs" role="tablist" aria-label="Arbeitsschritte des Lernmoduls">
+      <button id="tab-experiment" type="button" role="tab" aria-selected="true" aria-controls="panel-experiment" data-physics-tab="experiment">1 · Experiment</button>
+      <button id="tab-analysis" type="button" role="tab" aria-selected="false" aria-controls="panel-analysis" data-physics-tab="analysis" tabindex="-1">2 · Auswertung</button>
+      <button id="tab-final" type="button" role="tab" aria-selected="false" aria-controls="panel-final" data-physics-tab="final" tabindex="-1">3 · Abschlussquiz</button>
+    </div>
+    <div class="physics-revision-panels">
+      <section id="panel-experiment" class="physics-revision-panel" role="tabpanel" aria-labelledby="tab-experiment" data-physics-panel="experiment">
+        <div class="physics-card-heading"><p class="eyebrow">Entdecken und anwenden</p><h2>Verändere den Widerstand</h2></div>
+        <article class="physics-task-card">
+          <p><strong>Verändere</strong> den Widerstand von klein nach groß. <strong>Beobachte</strong>, wie sich Spannung U und Stromstärke I gleichzeitig ändern.</p>
+          <p><strong>Starte</strong> die Messung und <strong>nimm</strong> bei Weiß eine Kennlinie bis zum Leerlauf auf. <strong>Verändere</strong> den Widerstand besonders fein dort, wo der Strom stark abfällt.</p>
+          <p><strong>Bestimme</strong> den größten Wert von P = U · I unter deinen Messpunkten. <strong>Markiere</strong> diesen Punkt im Leistungsdiagramm.</p>
+          <p><strong>Wähle</strong> eine andere Lichtfarbe und <strong>wiederhole</strong> die Messung. <strong>Vergleiche</strong> die beiden Reihen im selben Diagramm.</p>
+          <p><strong>Erkläre</strong> einem Partner, warum die Stromstärke zunächst fast gleich bleibt und erst nahe der Leerlaufspannung stark sinkt. <strong>Vergleiche</strong> außerdem die Leistungen der beiden Lichtfarben.</p>
+          <p class="pv-model-notice">Vereinfachtes Modell einer kleinen Solarzelle. Die Lichtquelle und die Solarzelle bleiben während der Messung fest stehen.</p>
+          <div class="pv-experiment-grid">
+            <figure class="pv-apparatus">
+              <svg viewBox="0 0 680 370" role="img" aria-labelledby="apparatus-title apparatus-desc">
+                <title id="apparatus-title">Versuchsaufbau mit Solarzelle, Potentiometer und Messgeräten</title>
+                <desc id="apparatus-desc">Die Taschenlampe beleuchtet die fest stehende Solarzelle. Ein Strommessgerät liegt mit dem Potentiometer in Reihe; ein Spannungsmessgerät ist parallel zur Solarzelle angeschlossen. Der Potentiometer-Drehknopf folgt dem Widerstandsregler.</desc>
+                <defs><linearGradient id="beam" x1="0" x2="1"><stop id="beam-start" offset="0" stop-color="#fff0bd" stop-opacity=".45"/><stop id="beam-end" offset="1" stop-color="#fff0bd" stop-opacity=".75"/></linearGradient></defs>
+                <path class="pv-beam" d="M148 117 L310 86 L310 230 L148 199 Z" fill="url(#beam)"/>
+                <g class="pv-flashlight"><rect x="38" y="125" width="96" height="65" rx="20"/><path d="M134 139h22v37h-22z"/><circle cx="145" cy="157" r="12"/></g><text x="86" y="220" text-anchor="middle">Taschenlampe</text>
+                <g class="pv-cell"><rect x="310" y="95" width="100" height="130" rx="8"/><path d="M360 99v122M314 160h92"/><text x="360" y="245" text-anchor="middle">Solarzelle (zwei</text><text x="360" y="263" text-anchor="middle">Teilzellen in Reihe)</text></g>
+                <path class="circuit-wire" d="M310 95V50H460M520 50H545M610 50H625V165M625 205V320H310V225"/>
+                <path class="circuit-wire circuit-voltage" d="M310 95H270V186H384M436 186H450V280H270V225H310"/>
+                <circle class="circuit-meter" cx="490" cy="50" r="30"/><text x="490" y="57" text-anchor="middle">A</text>
+                <circle class="circuit-meter" cx="410" cy="186" r="26"/><text x="410" y="193" text-anchor="middle">V</text>
+                <path class="circuit-resistor" d="M545 50l8-13 12 26 12-26 12 26 12-26 12 26 5-13"/><path d="M584 23L574 39M584 23l-2 12M584 23l-11 2" class="pv-wiper"/><circle id="dial" cx="584" cy="23" r="5" class="pv-dial"/><text x="580" y="96" text-anchor="middle">Potentiometer</text>
+                <path id="closed-bridge" class="circuit-wire" d="M625 165V205"/>
+                <path id="open-gap" class="pv-open-gap" d="M625 165l-16 24" hidden/>
+              </svg>
+            </figure>
+            <div class="pv-readings" aria-live="polite"><section><h3>Spannung U</h3><output id="voltage">0,000 V</output></section><section><h3>Stromstärke I</h3><output id="current">0,000 mA</output></section><section><h3>Leistung P</h3><output id="power">0,000 mW</output></section></div>
+          </div>
+          <div class="pv-controls">
+            <label for="resistance">Widerstand des Potentiometers: <output id="resistance-value">0 Ω</output></label>
+            <input id="resistance" type="range" min="0" max="1000" step="1" value="0" aria-label="Widerstand des Potentiometers, 0 bis 10 Kiloohm">
+            <label class="pv-switch"><input id="open-circuit" type="checkbox"> Leerlauf – Stromkreis geöffnet</label>
+            <label for="color">Lichtfarbe</label><select id="color"><option>Weiß</option><option>Rot</option><option>Grün</option><option>Gelb</option><option>Blau</option></select>
+            <div class="action-row"><button id="start-measurement" type="button" class="physics-primary-button">Messung starten</button><button id="stop-measurement" type="button" class="physics-primary-button">Messung stoppen</button></div>
+            <p id="measurement-status" class="pv-set-status" aria-live="polite">Messung gestoppt.</p>
+            <div class="physics-help-stack"><details><summary>Hilfe 1: Hinweis</summary><p>Beginne bei kleinem Widerstand und achte auf beide Messgeräte.</p></details><details><summary>Hilfe 2: Denkansatz</summary><p>Erhöhe den Widerstand in kleinen Schritten nahe dem sichtbaren Knick der U-I-Werte.</p></details><details><summary>Hilfe 3: Teillösung</summary><p>Bei kleinem Widerstand ist U fast null und I nahe dem Kurzschlussstrom. Der Knick liegt kurz vor der Leerlaufspannung.</p></details></div>
+          </div>
+          <div class="pv-graphs"><figure><h3>Strom-Spannungs-Diagramm</h3><div id="ui-graph" class="pv-svg-host"></div><figcaption>Aufgenommene Messpunkte und aktueller Arbeitspunkt</figcaption></figure><figure><h3>Leistungs-Spannungs-Diagramm</h3><div id="pu-graph" class="pv-svg-host"></div><figcaption>Aufgenommene Messpunkte und markierter bester Messpunkt</figcaption></figure></div>
+          <div id="series-visibility" class="pv-series-visibility" aria-label="Sichtbarkeit der Messreihen"></div>
+        </article>
+      </section>
+      <section id="panel-analysis" class="physics-revision-panel" role="tabpanel" aria-labelledby="tab-analysis" data-physics-panel="analysis" hidden>
+        <div class="physics-card-heading"><p class="eyebrow">Verstehen und sichern</p><h2>Messreihen auswerten</h2></div>
+        <article class="physics-task-card">
+          <p><strong>Markiere</strong> den größten gemessenen Wert im Leistungsdiagramm. Vergleiche die Messreihen derselben Widerstandseinstellungen.</p>
+          <label for="selected-series">Auszuwertende Messreihe</label><select id="selected-series"></select>
+          <div class="action-row"><button id="mark-mpp" class="physics-primary-button" type="button">Gemessenen MPP markieren</button><button id="delete-series" type="button">Messreihe löschen</button><button id="export-csv" type="button">CSV exportieren</button></div>
+          <p id="analysis-feedback" class="physics-feedback" aria-live="polite"></p>
+          <p id="measurement-empty" aria-live="polite">Noch keine Messwerte aufgenommen.</p>
+          <details class="pv-table-details"><summary>Messwerttabelle anzeigen</summary><div class="pv-table-scroll"><table><caption>Aufgenommene Messwerte aller Messreihen</caption><thead><tr><th scope="col">Reihe</th><th scope="col">Farbe</th><th scope="col">Widerstand</th><th scope="col">U in V</th><th scope="col">I in mA</th><th scope="col">P in mW</th><th scope="col">Betrieb</th></tr></thead><tbody id="measurements"></tbody></table></div></details>
+          <section id="mpp-result" class="pv-mpp-result" aria-live="polite"></section>
+          <section id="definition" hidden><p>Beispiel: Bei einem deiner Messpunkte sind Spannung und Stromstärke gleichzeitig vorhanden; ihr Produkt zeigt die abgegebene Leistung. Der größte bisher gemessene Produktwert liegt oft weder bei Kurzschluss noch bei Leerlauf.</p><p>Der Maximum Power Point (MPP) ist der Arbeitspunkt, an dem die Solarzelle unter den gegebenen Bedingungen die größte elektrische Leistung abgibt. Dein bester gemessener Punkt nähert diesen Punkt an; weitere Messungen können die Schätzung verbessern.</p></section>
+          <h3>Merksätze</h3><ul><li>Zu jeder Widerstandseinstellung gehören eine Spannung U und eine Stromstärke I.</li><li>Die elektrische Leistung ergibt sich aus P = U · I; am Leerlauf und am idealisierten Kurzschluss ist P = 0.</li><li>Der beste gemessene Punkt ist eine Näherung für den MPP.</li><li>Bei gleicher optischer Leistung können Lichtfarben verschiedene Ströme erzeugen, weil Photonenzahl und spektrale Empfindlichkeit verschieden sind.</li></ul>
+          <details><summary>So rechnet das vereinfachte Modell</summary><p>Wir halten die auf jede Teilzelle treffende optische Leistung bei jeder Farbe gleich: 24 mW je Teilzelle, 48 mW für beide zusammen. Die dargestellte Zelle enthält zwei gleich beleuchtete Silizium-Teilzellen in Reihe; ihre Spannungen addieren sich auf etwa 1 V, ihr Strom nicht. Weiß besteht im Modell aus vier gleich starken Anteilen von Rot, Gelb, Grün und Blau. Licht mit kürzerer Wellenlänge hat energiereichere Photonen, bei gleicher Leistung aber weniger Photonen. Wie viel Strom entsteht, hängt zusätzlich davon ab, auf welchen Anteil der Photonen die Zelle reagiert; das beschreibt die externe Quanteneffizienz (EQE). Für jede Farbe berechnen wir einen Photostrom und daraus mit einer vereinfachten Diodenkennlinie den Arbeitspunkt. Reale Lampen und Solarzellen können andere Werte liefern.</p><p><a href="https://pvpmc.sandia.gov/modeling-guide/2-dc-module-iv/effective-irradiance/spectral-response/" target="_blank" rel="noopener">Sandia PVPMC: Spectral Response</a> · <a href="https://www.nrel.gov/docs/fy12osti/54601.pdf" target="_blank" rel="noopener">NREL: Detailed Performance Model</a></p></details>
+        </article>
+      </section>
+      <section id="panel-final" class="physics-revision-panel" role="tabpanel" aria-labelledby="tab-final" data-physics-panel="final" hidden>
+        <div class="physics-card-heading"><p class="eyebrow">Übertragen und sichern</p><h2>Abschlussquiz</h2></div>
+        <form id="final-quiz" class="physics-multiple-choice" novalidate><p>Kreuze alle richtigen Aussagen an. Prüfe jede Frage; danach kannst du das Quiz insgesamt auswerten.</p><div id="final-questions"></div><p id="quiz-status" aria-live="polite">0 von 3 Fragen richtig geprüft.</p><button id="evaluate-quiz" type="button" class="physics-primary-button">Quiz auswerten</button><p id="final-feedback" class="physics-feedback" aria-live="polite"></p></form>
+        <section id="quiz-summary" class="pv-summary" hidden><h2>Deine Übersicht</h2><div id="quiz-summary-answers" class="pv-summary-grid"></div><h3>Merksätze</h3><ul><li>Zu jeder Widerstandseinstellung gehören eine Spannung U und eine Stromstärke I.</li><li>Die elektrische Leistung ergibt sich aus P = U · I; am Leerlauf und am idealisierten Kurzschluss ist P = 0.</li><li>Der beste gemessene Punkt ist eine Näherung für den MPP.</li><li>Bei gleicher optischer Leistung können Lichtfarben verschiedene Ströme erzeugen, weil Photonenzahl und spektrale Empfindlichkeit verschieden sind.</li></ul></section>
+      </section>
+    </div>
+  </main>
+</body>
+</html>
