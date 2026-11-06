@@ -27,7 +27,6 @@ function updateReadings() {
   const body = document.querySelector(".pv-apparatus");
   body.dataset.color = colorSelect.value.toLowerCase();
   body.dataset.open = String(openSwitch.checked);
-  renderGraphs();
 }
 
 function createSeries(color) {
@@ -86,11 +85,8 @@ function renderGraph(kind) {
   let data = "";
   series.filter((item) => item.visible).forEach((item) => {
     const ordered = [...item.points].sort((p, q) => p.voltage - q.voltage);
-    if (ordered.length > 1) data += `<polyline points="${ordered.map((p) => `${x(p.voltage)},${y((isPower ? p.power * 1000 : p.current * 1000))}`).join(" ")}" fill="none" stroke="${colors[item.color]}" stroke-width="2" stroke-dasharray="5 3"/>`;
     ordered.forEach((p) => { data += pointShape(symbols[(item.id - 1) % symbols.length], x(p.voltage), y(isPower ? p.power * 1000 : p.current * 1000), colors[item.color], `${item.color} Reihe ${item.id}`); });
   });
-  const live = pointNow(), liveX = x(live.voltage), liveY = y(isPower ? live.power * 1000 : live.current * 1000);
-  data += `<circle cx="${liveX}" cy="${liveY}" r="8" fill="none" stroke="#111" stroke-width="2"><title>Aktueller Arbeitspunkt</title></circle><text x="${Math.min(liveX + 9, a.right - 112)}" y="${Math.max(liveY - 10, a.top + 12)}" class="graph-point-label">Aktueller Punkt</text>`;
   const chosen = series.find((item) => String(item.id) === $("selected-series").value), mark = markers[chosen?.id];
   if (isPower && mark) {
     const mx = x(mark.voltage), my = y(mark.power * 1000);
