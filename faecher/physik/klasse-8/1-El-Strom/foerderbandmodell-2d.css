@@ -1,0 +1,31 @@
+.foerderband-task-number{margin:9px 0 0;font-weight:800;color:#17324d}
+.foerderband-2d-page .foerderband-subtitle{margin-top:5px}
+.foerderband-2d-viewport{margin:4px 0 16px;overflow:hidden;border:1px solid #b7c9d9;border-radius:10px;background:linear-gradient(180deg,#dceefa 0%,#edf5fa 70%,#dce9ed 100%)}
+.foerderband-2d-viewport svg{display:block;width:100%;height:auto;max-height:700px;font-family:inherit}
+.foerderband-2d-viewport .fb-ground{fill:#e4b980;stroke:#a97e52;stroke-width:3}
+.foerderband-2d-viewport .fb-support{stroke:#8da6b5;stroke-width:5;stroke-linecap:round}
+.foerderband-2d-viewport .fb-level{stroke:#9aabb5;stroke-width:11;stroke-linecap:round}
+.foerderband-2d-viewport .fb-track-shadow{fill:none;stroke:#879da8;stroke-width:20;stroke-linecap:round;stroke-linejoin:round}
+.foerderband-2d-viewport .fb-track{fill:none;stroke:#f9fdff;stroke-width:12;stroke-linecap:round;stroke-linejoin:round}
+.foerderband-2d-viewport .fb-chain-link{fill:none;stroke:#1a658e;stroke-width:3.5;stroke-linecap:round;stroke-linejoin:round}
+.foerderband-2d-viewport .fb-chain-link.lane-2{stroke:#a94634}
+.foerderband-2d-viewport .fb-belt{fill:url(#belt-gradient);stroke:#27445a;stroke-width:5}
+.foerderband-2d-viewport .fb-belt-inner{fill:none;stroke:#acc2cd;stroke-width:2;stroke-dasharray:8 8}
+.foerderband-2d-viewport .fb-tread{stroke:#e7b05b;stroke-width:5;stroke-linecap:round}
+.foerderband-2d-viewport .fb-roller{fill:#c5d2da;stroke:#2e4a5d;stroke-width:5}
+.foerderband-2d-viewport .fb-roller-hub{fill:#f8fbfd;stroke:#4f6a79;stroke-width:3}
+.foerderband-2d-viewport .fb-spoke{stroke:#517487;stroke-width:4;stroke-linecap:round}
+.foerderband-2d-viewport .fb-ball{stroke:#07517c;stroke-width:2.5;fill:url(#ball-gradient);filter:url(#ball-shadow)}
+.foerderband-2d-viewport .fb-ball.lane-2{stroke:#9d3c29;fill:url(#ball-coral)}
+.foerderband-2d-viewport .fb-gate-ring{fill:#f8fbfd;stroke:#375367;stroke-width:5}
+.foerderband-2d-viewport .fb-gate-arm{stroke:#ca8132;stroke-width:8;stroke-linecap:round}
+.foerderband-2d-viewport .fb-gate-hub{fill:#344e61;stroke:#f4bd70;stroke-width:3}
+.foerderband-2d-viewport .fb-height{fill:none;stroke:#b97729;stroke-width:4;stroke-linecap:round}
+.foerderband-2d-viewport .fb-section{fill:none;stroke:#183850;stroke-width:4;stroke-linecap:round}
+.foerderband-2d-viewport .fb-label{fill:#17324d;font-size:18px;font-weight:800;paint-order:stroke;stroke:#f1f7fb;stroke-width:5;stroke-linejoin:round}
+.foerderband-2d-viewport .fb-small{font-size:16px}
+.foerderband-2d-viewport .fb-voltage-label{fill:#8a4c12}
+.foerderband-2d-viewport .fb-belt-label{fill:#17324d;font-size:18px;font-weight:800}
+.foerderband-2d-viewport .fb-label-plate{fill:#f8fcff;stroke:#b7cbd9;stroke-width:1.5}
+.foerderband-2d-viewport .fb-lamp-rays{stroke:#e8ad55;stroke-width:3;stroke-linecap:round}
+@media(max-width:650px){.foerderband-2d-viewport{margin-top:6px}.foerderband-2d-viewport .fb-label{font-size:21px}.foerderband-2d-viewport .fb-small{font-size:18px}.foerderband-2d-viewport .fb-belt-label{font-size:19px}}
