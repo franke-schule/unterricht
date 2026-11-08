@@ -39,14 +39,14 @@ async function main() {
     assert.match(await page.locator('.task-card').first().innerText(), /Hauptprogramm.java/);
     await page.locator('#answer-1a').fill('ein block und ein ball werden erstellt');
     await page.locator('#button-1a').click();
-    await page.waitForFunction(() => document.getElementById('result-1a').textContent.includes('2 von 5 Punkten'));
+    await page.waitForFunction(() => document.getElementById('result-1a').textContent.includes('2 von 4 Punkten'));
     assert.match(await page.locator('#result-1a').innerText(), /ein Objekt der Klasse/);
-    const complete = 'ein Objekt der Klasse Kiste und ein Objekt der Klasse Ball werden erstellt. Der Ball hat die x-Startposition 100';
+    const complete = 'ein Objekt der Klasse Kiste und ein Objekt der Klasse Ball werden erstellt';
     await page.locator('#answer-1a').fill(complete);
     assert.equal(await page.locator('#result-1a').isHidden(), true);
     for (let attempt = 0; attempt < 2; attempt++) {
       await page.locator('#button-1a').click();
-      await page.waitForFunction(() => document.getElementById('result-1a').textContent.includes('5 von 5 Punkten - Sehr gut, alles richtig'));
+      await page.waitForFunction(() => document.getElementById('result-1a').textContent.includes('4 von 4 Punkten - Sehr gut, alles richtig'));
     }
     await page.locator('#answer-1b').fill('Die 100 ist der Parameterwert.');
     await page.locator('#answer-1c').fill('Eine Klasse ist ein Bauplan.');

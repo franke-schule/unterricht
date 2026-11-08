@@ -11,7 +11,10 @@ Kriterienvertrag: Einzelurteile mit Originalbelegen, serverseitig berechnete
 Punkte und genau ein fester nächster Hinweis. Alle 19 Codeaufgaben verwenden
 denselben Vertrag. Bei `b`, `c`, `2b`, `1a`, `1b`, `1c` und `1f` entfallen auf
 Entscheidung der Lehrkraft die bisherigen Stil-/Beobachtungs-Metapunkte;
-diese Aufgaben besitzen nun jeweils fünf fachliche Punkte.
+diese Aufgaben besitzen jeweils fünf fachliche Punkte, außer `1a` und `1b`:
+Dort gelten seit dem 08.11.2026 jeweils vier Punkte. Die Bedeutung des
+Werts 100 gehört ausschließlich zu `1b`; die x-Startposition ist auch dort
+kein Pflichtaspekt mehr.
 
 Die [Ausgangsliste](../docs/ki-feedback-offene-aufgaben-2026-10-29.md),
 [Spezifikation](../docs/ki-feedback-migration-plan.md) und der

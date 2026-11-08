@@ -134,22 +134,19 @@ const TASKS = {
     grade:
       10,
     maxPoints:
-      5,
+      4,
     instruction:
-      'Beschreibe die Bedeutung der beiden Programmzeilen in Hauptprogramm.java. Verwende für beide Erzeugungen die Formulierung „ein Objekt der Klasse …“ und beschreibe die Startposition des Balls.',
+      'Beschreibe die Bedeutung der beiden Programmzeilen in Hauptprogramm.java. Verwende für beide Erzeugungen die Formulierung „ein Objekt der Klasse …“.',
     program:
       [
         'Kiste block = new Kiste();',
-        'Ball ball1 = new Ball(100);',
-        '// Ball(float startX) erzeugt intern new Circle(startX, 50, 30).',
-        '// 100 ist die x-Startposition, der Radius ist 30.'
+        'Ball ball1 = new Ball(100);'
       ].join('\n'),
     expectedAspects: [
       'Die erste Zeile erzeugt einen Block bzw. eine Kiste; diese Alltagssprache genügt für diesen Punkt unabhängig von der Fachsprache.',
       'Die zweite Zeile erzeugt einen Ball; diese Alltagssprache genügt für diesen Punkt unabhängig von der Fachsprache.',
       'Die erste Erzeugung wird als „ein Objekt der Klasse Kiste“ beschrieben; Block ist kein Klassenname im Programm.',
-      'Die zweite Erzeugung wird als „ein Objekt der Klasse Ball“ beschrieben.',
-      'Der Ball hat die x-Startposition 100; 100 ist weder Radius noch Durchmesser.'
+      'Die zweite Erzeugung wird als „ein Objekt der Klasse Ball“ beschrieben.'
     ]
   },
 
@@ -159,9 +156,9 @@ const TASKS = {
     grade:
       10,
     maxPoints:
-      6,
+      4,
     instruction:
-      'Bewerte, ob die Schuelerantwort die Bedeutung der 100 bei Ball(100) und den passenden Fachbegriff erklaert.',
+      'Erkläre, welche Bedeutung die 100 bei Ball(100) hat. Verwende die Begriffe Konstruktor, Parameter, Parameterwert. Beschreibe, was mit dem Parameterwert in der Klasse Ball passiert, nachdem der Konstruktor aufgerufen wurde.',
     program:
       [
         'Ball ball1 = new Ball(100);',
@@ -178,10 +175,8 @@ const TASKS = {
     expectedAspects: [
       'Die 100 wird beim Konstruktoraufruf new Ball(100) an den Konstruktor Ball(float startX) uebergeben.',
       'Die 100 wird im Konstruktor als Wert fuer startX verwendet.',
-      'startX legt die x-Position beziehungsweise den horizontalen Startpunkt des Kreises fest.',
-      'Der passende Fachbegriff fuer startX ist Parameter.',
-      'Der konkrete Wert 100 kann als Argument oder Parameterwert bezeichnet werden.',
-      'Die Antwort stellt den Zusammenhang zwischen Aufruf, Konstruktor und Circle(startX, 50, 30) nachvollziehbar dar.'
+      'Der Konstruktor der Klasse Ball besitzt einen Parameter.',
+      'Der konkrete Wert 100 wird als Parameterwert bezeichnet.'
     ]
   },
 
@@ -3171,15 +3166,13 @@ const CRITERION_HINTS = {
     'Beschreibe, was die erste Zeile in Hauptprogramm.java erzeugt.',
     'Beschreibe, was die zweite Zeile in Hauptprogramm.java erzeugt.',
     'Verwende für den Block die Formulierung „ein Objekt der Klasse …“ mit dem Klassennamen aus der ersten Programmzeile.',
-    'Verwende für den Ball die Formulierung „ein Objekt der Klasse …“ mit dem Klassennamen aus der zweiten Programmzeile.',
-    'Beschreibe anhand von startX in Ball.java, welche Startposition die 100 festlegt.'
+    'Verwende für den Ball die Formulierung „ein Objekt der Klasse …“ mit dem Klassennamen aus der zweiten Programmzeile.'
   ],
   '1b': [
-    'Verfolge die 100 vom Aufruf zum Ball-Konstruktor.',
-    'Prüfe, welche Variable im Konstruktor diesen Wert empfängt.',
-    'Erkläre die Wirkung von `startX` auf die Kreisposition.',
-    'Nenne den Fachbegriff für `startX` in der Konstruktordeklaration.',
-    'Unterscheide den übergebenen Wert vom Parameternamen.'
+    'Beschreibe mit dem Begriff „Konstruktor“, wohin die 100 beim Aufruf new Ball(100) übergeben wird.',
+    'Beschreibe, welchen Wert startX im Konstruktor erhält.',
+    'Verwende das Wort „Parameter“, um die Eingabe des Ball-Konstruktors zu benennen.',
+    'Verwende das Wort „Parameterwert“, um die übergebene 100 zu benennen.'
   ],
   '1c': [
     'Erkläre, was eine Klasse für ihre Objekte festlegt.',
@@ -3443,7 +3436,7 @@ const SQL_RELATION_HINTS = {
   'inf10-a3-quiz-foto-beschreibung': { 2: 'Unterscheide den Primärschlüssel des Fotos vom Fremdschlüssel zum Benutzer.' },
   'inf10-a3-quiz-regal-beschreibung': { 3: WRONG_RELATION_HINT }
 };
-const REDUCED_STYLE_TASKS = new Set(['b', 'c', '2b', '1a', '1b', '1c', '1f']);
+const REDUCED_STYLE_TASKS = new Set(['b', 'c', '2b', '1c', '1f']);
 
 for (const [id, hints] of Object.entries(CRITERION_HINTS)) {
   const task = TASKS[id];
@@ -3482,14 +3475,29 @@ for (const [id, hints] of Object.entries(CRITERION_HINTS)) {
 // Aufgabe 1a: Erkennen einer Erzeugung und die ausdrücklich verlangte
 // Fachsprache getrennt bewerten; keine versteckten Variablen-/Konstruktorpunkte.
 TASKS['1a'].criteriaFairnessRules = [
-  '„ein Block und ein Ball werden erstellt“ erfüllt genau die ersten beiden Kriterien (2/5), auch ohne die Wörter Objekt oder Klasse.',
+  '„ein Block und ein Ball werden erstellt“ erfüllt genau die ersten beiden Kriterien (2/4), auch ohne die Wörter Objekt oder Klasse.',
   'Die ausdrücklich geforderte Formulierung „Objekt der Klasse …“ wird nur in Kriterium 3 und 4 bewertet; Groß-/Kleinschreibung und verständliche Schreibfehler sind unerheblich.',
-  '„Ein Objekt der Klasse Kiste und ein Objekt der Klasse Ball werden erstellt. Der Ball hat die x-Startposition 100“ erfüllt alle fünf Kriterien.',
+  '„Ein Objekt der Klasse Kiste und ein Objekt der Klasse Ball werden erstellt“ erfüllt alle vier Kriterien.',
   'Verlange weder die Variablennamen block/ball1 noch eine gesonderte Erklärung von Referenzen oder Konstruktorübergabe.',
-  '„Klasse Block“ ist eine falsche Klassenzuordnung; die erkannte Erzeugung zählt trotzdem. Radius 100 ist fachlich falsch und erfüllt nur das fünfte Kriterium nicht.',
+  '„Klasse Block“ ist eine falsche Klassenzuordnung; die erkannte Erzeugung zählt trotzdem.',
+  'Startposition, Zahlenwert 100 und die Bedeutung des Konstruktorarguments gehören ausschließlich zu 1b und werden in 1a nicht bewertet; entsprechende Zusätze ändern die Punkte für die vier Kriterien nicht.',
   'Zitiere die Schülerantwort unverändert, einschließlich Groß-/Kleinschreibung; ersetze in Belegen niemals Block durch Kiste oder Radius durch Startposition.'
 ];
-const task1aLabels = ['Block erzeugen', 'Ball erzeugen', 'Fachsprache zur Kiste', 'Fachsprache zum Ball', 'Startposition des Balls'];
+const task1aLabels = ['Block erzeugen', 'Ball erzeugen', 'Fachsprache zur Kiste', 'Fachsprache zum Ball'];
 TASKS['1a'].feedbackCriteria.forEach((criterion, index) => { criterion.label = task1aLabels[index]; });
 TASKS['1a'].feedbackCriteria[2].issues.wrong_relation = 'Verwende Kiste als Klassennamen in der Formulierung „ein Objekt der Klasse …“.';
-TASKS['1a'].feedbackCriteria[4].issues.wrong_relation = 'Die 100 legt die x-Startposition fest: Verfolge dazu startX in Ball.java.';
+
+// Fachsprache ist in 1b ausdrücklich Teil des sichtbaren Arbeitsauftrags.
+TASKS['1b'].criteriaFairnessRules = [
+  'Bewerte genau die vier Kriterien; die räumliche Bedeutung von startX bzw. die x-Startposition ist kein Pflichtaspekt mehr.',
+  'Kriterium 2 bleibt die Verwendung der 100 als Wert von startX im Konstruktor; der Verweis auf new Circle(startX, 50, 30) kann dies erläutern, ist aber kein weiterer Pflichtaspekt.',
+  'Für Kriterium 3 muss die Antwort das Wort Parameter verwenden und erklären, dass der Konstruktor der Klasse Ball einen Parameter besitzt; eine sinngleiche Aussage wie „startX ist ein Parameter des Ball-Konstruktors“ genügt.',
+  'Für Kriterium 4 muss die 100 mit dem Wort Parameterwert bezeichnet werden; Argument allein erfüllt die ausdrücklich verlangte Fachsprache nicht.',
+  'Das Wort Parameterwert allein erfüllt nicht die Anforderung, auch das Wort Parameter zu verwenden; Groß-/Kleinschreibung ist unwichtig.',
+  'Die bloße Aufzählung von Konstruktor, Parameter und Parameterwert ohne die jeweilige fachliche Beziehung erfüllt die Kriterien nicht.',
+  'Eine Aussage darf mehrere Kriterien erfüllen; verlange keine vier getrennten Sätze und keine zusätzlichen Erläuterungen zur x-Position.'
+];
+const task1bLabels = ['Übergabe an den Konstruktor', 'Wert von startX', 'Parameter des Konstruktors', 'Parameterwert 100'];
+TASKS['1b'].feedbackCriteria.forEach((criterion, index) => { criterion.label = task1bLabels[index]; });
+TASKS['1b'].feedbackCriteria[2].issues.wrong_relation = 'Ordne den Parameter dem Konstruktor der Klasse Ball zu.';
+TASKS['1b'].feedbackCriteria[3].issues.wrong_relation = 'Bezeichne die konkrete Zahl 100 als Parameterwert statt als Parameter.';

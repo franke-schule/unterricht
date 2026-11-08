@@ -7,6 +7,9 @@ const { evaluate, readConfig, validateEvaluation } = require('../scaleway-client
 
 const config = readConfig({ AI_API_KEY: 'mock', AI_PROJECT_ID: '11111111-1111-1111-1111-111111111111', AI_MODEL: 'mock-model' });
 const migrated = Object.entries(core.TASKS).filter(([, task]) => task.feedbackCriteria && task.maxFeedbackHints === 1);
+// Die Vertragsfixtures enthalten die in 1b ausdrücklich verlangten Begriffe;
+// ihr Fehlen wird gesondert in inf10-programmierung-1b.test.js geprüft.
+const withRequiredTerms = (task, text) => task === core.TASKS['1b'] ? text + ' Konstruktor Parameter Parameterwert.' : text;
 
 function modelResult(task, answer, correctIndex = -1, wrong = null) {
   return { criteria: Object.fromEntries(task.feedbackCriteria.map((criterion, index) => {
@@ -31,7 +34,7 @@ function mockFetch(value) {
 
 test('Migrationsserie (Modelmock): jedes Kriterium zählt unabhängig, auch nach späteren offenen Kriterien', async () => {
   for (const [id, task] of migrated) {
-    const answer = task.responseType === 'code' ? 'int beleg = 7; // aktuelle Eingabe' : 'Die aktuelle Antwort enthält einen wörtlichen Beleg.';
+    const answer = withRequiredTerms(task, task.responseType === 'code' ? 'int beleg = 7; // aktuelle Eingabe' : 'Die aktuelle Antwort enthält einen wörtlichen Beleg.');
     for (let index = 0; index < task.feedbackCriteria.length; index++) {
       const result = await evaluate(task, answer, config, mockFetch(modelResult(task, answer, index)));
       assert.equal(result.points, 1, `${id}: Aspekt ${index + 1} muss unabhängig zählen`);
@@ -48,7 +51,7 @@ test('Migrationsserie (Modelmock): jedes Kriterium zählt unabhängig, auch nach
 
 test('Migrationsserie (Modelmock): alle offenen Einzelkriterien liefern genau ihren nächsten Schritt', async () => {
   for (const [id, task] of migrated) {
-    const answer = task.responseType === 'code' ? 'int beleg = 7; // aktuelle Eingabe' : 'Originalantwort mit einem zitierbaren Textbeleg.';
+    const answer = withRequiredTerms(task, task.responseType === 'code' ? 'int beleg = 7; // aktuelle Eingabe' : 'Originalantwort mit einem zitierbaren Textbeleg.');
     const allCorrect = task.feedbackCriteria.map(() => 'correct');
     const perfect = await evaluate(task, answer, config, mockFetch(resultWithStatuses(task, answer, allCorrect)));
     assert.equal(perfect.points, task.maxPoints, `${id}: alle Kriterien korrekt`);
@@ -90,7 +93,7 @@ test('Migrationsserie (Modelmock): falscher Status zeigt den für dieses Kriteri
       const criterion = task.feedbackCriteria[index];
       const status = Object.keys(criterion.issues).find(key => key.startsWith('wrong_'));
       if (!status) continue;
-      const answer = 'Wörtlicher Beleg aus der aktuellen Abgabe.';
+      const answer = withRequiredTerms(task, 'Wörtlicher Beleg aus der aktuellen Abgabe.');
       const statuses = task.feedbackCriteria.map(() => 'correct');
       statuses[index] = status;
       const result = await evaluate(task, answer, config, mockFetch(resultWithStatuses(task, answer, statuses)));

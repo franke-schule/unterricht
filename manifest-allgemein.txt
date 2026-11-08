@@ -103,9 +103,18 @@ Verbindliche Prinzipien:
     muessen zusammenpassen. Kein wesentlicher verlangter Teil darf fehlen.
     Bewusste didaktische Auslassungen im Auftrag kenntlich machen; bei
     Unklarheiten insbesondere ueber Lernziele und Punkte rueckfragen.
+  - Beschreibe-Aufgabenstellungen muessen an den Bewertungskriterien
+    orientiert sein: Aus dem sichtbaren Arbeitsauftrag muessen die
+    Schuelerinnen und Schueler erkennen koennen, welche Inhalte,
+    Zusammenhaenge und gegebenenfalls Fachbegriffe verlangt werden.
+    Keine versteckten Pflichtaspekte bewerten; bei Aenderungen der Kriterien
+    auch Aufgabenstellung und Hilfen entsprechend anpassen.
   - Fachliche Bedeutung bzw. funktional gleichwertigen Code anerkennen.
     Dieselbe Aussage oder Codepassage darf mehrere Kriterien belegen.
     Keine zusaetzlichen Saetze, Schluesselwoerter oder Loesungsformen erzwingen.
+    Ausdruecklich im Arbeitsauftrag verlangte Fachbegriffe duerfen ein eigenes
+    Kriterium sein; fehlen sie, gezielt zur Verwendung des jeweiligen Begriffs
+    auffordern und unabhaengige richtige Inhalte trotzdem bepunkten.
   - Fuer KI-Aufgaben feedbackCriteria und maxFeedbackHints: 1 in
     scaleway-functions/source/tasks.js konfigurieren. Pro Kriterium genau
     ein Punkt; maxPoints, expectedAspects, rubric und feedbackCriteria haben

@@ -497,9 +497,9 @@
           data-type="hint">
 ## AUFGABE 1 - Wiederholung
 
-a) Beschreibe die beiden Programmzeilen aus Hauptprogramm.java im Antwortfeld zu 1a. Verwende für beide Erzeugungen die Formulierung „ein Objekt der Klasse …“ und beschreibe die Startposition des Balls.
+a) Beschreibe die beiden Programmzeilen aus Hauptprogramm.java im Antwortfeld zu 1a. Verwende für beide Erzeugungen die Formulierung „ein Objekt der Klasse …“.
 
-b) Welche Bedeutung hat die 100 bei Ball(100)? Wie lautet der Fachbegriff? Notiere auf dem AB!
+b) Erkläre, welche Bedeutung die 100 bei Ball(100) hat. Verwende die Begriffe Konstruktor, Parameter, Parameterwert. Beschreibe, was mit dem Parameterwert in der Klasse Ball passiert, nachdem der Konstruktor aufgerufen wurde.
 
 c) Erkläre den Unterschied zwischen einer Klasse und einem Objekt anhand des Programms.
 
@@ -647,7 +647,7 @@ class Kiste extends Actor {
 
       <p>
         <strong>Beschreibe</strong> die beiden Programmzeilen aus <strong>Hauptprogramm.java</strong>.
-        Verwende für beide Erzeugungen die Formulierung „ein Objekt der Klasse …“ und beschreibe die Startposition des Balls.
+        Verwende für beide Erzeugungen die Formulierung „ein Objekt der Klasse …“.
       </p>
 
       <textarea
@@ -690,18 +690,38 @@ class Kiste extends Actor {
 
     <section class="task-card">
 
-      <h2>Aufgabe 1b)</h2>
+      <h2 id="title-1b">Aufgabe 1b)</h2>
 
       <p>
-        Erkläre, welche Bedeutung die 100 bei <strong>Ball(100)</strong>
-        hat und wie der Fachbegriff lautet.
+        <strong>Erkläre</strong>, welche Bedeutung die 100 bei <strong>Ball(100) hat.</strong>
+        Verwende die Begriffe Konstruktor, Parameter, Parameterwert.
+        Beschreibe, was mit dem Parameterwert in der Klasse Ball passiert, nachdem der Konstruktor aufgerufen wurde.
       </p>
+
+      <div class="help-stack">
+        <details data-criterion="aspect_1">
+          <summary>Hilfe 1: Konstruktor</summary>
+          <p>Ein Konstruktor wird beim Erzeugen eines Objekts aufgerufen und legt dessen Anfangszustand fest. Er trägt den Namen seiner Klasse und hat keinen Rückgabetyp.</p>
+        </details>
+        <details data-criterion="aspect_2">
+          <summary>Hilfe 2: Den Wert im Konstruktor verfolgen</summary>
+          <p>Suche den Namen in den Klammern hinter Ball und finde ihn im Konstruktorrumpf wieder. Überlege, welchen Wert dieser Name beim Aufruf erhält.</p>
+        </details>
+        <details data-criterion="aspect_3">
+          <summary>Hilfe 3: Parameter</summary>
+          <p>Ein Parameter ist eine benannte Eingabe in der Deklaration eines Konstruktors oder einer Methode, zum Beispiel zahl in Beispiel(int zahl). Beim Aufruf nimmt er einen übergebenen Wert an.</p>
+        </details>
+        <details data-criterion="aspect_4">
+          <summary>Hilfe 4: Parameterwert</summary>
+          <p>Ein Parameterwert ist der konkrete Wert, der beim Aufruf für einen Parameter übergeben wird. Bei new Beispiel(12) ist 12 der Parameterwert.</p>
+        </details>
+      </div>
 
       <textarea
         id="answer-1b"
-        aria-label="Antwort zu Aufgabe 1b"
+        aria-labelledby="title-1b"
         maxlength="3000"
-        placeholder="Beschreibe hier die Bedeutung der 100 und den Fachbegriff ..."
+        placeholder="Erkläre die 100 mit Konstruktor, Parameter und Parameterwert ..."
         oninput="updateCharacterCount('1b')"></textarea>
 
       <div class="textarea-info">
@@ -904,8 +924,8 @@ class Kiste extends Actor {
 
   <script>
     const SCRIPT_SERVER_URL = 'https://unterrichtkiichezbn4-ki-auswertung.functions.fnc.fr-par.scw.cloud/';
-const SCW_TASK_POINTS = {"1a":5,"1b":5,"1c":5,"1f":5};
-const SCW_ASSESSMENT_VERSIONS = {"1a":"20261108-criteria-v2","1b":"20261029-criteria-v1","1c":"20261029-criteria-v1","1f":"20261029-criteria-v1"};
+const SCW_TASK_POINTS = {"1a":4,"1b":4,"1c":5,"1f":5};
+const SCW_ASSESSMENT_VERSIONS = {"1a":"20261108-criteria-v3","1b":"20261108-criteria-v2","1c":"20261029-criteria-v1","1f":"20261029-criteria-v1"};
 const SCW_REQUEST_VERSIONS = new Map();
 Object.keys(SCW_TASK_POINTS).forEach((taskId) => {
   const input = document.getElementById("answer-" + taskId);

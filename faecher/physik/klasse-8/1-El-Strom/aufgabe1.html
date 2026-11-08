@@ -1,0 +1,65 @@
+<!doctype html>
+<html lang="de">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Das Förderbandmodell | Physik 8</title>
+  <link rel="stylesheet" href="../../../../styles.css?v=20261108">
+  <link rel="stylesheet" href="foerderbandmodell.css?v=20261108">
+  <script type="module" src="foerderbandmodell.mjs?v=20261108"></script>
+</head>
+<body class="foerderband-page">
+  <div class="site-backdrop" aria-hidden="true"></div>
+  <main class="page-shell foerderband-shell">
+    <nav class="topbar" aria-label="Navigation">
+      <a class="back-link" href="../index.html">Zur Aufgabenübersicht</a>
+      <a class="back-link" href="../../../../">Startseite</a>
+    </nav>
+    <header class="foerderband-hero">
+      <p class="eyebrow">Elektrischer Strom</p>
+      <h1>Das Förderbandmodell</h1>
+      <p class="foerderband-subtitle">Simulation · Physik 8</p>
+      <p>Wähle eine Schaltung und verändere Spannung und Stromstärke. Beobachte die Höhen, den Kugeldurchsatz und die Drehkreuze.</p>
+    </header>
+    <section class="foerderband-card" aria-label="3D-Simulation des Förderbandmodells">
+      <div class="foerderband-controls">
+        <div class="foerderband-control foerderband-mode-control">
+          <label for="circuit-mode">Schaltung</label>
+          <select id="circuit-mode">
+            <option value="simple">Einfacher Stromkreis</option>
+            <option value="series">Reihenschaltung</option>
+            <option value="parallel">Parallelschaltung</option>
+          </select>
+        </div>
+        <div class="foerderband-control">
+          <label for="voltage">Spannung U</label>
+          <div class="foerderband-range"><input id="voltage" type="range" min="2" max="12" step="1" value="6"><output id="voltage-output" for="voltage">6 V</output></div>
+        </div>
+        <div class="foerderband-control">
+          <label for="current">Gesamtstromstärke I</label>
+          <div class="foerderband-range"><input id="current" type="range" min="0.2" max="2" step="0.1" value="1"><output id="current-output" for="current">1,0 A</output></div>
+        </div>
+        <div class="foerderband-actions">
+          <button id="animation-toggle" type="button">Animation starten</button>
+          <button id="camera-reset" type="button">Ansicht zurücksetzen</button>
+        </div>
+      </div>
+      <p id="animation-status" class="foerderband-status" aria-live="polite">Animation pausiert</p>
+      <div id="simulation-viewport" class="foerderband-viewport">
+        <canvas id="simulation-canvas" role="img" aria-label="Dreidimensionales Förderbandmodell mit Kugeln, Förderband und Drehkreuzen. Schaltung und Messwerte stehen als Text unter der Simulation."></canvas>
+        <div id="scene-labels" class="foerderband-scene-labels" aria-hidden="true"></div>
+        <p id="webgl-error" class="foerderband-error" role="alert" hidden>Die 3D-Simulation konnte nicht gestartet werden. Prüfe, ob WebGL im Browser verfügbar ist.</p>
+      </div>
+      <p class="foerderband-camera-hint">Ansicht mit Maus oder Finger drehen; mit Mausrad oder Zwei-Finger-Geste zoomen.</p>
+      <div id="readouts" class="foerderband-readouts" aria-live="polite"></div>
+      <button id="equations-toggle" class="foerderband-equations-toggle" type="button" aria-expanded="false" aria-controls="equations">Gleichungen anzeigen</button>
+      <div id="equations" class="foerderband-equations" hidden></div>
+    </section>
+    <section class="foerderband-card foerderband-legend" aria-label="Modelllegende">
+      <p>Kugeln: Elektronen im geschlossenen Kreislauf. Förderband: Batterie, die den Kugeln Energie zuführt. Höhenunterschied: Spannung U. Kugeldurchsatz durch einen markierten Querschnitt: Stromstärke I. Drehkreuz: Glühlampe; hier wird Energie in Licht und Wärme umgewandelt.</p>
+      <p>Im Modell lassen sich Spannung und Stromstärke getrennt einstellen. Bei einer echten Glühlampe hängen beide Größen zusammen.</p>
+      <p>Die Kugelbewegung zeigt Elektronen; die technische Stromrichtung ist entgegengesetzt.</p>
+    </section>
+  </main>
+</body>
+</html>

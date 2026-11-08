@@ -100,6 +100,17 @@ function applyTaskCriterionRules_(evaluation, task, answer) {
     if (recognized) return recognized;
   }
   const criteria = { ...evaluation.criteria };
+  if (task === TASKS['1b']) {
+    // Pflichtbegriffe werden separat abgesichert; fachliche Richtigkeit und
+    // Zuordnung beurteilt weiterhin das Modell anhand der Originalbelege.
+    const terms = [[2, /\bparameter(?:s|n)?\b/i], [3, /\bparameterwert(?:e|es|s|en)?\b/i]];
+    for (const [index, term] of terms) {
+      const id = task.feedbackCriteria[index].id;
+      if (criteria[id].status === 'correct' && !term.test(answer)) {
+        criteria[id] = { status: 'missing', evidence: [] };
+      }
+    }
+  }
   const mark = (correct, indexes) => {
     if (!Array.isArray(correct) || correct.length !== indexes.length) return;
     correct.forEach((isCorrect, index) => {
@@ -156,11 +167,8 @@ function recognizeInf10Task1a_(answer) {
       continue;
     }
     if (positionSeen) return null;
-    if (/^(?:der Ball hat (?:die |eine )?x[- ]Startposition (?:von )?100|der Ball startet bei x\s*=\s*100|der Ball hat (?:die |eine )?x[- ]Position (?:von )?100)$/i.test(text)) {
-      mark(4, 'correct', clause);
-    } else if (/^der Ball hat (?:einen |den )?(?:Radius|Durchmesser) (?:von )?100$/i.test(text)) {
-      mark(4, 'wrong_relation', clause);
-    } else return null;
+    // Diese Zusätze betreffen ausschließlich 1b und zählen in 1a nicht.
+    if (!/^(?:der Ball hat (?:die |eine )?x[- ]Startposition (?:von )?100|der Ball startet bei x\s*=\s*100|der Ball hat (?:die |eine )?x[- ]Position (?:von )?100|der Ball hat (?:einen |den )?(?:Radius|Durchmesser) (?:von )?100)$/i.test(text)) return null;
     positionSeen = true;
   }
   return seen.size ? { criteria } : null;

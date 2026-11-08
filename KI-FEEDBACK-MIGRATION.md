@@ -52,8 +52,8 @@ Die vollständige [Ausgangsliste der 79 offenen Aufgaben](docs/ki-feedback-offen
 | `b` | Klasse 9 Aufgabe b: Programmtext analysieren | 5 |
 | `c` | Klasse 9 Aufgabe c: Zahlen variieren | 5 |
 | `2b` | Klasse 9 Aufgabe 2b: Klassen analysieren und veraendern | 5 |
-| `1a` | Klasse 10 Aufgabe 1a: Programmzeilen erklaeren | 5 |
-| `1b` | Klasse 10 Aufgabe 1b: Parameterwert Ball(100) | 5 |
+| `1a` | Klasse 10 Aufgabe 1a: Programmzeilen erklaeren | 4 |
+| `1b` | Klasse 10 Aufgabe 1b: Parameterwert Ball(100) | 4 |
 | `1c` | Klasse 10 Aufgabe 1c: Klasse und Objekt unterscheiden | 5 |
 | `1f` | Klasse 10 Aufgabe 1f: extends Actor erklaeren | 5 |
 | `10-2a` | Klasse 10 Aufgabe 2a: Ziegelreihe bis zur Wand | 6 |
@@ -135,24 +135,52 @@ Die vollständige [Ausgangsliste der 79 offenen Aufgaben](docs/ki-feedback-offen
 
 Alle aufgeführten Aufgaben verwenden `feedbackCriteria` und `maxFeedbackHints: 1`. Die fünf schon vor der Gesamtmigration vollständig konfigurierten Aufgaben behalten ihre Kriterien. Die vier SQL-Beschreibungen in Inf10 DB 9 bewerten weiterhin die Sortierung als fünften Aspekt; bei P11 zählen individuelle Ausgabe und Zählung je Mitglied getrennt, auch wenn derselbe Satz beide erfüllt.
 
-Auf Entscheidung der Lehrkraft haben `b`, `c`, `2b`, `1a`, `1b`, `1c` und `1f` nach ihrer Umstellung je fünf fachliche Punkte; der bisherige Stil-/Beobachtungs-Metapunkt entfällt. Übrige Punktgrenzen bleiben erhalten.
+Auf Entscheidung der Lehrkraft haben `b`, `c`, `2b`, `1c` und `1f` nach ihrer Umstellung je fünf fachliche Punkte; der bisherige Stil-/Beobachtungs-Metapunkt entfällt. `1a` und `1b` haben seit den gezielten Korrekturen vom 08.11.2026 je vier Punkte. Die Bedeutung des Werts 100 gehört ausschließlich zu `1b`; die x-Position ist auch dort kein Pflichtaspekt mehr. Übrige Punktgrenzen bleiben erhalten.
 
 ## Offener Bestand und Wiederholungsprüfung
 
+Gezielte Überarbeitung von Inf10 Programmierung 1b am 08.11.2026:
+Vier Kriterien zu je einem Punkt: (1) Übergabe der 100 an den Konstruktor,
+(2) Verwendung der 100 als Wert von startX im Konstruktor,
+(3) „Der Konstruktor der Klasse Ball besitzt einen Parameter.“ und
+(4) Bezeichnung der 100 als Parameterwert. Das bisherige Kriterium zur
+x-Startposition entfällt. Die sichtbare Aufgabenstellung fordert Konstruktor,
+Parameter und Parameterwert ausdrücklich und fragt die Weiterverwendung des
+Werts in der Klasse ab. Eine aufklappbare Hilfe pro Kriterium erklärt
+Konstruktor, Wertübernahme, Parameter bzw. Parameterwert mit Beispielen,
+ohne eine vollständige Musterantwort vorzugeben.
+
+Das Modell beurteilt weiterhin die fachliche Zuordnung. Eine lokale
+Nachprüfung verhindert Punkte für das dritte bzw. vierte Kriterium, wenn
+die verlangten Wörter Parameter bzw. Parameterwert fehlen. Parameterwert
+allein zählt nicht als Verwendung des Worts Parameter; Argument allein
+ersetzt nicht das ausdrücklich geforderte Wort Parameterwert. Fehlende
+Begriffe führen zum gezielten Wortverwendungshinweis, unabhängige richtige
+Inhalte zählen weiter. Rubrikversion 1b: `20261108-criteria-v2`.
+Die Tests in `scaleway-functions/tests/inf10-programmierung-1b.test.js`
+trennen simulierte Fachurteile von der echten lokalen Begriffsprüfung.
+Alle sechs gezielten Tests bestehen: Auftrag und Hilfen, volle Punkte ohne
+x-Position, jeder offene/falsche Aspekt, fehlende Pflichtwörter trotz zu
+großzügigem Modellurteil, Flexion sowie aufeinanderfolgende Serverabgaben.
+Keine neue Live-Prüfung belegt; das aktualisierte Function-Paket muss
+hochgeladen und erneut bereitgestellt werden.
+
 Gezielte Korrektur vom 08.11.2026 für Inf10 Programmierung 1a:
-Die fünf Punkte gelten jetzt für (1) Erzeugung der Kiste/des Blocks erkennen,
+Die vier Punkte gelten jetzt für (1) Erzeugung der Kiste/des Blocks erkennen,
 (2) Erzeugung des Balls erkennen, (3) „Objekt der Klasse Kiste“,
-(4) „Objekt der Klasse Ball“ und (5) x-Startposition 100.
+(4) „Objekt der Klasse Ball“.
+Startposition und Wert 100 sind keine Anforderungen von 1a und werden dort
+nicht bewertet, weil sie bereits zu 1b gehören.
 Die Zuordnung zu den Objektvariablen und die gesonderte Beschreibung der
 Konstruktorübergabe sind keine zusätzlichen Pflichtangaben mehr. Der Auftrag
-nennt Hauptprogramm.java sowie die Fachsprache und Startposition ausdrücklich.
+nennt Hauptprogramm.java sowie die Fachsprache ausdrücklich.
 Das Programm bleibt unverändert: Kiste ist der Klassenname, block die Variable;
 100 bezeichnet startX und der Kreisradius ist 30.
 
 Eng begrenzte, vollständig erkannte Satzformen werden vor einem Modellaufruf
 mit Originalbelegen über denselben Kriterienvertrag ausgewertet. So erhält
-„ein block und ein ball werden erstellt“ zuverlässig 2/5 und einen konkreten
-Fachsprachenhinweis; die vollständige korrekte Beschreibung erhält 5/5 auch
+„ein block und ein ball werden erstellt“ zuverlässig 2/4 und einen konkreten
+Fachsprachenhinweis; die vollständige korrekte Beschreibung erhält 4/4 auch
 bei wiederholter Abgabe. Negationen, widersprüchliche Zusätze und freie
 Formulierungen werden nicht durch diese Erkennung bewertet. Bei ungültigem
 Modell-JSON oder ungültigen Belegen für freie 1a-Antworten erfolgt genau ein
@@ -163,8 +191,8 @@ Die ursprüngliche fehlerhafte Live-Modellantwort ist lokal nicht verfügbar;
 ihre genaue Vertragsverletzung ist deshalb nicht nachgewiesen.
 `scaleway-functions/tests/inf10-programmierung-1a.test.js` prüft echte lokale
 Regelbewertungen, wiederholte Abgaben und simulierte Modellfehler getrennt.
-Die Rubrikversion für 1a lautet `20261108-criteria-v2`; die übrigen Teilaufgaben
-bleiben unverändert. Die Seite nutzt die vorhandene Eingabespeicherung und
+Die Rubrikversion für 1a lautet `20261108-criteria-v3`; 1b wird separat oben
+dokumentiert. Die Seite nutzt die vorhandene Eingabespeicherung und
 enthält den vorgeschriebenen Abschlusscheck mit der zentralen Quizkomponente.
 Website und Function-Paket müssen noch veröffentlicht und freie Antworten
 mit dem tatsächlich eingesetzten Modell überprüft werden.
