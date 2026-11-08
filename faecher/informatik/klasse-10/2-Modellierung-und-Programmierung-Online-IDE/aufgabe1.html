@@ -12,6 +12,8 @@
     content="width=device-width, initial-scale=1.0">
 
   <title>Aufgabe 1 – Wiederholung</title>
+  <script src="../../quiz-fragen-pruefen.js?v=20261006b"></script>
+  <script src="../../klasse-9/eingaben-speichern.js"></script>
 
   <style>
     :root {
@@ -182,6 +184,11 @@
     .task-card p {
       margin: 0.4rem 0;
     }
+
+    .choice-list { display: grid; gap: 0.5rem; }
+    .choice-option { display: flex; align-items: baseline; gap: 0.6rem; padding: 0.5rem; cursor: pointer; }
+    .final-quiz fieldset { min-width: 0; margin: 1rem 0; padding: 1rem; border: 1px solid var(--border); }
+    .final-quiz legend { font-weight: 600; }
 
     textarea {
       display: block;
@@ -490,7 +497,7 @@
           data-type="hint">
 ## AUFGABE 1 - Wiederholung
 
-a) Notiere die Bedeutung der beiden Programmzeilen auf deinem AB!
+a) Beschreibe die beiden Programmzeilen aus Hauptprogramm.java im Antwortfeld zu 1a. Verwende für beide Erzeugungen die Formulierung „ein Objekt der Klasse …“ und beschreibe die Startposition des Balls.
 
 b) Welche Bedeutung hat die 100 bei Ball(100)? Wie lautet der Fachbegriff? Notiere auf dem AB!
 
@@ -636,14 +643,16 @@ class Kiste extends Actor {
 
     <section class="task-card">
 
-      <h2>Aufgabe 1a)</h2>
+      <h2 id="title-1a">Aufgabe 1a)</h2>
 
       <p>
-        Notiere die Bedeutung der beiden Programmzeilen.
+        <strong>Beschreibe</strong> die beiden Programmzeilen aus <strong>Hauptprogramm.java</strong>.
+        Verwende für beide Erzeugungen die Formulierung „ein Objekt der Klasse …“ und beschreibe die Startposition des Balls.
       </p>
 
       <textarea
         id="answer-1a"
+        aria-labelledby="title-1a"
         maxlength="3000"
         placeholder="Beschreibe hier die beiden Programmzeilen ..."
         oninput="updateCharacterCount('1a')"></textarea>
@@ -690,6 +699,7 @@ class Kiste extends Actor {
 
       <textarea
         id="answer-1b"
+        aria-label="Antwort zu Aufgabe 1b"
         maxlength="3000"
         placeholder="Beschreibe hier die Bedeutung der 100 und den Fachbegriff ..."
         oninput="updateCharacterCount('1b')"></textarea>
@@ -736,6 +746,7 @@ class Kiste extends Actor {
 
       <textarea
         id="answer-1c"
+        aria-label="Antwort zu Aufgabe 1c"
         maxlength="3000"
         placeholder="Erkläre hier Klasse und Objekt mit Beispielen aus dem Programm ..."
         oninput="updateCharacterCount('1c')"></textarea>
@@ -782,6 +793,7 @@ class Kiste extends Actor {
 
       <textarea
         id="answer-1f"
+        aria-label="Antwort zu Aufgabe 1f"
         maxlength="3000"
         placeholder="Erkläre hier die Bedeutung von extends Actor ..."
         oninput="updateCharacterCount('1f')"></textarea>
@@ -818,6 +830,31 @@ class Kiste extends Actor {
       </aside>
 
     </div>
+
+    <section class="task-card" aria-labelledby="final-quiz-title">
+      <h2 id="final-quiz-title">Abschlussquiz</h2>
+      <p>Kreuze alle richtigen Antworten an. Bei jeder Frage sind mehrere Antworten richtig.</p>
+      <form id="final-quiz" class="final-quiz" novalidate>
+        <fieldset>
+          <legend>1. Was bewirken die beiden Zeilen in Hauptprogramm.java?</legend>
+          <div class="choice-list">
+            <label class="choice-option"><input type="checkbox" name="q1" value="kiste"><span>Es wird ein Objekt der Klasse Kiste erzeugt.</span></label>
+            <label class="choice-option"><input type="checkbox" name="q1" value="ball"><span>Es wird ein Objekt der Klasse Ball erzeugt.</span></label>
+            <label class="choice-option"><input type="checkbox" name="q1" value="class"><span>Es wird eine neue Klasse namens block definiert.</span></label>
+          </div>
+        </fieldset>
+        <fieldset>
+          <legend>2. Was gilt für new Ball(100) im vorliegenden Programm?</legend>
+          <div class="choice-list">
+            <label class="choice-option"><input type="checkbox" name="q2" value="parameter"><span>Der Wert 100 wird an den Parameter startX übergeben.</span></label>
+            <label class="choice-option"><input type="checkbox" name="q2" value="position"><span>Der Ball startet bei der x-Position 100.</span></label>
+            <label class="choice-option"><input type="checkbox" name="q2" value="radius"><span>Der Radius des Balls ist 100.</span></label>
+          </div>
+        </fieldset>
+        <button type="submit">Quiz auswerten</button>
+        <p id="quiz-feedback" class="result" aria-live="polite" hidden></p>
+      </form>
+    </section>
 
     <section class="solution-download" aria-labelledby="solution-download-title">
       <h2 id="solution-download-title">Lösungsblatt zu Aufgabe 1</h2>
@@ -868,7 +905,7 @@ class Kiste extends Actor {
   <script>
     const SCRIPT_SERVER_URL = 'https://unterrichtkiichezbn4-ki-auswertung.functions.fnc.fr-par.scw.cloud/';
 const SCW_TASK_POINTS = {"1a":5,"1b":5,"1c":5,"1f":5};
-const SCW_ASSESSMENT_VERSIONS = {"1a":"20261029-criteria-v1","1b":"20261029-criteria-v1","1c":"20261029-criteria-v1","1f":"20261029-criteria-v1"};
+const SCW_ASSESSMENT_VERSIONS = {"1a":"20261108-criteria-v2","1b":"20261029-criteria-v1","1c":"20261029-criteria-v1","1f":"20261029-criteria-v1"};
 const SCW_REQUEST_VERSIONS = new Map();
 Object.keys(SCW_TASK_POINTS).forEach((taskId) => {
   const input = document.getElementById("answer-" + taskId);
@@ -932,7 +969,7 @@ async function submitAnswer(taskId) {
     function showEvaluation(resultBox, result, renderCompactEvaluation) {
   resultBox.hidden = false;
   resultBox.className = 'result ' + (result.points === result.maxPoints ? 'high' : result.points > 0 ? 'medium' : 'low');
-  renderCompactEvaluation(resultBox, result);
+  renderCompactEvaluation(resultBox, result, { maxHints: 1 });
 }
 
 function showError(
@@ -992,6 +1029,29 @@ function showError(
       message.textContent =
         'Der eingegebene Code ist nicht gültig.';
     }
+    const quiz = document.getElementById('final-quiz');
+    const quizFeedback = document.getElementById('quiz-feedback');
+    const quizChecks = addQuizQuestionChecks({
+      form: quiz,
+      solutions: { q1: ['kiste', 'ball'], q2: ['parameter', 'position'] },
+      hints: { q1: 'Unterscheide das Erzeugen eines Objekts vom Definieren einer Klasse.', q2: 'Verfolge startX im Konstruktor von Ball.' },
+      feedbackClass: 'result',
+      onAllCorrect: () => quiz.requestSubmit()
+    });
+    quiz.addEventListener('submit', event => {
+      event.preventDefault();
+      const correct = quizChecks.checkAll();
+      quizFeedback.hidden = false;
+      quizFeedback.className = 'result ' + (correct === 2 ? 'high' : 'medium');
+      quizFeedback.textContent = correct === 2 ? 'Sehr gut, alles richtig' : correct + ' von 2 Fragen vollständig richtig.';
+    });
+    quiz.addEventListener('change', () => { quizFeedback.hidden = true; });
+    const saved = persistTaskInputs('informatik10-programmierung-aufgabe1-v1', 'textarea, #final-quiz input[type="checkbox"]');
+    if (saved.hasFlag('solutionUnlocked')) document.getElementById('solution-download-link').hidden = false;
+    document.querySelector('.solution-code-form').addEventListener('submit', () => {
+      if (!document.getElementById('solution-download-link').hidden) saved.setFlag('solutionUnlocked');
+      else saved.clearFlag('solutionUnlocked');
+    });
   </script>
 
 </body>

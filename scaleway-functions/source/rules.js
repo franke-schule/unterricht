@@ -95,6 +95,10 @@ function applyRuleBasedMinimum_(
 }
 
 function applyTaskCriterionRules_(evaluation, task, answer) {
+  if (task === TASKS['1a']) {
+    const recognized = recognizeInf10Task1a_(answer);
+    if (recognized) return recognized;
+  }
   const criteria = { ...evaluation.criteria };
   const mark = (correct, indexes) => {
     if (!Array.isArray(correct) || correct.length !== indexes.length) return;
@@ -120,6 +124,46 @@ function applyTaskCriterionRules_(evaluation, task, answer) {
   if (task === TASKS['11-6-einfach-ausgabe'] && evaluateTrainingOutputByRules_(answer, task)) markAll();
   if (task === TASKS['11-6-einfach-anpassung'] && evaluateTrainingUpdatesByRules_(answer, task)) markAll();
   return { ...evaluation, criteria };
+}
+
+// Nur vollständig erkannte Satzformen lokal auswerten. Zusätze, Negationen,
+// Widersprüche und freie Formulierungen gehen weiterhin an das Modell.
+// Originalbelege bleiben erhalten; dieselbe Stelle darf mehrere Punkte belegen.
+function recognizeInf10Task1a_(answer) {
+  const clauses = String(answer).trim().split(/[.\n]+/).map(s => s.trim()).filter(Boolean);
+  if (!clauses.length || clauses.length > 3) return null;
+  const task = TASKS['1a'];
+  const criteria = Object.fromEntries(task.feedbackCriteria.map(c => [c.id, { status: 'missing', evidence: [] }]));
+  const mark = (index, status, quote) => { criteria[task.feedbackCriteria[index].id] = { status, evidence: [quote] }; };
+  const seen = new Set();
+  let positionSeen = false;
+  for (const clause of clauses) {
+    const text = clause.replace(/\s+/g, ' ');
+    const creation = text.match(/^(?:(?:es )?werden (.+?) (?:erstellt|erzeugt)|(.+?) (?:wird|werden) (?:erstellt|erzeugt))$/i);
+    if (creation) {
+      const entities = (creation[1] || creation[2]).split(/ und /i);
+      if (entities.length > 2) return null;
+      for (const entity of entities) {
+        const object = entity.match(/^(?:ein|eine|der|die|das) (?:(?:neues? )?Objekt der Klasse (Kiste|Block|Ball)|(Block|Kiste|Ball))$/i);
+        if (!object) return null;
+        const name = (object[1] || object[2]).toLowerCase();
+        const index = name === 'ball' ? 1 : 0;
+        if (seen.has(index)) return null;
+        seen.add(index);
+        mark(index, 'correct', clause);
+        if (object[1]) mark(index + 2, name === 'block' ? 'wrong_relation' : 'correct', clause);
+      }
+      continue;
+    }
+    if (positionSeen) return null;
+    if (/^(?:der Ball hat (?:die |eine )?x[- ]Startposition (?:von )?100|der Ball startet bei x\s*=\s*100|der Ball hat (?:die |eine )?x[- ]Position (?:von )?100)$/i.test(text)) {
+      mark(4, 'correct', clause);
+    } else if (/^der Ball hat (?:einen |den )?(?:Radius|Durchmesser) (?:von )?100$/i.test(text)) {
+      mark(4, 'wrong_relation', clause);
+    } else return null;
+    positionSeen = true;
+  }
+  return seen.size ? { criteria } : null;
 }
 
 

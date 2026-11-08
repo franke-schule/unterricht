@@ -1,6 +1,6 @@
 # Kriterienbasiertes Feedback: Umstellung und neue Aufgaben
 
-Stand: 30.10.2026. Diese Datei dokumentiert den **lokalen Quellstand**.
+Stand: 08.11.2026. Diese Datei dokumentiert den **lokalen Quellstand**.
 Ein fertiger Build belegt keine Veröffentlichung und keine zuverlässige
 fachliche Bewertung durch das tatsächlich eingesetzte Modell.
 
@@ -138,6 +138,44 @@ Alle aufgeführten Aufgaben verwenden `feedbackCriteria` und `maxFeedbackHints: 
 Auf Entscheidung der Lehrkraft haben `b`, `c`, `2b`, `1a`, `1b`, `1c` und `1f` nach ihrer Umstellung je fünf fachliche Punkte; der bisherige Stil-/Beobachtungs-Metapunkt entfällt. Übrige Punktgrenzen bleiben erhalten.
 
 ## Offener Bestand und Wiederholungsprüfung
+
+Gezielte Korrektur vom 08.11.2026 für Inf10 Programmierung 1a:
+Die fünf Punkte gelten jetzt für (1) Erzeugung der Kiste/des Blocks erkennen,
+(2) Erzeugung des Balls erkennen, (3) „Objekt der Klasse Kiste“,
+(4) „Objekt der Klasse Ball“ und (5) x-Startposition 100.
+Die Zuordnung zu den Objektvariablen und die gesonderte Beschreibung der
+Konstruktorübergabe sind keine zusätzlichen Pflichtangaben mehr. Der Auftrag
+nennt Hauptprogramm.java sowie die Fachsprache und Startposition ausdrücklich.
+Das Programm bleibt unverändert: Kiste ist der Klassenname, block die Variable;
+100 bezeichnet startX und der Kreisradius ist 30.
+
+Eng begrenzte, vollständig erkannte Satzformen werden vor einem Modellaufruf
+mit Originalbelegen über denselben Kriterienvertrag ausgewertet. So erhält
+„ein block und ein ball werden erstellt“ zuverlässig 2/5 und einen konkreten
+Fachsprachenhinweis; die vollständige korrekte Beschreibung erhält 5/5 auch
+bei wiederholter Abgabe. Negationen, widersprüchliche Zusätze und freie
+Formulierungen werden nicht durch diese Erkennung bewertet. Bei ungültigem
+Modell-JSON oder ungültigen Belegen für freie 1a-Antworten erfolgt genau ein
+Reparaturversuch; bleibt er ungültig, gibt es weiterhin einen technischen
+Fehler ohne Punkte. Die Belegprüfung wird nicht gelockert.
+
+Die ursprüngliche fehlerhafte Live-Modellantwort ist lokal nicht verfügbar;
+ihre genaue Vertragsverletzung ist deshalb nicht nachgewiesen.
+`scaleway-functions/tests/inf10-programmierung-1a.test.js` prüft echte lokale
+Regelbewertungen, wiederholte Abgaben und simulierte Modellfehler getrennt.
+Die Rubrikversion für 1a lautet `20261108-criteria-v2`; die übrigen Teilaufgaben
+bleiben unverändert. Die Seite nutzt die vorhandene Eingabespeicherung und
+enthält den vorgeschriebenen Abschlusscheck mit der zentralen Quizkomponente.
+Website und Function-Paket müssen noch veröffentlicht und freie Antworten
+mit dem tatsächlich eingesetzten Modell überprüft werden.
+
+Lokale Prüfung am 08.11.: Alle acht gezielten 1a-Tests bestehen, einschließlich
+des echten Seitencodes mit DOM-Testobjekten über den lokalen Serverweg.
+Die Gesamtsuite besteht mit 156/157 Tests; der DISTINCT-Konfigurationstest
+in `inf9-db2-beschreibe.test.js` erwartet schon im unveränderten HEAD einen
+nicht vorhandenen Clienteintrag und wurde nicht verändert. Die interaktive
+Browserprüfung liegt als `tests/inf10-programmierung-1a-browser.check.js`
+bereit; Edge stürzt hier bereits beim Start ab, daher bleibt sie offen.
 
 Online-Nachprüfung vom 30.10.2026 für Inf10 DB Aufgabe 9: Der aktive Server
 liefert für eine synthetische vollständige P2-Antwort 5/5 Punkte. Die

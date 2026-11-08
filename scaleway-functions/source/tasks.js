@@ -134,21 +134,22 @@ const TASKS = {
     grade:
       10,
     maxPoints:
-      6,
+      5,
     instruction:
-      'Bewerte, ob die Schuelerantwort die Bedeutung der beiden Programmzeilen im Hauptprogramm erklaert.',
+      'Beschreibe die Bedeutung der beiden Programmzeilen in Hauptprogramm.java. Verwende für beide Erzeugungen die Formulierung „ein Objekt der Klasse …“ und beschreibe die Startposition des Balls.',
     program:
       [
         'Kiste block = new Kiste();',
-        'Ball ball1 = new Ball(100);'
+        'Ball ball1 = new Ball(100);',
+        '// Ball(float startX) erzeugt intern new Circle(startX, 50, 30).',
+        '// 100 ist die x-Startposition, der Radius ist 30.'
       ].join('\n'),
     expectedAspects: [
-      'Kiste block = new Kiste(); erzeugt ein neues Objekt der Klasse Kiste.',
-      'Das neu erzeugte Kiste-Objekt wird in der Objektvariablen block gespeichert.',
-      'Ball ball1 = new Ball(100); erzeugt ein neues Objekt der Klasse Ball.',
-      'Das neu erzeugte Ball-Objekt wird in der Objektvariablen ball1 gespeichert.',
-      'Die 100 wird beim Erzeugen an den Konstruktor von Ball uebergeben.',
-      'Die Antwort erklaert die Programmzeilen in eigenen Worten und unterscheidet Klasse, Objekt und Objektvariable nachvollziehbar.'
+      'Die erste Zeile erzeugt einen Block bzw. eine Kiste; diese Alltagssprache genügt für diesen Punkt unabhängig von der Fachsprache.',
+      'Die zweite Zeile erzeugt einen Ball; diese Alltagssprache genügt für diesen Punkt unabhängig von der Fachsprache.',
+      'Die erste Erzeugung wird als „ein Objekt der Klasse Kiste“ beschrieben; Block ist kein Klassenname im Programm.',
+      'Die zweite Erzeugung wird als „ein Objekt der Klasse Ball“ beschrieben.',
+      'Der Ball hat die x-Startposition 100; 100 ist weder Radius noch Durchmesser.'
     ]
   },
 
@@ -3167,11 +3168,11 @@ const CRITERION_HINTS = {
     'Erkläre die Wirkung des `belle`-Aufrufs beim richtigen Hund.'
   ],
   '1a': [
-    'Prüfe, welches Objekt `new Kiste()` erzeugt.',
-    'Erkläre die Rolle der Variablen `block`.',
-    'Prüfe, welches Objekt `new Ball(100)` erzeugt.',
-    'Erkläre die Rolle der Variablen `ball1`.',
-    'Erkläre, wohin die Zahl beim Konstruktoraufruf übergeben wird.'
+    'Beschreibe, was die erste Zeile in Hauptprogramm.java erzeugt.',
+    'Beschreibe, was die zweite Zeile in Hauptprogramm.java erzeugt.',
+    'Verwende für den Block die Formulierung „ein Objekt der Klasse …“ mit dem Klassennamen aus der ersten Programmzeile.',
+    'Verwende für den Ball die Formulierung „ein Objekt der Klasse …“ mit dem Klassennamen aus der zweiten Programmzeile.',
+    'Beschreibe anhand von startX in Ball.java, welche Startposition die 100 festlegt.'
   ],
   '1b': [
     'Verfolge die 100 vom Aufruf zum Ball-Konstruktor.',
@@ -3477,3 +3478,18 @@ for (const [id, hints] of Object.entries(CRITERION_HINTS)) {
     task.criteriaFairnessRules = previousRubric;
   }
 }
+
+// Aufgabe 1a: Erkennen einer Erzeugung und die ausdrücklich verlangte
+// Fachsprache getrennt bewerten; keine versteckten Variablen-/Konstruktorpunkte.
+TASKS['1a'].criteriaFairnessRules = [
+  '„ein Block und ein Ball werden erstellt“ erfüllt genau die ersten beiden Kriterien (2/5), auch ohne die Wörter Objekt oder Klasse.',
+  'Die ausdrücklich geforderte Formulierung „Objekt der Klasse …“ wird nur in Kriterium 3 und 4 bewertet; Groß-/Kleinschreibung und verständliche Schreibfehler sind unerheblich.',
+  '„Ein Objekt der Klasse Kiste und ein Objekt der Klasse Ball werden erstellt. Der Ball hat die x-Startposition 100“ erfüllt alle fünf Kriterien.',
+  'Verlange weder die Variablennamen block/ball1 noch eine gesonderte Erklärung von Referenzen oder Konstruktorübergabe.',
+  '„Klasse Block“ ist eine falsche Klassenzuordnung; die erkannte Erzeugung zählt trotzdem. Radius 100 ist fachlich falsch und erfüllt nur das fünfte Kriterium nicht.',
+  'Zitiere die Schülerantwort unverändert, einschließlich Groß-/Kleinschreibung; ersetze in Belegen niemals Block durch Kiste oder Radius durch Startposition.'
+];
+const task1aLabels = ['Block erzeugen', 'Ball erzeugen', 'Fachsprache zur Kiste', 'Fachsprache zum Ball', 'Startposition des Balls'];
+TASKS['1a'].feedbackCriteria.forEach((criterion, index) => { criterion.label = task1aLabels[index]; });
+TASKS['1a'].feedbackCriteria[2].issues.wrong_relation = 'Verwende Kiste als Klassennamen in der Formulierung „ein Objekt der Klasse …“.';
+TASKS['1a'].feedbackCriteria[4].issues.wrong_relation = 'Die 100 legt die x-Startposition fest: Verfolge dazu startX in Ball.java.';
