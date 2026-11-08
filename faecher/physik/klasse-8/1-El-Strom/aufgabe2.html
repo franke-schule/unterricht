@@ -6,8 +6,9 @@
   <title>Das Förderbandmodell in 2D | Physik 8</title>
   <link rel="stylesheet" href="../../../../styles.css?v=20261108">
   <link rel="stylesheet" href="foerderbandmodell.css?v=20261108">
-  <link rel="stylesheet" href="foerderbandmodell-2d.css?v=20261108">
-  <script type="module" src="foerderbandmodell-2d.mjs?v=20261108-parallel-rechts"></script>
+  <link rel="stylesheet" href="foerderbandmodell-2d.css?v=20261108-merksaetze">
+  <script src="../../../../faecher/informatik/quiz-fragen-pruefen.js"></script>
+  <script type="module" src="foerderbandmodell-2d.mjs?v=20261108-merksaetze"></script>
 </head>
 <body class="foerderband-page foerderband-2d-page">
   <div class="site-backdrop" aria-hidden="true"></div>
@@ -21,8 +22,13 @@
       <h1>Das Förderbandmodell in 2D</h1>
       <p class="foerderband-task-number">Aufgabe 2</p>
       <p class="foerderband-subtitle">Simulation · Physik 8</p>
-      <p>Wähle eine Schaltung und verändere Spannung und Stromstärke. <strong>Beobachte</strong> die Förderhöhe, den Kugeldurchsatz und die Drehkreuze.</p>
     </header>
+    <div class="physics-step-tabs" role="tablist" aria-label="Arbeitsschritte des Lernmoduls">
+      <button id="tab-simulation" type="button" role="tab" aria-controls="panel-simulation" aria-selected="true" data-physics-tab="simulation">1 · Simulation</button>
+      <button id="tab-merksaetze" type="button" role="tab" aria-controls="panel-merksaetze" aria-selected="false" data-physics-tab="merksaetze">2 · Merksätze und Quiz</button>
+    </div>
+    <section id="panel-simulation" class="physics-step-panel" role="tabpanel" aria-labelledby="tab-simulation" data-physics-panel="simulation">
+    <p class="foerderband-instruction">Wähle eine Schaltung und verändere Spannung und Stromstärke. <strong>Beobachte</strong> die Förderhöhe, den Kugeldurchsatz und die Drehkreuze.</p>
     <section class="foerderband-card" aria-label="2D-Simulation des Förderbandmodells">
       <div class="foerderband-controls">
         <div class="foerderband-control foerderband-mode-control">
@@ -44,8 +50,16 @@
         <div class="foerderband-actions"><button id="animation-toggle" type="button">Animation starten</button></div>
       </div>
       <p id="animation-status" class="foerderband-status" aria-live="polite">Animation pausiert</p>
-      <div class="foerderband-2d-viewport">
-        <svg id="simulation-svg" viewBox="0 0 1100 620" role="img" aria-label="Einfacher Stromkreis: Eine geschlossene Kugelkette läuft über ein Förderband und ein Drehkreuz. Die Förderhöhe entspricht 6 Volt, der Gesamtstrom 1,0 Ampere."></svg>
+      <div class="foerderband-model-and-circuit">
+        <div class="foerderband-2d-viewport">
+          <svg id="simulation-svg" viewBox="0 0 1100 620" role="img" aria-label="Einfacher Stromkreis: Eine geschlossene Kugelkette läuft über ein Förderband und ein Drehkreuz. Die Förderhöhe entspricht 6 Volt, der Gesamtstrom 1,0 Ampere."></svg>
+        </div>
+        <figure class="foerderband-circuit" aria-labelledby="circuit-title">
+          <figcaption id="circuit-title">Schaltplan</figcaption>
+          <p id="circuit-name"></p>
+          <svg id="circuit-svg" viewBox="0 0 320 260" role="img" aria-label="Schaltplan des gewählten Stromkreises"></svg>
+          <p id="circuit-legend" class="foerderband-circuit-legend"></p>
+        </figure>
       </div>
       <div id="readouts" class="foerderband-readouts" aria-live="polite"></div>
       <button id="equations-toggle" class="foerderband-equations-toggle" type="button" aria-expanded="false" aria-controls="equations">Gleichungen anzeigen</button>
@@ -55,6 +69,58 @@
       <p>Kugeln: Elektronen im geschlossenen Kreislauf. Förderband: Batterie, die den Kugeln Energie zuführt. Höhenunterschied: Spannung U. Kugeldurchsatz durch einen markierten Querschnitt: Stromstärke I. Drehkreuz: Glühlampe; hier wird Energie in Licht und Wärme umgewandelt.</p>
       <p>Im Modell lassen sich Spannung und Stromstärke getrennt einstellen. Bei einer echten Glühlampe hängen beide Größen zusammen.</p>
       <p>Die Kugelbewegung zeigt Elektronen; die technische Stromrichtung ist entgegengesetzt.</p>
+    </section>
+    </section>
+    <section id="panel-merksaetze" class="physics-step-panel" role="tabpanel" aria-labelledby="tab-merksaetze" data-physics-panel="merksaetze" hidden>
+      <section class="foerderband-card merksaetze-card">
+        <h2>Merksätze und Quiz</h2>
+        <p>Ziehe die Wortkarten in die passenden Lücken und bilde die Merksätze zu Reihen- und Parallelschaltung. Prüfe danach die beiden Quizfragen.</p>
+        <p>Ohne Ziehen: Tippe zuerst eine Wortkarte und dann eine Lücke an. Eine belegte Lücke kannst du zurück in den Wortspeicher legen.</p>
+        <article class="merksatz-task" aria-labelledby="series-title">
+          <h3 id="series-title">1 · Reihenschaltung</h3>
+          <p>Ergänze den Merksatz zur Reihenschaltung mit den Wortkarten.</p>
+          <div id="series-cloze" class="physics-cloze" aria-label="Lückentext zur Reihenschaltung"></div>
+          <div class="cloze-actions"><button id="check-series" class="physics-primary-button" type="button">Merksatz 1 prüfen</button></div>
+          <div id="series-feedback" class="physics-feedback" role="status" aria-live="polite" hidden></div>
+          <div class="physics-help-stack">
+            <details><summary>Hilfe 1</summary><p>Betrachte im Schaltplan die beiden Glühlampen hintereinander und vergleiche die angezeigten Messwerte.</p></details>
+            <details><summary>Hilfe 2</summary><p>Prüfe, ob der Kugeldurchsatz vor und nach jeder Lampe gleich ist. Vergleiche dann die beiden Teilspannungen mit der Batteriespannung.</p></details>
+            <details><summary>Hilfe 3</summary><p>Die Stromstärke I ist an jeder Stelle gleich groß. Für die Spannung fehlt noch die Beziehung zwischen den Teilspannungen und der Batteriespannung.</p></details>
+          </div>
+        </article>
+        <article class="merksatz-task" aria-labelledby="parallel-title">
+          <h3 id="parallel-title">2 · Parallelschaltung</h3>
+          <p>Ergänze den Merksatz zur Parallelschaltung mit den Wortkarten.</p>
+          <div id="parallel-cloze" class="physics-cloze" aria-label="Lückentext zur Parallelschaltung"></div>
+          <div class="cloze-actions"><button id="check-parallel" class="physics-primary-button" type="button">Merksatz 2 prüfen</button></div>
+          <div id="parallel-feedback" class="physics-feedback" role="status" aria-live="polite" hidden></div>
+          <div class="physics-help-stack">
+            <details><summary>Hilfe 1</summary><p>Betrachte im Schaltplan den Hauptstromkreis und die beiden Zweige getrennt.</p></details>
+            <details><summary>Hilfe 2</summary><p>Vergleiche die Stromstärke vor der Verzweigung mit den Stromstärken in den Zweigen. Miss die Spannung jeweils zwischen den Endpunkten eines Zweigs.</p></details>
+            <details><summary>Hilfe 3</summary><p>Die Teilstromstärken der Zweige ergeben zusammen die Gesamtstromstärke. Überlege selbst, wie die Spannungen an den Zweigenden zueinander passen.</p></details>
+          </div>
+        </article>
+      </section>
+      <section id="final-quiz" class="foerderband-card final-quiz" aria-labelledby="quiz-title">
+        <h2 id="quiz-title">Abschlussquiz</h2>
+        <p>Kreuze bei jeder Frage alle richtigen Aussagen an.</p>
+        <form id="quiz-form" novalidate>
+          <fieldset><legend>Frage 1: Welche Aussagen gelten für eine Reihenschaltung?</legend><div class="choice-list">
+            <label class="choice-option"><input type="checkbox" name="question-1" value="a"><span>A. Die Stromstärke I ist an jeder Stelle gleich groß.</span></label>
+            <label class="choice-option"><input type="checkbox" name="question-1" value="b"><span>B. Die Stromstärke teilt sich auf zwei Zweige auf.</span></label>
+            <label class="choice-option"><input type="checkbox" name="question-1" value="c"><span>C. Die Summe der Teilspannungen ergibt die Batteriespannung.</span></label>
+            <label class="choice-option"><input type="checkbox" name="question-1" value="d"><span>D. Die gemessene Spannung ist vom Messort unabhängig.</span></label>
+          </div><p id="question-1-feedback" class="feedback" aria-live="polite" hidden></p></fieldset>
+          <fieldset><legend>Frage 2: Welche Aussagen gelten für eine Parallelschaltung?</legend><div class="choice-list">
+            <label class="choice-option"><input type="checkbox" name="question-2" value="a"><span>A. Die Summe der Teilstromstärken ist gleich der Gesamtstromstärke im Hauptstromkreis.</span></label>
+            <label class="choice-option"><input type="checkbox" name="question-2" value="b"><span>B. Die Gesamtstromstärke ist in jedem Zweig gleich groß.</span></label>
+            <label class="choice-option"><input type="checkbox" name="question-2" value="c"><span>C. Die Spannungen zwischen den Endpunkten der Zweige sind gleich groß.</span></label>
+            <label class="choice-option"><input type="checkbox" name="question-2" value="d"><span>D. Die Summe der Zweigspannungen ergibt die Batteriespannung.</span></label>
+          </div><p id="question-2-feedback" class="feedback" aria-live="polite" hidden></p></fieldset>
+          <div class="action-row"><button id="quiz-submit" class="physics-primary-button" type="button">Quiz auswerten</button></div>
+          <p id="quiz-feedback" class="feedback" aria-live="polite"></p>
+        </form>
+      </section>
     </section>
   </main>
 </body>

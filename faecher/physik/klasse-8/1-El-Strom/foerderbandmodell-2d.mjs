@@ -1,5 +1,7 @@
 import { deriveModel, chainSpeed, fmtVoltage, fmtCurrent, readoutHtml, equationsHtml } from "./foerderbandmodell-core.mjs";
 import { createPhysicsTaskProgress } from "../../klasse-11/1-Kreisbewegungen/components/physics-task-progress.mjs";
+import { setupPhysicsStepTabs } from "../../klasse-11/1-Kreisbewegungen/components/physics-step-tabs.mjs";
+import { enableTokenDrag, wasDragged } from "../../klasse-11/1-Kreisbewegungen/components/token-drag.mjs";
 
 const svgNS = "http://www.w3.org/2000/svg";
 const modes = { simple: "Einfacher Stromkreis", series: "Reihenschaltung", parallel: "Parallelschaltung" };
@@ -11,6 +13,28 @@ const support = (x, top, low) => `<path class="fb-support" d="M${x} ${top+8}V${l
 const bracket = (x, top, bottom, caption, side = "right") => `<g><path class="fb-height" d="M${x-12} ${top}h12v${bottom-top}h-12"/>${label(side==="left"?x-11:x+13,(top+bottom)/2+5,caption,"fb-voltage-label",side==="left"?"end":"start")}</g>`;
 const section = (x, y, caption, labelX = x, labelY = y-22) => `<g><path class="fb-section" d="M${x} ${y-17}v34M${x-13} ${y-17}h26M${x-13} ${y+17}h26"/>${label(labelX,labelY,caption,"fb-small")}</g>`;
 const verticalSection = (x, y, caption, labelX, labelY) => `<g><path class="fb-section" d="M${x-12} ${y}h24M${x-12} ${y-5}v10M${x+12} ${y-5}v10"/>${label(labelX,labelY,caption,"fb-small")}</g>`;
+
+function updateCircuit(model) {
+  const svg=$("circuit-svg");
+  const lamp=(x,y,index,labelX=x,labelY=y+43)=>`<g class="circuit-consumer" data-lamp="${index}" style="color:${index===1?"#1a658e":"#a94634"}"><circle class="circuit-lamp${index===2?" circuit-lamp-2":""}" cx="${x}" cy="${y}" r="21"/><path class="circuit-cross" d="M${x-14} ${y-14}l28 28M${x-14} ${y+14}l28-28"/><text x="${labelX}" y="${labelY}" text-anchor="middle">${subSvg("L",index)}</text></g>`;
+  const source=`<path class="circuit-wire" d="M55 55V115M55 133V205M35 115H75M43 133H67"/><text x="24" y="112" text-anchor="middle">+</text><text x="24" y="144" text-anchor="middle">−</text><text x="55" y="240" text-anchor="middle">Batterie</text>`;
+  let wires,lamps,junctions="";
+  if(model.mode==="series") {
+    wires="M55 55H114M156 55H194M236 55H260V205H55";
+    lamps=lamp(135,55,1)+lamp(215,55,2);
+  } else if(model.mode==="parallel") {
+    wires="M55 55H260V109M260 151V205H55M165 55V109M165 151V205";
+    lamps=lamp(165,130,1,127,136)+lamp(260,130,2,222,136);
+    junctions='<circle cx="165" cy="55" r="5" fill="#17324d"/><circle cx="165" cy="205" r="5" fill="#17324d"/>';
+  } else {
+    wires="M55 55H260V109M260 151V205H55";
+    lamps=lamp(260,130,1,222,136);
+  }
+  svg.innerHTML=`${source}<path class="circuit-wire" d="${wires}"/>${junctions}${lamps}`;
+  svg.setAttribute("aria-label",`${modes[model.mode]}: Batterie und ${model.mode==="simple"?"eine Glühlampe in einem geschlossenen Stromkreis":model.mode==="series"?"zwei Glühlampen hintereinander in einem Stromkreis":"zwei Glühlampen in getrennten parallelen Zweigen"}.`);
+  $("circuit-name").textContent=modes[model.mode];
+  $("circuit-legend").innerHTML=model.mode==="simple"?"L<sub>1</sub> entspricht dem Drehkreuz.":"L<sub>1</sub> und L<sub>2</sub> entsprechen den beiden Drehkreuzen.";
+}
 
 function gate(x, y, index, radius) {
   const arm=radius*.7, diagonal=radius*.5, ray=radius+11;
@@ -104,7 +128,7 @@ function init() {
     const voltage=Number(ui.voltage.value),current=Number(ui.current.value);
     if(!Number.isInteger(voltage)||voltage<2||voltage>12)ui.voltage.value="6";
     if(!Number.isFinite(current)||current<.2||current>2||Math.abs(current*10-Math.round(current*10))>1e-8)ui.current.value="1";
-    model=deriveModel(ui.mode.value,Number(ui.voltage.value),Number(ui.current.value));updateText();
+    model=deriveModel(ui.mode.value,Number(ui.voltage.value),Number(ui.current.value));updateText();updateCircuit(model);
     const g=geometry(model,compact),markup=g.paths.map((path,index)=>`<path class="fb-track-shadow" d="${path}"/><path class="fb-track fb-chain-path" data-chain="${index}" d="${path}"/><path class="fb-chain-link${index===1?" lane-2":""}" d="${path}"/>`).join("");
     ui.svg.setAttribute("viewBox",`0 ${g.viewY} ${g.width} ${g.height}`);
     ui.svg.setAttribute("aria-label",g.description);
@@ -145,8 +169,26 @@ function init() {
   ui.play.addEventListener("click",()=>setRunning(!playing));
   ui.equationsToggle.addEventListener("click",()=>{const show=ui.equations.hidden;ui.equations.hidden=!show;ui.equationsToggle.textContent=show?"Gleichungen ausblenden":"Gleichungen anzeigen";ui.equationsToggle.setAttribute("aria-expanded",String(show));progress.save();});
   progress.registerPart("equations",()=>!ui.equations.hidden,value=>{if(typeof value!=="boolean")return;ui.equations.hidden=!value;ui.equationsToggle.textContent=value?"Gleichungen ausblenden":"Gleichungen anzeigen";ui.equationsToggle.setAttribute("aria-expanded",String(value));});
-  progress.restore();rebuild();setRunning(false);
-  window.addEventListener("resize",()=>{const next=window.matchMedia("(max-width: 650px)").matches;if(next!==compact){compact=next;rebuild();}});
+  rebuild();
+  setupPhysicsStepTabs();
+  const tabSimulation=$("tab-simulation"), tabMerksaetze=$("tab-merksaetze");
+  const syncSimulationViewport=()=>{const next=window.matchMedia("(max-width: 650px)").matches;if(next!==compact){compact=next;rebuild();}};
+  tabMerksaetze.addEventListener("click",()=>setRunning(false));
+  tabSimulation.addEventListener("click",syncSimulationViewport);
+  document.querySelector("[role=tablist]").addEventListener("keydown",event=>{
+    if(!["ArrowRight","ArrowLeft","Home","End"].includes(event.key))return;
+    queueMicrotask(()=>{
+      if(tabMerksaetze.getAttribute("aria-selected")==="true")setRunning(false);
+      else syncSimulationViewport();
+      progress.save();
+    });
+  });
+  setupMerksatz({progress,targetId:"series-cloze", feedbackId:"series-feedback", checkId:"check-series", terms:["an jeder Stelle","Ort der Spannungsmessung","Summe aller Teilspannungen"], expected:["an jeder Stelle","Ort der Spannungsmessung","Summe aller Teilspannungen"], parts:["In einer Reihenschaltung gilt: Die Stromstärke I ist "," gleich groß. Die gemessene Spannung ist vom "," abhängig. Die "," ergibt die Batteriespannung."], success:"Richtig. Der Merksatz zur Reihenschaltung ist vollständig.", partial:"Teilweise korrekt. Mindestens eine Wortkarte passt schon. Vergleiche die übrigen Lücken mit den Messwerten der Reihenschaltung.", wrong:"Noch nicht korrekt. Stelle die Reihenschaltung in der Simulation ein und prüfe Stromstärke und Teilspannungen erneut."});
+  setupMerksatz({progress,targetId:"parallel-cloze", feedbackId:"parallel-feedback", checkId:"check-parallel", terms:["gleich groß","Ort der Stromstärkemessung","Summe der Teilstromstärken"], expected:["Ort der Stromstärkemessung","Summe der Teilstromstärken","gleich groß"], parts:["In einer Parallelschaltung gilt: Die Stromstärke ist abhängig vom ",". Die "," in den einzelnen Zweigen ist gleich der Gesamtstromstärke im Hauptstromkreis. Die Spannungen zwischen den Endpunkten der Zweige sind ","."], success:"Richtig. Der Merksatz zur Parallelschaltung ist vollständig.", partial:"Teilweise korrekt. Mindestens eine Wortkarte passt schon. Vergleiche die übrigen Lücken mit Hauptstromkreis und Zweigen.", wrong:"Noch nicht korrekt. Stelle die Parallelschaltung in der Simulation ein und vergleiche Stromstärken und Spannungen erneut."});
+  setupQuiz(progress);
+  progress.restore();
+  setRunning(false);
+  window.addEventListener("resize",()=>{const next=window.matchMedia("(max-width: 650px)").matches;if(next!==compact&& !$("panel-simulation").hidden){compact=next;rebuild();}});
   const frame=time=>{
     const dt=lastTime?Math.min((time-lastTime)/1000,.05):0;lastTime=time;
     if(playing&&visual){
@@ -158,6 +200,41 @@ function init() {
     requestAnimationFrame(frame);
   };
   requestAnimationFrame(frame);
+}
+
+function setupMerksatz({progress,targetId,feedbackId,checkId,terms,expected,parts,success,partial,wrong}) {
+  const target=$(targetId), bank=document.createElement("div"), sentence=document.createElement("p"), feedback=$(feedbackId);
+  const choices=new Array(terms.length).fill(""); let picked=null;
+  bank.className="cloze-term-bank"; bank.setAttribute("aria-label","Wortspeicher");
+  sentence.className="cloze-sentence";
+  const render=()=>{
+    bank.replaceChildren(...terms.filter(term=>!choices.includes(term)).map(term=>{
+      const card=document.createElement("button");card.type="button";card.className="cloze-token";card.textContent=term;
+      card.setAttribute("aria-pressed",String(picked?.value===term&&picked.from===-1));
+      enableTokenDrag(card,{dropSelector:`#${targetId} .cloze-gap`,bankSelector:`#${targetId} .cloze-term-bank`,getLabel:()=>term,onDrop:(gap)=>{if(gap)place(term,-1,Number(gap.dataset.index));}});
+      card.addEventListener("click",()=>{if(wasDragged(card))return;picked=picked?.value===term?null:{value:term,from:-1};render();if(picked)sentence.querySelector(".cloze-gap:not(.is-filled),.cloze-gap")?.focus();progress.save();});return card;
+    }));
+    sentence.replaceChildren();
+    parts.forEach((part,index)=>{sentence.append(document.createTextNode(part));if(index>=terms.length)return;const value=choices[index],gap=document.createElement("button");gap.type="button";gap.className="cloze-gap";gap.dataset.index=String(index);gap.textContent=value||" ";gap.classList.toggle("is-filled",Boolean(value));gap.classList.toggle("is-attached",/^[.,:;!?]/.test(parts[index+1]||""));gap.setAttribute("aria-label",`Lücke ${index+1}: ${value||"leer"}`);gap.setAttribute("aria-pressed",String(picked?.from===index));
+      enableTokenDrag(gap,{dropSelector:`#${targetId} .cloze-gap`,bankSelector:`#${targetId} .cloze-term-bank`,getLabel:()=>choices[index],onDrop:(drop,onBank)=>{if(drop&&Number(drop.dataset.index)!==index)place(value,index,Number(drop.dataset.index));else if(onBank)place(value,index,-1);}});
+      gap.addEventListener("click",()=>{if(wasDragged(gap))return;if(picked&&picked.from!==index){place(picked.value,picked.from,index);sentence.querySelector(`[data-index="${index}"]`)?.focus();}else if(picked&&picked.from===index)place(value,index,-1);else if(value){picked={value,from:index};render();sentence.querySelector(`[data-index="${index}"]`)?.focus();}});sentence.append(gap);});
+  };
+  function place(value,from,index){if(from>=0)choices[from]="";if(index>=0){const old=choices[index];choices[index]=value;if(from>=0&&old)choices[from]=old;}picked=null;feedback.hidden=true;feedback.textContent="";render();progress.save();}
+  target.append(bank,sentence);render();
+  const check=()=>{const filled=choices.filter(Boolean).length;if(!filled){feedback.textContent="Setze zuerst Wortkarten in die Lücken.";feedback.className="physics-feedback error";feedback.hidden=false;return;}const count=choices.filter((value,index)=>value===expected[index]).length;if(count===terms.length){feedback.textContent=success;feedback.className="physics-feedback success";}else if(count){feedback.textContent=partial;feedback.className="physics-feedback partial";}else{feedback.textContent=wrong;feedback.className="physics-feedback error";}feedback.hidden=false;};
+  $(checkId).addEventListener("click",check);
+  progress.registerPart(targetId,()=>choices,values=>{if(!Array.isArray(values)||values.length!==choices.length)return;if(values.some(value=>typeof value!=="string"||(value&&!terms.includes(value)))||new Set(values.filter(Boolean)).size!==values.filter(Boolean).length)return;values.forEach((value,index)=>choices[index]=value);render();});
+}
+
+function setupQuiz(progress){
+  const form=$("quiz-form"), global=$("quiz-feedback");let checked=[false,false];
+  const checks=window.addQuizQuestionChecks({questions:[
+    {number:1,fieldset:form.querySelectorAll("fieldset")[0],solution:["a","c"],feedback:$("question-1-feedback"),success:"Korrekt. In der Reihenschaltung bleibt die Stromstärke gleich; die Teilspannungen ergeben zusammen die Batteriespannung.",hint:"Vergleiche Stromstärke und Teilspannungen im Reihenschaltplan."},
+    {number:2,fieldset:form.querySelectorAll("fieldset")[1],solution:["a","c"],feedback:$("question-2-feedback"),success:"Korrekt. In der Parallelschaltung addieren sich die Teilstromstärken; die Zweigspannungen sind gleich groß.",hint:"Vergleiche Hauptstrom und Zweige im Parallelschaltplan."}
+  ],buttonClass:"physics-primary-button",feedbackClass:"feedback",onCheck:(question,result)=>{const index=question.number-1;checked[index]=result==="correct";if(result==="empty")question.feedback.textContent+=` ${question.hint}`;global.textContent="";global.className="feedback";if(checked.every(Boolean))allCorrect();},onAllCorrect:allCorrect});
+  function allCorrect(){global.textContent="Richtig. Beide Quizfragen sind vollständig gelöst.";global.className="feedback success";}
+  form.addEventListener("change",()=>{checked=[false,false];global.textContent="";global.className="feedback";});
+  $("quiz-submit").addEventListener("click",()=>{const count=checks.checkAll();if(count===2)allCorrect();else if(count===1){global.textContent="Teilweise korrekt. Eine Quizfrage stimmt bereits; prüfe die andere noch einmal.";global.className="feedback partial";}else{global.textContent="Noch nicht korrekt. Prüfe beide Quizfragen erneut.";global.className="feedback error";}});
 }
 
 if(typeof document!=="undefined")init();
