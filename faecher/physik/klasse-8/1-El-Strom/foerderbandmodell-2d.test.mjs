@@ -36,6 +36,24 @@ test("invalid state is rejected by the shared core",()=>{
   for(const args of [["other",6,1],["simple",1,1],["series",13,1],["parallel",6,.25],["parallel",6,2.1]])assert.throws(()=>deriveModel(...args),RangeError);
 });
 
+test("parallel chains run right together before branching in the right-hand area",()=>{
+  for(const compact of [false,true])for(let voltage=2;voltage<=12;voltage++){
+    const g=geometry(deriveModel("parallel",voltage,1),compact);
+    assert.ok(g.beltShape.geometry.a.x<g.width*.25,"conveyor starts on the left");
+    const leads=g.paths.map(d=>{
+      const match=d.match(/^M([\d.]+) ([\d.]+)L([\d.]+) (-?[\d.]+)H([\d.]+)/);
+      assert.ok(match,"closed chain starts with conveyor and upper lead");
+      const [,bottomX,bottomY,topX,topY,turnX]=match.map(Number);
+      assert.ok(turnX>topX,"both upper leads run to the right");
+      assert.equal(bottomY,g.low);
+      assert.equal(topY,g.top);
+      return {bottomX,topX,turnX};
+    });
+    assert.ok(Math.min(...leads.map(l=>l.turnX))-Math.max(...leads.map(l=>l.topX))>g.width*.18,"long shared upper corridor");
+    assert.ok(g.gates.every(gate=>gate.x>g.width*.55),"both consumers are on the right");
+  }
+});
+
 test("consumer paths only descend and gates fit every voltage step",()=>{
   for(const compact of [false,true])for(let voltage=2;voltage<=12;voltage++)for(const mode of ["simple","series","parallel"]){
     const g=geometry(deriveModel(mode,voltage,1),compact);

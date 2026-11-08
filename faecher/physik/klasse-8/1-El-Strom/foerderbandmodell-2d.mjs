@@ -10,6 +10,7 @@ const plate = (x, y, width, content) => `<g><rect class="fb-label-plate" x="${x-
 const support = (x, top, low) => `<path class="fb-support" d="M${x} ${top+8}V${low-9}"/><path class="fb-level" d="M${x-25} ${top+8}H${x+25}"/>`;
 const bracket = (x, top, bottom, caption, side = "right") => `<g><path class="fb-height" d="M${x-12} ${top}h12v${bottom-top}h-12"/>${label(side==="left"?x-11:x+13,(top+bottom)/2+5,caption,"fb-voltage-label",side==="left"?"end":"start")}</g>`;
 const section = (x, y, caption, labelX = x, labelY = y-22) => `<g><path class="fb-section" d="M${x} ${y-17}v34M${x-13} ${y-17}h26M${x-13} ${y+17}h26"/>${label(labelX,labelY,caption,"fb-small")}</g>`;
+const verticalSection = (x, y, caption, labelX, labelY) => `<g><path class="fb-section" d="M${x-12} ${y}h24M${x-12} ${y-5}v10M${x+12} ${y-5}v10"/>${label(labelX,labelY,caption,"fb-small")}</g>`;
 
 function gate(x, y, index, radius) {
   const arm=radius*.7, diagonal=radius*.5, ray=radius+11;
@@ -38,10 +39,9 @@ export function geometry(model, compact) {
   const height=compact?Math.max(360,low-top+270):Math.max(250,low-top+190);
   const viewY=(low+top-height)/2;
   const parallel=model.mode==="parallel";
-  const a={x:parallel?(compact?285:500):(compact?105:185),y:low};
+  const a={x:compact?105:185,y:low};
   const b={x:a.x+(compact?65:105),y:top};
   const beltWidth=parallel?(compact?92:116):(compact?56:68);
-  const left=parallel?(compact?66:150):0;
   const right=compact?505:945;
   const end=compact?485:875;
   let paths=[], staticHtml="", gates=[], currents=[];
@@ -49,18 +49,24 @@ export function geometry(model, compact) {
   const ground=`<rect class="fb-ground" x="18" y="${low+42}" width="${width-36}" height="19" rx="8"/>`;
   if(parallel) {
     const lane=compact?24:32, lxA=a.x-lane,lxB=b.x-lane,rxA=a.x+lane,rxB=b.x+lane;
-    const lGateX=left+5,rGateX=right-5;
+    const inner=compact?350:650;
     const corner=Math.min(29,(low-top)*.33), gateRadius=Math.min(31,(low-top)*.43);
+    // Both closed chains use the same upper and lower corridor. They branch
+    // only at the inner consumer on the right; each still falls by the full U.
     paths=[
-      `M${lxA} ${low}L${lxB} ${top}H${left+corner}Q${left} ${top} ${left} ${top+corner}V${low-corner}Q${left} ${low} ${left+corner} ${low}H${lxA}Z`,
+      `M${lxA} ${low}L${lxB} ${top}H${inner-corner}Q${inner} ${top} ${inner} ${top+corner}V${low-corner}Q${inner} ${low} ${inner-corner} ${low}H${lxA}Z`,
       `M${rxA} ${low}L${rxB} ${top}H${right-corner}Q${right} ${top} ${right} ${top+corner}V${low-corner}Q${right} ${low} ${right-corner} ${low}H${rxA}Z`,
     ];
-    gates=[{x:lGateX,y:mid,radius:gateRadius,current:model.branchCurrents[0]},{x:rGateX,y:mid,radius:gateRadius,current:model.branchCurrents[1]}];
+    gates=[{x:inner,y:mid,radius:gateRadius,current:model.branchCurrents[0]},{x:right,y:mid,radius:gateRadius,current:model.branchCurrents[1]}];
     currents=model.chainCurrents;
-    staticHtml+=support(left+75,top,low)+support(right-75,top,low);
-    staticHtml+=bracket(left-35,top,low,subSvg("U",1),"left")+bracket(right+27,top,low,subSvg("U",2));
-    staticHtml+=section(left+105,top,subSvg("I",1),left+105,top-27)+section(right-105,top,subSvg("I",2),right-105,top-27);
-    staticHtml+=label(left+110,top-54,"Zweig 1")+label(right-110,top-54,"Zweig 2");
+    staticHtml+=support(inner-100,top,low)+support(right-75,top,low);
+    staticHtml+=bracket(inner+37,top,low,subSvg("U",1))+bracket(right+27,top,low,subSvg("U",2));
+    const markY=top+Math.min(12,(low-top)*.08);
+    const cornerT=Math.sqrt((markY-top)/corner);
+    const markOffset=corner*(1-cornerT)**2;
+    staticHtml+=verticalSection(inner-markOffset,markY,subSvg("I",1),inner-46,top-25)+verticalSection(right-markOffset,markY,subSvg("I",2),right-46,top-25);
+    staticHtml+=label(inner-42,top-54,"Zweig 1")+label(right-46,top-54,"Zweig 2");
+    staticHtml+=`<circle cx="${inner-corner}" cy="${top}" r="5" fill="#17324d"/><circle cx="${inner-corner}" cy="${low}" r="5" fill="#17324d"/>`;
     const sectionY=low-Math.min(42,(low-top)*.52),fraction=(low-sectionY)/(low-top),sectionX=a.x+(b.x-a.x)*fraction;
     staticHtml+=`<path class="fb-section" d="M${sectionX-beltWidth*.47} ${sectionY}H${sectionX+beltWidth*.47}M${sectionX-beltWidth*.47} ${sectionY-10}v20M${sectionX+beltWidth*.47} ${sectionY-10}v20"/>`;
     staticHtml+=label(a.x,low+88,"Gesamtstrom I","fb-small");
@@ -104,7 +110,7 @@ function init() {
     ui.svg.setAttribute("aria-label",g.description);
     ui.svg.innerHTML=`<defs><linearGradient id="belt-gradient" x1="0" x2="1" y1="0" y2="1"><stop stop-color="#466c7e"/><stop offset=".5" stop-color="#294757"/><stop offset="1" stop-color="#183849"/></linearGradient><radialGradient id="ball-gradient" cx=".32" cy=".25"><stop stop-color="#d7f5ff"/><stop offset=".38" stop-color="#49b5e8"/><stop offset="1" stop-color="#0d6da6"/></radialGradient><radialGradient id="ball-coral" cx=".32" cy=".25"><stop stop-color="#ffe5d7"/><stop offset=".38" stop-color="#ff9d79"/><stop offset="1" stop-color="#c64c38"/></radialGradient><filter id="ball-shadow" x="-60%" y="-60%" width="220%" height="220%"><feDropShadow dx="1" dy="2" stdDeviation="2" flood-color="#244456" flood-opacity=".3"/></filter></defs>
       <path d="M20 ${g.low+7}H${g.width-20}" stroke="#bdd1d7" stroke-width="2"/>${g.ground}${g.staticHtml}${g.beltShape.html}${markup}${g.gates.map((item,index)=>gate(item.x,item.y,index,item.radius)).join("")}
-      <g id="ball-layer"></g>${plate(g.beltShape.geometry.b.x,g.top-(compact?105:70),compact?210:250,"Förderband (Batterie)")}${label(compact?g.width-95:g.width-150,g.low+30,"untere Ebene","fb-small")}${label(compact?g.width-95:g.width-150,g.top-25,"obere Ebene","fb-small")}`;
+      <g id="ball-layer"></g>${plate(g.beltShape.geometry.b.x,g.top-(compact?105:70),compact?210:250,"Förderband (Batterie)")}${label(compact?g.width-95:g.width-150,g.low+30,"untere Ebene","fb-small")}${label(model.mode==="parallel"?g.width-25:compact?g.width-95:g.width-150,g.top-(model.mode==="parallel"&&compact?85:25),"obere Ebene","fb-small",model.mode==="parallel"?"end":"middle")}`;
     const paths=[...ui.svg.querySelectorAll(".fb-chain-path")];
     const ballLayer=ui.svg.querySelector("#ball-layer");
     const chains=paths.map((path,index)=>{
