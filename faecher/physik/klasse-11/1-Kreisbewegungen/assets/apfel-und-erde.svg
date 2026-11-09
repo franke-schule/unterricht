@@ -1,0 +1,47 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 280 220" width="280" height="220" role="img" aria-labelledby="title description">
+  <title id="title">Apfel und Erde</title>
+  <desc id="description">Ein roter Apfel nahe einer blau-grünen Erde, symbolisch und nicht maßstabsgetreu dargestellt.</desc>
+  <defs>
+    <radialGradient id="ocean" cx="32%" cy="25%" r="80%">
+      <stop stop-color="#69b7ed"/>
+      <stop offset=".55" stop-color="#3682c5"/>
+      <stop offset="1" stop-color="#173e7a"/>
+    </radialGradient>
+    <linearGradient id="land" x2=".7" y2="1">
+      <stop stop-color="#a1d4b1"/>
+      <stop offset="1" stop-color="#4c9d82"/>
+    </linearGradient>
+    <linearGradient id="apple" x2=".7" y2="1">
+      <stop stop-color="#f28165"/>
+      <stop offset=".55" stop-color="#de5647"/>
+      <stop offset="1" stop-color="#b9343b"/>
+    </linearGradient>
+    <clipPath id="earth-outline"><circle cx="180" cy="133" r="73"/></clipPath>
+  </defs>
+  <circle cx="178" cy="127" r="91" fill="#eff6ff"/>
+  <ellipse cx="182" cy="210" rx="54" ry="5" fill="#173e7a" opacity=".09"/>
+  <circle cx="180" cy="133" r="73" fill="url(#ocean)"/>
+  <g clip-path="url(#earth-outline)">
+    <g fill="none" stroke="#dbeafe" stroke-width="1" opacity=".24">
+      <ellipse cx="180" cy="133" rx="73" ry="27"/>
+      <ellipse cx="180" cy="133" rx="33" ry="73"/>
+      <path d="M110 108 Q180 89 250 108 M110 158 Q180 177 250 158"/>
+    </g>
+    <g fill="url(#land)" stroke="#3b8e79" stroke-width=".6" stroke-linejoin="round">
+      <path d="M111 89 126 76 143 77 153 85 151 96 164 102 158 115 146 115 141 128 131 126 128 116 115 110 109 99Z"/>
+      <path d="M142 129 155 128 164 140 162 153 153 169 149 184 141 177 137 160 132 147Z"/>
+      <path d="M181 73 195 65 214 72 225 83 244 89 254 102 240 112 224 107 214 118 201 111 191 116 180 103 187 92 176 85Z"/>
+      <path d="M189 118 207 119 219 134 213 154 202 170 192 159 188 143 182 132Z"/>
+      <path d="M224 170 237 165 251 175 247 187 231 189 220 181Z"/>
+      <path d="M151 66 162 60 170 66 166 79 155 82Z" fill="#d9eee4"/>
+    </g>
+    <path d="M132 87 Q153 68 177 68" fill="none" stroke="#fff" stroke-width="5" stroke-linecap="round" opacity=".24"/>
+  </g>
+  <circle cx="180" cy="133" r="73" fill="none" stroke="#2563a4" stroke-width="1.5"/>
+  <g transform="translate(14 -2)">
+    <path d="M89 43 Q87 30 94 23" fill="none" stroke="#79563d" stroke-width="4" stroke-linecap="round"/>
+    <path d="M94 33 Q100 17 115 23 Q110 37 94 33Z" fill="#559b73"/>
+    <path d="M88 42 C76 33 60 40 61 55 C61 69 69 88 80 87 C86 84 89 85 94 87 C106 89 115 70 115 55 C115 41 101 33 91 41Z" fill="url(#apple)"/>
+    <path d="M74 46 Q67 52 71 63" fill="none" stroke="#ffd9bf" stroke-width="4" stroke-linecap="round" opacity=".75"/>
+  </g>
+</svg>

@@ -41,6 +41,13 @@ test('M2-Vergleichsmessungen liefern 4F und ein Viertel F',()=>{
 });
 test('Zahlenschreibweisen, SI-Umrechnung und gültige Ziffern',()=>{
   assert.deepEqual(parseQuantity('6,67·10^-11'),{value:6.67e-11,digits:3,ambiguous:false});
+  const earthAcceleration = G * 0.150 / (6370e3) ** 2;
+  for (const input of ['2,5*10^-25', '2,5 * 10 ^ -25', '2,5·10^-25', '2,5×10^-25', '2,5e-25']) {
+    assert.equal(parseQuantity(input)?.digits, 2, input);
+    assert.equal(checkQuantity(input, 'm/s²', {target:earthAcceleration,digits:2,units:{'m/s²':1}}), 'correct', input);
+  }
+  assert.equal(checkQuantity('2,50*10^-25','m/s²',{target:earthAcceleration,digits:2,units:{'m/s²':1}}),'precision');
+  assert.equal(checkQuantity('2,5*10^25','m/s²',{target:earthAcceleration,digits:2,units:{'m/s²':1}}),'wrong');
   assert.equal(checkQuantity('1,5','N',{target:1.473951985,digits:2,units:{N:1,'µN':1e-6}}),'correct');
   assert.equal(checkQuantity('1500000','µN',{target:1.473951985,digits:2,units:{N:1,'µN':1e-6}}),'precision');
   assert.equal(checkQuantity('3,4·10^3','km',{target:3402264,digits:2,units:{km:1000,m:1}}),'correct');

@@ -29,6 +29,14 @@ export function setupPhysicsSemanticTask({
   fallbackMaxPoints = 0,
   evaluationFunction = evaluateSemanticAnswer,
   shortAnswerHint = "Formuliere eine etwas ausführlichere Beschreibung der beiden Vektoren.",
+  shortAnswerMessage = "Bitte formuliere eine etwas ausführlichere Beschreibung, damit sie fachlich bewertet werden kann.",
+  buttonText = "Antwort prüfen",
+  checkingText = "Antwort wird geprüft …",
+  retryText = "Antwort erneut prüfen",
+  technicalErrorMessage,
+  onInput,
+  onEvaluation,
+  onError,
 }) {
   const textarea = document.getElementById(answerId);
   const button = document.getElementById(buttonId);
@@ -53,7 +61,8 @@ export function setupPhysicsSemanticTask({
     feedback.className = "physics-semantic-feedback";
     feedback.dataset.status = "";
     button.disabled = false;
-    button.textContent = "Antwort prüfen";
+    button.textContent = buttonText;
+    onInput?.(textarea.value);
   });
 
   button.addEventListener("click", async () => {
@@ -75,13 +84,13 @@ export function setupPhysicsSemanticTask({
       feedback.hidden = false;
       feedback.className = "physics-semantic-feedback is-error";
       feedback.dataset.status = "noch nicht korrekt";
-      feedback.textContent = "Bitte formuliere eine etwas ausführlichere Beschreibung, damit sie fachlich bewertet werden kann.";
+      feedback.textContent = shortAnswerMessage;
       textarea.focus();
       return;
     }
 
     button.disabled = true;
-    button.textContent = "Antwort wird geprüft …";
+    button.textContent = checkingText;
     feedback.hidden = false;
     feedback.className = "physics-semantic-feedback";
     feedback.dataset.status = "";
@@ -95,6 +104,7 @@ export function setupPhysicsSemanticTask({
       });
       if (submittedVersion !== requestVersion || textarea.value.trim() !== answer) return;
       renderSemanticResult(feedback, result);
+      onEvaluation?.(result, textarea.value);
     } catch (error) {
       if (submittedVersion !== requestVersion || textarea.value.trim() !== answer) return;
       if (typeof feedbackBuilder === "function") {
@@ -105,19 +115,21 @@ export function setupPhysicsSemanticTask({
         const heading = document.createElement("h3");
         heading.textContent = "Automatische Prüfung nicht erreichbar";
         const message = document.createElement("p");
-        message.textContent = error.message || "Die Antwort konnte gerade nicht geprüft werden. Bitte versuche es erneut.";
+        message.textContent = technicalErrorMessage || error.message || "Die Antwort konnte gerade nicht geprüft werden. Bitte versuche es erneut.";
         feedback.append(heading, message);
         const comparison = feedbackBuilder({ status: "nicht geprüft", points: 0, maxPoints: fallbackMaxPoints, context: "server-error" });
         if (comparison) feedback.append(comparison);
+        onError?.(error, answer);
         return;
       }
       feedback.className = "physics-semantic-feedback is-error";
       feedback.dataset.status = "noch nicht korrekt";
-      feedback.textContent = error.message;
+      feedback.textContent = technicalErrorMessage || error.message;
+      onError?.(error, answer);
     } finally {
       if (submittedVersion === requestVersion) {
         button.disabled = false;
-        button.textContent = "Antwort erneut prüfen";
+        button.textContent = retryText;
       }
     }
   });

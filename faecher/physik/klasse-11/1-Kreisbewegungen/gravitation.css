@@ -2,6 +2,13 @@
 .gravitation-page .physics-step-tabs [role="tab"] { min-width: 0; white-space: normal; hyphens: auto; overflow-wrap: anywhere; font-size: .88rem; line-height: 1.15; padding: .6rem .3rem; }
 .gravitation-page .physics-revision-panel { max-width: 100%; grid-template-columns: minmax(0, 1fr); }
 .gravitation-page .physics-task-card { margin-block: 1rem; }
+.grav-illustrated-intro { display: grid; grid-template-columns: minmax(0, 1fr) 170px; align-items: center; gap: 1.25rem; }
+.grav-illustrated-copy { min-width: 0; }
+.gravitation-page .grav-illustrated-copy :is(h3,.task-prompt) { text-align: left; }
+.gravitation-page .grav-illustrated-figure { width: 100%; margin: 0; }
+.grav-illustrated-figure img { display: block; width: 100%; height: auto; }
+.gravitation-page .grav-illustrated-figure figcaption { margin-top: .1rem; color: #64748b; font-size: .75rem; font-weight: 400; line-height: 1.3; white-space: pre-line; }
+@media(max-width: 600px){ .grav-illustrated-intro { grid-template-columns: minmax(0, 1fr); gap: .5rem; }.gravitation-page .grav-illustrated-figure { width: 100px; justify-self: end; grid-row: 1; } }
 .grav-step-card { display: grid; gap: .35rem; min-width: 0; text-align: left; }
 .gravitation-page .step-order .cloze-token { max-width: 100%; white-space: normal; }
 .gravitation-page .drag-help { color: #64748b; font-size: .88rem; }
@@ -17,6 +24,20 @@
 .gravitation-page .physics-number-controls input { min-width: 0; flex: 1 1 58%; }
 .gravitation-page .physics-number-controls select { min-width: 0; flex: 1 1 42%; }
 .gravitation-page .physics-number-controls input,.gravitation-page .physics-number-controls select { min-height: 44px; }
+.gravitation-page #panel-application .physics-number-controls input { flex: 1 1 auto; }
+.gravitation-page #panel-application .physics-number-controls select { flex: 0 0 6.5rem; width: 6.5rem; }
+.gravitation-page #panel-fast .physics-number-controls input { flex: 1 1 auto; }
+.gravitation-page #panel-fast .physics-number-controls select { flex: 0 0 6.5rem; width: 6.5rem; }
+.gravitation-page #panel-fast #a5-ratio-unit { flex-basis: 9rem; width: 9rem; }
+.gravitation-page :is(#panel-application,#panel-fast) .physics-number-entry > button { justify-self: start; }
+.grav-calculation-columns { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 1rem; align-items: start; }
+.grav-calculation-columns--two { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+.grav-calculation-columns--single { grid-template-columns: minmax(0, 1fr); }
+.grav-calculation-column { min-width: 0; padding: .75rem; border: 1px solid #cbd5e1; border-radius: 10px; background: #f8fafc; }
+.grav-calculation-column h4 { margin: 0 0 .75rem; }
+.gravitation-page .grav-calculation-column .cloze-token,.gravitation-page .grav-calculation-column .formula-slot { font-size: .88rem; overflow-wrap: anywhere; }
+.grav-calculation-column .cloze-actions { flex-wrap: wrap; }
+@media(max-width: 900px){ .grav-calculation-columns { grid-template-columns: minmax(0, 1fr); } }
 .gravitation-page .source-text { line-height: 1.6; }
 .grav-principia-titlepage { width: min(100%, 320px); margin: 1rem auto 1.5rem; }
 .grav-principia-titlepage img { display: block; width: 100%; height: auto; border: 1px solid #c5aa76; box-shadow: 0 5px 16px #60461e26; }

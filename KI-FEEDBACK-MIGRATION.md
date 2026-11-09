@@ -42,7 +42,7 @@ Modell die Bedeutung der vorhandenen Aussage richtig beurteilt hat.
 
 ## Vollständig konfigurierte Aufgaben
 
-Lokaler Stand: **84 von 84 registrierten Aufgaben** verwenden den vollständigen Kriterienvertrag. Noch offen: **0**.
+Lokaler Stand: **85 von 85 registrierten Aufgaben** verwenden den vollständigen Kriterienvertrag. Noch offen: **0**.
 
 Die vollständige [Ausgangsliste der 79 offenen Aufgaben](docs/ki-feedback-offene-aufgaben-2026-10-29.md) dokumentiert den Bestand vor der ausdrücklich beauftragten Gesamtmigration. Die [Spezifikation](docs/ki-feedback-migration-plan.md) enthält Kriterien, feste Hinweise und fachliche Vergleichsfälle; der [Prüfbericht](docs/ki-feedback-migration-pruefung.md) unterscheidet lokale Prüfungen und ausstehende Online-Nachweise.
 
@@ -132,6 +132,7 @@ Die vollständige [Ausgangsliste der 79 offenen Aufgaben](docs/ki-feedback-offen
 | `11-6-1-ifelse-code` | Informatik Klasse 11 Aufgabe 6.1 – 2B if/else im zweiten Fall | 3 |
 | `11-6-1-elseif-code` | Informatik Klasse 11 Aufgabe 6.1 – 3B zweite else-if-Kette | 3 |
 | `11-6-1-for-code` | Informatik Klasse 11 Aufgabe 6.1 – 4B gezählte for-Schleife | 3 |
+| `ph11-a8-apfel-erde-kraft-beschleunigung` | Physik Klasse 11 – Aufgabe 8 A1: Kraftbetrag und Beschleunigungen von Apfel und Erde erklären | 2 |
 
 Alle aufgeführten Aufgaben verwenden `feedbackCriteria` und `maxFeedbackHints: 1`. Die fünf schon vor der Gesamtmigration vollständig konfigurierten Aufgaben behalten ihre Kriterien. Die vier SQL-Beschreibungen in Inf10 DB 9 bewerten weiterhin die Sortierung als fünften Aspekt; bei P11 zählen individuelle Ausgabe und Zählung je Mitglied getrennt, auch wenn derselbe Satz beide erfüllt.
 
@@ -219,7 +220,7 @@ auch die für Aufgabe 9 nötigen bisherigen Abhängigkeiten. Der Servercode
 wurde bei dieser Fehlerkorrektur nicht verändert. Ein einzelner erfolgreicher
 P2-Aufruf ist kein fachlicher Live-Nachweis für den gesamten Aufgabenbestand.
 
-Die Legacy-Fixture ist leer. Sämtliche 84 registrierten KI-Aufgaben sind lokal auf Einzelkriterien umgestellt, einschließlich der 19 Codeaufgaben. Es gibt keine nur teilweise vorbereitete registrierte Aufgabe mehr.
+Die Legacy-Fixture ist leer. Sämtliche 85 registrierten KI-Aufgaben sind lokal auf Einzelkriterien umgestellt, einschließlich der 19 Codeaufgaben. Es gibt keine nur teilweise vorbereitete registrierte Aufgabe mehr.
 
 `scaleway-functions/tests/fixtures/criterion-feedback-legacy.json` ist die maschinenlesbare Restliste. `criterion-feedback-contract.test.js` verhindert neue Aufgaben ohne Kriterien, Rückfälle sowie eine veraltete Kriterientabelle. Der Altbestand darf nur durch weitere Umstellungen schrumpfen.
 

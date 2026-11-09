@@ -1,0 +1,32 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 280 220" width="280" height="220" role="img" aria-labelledby="title description">
+  <title id="title">Mars</title>
+  <desc id="description">Symbolische Darstellung eines rostrot gefärbten Mars mit dunkleren Oberflächenstrukturen und einer hellen Polkappe.</desc>
+  <defs>
+    <radialGradient id="surface" cx="30%" cy="25%" r="85%">
+      <stop stop-color="#f4b082"/>
+      <stop offset=".55" stop-color="#d66c47"/>
+      <stop offset="1" stop-color="#8d3b36"/>
+    </radialGradient>
+    <clipPath id="outline"><circle cx="140" cy="110" r="76"/></clipPath>
+  </defs>
+  <circle cx="140" cy="106" r="94" fill="#fff3e8"/>
+  <ellipse cx="142" cy="200" rx="57" ry="5" fill="#79382f" opacity=".09"/>
+  <circle cx="140" cy="110" r="76" fill="url(#surface)"/>
+  <g clip-path="url(#outline)">
+    <g fill="#93483c" opacity=".45">
+      <path d="M84 112 Q106 97 125 106 L138 118 Q159 112 166 127 L152 137 130 133 Q112 142 97 130Z"/>
+      <path d="M162 69 Q179 64 194 80 L203 99 190 108 177 100 176 88 159 82Z"/>
+      <path d="M118 160 Q136 148 153 156 L173 165 163 181 140 183 121 175Z"/>
+    </g>
+    <path d="M78 87 Q98 72 116 85 T154 85" fill="none" stroke="#f7c095" stroke-width="7" stroke-linecap="round" opacity=".45"/>
+    <path d="M100 118 Q124 117 139 124 T174 122" fill="none" stroke="#8e4436" stroke-width="3" stroke-linecap="round" opacity=".45"/>
+    <g fill="#a35442" opacity=".45">
+      <circle cx="101" cy="148" r="7"/>
+      <circle cx="172" cy="146" r="5"/>
+      <circle cx="91" cy="101" r="4"/>
+    </g>
+    <path d="M108 37 Q138 26 169 39 L161 47 148 45 138 49 124 44 114 46Z" fill="#f2e7dc"/>
+    <path d="M86 69 Q102 49 126 44" fill="none" stroke="#ffe2c4" stroke-width="4" stroke-linecap="round" opacity=".5"/>
+  </g>
+  <circle cx="140" cy="110" r="76" fill="none" stroke="#b75b43" stroke-width="1.2"/>
+</svg>

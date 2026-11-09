@@ -3,7 +3,8 @@ import { createPhysicsTaskProgress } from './components/physics-task-progress.mj
 import { appendPhysicsText } from './components/physics-notation.mjs?v=20261022-force-indices';
 import { enableTokenDrag, wasDragged } from './components/token-drag.mjs';
 import { setupStepOrder } from './components/step-order.mjs';
-import { G, INITIAL, MIN_DISTANCE, MAX_DISTANCE, distance, force, validState, setDistance, moveBody, checkQuantity, parseQuantity } from './gravitation-model.mjs';
+import { setupPhysicsSemanticTask } from './components/physics-semantic-task.mjs?v=20261109-a1-freitext';
+import { G, INITIAL, MIN_DISTANCE, MAX_DISTANCE, distance, force, validState, setDistance, moveBody, checkQuantity, parseQuantity } from './gravitation-model.mjs?v=20261109-malzeichen';
 
 // Lehrercode-Freigabe nach dem bestehenden Muster aus kettenkarussell.mjs.
 function unlockSolution(event, expectedCode, downloadLinkId, messageId) {
@@ -35,17 +36,14 @@ const completed = new Set();
 let s1Checked = false;
 const numericCards = new Map();
 const wordBoards = new Map();
+const a1Review = { version: '20261109-a1-rubric-v1', passed: false, answer: '' };
 const separateChoiceFeedback = {
   M3:{success:'Richtig. Die Simulation verwendet G bereits; sie bestimmt die Naturkonstante nicht unabhängig.',error:'Noch nicht korrekt. Der Kraftwert wird mit einem hinterlegten G berechnet.'},
   M4:{success:'Richtig. Der gewählte Ansatz löst das Gravitationsgesetz nach G auf.',error:'Noch nicht korrekt. Stelle das Gravitationsgesetz nach G um.'},
-  A1:{success:'Richtig. Gleiche Kräfte führen bei sehr unterschiedlichen Massen zu unterschiedlichen Beschleunigungen.',error:'Noch nicht korrekt. Vergleiche Kraftbetrag und Beschleunigung getrennt.'},
-  A2:{success:'Richtig. Astronautin und Raumstation fallen gemeinsam um die Erde.',error:'Noch nicht korrekt. Die berechnete Gravitationskraft ist im Orbit weiterhin groß.'},
   A3:{success:'Richtig. Die Oberflächenfallbeschleunigung ist auf dem Mond ungefähr ein Sechstel so groß wie auf der Erde.',error:'Noch nicht korrekt. Vergleiche deinen berechneten Mondwert mit dem Erdwert.'}
 };
 const numericFeedback = {
   M3:{success:'Richtig. Wert und Einheit passen.',partial:'Teilweise korrekt. Prüfe Umrechnung, Einheit oder drei gültige Ziffern.'},
-  A1:{success:'Richtig. Die Kraft und beide Beschleunigungen passen.',partial:'Teilweise korrekt. Prüfe die zweite Beschleunigung.'},
-  A2:{success:'Richtig. Die beiden Kraftwerte passen.',partial:'Teilweise korrekt. Prüfe den Mittelpunktabstand.'},
   A3:{success:'Richtig. Auf dem Mond beträgt g etwa 1,626 m/s².',partial:'Teilweise korrekt. Prüfe die vier gültigen Ziffern.'}
 };
 let progress;
@@ -57,6 +55,33 @@ function feedback(id, level, message) {
   node.className = `physics-feedback ${level}`;
   node.replaceChildren();
   appendPhysicsText(node, notationTokens(message));
+}
+function appendApplicationMathText(target, text) {
+  const quotientToken = /\{\{([^{}|]+)\|([^{}]+)\}\}/g;
+  let lastEnd = 0;
+  let match;
+  while ((match = quotientToken.exec(text))) {
+    appendApplicationMathText(target, text.slice(lastEnd, match.index));
+    const fraction = document.createElement('span');
+    fraction.className = 'physics-fraction';
+    fraction.setAttribute('role', 'img');
+    const [whole, numeratorText, denominatorText] = match;
+    const accessible = value => value.replace(/([MRg])_(Merkur|Mars|Mond)/g, '$1 mit Index $2').replaceAll('²', ' zum Quadrat');
+    fraction.setAttribute('aria-label', `${accessible(numeratorText)} durch ${accessible(denominatorText)}`);
+    const numerator = document.createElement('span');
+    numerator.className = 'physics-fraction__numerator';
+    appendApplicationMathText(numerator, numeratorText);
+    const denominator = document.createElement('span');
+    denominator.className = 'physics-fraction__denominator';
+    appendApplicationMathText(denominator, denominatorText);
+    fraction.append(numerator, denominator);
+    target.append(fraction);
+    lastEnd = match.index + whole.length;
+  }
+  const rest = text.slice(lastEnd)
+    .replace(/(?<!\{)([MRg])_(Merkur|Mars|Mond)(?!\})/g, '{{$1_$2}}')
+    .replaceAll('m/s²', '{{m|s²}}');
+  appendPhysicsText(target, rest);
 }
 function finish(id) { completed.add(id); updateSummary(); progress?.save(); }
 function notationTokens(value){
@@ -396,22 +421,42 @@ const unitSets={
   G:{'N·m²/kg²':1,'m³/(kg·s²)':1,'N':NaN,'N/kg':NaN,'kg·m²':NaN},
   F:{'N':1,'µN':1e-6,'mN':1e-3,'kN':1e3,'kg':NaN},
   a:{'m/s²':1,'cm/s²':0.01,'N':NaN,'m/s':NaN},
-  R:{'km':1000,'m':1,'cm':0.01,'kg':NaN}
+  R:{'km':1000,'m':1,'cm':0.01,'kg':NaN},
+  ratio:{'ohne Einheit':1,'m':NaN,'km':NaN,'m/s²':NaN}
 };
 function setupNumeric({host,id,title,prompt,numbers,choices=[],helps,messages,after}){
   const area=card(host,id,title,prompt,helps);
-  const state={numbers,choices,numberPassed:false,choicePassed:Object.fromEntries(choices.map(([suffix])=>[suffix,false]))};
+  const separateNumbers=['A1','A2','A3','A4','A5'].includes(id);
+  const state={numbers,choices,separateNumbers,numberPassed:false,numberChecks:Object.fromEntries(numbers.map(([suffix])=>[suffix,false])),choicePassed:Object.fromEntries(choices.map(([suffix])=>[suffix,false]))};
   numericCards.set(id,state);
   const perhapsFinish=()=>{
-    if(state.numberPassed&&choices.every(([suffix])=>state.choicePassed[suffix])){finish(id);after?.();}
+    const explanationPassed=id!=='A1'||(a1Review.passed&&a1Review.answer===$('a1-explanation-answer')?.value);
+    if(state.numberPassed&&choices.every(([suffix])=>state.choicePassed[suffix])&&explanationPassed){finish(id);after?.();}
   };
   for(const [suffix,label,target,digits,kind] of numbers){
     const pair=document.createElement('div');pair.className='physics-number-entry';
     const units=Object.keys(unitSets[kind]);
     pair.innerHTML=`<label for="${id.toLowerCase()}-${suffix}">${label} (${digits} gültige Ziffern)</label><div class="physics-number-controls"><input id="${id.toLowerCase()}-${suffix}" type="text" inputmode="decimal" autocomplete="off" placeholder="z. B. 6,67·10^-11"><select id="${id.toLowerCase()}-${suffix}-unit" aria-label="Einheit für ${label}"><option value="">Einheit</option>${units.map(u=>`<option value="${u}">${u}</option>`).join('')}</select></div>`;
+    if(separateNumbers){
+      const fieldId=`${id.toLowerCase()}-${suffix}`;
+      pair.insertAdjacentHTML('beforeend',`<button id="check-${fieldId}" type="button" class="physics-primary-button">${label} prüfen</button><p id="feedback-${fieldId}" class="physics-feedback" role="status" aria-live="polite" hidden></p>`);
+      pair.querySelector('input').setAttribute('aria-describedby',`${id.toLowerCase()}-number-format`);
+      pair.querySelector('button').addEventListener('click',()=>{
+        const result=checkQuantity($(fieldId).value,$(`${fieldId}-unit`).value,{target,digits,units:unitSets[kind]});
+        state.numberChecks[suffix]=result==='correct';
+        state.numberPassed=numbers.every(([key])=>state.numberChecks[key]);
+        feedback(`feedback-${fieldId}`,result==='correct'?'success':result==='precision'?'partial':'error',result==='correct'?'Richtig. Zahlenwert, Einheit und die Anzahl der gültigen Ziffern stimmen.':feedbackWords[result==='precision'?'precision':'wrong']);
+        perhapsFinish();progress?.save();
+      });
+    }
     area.append(pair);
   }
-  area.append($(`check-${id.toLowerCase()}`),$(`feedback-${id.toLowerCase()}`));
+  if(separateNumbers){
+    $(`check-${id.toLowerCase()}`).remove();
+    const note=document.createElement('p');note.id=`${id.toLowerCase()}-number-format`;note.className='drag-help';
+    note.textContent='Als Malzeichen sind *, · und × erlaubt, z. B. 1,2*10^-25 oder 1,2·10^-25; auch 1,2e-25 ist möglich. Wähle die Einheit daneben aus.';
+    area.append(note);
+  }else area.append($(`check-${id.toLowerCase()}`),$(`feedback-${id.toLowerCase()}`));
   for(const [suffix,label,options,right] of choices){
     const wordChoice=id==='M3'||id==='M4';
     const choice=wordChoice?document.createElement('div'):addSelect(area,`${id.toLowerCase()}-${suffix}`,label,options);
@@ -432,11 +477,12 @@ function setupNumeric({host,id,title,prompt,numbers,choices=[],helps,messages,af
       perhapsFinish();progress?.save();
     });
   }
-  $(`check-${id.toLowerCase()}`).addEventListener('click',()=>{
+  $(`check-${id.toLowerCase()}`)?.addEventListener('click',()=>{
     const states=numbers.map(([suffix,label,target,digits,kind])=>({label,state:checkQuantity($(`${id.toLowerCase()}-${suffix}`).value,$(`${id.toLowerCase()}-${suffix}-unit`).value,{target,digits,units:unitSets[kind],tolerance:id==='M3'?0.01e-11:0})}));
     const good=states.filter(s=>s.state==='correct').length;
     const level=good===states.length?'success':good||states.some(s=>s.state==='precision')?'partial':'error';
     state.numberPassed=level==='success';
+    numbers.forEach(([suffix],index)=>{state.numberChecks[suffix]=states[index].state==='correct';});
     let message=numericFeedback[id]?.[level]||messages[level];
     if(level!=='success'){
       const bad=states.filter(s=>s.state!=='correct').map(s=>s.label).join(', ');
@@ -448,88 +494,180 @@ function setupNumeric({host,id,title,prompt,numbers,choices=[],helps,messages,af
     perhapsFinish();progress?.save();
   });
 }
-function setupRatio(){
-  const area=card('tasks-fast','A5','A5 · Merkur-Modell','Im vereinfachten Modell besitzt Merkur genau die halbe Marsmasse und dieselbe Oberflächenfallbeschleunigung. <strong>Bestimme</strong> das Verhältnis R<sub>Merkur</sub>/R<sub>Mars</sub> mit drei gültigen Ziffern.',[
-    'Setze die beiden Oberflächenbeschleunigungen gleich.',
-    'Bei gleichem g ist der Radius proportional zur Quadratwurzel der Masse.',
-    'Das gesuchte Verhältnis ist √(M<sub>Merkur</sub>/M<sub>Mars</sub>)=√0,5.'
-  ]);
-  area.innerHTML='<label for="a5-ratio">R<sub>Merkur</sub>/R<sub>Mars</sub> (3 gültige Ziffern)</label><input id="a5-ratio" type="text" inputmode="decimal">';
-  $('check-a5').addEventListener('click',()=>{
-    const q=parseQuantity($('a5-ratio').value);let level='error';
-    if(q&&Math.abs(q.value-0.707)<=0.0005)level=q.digits===3?'success':'partial';
-    feedback('feedback-a5',level,{success:'Richtig. Im vereinfachten Modell beträgt der Merkurradius 0,707 des Marsradius.',partial:'Teilweise korrekt. Dein Verhältnis liegt nahe am Ziel; prüfe drei gültige Ziffern.',error:'Noch nicht korrekt. Halbe Masse bedeutet bei gleichem g nicht halben Radius; beachte das Quadrat von R.'}[level]);
-    if(level==='success')finish('A5');
-  });
-}
 export const APPLICATION_STEP_TASKS = {
-  A1: {
-    n: 6,
-    order: ['accelerations', 'equal-acceleration', 'force', 'rounded', 'given', 'acceleration-law', 'law'],
+  A1: [
+  {
+    key:'force', title:'1 · Kraft', n:4,
+    order:['force','grams','rounded','given','law'],
     cards: [
       {id:'given', lines:['m_A = 150 g = 0,150 kg', 'M_E = 5,974·10²⁴ kg; r = R_E = 6,370·10⁶ m'], spoken:'Apfelmasse in Kilogramm umrechnen und Erdmasse sowie Mittelpunktabstand angeben'},
       {id:'law', lines:['F = G · {{m_A · M_E|r²}}'], spoken:'Gravitationsgesetz: F gleich G mal Apfelmasse mal Erdmasse durch r zum Quadrat'},
       {id:'force', lines:['F = 6,67430·10⁻¹¹ · {{0,150 · 5,974·10²⁴|(6,370·10⁶)²}} N', 'F ≈ 1,473951985 N'], spoken:'SI-Zahlenwerte in das Gravitationsgesetz einsetzen: Kraft ungefähr 1,473951985 Newton'},
-      {id:'acceleration-law', lines:['Mit der berechneten Kraft: a_A = {{F|m_A}} und a_E = {{F|M_E}}'], spoken:'Mit der berechneten Kraft die Beschleunigung des Apfels und der Erde jeweils als Kraft durch Masse bestimmen'},
-      {id:'accelerations', lines:['a_A ≈ {{1,473951985|0,150}} {{m/s²}} ≈ 9,826346567 {{m/s²}}', 'a_E ≈ {{1,473951985|5,974·10²⁴}} {{m/s²}} ≈ 2,467278180·10⁻²⁵ {{m/s²}}'], spoken:'Beschleunigung Apfel ungefähr 9,826346567 Meter pro Sekunde zum Quadrat, Erde ungefähr 2,467278180 mal zehn hoch minus 25 Meter pro Sekunde zum Quadrat'},
-      {id:'rounded', lines:['Endergebnisse mit zwei gültigen Ziffern:', 'F ≈ 1,5 N; a_A ≈ 9,8 {{m/s²}}; a_E ≈ 2,5·10⁻²⁵ {{m/s²}}'], spoken:'Erst die Endergebnisse auf zwei gültige Ziffern runden: 1,5 Newton, 9,8 und 2,5 mal zehn hoch minus 25 Meter pro Sekunde zum Quadrat'},
-      {id:'equal-acceleration', lines:['Aus gleichen Kraftbeträgen folgt: a_A = a_E.'], spoken:'Aus gleichen Kraftbeträgen folgt gleiche Beschleunigung von Apfel und Erde'},
+      {id:'rounded', lines:['Endergebnis mit zwei gültigen Ziffern:', 'F ≈ 1,5 N'], spoken:'Kraft erst am Ende auf zwei gültige Ziffern runden: 1,5 Newton'},
+      {id:'grams', lines:['m_A = 150 kg'], spoken:'Apfelmasse: 150 Kilogramm'},
     ],
-    acceptedOrders: [
-      ['given', 'law', 'force', 'acceleration-law', 'accelerations', 'rounded'],
-      ['law', 'given', 'force', 'acceleration-law', 'accelerations', 'rounded'],
-    ],
-    distractorIds: ['equal-acceleration'],
-    distractorHint: 'Gleiche Kräfte bedeuten bei verschiedenen Massen nicht gleiche Beschleunigungen. Nutze für jeden Körper a = {{F|m}}.',
-    success: 'Richtig. Der Lösungsweg führt von der Gravitationskraft zu beiden Beschleunigungen. Übertrage die Endergebnisse mit Zahl und Einheit in die Eingabefelder.',
+    acceptedOrders:[['given','law','force','rounded'],['law','given','force','rounded']],
+    distractorIds:['grams'],
+    distractorHint:'Rechne die Apfelmasse von Gramm in Kilogramm um.',
+    success:'Richtig. Übertrage die gerundete Kraft mit der passenden Einheit nach oben. Verwende für die Beschleunigungen den ungerundeten Kraftwert.',
   },
-  A2: {
-    n: 5,
-    order: ['ground', 'height-only', 'rounded', 'law', 'orbit', 'distances'],
-    cards: [
-      {id:'distances', lines:['r_O = (6370 + 400) km = 6,770·10⁶ m', 'r_B = 6370 km = 6,370·10⁶ m'], spoken:'Mittelpunktabstand im Orbit: Erdradius plus Höhe gleich 6,770 Millionen Meter; am Boden 6,370 Millionen Meter'},
-      {id:'law', lines:['F = G · {{M_E · m|r²}}; m = 62 kg'], spoken:'Gravitationsgesetz für die Astronautin mit der Masse 62 Kilogramm'},
-      {id:'orbit', lines:['Im Orbit: F_O = 6,67430·10⁻¹¹ · {{5,974·10²⁴ · 62|(6,770·10⁶)²}} N', 'F_O ≈ 539,3681457 N'], spoken:'Orbitkraft mit dem Mittelpunktabstand 6,770 Millionen Meter berechnen: ungefähr 539,3681457 Newton'},
-      {id:'ground', lines:['Am Boden: F_B = 6,67430·10⁻¹¹ · {{5,974·10²⁴ · 62|(6,370·10⁶)²}} N', 'F_B ≈ 609,2334871 N'], spoken:'Kraft am Boden mit dem Erdradius 6,370 Millionen Meter berechnen: ungefähr 609,2334871 Newton'},
-      {id:'rounded', lines:['Beide Endergebnisse mit zwei gültigen Ziffern:', 'F_O ≈ 5,4·10² N; F_B ≈ 6,1·10² N'], spoken:'Beide Kräfte auf zwei gültige Ziffern runden: im Orbit 5,4 mal zehn hoch zwei Newton, am Boden 6,1 mal zehn hoch zwei Newton'},
-      {id:'height-only', lines:['Im Orbit: r_O = h = 400 km = 4,00·10⁵ m'], spoken:'Als Mittelpunktabstand im Orbit nur die Höhe von 400 Kilometern verwenden'},
+  {
+    key:'apple', title:'2 · Beschleunigung Apfel', n:4,
+    order:['substitute','multiply','rounded','given','law'],
+    cards:[
+      {id:'given',lines:['F ≈ 1,473951985 N; m_A = 0,150 kg'],spoken:'Ungerundeten Kraftwert und Apfelmasse verwenden'},
+      {id:'law',lines:['a_A = {{F|m_A}}'],spoken:'Beschleunigung des Apfels: Kraft durch Apfelmasse'},
+      {id:'substitute',lines:['a_A ≈ {{1,473951985|0,150}} {{m/s²}}', 'a_A ≈ 9,826346567 {{m/s²}}'],spoken:'Kraft durch 0,150 Kilogramm teilen: ungefähr 9,826346567 Meter pro Sekunde zum Quadrat'},
+      {id:'rounded',lines:['Endergebnis mit zwei gültigen Ziffern:', 'a_A ≈ 9,8 {{m/s²}}'],spoken:'Beschleunigung des Apfels auf zwei gültige Ziffern runden: 9,8 Meter pro Sekunde zum Quadrat'},
+      {id:'multiply',lines:['a_A = F · m_A'],spoken:'Beschleunigung des Apfels als Kraft mal Apfelmasse berechnen'},
     ],
-    acceptedOrders: [
-      ['distances', 'law', 'orbit', 'ground', 'rounded'],
-      ['law', 'distances', 'orbit', 'ground', 'rounded'],
-      ['distances', 'law', 'ground', 'orbit', 'rounded'],
-      ['law', 'distances', 'ground', 'orbit', 'rounded'],
-    ],
-    distractorIds: ['height-only'],
-    distractorHint: 'Der Abstand r beginnt im Erdmittelpunkt. Zur Höhe über der Oberfläche gehört deshalb noch der Erdradius.',
-    success: 'Richtig. Beide Kräfte werden mit dem jeweiligen Mittelpunktabstand berechnet. Übertrage die gerundeten Endergebnisse mit Zahl und Einheit in die Eingabefelder.',
+    acceptedOrders:[['given','law','substitute','rounded'],['law','given','substitute','rounded']],
+    distractorIds:['multiply'],
+    distractorHint:'Die Beschleunigung ist Kraft geteilt durch Masse.',
+    success:'Richtig. Übertrage die gerundete Beschleunigung des Apfels mit der passenden Einheit nach oben.',
   },
+  {
+    key:'earth', title:'3 · Beschleunigung Erde', n:4,
+    order:['substitute','multiply','rounded','given','law'],
+    cards:[
+      {id:'given',lines:['F ≈ 1,473951985 N; M_E = 5,974·10²⁴ kg'],spoken:'Ungerundeten Kraftwert und Erdmasse verwenden'},
+      {id:'law',lines:['a_E = {{F|M_E}}'],spoken:'Beschleunigung der Erde: Kraft durch Erdmasse'},
+      {id:'substitute',lines:['a_E ≈ {{1,473951985|5,974·10²⁴}} {{m/s²}}', 'a_E ≈ 2,467278180·10⁻²⁵ {{m/s²}}'],spoken:'Kraft durch Erdmasse teilen: ungefähr 2,467278180 mal zehn hoch minus 25 Meter pro Sekunde zum Quadrat'},
+      {id:'rounded',lines:['Endergebnis mit zwei gültigen Ziffern:', 'a_E ≈ 2,5·10⁻²⁵ {{m/s²}}'],spoken:'Beschleunigung der Erde auf zwei gültige Ziffern runden: 2,5 mal zehn hoch minus 25 Meter pro Sekunde zum Quadrat'},
+      {id:'multiply',lines:['a_E = F · M_E'],spoken:'Beschleunigung der Erde als Kraft mal Erdmasse berechnen'},
+    ],
+    acceptedOrders:[['given','law','substitute','rounded'],['law','given','substitute','rounded']],
+    distractorIds:['multiply'],
+    distractorHint:'Teile die auf die Erde wirkende Kraft durch die Erdmasse.',
+    success:'Richtig. Trage oben 2,5e-25 oder 2,5·10^-25 ein und wähle m/s² als Einheit.',
+  },
+  ],
+  A2: [
+    {key:'orbit',title:'1 · Kraft in 400 km Höhe',index:'O',distance:'r_O = (6370 + 400) km = 6,770·10⁶ m',radius:'6,770',value:'539,3681457',rounded:'5,4·10²',wrong:'r_O = h = 400 km',hint:'Der Abstand beginnt im Erdmittelpunkt. Addiere zur Höhe noch den Erdradius.'},
+    {key:'ground',title:'2 · Kraft am Boden',index:'B',distance:'r_B = 6370 km = 6,370·10⁶ m',radius:'6,370',value:'609,2334871',rounded:'6,1·10²',wrong:'r_B = 6370 m',hint:'Rechne den Erdradius von Kilometern in Meter um.'},
+  ].map(item=>({
+    key:item.key,title:item.title,n:4,
+    order:['substitute','wrong-distance','rounded','distance','law'],
+    cards:[
+      {id:'distance',lines:[item.distance],spoken:item.distance.replaceAll('_',' mit Index ')},
+      {id:'law',lines:[`F_${item.index} = G · {{M_E · m|r_${item.index}²}}; m = 62 kg`],spoken:'Gravitationsgesetz für die Astronautin mit 62 Kilogramm'},
+      {id:'substitute',lines:[`F_${item.index} = 6,67430·10⁻¹¹ · {{5,974·10²⁴ · 62|(${item.radius}·10⁶)²}} N`,`F_${item.index} ≈ ${item.value} N`],spoken:`Kraft mit dem Mittelpunktabstand einsetzen: ungefähr ${item.value} Newton`},
+      {id:'rounded',lines:['Endergebnis mit zwei gültigen Ziffern:',`F_${item.index} ≈ ${item.rounded} N`],spoken:`Kraft auf zwei gültige Ziffern runden: ${item.rounded} Newton`},
+      {id:'wrong-distance',lines:[item.wrong],spoken:`Abstand ansetzen: ${item.wrong.replaceAll('_',' mit Index ')}`},
+    ],
+    acceptedOrders:[['distance','law','substitute','rounded'],['law','distance','substitute','rounded']],
+    distractorIds:['wrong-distance'],distractorHint:item.hint,
+    success:'Richtig. Übertrage die gerundete Kraft mit der passenden Einheit nach oben.',
+  })),
+  A3: [{
+    key:'moon', title:'3 · Mondfallbeschleunigung', n:4,
+    order:['substitute','wrong-radius','rounded','radius','law'],
+    cards:[
+      {id:'radius',lines:['{{R_Mond}} = 1737 km = 1,737·10⁶ m'],spoken:'Mondradius 1737 Kilometer in 1,737 mal zehn hoch 6 Meter umrechnen'},
+      {id:'law',lines:['{{g_Mond}} = G · {{M_Mond|R_Mond²}}'],spoken:'Ansatz für die Mondfallbeschleunigung: G mal Mondmasse geteilt durch Mondradius zum Quadrat'},
+      {id:'substitute',lines:['{{g_Mond}} = 6,67430·10⁻¹¹ {{N·m²|kg²}} · {{7,349·10²² kg|(1,737·10⁶ m)²}} ≈ 1,625677… {{m|s²}}'],spoken:'SI-Werte für G, Mondmasse und Radius einsetzen: ungefähr 1,625677 Meter pro Sekunde zum Quadrat'},
+      {id:'rounded',lines:['Erst am Ende auf vier gültige Ziffern:', '{{g_Mond}} ≈ 1,626 {{m|s²}}'],spoken:'Erst am Ende auf vier gültige Ziffern runden: 1,626 Meter pro Sekunde zum Quadrat'},
+      {id:'wrong-radius',lines:['{{R_Mond}} = 1737 m'],spoken:'1737 Kilometer direkt als 1737 Meter einsetzen'},
+    ],
+    acceptedOrders:[['radius','law','substitute','rounded']],
+    distractorIds:['wrong-radius'],
+    distractorHint:'Wandle den Mondradius zuerst von Kilometern in Meter um.',
+    success:'Richtig. Übertrage das gerundete Ergebnis mit der passenden Einheit nach oben.',
+  }],
+  A4: [{
+    key:'mars', title:'4 · Marsradius', n:4,
+    order:['substitute','forget-root','rounded','law','solve'],
+    cards:[
+      {id:'law',lines:['g = G · {{M|R²}}'],spoken:'Ansatz: Oberflächenfallbeschleunigung gleich G mal Masse durch Radius zum Quadrat'},
+      {id:'solve',lines:['Umstellen: R = √({{G·M|g}})'],spoken:'Nach dem Radius umstellen und die positive Quadratwurzel ziehen'},
+      {id:'substitute',lines:['Einsetzen: R = √(6,67430·10⁻¹¹ {{N·m²|kg²}} · {{6,417·10²³ kg|3,7 m/s²}}) ≈ 3,402264…·10⁶ m = 3402,264… km'],spoken:'Gegebene Masse und Fallbeschleunigung mit G in SI-Einheiten einsetzen: ungefähr 3402,264 Kilometer'},
+      {id:'rounded',lines:['Erst am Ende auf zwei gültige Ziffern:', 'R ≈ 3,4·10³ km'],spoken:'Erst am Ende auf zwei gültige Ziffern runden: 3,4 mal zehn hoch 3 Kilometer'},
+      {id:'forget-root',lines:['Bei R² = {{G·M|g}} aufhören'],spoken:'Bei R zum Quadrat gleich G mal Masse durch g aufhören und die Wurzel vergessen'},
+    ],
+    acceptedOrders:[['law','solve','substitute','rounded']],
+    distractorIds:['forget-root'],
+    distractorHint:'Nach dem Umstellen musst du noch die Quadratwurzel ziehen.',
+    success:'Richtig. Übertrage das gerundete Ergebnis mit der passenden Einheit nach oben.',
+  }],
+  A5: [{
+    key:'ratio', title:'5 · Merkur-Modell', n:4,
+    order:['linear-ratio','root','rounded','equal-g','square'],
+    cards:[
+      {id:'equal-g',lines:['G · {{M_Merkur|R_Merkur²}} = G · {{M_Mars|R_Mars²}}'],spoken:'Gleichsetzen: Oberflächenbeschleunigungen des Merkur- und Marsmodells gleichsetzen'},
+      {id:'square',lines:['G kürzen und Radienverhältnis quadrieren: ({{R_Merkur|R_Mars}})² = {{M_Merkur|M_Mars}}'],spoken:'G kürzen und das Radienverhältnis quadrieren; es ist gleich dem Massenverhältnis'},
+      {id:'root',lines:['Positive Wurzel: {{R_Merkur|R_Mars}} = √0,5 ≈ 0,707106…'],spoken:'Positive Wurzel ziehen: das Radienverhältnis ist ungefähr 0,707106'},
+      {id:'rounded',lines:['Erst am Ende auf drei gültige Ziffern:', '{{R_Merkur|R_Mars}} ≈ 0,707 ohne Einheit'],spoken:'Erst am Ende auf drei gültige Ziffern runden: 0,707 ohne Einheit'},
+      {id:'linear-ratio',lines:['{{R_Merkur|R_Mars}} = {{M_Merkur|M_Mars}} = 0,5'],spoken:'Das Radienverhältnis linear gleich dem Massenverhältnis 0,5 setzen'},
+    ],
+    acceptedOrders:[['equal-g','square','root','rounded']],
+    distractorIds:['linear-ratio'],
+    distractorHint:'Bei gleichem g hängt das Radienverhältnis von der Quadratwurzel des Massenverhältnisses ab.',
+    success:'Richtig. Übertrage das gerundete Ergebnis mit der passenden Einheit nach oben.',
+  }],
 };
 function setupApplicationStepHelps(taskProgress) {
-  for (const [id, config] of Object.entries(APPLICATION_STEP_TASKS)) {
+  for (const [id, columns] of Object.entries(APPLICATION_STEP_TASKS)) {
     const prefix = id.toLowerCase();
     const help = $(`card-${prefix}`).querySelector('.physics-help-stack details:last-child');
-    help.innerHTML = `<summary>Hilfe 3: Rechnung anordnen</summary><p><strong>Ordne</strong> die Rechenschritte in die richtige Reihenfolge.</p><p class="drag-help">Ziehe jede Karte in ein nummeriertes Feld oder tippe erst die Karte und dann das Feld an. Eine Karte bleibt übrig.</p><div id="${prefix}-steps" class="step-order" aria-label="Lösungsweg zu ${id} ordnen"></div><div class="cloze-actions"><button id="check-${prefix}-steps" class="physics-primary-button" type="button">Reihenfolge prüfen</button><button id="reset-${prefix}-steps" class="physics-primary-button secondary-button" type="button">Zurücksetzen</button></div><p id="${prefix}-steps-feedback" class="physics-feedback" role="status" aria-live="polite" hidden></p>`;
+    const calculationColumns = document.createElement('div');
+    calculationColumns.className = `grav-calculation-columns${columns.length===1?' grav-calculation-columns--single':columns.length===2?' grav-calculation-columns--two':''}`;
+    help.append(calculationColumns);
+    for(const config of columns){
+    const columnPrefix=`${prefix}-${config.key}`;
+    const column=document.createElement('section');column.className='grav-calculation-column';column.setAttribute('aria-labelledby',`${columnPrefix}-steps-title`);
+    column.innerHTML=`<h4 id="${columnPrefix}-steps-title">${config.title}</h4><div id="${columnPrefix}-steps" class="step-order" aria-label="${config.title}: Lösungsweg ordnen"></div><div class="cloze-actions"><button id="check-${columnPrefix}-steps" class="physics-primary-button" type="button">${config.title.slice(4)}: Reihenfolge prüfen</button><button id="reset-${columnPrefix}-steps" class="physics-primary-button secondary-button" type="button">Zurücksetzen</button></div><p id="${columnPrefix}-steps-feedback" class="physics-feedback" role="status" aria-live="polite" hidden></p>`;
+    calculationColumns.append(column);
     setupStepOrder({
-      ...config, containerId: `${prefix}-steps`, checkButtonId: `check-${prefix}-steps`, resetButtonId: `reset-${prefix}-steps`, feedbackId: `${prefix}-steps-feedback`,
+      ...config, containerId: `${columnPrefix}-steps`, checkButtonId: `check-${columnPrefix}-steps`, resetButtonId: `reset-${columnPrefix}-steps`, feedbackId: `${columnPrefix}-steps-feedback`,
+      bankLabel:`Rechenschritte: ${config.title.slice(4)}`,
       renderCard: (element, item) => {
         const content = document.createElement('span'); content.className = 'grav-step-card';
-        for (const line of item.lines) { const row = document.createElement('span'); appendPhysicsText(row, line); content.append(row); }
+        for (const line of item.lines) { const row = document.createElement('span'); appendApplicationMathText(row, line); content.append(row); }
         element.replaceChildren(content);
       },
-      showFeedback: (node, level, message) => feedback(node.id, level, message),
+      showFeedback: (node, level, message) => {
+        if (['A3','A4','A5'].includes(id)) {
+          if (level === 'error' && message.startsWith('Fülle zuerst')) {
+            feedback(node.id, level, message);
+            return;
+          }
+          const exactMessages = {
+            success:'Richtig. Übertrage das gerundete Ergebnis mit der passenden Einheit nach oben.',
+            partial:'Teilweise korrekt. Prüfe die Reihenfolge von Ansatz, Einsetzen und Rundung.',
+            error:'Noch nicht korrekt. Beginne mit dem Ansatz und runde erst das Endergebnis.',
+          };
+          feedback(node.id, level, exactMessages[level]);
+        } else feedback(node.id, level, message);
+      },
     }, taskProgress);
+    }
   }
+}
+function addTaskIllustration(id,asset,alt,caption='Symbolische Darstellung.'){
+  const task=$(`card-${id.toLowerCase()}`);
+  const intro=document.createElement('div');intro.className='grav-illustrated-intro';
+  const copy=document.createElement('div');copy.className='grav-illustrated-copy';
+  copy.append(task.querySelector('h3'),task.querySelector('.task-prompt'));
+  const figure=document.createElement('figure');figure.className='describe-figure grav-illustrated-figure';
+  const picture=document.createElement('img');picture.src=`assets/${asset}`;picture.width=280;picture.height=220;picture.alt=alt;
+  const note=document.createElement('figcaption');note.textContent=caption;
+  figure.append(picture,note);intro.append(copy,figure);task.prepend(intro);
 }
 function buildApplications(){
   const earthMass=5.974e24,earthRadius=6370e3;
   const appleForce=G*earthMass*0.150/earthRadius**2;
-  setupNumeric({host:'tasks-application',id:'A1',title:'A1 · Apfel und Erde',prompt:'Ein Apfel mit 150 g hängt dicht über der Erde. <strong>Bestimme</strong> die gegenseitige Kraft und die Beschleunigung von Apfel und Erde; <strong>wähle</strong> die Erklärung, warum vor allem der Apfel sichtbar fällt.',numbers:[['force','Kraft',appleForce,2,'F'],['apple','Beschleunigung Apfel',appleForce/0.150,2,'a'],['earth','Beschleunigung Erde',appleForce/earthMass,2,'a']],choices:[['why','Erklärung',yesNo('Gleiche Kraft, aber die Erde hat viel größere Masse und deshalb viel kleinere Beschleunigung','Auf die Erde wirkt keine Kraft'),'yes']],helps:['Für den Abstand genügt hier näherungsweise der Erdradius.','Berechne zuerst F und teile denselben Kraftbetrag jeweils durch die betreffende Masse.','m<sub>Apfel</sub>=0,150 kg; F≈1,474 N. Für beide Beschleunigungen gilt a=F/m, aber mit verschiedener Masse.'],messages:{success:'Richtig. Beide Kräfte sind gleich groß; wegen der riesigen Erdmasse ist ihre Beschleunigung kaum merklich.',partial:'Teilweise korrekt. Prüfe die zweite Beschleunigung und die Auswahl zu gleichen Kräften.',error:'Noch nicht korrekt. Setze 0,150 kg und den Erdradius in Metern ein.'}});
-  setupNumeric({host:'tasks-application',id:'A2',title:'A2 · Astronautin',prompt:'Eine Astronautin mit 62 kg umkreist die Erde in 400 km Höhe. <strong>Berechne</strong> ihre Gravitationskraft dort und am Boden; <strong>wähle</strong> die Erklärung für scheinbare Schwerelosigkeit im Orbit.',numbers:[['orbit','Kraft in 400 km Höhe',G*earthMass*62/(6770e3)**2,2,'F'],['ground','Kraft am Boden',G*earthMass*62/earthRadius**2,2,'F']],choices:[['why','Erklärung',yesNo('Astronautin und Raumstation befinden sich gemeinsam im freien Fall um die Erde','Dort wirkt keine Erdgravitation'),'yes']],helps:['Der Abstand beginnt am Erdmittelpunkt.','Für die Höhe addiere Erdradius und 400 km; berechne F zweimal.','Verwende r<sub>Orbit</sub>=6770 km und r<sub>Boden</sub>=6370 km. Die Orbitkraft ist noch deutlich von null verschieden.'],messages:{success:'Richtig. Auch im Orbit wirkt starke Gravitation; das gemeinsame Fallen erklärt die scheinbare Schwerelosigkeit.',partial:'Teilweise korrekt. Prüfe den Mittelpunktabstand oder die Erklärung zum freien Fall.',error:'Noch nicht korrekt. 400 km ist die Höhe über der Oberfläche, nicht der Abstand vom Erdmittelpunkt.'}});
+  setupNumeric({host:'tasks-application',id:'A1',title:'A1 · Apfel und Erde',prompt:'Ein Apfel mit 150 g hängt dicht über der Erde. <strong>Bestimme</strong> den gegenseitigen Kraftbetrag und die Beschleunigungen von Apfel und Erde.',numbers:[['force','Kraftbetrag',appleForce,2,'F'],['apple','Beschleunigung Apfel',appleForce/0.150,2,'a'],['earth','Beschleunigung Erde',appleForce/earthMass,2,'a']],helps:['Für den Abstand genügt hier näherungsweise der Erdradius.','Berechne zuerst F und teile denselben Kraftbetrag jeweils durch die betreffende Masse.','m<sub>Apfel</sub>=0,150 kg; F≈1,474 N. Für beide Beschleunigungen gilt a=F/m, aber mit verschiedener Masse.'],messages:{success:'Richtig.',partial:'Teilweise korrekt.',error:'Noch nicht korrekt.'}});
+  addTaskIllustration('A1','apfel-und-erde.svg','Ein roter Apfel nahe der Oberfläche einer blau-grünen Erde.','Symbolische Darstellung,\nnicht maßstabsgetreu.');
+  const explanation=document.createElement('article');explanation.id='card-a1-explanation';explanation.className='physics-task-card physics-semantic-task';explanation.setAttribute('aria-labelledby','a1-explanation-title');
+  explanation.innerHTML='<h3 id="a1-explanation-title">Deine Erklärung zu Kraft und Beschleunigung</h3><p class="task-prompt"><strong>Erkläre</strong>, warum nur ein Kraftbetrag berechnet werden muss. Gehe darauf ein, warum sich die Beträge der beiden Beschleunigungen stark unterscheiden.</p><label for="a1-explanation-answer">Deine Erklärung zu Kraft und Beschleunigung</label><textarea id="a1-explanation-answer" maxlength="3000" rows="6" aria-describedby="a1-explanation-count a1-explanation-privacy"></textarea><div class="physics-semantic-task__actions"><span id="a1-explanation-count" aria-live="polite">0 von 3000 Zeichen</span><button id="check-a1-explanation" type="button" class="physics-primary-button">Erklärung prüfen</button></div><p id="a1-explanation-privacy" class="privacy-note">Hinweis: Gib keine personenbezogenen Informationen ein. Deine Antwort wird zur automatischen Auswertung an den Skriptserver und dort an ein KI-System übertragen.</p><div id="a1-explanation-feedback" class="physics-semantic-feedback" role="status" aria-live="polite" hidden></div>';
+  $('card-a1').after(explanation);
+  setupNumeric({host:'tasks-application',id:'A2',title:'A2 · Astronautin',prompt:'Eine Astronautin mit 62 kg umkreist die Erde in 400 km Höhe. <strong>Berechne</strong> ihre Gravitationskraft dort und am Boden.',numbers:[['orbit','Kraft in 400 km Höhe',G*earthMass*62/(6770e3)**2,2,'F'],['ground','Kraft am Boden',G*earthMass*62/earthRadius**2,2,'F']],helps:['Der Abstand beginnt am Erdmittelpunkt.','Für die Höhe addiere Erdradius und 400 km; berechne F zweimal.','Verwende r<sub>Orbit</sub>=6770 km und r<sub>Boden</sub>=6370 km. Die Orbitkraft ist noch deutlich von null verschieden.'],messages:{success:'Richtig.',partial:'Teilweise korrekt.',error:'Noch nicht korrekt.'}});
   const derivation=document.createElement('article');derivation.className='physics-task-card';derivation.id='surface-derivation';derivation.innerHTML='<p>An der Oberfläche gilt für einen Probekörper zugleich F<sub>G</sub> = m·g und F<sub>G</sub> = G·<span class="physics-fraction"><span class="physics-fraction__numerator">M·m</span><span class="physics-fraction__denominator">R²</span></span>. Nach Kürzen der Probemasse folgt g = G·<span class="physics-fraction"><span class="physics-fraction__numerator">M</span><span class="physics-fraction__denominator">R²</span></span>.</p>';$('tasks-fast').append(derivation);
-  setupNumeric({host:'tasks-fast',id:'A3',title:'A3 · Mond',prompt:'Der Mond hat M=7,349·10²² kg und R=1737 km. <strong>Bestimme</strong> seine Oberflächenfallbeschleunigung und <strong>vergleiche</strong> sie mit der der Erde.',numbers:[['g','Oberflächenfallbeschleunigung',G*7.349e22/(1737e3)**2,4,'a']],choices:[['comparison','Vergleich',yesNo('kleiner als auf der Erde, ungefähr ein Sechstel','gleich wegen gleicher Probemasse'),'yes']],helps:['Die Probemasse fällt in g=G·M/R² heraus.','Wandle 1737 km in Meter um und quadriere den Radius.','Setze M=7,349·10²² kg und R=1,737·10⁶ m ein; der Rechenwert liegt nahe 1,63 m/s².'],messages:{success:'Richtig. Auf dem Mond beträgt g etwa 1,626 m/s² und ist deutlich kleiner als auf der Erde.',partial:'Teilweise korrekt. Prüfe die vier gültigen Ziffern oder den Vergleich mit der Erde.',error:'Noch nicht korrekt. Der Mondradius muss vor dem Quadrieren in Meter umgerechnet werden.'}});
-  setupNumeric({host:'tasks-fast',id:'A4',title:'A4 · Mars',prompt:'Für Mars gelten M=6,417·10²³ kg und g=3,7 m/s². <strong>Bestimme</strong> den mittleren Radius aus dem Gravitationsgesetz.',numbers:[['radius','Marsradius',Math.sqrt(G*6.417e23/3.7),2,'R']],helps:['Stelle g=G·M/R² nach R um.','Nach Multiplikation mit R² folgt R²=G·M/g.','Ziehe die Wurzel aus G·M/g; vor Rundung sind es etwa 3402 km.'],messages:{success:'Richtig. Der Modellwert für den Marsradius ist 3,4·10³ km.',partial:'Teilweise korrekt. Der Betrag passt; prüfe Einheit oder zwei gültige Ziffern.',error:'Noch nicht korrekt. Nach R² musst du noch die Quadratwurzel ziehen.'}});
-  setupRatio();
+  setupNumeric({host:'tasks-fast',id:'A3',title:'A3 · Mond',prompt:'Der Mond hat M=7,349·10²² kg und R=1737 km. <strong>Bestimme</strong> seine Oberflächenfallbeschleunigung und <strong>vergleiche</strong> sie mit der der Erde.',numbers:[['g','Oberflächenfallbeschleunigung',G*7.349e22/(1737e3)**2,4,'a']],choices:[['comparison','Vergleich',yesNo('kleiner als auf der Erde, ungefähr ein Sechstel','gleich wegen gleicher Probemasse'),'yes']],helps:['Die Probemasse fällt in g=G·M/R² heraus.','Wandle 1737 km in Meter um und quadriere den Radius.','Setze M=7,349·10²² kg und R=1,737·10⁶ m ein; der Rechenwert liegt nahe 1,63 m/s².'],messages:{success:'Richtig. Zahlenwert, Einheit und die Anzahl der gültigen Ziffern stimmen.',partial:feedbackWords.precision,error:feedbackWords.wrong}});
+  setupNumeric({host:'tasks-fast',id:'A4',title:'A4 · Mars',prompt:'Für Mars gelten M=6,417·10²³ kg und g=3,7 m/s². <strong>Bestimme</strong> den mittleren Radius aus dem Gravitationsgesetz.',numbers:[['radius','Marsradius',Math.sqrt(G*6.417e23/3.7),2,'R']],helps:['Stelle g=G·M/R² nach R um.','Nach Multiplikation mit R² folgt R²=G·M/g.','Ziehe die Wurzel aus G·M/g; vor Rundung sind es etwa 3402 km.'],messages:{success:'Richtig. Zahlenwert, Einheit und die Anzahl der gültigen Ziffern stimmen.',partial:feedbackWords.precision,error:feedbackWords.wrong}});
+  setupNumeric({host:'tasks-fast',id:'A5',title:'A5 · Merkur-Modell',prompt:'Im vereinfachten Modell besitzt Merkur genau die halbe Marsmasse und dieselbe Oberflächenfallbeschleunigung. <strong>Bestimme</strong> das Verhältnis R<sub>Merkur</sub>/R<sub>Mars</sub> mit drei gültigen Ziffern und <strong>wähle</strong> die passende Einheit.',numbers:[['ratio','Radienverhältnis',Math.sqrt(0.5),3,'ratio']],helps:['Setze die beiden Oberflächenbeschleunigungen gleich.','Bei gleichem g ist der Radius proportional zur Quadratwurzel der Masse.','Das gesuchte Verhältnis ist √(M<sub>Merkur</sub>/M<sub>Mars</sub>)=√0,5.'],messages:{success:'Richtig. Zahlenwert, Einheit und die Anzahl der gültigen Ziffern stimmen.',partial:feedbackWords.precision,error:feedbackWords.wrong}});
+  addTaskIllustration('A3','mond-illustration.svg','Graue Mondkugel mit dunkleren Ebenen und Kratern.');
+  addTaskIllustration('A4','mars-illustration.svg','Rostroter Mars mit dunkleren Oberflächenstrukturen und heller Polkappe.');
 }
 
 function simulationMarkup(prefix){
@@ -716,11 +854,11 @@ const solutionIdeas={
   M2:'F ist proportional zu m₁ und m₂ sowie umgekehrt proportional zu r²; beim Verdoppeln beider Massen entsteht 4F, beim Verdoppeln des Abstands F/4.',
   M3:'Aus einer simulierten Messreihe folgt ungefähr G=6,67·10⁻¹¹ N·m²/kg²; der Wert war in der Simulation bereits hinterlegt.',
   M4:'Die Cavendish-Zahlen ergeben etwa 6,75·10⁻¹¹ N·m²/kg², passend zur begrenzten Genauigkeit der historischen Angaben.',
-  A1:'Beide Körper erfahren etwa 1,5 N; der Apfel etwa 9,8 m/s², die Erde nur etwa 2,5·10⁻²⁵ m/s².',
-  A2:'In 400 km Höhe wirken etwa 5,4·10² N, am Boden etwa 6,1·10² N; der Orbit ist gemeinsamer freier Fall.',
+  A1:'Auf den Apfel wirkt die Kraft von der Erde auf den Apfel. Auf die Erde wirkt die Kraft vom Apfel auf die Erde. Beide Kräfte haben denselben Betrag; deshalb genügt eine Kraftberechnung. Wegen der viel größeren Erdmasse führt derselbe Kraftbetrag bei der Erde zu einer viel kleineren Beschleunigung als beim Apfel. Ergebnisse: F ≈ 1,5 N; a_A ≈ 9,8 m/s²; a_E ≈ 2,5·10⁻²⁵ m/s².',
+  A2:'In 400 km Höhe beträgt die Gravitationskraft etwa 5,4·10² N, am Boden etwa 6,1·10² N. Für den Orbitabstand werden Erdradius und Höhe addiert.',
   A3:'Am Mond beträgt g etwa 1,626 m/s², ungefähr ein Sechstel des Erdwerts.',
   A4:'Der Marsradius beträgt aus diesen Angaben etwa 3,4·10³ km.',
-  A5:'Im vereinfachten Modell ist R<sub>Merkur</sub>/R<sub>Mars</sub>=√0,5≈0,707.'
+  A5:'Bei gleichem g gilt {{R<sub>Merkur</sub>|R<sub>Mars</sub>}} = √({{M<sub>Merkur</sub>|M<sub>Mars</sub>}}) = √0,5 ≈ 0,707; das Verhältnis hat keine Einheit.'
 };
 function updateSummary(){
   if(typeof document==='undefined')return;
@@ -729,7 +867,7 @@ function updateSummary(){
   if(!all)return;
   const groupings=[['Newton und die Principia',['N1','P1','P2','P3','P4']],['Kräftebild',['S1','S2']],['Messreihen und Gesetz',['M0','M1A','M1B','M1C','M2','M3','M4']],['Anwendungen',['A1','A2']],['Für die Schnellen',['A3','A4','A5'].filter(id=>completed.has(id))]];
   const root=$('summary-content');root.replaceChildren();
-  const memory=document.createElement('article');memory.className='physics-task-card';memory.innerHTML=`<h3>Merksätze</h3><p>Alle Körper mit Masse ziehen einander an. Die beiden Kräfte sind gleich groß, entgegengesetzt gerichtet und wirken auf verschiedene Körper.</p><p>Bei einer durch Gravitation bewirkten Kreisbewegung ist die Gravitationskraft die benötigte Zentripetalkraft; beide Kräfte werden nicht addiert.</p><p>Die Gravitationskraft wächst proportional mit jeder der beiden Massen und nimmt mit dem Quadrat des Mittelpunktabstands ab.</p><p>Für den Kraftbetrag gilt F<sub>G</sub> = G·<span class="physics-fraction"><span class="physics-fraction__numerator">m₁·m₂</span><span class="physics-fraction__denominator">r²</span></span>. Auf der Oberfläche eines Himmelskörpers gilt g=G·<span class="physics-fraction"><span class="physics-fraction__numerator">M</span><span class="physics-fraction__denominator">R²</span></span>.</p><p>Schwerelosigkeit im Orbit bedeutet gemeinsamer freier Fall, nicht fehlende Gravitation.</p>`;root.append(memory);
+  const memory=document.createElement('article');memory.className='physics-task-card';memory.innerHTML=`<h3>Merksätze</h3><p>Alle Körper mit Masse ziehen einander an. Die beiden Kräfte sind gleich groß, entgegengesetzt gerichtet und wirken auf verschiedene Körper.</p><p>Bei einer durch Gravitation bewirkten Kreisbewegung ist die Gravitationskraft die benötigte Zentripetalkraft; beide Kräfte werden nicht addiert.</p><p>Die Gravitationskraft wächst proportional mit jeder der beiden Massen und nimmt mit dem Quadrat des Mittelpunktabstands ab.</p><p>Für den Kraftbetrag gilt F<sub>G</sub> = G·<span class="physics-fraction"><span class="physics-fraction__numerator">m₁·m₂</span><span class="physics-fraction__denominator">r²</span></span>. Auf der Oberfläche eines Himmelskörpers gilt g=G·<span class="physics-fraction"><span class="physics-fraction__numerator">M</span><span class="physics-fraction__denominator">R²</span></span>.</p>`;root.append(memory);
   groupings.forEach(([heading,ids])=>{
     if(!ids.length)return;
     const details=document.createElement('details');details.className='physics-task-card';
@@ -739,7 +877,9 @@ function updateSummary(){
       const title=original.querySelector('h3')?.textContent||id,prompt=original.querySelector('.task-prompt')?.innerHTML||'';
       const fields=[...original.querySelectorAll('.task-fields input, .task-fields select')].filter(el=>!el.id.endsWith('-unit'));
       const board=wordBoards.get(id);
-      const own=id==='S1'
+      const own=id==='A1'
+        ? [...fields.map(el=>el.tagName==='SELECT'?el.selectedOptions[0]?.textContent:`${el.value}${$(el.id+'-unit')?.value?' '+$(el.id+'-unit').value:''}`),$('a1-explanation-answer').value].filter(Boolean).join(' · ')
+        : id==='S1'
         ? [...original.querySelectorAll('.grav-s1-choices input:checked')].map(el=>el.closest('label')?.textContent.trim()).join(' · ')
         : board ? [
           ...((id==='M3'||id==='M4')?[`${$(`${id.toLowerCase()}-g`).value} ${$(`${id.toLowerCase()}-g-unit`).value}`.trim()]:[]),
@@ -772,7 +912,7 @@ const quizData=[
   ['Was geschieht bei unverändertem Abstand?',[['a','Verdoppeltes m₁ verdoppelt F.'],['b','Verdoppelte beide Massen vervierfachen F.'],['c','Halbiertes m₂ verdoppelt F.'],['d','Die Masse hat keinen Einfluss.']],['a','b'],'Richtig. Jede Masse wirkt als eigener Faktor.','Teilweise korrekt. Berücksichtige beide Massenfaktoren.','Noch nicht korrekt. Lies die beiden Faktoren m₁ und m₂ im Gesetz.'],
   ['Was gilt für den Abstand r?',[['a','Er wird zwischen den Schwerpunkten gemessen.'],['b','Bei 2r bleibt ein Viertel der Kraft.'],['c','Der Abstand beginnt an den Kreisrändern.'],['d','Bei 3r bleibt ein Drittel.']],['a','b'],'Richtig. Mittelpunktabstand und quadratische Abnahme passen.','Teilweise korrekt. Prüfe noch die Quadratur des Abstandsfaktors.','Noch nicht korrekt. Die symbolischen Kreisradien sind nicht der Abstand r.'],
   ['Welche Kraft hält den Mond auf einer annähernden Kreisbahn?',[['a','Die Erdanziehung kann die Rolle der Zentripetalkraft übernehmen.'],['b','Erdanziehung und Zentripetalkraft werden addiert.'],['c','Nur eine nach außen gerichtete Kraft hält ihn auf der Bahn.']],['a'],'Richtig. Gravitation ist hier die zur Bahnmitte gerichtete Kraft.','Teilweise korrekt. Prüfe, ob wirklich eine zweite Kraft addiert wird.','Noch nicht korrekt. Eine Kraft kann die Rolle der Zentripetalkraft erfüllen.'],
-  ['Warum wirkt eine Astronautin im Orbit schwerelos?',[['a','Sie fällt mit der Raumstation gemeinsam um die Erde.'],['b','In 400 km Höhe gibt es keine Erdanziehung.'],['c','Die Erde zieht nur ruhende Körper an.']],['a'],'Richtig. Im Orbit wirkt Gravitation weiterhin.','Teilweise korrekt. Verbinde freien Fall und vorhandene Gravitation.','Noch nicht korrekt. Die berechnete Orbitkraft ist deutlich von null verschieden.'],
+  ['Welche Aussagen folgen aus A2?',[['a','In 400 km Höhe ist die Gravitationskraft kleiner als am Boden.'],['b','Auch in 400 km Höhe wirkt auf die Astronautin eine Gravitationskraft.'],['c','Die Höhe von 400 km ist bereits der Abstand vom Erdmittelpunkt.'],['d','Für den Abstand im Orbit muss man Erdradius und Höhe addieren.']],['a','b','d'],'Richtig. Die Kraft nimmt mit dem Mittelpunktabstand ab und bleibt im Orbit von null verschieden.','Teilweise korrekt. Prüfe noch den Mittelpunktabstand und vergleiche die beiden Kraftwerte.','Noch nicht korrekt. Die 400 km werden zum Erdradius addiert; die berechnete Kraft im Orbit ist nicht null.'],
   ['Was folgt aus dem Gravitationsgesetz für einen Himmelskörper?',[['a','Bei gleicher Masse führt kleinerer Radius zu größerem Oberflächen-g.'],['b','Für g ist die Masse eines fallenden Probekörpers nicht entscheidend.'],['c','Halbe Himmelskörpermasse erzwingt bei gleichem g halben Radius.'],['d','G lässt sich durch die hinterlegte Simulation unabhängig bestimmen.']],['a','b'],'Richtig. Das Oberflächen-g hängt von M und R² ab.','Teilweise korrekt. Prüfe die Probemasse und das Quadrat des Radius.','Noch nicht korrekt. Vergleiche g=G·M/R² mit der Simulation.']
 ];
 function buildQuiz(){
@@ -810,8 +950,10 @@ if(typeof document!=='undefined'){
     const numeric=numericCards.get(id);
     if(numeric){
       const changed=event.target.id;
-      if(numeric.numbers.some(([suffix])=>changed===`${id.toLowerCase()}-${suffix}`||changed===`${id.toLowerCase()}-${suffix}-unit`)){
-        numeric.numberPassed=false;$(`feedback-${id.toLowerCase()}`).hidden=true;
+      for(const [suffix] of numeric.numbers)if(changed===`${id.toLowerCase()}-${suffix}`||changed===`${id.toLowerCase()}-${suffix}-unit`){
+        numeric.numberPassed=false;numeric.numberChecks[suffix]=false;
+        if(numeric.separateNumbers)$(`feedback-${id.toLowerCase()}-${suffix}`).hidden=true;
+        else $(`feedback-${id.toLowerCase()}`).hidden=true;
       }
       for(const [suffix] of numeric.choices)if(changed===`${id.toLowerCase()}-${suffix}`){
         numeric.choicePassed[suffix]=false;$(`feedback-${id.toLowerCase()}-${suffix}`).hidden=true;
@@ -832,6 +974,29 @@ if(typeof document!=='undefined'){
   window.addEventListener('resize',updateSimulation);
   progress=createPhysicsTaskProgress('aufgabe8');
   setupApplicationStepHelps(progress);
+  setupPhysicsSemanticTask({
+    answerId:'a1-explanation-answer',buttonId:'check-a1-explanation',feedbackId:'a1-explanation-feedback',countId:'a1-explanation-count',
+    taskId:'ph11-a8-apfel-erde-kraft-beschleunigung',serverUrl:undefined,minimumLength:30,fallbackMaxPoints:2,
+    buttonText:'Erklärung prüfen',checkingText:'Erklärung wird geprüft …',retryText:'Erklärung erneut prüfen',
+    shortAnswerHint:'Erkläre in eigenen Worten, wie die Kräfte und die Massen mit den beiden Beschleunigungen zusammenhängen.',
+    shortAnswerMessage:'Erkläre in eigenen Worten, wie die Kräfte und die Massen mit den beiden Beschleunigungen zusammenhängen.',
+    technicalErrorMessage:'Die Erklärung konnte gerade nicht geprüft werden. Bitte versuche es erneut.',
+    onInput:()=>{
+      a1Review.passed=false;a1Review.answer='';
+      if(completed.delete('A1'))updateSummary();
+      progress.save();
+    },
+    onEvaluation:(result,answer)=>{
+      const valid=Number(result?.points)===2&&Number(result?.maxPoints)===2;
+      a1Review.passed=valid;a1Review.answer=valid?answer:'';
+      const numeric=numericCards.get('A1');
+      if(valid&&numeric?.numberPassed)finish('A1');
+      else {completed.delete('A1');updateSummary();progress.save();}
+    },
+    onError:()=>{
+      a1Review.passed=false;a1Review.answer='';completed.delete('A1');updateSummary();progress.save();
+    }
+  });
   progress.registerPart('simulation',()=>({...simulation}),saved=>{if(validState(saved)){simulation={...saved};updateSimulation();}});
   progress.registerPart('m2-observations',()=>Object.fromEntries(m2Cases.filter(item=>validM2Observation(item,m2Observations[item.id])).map(item=>[item.id,{...m2Observations[item.id]}])),saved=>{
     m2Cases.forEach(item=>{delete m2Observations[item.id];if(validM2Observation(item,saved?.[item.id]))m2Observations[item.id]={...saved[item.id]};});
@@ -847,15 +1012,24 @@ if(typeof document!=='undefined'){
     const selected=[...$('card-s1').querySelectorAll('.grav-s1-choices input:checked')].map(input=>Number(input.value));
     s1Checked=saved===true&&selected.length===3&&[1,2,3].every(value=>selected.includes(value));
   });
+  progress.registerPart('a1-semantic-review',()=>({version:a1Review.version,passed:a1Review.passed,answer:a1Review.answer}),saved=>{
+    const current=$('a1-explanation-answer').value;
+    const valid=saved?.version===a1Review.version&&saved?.passed===true&&typeof saved.answer==='string'&&saved.answer.length>=30&&saved.answer===current;
+    a1Review.passed=valid;a1Review.answer=valid?current:'';
+  });
   progress.registerPart('completed',()=>[...completed],saved=>{if(Array.isArray(saved)){const allowed=new Set(Object.keys(solutionIdeas));saved.forEach(id=>{if(id==='S1'||numericCards.has(id))return;const board=wordBoards.get(id);if(allowed.has(id)&&(!board||board.values.every((value,index)=>value===board.answers[index]))&&(id!=='M2'||allM2Observations()&&m2SelectionsCorrect()))completed.add(id);});}if(s1Checked)completed.add('S1');if(!completed.has('M2')){completed.delete('M3');completed.delete('M4');}lawStepUnlock();updateSummary();$('modern-note').hidden=!completed.has('P1');$('m4-note').hidden=!completed.has('M4');});
-  progress.registerPart('numeric-checks',()=>Object.fromEntries([...numericCards].map(([id,state])=>[id,{numberPassed:state.numberPassed,choicePassed:{...state.choicePassed}}])),saved=>{
+  progress.registerPart('numeric-checks',()=>Object.fromEntries([...numericCards].map(([id,state])=>[id,{numberPassed:state.numberPassed,numberChecks:{...state.numberChecks},choicePassed:{...state.choicePassed}}])),saved=>{
     if(!saved||typeof saved!=='object'||Array.isArray(saved))return;
     for(const [id,state] of numericCards){
       const record=saved[id];if(!record||typeof record!=='object')continue;
-      const validNumbers=state.numbers.every(([suffix,label,target,digits,kind])=>checkQuantity($(`${id.toLowerCase()}-${suffix}`).value,$(`${id.toLowerCase()}-${suffix}-unit`).value,{target,digits,units:unitSets[kind],tolerance:id==='M3'?0.01e-11:0})==='correct');
-      state.numberPassed=record.numberPassed===true&&validNumbers;
+      for(const [suffix,label,target,digits,kind] of state.numbers){
+        const valid=checkQuantity($(`${id.toLowerCase()}-${suffix}`).value,$(`${id.toLowerCase()}-${suffix}-unit`).value,{target,digits,units:unitSets[kind],tolerance:id==='M3'?0.01e-11:0})==='correct';
+        state.numberChecks[suffix]=(typeof record.numberChecks==='object'&&record.numberChecks!==null?record.numberChecks[suffix]===true:record.numberPassed===true)&&valid;
+      }
+      state.numberPassed=state.numbers.every(([suffix])=>state.numberChecks[suffix]);
       for(const [suffix,label,options,right] of state.choices)state.choicePassed[suffix]=record.choicePassed?.[suffix]===true&&$(`${id.toLowerCase()}-${suffix}`).value===right&&(!wordBoards.has(id)||wordBoards.get(id).values[0]===right);
-      if(state.numberPassed&&state.choices.every(([suffix])=>state.choicePassed[suffix])&&(!(id==='M3'||id==='M4')||completed.has('M2')))completed.add(id);
+      const semanticReady=id!=='A1'||(a1Review.passed&&a1Review.answer===$('a1-explanation-answer').value);
+      if(state.numberPassed&&state.choices.every(([suffix])=>state.choicePassed[suffix])&&semanticReady&&(!(id==='M3'||id==='M4')||completed.has('M2')))completed.add(id);
     }
     updateSummary();$('m4-note').hidden=!completed.has('M4');
   });
