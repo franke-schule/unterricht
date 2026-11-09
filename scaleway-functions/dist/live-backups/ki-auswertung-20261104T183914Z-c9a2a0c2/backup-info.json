@@ -1,0 +1,17 @@
+﻿{
+    "createdAt":  "2026-11-04T18:39:15.4516161Z",
+    "functionId":  "26f7eaed-e1b0-4b1c-9f7e-27355b481959",
+    "name":  "ki-auswertung",
+    "region":  "fr-par",
+    "runtime":  "node26",
+    "handler":  "handler.handle",
+    "status":  "ready",
+    "sha256":  "49532F44CEFE9760CBD7818E3DCA38B67742DE596012DFF517E8E98494535A5B",
+    "files":  [
+                  "handler.js",
+                  "scaleway-client.js",
+                  "evaluation-core.js",
+                  "source-manifest.json",
+                  "package.json"
+              ]
+}

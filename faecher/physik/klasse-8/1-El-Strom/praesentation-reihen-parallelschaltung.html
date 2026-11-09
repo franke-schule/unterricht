@@ -1,0 +1,183 @@
+<!doctype html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Reihen- und Parallelschaltung · Physik 8</title>
+<style>
+:root{color-scheme:light;--ink:#111827;--muted:#526174;--blue:#2563eb;--green:#059669;--amber:#d97706;--line:#dbe3ec}
+*{box-sizing:border-box}body{margin:0;background:#edf2f7;color:var(--ink);font-family:Inter,ui-sans-serif,system-ui,-apple-system,"Segoe UI",Arial,sans-serif}
+button,a,select{-webkit-tap-highlight-color:transparent}button,select{font:inherit}button{cursor:pointer}button:focus-visible,a:focus-visible,select:focus-visible{outline:3px solid var(--blue);outline-offset:4px}button:disabled{opacity:.35;cursor:default}
+.shell{min-height:100dvh;display:flex;flex-direction:column;justify-content:center;align-items:center;gap:12px;padding:12px}
+.deck{width:min(calc(100vw - 24px),calc((100dvh - 100px)*16/9));aspect-ratio:16/9;position:relative;container-type:inline-size;background:#fff;box-shadow:0 15px 60px #172b4515;overflow:hidden}
+.slide{position:absolute;inset:0;padding:2.7cqw 3.6cqw 2.1cqw;display:flex;flex-direction:column}.slide[hidden]{display:none}
+.slide header{display:flex;align-items:center;justify-content:space-between;gap:2cqw;margin-bottom:.8cqw}.slide h1{font-size:3.3cqw;letter-spacing:-.04em;line-height:1.1;font-weight:720;margin:0}.chapter{font-size:1.05cqw;color:var(--muted);text-transform:uppercase;letter-spacing:.12em;white-space:nowrap}
+.visual{flex:1;min-height:0;display:flex;align-items:center;justify-content:center}.visual>svg{width:100%;height:100%;max-height:100%}.caption{min-height:3.5cqw;display:flex;align-items:center;justify-content:center;gap:2cqw;text-align:center;font-size:2.05cqw;line-height:1.25;color:var(--muted);margin:.4cqw 0 0}.caption strong{color:var(--ink);font-weight:650}.caption .accent{color:var(--blue)}
+.pair{display:grid;grid-template-columns:1fr 1fr;gap:3cqw;width:100%;height:100%;align-items:center}.pair figure{margin:0;min-width:0;display:flex;flex-direction:column;align-items:center}.pair figure+figure{border-left:1px solid var(--line);padding-left:3cqw}.pair h2{font-size:2cqw;font-weight:600;margin:0 0 .5cqw}.pair svg{width:100%;height:auto}.pair figcaption{font-size:1.65cqw;color:var(--muted);min-height:2.3cqw;text-align:center}
+.grid{display:grid;grid-template-columns:1fr 1fr;grid-template-rows:1fr 1fr;gap:1cqw 2.2cqw;flex:1;min-height:0}.diagram{appearance:none;border:0;background:transparent;padding:0 .7cqw;display:flex;flex-direction:column;min-height:0;position:relative;color:inherit;text-align:left;border-radius:6px}.diagram:hover{background:#f5f8fc}.diagram h2{font-size:1.5cqw;font-weight:600;margin:.15cqw 0 .15cqw}.diagram svg{width:100%;flex:1;min-height:0}.diagram:nth-child(even){border-left:1px solid var(--line);border-radius:0}.diagram:nth-child(n+3){border-top:1px solid var(--line);padding-top:.7cqw}.overview .caption{font-size:1.3cqw;min-height:2cqw}.overview h1{font-size:2.9cqw}.overview .chapter{font-size:1cqw}
+.controls{display:flex;justify-content:space-between;align-items:center;width:min(1200px,100%);gap:12px;font-size:14px;color:var(--muted)}.nav,.tools,.links{display:flex;align-items:center;gap:8px}.controls button,.controls select{border:1px solid var(--line);background:white;color:var(--ink);border-radius:8px;min-height:40px;padding:7px 13px}.controls select{max-width:240px}.controls a{color:var(--muted);font-size:12px}.progress{display:flex;gap:.4cqw;position:absolute;bottom:.8cqw;left:50%;transform:translateX(-50%)}.progress span{width:.6cqw;height:.25cqw;background:var(--line);border-radius:4px}.progress span.done{background:var(--blue)}
+svg{overflow:visible}svg .wire{fill:none;stroke:var(--ink);stroke-width:5;stroke-linecap:round;stroke-linejoin:round}svg .body{fill:#fff;stroke:var(--ink);stroke-width:5}svg .symbol{fill:none;stroke:var(--ink);stroke-width:4;stroke-linecap:round}svg text{font-family:inherit;fill:var(--ink);font-size:29px;text-anchor:middle;dominant-baseline:central}svg .small{font-size:24px;fill:var(--muted)}svg .measure{stroke:var(--blue)}svg .measure-body{fill:#fff;stroke:var(--blue);stroke-width:4}svg .meter-text{fill:var(--blue);font-size:24px}svg .trace{fill:none;stroke:var(--blue);stroke-width:10;opacity:.3;stroke-linejoin:round;stroke-linecap:round}svg .trace.second{stroke:var(--green)}svg .glow{fill:#fbbf24;opacity:.2}svg .lamp-lit{fill:#fff2be}svg .lamp-dim{fill:#fff9e5}svg .ghost{opacity:.3}svg .gap{stroke:var(--amber);stroke-width:4;fill:#fff}svg .tap{fill:var(--blue)}
+.sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}
+dialog{width:min(1200px,95vw);max-height:94dvh;border:0;border-radius:12px;padding:24px;background:white;color:var(--ink)}dialog::backdrop{background:#0f172acc}dialog h2{margin:0;font-size:clamp(18px,2.5vw,30px)}dialog .close{position:absolute;right:12px;top:10px;border:1px solid var(--line);background:white;border-radius:8px;padding:8px 13px;font-size:20px}dialog .zoom-visual{margin-top:24px}dialog svg{width:100%;height:auto;max-height:73dvh}dialog .zoom-hint{margin:5px 0 0;color:var(--muted);font-size:14px}
+:fullscreen{background:#edf2f7}.shell:fullscreen .links{display:none}
+@media(max-width:700px){.controls{flex-wrap:wrap;justify-content:center;gap:6px}.links{display:none}.tools select{max-width:180px}.controls button{padding:6px 10px}.shell{padding:6px;gap:8px}.deck{width:min(calc(100vw - 12px),calc((100dvh - 116px)*16/9))}}
+@media print{@page{size:landscape;margin:0}body,.shell{background:white;display:block;padding:0}.deck{width:100%;aspect-ratio:auto;box-shadow:none;overflow:visible}.slide,.slide[hidden]{display:flex;position:relative;width:100vw;height:56.25vw;break-after:page;container-type:inline-size}.controls,.progress{display:none}}
+</style>
+</head>
+<body>
+<main class="shell" id="shell">
+<div class="deck" id="deck" aria-label="Präsentation Reihen- und Parallelschaltung"></div>
+<nav class="controls" aria-label="Präsentationssteuerung">
+  <div class="links"><a href="../index.html">Physik 8</a><a href="../../../../index.html">Startseite</a></div>
+  <div class="nav"><button id="prev" aria-label="Vorheriger Schritt">← Zurück</button><span id="counter" aria-live="polite"></span><button id="next" aria-label="Nächster Schritt">Weiter →</button></div>
+  <div class="tools"><label class="sr-only" for="jump">Folie wählen</label><select id="jump"></select><button id="fullscreen" aria-label="Vollbild ein- oder ausschalten">Vollbild</button></div>
+</nav>
+<p class="sr-only" id="instructions">Pfeil rechts oder Leertaste: nächster Schritt. Pfeil links: zurück. Pos1: Anfang. Ende: Schlussfolie. F: Vollbild. Auf der Schlussfolie Schaltplan zum Vergrößern auswählen.</p>
+</main>
+<dialog id="zoom" aria-labelledby="zoom-title"><h2 id="zoom-title"></h2><button class="close" aria-label="Vergrößerung schließen">×</button><div class="zoom-visual"></div><p class="zoom-hint">Die Messstellen können nacheinander untersucht werden.</p></dialog>
+<script>
+'use strict';
+// Native SVG diagrams deliberately share the same symbols and terminal positions.
+const $=s=>document.querySelector(s);
+const sub=(base,index)=>`${base}<tspan dy="7" font-size=".65em">${index}</tspan><tspan dy="-7">​</tspan>`;
+const text=(x,y,label,cls='')=>`<text x="${x}" y="${y}" class="${cls}">${label}</text>`;
+const path=(d,cls='wire')=>`<path d="${d}" class="${cls}"/>`;
+const line=(x1,y1,x2,y2,cls='wire')=>path(`M${x1} ${y1}L${x2} ${y2}`,cls);
+const node=(x,y,cls='')=>`<circle cx="${x}" cy="${y}" r="7" class="${cls}" fill="currentColor"/>`;
+function battery(x,y,r=1){return `<g data-component="battery" transform="translate(${x} ${y}) scale(${r})">${line(-19,-35,-19,35)}${line(19,-19,19,19)}</g>`;}
+function lamp(x,y,{lit=true,dim=false,label='',removed=false}={}){
+  // Qualitative brightness: identical lamps and constant source voltage.
+  // No constant resistance or numerical brightness ratio is assumed for lamps.
+  return `<g data-component="lamp" ${removed?'class="ghost"':''}>${lit&&!removed?`<circle cx="${x}" cy="${y}" r="65" class="glow" style="opacity:${dim?.09:.23}"/>`:''}<circle cx="${x}" cy="${y}" r="40" class="body ${lit&&!removed?(dim?'lamp-dim':'lamp-lit'):''}"/>${line(x-26,y-26,x+26,y+26,'symbol')}${line(x-26,y+26,x+26,y-26,'symbol')}${label?text(x,y+72,sub('L',label),'small'):''}</g>`;
+}
+function resistor(x,y,index,w=120,h=58){return `<g data-component="resistor"><rect x="${x-w/2}" y="${y-h/2}" width="${w}" height="${h}" class="body"/>${text(x,y-2,sub('R',index))}</g>`;}
+function meter(x,y,type,index='',r=24){return `<g data-component="${type==='A'?'ammeter':'voltmeter'}"><circle cx="${x}" cy="${y}" r="${r}" class="measure-body"/>${text(x,y-2,index?sub(type,index):type,'meter-text')}</g>`;}
+const svg=(content,title,view='0 0 1000 450')=>`<svg xmlns="http://www.w3.org/2000/svg" viewBox="${view}" role="img" aria-label="${title}"><title>${title}</title>${content}</svg>`;
+function circuit({parallel=false,two=true,resistors=false,highlight=0,gap=false,removed=false}={}){
+  const left=120,right=880,top=95,low=225,bottom=350,x1=370,x2=650;
+  let out=path(`M${left} ${top}V${bottom}H466 M504 ${bottom}H${right}V${top}`)+battery(485,bottom);
+  if(parallel){
+    out+=path(`M${left} ${top}H${x1-(resistors?60:40)} M${x1+(resistors?60:40)} ${top}H${right}`);
+    out+=resistors?resistor(x1,top,1):removed?'':lamp(x1,top,{label:'1'});
+    if(removed)out+=lamp(x1+170,top+65,{lit:false,removed:true})+`<circle class="gap" cx="${x1-40}" cy="${top}" r="5"/><circle class="gap" cx="${x1+40}" cy="${top}" r="5"/>`;
+    if(two){out+=path(`M${left} ${low}H${x1-(resistors?60:40)} M${x1+(resistors?60:40)} ${low}H${right}`)+(resistors?resistor(x1,low,2):lamp(x1,low,{label:'2'}))+node(left,low)+node(right,low);}
+    if(highlight===1)out+=path(`M466 ${bottom}H${left}V${top}H330 M410 ${top}H${right}V${bottom}H504`,'trace');
+    if(highlight===2)out+=path(`M466 ${bottom}H${left}V${low}H330 M410 ${low}H${right}V${bottom}H504`,'trace second');
+  }else{
+    const half=resistors?60:40;
+    out+=path(`M${left} ${top}H${x1-half} M${x1+half} ${top}H${x2-(two||gap?half:0)}`);
+    out+=resistors?resistor(x1,top,1):removed?'':lamp(x1,top,{dim:two,lit:!gap,label:two?'1':''});
+    if(removed)out+=lamp(x1,top+90,{lit:false,removed:true})+`<circle class="gap" cx="${x1-half}" cy="${top}" r="5"/><circle class="gap" cx="${x1+half}" cy="${top}" r="5"/>`;
+    if(two)out+=resistors?resistor(x2,top,2):lamp(x2,top,{dim:!removed,lit:!removed,label:'2'});
+    if(gap)out+=`<circle class="gap" cx="${x2-half}" cy="${top}" r="5"/><circle class="gap" cx="${x2+half}" cy="${top}" r="5"/>`;
+    out+=path(`M${x2+(two||gap?half:0)} ${top}H${right}`);
+    if(gap){out=out.replace('class="body lamp-lit"','class="body"');}
+    if(highlight)out+=path(`M466 ${bottom}H${left}V${top}H330 M410 ${top}${two?'H610 M690 '+top:''}H${right}V${bottom}H504`,'trace');
+  }
+  return svg(out,`${parallel?'Parallel':'Reihen'}schaltung mit ${two?'zwei':'einer'} ${resistors?'Widerständen':'Glühlampen'}${removed?', eine Lampe ist entfernt':''}`);
+}
+function pair(a,b,capA='',capB=''){
+ return `<div class="pair"><figure><h2>Reihenschaltung</h2>${a}<figcaption>${capA}</figcaption></figure><figure><h2>Parallelschaltung</h2>${b}<figcaption>${capB}</figcaption></figure></div>`;
+}
+function ammeterDemo(step){
+ let out=path('M120 95V350H466 M504 350H880V95H710 M590 95H540 M480 95H430 M310 95H120')+battery(485,350)+resistor(370,95,1)+resistor(650,95,2);
+ if(step===0)out+=line(480,95,540,95);
+ if(step===1)out+=`<circle class="gap" cx="480" cy="95" r="7"/><circle class="gap" cx="540" cy="95" r="7"/>`;
+ if(step===2)out+=line(480,95,486,95,'wire measure')+line(534,95,540,95,'wire measure')+meter(510,95,'A');
+ return svg(out,step===0?'Zwei Widerstände in Reihe':step===1?'Die Leitung zwischen den Widerständen ist geöffnet':'Amperemeter in den Stromweg zwischen R1 und R2 eingefügt');
+}
+function voltmeterDemo(step){
+ let out=path('M120 145V370H466 M504 370H880V145H710 M590 145H430 M310 145H120')+battery(485,370)+resistor(370,145,1)+resistor(650,145,2);
+ if(step>0)out+=node(270,145,'tap')+node(step===3?750:470,145,'tap');
+ if(step===2)out+=path('M270 145V50H346 M394 50H470V145','wire measure')+meter(370,50,'V');
+ if(step===3)out+=path('M270 145V50H486 M534 50H750V145','wire measure')+meter(510,50,'V');
+ return svg(out,step===3?'Voltmeter über R1 und R2 zusammen':step===2?'Voltmeter parallel zu R1':'Anschlusspunkte für eine Spannungsmessung');
+}
+// Measurement diagrams: every gap is occupied by its stated component.
+function seriesCurrent(){
+ let o=path('M65 65V117 M65 163V210H251 M289 210H495V65H455 M415 65H380 M280 65H260 M220 65H180 M80 65H65');
+ o+=battery(270,210)+resistor(130,65,1,100,46)+resistor(330,65,2,100,46);
+ // A1 on the left vertical feed, A2 between the resistors, A3 after R2.
+ o+=meter(65,140,'A','1',23)+meter(240,65,'A','2',20)+meter(435,65,'A','3',20);
+ return svg(o,'Reihenschaltung: A1 vor R1, A2 zwischen R1 und R2, A3 hinter R2','0 0 560 260');
+}
+function parallelCurrent(){
+ let o=path('M90 55V139 M90 181V225H251 M289 225H465V181 M465 139V55H345 M245 55H195 M155 55H90 M90 125H155 M195 125H245 M345 125H465');
+ o+=battery(270,225)+resistor(295,55,1,100,46)+resistor(295,125,2,100,46);
+ o+=meter(90,160,'A','0',21)+meter(175,55,'A','1',20)+meter(175,125,'A','2',20)+meter(465,160,'A','3',21)+node(90,125)+node(465,125);
+ return svg(o,'Parallelschaltung: A0 vor der Verzweigung, A1 im Zweig mit R1, A2 im Zweig mit R2, A3 nach der Zusammenführung','0 0 560 270');
+}
+function seriesVoltage(){
+ let o=path('M65 90V225H251 M289 225H495V90H420 M320 90H240 M140 90H65')+battery(270,225)+resistor(190,90,1,100,46)+resistor(370,90,2,100,46);
+ o+=path('M120 90V27H169 M211 27H260V90 M300 90V27H349 M391 27H440V90 M65 162H256 M304 162H495','wire measure');
+ o+=meter(190,27,'V','1',21)+meter(370,27,'V','2',21)+meter(280,162,'V','3',24);
+ o+=node(120,90,'tap')+node(260,90,'tap')+node(300,90,'tap')+node(440,90,'tap')+node(65,162,'tap')+node(495,162,'tap');
+ return svg(o,'Reihenschaltung: V1 über R1, V2 über R2, V3 über R1 und R2 zusammen','0 0 560 270');
+}
+function parallelVoltage(){
+ let o=path('M90 62V235H251 M289 235H465V62H345 M245 62H90 M90 145H245 M345 145H465')+battery(270,235)+resistor(295,62,1,100,42)+resistor(295,145,2,100,42)+node(90,145)+node(465,145);
+ o+=path('M225 62V18H277 M313 18H365V62 M225 145V101H277 M313 101H365V145 M90 190H271 M319 190H465','wire measure');
+ o+=meter(295,18,'V','1',18)+meter(295,101,'V','2',18)+meter(295,190,'V','3',24);
+ o+=node(225,62,'tap')+node(365,62,'tap')+node(225,145,'tap')+node(365,145,'tap')+node(90,190,'tap')+node(465,190,'tap');
+ return svg(o,'Parallelschaltung: V1 über R1, V2 über R2, V3 über beiden parallelen Zweigen. Alle drei Voltmeter liegen zwischen denselben elektrischen Knoten.','0 0 560 280');
+}
+const measurementPlans=[
+ ['Reihe · Stromstärke',seriesCurrent],['Parallel · Stromstärke',parallelCurrent],
+ ['Reihe · Spannung',seriesVoltage],['Parallel · Spannung',parallelVoltage]
+];
+const slides=[
+ {title:'Ein geschlossener Stromkreis',chapter:'Eine Lampe',steps:2,draw:s=>circuit({two:false,highlight:s}),caption:s=>s?'Ein <strong>geschlossener Weg</strong> durch die Lampe.':'Verfolge den Weg durch die Lampe.'},
+ {title:'Eine zweite Lampe',chapter:'Hintereinander',steps:5,draw:s=>circuit({two:s>=2,gap:s===1,highlight:s===3,removed:s===4}),caption:s=>['Wo passt die zweite Lampe hinein?','Leitung öffnen.','Beide Lampen liegen im selben Weg.','<strong>Reihenschaltung:</strong> ein gemeinsamer Weg.','Eine Lampe fehlt: <strong>beide aus.</strong>'][s]},
+ {title:'Ein zweiter Weg',chapter:'Nebeneinander',steps:5,draw:s=>circuit({parallel:true,two:s>0,highlight:s===2?1:s===3?2:0,removed:s===4}),caption:s=>['Wie entsteht ein zweiter Weg?','Ein zusätzlicher Zweig mit einer Lampe.','Ein Weg durch die erste Lampe.','<strong>Parallelschaltung:</strong> getrennte Zweige.','Eine Lampe fehlt: <strong>die andere leuchtet.</strong>'][s]},
+ {title:'Ein Weg oder zwei Zweige?',chapter:'Vergleichen',steps:2,draw:s=>pair(circuit({removed:!!s}),circuit({parallel:true,removed:!!s}),s?'Beide Lampen aus.':'Ein gemeinsamer Weg.',s?'Eine Lampe leuchtet weiter.':'Zwei getrennte Zweige.'),caption:s=>s?'Wo bleibt ein geschlossener Weg erhalten?':'Was passiert, wenn eine Lampe fehlt?'},
+ {title:'Lampen werden durch Widerstände ersetzt',chapter:'Gleiche Verbindungen',steps:2,draw:s=>pair(circuit({resistors:!!s}),circuit({parallel:true,resistors:!!s})),caption:s=>s?'Andere Bauteile. <strong>Dieselbe Schaltung.</strong>':'Achte auf die Leitungen.'},
+ {title:'Stromstärke messen',chapter:'Amperemeter',steps:3,draw:ammeterDemo,caption:s=>['Wo soll das Amperemeter hin?','Leitung öffnen.','<strong>Amperemeter in den Stromweg einfügen.</strong>'][s]},
+ {title:'Spannung messen',chapter:'Voltmeter',steps:4,draw:voltmeterDemo,caption:s=>['Wo liegen die beiden Anschlüsse von R₁?','Zwei Anschlusspunkte auswählen.','<strong>Voltmeter parallel zu R₁ anschließen.</strong>','Spannung über <strong>R₁ und R₂ zusammen</strong> messen.'][s]},
+ {title:'Unsere Messstellen',chapter:'Vorbereiten',steps:2,draw:s=>pair(circuit({resistors:true}),circuit({parallel:true,resistors:true})),caption:s=>s?'Spannung: über R₁, über R₂ und über beide zusammen.':'Stromstärke: an welchen Stellen können wir messen?'},
+ {title:'So schließen wir die Messgeräte an',chapter:'Zum Vergrößern anklicken',steps:1,overview:true,draw:()=>`<div class="grid">${measurementPlans.map(([title,fn],i)=>`<button class="diagram" data-zoom="${i}" aria-label="${title}: Schaltplan vergrößern"><h2>${title}</h2>${fn()}</button>`).join('')}</div>`,caption:()=>'<strong>A</strong> in den Stromweg. <strong>V</strong> parallel. Messstellen nacheinander untersuchen.'}
+];
+let current=0,step=0;
+const deck=$('#deck'),jump=$('#jump');
+jump.innerHTML=slides.map((s,i)=>`<option value="${i}">${i+1}. ${s.title}</option>`).join('');
+function render(){
+ const s=slides[current];
+ deck.innerHTML=`<section class="slide ${s.overview?'overview':''}" aria-labelledby="slide-title" aria-describedby="instructions"><header><h1 id="slide-title">${s.title}</h1><span class="chapter">${s.chapter}</span></header>${s.overview?s.draw(step):`<div class="visual">${s.draw(step)}</div>`}<p class="caption">${s.caption(step)}</p><div class="progress" aria-hidden="true">${Array.from({length:s.steps},(_,i)=>`<span class="${i<=step?'done':''}"></span>`).join('')}</div></section>`;
+ $('#counter').textContent=`${current+1} / ${slides.length}`;
+ $('#prev').disabled=current===0&&step===0;
+ $('#next').disabled=current===slides.length-1&&step===s.steps-1;
+ $('#next').textContent=step<s.steps-1?'Einblenden →':'Weiter →';
+ jump.value=String(current);
+ const hash=`#${current+1}.${step+1}`;
+ try{history.replaceState(null,'',hash);}catch{}
+}
+function next(){if($('#zoom').open)return;if(step<slides[current].steps-1)step++;else if(current<slides.length-1){current++;step=0;}render();}
+function prev(){if($('#zoom').open)return;if(step>0)step--;else if(current>0){current--;step=slides[current].steps-1;}render();}
+function go(index){current=Math.max(0,Math.min(slides.length-1,index));step=0;render();}
+$('#next').addEventListener('click',next);$('#prev').addEventListener('click',prev);
+jump.addEventListener('change',()=>go(Number(jump.value)));
+async function fullscreen(){try{if(document.fullscreenElement)await document.exitFullscreen();else await $('#shell').requestFullscreen();}catch{$('#fullscreen').textContent='Vollbild: F11';}}
+$('#fullscreen').addEventListener('click',fullscreen);
+document.addEventListener('fullscreenchange',()=>{$('#fullscreen').textContent=document.fullscreenElement?'Vollbild beenden':'Vollbild';});
+document.addEventListener('keydown',e=>{
+ if($('#zoom').open||e.ctrlKey||e.altKey||e.metaKey||/SELECT|INPUT|TEXTAREA/.test(e.target.tagName))return;
+ if((e.key===' '||e.key==='Enter')&&e.target.closest('button,a'))return;
+ if(['ArrowRight','PageDown',' '].includes(e.key)){e.preventDefault();next();}
+ else if(['ArrowLeft','PageUp'].includes(e.key)){e.preventDefault();prev();}
+ else if(e.key==='Home'){e.preventDefault();go(0);}
+ else if(e.key==='End'){e.preventDefault();go(slides.length-1);}
+ else if(e.key.toLowerCase()==='f')fullscreen();
+});
+const zoom=$('#zoom');let opener=null;
+deck.addEventListener('click',e=>{
+ const button=e.target.closest('[data-zoom]');if(!button)return;
+ const [title,fn]=measurementPlans[Number(button.dataset.zoom)];opener=button;
+ $('#zoom-title').textContent=title;$('#zoom .zoom-visual').innerHTML=fn();zoom.showModal();
+});
+$('#zoom .close').addEventListener('click',()=>zoom.close());
+zoom.addEventListener('click',e=>{if(e.target===zoom){const b=zoom.getBoundingClientRect();if(e.clientX<b.left||e.clientX>b.right||e.clientY<b.top||e.clientY>b.bottom)zoom.close();}});
+zoom.addEventListener('close',()=>opener?.focus());
+function loadHash(){const match=location.hash.match(/^#(\d+)\.(\d+)$/);if(match){current=Math.max(0,Math.min(slides.length-1,Number(match[1])-1));step=Math.max(0,Math.min(slides[current].steps-1,Number(match[2])-1));}render();}
+window.addEventListener('hashchange',loadHash);loadHash();
+</script>
+</body>
+</html>

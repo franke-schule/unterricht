@@ -1,0 +1,16 @@
+{
+  "createdAt": "2026-11-04T00:33:05.5746807Z",
+  "accessProtection": "password-v1",
+  "taskCount": 84,
+  "functionArchive": "ki-auswertung-passwortschutz.zip",
+  "functionSha256": "298439BA104010B8AAC400EE0F677D0BD228DEF2136032C5A79C48E547A08772",
+  "websiteArchive": "website-passwortschutz.zip",
+  "websiteSha256": "690215119350397C87FD598AA11E99E60425477C9B762633E86955C7C11E6064",
+  "websiteFiles": [
+    "faecher/informatik/klasse-11/1-Kuenstliche-Intelligenz/perzeptron/ui/semantic-answer.mjs",
+    "faecher/informatik/klasse-11/1-Kuenstliche-Intelligenz/perzeptron/ui/ai-access.mjs",
+    "faecher/informatik/klasse-11/1-Kuenstliche-Intelligenz/perzeptron/ui/ai-access.css"
+  ],
+  "liveDeploymentVerified": true,
+  "verifiedWebsite": "https://franke-schule.de"
+}

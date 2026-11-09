@@ -1,0 +1,914 @@
+TAP version 13
+# 25 InstaHub-Referenzen, CSV-Zeilen, Alias-JOIN und Fehlerfälle erfolgreich geprüft.
+# Subtest: C:\\Users\\Franke\\Documents\\git\\unterricht\\faecher\\informatik\\klasse-10\\1-Datenbanken\\tests\\aufgabe9-sql.test.mjs
+ok 1 - C:\\Users\\Franke\\Documents\\git\\unterricht\\faecher\\informatik\\klasse-10\\1-Datenbanken\\tests\\aufgabe9-sql.test.mjs
+  ---
+  duration_ms: 1988.9828
+  type: 'test'
+  ...
+# Alle Tests für beziehungsarten.test.mjs sind gruen.
+# Subtest: C:\\Users\\Franke\\Documents\\git\\unterricht\\faecher\\informatik\\klasse-10\\1-Datenbanken\\tests\\beziehungsarten.test.mjs
+ok 2 - C:\\Users\\Franke\\Documents\\git\\unterricht\\faecher\\informatik\\klasse-10\\1-Datenbanken\\tests\\beziehungsarten.test.mjs
+  ---
+  duration_ms: 339.4146
+  type: 'test'
+  ...
+# Mensa-Kreuzprodukt, Filter und qualifizierte Spalten erfolgreich geprüft
+# Subtest: C:\\Users\\Franke\\Documents\\git\\unterricht\\faecher\\informatik\\klasse-10\\1-Datenbanken\\tests\\menue-kreuzprodukt.test.mjs
+ok 3 - C:\\Users\\Franke\\Documents\\git\\unterricht\\faecher\\informatik\\klasse-10\\1-Datenbanken\\tests\\menue-kreuzprodukt.test.mjs
+  ---
+  duration_ms: 685.2383
+  type: 'test'
+  ...
+# Aufgabe 2, Schritt 2: Reihenfolge, Sperre und verdeckte Auflösungen geprüft
+# Subtest: C:\\Users\\Franke\\Documents\\git\\unterricht\\faecher\\informatik\\klasse-10\\1-Datenbanken\\tests\\redundanzen-step2.test.mjs
+ok 4 - C:\\Users\\Franke\\Documents\\git\\unterricht\\faecher\\informatik\\klasse-10\\1-Datenbanken\\tests\\redundanzen-step2.test.mjs
+  ---
+  duration_ms: 176.7269
+  type: 'test'
+  ...
+# Sicherungsblatt in Arbeitsreiter und Auswertung geprüft
+# Subtest: C:\\Users\\Franke\\Documents\\git\\unterricht\\faecher\\informatik\\klasse-10\\1-Datenbanken\\tests\\sicherungsblatt-auswertung.test.mjs
+ok 5 - C:\\Users\\Franke\\Documents\\git\\unterricht\\faecher\\informatik\\klasse-10\\1-Datenbanken\\tests\\sicherungsblatt-auswertung.test.mjs
+  ---
+  duration_ms: 209.8337
+  type: 'test'
+  ...
+# Song-Verbund: Daten, 32 → 8 → 4, Schlüsselpaare und SQL-Fehlerfälle erfolgreich geprüft
+# Subtest: C:\\Users\\Franke\\Documents\\git\\unterricht\\faecher\\informatik\\klasse-10\\1-Datenbanken\\tests\\song-verbund.test.mjs
+ok 6 - C:\\Users\\Franke\\Documents\\git\\unterricht\\faecher\\informatik\\klasse-10\\1-Datenbanken\\tests\\song-verbund.test.mjs
+  ---
+  duration_ms: 804.1607
+  type: 'test'
+  ...
+# sql-lab-core tests passed
+# Subtest: C:\\Users\\Franke\\Documents\\git\\unterricht\\faecher\\informatik\\klasse-10\\1-Datenbanken\\tests\\sql-lab-core.test.mjs
+ok 7 - C:\\Users\\Franke\\Documents\\git\\unterricht\\faecher\\informatik\\klasse-10\\1-Datenbanken\\tests\\sql-lab-core.test.mjs
+  ---
+  duration_ms: 291.3669
+  type: 'test'
+  ...
+# 22 SQL-Referenzen sowie Äquivalenz-, Datums- und Relationsfälle erfolgreich ausgeführt
+# Subtest: C:\\Users\\Franke\\Documents\\git\\unterricht\\faecher\\informatik\\klasse-10\\1-Datenbanken\\tests\\sql-reference-queries.test.mjs
+ok 8 - C:\\Users\\Franke\\Documents\\git\\unterricht\\faecher\\informatik\\klasse-10\\1-Datenbanken\\tests\\sql-reference-queries.test.mjs
+  ---
+  duration_ms: 1230.7217
+  type: 'test'
+  ...
+# SQL-UI-Vertrag für Schema, Platzhalter, Ergebnisfenster und Punktefeedback geprüft
+# Subtest: C:\\Users\\Franke\\Documents\\git\\unterricht\\faecher\\informatik\\klasse-10\\1-Datenbanken\\tests\\sql-ui-contract.test.mjs
+ok 9 - C:\\Users\\Franke\\Documents\\git\\unterricht\\faecher\\informatik\\klasse-10\\1-Datenbanken\\tests\\sql-ui-contract.test.mjs
+  ---
+  duration_ms: 630.0922
+  type: 'test'
+  ...
+# Alle Tests für transaktionen.test.mjs sind gruen.
+# Subtest: C:\\Users\\Franke\\Documents\\git\\unterricht\\faecher\\informatik\\klasse-10\\1-Datenbanken\\tests\\transaktionen.test.mjs
+ok 10 - C:\\Users\\Franke\\Documents\\git\\unterricht\\faecher\\informatik\\klasse-10\\1-Datenbanken\\tests\\transaktionen.test.mjs
+  ---
+  duration_ms: 738.1181
+  type: 'test'
+  ...
+# Subtest: Alle Aufgaben behalten ihre Kennung, den Eingabetyp und das Ergebnisformat
+ok 11 - Alle Aufgaben behalten ihre Kennung, den Eingabetyp und das Ergebnisformat
+  ---
+  duration_ms: 231.6749
+  type: 'test'
+  ...
+# Subtest: A9: Server und Website verwenden dieselben Punktgrenzen, Aufträge und SQL-Kontexte
+ok 12 - A9: Server und Website verwenden dieselben Punktgrenzen, Aufträge und SQL-Kontexte
+  ---
+  duration_ms: 10.257
+  type: 'test'
+  ...
+# Subtest: A9: Alle vier Beschreibe-Aufgaben verwenden fünf Kriterien einschließlich Sortierung
+ok 13 - A9: Alle vier Beschreibe-Aufgaben verwenden fünf Kriterien einschließlich Sortierung
+  ---
+  duration_ms: 3.7744
+  type: 'test'
+  ...
+# Subtest: A9: Jedes offene Kriterium wird einzeln angezeigt, alle erfüllten Aspekte zählen sofort
+ok 14 - A9: Jedes offene Kriterium wird einzeln angezeigt, alle erfüllten Aspekte zählen sofort
+  ---
+  duration_ms: 38.5502
+  type: 'test'
+  ...
+# Subtest: A9: P8 benennt die Rollenverwechslung, ohne den gesamten Erwartungshorizont auszugeben
+ok 15 - A9: P8 benennt die Rollenverwechslung, ohne den gesamten Erwartungshorizont auszugeben
+  ---
+  duration_ms: 1.1232
+  type: 'test'
+  ...
+# Subtest: A9: P11 darf denselben Satz für individuelle Ausgabe und Zählung je Mitglied verwenden
+ok 16 - A9: P11 darf denselben Satz für individuelle Ausgabe und Zählung je Mitglied verwenden
+  ---
+  duration_ms: 1.2568
+  type: 'test'
+  ...
+# Subtest: A9: Bekannte Fehlertypen liefern konkrete Hinweise zu Ortsbezug, Teilaspekten und Foto-ID
+ok 17 - A9: Bekannte Fehlertypen liefern konkrete Hinweise zu Ortsbezug, Teilaspekten und Foto-ID
+  ---
+  duration_ms: 2.3726
+  type: 'test'
+  ...
+# Subtest: A9: Server verwirft erfundene Belege und übernimmt keine freien Modellpunkte (Mock)
+ok 18 - A9: Server verwirft erfundene Belege und übernimmt keine freien Modellpunkte (Mock)
+  ---
+  duration_ms: 9.2234
+  type: 'test'
+  ...
+# Subtest: A9: Ohne Sortierung bleiben vier von fünf Punkten; Teilangaben und falsche Richtungen erhalten einen gezielten fünften Schritt
+ok 19 - A9: Ohne Sortierung bleiben vier von fünf Punkten; Teilangaben und falsche Richtungen erhalten einen gezielten fünften Schritt
+  ---
+  duration_ms: 7.3148
+  type: 'test'
+  ...
+# Subtest: Neue KI-Aufgaben benötigen Kriterien; der eingefrorene Altbestand und die Migrationsübersicht bleiben konsistent
+ok 20 - Neue KI-Aufgaben benötigen Kriterien; der eingefrorene Altbestand und die Migrationsübersicht bleiben konsistent
+  ---
+  duration_ms: 6.0038
+  type: 'test'
+  ...
+# Subtest: Neue Codeaufgaben nutzen denselben Kriterienvertrag mit Codebelegen und einem nächsten Hinweis (Mock)
+ok 21 - Neue Codeaufgaben nutzen denselben Kriterienvertrag mit Codebelegen und einem nächsten Hinweis (Mock)
+  ---
+  duration_ms: 35.5008
+  type: 'test'
+  ...
+# Subtest: Neue Physik-Kriterien bewahren Originalbelege trotz gleichwertiger Formelzeichen
+ok 22 - Neue Physik-Kriterien bewahren Originalbelege trotz gleichwertiger Formelzeichen
+  ---
+  duration_ms: 0.9599
+  type: 'test'
+  ...
+# Subtest: finale Rückmeldung ist kompakt, dedupliziert und ohne feedbackNoteAboveHalf
+ok 23 - finale Rückmeldung ist kompakt, dedupliziert und ohne feedbackNoteAboveHalf
+  ---
+  duration_ms: 37.2957
+  type: 'test'
+  ...
+# Subtest: Server und Anzeige begrenzen mehrsätzige und ältere Modellantworten auf dieselben zwei Sätze
+ok 24 - Server und Anzeige begrenzen mehrsätzige und ältere Modellantworten auf dieselben zwei Sätze
+  ---
+  duration_ms: 16.4902
+  type: 'test'
+  ...
+# Subtest: alle Beschreibe- und Codeprompts in Inf9, Inf10 und Inf11 enthalten dieselbe Zweisatzregel
+ok 25 - alle Beschreibe- und Codeprompts in Inf9, Inf10 und Inf11 enthalten dieselbe Zweisatzregel
+  ---
+  duration_ms: 30.1544
+  type: 'test'
+  ...
+# Subtest: Konfigurierte Aufgaben liefern genau einen nächsten Verbesserungsschritt bei vollständiger Bewertung
+ok 26 - Konfigurierte Aufgaben liefern genau einen nächsten Verbesserungsschritt bei vollständiger Bewertung
+  ---
+  duration_ms: 79.5073
+  type: 'test'
+  ...
+# Subtest: 6.2: Einzelschritt begrenzt Feedback-Fallback und behält den Erfolgssatz bei
+ok 27 - 6.2: Einzelschritt begrenzt Feedback-Fallback und behält den Erfolgssatz bei
+  ---
+  duration_ms: 1.379
+  type: 'test'
+  ...
+# Subtest: Inf10: alle SQL-Beschreibe-Aufgaben der Webseiten sind mit den zentralen Kriterien verbunden
+ok 28 - Inf10: alle SQL-Beschreibe-Aufgaben der Webseiten sind mit den zentralen Kriterien verbunden
+  ---
+  duration_ms: 23.3065
+  type: 'test'
+  ...
+# Subtest: Inf10: die einzelnen Rubriken akzeptieren deutsche Beschreibungen von Ausgabe, Filter, Minimum und Sortierung
+ok 29 - Inf10: die einzelnen Rubriken akzeptieren deutsche Beschreibungen von Ausgabe, Filter, Minimum und Sortierung
+  ---
+  duration_ms: 0.6257
+  type: 'test'
+  ...
+# Subtest: Inf10: verständliche Personen- und Fotozuordnungen genügen ohne wörtliche Schlüsselgleichungen
+ok 30 - Inf10: verständliche Personen- und Fotozuordnungen genügen ohne wörtliche Schlüsselgleichungen
+  ---
+  duration_ms: 0.7832
+  type: 'test'
+  ...
+# Subtest: Inf9 Aufgabe 2: vier Beschreibe-Aufgaben haben vollständige Verträge und faire Rubriken
+ok 31 - Inf9 Aufgabe 2: vier Beschreibe-Aufgaben haben vollständige Verträge und faire Rubriken
+  ---
+  duration_ms: 23.8709
+  type: 'test'
+  ...
+# Subtest: promptartige Schüleranweisungen ersetzen die Bewertungsregeln nicht
+ok 32 - promptartige Schüleranweisungen ersetzen die Bewertungsregeln nicht
+  ---
+  duration_ms: 1.0208
+  type: 'test'
+  ...
+# Subtest: Reiter 4: Wohnorte statt city und Dopplungen in den Ausgangsdaten sind bei vollständiger Erklärung korrekt
+ok 33 - Reiter 4: Wohnorte statt city und Dopplungen in den Ausgangsdaten sind bei vollständiger Erklärung korrekt
+  ---
+  duration_ms: 0.5431
+  type: 'test'
+  ...
+# Subtest: Reiter 5: ausgewählte Spalte ohne „nur“ und verständliche Schreibfehler erfüllen die Rubrik
+ok 34 - Reiter 5: ausgewählte Spalte ohne „nur“ und verständliche Schreibfehler erfüllen die Rubrik
+  ---
+  duration_ms: 0.7458
+  type: 'test'
+  ...
+# Subtest: unveränderte Tabelle ist eine zulässige freiwillige Ergänzung, kein wiederholter Pflichtpunkt
+ok 35 - unveränderte Tabelle ist eine zulässige freiwillige Ergänzung, kein wiederholter Pflichtpunkt
+  ---
+  duration_ms: 1.7485
+  type: 'test'
+  ...
+# Subtest: Reiter 3: Körpergröße benennt die Sortierspalte und größtes Mitglied zuerst erklärt DESC
+ok 36 - Reiter 3: Körpergröße benennt die Sortierspalte und größtes Mitglied zuerst erklärt DESC
+  ---
+  duration_ms: 3.1414
+  type: 'test'
+  ...
+# Subtest: DISTINCT-Auftrag und Anzeige passen zur Serverrubrik ohne Pflicht zur unveränderten Tabelle
+ok 37 - DISTINCT-Auftrag und Anzeige passen zur Serverrubrik ohne Pflicht zur unveränderten Tabelle
+  ---
+  duration_ms: 5.2622
+  type: 'test'
+  ...
+# Subtest: Inf9 Aufgabe 3: WHERE-Beschreibung hat drei getrennte Bewertungspunkte
+ok 38 - Inf9 Aufgabe 3: WHERE-Beschreibung hat drei getrennte Bewertungspunkte
+  ---
+  duration_ms: 5.1232
+  type: 'test'
+  ...
+# Subtest: Antwortanweisungen ändern die Rubrik nicht
+ok 39 - Antwortanweisungen ändern die Rubrik nicht
+  ---
+  duration_ms: 0.5489
+  type: 'test'
+  ...
+# Subtest: vollständige WHERE-Beschreibungen erhalten trotz falscher KI-Abwertung 3/3
+ok 40 - vollständige WHERE-Beschreibungen erhalten trotz falscher KI-Abwertung 3/3
+  ---
+  duration_ms: 8.0595
+  type: 'test'
+  ...
+# Subtest: WHERE-Nachprüfung stuft unvollständige, widersprüchliche und unbekannte Aussagen nicht hoch
+ok 41 - WHERE-Nachprüfung stuft unvollständige, widersprüchliche und unbekannte Aussagen nicht hoch
+  ---
+  duration_ms: 2.0017
+  type: 'test'
+  ...
+# Subtest: Server korrigiert die gemeldete 2/3-Antwort und entfernt den falschen Tabellenhinweis (Mock)
+ok 42 - Server korrigiert die gemeldete 2/3-Antwort und entfernt den falschen Tabellenhinweis (Mock)
+  ---
+  duration_ms: 5.9605
+  type: 'test'
+  ...
+# Subtest: Kettenkarussell-Aufgabe 4 bewertet fünf Veränderungen ohne Kettenlänge als Pflicht
+ok 43 - Kettenkarussell-Aufgabe 4 bewertet fünf Veränderungen ohne Kettenlänge als Pflicht
+  ---
+  duration_ms: 2.1857
+  type: 'test'
+  ...
+# Subtest: gemeldete Antworten erhalten zuverlässig 5/5 bzw. 4/5; nur die Seilkraft ist offen
+ok 44 - gemeldete Antworten erhalten zuverlässig 5/5 bzw. 4/5; nur die Seilkraft ist offen
+  ---
+  duration_ms: 39.9017
+  type: 'test'
+  ...
+# Subtest: gemeinsame Prädikate und Formelzeichen sind ebenfalls zulässig
+ok 45 - gemeinsame Prädikate und Formelzeichen sind ebenfalls zulässig
+  ---
+  duration_ms: 1.4778
+  type: 'test'
+  ...
+# Subtest: Negationen, Widersprüche, Zitate und unvollständige Antworten werden nicht hochgestuft
+ok 46 - Negationen, Widersprüche, Zitate und unvollständige Antworten werden nicht hochgestuft
+  ---
+  duration_ms: 3.0661
+  type: 'test'
+  ...
+# Subtest: Server korrigiert die tatsächlich gemeldete Drei-Punkte-Antwort mit falschen Fehlhinweisen (Mock)
+ok 47 - Server korrigiert die tatsächlich gemeldete Drei-Punkte-Antwort mit falschen Fehlhinweisen (Mock)
+  ---
+  duration_ms: 4.2972
+  type: 'test'
+  ...
+# Subtest: Kettenkarussell-Aufgabe 5 erlaubt die Begründung über das Kräfteverhältnis
+ok 48 - Kettenkarussell-Aufgabe 5 erlaubt die Begründung über das Kräfteverhältnis
+  ---
+  duration_ms: 0.5663
+  type: 'test'
+  ...
+# Subtest: Photovoltaik-Schaltplanrubrik enthält genau die vier geforderten Aspekte
+ok 49 - Photovoltaik-Schaltplanrubrik enthält genau die vier geforderten Aspekte
+  ---
+  duration_ms: 3.0737
+  type: 'test'
+  ...
+# Subtest: Photovoltaik-Aufgabe erfüllt den Scaleway-Serververtrag und gibt Statusstufen zurück
+ok 50 - Photovoltaik-Aufgabe erfüllt den Scaleway-Serververtrag und gibt Statusstufen zurück
+  ---
+  duration_ms: 40.7413
+  type: 'test'
+  ...
+# Subtest: Semantische Freitextkarte verarbeitet korrekte, teilweise, kurze und nicht erreichbare Antworten
+ok 51 - Semantische Freitextkarte verarbeitet korrekte, teilweise, kurze und nicht erreichbare Antworten
+  ---
+  duration_ms: 4.3187
+  type: 'test'
+  ...
+# Subtest: alle registrierten Physik-Aufgaben erhalten konkrete fachliche Hinweise im Zweisatzformat
+ok 52 - alle registrierten Physik-Aufgaben erhalten konkrete fachliche Hinweise im Zweisatzformat
+  ---
+  duration_ms: 41.6024
+  type: 'test'
+  ...
+# Subtest: sämtliche Physik-KI-Renderer einschließlich Wiederholungsquizzen verwenden die gemeinsame Formelanzeige
+ok 53 - sämtliche Physik-KI-Renderer einschließlich Wiederholungsquizzen verwenden die gemeinsame Formelanzeige
+  ---
+  duration_ms: 11.4176
+  type: 'test'
+  ...
+# Subtest: Physik-Feedback zeigt nur Punkte und zwei Sätze mit echten Indizes und Brüchen
+ok 54 - Physik-Feedback zeigt nur Punkte und zwei Sätze mit echten Indizes und Brüchen
+  ---
+  duration_ms: 22.8517
+  type: 'test'
+  ...
+# Subtest: Kraftsymbole im Physikfeedback besitzen auch ohne HTML-Darstellung einen Unterstrich
+ok 55 - Kraftsymbole im Physikfeedback besitzen auch ohne HTML-Darstellung einen Unterstrich
+  ---
+  duration_ms: 2.2821
+  type: 'test'
+  ...
+# Subtest: alle Physik-Beschreibe-Aufgaben vereinheitlichen die Kraft- und Alpha-Aliase vor der Bewertung
+ok 56 - alle Physik-Beschreibe-Aufgaben vereinheitlichen die Kraft- und Alpha-Aliase vor der Bewertung
+  ---
+  duration_ms: 39.5028
+  type: 'test'
+  ...
+# Subtest: Größennamen und Formelzeichen sind ausdrücklich gleichwertig, Aussagen werden fachlich beurteilt
+ok 57 - Größennamen und Formelzeichen sind ausdrücklich gleichwertig, Aussagen werden fachlich beurteilt
+  ---
+  duration_ms: 2.307
+  type: 'test'
+  ...
+# Subtest: Normalisierung erhält Zahlen, Einheiten, Richtungen, andere Symbole und Wortbestandteile
+ok 58 - Normalisierung erhält Zahlen, Einheiten, Richtungen, andere Symbole und Wortbestandteile
+  ---
+  duration_ms: 0.6661
+  type: 'test'
+  ...
+# Subtest: echter Anfragepfad übermittelt dieselbe normalisierte Physikantwort; Aliase vergeben keine Punkte (Mock)
+ok 59 - echter Anfragepfad übermittelt dieselbe normalisierte Physikantwort; Aliase vergeben keine Punkte (Mock)
+  ---
+  duration_ms: 35.5872
+  type: 'test'
+  ...
+# Subtest: Quader-Testvorlage baut exakt 3x5 Felder mit je vier Ziegeln ohne Kollision
+ok 60 - Quader-Testvorlage baut exakt 3x5 Felder mit je vier Ziegeln ohne Kollision
+  ---
+  duration_ms: 10.9832
+  type: 'test'
+  ...
+# Subtest: Vergleichsvariante mit hinlegen(3) behält Grundfläche, hat aber die falsche Höhe
+ok 61 - Vergleichsvariante mit hinlegen(3) behält Grundfläche, hat aber die falsche Höhe
+  ---
+  duration_ms: 5.9118
+  type: 'test'
+  ...
+# Subtest: Healthcheck zeigt nur Status und ruft kein Modell auf
+ok 62 - Healthcheck zeigt nur Status und ruft kein Modell auf
+  ---
+  duration_ms: 3.0988
+  type: 'test'
+  ...
+# Subtest: Auswertung ist ohne ausdrückliche Aktivierung gesperrt
+ok 63 - Auswertung ist ohne ausdrückliche Aktivierung gesperrt
+  ---
+  duration_ms: 1.1662
+  type: 'test'
+  ...
+# Subtest: Echte POST-Struktur, Projekt-URL, Schema und vorhandenes Feedbackformat
+ok 64 - Echte POST-Struktur, Projekt-URL, Schema und vorhandenes Feedbackformat
+  ---
+  duration_ms: 63.3938
+  type: 'test'
+  ...
+# Subtest: Codeauswertung nutzt Programmcode und liefert passende Ergebnishülle
+ok 65 - Codeauswertung nutzt Programmcode und liefert passende Ergebnishülle
+  ---
+  duration_ms: 4.8497
+  type: 'test'
+  ...
+# Subtest: Ungültige Anfragen lösen keinen kostenpflichtigen Aufruf aus
+ok 66 - Ungültige Anfragen lösen keinen kostenpflichtigen Aufruf aus
+  ---
+  duration_ms: 1.3828
+  type: 'test'
+  ...
+# Subtest: Base64 und UTF-8 werden korrekt gelesen; Codegrenze bleibt erhalten
+ok 67 - Base64 und UTF-8 werden korrekt gelesen; Codegrenze bleibt erhalten
+  ---
+  duration_ms: 3.5546
+  type: 'test'
+  ...
+# Subtest: CORS erlaubt nur konfigurierte Origins und passende Voranfragen
+ok 68 - CORS erlaubt nur konfigurierte Origins und passende Voranfragen
+  ---
+  duration_ms: 0.7093
+  type: 'test'
+  ...
+# Subtest: Modellfehler und Timeouts werden ohne Secrets/Antwortinhalte zurückgegeben
+ok 69 - Modellfehler und Timeouts werden ohne Secrets/Antwortinhalte zurückgegeben
+  ---
+  duration_ms: 56.0817
+  type: 'test'
+  ...
+# Subtest: Konfigurationsfehler werden vor dem Modellaufruf erkannt
+ok 70 - Konfigurationsfehler werden vor dem Modellaufruf erkannt
+  ---
+  duration_ms: 3.5528
+  type: 'test'
+  ...
+# Subtest: Lokale Aufrufbremse begrenzt Aufrufe ohne IPs oder Schülertexte zu speichern
+ok 71 - Lokale Aufrufbremse begrenzt Aufrufe ohne IPs oder Schülertexte zu speichern
+  ---
+  duration_ms: 12.2326
+  type: 'test'
+  ...
+# Subtest: Alle Aufgaben, Prompts, Normalisierungen und Regeln stimmen mit den Scaleway-Quellen überein
+ok 72 - Alle Aufgaben, Prompts, Normalisierungen und Regeln stimmen mit den Scaleway-Quellen überein
+  ---
+  duration_ms: 79.8914
+  type: 'test'
+  ...
+# Subtest: Scaleway lässt sich ohne Google-Archiv vollständig bauen
+ok 73 - Scaleway lässt sich ohne Google-Archiv vollständig bauen
+  ---
+  duration_ms: 582.5271
+  type: 'test'
+  ...
+# Subtest: Gelöschte Inf9-DB-Aufgabe 2 ist unbekannt und löst keine KI-Auswertung aus
+ok 74 - Gelöschte Inf9-DB-Aufgabe 2 ist unbekannt und löst keine KI-Auswertung aus
+  ---
+  duration_ms: 1.994
+  type: 'test'
+  ...
+# Subtest: Bestandsprüfung: jede SQL-Beschreibung, auch künftig hinzugefügte SELECT-Aufgaben, ist konfiguriert
+ok 75 - Bestandsprüfung: jede SQL-Beschreibung, auch künftig hinzugefügte SELECT-Aufgaben, ist konfiguriert
+  ---
+  duration_ms: 5.0722
+  type: 'test'
+  ...
+# Subtest: gemeinsame Kriterien und lokale Bedeutungen gelangen vollständig in jeden SQL-Prompt
+ok 76 - gemeinsame Kriterien und lokale Bedeutungen gelangen vollständig in jeden SQL-Prompt
+  ---
+  duration_ms: 3.7154
+  type: 'test'
+  ...
+# Subtest: SQL-Regeln gelten automatisch für neue konfigurierte Aufgaben und bleiben auf diese beschränkt
+ok 77 - SQL-Regeln gelten automatisch für neue konfigurierte Aufgaben und bleiben auf diese beschränkt
+  ---
+  duration_ms: 6.568
+  type: 'test'
+  ...
+# Subtest: ausdrückliches Lernziel zur unveränderten Tabelle wird nicht pauschal abgeschafft
+ok 78 - ausdrückliches Lernziel zur unveränderten Tabelle wird nicht pauschal abgeschafft
+  ---
+  duration_ms: 0.5709
+  type: 'test'
+  ...
+# Subtest: Rollen und Bedeutungen bleiben aufgabenspezifisch, keine globale Schülertext-Ersetzung
+ok 79 - Rollen und Bedeutungen bleiben aufgabenspezifisch, keine globale Schülertext-Ersetzung
+  ---
+  duration_ms: 0.6185
+  type: 'test'
+  ...
+# Subtest: alle Vergleichsfälle durchlaufen die bestehende Serveranbindung mit simulierten Modellantworten
+ok 80 - alle Vergleichsfälle durchlaufen die bestehende Serveranbindung mit simulierten Modellantworten
+  ---
+  duration_ms: 107.7505
+  type: 'test'
+  ...
+# Subtest: Live-Prüfwerkzeug sendet ohne --live keine Anfrage
+ok 81 - Live-Prüfwerkzeug sendet ohne --live keine Anfrage
+  ---
+  duration_ms: 4.8535
+  type: 'test'
+  ...
+# Subtest: Live-Prüfwerkzeug wiederholt nur gewählte synthetische Fälle und speichert den Vergleich
+ok 82 - Live-Prüfwerkzeug wiederholt nur gewählte synthetische Fälle und speichert den Vergleich
+  ---
+  duration_ms: 19.1777
+  type: 'test'
+  ...
+# Subtest: Live-Prüfwerkzeug meldet abweichende Punkte und beendet die Serie bei technischen Fehlern
+ok 83 - Live-Prüfwerkzeug meldet abweichende Punkte und beendet die Serie bei technischen Fehlern
+  ---
+  duration_ms: 4.7702
+  type: 'test'
+  ...
+# Subtest: Live-Prüfwerkzeug weist widersprüchliche und ungültige Optionen vor dem Versand zurück
+ok 84 - Live-Prüfwerkzeug weist widersprüchliche und ungültige Optionen vor dem Versand zurück
+  ---
+  duration_ms: 13.2833
+  type: 'test'
+  ...
+# Subtest: Aufgabe 6.0 registriert drei getrennte code-Rubriken mit den spezifizierten Punkten
+ok 85 - Aufgabe 6.0 registriert drei getrennte code-Rubriken mit den spezifizierten Punkten
+  ---
+  duration_ms: 4.0769
+  type: 'test'
+  ...
+# Subtest: Rubriken decken kumulative und unabhängige Schritte samt Scheinlösungen ab
+ok 86 - Rubriken decken kumulative und unabhängige Schritte samt Scheinlösungen ab
+  ---
+  duration_ms: 0.9608
+  type: 'test'
+  ...
+# Subtest: 4A übermittelt die Bewertungsrubrik und konkrete Regeln für beide gemeldeten Fehlbewertungen
+ok 87 - 4A übermittelt die Bewertungsrubrik und konkrete Regeln für beide gemeldeten Fehlbewertungen
+  ---
+  duration_ms: 2.8608
+  type: 'test'
+  ...
+# Subtest: 4A bewertet den gemeldeten gültigen Code unabhängig von einer falschen KI-Rückmeldung vollständig
+ok 88 - 4A bewertet den gemeldeten gültigen Code unabhängig von einer falschen KI-Rückmeldung vollständig
+  ---
+  duration_ms: 8.2477
+  type: 'test'
+  ...
+# Subtest: 4A unterscheidet void-Ausgabe, Getter ohne Ausgabe und Scheinlösungen
+ok 89 - 4A unterscheidet void-Ausgabe, Getter ohne Ausgabe und Scheinlösungen
+  ---
+  duration_ms: 3.0102
+  type: 'test'
+  ...
+# Subtest: 4A hebt die Bewertung bei ungeprüfter Syntax, Kontrollfluss oder geänderter Hund-Klasse nicht an
+ok 90 - 4A hebt die Bewertung bei ungeprüfter Syntax, Kontrollfluss oder geänderter Hund-Klasse nicht an
+  ---
+  duration_ms: 2.3799
+  type: 'test'
+  ...
+# Subtest: 4A korrigiert die gemeldete Zwei-Punkte-Antwort im tatsächlichen Server-Antwortweg
+ok 91 - 4A korrigiert die gemeldete Zwei-Punkte-Antwort im tatsächlichen Server-Antwortweg
+  ---
+  duration_ms: 33.123
+  type: 'test'
+  ...
+# Subtest: 5A wertet den kumulativen Startcode regelbasiert mit 4/4 trotz falscher KI-Ausgabe
+ok 92 - 5A wertet den kumulativen Startcode regelbasiert mit 4/4 trotz falscher KI-Ausgabe
+  ---
+  duration_ms: 11.5945
+  type: 'test'
+  ...
+# Subtest: Client prüft aktuellen IDE-Code aus beiden Dateien und Codeblöcke haben keine Begleitfelder
+ok 93 - Client prüft aktuellen IDE-Code aus beiden Dateien und Codeblöcke haben keine Begleitfelder
+  ---
+  duration_ms: 1.0793
+  type: 'test'
+  ...
+# Subtest: 4A-Legacy-Migration ist einmalig und bewahrt späteren Codeerfolg samt Merksatz
+ok 94 - 4A-Legacy-Migration ist einmalig und bewahrt späteren Codeerfolg samt Merksatz
+  ---
+  duration_ms: 7.4098
+  type: 'test'
+  ...
+# Subtest: IDE-Code-Leser unterscheidet Ladezustand, fehlende Dateien und übergibt beide aktuellen Dateien in Reihenfolge
+ok 95 - IDE-Code-Leser unterscheidet Ladezustand, fehlende Dateien und übergibt beide aktuellen Dateien in Reihenfolge
+  ---
+  duration_ms: 10.5496
+  type: 'test'
+  ...
+# Subtest: HTML-Startprojekt behält die sieben Sollzeilen und verwendet println
+ok 96 - HTML-Startprojekt behält die sieben Sollzeilen und verwendet println
+  ---
+  duration_ms: 0.6188
+  type: 'test'
+  ...
+# Subtest: vorhandener evaluateCodeAnswer-Transport setzt Grenzen, POST-Vertrag und Antwortformat durch
+ok 97 - vorhandener evaluateCodeAnswer-Transport setzt Grenzen, POST-Vertrag und Antwortformat durch
+  ---
+  duration_ms: 7.4023
+  type: 'test'
+  ...
+# Subtest: Prompt-Vertrag mit Codefixtures und kontrollierten Modellantworten (Mock; keine KI-Livebewertung)
+ok 98 - Prompt-Vertrag mit Codefixtures und kontrollierten Modellantworten (Mock; keine KI-Livebewertung)
+  ---
+  duration_ms: 14.6103
+  type: 'test'
+  ...
+# Subtest: Aufgabe 6.1 registriert vier getrennte Code-Rubriken mit je drei Punkten
+ok 99 - Aufgabe 6.1 registriert vier getrennte Code-Rubriken mit je drei Punkten
+  ---
+  duration_ms: 2.835
+  type: 'test'
+  ...
+# Subtest: Client übermittelt aktuelle IDE-Dateien für jeden individuellen Codeauftrag
+ok 100 - Client übermittelt aktuelle IDE-Dateien für jeden individuellen Codeauftrag
+  ---
+  duration_ms: 1.2519
+  type: 'test'
+  ...
+# Subtest: IDE-Konsolenstartstände enthalten die geforderten Fälle und getrennte Übungen
+ok 101 - IDE-Konsolenstartstände enthalten die geforderten Fälle und getrennte Übungen
+  ---
+  duration_ms: 0.6349
+  type: 'test'
+  ...
+# Subtest: 6.2 Schritt 4: Identische Delta-Formeln in beiden Zweigen erhalten trotz KI-Fehler 5/5
+ok 102 - 6.2 Schritt 4: Identische Delta-Formeln in beiden Zweigen erhalten trotz KI-Fehler 5/5
+  ---
+  duration_ms: 6.2825
+  type: 'test'
+  ...
+# Subtest: 6.2 Schritt 4: Allgemeine Formel, explizite Vorzeichen und unabhängige Reihenfolgen sind gleichwertig
+ok 103 - 6.2 Schritt 4: Allgemeine Formel, explizite Vorzeichen und unabhängige Reihenfolgen sind gleichwertig
+  ---
+  duration_ms: 3.2069
+  type: 'test'
+  ...
+# Subtest: 6.2 Schritt 4: Fehlerhafte Formeln und Scheinlösungen werden nicht auf volle Punkte angehoben
+ok 104 - 6.2 Schritt 4: Fehlerhafte Formeln und Scheinlösungen werden nicht auf volle Punkte angehoben
+  ---
+  duration_ms: 6.3492
+  type: 'test'
+  ...
+# Subtest: 6.2 Schritt 4: Server korrigiert die konkrete falsche Theta-Rückmeldung (Mock)
+ok 105 - 6.2 Schritt 4: Server korrigiert die konkrete falsche Theta-Rückmeldung (Mock)
+  ---
+  duration_ms: 10.3215
+  type: 'test'
+  ...
+# Subtest: 6.2 Schritt 3: Gemeldeter Code mit > wird trotz KI-Fehlbewertung auf 3/3 korrigiert
+ok 106 - 6.2 Schritt 3: Gemeldeter Code mit > wird trotz KI-Fehlbewertung auf 3/3 korrigiert
+  ---
+  duration_ms: 4.5473
+  type: 'test'
+  ...
+# Subtest: 6.2 Schritt 3: Offene Summe, Formatierung und implizites else verhindern keine Erfolgserkennung
+ok 107 - 6.2 Schritt 3: Offene Summe, Formatierung und implizites else verhindern keine Erfolgserkennung
+  ---
+  duration_ms: 1.714
+  type: 'test'
+  ...
+# Subtest: 6.2 Schritt 3: Falsche, verdeckte, unerreichbare oder überschriebene Ausgaben bleiben bei der KI-Bewertung
+ok 108 - 6.2 Schritt 3: Falsche, verdeckte, unerreichbare oder überschriebene Ausgaben bleiben bei der KI-Bewertung
+  ---
+  duration_ms: 3.8565
+  type: 'test'
+  ...
+# Subtest: 6.2 Schritt 3: Server entfernt den tatsächlich gemeldeten falschen >=-Hinweis (Mock)
+ok 109 - 6.2 Schritt 3: Server entfernt den tatsächlich gemeldeten falschen >=-Hinweis (Mock)
+  ---
+  duration_ms: 5.2025
+  type: 'test'
+  ...
+# Subtest: 6.2: Vier Kriterien mit Textbelegen ersetzen freie Modellpunkte, Browservertrag bleibt gleich
+ok 110 - 6.2: Vier Kriterien mit Textbelegen ersetzen freie Modellpunkte, Browservertrag bleibt gleich
+  ---
+  duration_ms: 38.2578
+  type: 'test'
+  ...
+# Subtest: 6.2: Nach jedem tatsächlich ergänzten Schritt erscheint nur die nächste offene Verbesserung
+ok 111 - 6.2: Nach jedem tatsächlich ergänzten Schritt erscheint nur die nächste offene Verbesserung
+  ---
+  duration_ms: 5.6631
+  type: 'test'
+  ...
+# Subtest: 6.2: Gewichte-Belege zählen unabhängig vom übrigen Wortlaut und dessen Reihenfolge
+ok 112 - 6.2: Gewichte-Belege zählen unabhängig vom übrigen Wortlaut und dessen Reihenfolge
+  ---
+  duration_ms: 3.9941
+  type: 'test'
+  ...
+# Subtest: 6.2: Reihenfolge der Kriterien, passende Fehlerhinweise und sofortige Anrechnung späterer Aspekte
+ok 113 - 6.2: Reihenfolge der Kriterien, passende Fehlerhinweise und sofortige Anrechnung späterer Aspekte
+  ---
+  duration_ms: 1.2696
+  type: 'test'
+  ...
+# Subtest: 6.2: Widersprüche, eingeschränkte Verneinungen, Zitate und Zweifel verhindern lokale Gewichte-Gutschriften
+ok 114 - 6.2: Widersprüche, eingeschränkte Verneinungen, Zitate und Zweifel verhindern lokale Gewichte-Gutschriften
+  ---
+  duration_ms: 1.5224
+  type: 'test'
+  ...
+# Subtest: 6.2: Erfundenes Belegzitat, fehlende Kriterien und alte freie Bewertungen sind technische Fehler
+ok 115 - 6.2: Erfundenes Belegzitat, fehlende Kriterien und alte freie Bewertungen sind technische Fehler
+  ---
+  duration_ms: 34.0379
+  type: 'test'
+  ...
+# Subtest: 6.2: Belege dürfen aus mehreren Sätzen stammen, aber weder erfunden noch paraphrasiert werden
+ok 116 - 6.2: Belege dürfen aus mehreren Sätzen stammen, aber weder erfunden noch paraphrasiert werden
+  ---
+  duration_ms: 1.5525
+  type: 'test'
+  ...
+# Subtest: 6.2: Gemeldete Lösung erhält trotz falscher KI-Bewertung volle Punkte
+ok 117 - 6.2: Gemeldete Lösung erhält trotz falscher KI-Bewertung volle Punkte
+  ---
+  duration_ms: 4.2378
+  type: 'test'
+  ...
+# Subtest: 6.2: Faktoren und Summanden dürfen vertauscht und beliebig formatiert werden
+ok 118 - 6.2: Faktoren und Summanden dürfen vertauscht und beliebig formatiert werden
+  ---
+  duration_ms: 3.8714
+  type: 'test'
+  ...
+# Subtest: 6.2: Kommentare, Literale, andere Methoden und falsche Rechnungen lösen keine Aufwertung aus
+ok 119 - 6.2: Kommentare, Literale, andere Methoden und falsche Rechnungen lösen keine Aufwertung aus
+  ---
+  duration_ms: 4.5711
+  type: 'test'
+  ...
+# Subtest: 6.2: Bewertungsauftrag trennt die double-Summe von binärer int-Ausgabe und offenen Folgeschritten
+ok 120 - 6.2: Bewertungsauftrag trennt die double-Summe von binärer int-Ausgabe und offenen Folgeschritten
+  ---
+  duration_ms: 1.7959
+  type: 'test'
+  ...
+# Subtest: 6.2: Server korrigiert die gemeldete KI-Fehlbewertung im Antwortpfad (Mock, keine KI-Livebewertung)
+ok 121 - 6.2: Server korrigiert die gemeldete KI-Fehlbewertung im Antwortpfad (Mock, keine KI-Livebewertung)
+  ---
+  duration_ms: 4.7018
+  type: 'test'
+  ...
+# Subtest: 6.2: Jede verbleibende Codeaufgabe hat eine getrennte Rubrik und den passenden Seitenbutton
+ok 122 - 6.2: Jede verbleibende Codeaufgabe hat eine getrennte Rubrik und den passenden Seitenbutton
+  ---
+  duration_ms: 3.2015
+  type: 'test'
+  ...
+# Subtest: 6.2: Vergleichsfälle durchlaufen vollständigen Prompt und Ergebnisanzeigevertrag (Mock, keine KI-Livebewertung)
+ok 123 - 6.2: Vergleichsfälle durchlaufen vollständigen Prompt und Ergebnisanzeigevertrag (Mock, keine KI-Livebewertung)
+  ---
+  duration_ms: 64.6544
+  type: 'test'
+  ...
+# Subtest: 6.2: Ausgabe-Sollpunkte entsprechen drei verschiedenen Fällen, auch bei implizitem else
+ok 124 - 6.2: Ausgabe-Sollpunkte entsprechen drei verschiedenen Fällen, auch bei implizitem else
+  ---
+  duration_ms: 117.6702
+  type: 'test'
+  ...
+# Subtest: 6.2: Anpassungs-Sollpunkte berücksichtigen negative Eingaben, Dezimalwerte und alle Fehlerzeichen
+ok 125 - 6.2: Anpassungs-Sollpunkte berücksichtigen negative Eingaben, Dezimalwerte und alle Fehlerzeichen
+  ---
+  duration_ms: 359.7505
+  type: 'test'
+  ...
+# Subtest: 6.2: Vollständige schwere Varianten rechnen gleichwertig; absichtlich fehlerhafte Varianten weichen ab
+ok 126 - 6.2: Vollständige schwere Varianten rechnen gleichwertig; absichtlich fehlerhafte Varianten weichen ab
+  ---
+  duration_ms: 428.2777
+  type: 'test'
+  ...
+# Subtest: Vorhandene IDE-Abfrage, Vorprüfung, Ergebnisanzeige und Abschlussquiz bleiben erhalten
+ok 127 - Vorhandene IDE-Abfrage, Vorprüfung, Ergebnisanzeige und Abschlussquiz bleiben erhalten
+  ---
+  duration_ms: 3.5445
+  type: 'test'
+  ...
+# Subtest: Code aus Hauptprogramm.java geht als JSON-Body an Scaleway; a/b haben eigene Punktegrenzen
+ok 128 - Code aus Hauptprogramm.java geht als JSON-Body an Scaleway; a/b haben eigene Punktegrenzen
+  ---
+  duration_ms: 8.5484
+  type: 'test'
+  ...
+# Subtest: Fehlende IDE und bestehende Code-Vorprüfungen verhindern Modellanfragen
+ok 129 - Fehlende IDE und bestehende Code-Vorprüfungen verhindern Modellanfragen
+  ---
+  duration_ms: 3.3888
+  type: 'test'
+  ...
+# Subtest: Doppelklick wird abgefangen; Fehler geben den Prüfbutton für einen erneuten Versuch frei
+ok 130 - Doppelklick wird abgefangen; Fehler geben den Prüfbutton für einen erneuten Versuch frei
+  ---
+  duration_ms: 3.4019
+  type: 'test'
+  ...
+# Subtest: Falsche requestId und Punktegrenzen werden nicht als gültige Codebewertung angezeigt
+ok 131 - Falsche requestId und Punktegrenzen werden nicht als gültige Codebewertung angezeigt
+  ---
+  duration_ms: 5.2887
+  type: 'test'
+  ...
+# Subtest: Timeout beendet die Codeanfrage und stellt den ursprünglichen Button wieder her
+ok 132 - Timeout beendet die Codeanfrage und stellt den ursprünglichen Button wieder her
+  ---
+  duration_ms: 3.4015
+  type: 'test'
+  ...
+# Subtest: Pilot behält Ergebnisanzeige, Lehrercode, IDE und Eingabespeicherung bei
+ok 133 - Pilot behält Ergebnisanzeige, Lehrercode, IDE und Eingabespeicherung bei
+  ---
+  duration_ms: 1.7383
+  type: 'test'
+  ...
+# Subtest: 3000 Zeichen werden im POST-Body übertragen; vorhandene Anzeige verarbeitet b und c
+ok 134 - 3000 Zeichen werden im POST-Body übertragen; vorhandene Anzeige verarbeitet b und c
+  ---
+  duration_ms: 6.2168
+  type: 'test'
+  ...
+# Subtest: Doppelklick erzeugt keine zweite Anfrage; beide Aufgaben können getrennt laufen
+ok 135 - Doppelklick erzeugt keine zweite Anfrage; beide Aufgaben können getrennt laufen
+  ---
+  duration_ms: 3.016
+  type: 'test'
+  ...
+# Subtest: Ungültige Eingabe führt vor dem Versand zu einer Rückmeldung
+ok 136 - Ungültige Eingabe führt vor dem Versand zu einer Rückmeldung
+  ---
+  duration_ms: 2.4019
+  type: 'test'
+  ...
+# Subtest: Fehler und falsch zugeordnete oder beschädigte Ergebnisse geben die Eingabe frei
+ok 137 - Fehler und falsch zugeordnete oder beschädigte Ergebnisse geben die Eingabe frei
+  ---
+  duration_ms: 10.2705
+  type: 'test'
+  ...
+# Subtest: Timeout bricht die Anfrage ab und ermöglicht erneutes Prüfen
+ok 138 - Timeout bricht die Anfrage ab und ermöglicht erneutes Prüfen
+  ---
+  duration_ms: 3.2209
+  type: 'test'
+  ...
+# Subtest: volle Punktzahl zeigt ausschließlich Punktzahl und den gewünschten Erfolgswortlaut
+ok 139 - volle Punktzahl zeigt ausschließlich Punktzahl und den gewünschten Erfolgswortlaut
+  ---
+  duration_ms: 2.5833
+  type: 'test'
+  ...
+# Subtest: Teilpunkte zeigen nur konkrete Stichpunkte, keine Stärken und keine doppelte Prosa
+ok 140 - Teilpunkte zeigen nur konkrete Stichpunkte, keine Stärken und keine doppelte Prosa
+  ---
+  duration_ms: 25.6354
+  type: 'test'
+  ...
+# Subtest: höchstens zwei unterschiedliche Hinweise, leere und doppelte Einträge entfallen
+ok 141 - höchstens zwei unterschiedliche Hinweise, leere und doppelte Einträge entfallen
+  ---
+  duration_ms: 1.034
+  type: 'test'
+  ...
+# Subtest: ohne missing wird individueller Feedbacktext einmal als Stichpunkt verwendet
+ok 142 - ohne missing wird individueller Feedbacktext einmal als Stichpunkt verwendet
+  ---
+  duration_ms: 0.7955
+  type: 'test'
+  ...
+# Subtest: Einzelhinweis zeigt bei mehreren Fehlern nur den nächsten Schritt und ersetzt ihn beim erneuten Prüfen
+ok 143 - Einzelhinweis zeigt bei mehreren Fehlern nur den nächsten Schritt und ersetzt ihn beim erneuten Prüfen
+  ---
+  duration_ms: 1.1003
+  type: 'test'
+  ...
+# Subtest: Einzelhinweis begrenzt auch älteren Feedbacktext und erhält vollständige Code-Ersetzungen
+ok 144 - Einzelhinweis begrenzt auch älteren Feedbacktext und erhält vollständige Code-Ersetzungen
+  ---
+  duration_ms: 1.4053
+  type: 'test'
+  ...
+# Subtest: erneutes Prüfen ersetzt die vorherige Rückmeldung und behandelt Code/HTML sicher als Text
+ok 145 - erneutes Prüfen ersetzt die vorherige Rückmeldung und behandelt Code/HTML sicher als Text
+  ---
+  duration_ms: 0.9185
+  type: 'test'
+  ...
+# Subtest: bestehende Formelrenderer können den Text der Stichpunkte formatieren
+ok 146 - bestehende Formelrenderer können den Text der Stichpunkte formatieren
+  ---
+  duration_ms: 1.0881
+  type: 'test'
+  ...
+# Subtest: gemeldete Getter-Rückmeldung besteht genau aus Punktzahl und konkretem Fehlersatz
+ok 147 - gemeldete Getter-Rückmeldung besteht genau aus Punktzahl und konkretem Fehlersatz
+  ---
+  duration_ms: 1.9675
+  type: 'test'
+  ...
+# Subtest: Satzgrenze gilt insgesamt, auch bei mehreren Sätzen innerhalb eines Hinweises
+ok 148 - Satzgrenze gilt insgesamt, auch bei mehreren Sätzen innerhalb eines Hinweises
+  ---
+  duration_ms: 1.0023
+  type: 'test'
+  ...
+# Subtest: Methodenaufrufe, Dateinamen und Abkürzungen bleiben als vollständige Hinweise erhalten
+ok 149 - Methodenaufrufe, Dateinamen und Abkürzungen bleiben als vollständige Hinweise erhalten
+  ---
+  duration_ms: 1.121
+  type: 'test'
+  ...
+1..149
+# tests 149
+# suites 0
+# pass 149
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 3324.8855
