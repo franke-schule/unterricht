@@ -122,9 +122,14 @@
 .pv-analysis .pv-mpp-result:empty { display:none; }
 .pv-helps { grid-column:1/-1; display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:.7rem; margin-top:.4rem; }
 .pv-model-details { grid-column:1/-1; margin-top:.4rem; }
-.pv-merksatz { border-left:6px solid #1b7894; background:#edf7fb; line-height:1.5; text-align:left; }
-.pv-merksatz p { margin:.55rem 0; }
+.photovoltaik-page .physics-task-card.pv-merksatz { border:1px solid #a8d3e2; border-left:6px solid #1b7894; background:#edf7fb; color:#193851; line-height:1.5; text-align:left; }
+.pv-merksatz h2 { margin:.3rem 0 1rem; color:#193851; font-size:clamp(1.3rem,3vw,1.8rem); }
+.physics-task-card.pv-merksatz > p { margin:.75rem 0; color:inherit; }
+.physics-task-card.pv-merksatz > .eyebrow { color:#1b7894; }
+.physics-task-card.pv-merksatz > .pv-merksatz-formula { padding:.65rem 1rem; border:1px solid #a8d3e2; border-radius:10px; background:#fff; color:#193851; text-align:center; font-size:clamp(1.4rem,4vw,1.9rem); }
 .pv-merksatz ul { margin:.5rem 0; padding-left:1.35rem; }
+.pv-merksatz li + li { margin-top:.5rem; }
+@media (max-width:600px) { .photovoltaik-page .physics-step-tabs { grid-template-columns:minmax(0,1fr); } }
 .photovoltaik-page [hidden] { display:none !important; }
 @media (prefers-reduced-motion: reduce) { .pv-switch-arm { transition:none; } }
 @media (max-width:940px) { .pv-workspace { grid-template-columns:minmax(0,1fr); } .pv-apparatus svg { height:auto; max-height:280px; } .pv-graphs { grid-template-columns:minmax(0,1fr); } }
