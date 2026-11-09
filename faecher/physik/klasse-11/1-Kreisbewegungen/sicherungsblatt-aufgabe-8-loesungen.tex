@@ -1,0 +1,186 @@
+\documentclass[10pt,a4paper]{article}
+
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage[ngerman]{babel}
+\usepackage[a4paper,margin=12mm]{geometry}
+\usepackage{lmodern}
+\usepackage[table]{xcolor}
+\usepackage{tabularx}
+\usepackage{array}
+\usepackage{booktabs}
+\usepackage{amsmath}
+\usepackage{microtype}
+\usepackage[most]{tcolorbox}
+\usepackage{tikz}
+\usetikzlibrary{arrows.meta,calc}
+
+\pagestyle{empty}
+\setlength{\parindent}{0pt}
+\setlength{\parskip}{0pt}
+\renewcommand{\familydefault}{\sfdefault}
+\renewcommand{\arraystretch}{1.08}
+
+\definecolor{Navy}{HTML}{17324D}
+\definecolor{Blue}{HTML}{3B6EA5}
+\definecolor{Sky}{HTML}{EAF3FA}
+\definecolor{Mint}{HTML}{E8F5EF}
+\definecolor{Gold}{HTML}{F3B33D}
+\definecolor{Ink}{HTML}{1E2935}
+\definecolor{Muted}{HTML}{617080}
+\definecolor{Line}{HTML}{D8E1E8}
+
+\color{Ink}
+\newcommand{\sectiontitle}[1]{\vspace{0.4mm}{\color{Blue}\bfseries\large #1}\par\vspace{0.15mm}{\color{Blue}\rule{\linewidth}{0.7pt}}\par\vspace{0.25mm}}
+\newcommand{\unit}[1]{\,\mathrm{#1}}
+\newcommand{\unitfrac}[2]{\,\frac{\mathrm{#1}}{\mathrm{#2}}}
+\newcommand{\pagefooter}[1]{\par\vspace{2mm}{\color{Line}\rule{\linewidth}{0.5pt}}\par\vspace{1mm}\begin{tabularx}{\linewidth}{@{}Xc r@{}}{\leavevmode\small\color{Muted}Klasse 11 \textperiodcentered{} Physik \textperiodcentered{} Kreisbewegungen} & {\leavevmode\small\color{Muted}#1} & {\leavevmode\small\color{Muted}Sicherungsblatt \textperiodcentered{} Aufgabe 8}\end{tabularx}}
+\newcommand{\compact}{\small\setlength{\abovedisplayskip}{2.5pt}\setlength{\belowdisplayskip}{2.5pt}\setlength{\abovedisplayshortskip}{1pt}\setlength{\belowdisplayshortskip}{2pt}}
+\tcbset{sheetbox/.style={colframe=Line,arc=1.2mm,boxrule=.6pt,left=2mm,right=2mm,top=.7mm,bottom=.7mm}}
+
+
+\newcommand{\sheethead}{\par\normalsize\color{Ink}\leavevmode%
+\colorbox{Navy}{\parbox{\dimexpr\linewidth-2\fboxsep\relax}{\vspace{1.3mm}\color{white}\small\bfseries PHYSIK \textperiodcentered{} KLASSE 11\hfill\textcolor{Gold}{LÖSUNGEN}\par\vspace{1.1mm}{\large Sicherungsblatt}\vspace{1.1mm}}}
+\par\vspace{1.6mm}
+{\color{Navy}\fontsize{15}{18}\selectfont\bfseries Das Gravitationsgesetz\par}
+\vspace{.5mm}\textbf{Aufgabe 8}\par\vspace{1.2mm}}
+\newcommand{\step}[2]{\par\vspace{1.3mm}\textbf{\textcolor{Blue}{#1}\quad #2}\par\vspace{.4mm}}
+\setlength{\abovedisplayskip}{4pt}
+\setlength{\belowdisplayskip}{4pt}
+\begin{document}
+\sheethead
+\colorbox{Sky}{\parbox{\dimexpr\linewidth-2\fboxsep\relax}{\vspace{.6mm}\textcolor{Blue}{\bfseries Ziel:} Die gegenseitige Anziehung von Körpern erklären und ihre Abhängigkeit von Massen und Abstand beschreiben.\vspace{.6mm}}}
+
+\par\vspace{2mm}\sectiontitle{1 \textperiodcentered{} Gravitation wirkt zwischen allen Körpern}
+Alle Körper mit Masse ziehen einander an. Newton verband damit die Bewegungen auf der Erde und am Himmel: Bei der Mondbahn übernimmt die Gravitationskraft die Rolle der \textbf{Zentripetalkraft}. Es wird keine zusätzliche Kraft addiert.
+
+\par\vspace{2mm}\sectiontitle{2 \textperiodcentered{} Wechselwirkung: zwei Körper, zwei Kräfte}
+\begin{center}
+\begin{tikzpicture}[x=1mm,y=1mm,>=Latex]
+  \coordinate (A) at (18,0);
+  \coordinate (B) at (122,0);
+  \draw[Muted,densely dashed,line width=.5pt] (A) -- (B);
+  \filldraw[fill=Sky,draw=Blue,line width=.8pt] (A) circle (7);
+  \filldraw[fill=Gold!25,draw=Gold!85!black,line width=.8pt] (B) circle (11);
+  \fill[Ink] (A) circle (.8);
+  \fill[Ink] (B) circle (.8);
+  \draw[-{Latex[length=3mm]},Blue,line width=1.3pt] (A) -- ++(30,0) node[midway,above=2mm] {$\vec F_1$};
+  \draw[-{Latex[length=3mm]},Gold!85!black,line width=1.3pt] (B) -- ++(-30,0) node[midway,above=2mm] {$\vec F_2$};
+  \node[above] at (18,9) {$m_1$};
+  \node[above] at (122,13) {$m_2>m_1$};
+  \draw[Muted,line width=.4pt] (18,-1) -- (18,-20);
+  \draw[Muted,line width=.4pt] (122,-1) -- (122,-20);
+  \draw[{Latex[length=2mm]}-{Latex[length=2mm]},Muted,line width=.6pt] (18,-17) -- (122,-17) node[midway,fill=white,inner sep=1.5mm,text=Ink] {$r$};
+\end{tikzpicture}
+\par\vspace{.2mm}{\scriptsize\color{Muted}Symbolische Körpergrö\ss{}en; die Kraftpfeile beginnen an den Mittelpunkten.}
+\end{center}
+\begin{minipage}[c]{.32\linewidth}
+\centering\large
+\(\boxed{\vec F_1=-\vec F_2}\)
+\end{minipage}\hfill
+\begin{minipage}[c]{.65\linewidth}
+$\vec F_1$: Kraft auf Körper 1 durch Körper 2.\\[.6mm]
+$\vec F_2$: Kraft auf Körper 2 durch Körper 1.
+\end{minipage}
+\par\vspace{2mm}
+Die Kräfte sind \textbf{gleich gro\ss{} und entgegengesetzt gerichtet}. Sie greifen an verschiedenen Körpern an und heben sich deshalb nicht an einem Körper auf.
+\par\vspace{1mm}
+Aus $a=\dfrac{F}{m}$ folgt: Bei gleichem Kraftbetrag wird der Körper mit der kleineren Masse stärker beschleunigt.
+
+\par\vspace{2mm}\sectiontitle{3 \textperiodcentered{} Was bestimmt den Kraftbetrag?}
+Beim Vergleich werden jeweils die anderen Grö\ss{}en konstant gehalten.
+\par\vspace{1.5mm}
+\begin{tabularx}{\linewidth}{@{}>{\raggedright\arraybackslash}X >{\centering\arraybackslash}p{32mm} >{\raggedright\arraybackslash}X@{}}
+\rowcolor{Sky}\textbf{Veränderte Grö\ss{}e} & \textbf{Zusammenhang} & \textbf{Beispiel}\\[1mm]
+Masse $m_1$ & $F\propto m_1$ & $m_1$ verdoppeln: doppelte Kraft.\\[1.8mm]
+Masse $m_2$ & $F\propto m_2$ & $m_2$ verdoppeln: doppelte Kraft.\\[1.8mm]
+Abstand $r$ & $F\propto\dfrac{1}{r^2}$ & $r$ verdoppeln: ein Viertel der Kraft.\\[1.8mm]
+\end{tabularx}
+\par\vspace{1mm}
+Werden \textbf{beide Massen verdoppelt}, ist die Kraft $2\cdot2=4$-mal so gro\ss{}.
+
+\vfill
+\sectiontitle{4 \textperiodcentered{} Merke: das allgemeine Gravitationsgesetz}
+\begin{tcolorbox}[sheetbox,colback=Mint,colframe=Blue,boxrule=.9pt,top=2mm,bottom=2mm]
+\begin{minipage}[c]{.35\linewidth}
+\centering\Large
+\(F_{\mathrm G}=G\cdot\dfrac{m_1\cdot m_2}{r^2}\)
+\end{minipage}\hfill
+\begin{minipage}[c]{.61\linewidth}
+\small $F_{\mathrm G}$: Betrag jeder der beiden Gravitationskräfte.\\[.7mm]
+$m_1$, $m_2$: Massen der beiden Körper.\\[.7mm]
+$r$: Abstand der Schwerpunkte, nicht der Oberflächen.
+\end{minipage}
+\par\vspace{2mm}
+\centering\small Gravitationskonstante:
+\(G=6{,}67430\cdot10^{-11}\unitfrac{N\cdot m^2}{kg^2}\)
+\end{tcolorbox}
+\pagefooter{1 von 2}
+\newpage
+\sheethead
+\small
+\begin{tcolorbox}[sheetbox,colback=Sky]
+\textbf{Vorgaben aus dem Modul:}
+$G=6{,}67430\cdot10^{-11}\unitfrac{N\cdot m^2}{kg^2}$,
+$M_{\mathrm E}=5{,}974\cdot10^{24}\unit{kg}$,\\[1mm]
+$R_{\mathrm E}=6370\unit{km}=6{,}370\cdot10^6\unit{m}$.
+Der Abstand $r$ wird zwischen den Mittelpunkten gemessen.
+\end{tcolorbox}
+\sectiontitle{A1 \textperiodcentered{} Apfel und Erde}
+\textbf{Gegeben:} Ein Apfel mit $m_{\mathrm A}=150\unit{g}$ hängt dicht über der Erdoberfläche. Gesucht sind der gegenseitige Kraftbetrag und beide Beschleunigungen.
+\step{1}{Masse umrechnen und Abstand festlegen}
+\[
+m_{\mathrm A}=150\unit{g}=0{,}150\unit{kg},\qquad r\approx R_{\mathrm E}=6{,}370\cdot10^6\unit{m}.
+\]
+\step{2}{Gravitationskraft berechnen}
+\[
+F=G\cdot\frac{M_{\mathrm E}\cdot m_{\mathrm A}}{r^2}
+=\frac{6{,}67430\cdot10^{-11}\unitfrac{N\cdot m^2}{kg^2}\cdot5{,}974\cdot10^{24}\unit{kg}\cdot0{,}150\unit{kg}}
+{(6{,}370\cdot10^6\unit{m})^2}
+=1{,}47395\ldots\unit{N}.
+\]
+Nach dem Wechselwirkungsprinzip ziehen sich Apfel und Erde mit gleich gro\ss{}en, entgegengesetzt gerichteten Kräften an. Diese Kräfte greifen an verschiedenen Körpern an.
+\step{3}{Denselben Kraftbetrag durch die jeweilige Masse teilen}
+Für die Fallbewegung nach dem Loslassen gilt jeweils $a=\dfrac{F}{m}$:
+\begin{align*}
+a_{\mathrm A}&=\frac{G\cdot M_{\mathrm E}}{R_{\mathrm E}^2}
+=\frac{1{,}47395\ldots\unit{N}}{0{,}150\unit{kg}}
+=9{,}82635\ldots\unitfrac{m}{s^2},\\[1mm]
+a_{\mathrm E}&=\frac{G\cdot m_{\mathrm A}}{R_{\mathrm E}^2}
+=\frac{1{,}47395\ldots\unit{N}}{5{,}974\cdot10^{24}\unit{kg}}
+=2{,}46728\ldots\cdot10^{-25}\unitfrac{m}{s^2}.
+\end{align*}
+\begin{tcolorbox}[sheetbox,colback=Mint]
+\textbf{Ergebnisse mit zwei gültigen Ziffern:}
+$\boxed{F\approx1{,}5\unit{N}}$,\quad
+$\boxed{a_{\mathrm A}\approx9{,}8\unitfrac{m}{s^2}}$,\quad
+$\boxed{a_{\mathrm E}\approx2{,}5\cdot10^{-25}\unitfrac{m}{s^2}}$.\\[1mm]
+Vor allem der Apfel fällt sichtbar: Bei gleichem Kraftbetrag ist die Beschleunigung der viel massereicheren Erde verschwindend klein. Solange der Apfel noch hängt, wird seine Gravitationskraft durch die Haltekraft ausgeglichen.
+\end{tcolorbox}
+\sectiontitle{A2 \textperiodcentered{} Astronautin in 400 km Höhe}
+\textbf{Gegeben:} $m=62\unit{kg}$, $h=400\unit{km}$. Gesucht sind die Gravitationskräfte im Orbit und am Boden sowie die Erklärung der scheinbaren Schwerelosigkeit.
+\step{1}{Mittelpunktabstände bestimmen}
+\[
+r_{\mathrm{Orbit}}=R_{\mathrm E}+h=6770\unit{km}=6{,}770\cdot10^6\unit{m},\qquad
+r_{\mathrm{Boden}}=6{,}370\cdot10^6\unit{m}.
+\]
+\step{2}{Gravitationsgesetz für beide Abstände anwenden}
+\begin{align*}
+F_{\mathrm{Orbit}}&=G\cdot\frac{M_{\mathrm E}\cdot m}{r_{\mathrm{Orbit}}^2}
+=\frac{6{,}67430\cdot10^{-11}\cdot5{,}974\cdot10^{24}\cdot62}{(6{,}770\cdot10^6)^2}\unit{N}
+=539{,}368\ldots\unit{N},\\[1mm]
+F_{\mathrm{Boden}}&=G\cdot\frac{M_{\mathrm E}\cdot m}{R_{\mathrm E}^2}
+=\frac{6{,}67430\cdot10^{-11}\cdot5{,}974\cdot10^{24}\cdot62}{(6{,}370\cdot10^6)^2}\unit{N}
+=609{,}233\ldots\unit{N}.
+\end{align*}
+Die Zahlenrechnungen verwenden ausschlie\ss{}lich SI-Einheiten.
+\step{3}{Runden und die Schwerelosigkeit erklären}
+\begin{tcolorbox}[sheetbox,colback=Mint]
+\textbf{Zwei gültige Ziffern:}
+$\boxed{F_{\mathrm{Orbit}}\approx5{,}4\cdot10^2\unit{N}}$,\quad
+$\boxed{F_{\mathrm{Boden}}\approx6{,}1\cdot10^2\unit{N}}$.\\[1mm]
+Auch im Orbit wirkt eine starke Gravitationskraft. Astronautin und Raumstation befinden sich gemeinsam im freien Fall um die Erde. Die Astronautin wird daher nicht wie am Boden von einer Unterlage getragen und erscheint schwerelos. Die Gravitation wirkt dabei als Zentripetalkraft.
+\end{tcolorbox}
+
+\vfill\pagefooter{2 von 2}
+\end{document}

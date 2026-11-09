@@ -1,7 +1,7 @@
 // Löschanleitung: aufgabe5-quiz-loeschen.txt.
 import { enableTokenDrag, wasDragged } from "./components/token-drag.mjs";
-import { appendPhysicsText, physicsTextSpan } from "./components/physics-notation.mjs?v=20260911a";
-import { evaluateSemanticAnswer } from "../../../informatik/klasse-11/1-Kuenstliche-Intelligenz/perzeptron/ui/semantic-answer.mjs?v=20261010-scaleway";
+import { appendPhysicsText, physicsTextSpan } from "./components/physics-notation.mjs?v=20261022-force-indices";
+import { evaluateSemanticAnswer, renderCompactEvaluation } from "../../../informatik/klasse-11/1-Kuenstliche-Intelligenz/perzeptron/ui/semantic-answer.mjs?v=20261029-criteria-v1";
 
 // Wiederholungs-Quiz zu Aufgabe 5: nicht verlinkte Seite, jede Aufgabe mit eigenem Prüfen-Button.
 // Eigenständig aufgebaut (Vorlage: wdh2-quiz.mjs), damit der Test ohne Reste wieder
@@ -37,6 +37,7 @@ const DESCRIBE_TASKS = [
     "prompt": "Behauptung: „Ein schwerer LKW kann leichter aus der Kurve fliegen als ein kleines Auto“. **Bewerte** die aufgestellte Behauptung aus physikalischer Sicht."
   }
 ];
+DESCRIBE_TASKS.forEach((task) => { task.assessmentVersion = "20261029-criteria-v1"; });
 const DESCRIBE_MAX_POINTS = DESCRIBE_TASKS.reduce((sum, task) => sum + task.maxPoints, 0);
 const CLOZE_TERMS = [
   {
@@ -297,6 +298,7 @@ const DEFAULT_STATE = {
   // true, solange die Markierungen des letzten Prüfens zur aktuellen Eingabe passen.
   checked: { cloze: false, sort: false, mc: Object.fromEntries(MC_QUESTIONS.map((question) => [question.id, false])) },
   // Gewertet wird der erste Prüfversuch jeder Aufgabe; null = noch nicht geprüft.
+  assessmentVersions: Object.fromEntries(DESCRIBE_TASKS.map((task) => [task.id, task.assessmentVersion])),
   first: {
     cloze: null,
     sort: null,
@@ -341,6 +343,7 @@ function loadState() {
       fresh.first.mc[question.id] = clampPoints(saved.first?.mc?.[question.id], 1);
     });
     DESCRIBE_TASKS.forEach((task) => {
+      if (saved.assessmentVersions?.[task.id] !== task.assessmentVersion) return;
       const ai = saved.ai?.[task.id];
       if (isPlainObject(ai) && Number.isInteger(ai.points) && ai.points >= 0 && ai.points <= task.maxPoints && typeof saved.aiText?.[task.id] === "string" && saved.aiText[task.id].length <= 3000) {
         fresh.ai[task.id] = {
@@ -766,15 +769,7 @@ function renderDescribe(task) {
     box.replaceChildren(element("p", "", `Die Antwort konnte gerade nicht automatisch bewertet werden (${describeErrors[task.id]}). Versuche es in einem Moment noch einmal.`));
   } else if (ai) {
     box.dataset.status = ai.status || "";
-    box.replaceChildren(element("h4", "", `${ai.status}: ${ai.points} von ${ai.maxPoints} Aspekten erkannt.`));
-    [["Das ist dir gelungen:", ai.strengths, "Noch kein Aspekt wurde eindeutig erkannt."], ["Das fehlt noch:", ai.missing, "Es fehlen keine wesentlichen Aspekte."]].forEach(([title, entries, fallback]) => {
-      box.append(element("h4", "", title));
-      const list = document.createElement("ul");
-      (entries?.length ? entries : [fallback]).forEach((entry) => list.append(element("li", "", entry)));
-      box.append(list);
-    });
-    if (ai.feedback) box.append(element("p", "", ai.feedback));
-    if (!solved) box.append(element("p", "", "Ergänze deine Antwort und prüfe sie erneut."));
+    renderCompactEvaluation(box, ai, { appendText: appendPhysicsText });
   } else {
     box.hidden = true;
     return;
@@ -807,6 +802,7 @@ function checkDescription(task) {
 async function evaluateDescription(task, text) {
   try {
     const result = await evaluateSemanticAnswer({ serverUrl: SCRIPT_SERVER_URL, taskId: task.taskId, answer: text.trim(), expectedMaxPoints: task.maxPoints });
+    if (state.texts[task.id] !== text) { describePending[task.id] = false; renderDescribe(task); updateProgress(); return; }
     const points = clampPoints(Number(result.points) || 0, task.maxPoints);
     state.ai[task.id] = {
       status: result.status || "noch nicht korrekt",
@@ -820,6 +816,7 @@ async function evaluateDescription(task, text) {
     if (state.first.describe[task.id] === null) state.first.describe[task.id] = points;
     saveState();
   } catch (error) {
+    if (state.texts[task.id] !== text) { describePending[task.id] = false; renderDescribe(task); updateProgress(); return; }
     describeErrors[task.id] = error.message || "Der Auswertungsserver war nicht erreichbar";
   }
   describePending[task.id] = false;
@@ -832,7 +829,7 @@ function setupDescribeTask(task) {
   const textarea = document.getElementById(`describe-${task.id}`);
   const counter = document.getElementById(`describe-${task.id}-count`);
   const updateCounter = () => { counter.textContent = `${textarea.value.length} von 3000 Zeichen`; };
-  textarea.addEventListener("input", () => { state.texts[task.id] = textarea.value; updateCounter(); saveState(); updateProgress(); });
+  textarea.addEventListener("input", () => { state.texts[task.id] = textarea.value; delete state.ai[task.id]; state.aiText[task.id] = ""; delete describeErrors[task.id]; renderDescribe(task); updateCounter(); saveState(); updateProgress(); });
   document.getElementById(`check-${task.id}`).addEventListener("click", () => checkDescription(task));
   textarea.value = state.texts[task.id];
   updateCounter();

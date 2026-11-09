@@ -1,158 +1,1438 @@
-// Aufgabe 2 – Struktur und Anwendung von SQL-Abfragen (Informatik 9).
-// Verwendet die gemeinsamen SQL-Hilfen, Tabnavigation, Skriptserver-Pipeline und Quizprüfung.
-import { compareRelations, normalizeRelation, validateSelectStatement } from '../../klasse-10/1-Datenbanken/sql-lab-core.mjs?v=20260929b';
-import { enableTabKeyboardNavigation, focusTabPanelStart, renderTabFlowNavigation, syncTabSemantics } from '../../klasse-10/1-Datenbanken/tab-navigation.mjs?v=20260906a';
+import { bindSolutionCodePersistence, readSplitProgress } from './sql9-progress-migration.mjs';
+// Aufgabe 2 – Erste SQL-Abfragen: SELECT und ORDER BY (Informatik 9).
+// Seitengerüst nach klasse-9/2-Datenbanken/aufgabe1.js, SQL-Labor nach klasse-10/1-Datenbanken/sql-lab.js.
+import { classifyDescriptionResult, compareRelations, isValidScriptServerUrl, missingTextQuote, normalizeRelation, parseDelimited, sqlTokens, validateSelectStatement } from '../../klasse-10/1-Datenbanken/sql-lab-core.mjs?v=20260929b';
+import { evaluateSemanticAnswer, renderCompactEvaluation } from '../../klasse-11/1-Kuenstliche-Intelligenz/perzeptron/ui/semantic-answer.mjs?v=20261029-criteria-v1';
+import { appendSolutionDownloadFromTemplate, enableTabKeyboardNavigation, focusTabPanelStart, renderTabFlowNavigation, syncTabSemantics } from '../../klasse-10/1-Datenbanken/tab-navigation.mjs?v=20260906a';
 
-const STORAGE_KEY = 'informatik9-datenbanken-wichmatics-aufgabe2-v1';
-const CODE = 'M6QR-4TP7';
-const APP = 'https://wichematik.education/app/sql-abfragen.html';
-const TABS = ['Einstieg und Einführung 1','Einführung 2','Einführung 3','Einführung 4','Einführung 5','Weiterführend 1','Weiterführend 2','Weiterführend 3','Weiterführend 4','Abschlussquiz'];
-const FILM = [
-  ['Forrest Gump',1994,7.99,142,'4010884590517'],['König der Löwen',2019,12.99,118,'8717418555689'],['Frozen',2013,6.99,152,'8717418505639'],['Titanic',1997,8.99,195,'4010232057068'],['Dune',2021,14.99,155,'5051890328120'],['König der Löwen',1994,9.99,88,'8717418522742'],['Minions',2015,10.99,91,'5053083026356'],['Avatar',2009,13.99,162,'4013575722600']
-];
-const BUCH = [
-  ['9783570161319','Die Bestimmung','Veronica Roth',2011,480],['9783548263007','Die Insel','John Connolly',2005,512],['9783938484777','Der Prozess','Franz Kafka',1925,251],['9783872915061','Die Verwandlung','Franz Kafka',1915,70],['9783453136410','Das Urteil','Franz Kafka',1912,110],['9783499242977','Die Insel','Charlotte Link',2011,80],['9783257065541','Der Alchimist','Paulo Coelho',1988,192]
-];
-const EINWOHNER = [['Lukas Schmidt','A30F24N410',16,'Grün',172],['Sarah Müller','U91P77J128',21,'Blau',167],['Jonas Neubauer','T01O31F912',9,'Braun',138],['Anna Becker','K72P14G531',34,'Braun',162],['Tim Schwarz','E44U31H427',28,'Blau',180],['Laura Schmidt','B26E83Z311',25,'Grün',175],['Omar Petrov','R12P19A127',30,'Braun',182],['Clara Weber','K72A66X919',22,'Blau',165],['Felix Klein','T02H14S820',18,'Grün',175]];
-const SPEISE = [[1,'Lasagne',12.5,0,680],[2,'Schokopudding',3.9,0,182],[3,'Gemüsepfanne',8.5,1,420],[4,'Pizza Margherita',9.2,0,855],[5,'Fruchtsalat',4.5,1,158],[6,'Quinoa-Salat',8.7,1,510],[7,'Hühnchen-Curry',12.5,0,742],[8,'Tofu-Stir-Fry',9,1,484]];
-// Die Quelldokumente nennen die Spalten, aber keine SQL-Datentypen. Deshalb
-// werden SQLite-Spalten ohne erfundene Typdeklarationen angelegt.
-const SQL_TABLES = [
-  ['Film',['Name','Jahr','Preis','Länge','EAN'],FILM],
-  ['Buch',['ISBN','Name','Autor','Jahr','Seiten'],BUCH],
-  ['Einwohner',['Name','AusweisID','Alter','Augenfarbe','Körpergröße'],EINWOHNER],
-  ['Speise',['Nummer','Name','Preis','Vegan','Kilokalorien'],SPEISE]
-];
-const KAFKA = [['9783938484777','Der Prozess','Franz Kafka',1925,251],['9783872915061','Die Verwandlung','Franz Kafka',1915,70],['9783453136410','Das Urteil','Franz Kafka',1912,110]];
-const VEGAN = [['Gemüsepfanne',8.5,420],['Fruchtsalat',4.5,158],['Quinoa-Salat',8.7,510],['Tofu-Stir-Fry',9,484]];
+// Speicherschlüssel trotz Umbenennung beibehalten, damit bestehende Lernstände erhalten bleiben.
+const STORAGE_KEY = 'informatik9-datenbanken-aufgabe2-select-order-v2';
+const LEGACY_STORAGE_KEY = 'informatik9-datenbanken-aufgabe2-v1';
+const MIGRATION_MARKER = `${STORAGE_KEY}-migration-done`;
+const NEUTRAL_SQL_PLACEHOLDER = 'SELECT ...\nFROM ...';
+const SCRIPT_SERVER_URL = 'https://unterrichtkiichezbn4-ki-auswertung.functions.fnc.fr-par.scw.cloud/';
+// nach USERS_TABLE_SCHEMAS in klasse-10/1-Datenbanken/sql-lab.js, wortgleich
+const USERS_TABLE_SCHEMAS = Object.freeze([
+  Object.freeze({ table: 'users', columns: Object.freeze([
+    ['id', 'int'], ['name', 'varchar(255)'], ['username', 'varchar(255)'], ['email', 'varchar(255)'],
+    ['email_verified_at', 'date'], ['password', 'varchar(255)'], ['bio', 'varchar(255)'], ['gender', 'varchar(255)'],
+    ['birthday', 'date'], ['city', 'varchar(255)'], ['country', 'varchar(255)'], ['centimeters', 'int'],
+    ['avatar', 'varchar(255)'], ['role', 'varchar(255)'], ['is_active', 'int'], ['remember_token', 'varchar(255)'],
+    ['created_at', 'date'], ['updated_at', 'date']
+  ]) })
+]);
+const USER_COLUMN_NAMES = USERS_TABLE_SCHEMAS[0].columns.map(([name]) => name);
 
-const tasks = [
-  {id:'e1',tab:0,title:'Einführung 1',prompt:'Beschreibe, wie sich die Ergebnisse der abgebildeten Abfrage von der Ergebnistabelle der oben angegebenen Abfrage unterscheiden.',textTask:'inf9-wichmatics-e1-buch',fields:[],sentence:['Das Schlüsselwort FROM ist für die Auswahl der','verantwortlich, aus der die Daten abgerufen werden sollen.'],memoExpected:['Tabelle'],sql:'SELECT Name\nFROM Buch',help:['Vergleiche, was hinter FROM steht.','SELECT Name bleibt gleich. Nur die Quelltabelle wechselt.','Die Namen kommen jetzt aus Buch; in die Merksatzlücke gehört die Quelltabelle.'],feedback:['Korrekt: Du erkennst die andere Quelltabelle und ergänzt FROM passend.','Teilweise korrekt: Prüfe noch, ob du den Tabellenwechsel und die FROM-Lücke beide richtig erfasst hast.','Noch nicht korrekt: Vergleiche die beiden Zeilen mit FROM.']},
-  {id:'e2',tab:1,title:'Einführung 2',prompt:'Füge einen weiteren roten Block hinzu und wähle Seiten aus. Erläutere, wie sich die Ergebnistabelle verändert.',textTask:'inf9-wichmatics-e2-spalten',fields:[['select','Ergänzung nach Name',' , Seiten']],sentence:null,expected:['Seiten'],sql:'SELECT Name, Seiten\nFROM Buch',help:['Beobachte, was der zweite rote Block verändert.','Rot steht für die ausgewählten Spalten. Name bleibt erhalten; eine Spalte kommt hinzu.','Ergänze Seiten als zweite Spalte nach einem Komma; FROM Buch bleibt bestehen.'],feedback:['Korrekt: Die Ergebnistabelle hat nun Name und Seiten als zwei Spalten.','Teilweise korrekt: Ein Teil stimmt. Prüfe, ob die zweite Spalte auch in der SQL-Zeile steht.','Noch nicht korrekt: Vergleiche die Spalten der Ergebnistabelle vor und nach dem zweiten Block.']},
-  {id:'e3',tab:2,title:'Einführung 3',prompt:'Erkläre, warum die abgebildete Abfrage keine Ergebnistabelle ausgibt.',textTask:'inf9-wichmatics-e3-fehler',fields:[],sentence:['Das Schlüsselwort SELECT bestimmt, welche','in der Ergebnistabelle enthalten sein sollen.'],memoExpected:['vorhandenen Spalten'],sql:'SELECT Seiten\nFROM Film',invalid:true,help:['Vergleiche den roten Block mit den Spalten der gewählten Tabelle.','Die Tabelle Film besitzt keine Spalte Seiten.','SELECT darf nur vorhandene Spalten der Tabelle Film auswählen.'],feedback:['Korrekt: Seiten gehört nicht zu Film; SELECT wählt vorhandene Spalten.','Teilweise korrekt: Prüfe noch die Begründung oder den genauen Wortlaut der SELECT-Lücke.','Noch nicht korrekt: Sieh in der Tabelle Film nach, ob Seiten eine Spalte ist.']},
-  {id:'e4',tab:3,title:'Einführung 4',prompt:'Gib eine Abfrage an, die den Namen und den Preis aller Filme zeigt, die nach 2014 veröffentlicht wurden.',fields:[['select','SELECT-Ergänzung nach Name',', Preis'],['where','WHERE-Bedingung','Jahr > 2014']],sentence:['Das Schlüsselwort','schränkt die Auswahl der','der Ergebnistabelle anhand von','ein.'],memoExpected:['WHERE','Zeilen','Bedingungen'],sql:'SELECT Name, Preis\nFROM Film\nWHERE Jahr > 2014',table:'Film',help:['Markiere in Film die Zeilen mit Jahr nach 2014.','Die Ausgabe braucht Name und Preis; die Jahresbedingung gehört hinter WHERE.','Ergänze Preis nach Name und formuliere eine Bedingung mit Jahr größer als 2014.'],feedback:['Korrekt: Die Abfrage liefert die drei vorgegebenen Filme mit Name und Preis.','Teilweise korrekt: Spaltenwahl oder Zeilenauswahl stimmt schon; prüfe die übrige SQL-Stelle und die Merksatzlücken.','Noch nicht korrekt: Vergleiche SELECT mit den Ergebnis-Spalten und WHERE mit den ausgewählten Jahren.']},
-  {id:'e5',tab:4,title:'Einführung 5',prompt:'Formuliere eine Abfrage, die alle Informationen aller Filme zeigt, die nach 2014 veröffentlicht wurden und kürzer als 100 Minuten sind.',fields:[['select','SELECT-Ergänzung','*'],['where','WHERE-Bedingung','Jahr > 2014 AND Länge < 100']],sentence:['SQL-Abfragen','Datenbanktabellen.'],memoExpected:['(durchsuchen und) filtern Daten in'],sql:'SELECT *\nFROM Film\nWHERE Jahr > 2014 AND Länge < 100',help:['„Alle Informationen“ betrifft die Spalten.','Für alle Spalten steht *; beide Bedingungen müssen zugleich gelten.','Verwende hinter WHERE die Bedingungen Jahr > 2014 und Länge < 100 mit AND.'],feedback:['Korrekt: Nur Minions erfüllt beide Bedingungen, und * zeigt alle Spalten.','Teilweise korrekt: Prüfe, ob du alle Spalten ausgibst und beide Bedingungen gleichzeitig verlangst.','Noch nicht korrekt: Suche die Schnittmenge aus Filmen nach 2014 und unter 100 Minuten.']},
-  {id:'w1',tab:5,title:'Weiterführend 1',prompt:'Das Einwohnermeldeamt möchte die Namen und das Alter aller Einwohner erhalten, die blaue Augen haben. Formuliere eine passende Abfrage und vervollständige die Ergebnistabelle.',fields:[['select','SELECT-Ergänzung','Name, Alter'],['from','FROM-Ergänzung','Einwohner'],['where','WHERE-Bedingung',"Augenfarbe = 'Blau'"]],expected:['Name, Alter','Einwohner',"Augenfarbe = 'Blau'"],sql:"SELECT Name, Alter\nFROM Einwohner\nWHERE Augenfarbe = 'Blau'",table:'Einwohner',cells:['Tim Schwarz','28','Clara Weber','22'],help:['Welche Tabelle enthält Augenfarbe?','Nur Name und Alter sollen ausgegeben werden; Blau ist ein Textwert.','Die Zeilen mit Augenfarbe Blau gehören in die Ergebnistabelle. Trage die zwei noch fehlenden Personen mit ihrem Alter ein.'],feedback:['Korrekt: Die SQL-Abfrage und beide ergänzten Personen stimmen.','Teilweise korrekt: Einige SQL-Teile oder Tabellenzellen stimmen; kontrolliere die markierten Stellen.','Noch nicht korrekt: Lies die drei blauen Augen-Zeilen in Einwohner und vergleiche SELECT, FROM und WHERE.']},
-  {id:'w2',tab:6,title:'Weiterführend 2a',prompt:'Gib eine zielführende Abfrage an, die diese Ergebnistabelle liefert.',textTask:'inf9-wichmatics-w2b-motivation',fields:[['select','SELECT-Ergänzung','Name, Preis, Kilokalorien'],['from','FROM-Ergänzung','Speise'],['where','WHERE-Bedingung','Vegan = TRUE']],expected:['Name, Preis, Kilokalorien','Speise','Vegan = TRUE'],sql:'SELECT Name, Preis, Kilokalorien\nFROM Speise\nWHERE Vegan = TRUE',table:'Speise',help:['Vergleiche die vier Speisen auf eine gemeinsame Eigenschaft.','Die Tabelle heißt Speise; alle gezeigten Speisen sind vegan.','Wähle Name, Preis und Kilokalorien aus Speise und filtere auf den Wahrheitswert TRUE.'],feedback:['Korrekt: Die Abfrage liefert genau die vier vorgegebenen Speisen und Spalten.','Teilweise korrekt: Ein Teil der Abfrage passt; prüfe Spaltenliste, Tabelle und Vegan-Bedingung.','Noch nicht korrekt: Suche in Speise die Eigenschaft, die genau diese vier Zeilen auswählt.']},
-  {id:'w3',tab:7,title:'Weiterführend 3',prompt:'Sophia möchte den Namen und die Länge aller Filme erhalten, die günstiger als 7€ oder nach dem Jahr 2019 erschienen sind. Formuliere eine Abfrage, die den Anforderungen entspricht.',fields:[['select','SELECT-Ergänzung','Name, Länge'],['from','FROM-Ergänzung','Film'],['where','WHERE-Bedingung','Preis < 7 OR Jahr > 2019']],expected:['Name, Länge','Film','Preis < 7 OR Jahr > 2019'],sql:'SELECT Name, Länge\nFROM Film\nWHERE Preis < 7 OR Jahr > 2019',table:'Film',help:['Achte auf das Wort „oder“.','Eine Zeile reicht aus, wenn Preis oder Jahr die Bedingung erfüllt.','Wähle Name und Länge aus Film; verknüpfe Preis < 7 und Jahr > 2019 mit OR.'],feedback:['Korrekt: Frozen und Dune erfüllen jeweils eine der beiden OR-Bedingungen.','Teilweise korrekt: Prüfe die Spalten oder ob OR statt AND verwendet wird.','Noch nicht korrekt: Prüfe die Grenzen „günstiger als 7“ und „nach 2019“ einzeln.']},
-  {id:'w4',tab:8,title:'Weiterführend 4a',prompt:'Der Deutschlehrer Herr Schröder möchte sich aus der Datenbank alle verfügbaren Informationen aller Bücher ausgeben lassen, die von Franz Kafka geschrieben wurden. Gib eine zur Ergebnistabelle gehörende Abfrage an.',fields:[['select','4a SELECT-Ergänzung','*'],['from','4a FROM-Ergänzung','Buch'],['where','4a WHERE-Bedingung',"Autor = 'Franz Kafka'"]],expected:['*','Buch',"Autor = 'Franz Kafka'"],sql:"SELECT *\nFROM Buch\nWHERE Autor = 'Franz Kafka'",table:'Buch',help:['„Alle verfügbaren Informationen“ betrifft die Spaltenauswahl.','Wähle Buch und filtere auf den Autor.','* steht für alle Spalten; Franz Kafka ist ein Textwert in Autor.'],feedback:['Korrekt: Die Abfrage zeigt alle fünf Spalten der drei Kafka-Bücher.','Teilweise korrekt: Prüfe, ob du wirklich alle Spalten und nur Kafka-Bücher erhältst.','Noch nicht korrekt: Vergleiche Tabellenname, Sternchen und Autor-Bedingung mit dem Auftrag.']}
+// [id, Label, Kicker, Überschrift]
+const TABS = [
+  ['intro', 'Einführung: SELECT und FROM', 'Entdecken', 'Wie funktioniert eine Abfrage?'],
+  ['projection', 'Spalten auswählen', 'Anwenden', 'Spalten auswählen'],
+  ['orderBy', 'Sortieren mit ORDER BY', 'Verstehen und anwenden', 'Sortieren mit ORDER BY'],
+  ['fast', 'Für die Schnellen', 'Übertragen', 'Für die Schnellen'],
+  ['quiz', 'Abschlussquiz', 'Sichern', 'Abschlussquiz und Zusammenfassung']
 ];
-const questionData = [
-  ['Welche Aussagen zu FROM stimmen?', [['a','FROM legt fest, aus welcher Tabelle die Daten stammen.',true],['b','FROM Buch verwendet die Tabelle Buch.',true],['c','FROM wählt die Spalten der Ergebnistabelle aus.',false],['d','FROM prüft die Bedingung für einzelne Zeilen.',false]],'Prüfe, welche Rolle die blaue Tabellenwahl im Einstiegsbeispiel spielt.'],
-  ['Welche Aussagen zu SELECT stimmen?', [['a','SELECT Name wählt die Spalte Name aus.',true],['b','SELECT * wählt alle Spalten aus.',true],['c','SELECT Seiten FROM Film ist gültig, obwohl Film keine Spalte Seiten hat.',false],['d','SELECT filtert Zeilen nach ihrem Jahr.',false]],'Vergleiche SELECT mit den Spaltenüberschriften der Ergebnistabelle.'],
-  ['Welche Aussagen zu WHERE stimmen?', [['a',"WHERE Jahr > 2014 wählt Filmzeilen nach einer Bedingung aus.",true],['b',"WHERE Augenfarbe = 'Blau' kann Einwohnerzeilen auswählen.",true],['c','WHERE entscheidet, welche Spalten angezeigt werden.',false],['d','Jahr > 2014 schließt Filme aus dem Jahr 2015 aus.',false]],'Prüfe, ob WHERE Spalten oder Zeilen eingrenzt und was „größer als“ bedeutet.'],
-  ['Welche Aussagen zu AND und OR stimmen?', [['a','Mit AND müssen beide Bedingungen für eine Zeile gelten.',true],['b','Mit OR genügt eine der beiden Bedingungen.',true],['c','Mit OR müssen immer beide Bedingungen gelten.',false],['d','Preis < 7 OR Jahr > 2019 liefert nur Filme, die beides erfüllen.',false]],'Vergleiche Frozen mit der Preisbedingung und Dune mit der Jahresbedingung.'],
-  ['Welche Abfragen wählen alle Informationen zu den Kafka-Büchern aus?', [['a',"SELECT * / FROM Buch / WHERE Autor = 'Franz Kafka'",true],['b',"SELECT * / FROM Buch / WHERE Autor = 'Franz Kafka' AND Seiten > 50",true],['c',"SELECT Seiten / FROM Film / WHERE Autor = 'Franz Kafka'",false],['d',"SELECT Name / FROM Buch / WHERE Autor = 'Franz Kafka'",false]],'„Alle Informationen“ meint alle Spalten; prüfe zusätzlich Tabelle und Autor-Bedingung.']
-];
-const state = { tab: 0, values: {}, checked: {}, details: {}, semantic: {}, quiz: {}, quizChecked: {}, quizPassed: false, unlocks: {quiz:false,summary:false} };
-let database;
-let quizChecks;
-const el = (tag, attrs={}, text='') => { const n=document.createElement(tag); Object.entries(attrs).forEach(([k,v])=>{ if(k==='class')n.className=v; else if(k==='html')n.innerHTML=v; else n.setAttribute(k,v); }); if(text)n.textContent=text; return n; };
-function plain(value){return value!==null&&typeof value==='object'&&Object.getPrototypeOf(value)===Object.prototype;}
-function safeRead() {
-  try {
-    const data=JSON.parse(localStorage.getItem(STORAGE_KEY)||'null');
-    if(!plain(data))return;
-    if(Number.isInteger(data.tab)&&data.tab>=0&&data.tab<TABS.length)state.tab=data.tab;
-    const validKeys=new Set(['w2-motivation','w4b.a','w4b.b',...Array.from({length:4},(_,i)=>`w1.cell${i}`)]);
-    for(const task of tasks){for(const [field] of task.fields)validKeys.add(`${task.id}.${field}`);for(let i=0;i<(task.memoExpected?.length||0);i++)validKeys.add(`${task.id}.memo${i}`);if(task.textTask&&task.id!=='w2')validKeys.add(`${task.id}.text`);}
-    if(plain(data.values))for(const [key,value] of Object.entries(data.values))if(validKeys.has(key)&&typeof value==='string')state.values[key]=value;
-    const validTasks=new Set([...tasks.map(t=>t.id),'w2b','w4b']);
-    if(plain(data.checked))for(const [key,value] of Object.entries(data.checked))if(validTasks.has(key)&&plain(value)&&['success','partial','error','hint'].includes(value.level)&&typeof value.text==='string')state.checked[key]={level:value.level,text:value.text};
-    if(plain(data.details))for(const [key,value] of Object.entries(data.details))if(/^(?:e[1-5]|w[1-4]|w2b|w4b)-help-[1-3]$|^solution-reveal(?:-summary)?$/.test(key)&&typeof value==='boolean')state.details[key]=value;
-    if(plain(data.semantic))for(const [key,value] of Object.entries(data.semantic)){
-      const taskId=key==='w2b-semantic'?'w2b':key.replace('-semantic','');
-      const answerKey=taskId==='w2b'?'w2-motivation':`${taskId}.text`;
-      if(['e1','e2','e3','w2b'].includes(taskId)&&plain(value)&&typeof value.text==='string'&&typeof value.className==='string'&&typeof value.answer==='string'&&value.answer===state.values[answerKey]?.trim()&&Number.isInteger(value.points)&&value.maxPoints===2&&value.points>=0&&value.points<=2&&['korrekt','teilweise korrekt','noch nicht korrekt'].includes(value.status))state.semantic[key]={text:value.text,className:value.className,answer:value.answer,points:value.points,maxPoints:2,status:value.status};
+const FEEDBACK_LEVELS = ['success', 'partial', 'hint', 'error'];
+const DESCRIPTION_LEVELS = ['high', 'medium', 'low', 'error'];
+const DESCRIPTION_STATUSES = ['korrekt', 'teilweise korrekt', 'noch nicht korrekt'];
+const YOUNGEST_KINDS = ['empty', 'correct', 'ageWrong', 'admin', 'oldest', 'wrong'];
+
+const DESCRIPTION_TASKS = [
+  {
+    id: 'd-projection', tab: 'projection', tabLabel: 'Reiter 2', serverTaskId: 'inf9-db2-beschreibe-projektion',
+    title: 'Einstieg – Anweisung beschreiben', prompt: '**Beschreibe** in eigenen Worten, welche Daten diese Anweisung ausgibt.',
+    sql: 'SELECT username, birthday\nFROM users',
+    hints: ['Sieh zuerst hinter FROM nach: Wo liegen die Daten?', 'Hinter SELECT stehen zwei Spalten. Welche Eigenschaften eines Mitglieds sind das?', 'Die Tabelle heißt users. username steht für den Benutzernamen und birthday für den Geburtstag.'],
+    aspects: ['Tabelle users', 'Benutzername/username als Ausgabespalte', 'Geburtstag/Geburtsdatum/birthday als Ausgabespalte'],
+    model: 'Die Abfrage liest Daten aus users und zeigt Benutzernamen und Geburtstage.',
+    anchor: 'Prüfe die Tabelle und ob du beide ausgewählten Spalten genannt hast.',
+    fallbacks: {
+      korrekt: 'Korrekt: Du hast die Tabelle und beide Ausgabespalten richtig beschrieben.',
+      partial: 'Teilweise korrekt: Ein Teil stimmt. Prüfe die Tabelle und ob du beide Ausgabespalten genannt hast.',
+      incorrect: 'Noch nicht korrekt: Lies zuerst FROM und dann SELECT. Was ist die Tabelle, was sind die Ergebnisspalten?'
     }
-    for(const id of ['e1','e2','e3','w2b'])if(!semanticGrade(id)||state.checked[id]?.level==='success'&&semanticGrade(id).points<2)delete state.checked[id];
-    if(plain(data.quiz))for(let i=1;i<=5;i++){const key=`q${i}`;if(Array.isArray(data.quiz[key])&&data.quiz[key].every(v=>['a','b','c','d'].includes(v)))state.quiz[key]=[...new Set(data.quiz[key])];}
-    if(plain(data.quizChecked))for(let i=1;i<=5;i++)if(typeof data.quizChecked[`q${i}`]==='boolean')state.quizChecked[`q${i}`]=data.quizChecked[`q${i}`];
-    state.quizPassed=data.quizPassed===true;
-    if(plain(data.unlocks))state.unlocks={quiz:data.unlocks.quiz===true,summary:data.unlocks.summary===true};
-  } catch { /* Gesperrter oder beschädigter Speicher blockiert die Aufgabe nicht. */ }
+  },
+  {
+    id: 'd-order', tab: 'orderBy', tabLabel: 'Reiter 3', serverTaskId: 'inf9-db2-beschreibe-sortierung',
+    title: 'Einstieg – Anweisung beschreiben', prompt: '**Beschreibe** in eigenen Worten, welche Daten diese Anweisung ausgibt und wie sie geordnet sind.',
+    sql: 'SELECT username, centimeters\nFROM users\nORDER BY centimeters DESC',
+    hints: ['Lies zuerst SELECT und FROM. Welche beiden Spalten aus welcher Tabelle siehst du?', 'ORDER BY ordnet die Zeilen nach einer Spalte. Welche steht hier dahinter?', 'DESC bedeutet absteigend: größere Zahlen stehen vor kleineren.'],
+    aspects: ['Daten aus users mit username und centimeters', 'Sortierung nach centimeters', 'DESC absteigend, größte Werte oben'],
+    model: 'Die Abfrage zeigt aus users Benutzernamen und Körpergröße und ordnet die Mitglieder nach der Größe, beginnend mit den größten.',
+    anchor: 'Prüfe besonders die Sortierspalte und die Bedeutung von DESC.',
+    fallbacks: {
+      korrekt: 'Korrekt: Du hast die ausgewählten Daten und die absteigende Sortierung nach Größe richtig beschrieben.',
+      partial: 'Teilweise korrekt: Die Daten oder die Sortierung stimmen bereits. Prüfe die Sortierspalte und DESC.',
+      incorrect: 'Noch nicht korrekt: Lies SELECT, FROM und ORDER BY einzeln und achte auf DESC.'
+    }
+  }
+];
+const DESCRIPTION_BY_ID = new Map(DESCRIPTION_TASKS.map((item) => [item.id, item]));
+const DESCRIPTION_BY_TAB = new Map(DESCRIPTION_TASKS.map((item) => [item.tab, item]));
+
+// ---------------------------------------------------------------------------
+// Einführung (Reiter 1)
+// ---------------------------------------------------------------------------
+
+const INTRO_COLUMNS = ['id', 'name', 'username', 'birthday', 'city'];
+const INTRO_ROWS = [
+  { id: '1', name: 'Noah Schneider', username: 'zornigerfotograf', birthday: '2007-10-02', city: 'Schwerin' },
+  { id: '2', name: 'Finn Becker', username: 'wanderwut_finn', birthday: '2006-06-14', city: 'München' },
+  { id: '3', name: 'Liam Hoffmann', username: 'bergcoder', birthday: '2009-07-08', city: 'Zürich' },
+  { id: '4', name: 'Elias Wagner', username: 'koch_kicker', birthday: '2008-04-23', city: 'Berlin' }
+];
+const INTRO_PHASES = ['1 · Auftrag', '2 · Tabelle users', '3 · FROM und SELECT', '4 · Mehrere Spalten'];
+const INTRO_SCHEMA_LINE = 'users (id: int, name: varchar(255), username: varchar(255), …, birthday: date, city: varchar(255), …)';
+const NOTE_EMPTY = 'Noch keine Abfrage – die Ergebnisrelation ist leer.';
+const INTRO_STEPS = [
+  {
+    phase: 1, visual: 'task', result: null,
+    explanation: 'Unternehmen möchten im InstaHub Werbung schalten. Vorher wollen sie wissen, wer die Mitglieder sind – zum Beispiel, wie alt sie sind.',
+    note: 'Hier entsteht gleich die gesuchte Übersicht.'
+  },
+  {
+    phase: 1, visual: 'flow', result: null,
+    explanation: 'Die Daten der Mitglieder liegen in einer Datenbank. Mit einer Abfrage holst du gezielt Informationen aus einer Tabelle. Das Ergebnis ist wieder eine Tabelle, die Ergebnisrelation. Die gebräuchlichste Sprache für Abfragen heißt SQL.',
+    note: NOTE_EMPTY
+  },
+  {
+    phase: 2, visual: 'table', schema: true, label: 'Ausschnitt aus users', result: null,
+    explanation: 'Alle Mitglieder stehen in der Tabelle users. Jede Zeile beschreibt ein Mitglied, jede Spalte eine Eigenschaft. Du siehst hier 4 Zeilen und 5 Spalten – die ganze Tabelle hat 317 Zeilen und 18 Spalten.',
+    note: NOTE_EMPTY
+  },
+  {
+    phase: 3, visual: 'table', source: true, label: 'FROM users: Diese Tabelle wird verwendet', result: null,
+    sql: { select: 'SELECT birthday', from: 'FROM users', active: ['from'] },
+    explanation: 'Geschrieben wird SELECT zuerst. Verstehen lässt sich die Abfrage leichter, wenn du bei FROM beginnst: FROM users legt fest, aus welcher Tabelle die Daten stammen.',
+    note: 'Die Tabelle ist gewählt. Welche Spalten in die Ergebnisrelation kommen, bestimmt SELECT.'
+  },
+  {
+    phase: 3, visual: 'table', label: 'Ausschnitt aus users', selected: ['birthday'], result: { columns: ['birthday'], filled: false },
+    sql: { select: 'SELECT birthday', from: 'FROM users', active: ['select'] },
+    explanation: 'SELECT birthday legt fest, welche Spalte ausgegeben wird: nur birthday. Die übrigen Spalten kommen nicht in die Ergebnisrelation.',
+    note: 'Die Spalte birthday ist ausgewählt.'
+  },
+  {
+    phase: 3, visual: 'table', label: 'Ausschnitt aus users', selected: ['birthday'], result: { columns: ['birthday'], filled: true },
+    sql: { select: 'SELECT birthday', from: 'FROM users', active: ['select', 'from'] },
+    explanation: 'Die Ergebnisrelation enthält alle Zeilen, aber nur die Spalte birthday. Für alle 317 Mitglieder entsteht so die Übersicht der Geburtsdaten, die die Werbekunden wollten.',
+    note: 'Alle 4 Zeilen des Ausschnitts bleiben erhalten.'
+  },
+  {
+    phase: 4, visual: 'table', label: 'Ausschnitt aus users', selected: ['username', 'birthday'], result: { columns: ['username', 'birthday'], filled: true },
+    sql: { select: 'SELECT username, birthday', from: 'FROM users', active: ['select'] },
+    explanation: 'Mehrere Spalten trennst du mit einem Komma. Die Ergebnisrelation zeigt sie in der Reihenfolge, in der sie hinter SELECT stehen: zuerst username, dann birthday.',
+    note: 'Reihenfolge wie hinter SELECT: username, birthday.'
+  },
+  {
+    phase: 4, visual: 'table', label: 'Ausschnitt aus users', selected: INTRO_COLUMNS, result: { columns: INTRO_COLUMNS, filled: true },
+    sql: { select: 'SELECT *', from: 'FROM users', active: ['select'] },
+    explanation: 'Das Sternchen * steht für alle Spalten. SELECT * gibt die ganze Tabelle aus.',
+    note: 'Im Ausschnitt siehst du 5 von 18 Spalten. SELECT * gibt alle 18 Spalten aus.'
+  }
+];
+
+// ---------------------------------------------------------------------------
+// Aufgaben (Reiter 2 bis 6)
+// ---------------------------------------------------------------------------
+
+const TEXT_NO_LIMIT_EXPECTED = (c) => `Teilweise korrekt: Deine Ergebnisrelation hat nur ${c.n} Zeilen, gesucht sind alle passenden Zeilen. Entferne LIMIT.`;
+const TEXT_CITY_COLUMNS = (c) => `Noch nicht korrekt: Gesucht ist nur die Spalte mit den Wohnorten. Deine Ergebnisrelation enthält ${c.list}. Sieh im Tabellenschema nach, wie diese Spalte heißt.`;
+const TEXT_ALL_MEMBERS_EXTRA = 'Statt * ist auch eine Spaltenauswahl richtig, die die Mitglieder erkennbar macht.';
+
+function task(config) {
+  return { projection: 'exact', columnOrder: true, requireAny: [], requireAll: [], requireDistinct: false, order: null, limit: null, initialSql: '', extra: [], ...config };
 }
-function save(){try{localStorage.setItem(STORAGE_KEY,JSON.stringify(state));}catch{}}
-function q(s){return String(s).replaceAll("'","''");}
-class SqlWorker {
-  constructor(){this.id=0;this.pending=new Map();}
-  async init(){this.worker=new Worker(new URL('../../../../include/lib/sql.js/worker.sql-wasm.js',import.meta.url));this.worker.onmessage=e=>{const p=this.pending.get(e.data.id);if(!p)return;this.pending.delete(e.data.id);e.data.error?p.reject(new Error(e.data.error)):p.resolve(e.data);};this.worker.onerror=e=>{for(const p of this.pending.values())p.reject(e.error||new Error('SQL-Worker nicht verfügbar.'));this.pending.clear();};await this.send({action:'open'});const statements=[];for(const [name,cols,rows] of SQL_TABLES){statements.push(`CREATE TABLE "${name}" (${cols.map(col=>`"${col}"`).join(',')})`);for(const row of rows)statements.push(`INSERT INTO "${name}" VALUES (${row.map(v=>typeof v==='number'?String(v):`'${q(v)}'`).join(',')})`);}await this.send({action:'exec',sql:statements.join(';')});}
-  send(msg){return new Promise((resolve,reject)=>{const id=`wich-${++this.id}`;const timer=setTimeout(()=>{this.pending.delete(id);reject(new Error('Die SQL-Prüfung antwortet nicht rechtzeitig.'));},15000);this.pending.set(id,{resolve:v=>{clearTimeout(timer);resolve(v);},reject:e=>{clearTimeout(timer);reject(e);}});this.worker.postMessage({...msg,id});});}
-  async exec(sql){return normalizeRelation((await this.send({action:'exec',sql})).results);}
-  close(){this.worker?.terminate();}
-}
-function sqlValue(value){return String(value??'');}
-function fieldsMarkup(t){return (t.fields||[]).map(([key,label])=>{const start=key==='select'?(t.id==='e2'||t.id==='e4'?'SELECT Name':'SELECT'):key==='from'?'FROM':key==='where'?'WHERE':'';const row=`<div class="gap-row sql-entry"><label for="${t.id}-${key}">${label}</label><div class="sql-entry-line"><code>${start}${start?' ':''}</code><textarea id="${t.id}-${key}" data-key="${t.id}.${key}" rows="1" autocomplete="off" aria-describedby="${t.id}-feedback"></textarea></div></div>`;return row+(key==='select'&&['e4','e5'].includes(t.id)?'<div class="sql-given"><code>FROM Film</code></div>':'');}).join('');}
-function tableMarkup(title,headers,rows){return `<div class="table-shell"><strong>${title}</strong><div class="table-scroll" tabindex="0"><table class="data-table"><caption>${title}</caption><thead><tr>${headers.map(h=>`<th scope="col">${h}</th>`).join('')}</tr></thead><tbody>${rows.map(r=>`<tr>${r.map(x=>`<td>${x}</td>`).join('')}</tr>`).join('')}</tbody></table></div></div>`;}
-function helpMarkup(t){return `<div class="help-stack">${(t.help||[]).map((h,i)=>`<details data-detail="${t.id}-help-${i+1}"><summary>Hilfe ${i+1}</summary><p>${h}</p></details>`).join('')}</div>`;}
-function sentenceMarkup(t){if(!t.sentence)return '';return `<div class="sentence" role="group" aria-label="Merksatz">${t.sentence.map((part,i)=>`${part}${i<t.memoExpected.length?` <label class="inline-gap"><span class="gap-label">Lücke ${i+1}:</span> <input data-key="${t.id}.memo${i}" aria-label="${t.title}: Merksatzlücke ${i+1}" type="text"></label><span class="gap-feedback" id="${t.id}-memo${i}-feedback" aria-live="polite"></span> `:''}`).join('')}</div>`;}
-function formatPrompt(prompt){return escapeHtml(prompt).replace(/\b(Beschreibe|Erkläre|Formuliere|Gib|Füge|Erläutere|Leite|vervollständige)\b/g,'<strong>$1</strong>');}
-function sectionTask(t){return `<section class="task-card" data-task="${t.id}"><h3>${t.title}</h3>${t.id==='e1'?`<div class="sql-blocks" role="img" aria-label="Roter SELECT-Block Name, blauer FROM-Block Buch"><pre class="sql-select-block"><code>SELECT Name</code></pre><pre class="sql-from-block"><code>FROM Buch</code></pre></div>`:''}${t.id==='e3'?'<pre><code>SELECT Seiten\nFROM Film</code></pre>':''}${t.id==='e4'?tableMarkup('Film: Ausgangstabelle',['Name','Jahr','Preis','Länge','EAN'],FILM):''}${t.id==='e5'?tableMarkup('Ergebnistabelle',['Name','Jahr','Preis','Länge','EAN'],[['Minions','2015','10.99','91','5053083026356']]):''}${t.id==='w2'?`<p>Es ist die folgende Ergebnistabelle gegeben.</p>${tableMarkup('Ergebnistabelle',['Name','Preis','Kilokalorien'],VEGAN)}`:''}${t.id==='w3'?tableMarkup('Ergebnistabelle',['Name','Länge'],[['Frozen','152'],['Dune','155']]):''}${t.id==='w4'?`${tableMarkup('Ergebnistabelle',['ISBN','Name','Autor','Jahr','Seiten'],KAFKA)}`:''}<p>${formatPrompt(t.prompt)}</p>${t.id==='e2'?'<p><strong>Ergänze</strong> die vorformulierte Abfrage.</p><pre><code>SELECT Name\nFROM Buch</code></pre>':''}${t.id==='e4'?tableMarkup('Ergebnistabelle',['Name','Preis'],[['König der Löwen','12.99'],['Dune','14.99'],['Minions','10.99']]):''}${t.id==='w1'?`<div class="table-shell"><strong>Ergebnistabelle</strong><div class="table-scroll" tabindex="0"><table class="data-table"><caption>Ergebnistabelle mit Einwohnernamen und Alter</caption><thead><tr><th scope="col">Name</th><th scope="col">Alter</th></tr></thead><tbody><tr><td>Sarah Müller</td><td>21</td></tr>${[0,2].map(i=>`<tr>${[i,i+1].map((j)=>`<td><label for="w1-cell${j}">${j%2===0?'Name':'Alter'} der ${i===0?'zweiten':'dritten'} Person</label><input id="w1-cell${j}" data-key="w1.cell${j}"><span id="w1-cell${j}-feedback" class="gap-feedback" aria-live="polite"></span></td>`).join('')}</tr>`).join('')}</tbody></table></div></div>`:''}${fieldsMarkup(t)}${t.textTask&&t.id!=='w2'?`<div class="gap-row"><label for="${t.id}-text">Deine Beschreibung</label><textarea id="${t.id}-text" data-key="${t.id}.text" rows="4" aria-describedby="${t.id}-feedback"></textarea><button class="secondary-button" type="button" data-semantic="${t.textTask}" data-answer="${t.id}-text">Antwort abgeben</button><span class="semantic-result" id="${t.id}-semantic" aria-live="polite"></span></div>`:''}${sentenceMarkup(t)}${helpMarkup(t)}<div class="action-row"><button class="primary-button" type="button" data-check="${t.id}">Antwort prüfen</button></div><div id="${t.id}-feedback" class="feedback" aria-live="polite"></div></section>`;}
-function introBlock(){return `<section class="scenario-card"><p>Öffne die SQL-Anwendung über den Button in einem neuen Tab. Bearbeite anschließend die Aufgaben hier und probiere die Abfragen in der Anwendung aus.</p><div class="action-row"><a class="primary-button" href="${APP}" target="_blank" rel="noopener noreferrer">SQL-Anwendung öffnen ↗</a></div></section><section class="scenario-card"><p><strong>Beispiel:</strong> SELECT Name / FROM Film. Die Abfrage stellt die Daten der Spalte Name aus der Tabelle Film in einer Ergebnistabelle dar.</p><div class="sql-blocks" role="img" aria-label="Roter SELECT-Block Name, blauer FROM-Block Film"><pre class="sql-select-block"><code>SELECT Name</code></pre><pre class="sql-from-block"><code>FROM Film</code></pre></div><p>SELECT (roter Block) wählt die Spalte Name. FROM (blauer Block) wählt die Tabelle Film.</p></section>${sectionTask(tasks[0])}`;}
-const summaryAnswers = {
-  e1:'Die Namen stammen nun aus der Tabelle „Buch“. Merksatz: Das Schlüsselwort FROM ist für die Auswahl der Tabelle verantwortlich, aus der die Daten abgerufen werden sollen.',
-  e2:'Die Ergebnistabelle besteht nun aus zwei Spalten.',
-  e3:'Die Spalte „Seiten“ ist kein Bestandteil der Tabelle „Film“. Merksatz: Das Schlüsselwort SELECT bestimmt, welche vorhandenen Spalten in der Ergebnistabelle enthalten sein sollen.',
-  e4:'Ergebnis: König der Löwen | 12.99; Dune | 14.99; Minions | 10.99. Merksatz: Das Schlüsselwort WHERE schränkt die Auswahl der Zeilen der Ergebnistabelle anhand von Bedingungen ein.',
-  e5:'Ergebnis: Minions | 2015 | 10.99 | 91 | 5053083026356. Merksatz: SQL-Abfragen (durchsuchen und) filtern Daten in Datenbanktabellen.',
-  w1:'Ergebnis: Sarah Müller | 21; Tim Schwarz | 28; Clara Weber | 22.',
-  w2:'Ergebnis: Gemüsepfanne | 8.5 | 420; Fruchtsalat | 4.5 | 158; Quinoa-Salat | 8.7 | 510; Tofu-Stir-Fry | 9 | 484.',
-  w3:'Ergebnis: Frozen | 152; Dune | 155.',
-  w4:'Ergebnis: 9783938484777 | Der Prozess | Franz Kafka | 1925 | 251; 9783872915061 | Die Verwandlung | Franz Kafka | 1915 | 70; 9783453136410 | Das Urteil | Franz Kafka | 1912 | 110.'
+
+const TASKS = [
+  task({
+    id: 't1', number: 1, tab: 'projection', prompt: '**Zeige** alle Einträge der Tabelle `users` an.',
+    select: '*', tail: 'FROM users',
+    texts: {
+      ok: 'Korrekt: SELECT * gibt alle 18 Spalten und alle 317 Zeilen der Tabelle users aus. Scrolle in der Ergebnisrelation nach rechts und nach unten, um alles zu sehen.',
+      cols: (c) => `Noch nicht korrekt: Deine Ergebnisrelation hat ${c.count} Spalte(n). Gesucht sind alle Einträge, also alle Spalten. Welches Zeichen steht hinter SELECT für alle Spalten?`
+    },
+    hints: [
+      'Alle Einträge heißt: alle Zeilen und alle Spalten der Tabelle.',
+      'Im Merke-Kasten des Reiters Einführung steht ein Zeichen, das für alle Spalten steht.',
+      'Die Abfrage beginnt mit SELECT *. Ergänze in der zweiten Zeile FROM und den Tabellennamen.'
+    ]
+  }),
+  task({
+    id: 't2', number: 2, tab: 'projection', prompt: '**Gib** alle Benutzernamen (`username`) aus.',
+    select: 'username', tail: 'FROM users',
+    texts: {
+      ok: 'Korrekt: Die Ergebnisrelation enthält nur die Spalte username – für jedes der 317 Mitglieder eine Zeile.',
+      cols: (c) => (c.cols.length === 1 && c.cols[0] === 'name'
+        ? 'Noch nicht korrekt: name enthält den vollständigen Namen, zum Beispiel Noah Schneider. Gesucht sind die Benutzernamen wie zornigerfotograf – sieh im Tabellenschema nach.'
+        : `Noch nicht korrekt: Deine Ergebnisrelation enthält ${c.list}. Gesucht ist nur die Spalte mit den Benutzernamen.`)
+    },
+    hints: [
+      'Hinter SELECT steht nur die Spalte, die ausgegeben werden soll.',
+      'Wie die Spalte mit den Benutzernamen heißt, steht in der Aufgabe in Klammern und im Tabellenschema.',
+      { before: 'Ergänze die zweite Zeile:', sql: 'SELECT username\nFROM …' }
+    ]
+  }),
+  task({
+    id: 't3', number: 3, tab: 'projection', prompt: 'Aus welchen Ländern stammen die Mitglieder? **Gib** neben dem Land auch den jeweiligen Namen (`name`) aus.',
+    select: 'name, country', tail: 'FROM users', columnOrder: false,
+    texts: {
+      ok: 'Korrekt: Die Ergebnisrelation zeigt für jedes der 317 Mitglieder den Namen und das Land. Viele Länder kommen deshalb mehrfach vor. Beim Konto admin steht NULL: Dort ist kein Land eingetragen.',
+      cols: (c) => (c.cols.includes('username') && !c.cols.includes('name')
+        ? 'Noch nicht korrekt: username enthält den Benutzernamen. Gesucht ist der Name, zum Beispiel Noah Schneider.'
+        : `Noch nicht korrekt: Gesucht sind genau zwei Spalten: der Name und das Land. Deine Ergebnisrelation enthält ${c.list}. Sieh im Tabellenschema nach, wie die Spalte für das Land heißt.`)
+    },
+    hints: [
+      'Du brauchst zwei Spalten. Im Tabellenschema sind die Spaltennamen englisch.',
+      'Land heißt auf Englisch country. Mehrere Spalten trennst du hinter SELECT mit einem Komma.',
+      { sql: 'SELECT name, country\nFROM …', after: 'Ergänze den Tabellennamen.' }
+    ]
+  }),
+  task({
+    id: 't4', number: 4, tab: 'orderBy', prompt: '**Ordne** alle Mitglieder alphabetisch nach ihrem Benutzernamen.',
+    select: '*', tail: 'FROM users\nORDER BY username', projection: 'any', requireAny: ['username', 'name'],
+    order: { column: 'username', dir: 'ASC' }, extra: [TEXT_ALL_MEMBERS_EXTRA],
+    texts: {
+      ok: 'Korrekt: Die Mitglieder stehen alphabetisch nach Benutzernamen geordnet – von admin bis zwerglaeuferin. Ohne Angabe sortiert ORDER BY aufsteigend (ASC).',
+      cols: () => 'Noch nicht korrekt: Gesucht sind alle Mitglieder. Gib alle Spalten (SELECT *) aus oder mindestens den Benutzernamen.',
+      noOrder: () => 'Teilweise korrekt: Du gibst die richtigen Daten aus, aber noch in der ursprünglichen Reihenfolge der Tabelle. Mit welchem Schlüsselwort sortierst du die Zeilen?',
+      dir: () => 'Teilweise korrekt: DESC sortiert absteigend, also von Z nach A. Alphabetisch heißt aufsteigend: Lass DESC weg oder schreibe ASC.'
+    },
+    hints: [
+      'Hänge an deine Abfrage eine dritte Zeile an, die festlegt, wonach sortiert wird.',
+      'Hinter ORDER BY steht die Spalte, nach der sortiert wird. Alphabetisch ist aufsteigend – das ist die Voreinstellung.',
+      { sql: 'SELECT *\nFROM users\nORDER BY …', after: 'Ergänze die Spalte mit den Benutzernamen.' }
+    ]
+  }),
+  task({
+    id: 't5', number: 5, tab: 'orderBy', prompt: '**Korrigiere** die gezeigte Anweisung, damit Benutzername, Name und Größe ausgegeben werden und das größte Mitglied oben steht. **Gib** die vollständige korrigierte Anweisung neu ein.',
+    correctionSql: 'SELECT username, name, centimeters\nFROM users\nORDER BY centimeters ASC',
+    select: 'username, name, centimeters', tail: 'FROM users\nORDER BY centimeters DESC', columnOrder: false,
+    order: { column: 'centimeters', dir: 'DESC' },
+    texts: {
+      ok: 'Korrekt: DESC ordnet die Größen absteigend; die größten Mitglieder stehen oben.',
+      cols: (c) => `Noch nicht korrekt: Gesucht sind genau drei Spalten: Benutzername, Name und Größe. Deine Ergebnisrelation enthält ${c.list}. Sieh im Tabellenschema nach, wie die Spalte für die Größe heißt.`,
+      noOrder: () => 'Teilweise korrekt: Spalten und Tabelle stimmen. Prüfe, ob die größte Größe oben steht.',
+      dir: () => 'Teilweise korrekt: Spalten und Tabelle stimmen. Prüfe, ob die größte Größe oben steht.'
+    },
+    hints: [
+      'Die Spaltenauswahl stimmt bereits.',
+      'Prüfe die Richtung der Sortierung: Bei welcher Richtung steht die größte Zahl zuerst?',
+      'Ändere nur ASC zu DESC und schreibe alle drei Klauseln in dein Eingabefeld.'
+    ]
+  }),
+  task({
+    id: 't6', number: 6, tab: 'orderBy', prompt: '**Ordne** alle Mitglieder aufsteigend nach ihrem Geburtsdatum.',
+    select: '*', tail: 'FROM users\nORDER BY birthday', projection: 'any', requireAny: ['username', 'name'], requireAll: ['birthday'],
+    order: { column: 'birthday', dir: 'ASC' }, extra: [TEXT_ALL_MEMBERS_EXTRA, 'youngest'],
+    texts: {
+      ok: 'Korrekt: Die Mitglieder sind nach dem Geburtsdatum geordnet – vom frühesten zum spätesten Datum. Ganz oben steht admin mit NULL: Dort ist kein Geburtsdatum eingetragen. Das jüngste Mitglied hat das späteste Datum und steht ganz unten.',
+      cols: () => 'Noch nicht korrekt: Damit du das jüngste Mitglied und sein Alter findest, brauchst du den Benutzernamen und das Geburtsdatum. Gib alle Spalten (SELECT *) aus oder mindestens username und birthday.',
+      noOrder: () => 'Teilweise korrekt: Die Daten stimmen, aber sie sind noch nicht nach dem Geburtsdatum geordnet. Welche Spalte steht hinter ORDER BY?',
+      dir: () => 'Teilweise korrekt: DESC sortiert absteigend – oben steht jetzt das späteste Geburtsdatum. Die Aufgabe verlangt aufsteigend: vom frühesten zum spätesten Datum.'
+    },
+    hints: [
+      'Das Geburtsdatum steht in der Spalte birthday im Format Jahr-Monat-Tag.',
+      'Aufsteigend ist die Voreinstellung von ORDER BY. Das jüngste Mitglied ist am spätesten geboren – wo steht es dann in der Liste?',
+      { sql: 'SELECT *\nFROM users\nORDER BY …', after: 'Ergänze die Spalte. Scrolle danach in der Ergebnisrelation ganz nach unten.' }
+    ]
+  }),
+  task({
+    id: 't11', number: 11, tab: 'fast', prompt: '**Kehre** die Reihenfolge der Tabelle `users` um.',
+    select: '*', tail: 'FROM users\nORDER BY id DESC', order: { column: 'id', dir: 'DESC' },
+    texts: {
+      ok: 'Korrekt: Die Tabelle ist nach id geordnet. ORDER BY id DESC dreht die Reihenfolge um: Der zuletzt eingetragene Datensatz steht jetzt oben.',
+      cols: () => 'Noch nicht korrekt: Gesucht ist die ganze Tabelle users, also alle Spalten.',
+      noOrder: () => 'Teilweise korrekt: Das ist noch die ursprüngliche Reihenfolge. Nach welcher Spalte ist die Tabelle geordnet – und wie drehst du diese Reihenfolge um?',
+      wrongCol: (c) => `Teilweise korrekt: Du sortierst nach ${c.ist}. Die ursprüngliche Reihenfolge der Tabelle ergibt sich aus der Spalte id – kehre diese Reihenfolge um.`,
+      dir: () => 'Teilweise korrekt: Aufsteigend nach id ist genau die ursprüngliche Reihenfolge. Zum Umkehren sortierst du absteigend.'
+    },
+    hints: [
+      'Sieh dir die erste Spalte der Tabelle an: Nach welcher Spalte ist users geordnet?',
+      'Die Tabelle ist aufsteigend nach id geordnet. Umkehren heißt: absteigend sortieren.',
+      { sql: 'SELECT *\nFROM users\nORDER BY id …' }
+    ]
+  }),
+  task({
+    id: 't13', number: 13, tab: 'fast', prompt: '**Gib** Benutzername und Wohnort aller Mitglieder aus, alphabetisch sortiert nach Wohnort.',
+    select: 'username, city', tail: 'FROM users\nORDER BY city', columnOrder: false, order: { column: 'city', dir: 'ASC' },
+    texts: {
+      ok: 'Korrekt: Die Mitglieder sind nach Wohnort geordnet. Innerhalb eines Wohnorts ist jede Reihenfolge richtig. Oben steht admin mit NULL, weil dort kein Wohnort eingetragen ist.',
+      cols: (c) => `Noch nicht korrekt: Gesucht sind genau zwei Spalten: Benutzername und Wohnort. Deine Ergebnisrelation enthält ${c.list}.`,
+      noOrder: () => 'Teilweise korrekt: Die Spalten stimmen, aber die Zeilen sind noch nicht nach Wohnort sortiert.',
+      dir: () => 'Teilweise korrekt: DESC sortiert von Z nach A. Alphabetisch heißt aufsteigend.'
+    },
+    hints: [
+      'Der Benutzername steht in username, der Wohnort in city.',
+      'Sortiere mit ORDER BY nach der Spalte mit dem Wohnort. Alphabetisch ist die Voreinstellung.',
+      { sql: 'SELECT username, city\nFROM users\nORDER BY …' }
+    ]
+  })
+];
+const TASK_BY_ID = new Map(TASKS.map((item) => [item.id, item]));
+const TAB_TASKS = { projection: ['t1', 't2', 't3'], orderBy: ['t4', 't5', 't6'], fast: ['t11', 't13'] };
+
+const YOUNGEST = {
+  username: 'gartenlesemaus',
+  fullName: 'elena heidenkamp',
+  birthYear: 2010,
+  birthMonth: 7,
+  birthDay: 7
 };
-function escapeHtml(value){return String(value).replaceAll('&','&amp;').replaceAll('<','&lt;').replaceAll('>','&gt;').replaceAll('"','&quot;');}
-function summaryMarkup(){return `${tasks.map(t=>`<details><summary>${t.title}</summary><p>${formatPrompt(t.prompt)}</p><p>${escapeHtml(summaryAnswers[t.id])}</p>${t.invalid?'':`<pre><code>${escapeHtml(t.sql)}</code></pre>`}</details>`).join('')}<details><summary>Weiterführend 2b</summary><p><strong>Leite</strong> eine mögliche Motivation des Anwenders zum Stellen dieser Abfrage her.</p><p>Der Anwender interessiert sich für vegane Speisen.</p></details><details><summary>Weiterführend 4b</summary><p><strong>Formuliere</strong> zwei verschiedene modifizierte WHERE-Teile der SQL-Abfrage, die die gleiche Ergebnistabelle liefern.</p><pre><code>WHERE Jahr &lt; 1926\nWHERE Autor = 'Franz Kafka' OR Seiten &lt; 50</code></pre></details>`;}
-function quizMarkup(){return `<section id="final-quiz" class="task-card"><h2>Abschlussquiz</h2><p>Kreuze bei jeder Frage alle richtigen Antworten an. Prüfe jede Frage einzeln oder werte anschließend das ganze Quiz aus.</p><form id="quiz-form">${questionData.map((q,i)=>`<fieldset class="quiz-question" data-question="q${i+1}"><legend>${i+1}. ${q[0]}</legend><div class="choice-list">${q[1].map(([id,label])=>`<label class="choice-option"><input type="checkbox" name="q${i+1}" value="${id}"><span>${label}</span></label>`).join('')}</div></fieldset>`).join('')}<div class="action-row"><button class="primary-button" type="submit">Quiz prüfen</button></div><p id="quiz-feedback" class="feedback" aria-live="polite"></p></form><div id="answer-summary" class="short-summary" hidden><h2>Übersicht: Aufgaben und Lösungen</h2>${summaryMarkup()}${solutionBlock('summary')}</div>${solutionBlock('quiz')}</section>`;}
-function solutionBlock(suffix){const suf=suffix==='summary'?'-summary':'';return `<section class="solution-download" aria-labelledby="solution-download-title${suf}"><h2 id="solution-download-title${suf}">Sicherungsblatt zu Aufgabe 2</h2><details class="solution-reveal" data-detail="solution-reveal${suf}"><summary>Sicherungsblatt anzeigen</summary><form class="solution-code-form" onsubmit="return window.unlockSolution(event, '${CODE}', 'solution-download-link${suf}', 'solution-code-message${suf}')"><label for="solution-code${suf}">Lehrercode eingeben</label><div class="solution-code-controls"><input id="solution-code${suf}" name="solution-code" type="text" maxlength="9" autocomplete="off" autocapitalize="characters" spellcheck="false" required><button type="submit">Code prüfen</button></div><p id="solution-code-message${suf}" class="solution-code-message" aria-live="polite"></p><a id="solution-download-link${suf}" class="download-button" href="sicherungsblatt-aufgabe-2-loesungen.pdf" download hidden>↓ Sicherungsblatt herunterladen</a></form></details></section>`;}
-function render(){const tabs=document.getElementById('step-tabs'),panels=document.getElementById('step-panels');tabs.innerHTML='';panels.innerHTML='';TABS.forEach((title,i)=>{const tab=el('button',{id:`tab-${i+1}`,class:'step-tab',role:'tab','data-step':String(i),'aria-controls':`step-${i+1}`,'aria-selected':String(state.tab===i),tabindex:state.tab===i?'0':'-1'},`${i+1}. ${title}`);tab.type='button';tab.addEventListener('click',()=>setTab(i));tabs.append(tab);const panel=el('section',{id:`step-${i+1}`,class:'step-panel',role:'tabpanel','aria-labelledby':`tab-${i+1}`});panel.hidden=i!==state.tab;panel.innerHTML=`<div class="step-heading"><span class="step-number">${i+1}</span><div><p class="step-kicker">${i<5?'Einführung':i<9?'Weiterführend':'Abschlussquiz'}</p><h2>${title}</h2></div></div>${i===0?introBlock():i===9?quizMarkup():tasks.filter(t=>t.tab===i).map(sectionTask).join('')}${i===6?`<section class="task-card"><h3>Weiterführend 2b</h3><p><strong>Leite</strong> eine mögliche Motivation des Anwenders zum Stellen dieser Abfrage her.</p><label for="w2-motivation">Deine Antwort</label><textarea id="w2-motivation" data-key="w2-motivation" rows="4"></textarea><div class="help-stack"><details data-detail="w2b-help-1"><summary>Hilfe 1</summary><p>Überlege, was die vier gezeigten Speisen gemeinsam haben.</p></details><details data-detail="w2b-help-2"><summary>Hilfe 2</summary><p>Beachte neben dem Namen auch Preis und Kilokalorien.</p></details><details data-detail="w2b-help-3"><summary>Hilfe 3</summary><p>Eine Person könnte vegane Gerichte vergleichen wollen.</p></details></div><div class="action-row"><button class="primary-button" type="button" data-check="w2b">Antwort prüfen</button><button class="secondary-button" type="button" data-semantic="inf9-wichmatics-w2b-motivation" data-answer="w2-motivation">Antwort abgeben</button></div><p id="w2b-feedback" class="feedback" aria-live="polite"></p><p id="w2b-semantic" class="feedback" aria-live="polite"></p></section>`:''}${i===8?`<section class="task-card"><h3>Weiterführend 4b</h3><p><strong>Formuliere</strong> zwei verschiedene modifizierte WHERE-Teile der SQL-Abfrage, die die gleiche Ergebnistabelle liefern.</p><label for="w4b-a">Erster WHERE-Teil</label><textarea id="w4b-a" data-key="w4b.a" rows="1"></textarea><p id="w4b-a-feedback" class="gap-feedback" aria-live="polite"></p><label for="w4b-b">Zweiter WHERE-Teil</label><textarea id="w4b-b" data-key="w4b.b" rows="1"></textarea><p id="w4b-b-feedback" class="gap-feedback" aria-live="polite"></p><div class="help-stack"><details data-detail="w4b-help-1"><summary>Hilfe 1</summary><p>Prüfe jede deiner beiden Bedingungen an allen Büchern.</p></details><details data-detail="w4b-help-2"><summary>Hilfe 2</summary><p>Jede Bedingung muss genau die drei Kafka-Zeilen liefern und beide müssen verschieden sein.</p></details><details data-detail="w4b-help-3"><summary>Hilfe 3</summary><p>Du kannst die Autor-Bedingung sinnvoll erweitern und anschließend die Ergebnisrelation vergleichen.</p></details></div><div class="action-row"><button class="primary-button" type="button" data-check="w4b">Antwort prüfen</button></div><p id="w4b-feedback" class="feedback" aria-live="polite"></p></section>`:''}`;panels.append(panel);});syncTabSemantics?.(tabs,state.tab);enableTabKeyboardNavigation?.(tabs);restoreInputs();setupQuizChecks();document.getElementById('quiz-form').addEventListener('submit',e=>{e.preventDefault();quizChecks?.checkAll();gradeQuiz();});updateProgress();}
-function setupQuizChecks(){const form=document.getElementById('quiz-form');if(!form)return;const questions=questionData.map((item,i)=>{const fieldset=form.querySelector(`[data-question="q${i+1}"]`);return {fieldset,solution:item[1].filter(x=>x[2]).map(x=>x[0]),hint:item[2],success:'Korrekt: Diese Frage stimmt.',check:()=>{const selected=[...fieldset.querySelectorAll('input:checked')].map(n=>n.value);if(!selected.length)return {result:'empty',text:'Kreuze mindestens eine Antwort an.'};const right=selected.filter(value=>item[1].some(option=>option[0]===value&&option[2])).length;const wrong=selected.length-right;if(!wrong&&right===item[1].filter(option=>option[2]).length)return {result:'correct',text:'Korrekt: Diese Frage stimmt.'};if(right)return {result:'mixed',text:`Teilweise korrekt: Es fehlt eine richtige Antwort oder eine falsche Auswahl ist noch markiert. Prüfe die Aussage erneut. ${item[2]}`};return {result:'wrong',text:`Noch nicht korrekt: Vergleiche die Aussagen mit den Beispielen im Modul. ${item[2]}`};}};});quizChecks=window.addQuizQuestionChecks({questions,buttonClass:'primary-button',rowClass:'action-row',feedbackClass:'feedback',levels:{high:'success',medium:'partial',low:'hint'},onCheck:(question,result)=>{const name=question.fieldset.dataset.question;state.quizChecked[name]=result==='correct';save();},onAllCorrect:gradeQuiz});questions.forEach((question,i)=>{if(state.quizChecked[`q${i+1}`])question.fieldset.querySelector('[data-quiz-question-check] button')?.click();});}
-function setTab(i){state.tab=i;save();render();focusTabPanelStart?.(document.getElementById(`step-${i+1}`));}
-function restoreInputs(){document.querySelectorAll('[data-key]').forEach(node=>{node.value=state.values[node.dataset.key]||'';});document.querySelectorAll('[data-check]').forEach(node=>{const id=node.dataset.check;const f=document.getElementById(`${id}-feedback`);if(state.checked[id]&&f){const saved=typeof state.checked[id]==='string'?{level:'hint',text:state.checked[id]}:state.checked[id];f.textContent=saved.text;f.className=`feedback ${saved.level}`;}});document.querySelectorAll('[data-detail]').forEach(node=>{node.open=state.details[node.dataset.detail]===true;});Object.entries(state.semantic).forEach(([id,value])=>{const node=document.getElementById(id);if(node&&value&&typeof value.text==='string'){node.textContent=value.text;node.className=value.className||'semantic-result';}});document.querySelectorAll('input[type=checkbox]').forEach(n=>{n.checked=Array.isArray(state.quiz[n.name])&&state.quiz[n.name].includes(n.value);});document.querySelectorAll('.solution-code-form').forEach((form)=>{const link=form.querySelector('.download-button');link.hidden=!state.unlocks[link.id.endsWith('-summary')?'summary':'quiz'];});document.getElementById('answer-summary')?.toggleAttribute('hidden',!state.quizPassed);}
-function updateProgress(){const done=Object.keys(state.checked).length;const pct=Math.min(100,Math.round(100*done/11));document.getElementById('progress-percent').textContent=`${pct} % bearbeitet`;document.getElementById('progress-bar').style.width=`${pct}%`;document.getElementById('progress-label').textContent=`Reiter ${state.tab+1} von 10`;}
-function norm(s){return String(s||'').trim().replace(/\s+/g,' ').replace(/^,+|,+$/g,'').toLocaleLowerCase('de');}
-function feedback(id,level,text){const node=document.getElementById(`${id}-feedback`);if(node){node.className=`feedback ${level}`;node.textContent=text;}state.checked[id]={level,text};save();updateProgress();}
-function answer(t,key){return document.querySelector(`[data-key="${t}.${key}"]`)?.value||'';}
-function semanticGrade(id){const key=id==='w2b'?'w2-motivation':`${id}.text`;const result=state.semantic[`${id}-semantic`];return result?.answer&&result.answer===state.values[key]?.trim()&&result.maxPoints===2&&Number.isInteger(result.points)&&result.points>=0&&result.points<=2?result:null;}
-function semanticLevel(grade){return grade.points===grade.maxPoints?'success':grade.points>0?'partial':'error';}
-function memoCorrect(task,value,index){const actual=norm(value);if(task.id==='e5')return /filter/.test(actual)&&/(daten|tabelle|durchsuch)/.test(actual);return actual===norm(task.memoExpected[index]);}
-function markGap(id,correct){const node=document.getElementById(`${id}-feedback`);if(node){node.textContent=correct?'Korrekt':'Noch nicht korrekt';node.className=`gap-feedback ${correct?'success':'error'}`;}}
-function checkMemoGaps(task){if(!task.memoExpected)return true;return task.memoExpected.map((_,i)=>{const right=memoCorrect(task,answer(task.id,`memo${i}`),i);markGap(`${task.id}-memo${i}`,right);return right;}).every(Boolean);}
-function checkResidentCells(){return ['Tim Schwarz','28','Clara Weber','22'].map((v,i)=>{const right=norm(answer('w1',`cell${i}`))===norm(v);markGap(`w1-cell${i}`,right);return right;}).every(Boolean);}
-async function checkTask(id){const t=id==='w4b'?null:tasks.find(x=>x.id===id);if(id==='w2b'){const grade=semanticGrade('w2b');if(!state.values['w2-motivation']?.trim()){feedback('w2b','hint','Schreibe zuerst eine Antwort.');return;}if(!grade){feedback('w2b','hint','Gib deine Antwort zur fachlichen Prüfung ab.');return;}const level=semanticLevel(grade);feedback('w2b',level,level==='success'?'Korrekt: Deine Motivation passt zur Abfrage und zur Ergebnistabelle.':level==='partial'?'Teilweise korrekt: Du nennst passende Speisen; ergänze, weshalb genau diese Zeilen interessant sind.':'Noch nicht korrekt: Leite die Motivation aus der Gemeinsamkeit der vier Speisen ab.');return;}if(id==='w4b'){const a=document.getElementById('w4b-a').value.trim(),b=document.getElementById('w4b-b').value.trim();if(!a||!b){feedback('w4b','hint','Beantworte zuerst beide WHERE-Felder.');return;}try{const [ra,rb]=await Promise.all([runQuery(`SELECT * FROM Buch ${a.toUpperCase().startsWith('WHERE')?a:`WHERE ${a}`}`),runQuery(`SELECT * FROM Buch ${b.toUpperCase().startsWith('WHERE')?b:`WHERE ${b}`}`)]);const sameA=compareRelations(ra,{columns:['ISBN','Name','Autor','Jahr','Seiten'],values:KAFKA}).correct,sameB=compareRelations(rb,{columns:['ISBN','Name','Autor','Jahr','Seiten'],values:KAFKA}).correct;const canonical=s=>norm(s).replace(/^where\s+/,'').replace(/;$/,'').replace(/\s*([=<>])\s*/g,'$1');const distinct=canonical(a)!==canonical(b);markGap('w4b-a',sameA);markGap('w4b-b',sameB);feedback('w4b',sameA&&sameB&&distinct?'success':sameA||sameB?'partial':'error',sameA&&sameB&&distinct?'Korrekt: Beide verschiedenen Bedingungen liefern im aktuellen Buch-Datenbestand genau die drei vorgegebenen Zeilen.':sameA||sameB?'Teilweise korrekt: Eine Bedingung passt; prüfe die andere an allen sieben Buchzeilen oder unterscheide die beiden Eingaben.':'Noch nicht korrekt: Führe jede WHERE-Bedingung mit SELECT * FROM Buch aus und vergleiche die ganze Ergebnistabelle.');}catch{feedback('w4b','error','Noch nicht korrekt: Prüfe die Syntax deiner beiden WHERE-Bedingungen.');}return;}
- if(!t)return;let complete=true;for(const [key,,] of t.fields||[]){const value=answer(t.id,key);if(value.trim()==='')complete=false;}for(const key of Object.keys(t.expected||{})){}if(t.sentence){const memo=document.querySelectorAll(`[data-key^="${t.id}.memo"]`);for(const n of memo)if(!n.value.trim())complete=false;}
- if(t.id==='w1')for(let i=0;i<4;i++)if(!document.querySelector(`[data-key="w1.cell${i}"]`)?.value.trim())complete=false;
- if(t.textTask&&id!=='w2')complete=complete&&Boolean(answer(id,'text').trim());if(!complete){feedback(id,'hint','Fülle zuerst alle Eingabefelder dieser Aufgabe aus.');return;}
- if(t.invalid){const memo=checkMemoGaps(t),grade=semanticGrade(id);if(!grade){feedback(id,'hint','Gib deine Erklärung zur fachlichen Prüfung ab.');return;}const allOk=grade.points===grade.maxPoints&&memo,partial=grade.points>0||memo;feedback(id,allOk?'success':partial?'partial':'error',allOk?t.feedback[0]:partial?t.feedback[1]:t.feedback[2]);return;}
- let sql=t.sql;if(id==='e2')sql=`SELECT Name${answer(id,'select')}\nFROM Buch`;if(id==='e4')sql=`SELECT Name${answer(id,'select')}\nFROM Film\nWHERE ${answer(id,'where')}`;if(id==='e5')sql=`SELECT ${answer(id,'select')}\nFROM Film\nWHERE ${answer(id,'where')}`;if(['w1','w2','w3','w4'].includes(id)){sql=`SELECT ${answer(id,'select')}\nFROM ${answer(id,'from')}\nWHERE ${answer(id,'where')}`;}
- // Alter ist in SQLite reserviert; die Eingabe bleibt wie im Originalblatt.
- if(id==='w1')sql=sql.replace(/^(SELECT\s+)([\s\S]*?)(\s+FROM\b)/i,(_,start,columns,end)=>start+columns.replace(/\bAlter\b/gi,'"Alter"')+end);
- const validator=validateSelectStatement(sql);if(!validator.ok){feedback(id,'error',`Noch nicht korrekt: ${validator.message}`);return;}let resultOk=false;try{const actual=await runQuery(sql);const expected=id==='e1'?{columns:['Name'],values:BUCH.map(row=>[row[1]])}:id==='e2'?{columns:['Name','Seiten'],values:BUCH.map(row=>[row[1],row[4]])}:id==='e4'?{columns:['Name','Preis'],values:[['König der Löwen',12.99],['Dune',14.99],['Minions',10.99]]}:id==='e5'?{columns:['Name','Jahr','Preis','Länge','EAN'],values:[FILM[6]]}:id==='w3'?{columns:['Name','Länge'],values:[['Frozen',152],['Dune',155]]}:t.table==='Einwohner'?{columns:['Name','Alter'],values:[['Sarah Müller',21],['Tim Schwarz',28],['Clara Weber',22]]}:t.table==='Speise'?{columns:['Name','Preis','Kilokalorien'],values:VEGAN}:t.table==='Buch'?{columns:['ISBN','Name','Autor','Jahr','Seiten'],values:KAFKA}:null;resultOk=expected?compareRelations(actual,expected,{columnOrder:true,columnLabels:true,rowOrder:false,numericTolerance:0.001}).correct:false;}catch(error){feedback(id,'error',`Noch nicht korrekt: ${String(error.message||'Prüfe deine SQL-Abfrage.')}`);return;}
- let cellsOk=true;if(id==='w1')cellsOk=checkResidentCells();
- let fieldsOk=true;if(id==='e2')fieldsOk=norm(answer(id,'select')).includes('seiten');if(id==='e4')fieldsOk=norm(answer(id,'select')).includes('preis');if(id==='e5')fieldsOk=norm(answer(id,'select'))==='*';fieldsOk=checkMemoGaps(t)&&fieldsOk;
- const grade=t.textTask&&id!=='w2'?semanticGrade(id):null;if(t.textTask&&id!=='w2'&&!grade){feedback(id,'hint','Gib deine Beschreibung zur fachlichen Prüfung ab.');return;}const allOk=resultOk&&cellsOk&&fieldsOk&&(!grade||grade.points===grade.maxPoints);const partial=(t.textTask&&id!=='w2'?fieldsOk||grade.points>0:resultOk||cellsOk||fieldsOk);feedback(id,allOk?'success':partial?'partial':'error',allOk?t.feedback[0]:partial?t.feedback[1]:t.feedback[2]);}
-async function runQuery(sql){const valid=validateSelectStatement(sql);if(!valid.ok)throw new Error(valid.message);return database.exec(valid.sql);}
-async function sendSemantic(taskId,answerId){
-  const input=document.getElementById(answerId),button=document.querySelector(`[data-answer="${answerId}"]`);
-  const id=answerId==='w2-motivation'?'w2b':answerId.replace('-text','');
-  const result=document.getElementById(`${id}-semantic`),submitted=input.value.trim();
-  const show=(text,className='semantic-result',grade=null)=>{result.textContent=text;result.className=className;state.semantic[result.id]={text,className,...grade};save();};
-  if(!submitted){show('Schreibe zuerst eine Antwort.');feedback(id,'hint','Schreibe zuerst eine Antwort.');return;}
-  button.disabled=true;show('Antwort wird geprüft …');feedback(id,'hint','Die fachliche Rückmeldung wird abgewartet.');
-  try{
-    const {evaluateSemanticAnswer}=await import('../../klasse-11/1-Kuenstliche-Intelligenz/perzeptron/ui/semantic-answer.mjs?v=20261010-scaleway');
-    const out=await evaluateSemanticAnswer({taskId,answer:submitted,expectedMaxPoints:2});
-    if(input.value.trim()!==submitted)return;
-    const expectedStatus=out.points===out.maxPoints?'korrekt':out.points>0?'teilweise korrekt':'noch nicht korrekt';
-    if(out.status!==expectedStatus)throw new Error('Die Auswertung hat widersprüchliche Punkte und Status geliefert. Bitte versuche es erneut.');
-    show(`${out.status} · ${out.points} / ${out.maxPoints} Punkte. ${out.feedback}${out.strengths.length?` Stärken: ${out.strengths.join(' ')}`:''}${out.missing.length?` Noch prüfen: ${out.missing.join(' ')}`:''}`,`semantic-result ${semanticLevel(out)}`,{answer:submitted,points:out.points,maxPoints:out.maxPoints,status:out.status});
-    await checkTask(id);
-  }catch(error){if(input.value.trim()===submitted){show(`Die Rückmeldung ist gerade nicht verfügbar. ${error.message||'Du kannst deine Antwort erneut abgeben.'}`,'semantic-result error');feedback(id,'hint','Die fachliche Prüfung ist nicht verfügbar. Gib deine Antwort später erneut ab.');}}
-  finally{button.disabled=false;}
+
+// ---------------------------------------------------------------------------
+// Abschlussquiz (Reiter 7)
+// ---------------------------------------------------------------------------
+
+// Optionen: [id, Text, richtig]; sql: true stellt den Text als SQL-Block dar.
+const FINAL_QUIZ = [
+  {
+    id: 'q1', prompt: 'Welche Aussagen zu SELECT und FROM stimmen?',
+    hint: 'SELECT wählt Spalten aus, die Zeilen bleiben alle erhalten. Diese Auswahl von Spalten heißt Projektion.',
+    options: [
+      ['a', 'FROM gibt an, aus welcher Tabelle die Daten stammen.', true],
+      ['b', 'SELECT legt fest, welche Spalten ausgegeben werden.', true],
+      ['c', 'SELECT legt fest, welche Zeilen ausgegeben werden.', false],
+      ['d', 'SELECT * gibt alle Spalten der Tabelle aus.', true]
+    ]
+  },
+  {
+    id: 'q2', prompt: 'Welche Aussagen über das Ergebnis dieser Abfrage stimmen?', sql: 'SELECT username, birthday\nFROM users',
+    hint: 'Eine Abfrage verändert die Tabelle nicht, sie erzeugt eine neue Tabelle. Die Spalten erscheinen in der Reihenfolge hinter SELECT.',
+    options: [
+      ['a', 'Die Ergebnisrelation hat genau zwei Spalten.', true],
+      ['b', 'Die erste Spalte ist username.', true],
+      ['c', 'Die Ergebnisrelation enthält nur ein Mitglied.', false],
+      ['d', 'Die Tabelle users besteht danach nur noch aus diesen zwei Spalten.', false]
+    ]
+  },
+  {
+    id: 'q3', prompt: 'Welche Aussagen zu ORDER BY stimmen?',
+    hint: 'Ohne Angabe gilt ASC, also aufsteigend. ORDER BY sortiert nur die Ergebnisrelation, nicht die Tabelle.',
+    options: [
+      ['a', 'ORDER BY centimeters DESC setzt das größte Mitglied an den Anfang.', true],
+      ['b', 'Ohne Angabe von ASC oder DESC sortiert ORDER BY absteigend.', false],
+      ['c', 'ORDER BY username sortiert die Benutzernamen alphabetisch von A nach Z.', true],
+      ['d', 'ORDER BY ändert die Reihenfolge der Zeilen in der Tabelle users dauerhaft.', false]
+    ]
+  }
+];
+const QUIZ_BY_ID = new Map(FINAL_QUIZ.map((question) => [question.id, question]));
+
+// ---------------------------------------------------------------------------
+// Zustand und Speicherung
+// ---------------------------------------------------------------------------
+
+const state = { assessmentVersion: '20261029-criteria-v1', tab: 'intro', introStep: 1, answers: {}, feedback: {}, solved: {}, descriptionAnswers: {}, descriptionFeedback: {}, youngest: { username: '', age: '', feedback: null }, quiz: {}, quizFeedback: null, quizPassed: false };
+const results = {}; // Ergebnisrelationen werden nicht gespeichert (zu groß).
+const running = new Set();
+const descriptionRequests = new Map();
+let tabRevision = 0;
+let database;
+let databaseReady = false;
+
+function save() {
+  try { localStorage.setItem(STORAGE_KEY, JSON.stringify(state)); } catch { /* Ohne Speicher bleibt das Modul bedienbar. */ }
 }
-function saveUnlock(event,code,linkId,msgId){event.preventDefault();const form=event.currentTarget,input=form.querySelector('[name="solution-code"]'),link=document.getElementById(linkId),msg=document.getElementById(msgId);const ok=input.value.toUpperCase().replace(/[^A-Z0-9]/g,'')===code.replace(/[^A-Z0-9]/g,'');link.hidden=!ok;msg.textContent=ok?'Der Code stimmt. Der Download ist freigeschaltet.':'Der Code stimmt nicht. Prüfe die Eingabe.';const kind=linkId.endsWith('-summary')?'summary':'quiz';state.unlocks[kind]=ok;save();return false;}
-window.unlockSolution=saveUnlock;
-function init(){safeRead();render();document.addEventListener('input',e=>{if(e.target.matches('[data-key]')){const key=e.target.dataset.key;state.values[key]=e.target.value;
-      const id=key==='w2-motivation'?'w2b':/^(e[123])\./.exec(key)?.[1];
-      if(id){delete state.checked[id];if(key===`${id}.text`||key==='w2-motivation'){delete state.semantic[`${id}-semantic`];const node=document.getElementById(`${id}-semantic`);if(node){node.textContent='Antwort geändert. Gib sie erneut ab.';node.className='semantic-result hint';}}const node=document.getElementById(`${id}-feedback`);if(node){node.textContent='Antwort geändert. Prüfe die Aufgabe erneut.';node.className='feedback hint';}updateProgress();}save();}});document.addEventListener('toggle',e=>{if(e.target.matches('details[data-detail]')){state.details[e.target.dataset.detail]=e.target.open;save();}},true);document.addEventListener('change',e=>{if(e.target.matches('input[type=checkbox]')){state.quiz[e.target.name]=[...document.querySelectorAll(`input[name="${e.target.name}"]:checked`)].map(n=>n.value);state.quizChecked[e.target.name]=false;state.quizPassed=false;document.getElementById('answer-summary').hidden=true;save();}});document.addEventListener('click',e=>{const next=e.target.closest('[data-check]');if(next)checkTask(next.dataset.check);const sem=e.target.closest('[data-semantic]');if(sem)sendSemantic(sem.dataset.semantic,sem.dataset.answer);});document.getElementById('quiz-form').addEventListener('submit',e=>{e.preventDefault();quizChecks?.checkAll();gradeQuiz();});document.getElementById('reset-module').addEventListener('click',()=>{try{localStorage.removeItem(STORAGE_KEY);}catch{}location.reload();});window.addEventListener('beforeunload',()=>database?.close());database=new SqlWorker();database.init().then(()=>{const s=document.getElementById('data-status');s.textContent='Die vier originalen Wichmatics-Tabellen sind bereit.';s.className='feedback success';s.setAttribute('aria-busy','false');}).catch(()=>{const s=document.getElementById('data-status');s.textContent='Die SQL-Prüfung konnte nicht gestartet werden. Lade die Seite erneut.';s.className='feedback error';s.setAttribute('aria-busy','false');});}
-function gradeQuiz(){const p=document.getElementById('quiz-feedback');if(questionData.some((_,i)=>!state.quiz[`q${i+1}`]?.length)){p.className='feedback hint';p.textContent='Beantworte zuerst alle fünf Fragen.';return;}const all=questionData.every((_,i)=>state.quizChecked[`q${i+1}`]);p.className=`feedback ${all?'success':'partial'}`;p.textContent=all?'Korrekt: Alle fünf Fragen stimmen. Die Übersicht mit allen Aufgaben und Lösungen ist jetzt sichtbar.':'Teilweise korrekt: Prüfe die noch offenen Fragen erneut.';if(all){state.quizPassed=true;document.getElementById('answer-summary').hidden=false;save();}}
-document.addEventListener('DOMContentLoaded',init);
+
+function isPlainObject(value) { return Boolean(value) && typeof value === 'object' && !Array.isArray(value); }
+function validFeedback(value) { return isPlainObject(value) && FEEDBACK_LEVELS.includes(value.level) && typeof value.text === 'string'; }
+function validDescriptionFeedback(value) {
+  return isPlainObject(value) && DESCRIPTION_LEVELS.includes(value.level) && typeof value.text === 'string' &&
+    (value.points === undefined || (Number.isInteger(value.points) && value.points >= 0 && value.points <= 3)) &&
+    (value.maxPoints === undefined || value.maxPoints === 3) &&
+    (value.status === undefined || DESCRIPTION_STATUSES.includes(value.status)) &&
+    (value.strengths === undefined || (Array.isArray(value.strengths) && value.strengths.every((text) => typeof text === 'string'))) &&
+    (value.missing === undefined || (Array.isArray(value.missing) && value.missing.every((text) => typeof text === 'string')));
+}
+
+function restore() {
+  const saved = readSplitProgress(STORAGE_KEY, MIGRATION_MARKER, 'select', TASKS, DESCRIPTION_TASKS, TABS, INTRO_STEPS.length);
+  if (!saved) return;
+  if (TABS.some(([id]) => id === saved.tab)) state.tab = saved.tab;
+  if (Number.isInteger(saved.introStep) && saved.introStep >= 1 && saved.introStep <= INTRO_STEPS.length) state.introStep = saved.introStep;
+  if (isPlainObject(saved.answers)) for (const [id, answer] of Object.entries(saved.answers)) if (TASK_BY_ID.has(id) && typeof answer === 'string') state.answers[id] = answer;
+  if (isPlainObject(saved.feedback)) for (const [id, feedback] of Object.entries(saved.feedback)) if (TASK_BY_ID.has(id) && validFeedback(feedback)) state.feedback[id] = feedback;
+  if (isPlainObject(saved.solved)) for (const [id, done] of Object.entries(saved.solved)) if (TASK_BY_ID.has(id) && done === true) state.solved[id] = true;
+  if (isPlainObject(saved.descriptionAnswers)) for (const [id, answer] of Object.entries(saved.descriptionAnswers)) if (DESCRIPTION_BY_ID.has(id) && typeof answer === 'string') state.descriptionAnswers[id] = answer;
+  if (saved.assessmentVersion === state.assessmentVersion && isPlainObject(saved.descriptionFeedback)) for (const [id, feedback] of Object.entries(saved.descriptionFeedback)) if (DESCRIPTION_BY_ID.has(id) && validDescriptionFeedback(feedback)) state.descriptionFeedback[id] = feedback;
+  if (isPlainObject(saved.youngest)) {
+    if (typeof saved.youngest.username === 'string') state.youngest.username = saved.youngest.username;
+    if (typeof saved.youngest.age === 'string') state.youngest.age = saved.youngest.age;
+    if (YOUNGEST_KINDS.includes(saved.youngest.feedback)) state.youngest.feedback = saved.youngest.feedback;
+  }
+  if (isPlainObject(saved.quiz)) FINAL_QUIZ.forEach((question) => { if (Array.isArray(saved.quiz[question.id])) state.quiz[question.id] = saved.quiz[question.id].filter((value) => question.options.some(([id]) => id === value)); });
+  if (validFeedback(saved.quizFeedback)) state.quizFeedback = saved.quizFeedback;
+  state.quizPassed = saved.quizPassed === true;
+  if (typeof saved.solutionCode === 'string') state.solutionCode = saved.solutionCode;
+  state.solutionUnlocked = saved.solutionUnlocked === true;
+}
+
+function isTabComplete(id) {
+  if (id === 'intro') return state.introStep === INTRO_STEPS.length;
+  if (id === 'quiz') return state.quizPassed;
+  const done = TAB_TASKS[id].every((taskId) => state.solved[taskId]);
+  const descriptionDone = DESCRIPTION_BY_TAB.has(id) && state.descriptionFeedback[DESCRIPTION_BY_TAB.get(id).id]?.status === 'korrekt' && state.descriptionFeedback[DESCRIPTION_BY_TAB.get(id).id]?.points === 3;
+  return id === 'orderBy' ? done && descriptionDone && state.youngest.feedback === 'correct' : DESCRIPTION_BY_TAB.has(id) ? done && descriptionDone : done;
+}
+
+// ---------------------------------------------------------------------------
+// DOM-Hilfen
+// ---------------------------------------------------------------------------
+
+function element(tag, className, text) {
+  const node = document.createElement(tag);
+  if (className) node.className = className;
+  if (text !== undefined) node.textContent = text;
+  return node;
+}
+
+// Einfache Auszeichnung: **fett** und `code`; alles andere bleibt Text (kein innerHTML).
+function richText(parent, text) {
+  text.split(/(\*\*[^*]+\*\*|`[^`]+`)/).forEach((part) => {
+    if (!part) return;
+    if (part.startsWith('**')) parent.append(element('strong', '', part.slice(2, -2)));
+    else if (part.startsWith('`')) parent.append(element('code', '', part.slice(1, -1)));
+    else parent.append(document.createTextNode(part));
+  });
+  return parent;
+}
+function paragraph(text, className) { return richText(element('p', className), text); }
+function sqlBlock(text) { const pre = element('pre', 'given-sql'); pre.append(element('code', '', text)); return pre; }
+
+// ---------------------------------------------------------------------------
+// SQL-Worker (nach SqlWorker in klasse-10/1-Datenbanken/sql-lab.js, angepasst: nur Modus users-full, CSV-Pfad relativ zu klasse-10)
+// ---------------------------------------------------------------------------
+
+class SqlWorker {
+  constructor() { this.nextId = 0; this.pending = new Map(); }
+  async init() {
+    this.worker = new Worker(new URL('../../../../include/lib/sql.js/worker.sql-wasm.js', import.meta.url));
+    this.worker.onmessage = (event) => { const pending = this.pending.get(event.data.id); if (!pending) return; this.pending.delete(event.data.id); if (event.data.error) pending.reject(new Error(event.data.error)); else pending.resolve(event.data); };
+    this.worker.onerror = (event) => { this.pending.forEach(({ reject }) => reject(event.error || new Error('SQL-Worker nicht verfügbar.'))); this.pending.clear(); };
+    await this.send({ action: 'open' });
+    const response = await fetch(new URL('../../klasse-10/1-Datenbanken/users.csv', import.meta.url));
+    if (!response.ok) throw new Error('users.csv konnte nicht geladen werden.');
+    const [headers, ...data] = parseDelimited(await response.text());
+    const schema = headers.map((name) => `${quoteIdentifier(name)} ${['id', 'centimeters', 'is_active'].includes(name) ? 'INTEGER' : 'TEXT'}`).join(', ');
+    const statements = [`CREATE TABLE users (${schema})`];
+    data.forEach((row) => statements.push(`INSERT INTO users (${headers.map(quoteIdentifier).join(', ')}) VALUES (${headers.map((header, index) => sqlValue(row[index], header)).join(', ')})`));
+    await this.send({ action: 'exec', sql: statements.join(';') });
+  }
+  send(message) {
+    return new Promise((resolve, reject) => {
+      const id = `sql-${++this.nextId}`;
+      const timeout = window.setTimeout(() => { if (!this.pending.delete(id)) return; reject(new Error('Der SQL-Worker antwortet nicht rechtzeitig.')); }, 15000);
+      this.pending.set(id, { resolve: (value) => { window.clearTimeout(timeout); resolve(value); }, reject: (error) => { window.clearTimeout(timeout); reject(error); } });
+      try { this.worker.postMessage({ ...message, id }); } catch (error) { window.clearTimeout(timeout); this.pending.delete(id); reject(error); }
+    });
+  }
+  async exec(sqlText) { return normalizeRelation((await this.send({ action: 'exec', sql: sqlText })).results); }
+  close() { if (this.worker) { this.send({ action: 'close' }).catch(() => {}); this.worker.terminate(); } }
+}
+// nach quoteIdentifier und sqlValue in klasse-10/1-Datenbanken/sql-lab.js, angepasst: nur die Spalten der Tabelle users
+function quoteIdentifier(name) { return `"${String(name).replaceAll('"', '""')}"`; }
+function sqlValue(value, header) {
+  if (value === 'NULL' || value === undefined || value === null) return 'NULL';
+  if (['id', 'centimeters', 'is_active'].includes(header) && /^-?\d+(?:\.\d+)?$/.test(value)) return value;
+  return `'${String(value).replaceAll("'", "''")}'`;
+}
+
+// Abfragen laufen nur lesend; Ergebnisse der Referenzabfragen werden zwischengespeichert.
+const execCache = new Map();
+async function cachedExec(sqlText) {
+  if (!execCache.has(sqlText)) execCache.set(sqlText, await database.exec(sqlText));
+  return execCache.get(sqlText);
+}
+
+// ---------------------------------------------------------------------------
+// Lokale Analyse der Schülerabfrage (auf Basis von sqlTokens)
+// ---------------------------------------------------------------------------
+
+function splitGroups(tokens) {
+  const groups = [[]];
+  tokens.forEach((token) => { if (token.value === ',') groups.push([]); else groups.at(-1).push(token); });
+  return groups;
+}
+function tokenKeyword(token) { return token?.type === 'word' ? token.value.toUpperCase() : ''; }
+function identifierValue(token) {
+  if (token?.type === 'word') return token.value;
+  if (token?.type === 'string' && !token.value.startsWith("'")) return stripQuotes(token.value);
+  return null;
+}
+function stripQuotes(value) { return String(value).replace(/^["'`]/, '').replace(/["'`]$/, ''); }
+
+function analyzeQuery(sql) {
+  const tokens = sqlTokens(sql).filter((token) => token.value !== ';');
+  const keywords = tokens.map(tokenKeyword);
+  const selectIndex = keywords.indexOf('SELECT');
+  const fromIndex = keywords.indexOf('FROM', selectIndex + 1);
+  const orderIndex = keywords.indexOf('ORDER');
+  const limitIndex = keywords.indexOf('LIMIT');
+  const distinctIndex = keywords.indexOf('DISTINCT');
+  const whereIndex = keywords.indexOf('WHERE');
+  const hasFrom = fromIndex > -1;
+  const afterSelect = selectIndex + 1 + (keywords[selectIndex + 1] === 'DISTINCT' ? 1 : 0);
+  const projectionEnd = hasFrom ? fromIndex : [orderIndex, limitIndex].filter((index) => index > -1).reduce((min, index) => Math.min(min, index), tokens.length);
+  const analysis = {
+    hasFrom,
+    distinct: distinctIndex > -1,
+    distinctMisplaced: distinctIndex > -1 && distinctIndex !== selectIndex + 1,
+    columns: [],
+    implicitAliases: [],
+    selectAliases: [],
+    trailingComma: hasFrom && tokens[fromIndex - 1]?.value === ',',
+    orderBy: [],
+    orderWithoutBy: (orderIndex > -1 && keywords[orderIndex + 1] !== 'BY') || keywords.includes('SORT'),
+    limit: null,
+    limitBeforeOrder: limitIndex > -1 && orderIndex > -1 && limitIndex < orderIndex,
+    tokens,
+    orderIndex,
+    selectIndex,
+    fromIndex,
+    whereIndex,
+    source: sql,
+    distinctToken: distinctIndex > -1 ? tokens[distinctIndex] : null
+  };
+  splitGroups(tokens.slice(afterSelect, projectionEnd)).forEach((group) => {
+    if (!analysis.columns) return;
+    const values = group.map(identifierValue);
+    if (group.length === 1 && (values[0] || group[0].value === '*')) analysis.columns.push((values[0] || '*').toLowerCase());
+    else if (group.length === 3 && values[0] && group[1].value === '.' && (values[2] || group[2].value === '*')) analysis.columns.push((values[2] || '*').toLowerCase());
+    else if (group.length === 3 && values[0] && tokenKeyword(group[1]) === 'AS' && values[2]) {
+      analysis.columns.push(values[0].toLowerCase());
+      analysis.selectAliases.push({ column: values[0].toLowerCase(), alias: values[2].toLowerCase() });
+    }
+    else if (group.length === 2 && values[0] && values[1]) {
+      analysis.columns.push(values[0].toLowerCase());
+      analysis.implicitAliases.push({ column: values[0].toLowerCase(), alias: values[1].toLowerCase() });
+      analysis.selectAliases.push({ column: values[0].toLowerCase(), alias: values[1].toLowerCase() });
+    } else analysis.columns = null;
+  });
+  if (orderIndex > -1 && keywords[orderIndex + 1] === 'BY') {
+    const orderEnd = limitIndex > orderIndex ? limitIndex : tokens.length;
+    splitGroups(tokens.slice(orderIndex + 2, orderEnd)).forEach((group) => {
+      let parts = group; let dir = 'ASC';
+      const last = tokenKeyword(parts.at(-1));
+      if (last === 'ASC' || last === 'DESC') { dir = last; parts = parts.slice(0, -1); }
+      if (!parts.length) return;
+      const quoted = parts.some((token) => token.type === 'string' && token.value.startsWith("'"));
+      const rawColumn = stripQuotes(sql.slice(parts[0].start, parts.at(-1).end)).split('.').at(-1).trim().toLowerCase();
+      const column = analysis.selectAliases.find(({ alias }) => alias === rawColumn)?.column || rawColumn;
+      analysis.orderBy.push({ column, dir, quoted });
+    });
+  }
+  if (limitIndex > -1 && tokens[limitIndex + 1]?.type === 'number') analysis.limit = Number(tokens[limitIndex + 1].value);
+  return analysis;
+}
+
+// ---------------------------------------------------------------------------
+// Fehler- und Ergebnisdiagnose
+// ---------------------------------------------------------------------------
+
+const GERMAN_COLUMN_HINTS = {
+  benutzername: 'username', nutzername: 'username', benutzer: 'username',
+  geburtstag: 'birthday', geburtsdatum: 'birthday',
+  stadt: 'city', wohnort: 'city', ort: 'city',
+  land: 'country', laender: 'country', länder: 'country',
+  groesse: 'centimeters', größe: 'centimeters', grosse: 'centimeters', koerpergroesse: 'centimeters',
+  geschlecht: 'gender',
+  nummer: 'id'
+};
+
+function unknownColumnClause(sql, analysis, name) {
+  const tokens = analysis.tokens;
+  const ranges = [];
+  if (analysis.selectIndex > -1 && analysis.fromIndex > analysis.selectIndex) {
+    ranges.push({ clause: 'SELECT', start: tokens[analysis.selectIndex].end, end: tokens[analysis.fromIndex].start });
+  }
+  if (analysis.whereIndex > -1) {
+    const endIndex = tokens.findIndex((token, index) => index > analysis.whereIndex && ['GROUP', 'HAVING', 'ORDER', 'LIMIT'].includes(tokenKeyword(token)));
+    ranges.push({ clause: 'WHERE', start: tokens[analysis.whereIndex].end, end: endIndex < 0 ? sql.length : tokens[endIndex].start });
+  }
+  if (analysis.orderIndex > -1 && tokenKeyword(tokens[analysis.orderIndex + 1]) === 'BY') {
+    const endIndex = tokens.findIndex((token, index) => index > analysis.orderIndex + 1 && tokenKeyword(token) === 'LIMIT');
+    ranges.push({ clause: 'ORDER BY', start: tokens[analysis.orderIndex + 1].end, end: endIndex < 0 ? sql.length : tokens[endIndex].start });
+  }
+  const needle = name.toLowerCase(); const identifiers = [];
+  for (let start = 0; start < tokens.length; start += 1) {
+    const first = tokens[start];
+    if (first.type === 'string') {
+      if (!first.value.startsWith("'") && stripQuotes(first.value).toLowerCase() === needle) identifiers.push({ start: first.start, end: first.end });
+      continue;
+    }
+    for (let end = start; end < tokens.length; end += 1) {
+      const current = tokens[end];
+      if (current.type === 'string' || (end > start && tokens[end - 1].end !== current.start)) break;
+      const raw = sql.slice(first.start, current.end);
+      if (raw.toLowerCase() === needle) {
+        const before = sql[first.start - 1] || '';
+        const after = sql[current.end] || '';
+        if (!/[\p{L}\p{N}_$]/u.test(before) && !/[\p{L}\p{N}_$]/u.test(after)) identifiers.push({ start: first.start, end: current.end });
+        break;
+      }
+      if (raw.length > name.length + 2) break;
+    }
+  }
+  for (const range of ranges) {
+    if (identifiers.some(({ start, end }) => start >= range.start && end <= range.end)) return range.clause;
+  }
+  return null;
+}
+
+function diagnoseError(error, sql) {
+  const analysis = analyzeQuery(sql);
+  const message = String(error?.message || error || '');
+  if (!analysis.hasFrom) return 'Noch nicht korrekt: Es fehlt FROM. Gib hinter FROM an, aus welcher Tabelle die Daten stammen.';
+  if (analysis.limitBeforeOrder) return 'Noch nicht korrekt: LIMIT steht vor ORDER BY. LIMIT steht immer ganz am Ende der Abfrage – also hinter ORDER BY.';
+  if (analysis.distinctMisplaced) return 'Noch nicht korrekt: DISTINCT steht direkt hinter SELECT, zum Beispiel SELECT DISTINCT gender.';
+  if (analysis.orderWithoutBy) return 'Noch nicht korrekt: Zum Sortieren schreibst du ORDER BY – beide Wörter sind nötig.';
+  if (analysis.trailingComma) return 'Noch nicht korrekt: Hinter der letzten Spalte vor FROM steht kein Komma.';
+  if (/no such table/i.test(message)) return 'Noch nicht korrekt: Eine Tabelle mit diesem Namen gibt es nicht. Die Tabelle heißt users – prüfe den Namen hinter FROM.';
+  const unknown = message.match(/no such column:\s*(\S+)/i);
+  if (unknown) {
+    const name = stripQuotes(unknown[1]).split('.').pop();
+    const clause = unknownColumnClause(sql, analysis, name) || 'SELECT';
+    const english = GERMAN_COLUMN_HINTS[name.toLowerCase()];
+    const englishHint = english ? ` Die Spaltennamen sind englisch – gemeint ist vermutlich ${english}.` : '';
+    if (clause === 'WHERE') {
+      const quoteHint = missingTextQuote(sql, name);
+      if (quoteHint) return `${quoteHint}${englishHint}`;
+      return `Noch nicht korrekt: Die Spalte ${name} hinter WHERE gibt es in users nicht. Prüfe den Spaltennamen oder den Textwert.${englishHint}`;
+    }
+    return `Noch nicht korrekt: Die Spalte ${name} hinter ${clause} gibt es in der Tabelle users nicht. Sieh im Tabellenschema nach, wie die Spalte heißt.${english ? ` Die Spaltennamen sind englisch – gemeint ist vermutlich ${english}.` : ''}`;
+  }
+  return 'Noch nicht korrekt: SQL versteht deine Abfrage nicht. Prüfe die Schreibweise der Schlüsselwörter, die Kommas zwischen den Spalten und die Reihenfolge der Klauseln.';
+}
+
+// nach valueKey und rowKey in klasse-10/1-Datenbanken/sql-lab-core.mjs (dort nicht exportiert)
+function valueKey(value) { return value === null ? '__NULL__' : `${typeof value}:${String(value)}`; }
+function rowKey(row) { return row.map(valueKey).join('\u001f'); }
+function columnIndex(relation, name) { return relation.columns.findIndex((column) => column.toLowerCase() === name.toLowerCase()); }
+function sameSet(left, right) { const a = new Set(left); const b = new Set(right); return a.size === b.size && [...a].every((value) => b.has(value)); }
+function sameMultiset(left, right) {
+  if (!Array.isArray(left) || !Array.isArray(right) || left.length !== right.length) return false;
+  const counts = new Map();
+  left.forEach((value) => counts.set(value, (counts.get(value) || 0) + 1));
+  for (const value of right) {
+    const remaining = counts.get(value) || 0;
+    if (!remaining) return false;
+    counts.set(value, remaining - 1);
+  }
+  return [...counts.values()].every((count) => count === 0);
+}
+
+function requireAnyOk(taskConfig, analysis) {
+  if (!analysis.columns) return false;
+  const has = (name) => analysis.columns.includes('*') || analysis.columns.includes(name);
+  if (taskConfig.requireAny.length && !taskConfig.requireAny.some(has)) return false;
+  return taskConfig.requireAll.every(has);
+}
+
+function projectedColumns(analysis) {
+  return analysis.columns ? analysis.columns.flatMap((name) => name === '*' ? USER_COLUMN_NAMES : [name]) : null;
+}
+
+// Referenz je Aufgabe; bei projection 'any' wird sie mit der Spaltenliste der Schülerin oder des Schülers neu gebaut.
+function referenceSql(taskConfig, analysis) {
+  if (taskConfig.projection === 'any') return analysis.columns ? `SELECT ${analysis.columns.join(', ')}\n${taskConfig.tail}` : null;
+  return `SELECT ${taskConfig.select}\n${taskConfig.tail}`;
+}
+
+async function isCorrect(taskConfig, analysis, actual) {
+  if (taskConfig.projection === 'anyThree') {
+    if (!analysis.columns || actual.values.length !== 3) return false;
+    if (analysis.distinct && analysis.distinctToken) {
+      const withoutDistinctSql = `${analysis.source.slice(0, analysis.distinctToken.start)}${analysis.source.slice(analysis.distinctToken.end)}`;
+      const withoutDistinct = await cachedExec(withoutDistinctSql);
+      if (!compareRelations(actual, withoutDistinct, { columnOrder: true, rowOrder: true }).correct) return false;
+    }
+    const full = await cachedExec(`SELECT ${analysis.columns.join(', ')}\nFROM users`);
+    const counts = new Map();
+    full.values.forEach((row) => counts.set(rowKey(row), (counts.get(rowKey(row)) || 0) + 1));
+    return actual.values.every((row) => { const key = rowKey(row); const left = counts.get(key) || 0; if (!left) return false; counts.set(key, left - 1); return true; });
+  }
+  if (taskConfig.projection === 'any' && !requireAnyOk(taskConfig, analysis)) return false;
+  const sql = referenceSql(taskConfig, analysis);
+  if (!sql) return false;
+  const reference = await cachedExec(sql);
+  const options = { columnOrder: taskConfig.projection === 'any' ? true : taskConfig.columnOrder, columnLabels: false, rowOrder: false };
+  if (!taskConfig.order) return compareRelations(actual, reference, options).correct;
+  const actualIndex = projectedColumns(analysis)?.findIndex((column) => column.toLowerCase() === taskConfig.order.column.toLowerCase()) ?? -1;
+  const referenceIndex = columnIndex(reference, taskConfig.order.column);
+  if (actualIndex < 0 || referenceIndex < 0) return compareRelations(actual, reference, { ...options, rowOrder: true }).correct;
+  // Bei Gleichstand zählt jede Reihenfolge: Nur die Folge der Sortierwerte muss übereinstimmen (NULL gleich NULL).
+  if (!compareRelations(actual, reference, options).correct) return false;
+  return actual.values.length === reference.values.length && actual.values.every((row, index) => row[actualIndex] === reference.values[index][referenceIndex]);
+}
+
+function actualColumnNames(analysis, actual) {
+  const selected = projectedColumns(analysis);
+  if (selected && (!actual.columns.length || selected.length === actual.columns.length)) return selected;
+  if (actual.columns.length) return actual.columns;
+  return [];
+}
+
+function rowCountText(count, limit) { return `Teilweise korrekt: Deine Ergebnisrelation hat ${count} Zeilen, gesucht sind genau ${limit}. Prüfe die Zahl hinter LIMIT.`; }
+
+function relationSubset(actual, expected, actualNames, expectedNames) {
+  if (!actualNames || !expectedNames || actualNames.length !== actual.columns.length || expectedNames.length !== expected.columns.length || !sameSet(actualNames, expectedNames)) return false;
+  const key = (row, names) => JSON.stringify(names.map((name, index) => [name.toLowerCase(), valueKey(row[index])]).sort(([left], [right]) => left.localeCompare(right)));
+  const counts = new Map();
+  expected.values.forEach((row) => { const rowKey = key(row, expectedNames); counts.set(rowKey, (counts.get(rowKey) || 0) + 1); });
+  return actual.values.every((row) => { const rowKey = key(row, actualNames); const remaining = counts.get(rowKey) || 0; if (!remaining) return false; counts.set(rowKey, remaining - 1); return true; });
+}
+
+function expectedColumnNames(taskConfig, analysis) {
+  if (taskConfig.projection === 'any' || taskConfig.projection === 'anyThree') return projectedColumns(analysis);
+  return taskConfig.select.replace(/^DISTINCT\s+/i, '').split(',').flatMap((name) => {
+    const column = stripQuotes(name.trim()).toLowerCase();
+    return column === '*' ? USER_COLUMN_NAMES : [column];
+  });
+}
+
+function missingExpectedComma(taskConfig, analysis, columns) {
+  const required = new Set(taskConfig.projection === 'any' ? [...taskConfig.requireAny, ...taskConfig.requireAll] : expectedColumnNames(taskConfig, analysis) || []);
+  return analysis.implicitAliases.some(({ column, alias }) => required.has(column) && required.has(alias) && !columns.includes(alias));
+}
+
+async function distinctlessResult(analysis) {
+  if (!analysis.distinct || !analysis.distinctToken) return null;
+  const sql = `${analysis.source.slice(0, analysis.distinctToken.start)}${analysis.source.slice(analysis.distinctToken.end)}`;
+  return cachedExec(sql);
+}
+
+async function evaluate(taskConfig, analysis, actual) {
+  const names = actualColumnNames(analysis, actual);
+  const context = { n: actual.values.length, count: names.length, cols: names.map((name) => name.toLowerCase()), list: names.join(', '), ist: analysis.orderBy[0]?.column };
+  if (await isCorrect(taskConfig, analysis, actual)) return { level: 'success', text: taskConfig.texts.ok, solved: true };
+  const fallback = { level: 'hint', text: 'Noch nicht korrekt: Vergleiche deine Ergebnisrelation mit der Aufgabe: Stimmen die Spalten, die Anzahl der Zeilen und ihre Reihenfolge?' };
+  const partial = (text) => ({ level: 'partial', text });
+  if (taskConfig.projection === 'anyThree') {
+    if (!analysis.columns) return fallback;
+    if (analysis.distinct) {
+      const withoutDistinct = await distinctlessResult(analysis);
+      if (withoutDistinct && !compareRelations(actual, withoutDistinct, { columnOrder: true, rowOrder: true }).correct) return partial(taskConfig.texts.distinct(context));
+    }
+    const full = await cachedExec(`SELECT ${analysis.columns.join(', ')}\nFROM users`);
+    if (analysis.limit !== null && analysis.limit !== taskConfig.limit) return partial(rowCountText(context.n, taskConfig.limit));
+    if (context.n === 0) return partial('Teilweise korrekt: Die Spalten passen, aber deine Abfrage liefert keine Zeilen. Prüfe, ob eine zusätzliche Bedingung alle Mitglieder ausschließt.');
+    if (context.n !== taskConfig.limit) {
+      if (analysis.limit !== null && analysis.limit !== taskConfig.limit) return partial(rowCountText(context.n, taskConfig.limit));
+      if (analysis.limit === null && context.n > taskConfig.limit) return partial(taskConfig.texts.noLimit(context));
+      return partial('Teilweise korrekt: Die Spalten passen, aber die ausgegebenen Zeilen stimmen noch nicht mit der Aufgabe überein. Prüfe zusätzliche Einschränkungen oder Zusammenfassungen.');
+    }
+    if (!relationSubset(actual, full, projectedColumns(analysis), projectedColumns(analysis))) return partial('Teilweise korrekt: Die Spalten passen, aber die ausgegebenen Zeilen stimmen noch nicht mit der Aufgabe überein. Prüfe zusätzliche Einschränkungen oder Zusammenfassungen.');
+    return fallback;
+  }
+  if (taskConfig.projection === 'any' && !analysis.columns) return fallback;
+  const reference = taskConfig.projection === 'any' ? null : await cachedExec(`SELECT ${taskConfig.select}\n${taskConfig.tail}`);
+  const expected = taskConfig.projection === 'any' ? await cachedExec(referenceSql(taskConfig, analysis)) : reference;
+  const selected = projectedColumns(analysis);
+  const expectedNames = expectedColumnNames(taskConfig, analysis);
+  const columnsWrong = taskConfig.projection === 'any' ? !requireAnyOk(taskConfig, analysis) : !sameMultiset(context.cols, expectedNames || []);
+  if (analysis.implicitAliases.length && missingExpectedComma(taskConfig, analysis, context.cols)) {
+    return { level: 'hint', text: 'Noch nicht korrekt: Zwischen zwei gewünschten Spalten fehlt ein Komma. SQL liest das zweite Wort sonst als Alias der ersten Spalte.' };
+  }
+  if (columnsWrong) return { level: 'hint', text: taskConfig.texts.cols(context) };
+  if (taskConfig.limit === null && analysis.limit !== null) return partial(TEXT_NO_LIMIT_EXPECTED(context));
+  if (context.n === 0) return partial('Teilweise korrekt: Die Spalten passen, aber deine Abfrage liefert keine Zeilen. Prüfe, ob eine zusätzliche Bedingung alle Mitglieder ausschließt.');
+  const rowsMatch = compareRelations(actual, expected, { columnOrder: taskConfig.projection === 'any' ? true : taskConfig.columnOrder, columnLabels: false, rowOrder: false }).correct;
+  const isSubset = relationSubset(actual, expected, selected, expectedNames);
+  if (taskConfig.requireDistinct && !analysis.distinct) {
+    const hasDuplicates = actual.values.some((row, index) => actual.values.slice(0, index).some((other) => rowKey(row) === rowKey(other)));
+    if (hasDuplicates) return partial(taskConfig.texts.noDistinct(context));
+  }
+  if (!taskConfig.requireDistinct && analysis.distinct) {
+    const withoutDistinct = await distinctlessResult(analysis);
+    if (withoutDistinct && compareRelations(withoutDistinct, expected, { columnOrder: taskConfig.projection === 'any' ? true : taskConfig.columnOrder, columnLabels: false, rowOrder: false }).correct) {
+      return partial('Teilweise korrekt: Die Spalten stimmen. DISTINCT entfernt aber Zeilen, die hier gebraucht werden – gesucht sind alle Mitglieder, nicht nur verschiedene Werte. Lass DISTINCT weg.');
+    }
+  }
+  if (!rowsMatch && isSubset && taskConfig.limit === null && analysis.limit !== null) return partial(TEXT_NO_LIMIT_EXPECTED(context));
+  if (!rowsMatch && taskConfig.limit !== null && context.n !== taskConfig.limit) {
+    if (analysis.limit === null && (taskConfig.order && analysis.orderBy[0]?.column === taskConfig.order.column && analysis.orderBy[0]?.dir === taskConfig.order.dir)) return partial(taskConfig.texts.noLimit(context));
+    if (analysis.limit !== null && analysis.limit !== taskConfig.limit) return partial(rowCountText(context.n, taskConfig.limit));
+  }
+  if (!rowsMatch && isSubset) {
+    if (context.n < expected.values.length && ['t1', 't2', 't3', 't4', 't5', 't6', 't11', 't13'].includes(taskConfig.id)) {
+      if (taskConfig.limit !== null && analysis.limit !== null && analysis.limit !== taskConfig.limit) return partial(rowCountText(context.n, taskConfig.limit));
+      return partial('Teilweise korrekt: Die Spalten passen, aber es fehlen Mitglieder. Prüfe, ob deine Abfrage die Zeilen unnötig einschränkt.');
+    }
+    return partial('Teilweise korrekt: Die Spalten passen, aber die ausgegebenen Zeilen stimmen noch nicht mit der Aufgabe überein. Prüfe zusätzliche Einschränkungen oder Zusammenfassungen.');
+  }
+  if (!rowsMatch && taskConfig.limit !== null && context.n !== taskConfig.limit && analysis.limit !== null && analysis.limit !== taskConfig.limit) return partial(rowCountText(context.n, taskConfig.limit));
+  if (taskConfig.order) {
+    const first = analysis.orderBy[0];
+    if (!first) return partial(taskConfig.texts.noOrder(context));
+    if (first.quoted) return partial("Teilweise korrekt: Hinter ORDER BY steht ein Textwert. Sortiere nach der Spalte ohne einfache Anführungszeichen.");
+    if (first.column !== taskConfig.order.column) return partial(taskConfig.texts.wrongCol ? taskConfig.texts.wrongCol(context) : `Teilweise korrekt: Du sortierst nach ${first.column}. Die Aufgabe verlangt eine Sortierung nach ${taskConfig.order.column}. Prüfe die Spalte hinter ORDER BY.`);
+    if (first.dir !== taskConfig.order.dir) return partial(taskConfig.texts.dir(context));
+  }
+  if (taskConfig.limit !== null) {
+    if (analysis.limit === null) return partial(taskConfig.texts.noLimit(context));
+    if (context.n !== taskConfig.limit) return partial(rowCountText(context.n, taskConfig.limit));
+  } else if (analysis.limit !== null) return partial(TEXT_NO_LIMIT_EXPECTED(context));
+  if (!rowsMatch) return partial('Teilweise korrekt: Die Spalten passen, aber die ausgegebenen Zeilen stimmen noch nicht mit der Aufgabe überein. Prüfe zusätzliche Einschränkungen oder Zusammenfassungen.');
+  return fallback;
+}
+
+// ---------------------------------------------------------------------------
+// Ausführen und Anzeigen einer SQL-Aufgabe
+// ---------------------------------------------------------------------------
+
+function taskCard(taskConfig) { return document.getElementById(`task-${taskConfig.id}`); }
+
+function applyFeedback(taskConfig, level, text, { solved = false, relation = null, persist = true } = {}) {
+  state.feedback[taskConfig.id] = { level, text };
+  if (solved) state.solved[taskConfig.id] = true; else delete state.solved[taskConfig.id];
+  if (relation) results[taskConfig.id] = relation; else delete results[taskConfig.id];
+  if (persist) save();
+  renderTaskOutput(taskConfig);
+  updateTabMarks();
+}
+
+// nach renderTaskFeedback in klasse-10/1-Datenbanken/sql-lab.js, angepasst: Rückmeldung bleibt als aria-live-Bereich bestehen, Relation liegt in einem eigenen Platzhalter
+function renderTaskOutput(taskConfig) {
+  const card = taskCard(taskConfig);
+  if (!card) return;
+  const feedback = state.feedback[taskConfig.id];
+  const box = card.querySelector('.sql-feedback');
+  box.className = `feedback ${feedback ? feedback.level : ''} sql-feedback`;
+  box.textContent = feedback ? feedback.text : '';
+  const slot = card.querySelector('.sql9-relation-slot');
+  slot.replaceChildren();
+  if (results[taskConfig.id]) slot.append(renderRelation(results[taskConfig.id]));
+  const run = card.querySelector('.sql9-run');
+  if (run) run.disabled = !databaseReady || running.has(taskConfig.id);
+}
+
+async function runTask(taskConfig, { auto = false } = {}) {
+  if (running.has(taskConfig.id)) return;
+  const sqlText = state.answers[taskConfig.id] || '';
+  const check = validateSelectStatement(sqlText);
+  if (!check.ok) { applyFeedback(taskConfig, 'hint', check.message); return; }
+  if (!databaseReady) { applyFeedback(taskConfig, 'hint', 'Warte bitte, bis die Tabelle users vollständig geladen ist.', { persist: false }); return; }
+  running.add(taskConfig.id);
+  if (auto) renderTaskOutput(taskConfig);
+  else applyFeedback(taskConfig, 'hint', 'Die Abfrage wird ausgeführt …', { persist: false });
+  try {
+    const actual = await database.exec(check.sql);
+    const verdict = await evaluate(taskConfig, analyzeQuery(check.sql), actual);
+    if ((state.answers[taskConfig.id] || '') === sqlText) applyFeedback(taskConfig, verdict.level, verdict.text, { solved: verdict.solved === true, relation: actual });
+  } catch (error) {
+    if ((state.answers[taskConfig.id] || '') === sqlText) applyFeedback(taskConfig, 'error', diagnoseError(error, check.sql));
+  } finally {
+    running.delete(taskConfig.id);
+    renderTaskOutput(taskConfig);
+  }
+}
+
+// nach renderRelation in klasse-10/1-Datenbanken/sql-lab.js, angepasst: alle Zeilen statt höchstens 100, kein aria-live am Container
+function renderRelation(relation) {
+  const shell = element('section', 'table-shell result-relation');
+  shell.setAttribute('aria-label', 'Ergebnisrelation deiner SQL-Abfrage');
+  const caption = element('div', 'table-caption');
+  caption.append(element('strong', '', 'Ergebnisrelation'), element('span', '', `${relation.values.length} Zeile(n)`));
+  shell.append(caption);
+  if (!relation.values.length) { shell.append(element('p', 'empty-result', 'Die Abfrage ist gültig, liefert aber keine Datensätze.')); return shell; }
+  const scroll = element('div', 'table-scroll'); scroll.tabIndex = 0; scroll.setAttribute('aria-label', 'Ergebnisrelation horizontal und vertikal scrollen');
+  const table = element('table', `data-table${relation.columns.length <= 3 ? ' compact' : ''}`);
+  table.append(element('caption', 'visually-hidden', 'Ergebnis deiner SQL-Abfrage'));
+  const head = document.createElement('thead'); const headRow = document.createElement('tr');
+  relation.columns.forEach((column) => { const th = element('th', '', column); th.scope = 'col'; headRow.append(th); });
+  head.append(headRow);
+  const body = document.createElement('tbody');
+  relation.values.forEach((values) => { const tr = document.createElement('tr'); values.forEach((value) => tr.append(element('td', '', value === null ? 'NULL' : String(value)))); body.append(tr); });
+  table.append(head, body); scroll.append(table); shell.append(scroll);
+  return shell;
+}
+
+// nach appendHints in klasse-10/1-Datenbanken/sql-lab.js, angepasst: eine Hilfe kann Text, einen SQL-Block und einen Schlusstext enthalten
+function appendHints(card, hints) {
+  const box = element('div', 'help-stack');
+  hints.forEach((hint, index) => {
+    const details = element('details'); details.append(element('summary', '', `Hilfe ${index + 1}`));
+    const parts = typeof hint === 'string' ? { before: hint } : hint;
+    if (parts.before) details.append(element('p', '', parts.before));
+    if (parts.sql) details.append(sqlBlock(parts.sql));
+    if (parts.after) details.append(element('p', '', parts.after));
+    box.append(details);
+  });
+  card.append(box);
+}
+
+function renderDescriptionFeedback(task, box) {
+  box.replaceChildren();
+  const feedback = state.descriptionFeedback[task.id];
+  if (!feedback) return;
+  const level = Number.isInteger(feedback.points) ? feedback.points === 3 ? 'success' : feedback.points > 0 ? 'partial' : 'error' : feedback.level;
+  box.className = `result server-feedback ${level}`;
+  if (Number.isInteger(feedback.points)) {
+    renderCompactEvaluation(box, { ...feedback, maxPoints: 3, feedback: feedback.text }, { maxHints: 1 });
+  } else box.append(element('p', '', feedback.text));
+}
+
+function renderDescriptionTask(task) {
+  const card = element('section', 'task-card sql-task description-task');
+  card.id = `task-${task.id}`;
+  card.append(element('h3', '', task.title), element('p', 'description-task-tab', task.tabLabel), paragraph(task.prompt), sqlBlock(task.sql));
+  const label = element('label', 'sql-label', 'Deine Erklärung');
+  label.htmlFor = `input-${task.id}`;
+  const input = document.createElement('textarea');
+  input.id = label.htmlFor; input.className = 'description-input'; input.maxLength = 1200; input.value = state.descriptionAnswers[task.id] || '';
+  input.addEventListener('input', () => {
+    state.descriptionAnswers[task.id] = input.value;
+    descriptionRequests.set(task.id, (descriptionRequests.get(task.id) || 0) + 1);
+    delete state.descriptionFeedback[task.id]; save(); renderDescriptionFeedback(task, output); updateTabMarks();
+  });
+  card.append(label, input);
+  appendHints(card, task.hints);
+  const actions = element('div', 'action-row');
+  const button = element('button', 'primary-button', 'Erklärung prüfen'); button.type = 'button';
+  button.addEventListener('click', () => submitDescription(task, input, button, output));
+  actions.append(button); card.append(actions);
+  const output = element('section', 'result server-feedback'); output.setAttribute('aria-live', 'polite');
+  card.append(output); renderDescriptionFeedback(task, output);
+  return card;
+}
+
+async function submitDescription(task, input, button, output) {
+  if (button.disabled) return;
+  const submittedText = input.value;
+  if (submittedText.trim().length < 10) {
+    state.descriptionFeedback[task.id] = { level: 'error', text: 'Bitte formuliere eine etwas ausführlichere Antwort.' };
+    save(); renderDescriptionFeedback(task, output); input.focus(); return;
+  }
+  if (!isValidScriptServerUrl(SCRIPT_SERVER_URL)) {
+    state.descriptionFeedback[task.id] = { level: 'error', text: 'Der Auswertungsserver ist nicht korrekt eingerichtet.' };
+    save(); renderDescriptionFeedback(task, output); return;
+  }
+  const requestId = (descriptionRequests.get(task.id) || 0) + 1;
+  descriptionRequests.set(task.id, requestId);
+  const submittedTabRevision = tabRevision;
+  input.disabled = true; button.disabled = true; button.textContent = 'Erklärung wird geprüft …';
+  output.replaceChildren(element('p', '', 'Deine Erklärung wird ausgewertet.'));
+  output.className = 'result server-feedback';
+  const stillCurrent = () => descriptionRequests.get(task.id) === requestId && tabRevision === submittedTabRevision && state.tab === task.tab && input.value === submittedText;
+  try {
+    const result = await evaluateSemanticAnswer({ serverUrl: SCRIPT_SERVER_URL, taskId: task.serverTaskId, answer: submittedText, expectedMaxPoints: 3 });
+    if (!stillCurrent()) return;
+    const classified = classifyDescriptionResult(result);
+    if (classified.level !== 'error' && !String(result.feedback || '').trim()) {
+      const key = classified.status === 'korrekt' ? 'korrekt' : classified.status === 'teilweise korrekt' ? 'partial' : 'incorrect';
+      classified.text = task.fallbacks[key];
+    }
+    state.descriptionFeedback[task.id] = classified;
+  } catch (error) {
+    if (!stillCurrent()) return;
+    state.descriptionFeedback[task.id] = { level: 'error', text: error.message || 'Die Auswertung konnte nicht abgeschlossen werden. Bitte versuche es erneut.' };
+  } finally {
+    if (stillCurrent()) {
+      input.disabled = false; button.disabled = false; button.textContent = 'Erklärung prüfen';
+      save(); renderDescriptionFeedback(task, output); updateTabMarks();
+    } else if (input.isConnected && tabRevision === submittedTabRevision && state.tab === task.tab) {
+      input.disabled = false; button.disabled = false; button.textContent = 'Erklärung prüfen';
+    }
+  }
+}
+
+function renderTask(taskConfig) {
+  const card = element('section', 'task-card sql-task'); card.id = `task-${taskConfig.id}`;
+  card.append(element('h3', '', `Aufgabe ${TASKS.indexOf(taskConfig) + 1}`), paragraph(taskConfig.prompt));
+  // nach renderSqlTask in klasse-10/1-Datenbanken/sql-lab.js, angepasst: eigene Prüflogik, Hilfen über appendHints
+  const label = element('label', 'sql-label', 'Deine vollständige SQL-Anweisung'); label.htmlFor = `input-${taskConfig.id}`;
+  const input = document.createElement('textarea'); input.id = label.htmlFor; input.className = 'sql-input'; input.spellcheck = false; input.placeholder = NEUTRAL_SQL_PLACEHOLDER;
+  const hasSavedAnswer = Object.prototype.hasOwnProperty.call(state.answers, taskConfig.id);
+  input.value = hasSavedAnswer ? state.answers[taskConfig.id] : (taskConfig.correctionSql ? '' : taskConfig.initialSql);
+  if (!hasSavedAnswer && taskConfig.initialSql) { state.answers[taskConfig.id] = taskConfig.initialSql; save(); }
+  const resetOutput = () => {
+    const wasSolved = Boolean(state.solved[taskConfig.id]);
+    delete state.feedback[taskConfig.id]; delete state.solved[taskConfig.id]; delete results[taskConfig.id];
+    save(); renderTaskOutput(taskConfig);
+    if (wasSolved) updateTabMarks();
+  };
+  input.addEventListener('input', () => { state.answers[taskConfig.id] = input.value; resetOutput(); });
+  input.addEventListener('keydown', (event) => { if ((event.ctrlKey || event.metaKey) && event.key === 'Enter') { event.preventDefault(); runTask(taskConfig); } });
+  if (taskConfig.correctionSql) card.append(element('p', 'sql-label', 'Fehlerhafte Anweisung'), sqlBlock(taskConfig.correctionSql));
+  card.append(label, input);
+  appendHints(card, taskConfig.hints);
+  const actions = element('div', 'action-row');
+  const run = element('button', 'primary-button sql9-run', 'Abfrage ausführen und prüfen'); run.type = 'button'; run.disabled = !databaseReady;
+  run.addEventListener('click', () => runTask(taskConfig));
+  actions.append(run);
+  if (taskConfig.initialSql && !taskConfig.correctionSql) {
+    const reset = element('button', 'secondary-button', 'Ursprungsanweisung wiederherstellen'); reset.type = 'button';
+    reset.addEventListener('click', () => { input.value = taskConfig.initialSql; state.answers[taskConfig.id] = taskConfig.initialSql; resetOutput(); input.focus(); });
+    actions.append(reset);
+  }
+  actions.append(element('span', 'shortcut-hint', 'Strg/Cmd + Enter'));
+  card.append(actions);
+  const output = element('div', 'sql9-task-output');
+  const feedback = element('p', 'feedback sql-feedback'); feedback.setAttribute('aria-live', 'polite');
+  output.append(feedback, element('div', 'sql9-relation-slot'));
+  card.append(output);
+  if (taskConfig.id === 't6') card.append(renderYoungest());
+  return card;
+}
+
+// ---------------------------------------------------------------------------
+// Zusatzteil Aufgabe 6: jüngstes Mitglied
+// ---------------------------------------------------------------------------
+
+function youngestAge() {
+  const now = new Date();
+  const month = now.getMonth() + 1;
+  const before = month < YOUNGEST.birthMonth || (month === YOUNGEST.birthMonth && now.getDate() < YOUNGEST.birthDay);
+  return now.getFullYear() - YOUNGEST.birthYear - (before ? 1 : 0);
+}
+function normalizeName(value) { return value.trim().toLowerCase().replace(/^@+/, '').replace(/\s+/g, ' ').trim(); }
+function youngestFeedback(kind) {
+  const texts = {
+    empty: ['hint', 'Noch nicht korrekt: Fülle beide Felder aus.'],
+    correct: ['success', `Korrekt: Das jüngste Mitglied ist gartenlesemaus (Elena Heidenkamp), geboren am 7. Juli 2010. Heute ist sie ${youngestAge()} Jahre alt. Bei aufsteigender Sortierung steht sie ganz unten, weil sie das späteste Geburtsdatum hat.`],
+    ageWrong: ['partial', 'Teilweise korrekt: Das Mitglied stimmt. Prüfe das Alter: Wie viele Jahre liegen zwischen dem 7. Juli 2010 und heute? Achte darauf, ob der Geburtstag in diesem Jahr schon war.'],
+    admin: ['hint', 'Noch nicht korrekt: admin steht zwar ganz oben, hat aber kein Geburtsdatum (NULL). Bei aufsteigender Sortierung steht das jüngste Mitglied am Ende der Liste.'],
+    oldest: ['hint', 'Noch nicht korrekt: zornigeracket ist das älteste Mitglied mit Geburtsdatum. Je jünger ein Mitglied ist, desto später ist sein Geburtsdatum – bei aufsteigender Sortierung steht es ganz unten.'],
+    wrong: ['hint', 'Noch nicht korrekt: Das ist nicht das jüngste Mitglied. Scrolle in deiner sortierten Ergebnisrelation bis ganz nach unten: Dort steht das späteste Geburtsdatum.']
+  };
+  return texts[kind];
+}
+function classifyYoungest() {
+  const name = normalizeName(state.youngest.username);
+  const age = state.youngest.age.trim();
+  if (!name || !age) return 'empty';
+  if (name === YOUNGEST.username || name === YOUNGEST.fullName) return /^\d+$/.test(age) && Number(age) === youngestAge() ? 'correct' : 'ageWrong';
+  if (name === 'admin') return 'admin';
+  if (name === 'zornigeracket') return 'oldest';
+  return 'wrong';
+}
+function renderYoungestFeedback(box) {
+  const entry = state.youngest.feedback ? youngestFeedback(state.youngest.feedback) : null;
+  box.className = `feedback ${entry ? entry[0] : ''} sql9-youngest-feedback`;
+  box.textContent = entry ? entry[1] : '';
+}
+function renderYoungest() {
+  const wrapper = element('div', 'sql9-youngest');
+  wrapper.append(paragraph('**Gib** an, wer das jüngste Mitglied ist und wie alt es heute ist.'));
+  const feedback = element('p', 'feedback sql9-youngest-feedback'); feedback.setAttribute('aria-live', 'polite');
+  const clearFeedback = () => { const hadCorrect = state.youngest.feedback === 'correct'; state.youngest.feedback = null; save(); renderYoungestFeedback(feedback); if (hadCorrect) updateTabMarks(); };
+  [['youngest-name', 'Benutzername des jüngsten Mitglieds', 'username', null], ['youngest-age', 'Alter heute (in Jahren)', 'age', 'numeric']].forEach(([id, text, key, mode]) => {
+    const row = element('div', 'gap-row');
+    const label = element('label', '', text); label.htmlFor = id;
+    const input = document.createElement('input'); input.id = id; input.className = 'gap-input'; input.type = 'text'; input.autocomplete = 'off'; input.spellcheck = false;
+    if (mode) input.inputMode = mode;
+    input.value = state.youngest[key];
+    input.addEventListener('input', () => { state.youngest[key] = input.value; clearFeedback(); });
+    row.append(label, input); wrapper.append(row);
+  });
+  const actions = element('div', 'action-row');
+  const check = element('button', 'primary-button', 'Antwort prüfen'); check.type = 'button';
+  check.addEventListener('click', () => { state.youngest.feedback = classifyYoungest(); save(); renderYoungestFeedback(feedback); updateTabMarks(); });
+  actions.append(check); wrapper.append(actions, feedback);
+  renderYoungestFeedback(feedback);
+  return wrapper;
+}
+
+// ---------------------------------------------------------------------------
+// Tabs und Seitenaufbau
+// ---------------------------------------------------------------------------
+
+function updateTabMarks() { TABS.forEach(([id]) => document.getElementById(`tab-${id}`)?.classList.toggle('is-complete', isTabComplete(id))); }
+function tabIndex(id) { return TABS.findIndex(([tabId]) => tabId === id); }
+function activateTab(id, { focusContent = false } = {}) { tabRevision += 1; state.tab = id; save(); render({ focusContent }); }
+
+function renderTabs() {
+  const tabs = document.getElementById('sql-tabs'); tabs.replaceChildren();
+  TABS.forEach(([id, label], index) => {
+    const button = element('button', `step-tab${isTabComplete(id) ? ' is-complete' : ''}`);
+    button.type = 'button'; button.id = `tab-${id}`; button.dataset.tab = id; button.setAttribute('role', 'tab'); button.setAttribute('aria-controls', 'sql-panel');
+    button.setAttribute('aria-selected', String(state.tab === id));
+    button.append(element('span', '', String(index + 1)), element('small', '', label));
+    button.addEventListener('click', () => activateTab(id));
+    tabs.append(button);
+  });
+  enableTabKeyboardNavigation(tabs);
+  syncTabSemantics(tabs, state.tab);
+}
+
+// nach schemaCard in klasse-10/1-Datenbanken/sql-lab.js
+function schemaCard(schemas) {
+  const card = element('aside', 'scenario-card accent sql-schema-card'); card.setAttribute('aria-label', 'Tabellenschema der SQL-Übungsdaten');
+  const scroll = element('div', 'schema-scroll'); scroll.tabIndex = 0; scroll.setAttribute('aria-label', 'Tabellenschemata horizontal scrollen');
+  // Überschrift und Innenabstände gehören zur Wischfläche des gesamten Kastens.
+  scroll.append(element('strong', 'schema-title', schemas.length === 1 ? 'Tabellenschema' : 'Tabellenschemata'));
+  schemas.forEach(({ table, columns }) => scroll.append(element('code', 'schema-code', `${table} (${columns.map(([name, type]) => `${name}: ${type}`).join(', ')})`)));
+  card.append(scroll);
+  return card;
+}
+
+function stepHeading(id) {
+  const [, , kicker, title] = TABS[tabIndex(id)];
+  const heading = element('div', 'step-heading'); heading.append(element('span', 'step-number', String(tabIndex(id) + 1)));
+  const copy = element('div'); copy.append(element('p', 'step-kicker', kicker), element('h2', '', title)); heading.append(copy);
+  return heading;
+}
+
+function render({ focusContent = false } = {}) {
+  document.body.classList.toggle('sql-intro-active', state.tab === 'intro');
+  renderTabs();
+  const panel = document.getElementById('sql-panel'); panel.replaceChildren();
+  panel.setAttribute('aria-labelledby', `tab-${state.tab}`);
+  if (state.tab !== 'intro' && state.tab !== 'quiz') panel.append(schemaCard(USERS_TABLE_SCHEMAS));
+  panel.append(stepHeading(state.tab));
+  if (state.tab === 'intro') renderIntro(panel);
+  else if (state.tab === 'quiz') renderQuiz(panel);
+  else renderTaskTab(panel);
+  renderTabFlowNavigation(panel, { items: TABS.map(([id, label]) => ({ id, label })), currentId: state.tab, onNavigate: activateTab });
+  if (focusContent) focusTabPanelStart(panel);
+}
+
+// ---------------------------------------------------------------------------
+// Reiter 2 bis 6
+// ---------------------------------------------------------------------------
+
+function exampleTable(caption, columns, rows, className = '') {
+  const table = element('table', `data-table sql9-mini-table${className ? ` ${className}` : ''}`);
+  table.append(element('caption', '', caption));
+  const head = document.createElement('thead'); const headRow = document.createElement('tr');
+  columns.forEach((column) => { const th = element('th', '', column); th.scope = 'col'; headRow.append(th); });
+  head.append(headRow);
+  const body = document.createElement('tbody');
+  rows.forEach((values) => { const tr = document.createElement('tr'); values.forEach((value) => tr.append(element('td', '', value))); body.append(tr); });
+  table.append(head, body);
+  return table;
+}
+
+function explainCard(title) { const card = element('section', 'scenario-card aggregate-intro'); card.append(element('h3', '', title)); return card; }
+
+function orderByCard() {
+  const card = explainCard('Kurz erklärt: Sortieren mit ORDER BY');
+  card.append(
+    element('p', '', 'Die Werbekunden möchten Listen, die nach Namen, Größe oder Alter geordnet sind. Dafür hängst du ORDER BY an die Abfrage an.'),
+    sqlBlock('SELECT Spalte1, Spalte2, …\nFROM Tabellenname\nORDER BY Spaltenname [ASC | DESC]')
+  );
+  const list = element('dl', 'aggregate-list');
+  [['ASC', 'aufsteigend: A bis Z, klein nach groß, früh nach spät'], ['DESC', 'absteigend: Z bis A, groß nach klein, spät nach früh'], ['[ ] und |', 'Eckige Klammern bedeuten: kann weggelassen werden. | bedeutet: oder. Ohne Angabe gilt ASC.']]
+    .forEach(([term, meaning]) => list.append(element('dt', '', term), element('dd', '', meaning)));
+  card.append(list);
+  const row = element('div', 'sql9-example-row sql9-example-row-three');
+  const columns = ['username', 'centimeters'];
+  row.append(
+    exampleTable('ohne ORDER BY', columns, [['zornigerfotograf', '168'], ['wanderwut_finn', '183'], ['bergcoder', '174']]),
+    exampleTable('ORDER BY centimeters', columns, [['zornigerfotograf', '168'], ['bergcoder', '174'], ['wanderwut_finn', '183']]),
+    exampleTable('ORDER BY centimeters DESC', columns, [['wanderwut_finn', '183'], ['bergcoder', '174'], ['zornigerfotograf', '168']])
+  );
+  card.insertBefore(row, card.children[1]);
+  card.append(paragraph('**NULL** bedeutet: In diesem Feld ist kein Wert eingetragen. Beim Sortieren mit ASC steht NULL ganz oben, mit DESC ganz unten.'));
+  return card;
+}
+
+function distinctCard() {
+  const card = explainCard('Kurz erklärt: Doppelte Werte vermeiden mit DISTINCT');
+  card.append(
+    element('p', '', 'Die Werbekunden fragen: Aus welchen Orten und Ländern kommen unsere Mitglieder? In einer Spalte kommen oft viele gleiche Werte vor. Mit DISTINCT direkt hinter SELECT wird jeder Wert nur einmal ausgegeben.'),
+    sqlBlock('SELECT DISTINCT Spalte1, Spalte2, …\nFROM Tabellenname')
+  );
+  const row = element('div', 'sql9-example-row sql9-example-row-two');
+  const left = element('div', 'sql9-example'); left.append(sqlBlock('SELECT gender\nFROM users'), exampleTable('Ergebnisrelation ohne DISTINCT', ['gender'], [['male'], ['male'], ['male'], ['male'], ['male'], ['male'], ['…']]), element('p', 'sql9-example-count', '317 Zeilen'));
+  const right = element('div', 'sql9-example'); right.append(sqlBlock('SELECT DISTINCT gender\nFROM users'), exampleTable('Ergebnisrelation mit DISTINCT', ['gender'], [['male'], ['female'], ['diverse'], ['NULL']]), element('p', 'sql9-example-count', '4 Zeilen'));
+  row.append(left, right);
+  card.append(row, element('p', '', 'DISTINCT verändert die Tabelle users nicht. Es entfernt die Dopplungen nur in der Ergebnisrelation. NULL erscheint als eigener Wert: Beim Konto admin ist kein Geschlecht eingetragen.'));
+  return card;
+}
+
+function limitCard() {
+  const card = explainCard('Kurz erklärt: Zeilen begrenzen mit LIMIT');
+  card.append(
+    element('p', '', 'Für eine Vorschau auf dem Handy reichen den Werbekunden wenige Zeilen. Bei einem langsamen Netz dauert es außerdem, bis alle 317 Mitglieder angezeigt werden. Mit LIMIT legst du fest, wie viele Zeilen höchstens ausgegeben werden.'),
+    sqlBlock('SELECT username\nFROM users\nLIMIT 25'),
+    element('p', '', 'Diese Abfrage zeigt die ersten 25 Benutzernamen. LIMIT steht immer am Ende der Abfrage – auch hinter ORDER BY:'),
+    sqlBlock('SELECT …\nFROM …\nORDER BY …\nLIMIT …')
+  );
+  return card;
+}
+
+function renderTaskTab(panel) {
+  const introCard = {
+    projection: () => { const card = element('div', 'scenario-card'); card.append(paragraph('Im InstaHub-Datenbanklabor fragst du eine echte Tabelle `users` mit 317 Mitgliedern ab. Die Daten stimmen nicht mit deinem eigenen InstaHub überein.'), paragraph('**Tippe** deine Abfrage ein und **klicke** auf „Abfrage ausführen und prüfen“. Darunter erscheint die Ergebnisrelation deiner Abfrage.')); return card; },
+    orderBy: orderByCard,
+    distinct: distinctCard,
+    limit: limitCard,
+    fast: () => element('div', 'scenario-card')
+  }[state.tab];
+  const descriptionTask = DESCRIPTION_BY_TAB.get(state.tab);
+  if (state.tab === 'orderBy') panel.append(introCard());
+  if (descriptionTask) panel.append(renderDescriptionTask(descriptionTask));
+  if (state.tab !== 'fast' && state.tab !== 'orderBy') panel.append(introCard());
+  TAB_TASKS[state.tab].forEach((id) => { const taskConfig = TASK_BY_ID.get(id); panel.append(renderTask(taskConfig)); renderTaskOutput(taskConfig); });
+}
+
+// ---------------------------------------------------------------------------
+// Reiter 1 – Einführung (Design nach klasse-11/1-Kuenstliche-Intelligenz/aufgabe3.html, #split-intro)
+// ---------------------------------------------------------------------------
+
+function introSnippet(step) {
+  const selected = step.selected || [];
+  const wrapper = element('div', 'sql9-intro-table');
+  if (step.schema) wrapper.append(element('code', 'schema-code sql9-intro-schema', INTRO_SCHEMA_LINE));
+  wrapper.append(element('p', 'sql9-snippet-label', step.label));
+  const shell = element('div', `sql9-snippet${step.source ? ' is-source' : ''}`);
+  const scroll = element('div', 'table-scroll'); scroll.tabIndex = 0; scroll.setAttribute('aria-label', 'Ausschnitt aus users horizontal scrollen');
+  const table = element('table', 'data-table sql9-snippet-table');
+  let caption = 'Ausschnitt aus users';
+  if (selected.length === INTRO_COLUMNS.length) caption += ', ausgewählte Spalten: alle Spalten';
+  else if (selected.length) caption += `, ausgewählte ${selected.length === 1 ? 'Spalte' : 'Spalten'}: ${selected.join(', ')}`;
+  else if (step.source) caption += ', Tabelle für FROM users gewählt';
+  table.append(element('caption', 'visually-hidden', caption));
+  const stateClass = (column) => (!selected.length ? '' : selected.includes(column) ? 'is-selected' : 'is-dimmed');
+  const head = document.createElement('thead'); const headRow = document.createElement('tr');
+  INTRO_COLUMNS.forEach((column) => {
+    const th = element('th', stateClass(column)); th.scope = 'col';
+    if (selected.includes(column)) { const mark = element('span', 'sql9-check', '✓ '); mark.setAttribute('aria-hidden', 'true'); th.append(mark); }
+    th.append(document.createTextNode(column)); headRow.append(th);
+  });
+  head.append(headRow);
+  const body = document.createElement('tbody');
+  INTRO_ROWS.forEach((row) => { const tr = document.createElement('tr'); INTRO_COLUMNS.forEach((column) => tr.append(element('td', stateClass(column), row[column]))); body.append(tr); });
+  table.append(head, body); scroll.append(table); shell.append(scroll); wrapper.append(shell);
+  return wrapper;
+}
+
+function introFlow() {
+  const flow = element('div', 'sql9-flow');
+  ['Tabelle users', 'Abfrage in SQL', 'Ergebnisrelation: wieder eine Tabelle'].forEach((text, index) => {
+    if (index) { const arrow = element('span', 'sql9-flow-arrow'); arrow.setAttribute('aria-hidden', 'true'); flow.append(arrow); }
+    flow.append(element('div', 'sql9-flow-box', text));
+  });
+  return flow;
+}
+
+function introResult(step) {
+  const wrapper = element('div', 'sql9-result-table');
+  if (!step.result) { const empty = element('div', 'sql9-result-empty', '–'); empty.setAttribute('aria-hidden', 'true'); wrapper.append(empty); return wrapper; }
+  const scroll = element('div', 'table-scroll'); scroll.tabIndex = 0; scroll.setAttribute('aria-label', 'Ergebnisrelation des Ausschnitts horizontal scrollen');
+  const table = element('table', 'data-table sql9-result-cells');
+  table.append(element('caption', 'visually-hidden', `Ergebnisrelation des Ausschnitts, Spalten: ${step.result.columns.join(', ')}`));
+  const head = document.createElement('thead'); const headRow = document.createElement('tr');
+  step.result.columns.forEach((column) => { const th = element('th', '', column); th.scope = 'col'; headRow.append(th); });
+  head.append(headRow);
+  const body = document.createElement('tbody');
+  INTRO_ROWS.forEach((row) => { const tr = document.createElement('tr'); step.result.columns.forEach((column) => tr.append(element('td', step.result.filled ? 'is-filled is-current' : '', step.result.filled ? row[column] : '–'))); body.append(tr); });
+  table.append(head, body); scroll.append(table); wrapper.append(scroll);
+  return wrapper;
+}
+
+function introMemo() {
+  const memo = element('section', 'short-summary sql9-intro-memo'); memo.setAttribute('aria-labelledby', 'sql9-memo-title');
+  const title = element('h3', '', 'Merke: Projektion'); title.id = 'sql9-memo-title';
+  memo.append(
+    title,
+    paragraph('Mit einer Abfrage wählst du Spalten aus einer Tabelle aus. Diese Auswahl von Spalten heißt **Projektion**.'),
+    sqlBlock('SELECT Spalte1, Spalte2, …\nFROM Tabellenname'),
+    element('p', '', 'FROM nennt die Tabelle, SELECT die Spalten. Mehrere Spalten trennst du durch Kommas. Alle Zeilen bleiben erhalten.'),
+    sqlBlock('SELECT *\nFROM Tabellenname'),
+    element('p', '', 'gibt die gesamte Tabelle aus.')
+  );
+  return memo;
+}
+
+function renderIntro(panel) {
+  const card = element('section', 'task-card sql9-intro');
+  const heading = element('div', 'sql9-intro-heading');
+  const progress = element('div', 'sql9-intro-progress'); progress.setAttribute('aria-label', 'Ablauf der Erklärung');
+  const phaseNodes = INTRO_PHASES.map((text) => { const span = element('span', '', text); progress.append(span); return span; });
+  const stepper = element('div', 'intro-stepper'); stepper.setAttribute('role', 'group'); stepper.setAttribute('aria-label', 'Erklärung durchklicken');
+  const previous = element('button', 'secondary-button', 'Zurück'); previous.type = 'button'; previous.id = 'intro-prev';
+  const count = element('span', ''); count.id = 'intro-frame-count'; count.setAttribute('aria-live', 'polite');
+  const next = element('button', 'primary-button', 'Weiter'); next.type = 'button'; next.id = 'intro-next';
+  stepper.append(previous, count, next);
+  heading.append(progress, stepper);
+  const hint = element('p', 'sql9-intro-hint'); hint.append(element('strong', '', 'Hinweis:'), document.createTextNode(' '), element('strong', '', 'Klicke'), document.createTextNode(' dich zunächst durch die Animation, '), element('strong', '', 'bearbeite'), document.createTextNode(' anschließend die Aufgaben in den nächsten Reitern.'));
+  const workspace = element('div', 'sql9-intro-workspace');
+  const visual = element('div', 'sql9-intro-visual');
+  const explanation = element('p', 'intro-explanation'); explanation.id = 'intro-explanation'; explanation.setAttribute('aria-live', 'polite');
+  const statement = element('pre', 'given-sql sql9-intro-sql');
+  const stage = element('div', 'sql9-intro-stage');
+  visual.append(explanation, statement, stage);
+  const resultCard = element('div', 'sql9-result-card');
+  const resultBody = element('div', 'sql9-result-body');
+  const note = element('p', 'sql9-result-note');
+  resultCard.append(element('h3', '', 'Ergebnisrelation'), resultBody, note);
+  workspace.append(visual, resultCard);
+  const memoSlot = element('div', 'sql9-memo-slot');
+  card.append(heading, hint, workspace, memoSlot);
+  panel.append(card);
+
+  const update = () => {
+    const index = state.introStep - 1; const step = INTRO_STEPS[index];
+    phaseNodes.forEach((span, phaseIndex) => {
+      const phase = phaseIndex + 1;
+      span.className = phase === step.phase ? 'is-active' : phase < step.phase ? 'is-complete' : '';
+      if (phase === step.phase) span.setAttribute('aria-current', 'step'); else span.removeAttribute('aria-current');
+      span.textContent = phase < step.phase ? `✓ ${INTRO_PHASES[phaseIndex]}` : INTRO_PHASES[phaseIndex];
+    });
+    count.textContent = `Schritt ${state.introStep} von ${INTRO_STEPS.length}`;
+    previous.disabled = index === 0; next.disabled = index === INTRO_STEPS.length - 1;
+    explanation.textContent = step.explanation;
+    statement.replaceChildren();
+    const code = element('code'); statement.append(code);
+    if (step.sql) {
+      [['select', step.sql.select], ['from', step.sql.from]].forEach(([clause, line]) => code.append(element('span', step.sql.active.includes(clause) ? 'is-active-clause' : '', line)));
+      statement.classList.remove('is-empty');
+    } else { code.append(element('span', '', 'Hier erscheint gleich die Abfrage.')); statement.classList.add('is-empty'); }
+    stage.replaceChildren();
+    if (step.visual === 'task') { const task = element('div', 'scenario-card accent sql9-intro-task'); task.append(paragraph('**Auftrag der Werbekunden:** Erstelle eine Übersicht über die Geburtsdaten aller Mitglieder.')); stage.append(task); }
+    else if (step.visual === 'flow') stage.append(introFlow());
+    else stage.append(introSnippet(step));
+    resultBody.replaceChildren(introResult(step));
+    note.textContent = step.note;
+    memoSlot.replaceChildren();
+    if (state.introStep === INTRO_STEPS.length) memoSlot.append(introMemo());
+  };
+  const change = (direction, button, other) => {
+    state.introStep = Math.max(1, Math.min(INTRO_STEPS.length, state.introStep + direction));
+    save(); update(); updateTabMarks();
+    (button.disabled ? other : button).focus();
+  };
+  previous.addEventListener('click', () => change(-1, previous, next));
+  next.addEventListener('click', () => change(1, next, previous));
+  update();
+}
+
+// ---------------------------------------------------------------------------
+// Reiter 7 – Abschlussquiz, Übersicht, Merke
+// ---------------------------------------------------------------------------
+
+function quizSelection(question) { return Array.isArray(state.quiz[question.id]) ? state.quiz[question.id] : []; }
+
+function renderQuiz(panel) {
+  const card = element('section', 'task-card sql-task');
+  card.append(element('h3', '', 'Abschlussquiz'), paragraph('**Kreuze** alle richtigen Antworten an. Bei manchen Fragen sind mehrere Antworten richtig.'));
+  const form = element('form', 'final-quiz'); form.id = 'final-quiz'; form.noValidate = true;
+  const feedback = element('p', 'feedback sql-quiz-feedback'); feedback.setAttribute('aria-live', 'polite');
+  const showFeedback = () => { feedback.className = `feedback ${state.quizFeedback ? state.quizFeedback.level : ''} sql-quiz-feedback`; feedback.textContent = state.quizFeedback ? state.quizFeedback.text : ''; };
+  // nach renderFinalQuiz in klasse-10/1-Datenbanken/sql-lab.js, angepasst: SQL-Blöcke in Frage und Antwort, Rückmeldung als dauerhafter aria-live-Bereich
+  FINAL_QUIZ.forEach((question, index) => {
+    const field = document.createElement('fieldset'); const legend = document.createElement('legend');
+    legend.append(element('span', '', String(index + 1)), document.createTextNode(question.prompt)); field.append(legend);
+    if (question.sql) field.append(sqlBlock(question.sql));
+    const choices = element('div', 'choice-list');
+    question.options.forEach(([id, text, , isSql]) => {
+      const label = element('label', 'choice-option'); const input = document.createElement('input');
+      input.type = 'checkbox'; input.name = `sql9-final-${question.id}`; input.value = id; input.checked = quizSelection(question).includes(id);
+      input.addEventListener('change', () => {
+        const selected = quizSelection(question).filter((value) => value !== id);
+        state.quiz[question.id] = input.checked ? [...selected, id] : selected;
+        state.quizFeedback = null; state.quizPassed = false; save(); showFeedback(); refreshOverview(); updateTabMarks();
+      });
+      const content = element('span'); if (isSql) content.append(element('code', 'quiz-sql', text)); else richText(content, text);
+      label.append(input, content); choices.append(label);
+    });
+    field.append(choices); form.append(field);
+  });
+  const actions = element('div', 'action-row'); const submit = element('button', 'primary-button', 'Quiz prüfen'); submit.type = 'submit'; actions.append(submit); form.append(actions, feedback);
+  const overviewSlot = element('div', 'sql9-overview-slot');
+  const refreshOverview = () => { overviewSlot.replaceChildren(); if (state.quizPassed) overviewSlot.append(renderOverview()); };
+  form.addEventListener('submit', (event) => { event.preventDefault(); checkQuiz(); showFeedback(); refreshOverview(); updateTabMarks(); });
+  // Jede Quizfrage lässt sich zusätzlich einzeln prüfen (../quiz-fragen-pruefen.js).
+  window.addQuizQuestionChecks?.({
+    questions: FINAL_QUIZ.map((question, index) => ({
+      fieldset: form.querySelectorAll('fieldset')[index],
+      solution: question.options.filter(([, , right]) => right).map(([id]) => id),
+      hint: question.hint,
+    })),
+    buttonClass: 'primary-button',
+    rowClass: 'action-row',
+    levels: { high: 'success', medium: 'partial', low: 'hint' },
+    onAllCorrect: () => form.requestSubmit(),
+  });
+  card.append(form); panel.append(card, overviewSlot, renderSummary());
+  appendSolutionDownloadFromTemplate(panel);
+  bindSolutionCodePersistence(panel, state, save);
+  showFeedback(); refreshOverview();
+}
+
+function checkQuiz() {
+  const correct = FINAL_QUIZ.map((question) => {
+    const chosen = new Set(quizSelection(question));
+    return question.options.every(([id, , right]) => chosen.has(id) === right);
+  });
+  const amount = correct.filter(Boolean).length;
+  state.quizPassed = amount === FINAL_QUIZ.length;
+  state.quizFeedback = state.quizPassed
+    ? { level: 'success', text: 'Korrekt: Alle Fragen stimmen. Unten findest du jetzt die Übersicht über die Aufgaben mit Lösungen.' }
+    : amount > 0
+      ? { level: 'partial', text: `Teilweise korrekt: ${amount} von ${FINAL_QUIZ.length} Fragen stimmen. Prüfe die übrigen Fragen erneut.` }
+      : { level: 'hint', text: 'Noch nicht korrekt: Prüfe die Fragen mit den Hinweisen direkt darunter.' };
+  save();
+}
+function renderOverview() {
+  const overview = element('section', 'short-summary sql-quiz-overview'); overview.setAttribute('aria-labelledby', 'sql9-overview-title');
+  const title = element('h3', '', 'Übersicht: alle Aufgaben mit Lösung'); title.id = 'sql9-overview-title'; overview.append(title);
+  const list = document.createElement('ol');
+  DESCRIPTION_TASKS.forEach((task) => {
+    const item = document.createElement('li');
+    item.append(element('strong', '', `${task.tabLabel}: ${task.title}. `)); richText(item, task.prompt);
+    item.append(sqlBlock(task.sql), element('p', '', `Musterbeschreibung: ${task.model}`));
+    list.append(item);
+  });
+  TASKS.forEach((taskConfig) => {
+    const item = document.createElement('li');
+    item.append(element('strong', '', `Aufgabe ${TASKS.indexOf(taskConfig) + 1}: `)); richText(item, taskConfig.prompt);
+    if (taskConfig.correctionSql) item.append(element('p', '', 'Fehlerhafte Anweisung:'), sqlBlock(taskConfig.correctionSql));
+    item.append(element('p', '', taskConfig.correctionSql ? 'Korrigierte Anweisung:' : 'Lösung:'), sqlBlock(`SELECT ${taskConfig.select}\n${taskConfig.tail}`));
+    taskConfig.extra.forEach((line) => {
+      if (line === 'youngest') item.append(element('p', '', `Jüngstes Mitglied: gartenlesemaus (Elena Heidenkamp), geboren am 7. Juli 2010, heute ${youngestAge()} Jahre alt.`));
+      else item.append(element('p', '', line));
+    });
+    list.append(item);
+  });
+  const quizItem = document.createElement('li'); quizItem.append(element('strong', '', 'Abschlussquiz'));
+  const questions = document.createElement('ol');
+  FINAL_QUIZ.forEach((question) => {
+    const entry = document.createElement('li'); entry.append(element('strong', '', question.prompt));
+    if (question.sql) entry.append(sqlBlock(question.sql));
+    const answers = document.createElement('ul');
+    question.options.filter(([, , right]) => right).forEach(([, text, , isSql]) => { const answer = document.createElement('li'); if (isSql) answer.append(element('code', 'quiz-sql', text)); else richText(answer, text); answers.append(answer); });
+    entry.append(answers); questions.append(entry);
+  });
+  quizItem.append(questions); list.append(quizItem);
+  overview.append(list);
+  return overview;
+}
+
+function renderSummary() {
+  const summary = element('section', 'short-summary');
+  summary.setAttribute('aria-labelledby', 'sql9-summary-title');
+  const title = element('h3', '', 'Merke'); title.id = 'sql9-summary-title';
+  summary.append(title, paragraph('FROM nennt die Tabelle. SELECT bestimmt die Ausgabespalten; diese Spaltenauswahl heißt Projektion. `SELECT *` gibt alle Spalten aus. ORDER BY sortiert die Ergebnisrelation: ASC aufsteigend (Voreinstellung), DESC absteigend. Die gespeicherte Tabelle bleibt unverändert.'));
+  return summary;
+}
+async function rerunSavedTasks() {
+  for (const taskConfig of TASKS) if (state.feedback[taskConfig.id]) await runTask(taskConfig, { auto: true });
+}
+
+async function init() {
+  restore();
+  render();
+  document.getElementById('reset-module').addEventListener('click', () => {
+    if (window.confirm('Möchtest du alle SQL-Eingaben und den Fortschritt dieser Aufgabe zurücksetzen?')) {
+      try { localStorage.setItem(MIGRATION_MARKER, 'done'); localStorage.removeItem(STORAGE_KEY); } catch { /* Ohne Speicher weiter nutzbar. */ }
+      location.reload();
+    }
+  });
+  window.addEventListener('beforeunload', () => database?.close());
+  const status = document.getElementById('data-status');
+  try {
+    database = new SqlWorker();
+    await database.init();
+    databaseReady = true;
+    status.textContent = 'Die Tabelle users ist geladen. Du kannst SQL-Abfragen ausführen.'; status.className = 'feedback success'; status.setAttribute('aria-busy', 'false');
+    document.querySelectorAll('.sql9-run').forEach((button) => { button.disabled = false; });
+    await rerunSavedTasks();
+  } catch (error) {
+    status.textContent = 'Die Übungsdaten konnten nicht geladen werden. Bitte lade die Seite neu.'; status.className = 'feedback error'; status.setAttribute('aria-busy', 'false');
+    console.error(error);
+  }
+}
+document.addEventListener('DOMContentLoaded', init);

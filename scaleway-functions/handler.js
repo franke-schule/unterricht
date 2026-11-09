@@ -3,6 +3,33 @@
 const core = require('./evaluation-core');
 const { ApiError, readConfig, evaluate } = require('./scaleway-client');
 const { version } = require('./package.json');
+const { scrypt, timingSafeEqual } = require('node:crypto');
+const { promisify } = require('node:util');
+
+const derivePassword = promisify(scrypt);
+const PASSWORD_HASH_PATTERN = /^scrypt\$v1\$32768\$8\$1\$([0-9a-f]{32})\$([0-9a-f]{128})$/;
+
+function passwordConfiguration(env) {
+  const match = typeof env.AI_ACCESS_PASSWORD_HASH === 'string' && env.AI_ACCESS_PASSWORD_HASH.match(PASSWORD_HASH_PATTERN);
+  if (!match || match[0] !== env.AI_ACCESS_PASSWORD_HASH) throw new ApiError(503, 'AUTH_CONFIGURATION', 'Der Passwortschutz ist auf dem Auswertungsserver noch nicht korrekt eingerichtet.');
+  return { salt: Buffer.from(match[1], 'hex'), expected: Buffer.from(match[2], 'hex') };
+}
+
+async function requireAccess(event, env) {
+  const { salt, expected } = passwordConfiguration(env);
+  const encoded = header(event, 'x-ai-password');
+  const denied = () => new ApiError(401, 'AUTH_REQUIRED', 'Bitte gib das gültige Unterrichtspasswort ein.');
+  // Base64 ist nur die Transportkodierung für UTF-8, keine Verschlüsselung.
+  if (!encoded || encoded.length > 344 || !/^(?:[A-Za-z0-9+/]{4})*(?:[A-Za-z0-9+/]{2}==|[A-Za-z0-9+/]{3}=)?$/.test(encoded)) throw denied();
+  const bytes = Buffer.from(encoded, 'base64');
+  if (!bytes.length || bytes.length > 256 || bytes.toString('base64') !== encoded) throw denied();
+  let password;
+  try { password = new TextDecoder('utf-8', { fatal: true, ignoreBOM: true }).decode(bytes); }
+  catch { throw denied(); }
+  if (/\p{Cc}/u.test(password)) throw denied();
+  const actual = await derivePassword(password, salt, expected.length, { N: 32768, r: 8, p: 1, maxmem: 64 * 1024 * 1024 });
+  if (!timingSafeEqual(actual, expected)) throw denied();
+}
 
 const MAX_BODY_BYTES = 65536;
 
@@ -56,7 +83,7 @@ function createHandler({ env = process.env, fetchImpl = globalThis.fetch, now = 
     const corsHeaders = origin && allowedOrigins.includes(origin) ? {
       'Access-Control-Allow-Origin': origin,
       'Access-Control-Allow-Methods': 'GET, POST, OPTIONS',
-      'Access-Control-Allow-Headers': 'Content-Type',
+      'Access-Control-Allow-Headers': 'Content-Type, X-AI-Password',
       'Access-Control-Max-Age': '600'
     } : {};
     function respond(statusCode, payload, extraHeaders = {}) {
@@ -76,7 +103,7 @@ function createHandler({ env = process.env, fetchImpl = globalThis.fetch, now = 
         if (!origin) throw new ApiError(400, 'ORIGIN_MISSING', 'Die Voranfrage enthält keinen Origin.');
         const requestedMethod = header(event, 'access-control-request-method').toUpperCase();
         const requestedHeaders = header(event, 'access-control-request-headers').toLowerCase().split(',').map(value => value.trim()).filter(Boolean);
-        if (!['GET', 'POST'].includes(requestedMethod) || requestedHeaders.some(value => value !== 'content-type')) {
+        if (!['GET', 'POST'].includes(requestedMethod) || requestedHeaders.some(value => !['content-type', 'x-ai-password'].includes(value))) {
           throw new ApiError(403, 'PREFLIGHT_NOT_ALLOWED', 'Diese Voranfrage ist nicht freigegeben.');
         }
         return respond(204);
@@ -84,9 +111,12 @@ function createHandler({ env = process.env, fetchImpl = globalThis.fetch, now = 
       if (method === 'GET') {
         if (Object.keys(event.queryStringParameters || {}).length) throw new ApiError(400, 'USE_POST', 'Aufgabeneingaben müssen per POST als JSON übertragen werden.');
         let configured = false;
-        try { readConfig(env); configured = true; } catch {}
+        let accessConfigured = false;
+        try { passwordConfiguration(env); accessConfigured = true; } catch {}
+        try { readConfig(env); configured = accessConfigured; } catch {}
         return respond(200, { ok: true, service: 'unterricht-ki', provider: 'scaleway', version,
           taskCount: Object.keys(core.TASKS).length, configured,
+          accessProtection: 'password-v1', accessConfigured,
           evaluationEnabled: env.AI_EVALUATION_ENABLED === 'true' });
       }
       if (method !== 'POST' || path !== '/') throw new ApiError(405, 'METHOD_NOT_ALLOWED', 'Für Auswertungen bitte POST verwenden.');
@@ -94,6 +124,7 @@ function createHandler({ env = process.env, fetchImpl = globalThis.fetch, now = 
       requestId = request.requestId;
       type = request.isCode ? core.CODE_RESULT_MESSAGE_TYPE : core.RESULT_MESSAGE_TYPE;
       if (env.AI_EVALUATION_ENABLED !== 'true') throw new ApiError(503, 'EVALUATION_DISABLED', 'Die KI-Auswertung ist für den Test noch nicht aktiviert.');
+      await requireAccess(event, env);
       const config = readConfig(env);
       const timestamp = now();
       if (timestamp - windowStart >= 60000) { windowStart = timestamp; calls = 0; }

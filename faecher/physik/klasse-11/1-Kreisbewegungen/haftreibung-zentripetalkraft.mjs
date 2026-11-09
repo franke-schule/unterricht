@@ -1,5 +1,5 @@
 import { setupPhysicsStepTabs } from "./components/physics-step-tabs.mjs";
-import { addSquareRootSigns, appendPhysicsText, createIndexedSymbol, createQuotient, createSquareRoot, createUnitFraction } from "./components/physics-notation.mjs?v=20260922b";
+import { addSquareRootSigns, appendPhysicsText, createIndexedSymbol, createQuotient, createSquareRoot, createUnitFraction } from "./components/physics-notation.mjs?v=20261022-force-indices";
 import { enableTokenDrag, wasDragged } from "./components/token-drag.mjs";
 import { createPhysicsTaskProgress } from "./components/physics-task-progress.mjs";
 

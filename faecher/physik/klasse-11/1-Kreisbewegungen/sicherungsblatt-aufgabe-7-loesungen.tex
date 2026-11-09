@@ -31,12 +31,12 @@
 \definecolor{Line}{HTML}{D8E1E8}
 
 \color{Ink}
-\newcommand{\sectiontitle}[1]{\vspace{0.4mm}{\color{Blue}\bfseries\large #1}\par\vspace{0.15mm}{\color{Blue}\rule{\linewidth}{0.7pt}}\par\vspace{0.25mm}}
+\newcommand{\sectiontitle}[1]{\vspace{7mm}{\color{Blue}\bfseries\large #1}\par\vspace{1mm}{\color{Blue}\rule{\linewidth}{0.7pt}}\par\vspace{3mm}}
 \newcommand{\unit}[1]{\,\mathrm{#1}}
 \newcommand{\unitfrac}[2]{\,\frac{\mathrm{#1}}{\mathrm{#2}}}
 \newcommand{\pagefooter}[1]{\vfill{\color{Line}\rule{\linewidth}{0.5pt}}\par\vspace{1mm}\begin{tabularx}{\linewidth}{@{}Xc r@{}}{\leavevmode\small\color{Muted}Klasse 11 · Physik · Kreisbewegungen} & {\leavevmode\small\color{Muted}#1} & {\leavevmode\small\color{Muted}Sicherungsblatt · Aufgabe 7}\end{tabularx}}
-\newcommand{\compact}{\small\setlength{\abovedisplayskip}{2.5pt}\setlength{\belowdisplayskip}{2.5pt}\setlength{\abovedisplayshortskip}{1pt}\setlength{\belowdisplayshortskip}{2pt}}
-\tcbset{sheetbox/.style={colframe=Line,arc=1.2mm,boxrule=.6pt,left=2mm,right=2mm,top=.7mm,bottom=.7mm}}
+\newcommand{\compact}{\small\setlength{\baselineskip}{20pt}\setlength{\abovedisplayskip}{12pt}\setlength{\belowdisplayskip}{12pt}\setlength{\abovedisplayshortskip}{10pt}\setlength{\belowdisplayshortskip}{12pt}}
+\tcbset{sheetbox/.style={colframe=Line,arc=1.2mm,boxrule=.6pt,left=2mm,right=2mm,top=4mm,bottom=4mm}}
 
 \begin{document}
 \colorbox{Navy}{\parbox{\dimexpr\linewidth-2\fboxsep\relax}{\vspace{1.3mm}\color{white}\small\bfseries PHYSIK · KLASSE 11\hfill\textcolor{Gold}{LÖSUNGEN}\par\vspace{1.1mm}{\large Sicherungsblatt}\vspace{1.1mm}}}
@@ -44,7 +44,7 @@
 \vspace{1.6mm}
 {\color{Navy}\fontsize{15}{18}\selectfont\bfseries Aufgabe 7 -- Übungen zur Zentripetalkraft\par}
 \vspace{0.9mm}
-\colorbox{Sky}{\parbox{\dimexpr\linewidth-2\fboxsep\relax}{\vspace{0.55mm}\textcolor{Blue}{\bfseries Ziel:} Die Zentripetalkraft beim Hammerwurf, in einer geneigten Kurve und beim Kettenkarussell als Resultierende realer Kräfte deuten und berechnen.\vspace{0.55mm}}}
+\colorbox{Sky}{\parbox{\dimexpr\linewidth-2\fboxsep\relax}{\vspace{0.55mm}\textcolor{Blue}{\bfseries Ziel:} Die Zentripetalkraft beim Hammerwurf und in einer geneigten Kurve als Resultierende realer Kräfte deuten und berechnen.\vspace{0.55mm}}}
 
 \sectiontitle{1 · Hammerwurf}
 \begin{minipage}[c]{0.66\linewidth}
@@ -113,13 +113,16 @@ F_{\mathrm Z}=\frac{m\cdot v_{\mathrm B}^{2}}{r}=\frac{7{,}16\unit{kg}\cdot\left
 {\scriptsize\color{Muted}Querschnitt und Kräftedreieck, nicht maßstäblich.}
 \end{minipage}\hfill
 \begin{minipage}[c]{0.57\linewidth}
-\compact Ohne seitliche Reibung wirken nur $F_{\mathrm G}$ und $F_{\mathrm N}$. Ihre Resultierende ist $F_{\mathrm Z}$. Im Kräftedreieck ist $F_{\mathrm N}$ die Hypotenuse, $F_{\mathrm G}$ die Ankathete und $F_{\mathrm Z}$ die Gegenkathete von $\alpha$.
-\begin{align*}
-\text{senkrecht:}\quad F_{\mathrm N}\cdot\cos\alpha&=F_{\mathrm G}=m\cdot g\\
-\text{waagerecht:}\quad F_{\mathrm N}\cdot\sin\alpha&=F_{\mathrm Z}=\frac{m\cdot v_{\mathrm B}^{2}}{r}
-\end{align*}
-Teilen ergibt $\dfrac{\sin\alpha}{\cos\alpha}=\tan\alpha=\dfrac{v_{\mathrm B}^{2}}{r\cdot g}$; dabei kürzen sich $F_{\mathrm N}$ und $m$.
+\compact Optimal ist die Neigung, bei der das Fahrzeug bei der vorgegebenen Geschwindigkeit ohne seitliche Reibung durch die Kurve fährt. Dann wirken nur $F_{\mathrm G}$ und $F_{\mathrm N}$; ihre Resultierende ist $F_{\mathrm Z}$.
 
+\vspace{0.8mm}
+Im Kräftedreieck ist $F_{\mathrm Z}$ die Gegenkathete und $F_{\mathrm G}$ die Ankathete von $\alpha$. Direkt mit dem Tangens folgt:
+\[
+\tan\alpha=\frac{\text{Gegenkathete}}{\text{Ankathete}}
+=\frac{F_{\mathrm Z}}{F_{\mathrm G}}
+=\frac{\dfrac{m\cdot v_{\mathrm B}^{2}}{r}}{m\cdot g}
+=\frac{v_{\mathrm B}^{2}}{r\cdot g}
+\]
 \vspace{0.8mm}
 Mit $v_{\mathrm B}=36\unitfrac{km}{h}=10\unitfrac{m}{s}$ und $r=50\unit{m}$:
 \[
@@ -127,58 +130,9 @@ Mit $v_{\mathrm B}=36\unitfrac{km}{h}=10\unitfrac{m}{s}$ und $r=50\unit{m}$:
 \]
 \end{minipage}
 
-\par\vspace{1mm}\sectiontitle{3 · Bahngeschwindigkeit im Kettenkarussell}
-\begin{minipage}[c]{0.36\linewidth}\centering
-\begin{tikzpicture}[x=0.7mm,y=0.7mm,>=Latex]
-  \coordinate (A) at (6,45);
-  \coordinate (P) at (46,18);
-  \coordinate (FG) at (46,-2);
-  \coordinate (FZ) at (16.3,18);
-  \coordinate (FS) at (16.3,38);
-  \draw[Muted,dash dot,line width=.6pt] (6,-4) -- (6,54);
-  \node[font=\scriptsize,anchor=south] at (6,54) {Drehachse};
-  \draw[Muted,line width=.7pt] (A) -- (P) node[pos=0.17,above right,font=\scriptsize,inner sep=1pt]{$l$};
-  \draw[Muted,line width=.4pt,{Latex[length=1.6mm]}-{Latex[length=1.6mm]}] (6,50) -- (46,50) node[midway,above,font=\scriptsize,inner sep=1pt]{$r$};
-  \draw[Muted,densely dotted,line width=.4pt] (46,50) -- (46,21);
-  \draw ($(A)+(-90:8)$) arc[start angle=-90,end angle=-34,radius=8];
-  \node[font=\scriptsize] at (9.5,33.5) {$\alpha$};
-  \draw[Blue!45,densely dashed,line width=.5pt] (FS) -- (FZ);
-  \draw[Blue!45,densely dashed,line width=.5pt] (FG) -- (FZ);
-  \fill (P) circle (0.9);
-  \draw[-{Latex},color=Gold!85!black,line width=1.1pt] (P) -- (FG) node[right,font=\scriptsize]{$F_{\mathrm G}$};
-  \draw[-{Latex},Blue,line width=1.1pt] (P) -- (FS) node[pos=0.55,below left,font=\scriptsize,inner sep=1pt]{$F_{\mathrm S}$};
-  \draw[-{Latex},red!80!black,line width=1.1pt] (P) -- (FZ) node[midway,below,font=\scriptsize]{$F_{\mathrm Z}$};
-\end{tikzpicture}
-
-\vspace{0.4mm}
-{\scriptsize\color{Muted}Kettenkarussell von der Seite, nicht maßstäblich.}
-\end{minipage}\hfill
-\begin{minipage}[c]{0.61\linewidth}
-\compact Gegeben: $l=15\unit{m}$, $\alpha=56^{\circ}$, $m=75\unit{kg}$.
-
-\vspace{0.6mm}
-\textbf{3a Kräfte:} Am Körperschwerpunkt greifen nur $F_{\mathrm G}$ (senkrecht nach unten) und $F_{\mathrm S}$ (entlang der Kette zum Aufhängepunkt) an. Ihre Resultierende zeigt waagerecht zur Drehachse und wirkt als Zentripetalkraft $F_{\mathrm Z}$. Als Hypotenuse ist $F_{\mathrm S}$ größer als $F_{\mathrm G}$.
-
-\vspace{0.6mm}
-\textbf{3b Bahngeschwindigkeit:} $r$ liegt gegenüber von $\alpha$, $l$ ist die Hypotenuse:
-\[
-r=l\cdot\sin\alpha=15\unit{m}\cdot\sin56^{\circ}\approx12{,}44\unit{m}
-\]
-Wie bei der Rennbahn gilt $F_{\mathrm S}\cdot\cos\alpha=m\cdot g$ und $F_{\mathrm S}\cdot\sin\alpha=\dfrac{m\cdot v_{\mathrm B}^{2}}{r}$, also $\tan\alpha=\dfrac{v_{\mathrm B}^{2}}{r\cdot g}$:
-\[
-v_{\mathrm B}=\sqrt{r\cdot g\cdot\tan\alpha}=\sqrt{12{,}44\unit{m}\cdot9{,}81\unitfrac{m}{s^{2}}\cdot\tan56^{\circ}}\approx13\unitfrac{m}{s}\approx48\unitfrac{km}{h}
-\]
-\end{minipage}
-
-\par\vspace{1mm}\sectiontitle{4 · Merke}
+\par\vspace{1mm}\sectiontitle{3 · Merke}
 \begin{tcolorbox}[sheetbox,colback=Mint]
-\small Die Zentripetalkraft ist keine zusätzliche Kraft, sondern die Resultierende der realen Kräfte, zum Beispiel von Seilkraft, Normalkraft und Gewichtskraft. Sie zeigt immer zum Mittelpunkt der Kreisbahn: $F_{\mathrm Z}=\dfrac{m\cdot v_{\mathrm B}^{2}}{r}$.
+\small\setlength{\baselineskip}{20pt} Die Zentripetalkraft ist keine zusätzliche Kraft, sondern die Resultierende der realen Kräfte. Sie zeigt immer zum Mittelpunkt der Kreisbahn. Es gilt $F_{\mathrm Z}=\dfrac{m\cdot v_{\mathrm B}^{2}}{r}$.
 \end{tcolorbox}
-\vspace{0.8mm}
-\begin{tcolorbox}[sheetbox,colback=Sky]
-\small Eine schräge Kraft wird im rechtwinkligen Kräftedreieck zerlegt: Die Seite am Winkel $\alpha$ (Ankathete) gehört zum Kosinus, die Seite gegenüber von $\alpha$ (Gegenkathete) zum Sinus. Teilt man die beiden Teilgleichungen durcheinander, kürzen sich die schräge Kraft und die Masse: $\tan\alpha=\dfrac{v_{\mathrm B}^{2}}{r\cdot g}$. Der Winkel hängt deshalb nicht von der Masse ab.
-\end{tcolorbox}
-\vspace{0.8mm}
-\colorbox{Gold}{\parbox{\dimexpr\linewidth-2\fboxsep\relax}{\small\centering\bfseries Eine Fliehkraft nach außen gibt es für einen Beobachter am Boden nicht. Wer sich in der Kurve nach außen gedrückt fühlt, spürt seine Trägheit.}}
 \pagefooter{1 / 1}
 \end{document}

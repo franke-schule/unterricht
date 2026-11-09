@@ -395,9 +395,8 @@
   cursor: pointer;
 }
 
-/* Merksatz in der Rückmeldung zu Aufgabe 5: Er steht nicht im
-   Erwartungshorizont, soll aber in jeder Rückmeldung auffallen. */
-.physics-semantic-feedback .physics-semantic-note {
+/* Feste Notiz zu Aufgabe 5, außerhalb des kompakten KI-Feedbacks. */
+.physics-task-card > .physics-semantic-note {
   margin: 10px 0 0;
   border-top: 1px solid currentColor;
   padding-top: 8px;

@@ -94,7 +94,7 @@ async function main() {
     assert.match(await page.locator('#result-b').innerText(), /warte eine Minute/);
     await page.click('#button-b');
     await page.waitForFunction(() => !document.getElementById('button-b').disabled);
-    assert.match(await page.locator('#result-b').innerText(), /6 von 6/);
+    assert.match(await page.locator('#result-b').innerText(), /5 von 5/);
     report.errorAndRetry = true;
     assert.deepEqual(report.errors, []);
     fs.writeFileSync(path.join(repo, 'tmp/scaleway-browser-report.json'), JSON.stringify(report, null, 2) + '\n');

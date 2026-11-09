@@ -1,7 +1,7 @@
 import {calculate,normaliseNumber} from '../logic/perceptron.mjs';
-import {parseLinearRelation as parse,equivalent,countMatching} from '../logic/linear-inequality.mjs';
+import {parseLinearRelation as parse,equivalent,countMatching} from '../logic/linear-inequality.mjs?v=20261015-fractions';
 import {numberMatches,runEpoch} from '../logic/perceptron.mjs';
-import {evaluateSemanticAnswer} from './semantic-answer.mjs?v=20261010-scaleway';
+import {evaluateSemanticAnswer, renderCompactEvaluation} from './semantic-answer.mjs?v=20261029-criteria-v1';
 import {unlockSolution} from '../../../../klasse-10/1-Datenbanken/tab-navigation.mjs';
 
 const KEY='informatik11-perzeptron-aufgabe5-2-v1';
@@ -335,7 +335,7 @@ function setupStructure(){
     const current=state.signalStep;
     document.querySelectorAll('[data-signal]').forEach(el=>{const key=el.dataset.signal;const active=current>=0&&SIGNAL_STEPS[current].targets.includes(key),done=current>=0&&SIGNAL_STEPS.slice(0,current).some(step=>step.targets.includes(key));el.classList.toggle('is-active',active);el.classList.toggle('is-complete',done);el.classList.toggle('is-dimmed',!active&&!done);});
     document.querySelectorAll('[data-signal-arrow]').forEach(el=>{const keys=el.dataset.signalArrow.split(' ');const active=current>=0&&keys.some(key=>SIGNAL_STEPS[current].targets.includes(key));el.classList.toggle('is-active',active);el.classList.toggle('is-dimmed',!active);});
-    $('#signal-step-status').textContent=current<0?'Klicke auf Weiter, um mit Schritt 1 von 7 zu beginnen.':`Schritt ${current+1}/7: ${SIGNAL_STEPS[current].title} – ${SIGNAL_STEPS[current].text}`;
+    $('#signal-step-status').textContent=current<0?'Klicke auf Weiter, um mit Schritt 1 von 7 zu beginnen.':`Schritt ${current+1}/7: ${SIGNAL_STEPS[current].title}: ${SIGNAL_STEPS[current].text}`;
     $('#next-signal-step').textContent=current===6?'Schritte neu starten':'Weiter';
   };
   $('#next-signal-step').addEventListener('click',()=>{state.signalStep=state.signalStep===6?-1:state.signalStep+1;if(state.signalStep===6){state.signalObserved=true;mark('structure',true);}show();save();});
@@ -383,8 +383,9 @@ function setupEpoch(){
 }
 function setupSemantic(){
   const textarea=$('#learning-answer'),counter=$('#learning-counter'),button=$('#check-learning-answer');
-  const update=()=>counter.textContent=textarea.value.length+' von 600 Zeichen';textarea.addEventListener('input',update);
-  button.addEventListener('click',async()=>{const answer=textarea.value.trim();if(answer.length<30){feedback('learning-feedback','error','Bitte formuliere eine etwas ausführlichere Antwort, damit sie sinnvoll ausgewertet werden kann.');return;}button.disabled=true;feedback('learning-feedback','','Deine Antwort wird mit dem Erwartungshorizont verglichen.');try{const result=await evaluateSemanticAnswer({serverUrl:SERVER_URL,taskId:'11-5-1',answer});feedback('learning-feedback',result.points>=3?'success':result.points?'partial':'error',`${result.points} von ${result.maxPoints} Punkten – ${result.status}. ${(result.feedback||'').trim()}`);}catch(error){feedback('learning-feedback','error',error.message);}finally{button.disabled=false;}});
+  let requestId=0;
+  const update=()=>counter.textContent=textarea.value.length+' von 600 Zeichen';textarea.addEventListener('input',()=>{update();requestId++;feedback('learning-feedback','','');button.disabled=false;});
+  button.addEventListener('click',async()=>{const answer=textarea.value.trim();const currentRequest=++requestId;if(answer.length<30){feedback('learning-feedback','error','Bitte formuliere eine etwas ausführlichere Antwort, damit sie sinnvoll ausgewertet werden kann.');return;}button.disabled=true;feedback('learning-feedback','','Deine Antwort wird mit dem Erwartungshorizont verglichen.');try{const result=await evaluateSemanticAnswer({serverUrl:SERVER_URL,taskId:'11-5-1',answer});if(currentRequest!==requestId||textarea.value.trim()!==answer)return;feedback('learning-feedback',result.points===result.maxPoints?'success':result.points?'partial':'error','');renderCompactEvaluation($('#learning-feedback'),result);}catch(error){if(currentRequest===requestId&&textarea.value.trim()===answer)feedback('learning-feedback','error',error.message);}finally{if(currentRequest===requestId)button.disabled=false;}});
   return update;
 }
 function start() {

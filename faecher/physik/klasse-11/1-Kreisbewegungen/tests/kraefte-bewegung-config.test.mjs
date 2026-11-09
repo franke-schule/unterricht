@@ -20,15 +20,16 @@ assert.match(html, /Rechenschritte sortieren/);
 assert.match(html, /mehrere Antworten richtig/);
 assert.match(html, /kraefte-bewegung\.css\?v=20260923a/);
 assert.match(html, /bewegung-koerpern\.css\?v=20260910a/);
-assert.match(html, /kraefte-bewegung\.mjs\?v=20260930b/);
+assert.match(html, /kraefte-bewegung\.mjs\?v=20261022-compact-feedback/);
 assert.match(html, /Sicherungsblatt zu Wiederholung 2/);
 assert.match(html, /onsubmit="unlockSolution\(event, 'R8NT-DKPV', 'solution-download-link', 'solution-code-message'\)"/);
 assert.match(html, /href="sicherungsblatt-aufgabe-2-loesungen\.pdf\?v=20260923a" download hidden/);
-// Merksatz zu den Angriffspunkten steht in jeder Rückmeldung zu Aufgabe 5
-assert.match(source, /function forceBalanceFeedback\(result\)/);
-assert.match(source, /\*\*Die Gewichtskraft greift immer im Körpermittelpunkt per Definition\. Die Gegenkraft des Tisches greift am Kontaktpunkt zwischen Körper und Tisch\.\*\*/);
-assert.match(source, /feedbackBuilder: forceBalanceFeedback/);
-assert.match(css, /\.physics-semantic-feedback \.physics-semantic-note/);
+// Alle KI-Ergebnisse verwenden den gemeinsamen kompakten Renderer.
+const semantic = fs.readFileSync(new URL("../components/physics-semantic-task.mjs", import.meta.url), "utf8");
+assert.match(semantic, /renderCompactEvaluation\(container, result, \{ appendText: appendPhysicsText \}\)/);
+assert.doesNotMatch(source, /feedbackBuilder: forceBalanceFeedback/);
+assert.match(html, /Gewichtskraft:<\/strong> Angriffspunkt im Körpermittelpunkt/);
+assert.match(html, /Gegenkraft des Tisches:<\/strong> Angriffspunkt am Kontaktpunkt/);
 // Sicherungsblatt: Angriffspunkte, Beschriftungen und Crashtest-Grafik
 const sheet = fs.readFileSync(new URL("../sicherungsblatt-aufgabe-2-loesungen.tex", import.meta.url), "utf8");
 assert.doesNotMatch(sheet, /Körper auf dem Tisch\}\\par\\scriptsize Ruhe/);

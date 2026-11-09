@@ -238,6 +238,22 @@ h1 {
   font-size: clamp(3rem, 8vw, 6.2rem);
 }
 
+.legal-page {
+  width: min(76ch, calc(100% - 32px));
+  text-align: start;
+  line-height: 1.6;
+  overflow-wrap: anywhere;
+}
+
+.legal-page .page-header h1 {
+  font-size: clamp(1.6rem, 6vw, 3rem);
+  line-height: 1.15;
+}
+
+.legal-page article a {
+  text-decoration: underline;
+}
+
 .grade-grid {
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));

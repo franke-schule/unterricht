@@ -1,0 +1,48 @@
+#ai-access-dialog {
+  box-sizing: border-box;
+  width: min(460px, calc(100vw - 32px));
+  max-width: calc(100vw - 32px);
+  max-height: calc(100dvh - 32px);
+  overflow: auto;
+  padding: 24px;
+  border: 1px solid #b9d1df;
+  border-radius: 14px;
+  background: #fff;
+  color: #172f49;
+  font: 1rem/1.5 system-ui, sans-serif;
+}
+#ai-access-dialog::backdrop { background: #071426aa; }
+#ai-access-dialog form { display: grid; gap: 14px; margin: 0; }
+#ai-access-dialog h2 { margin: 0; padding: 0; font-size: 1.25rem; line-height: 1.3; }
+#ai-access-dialog p { margin: 0; }
+#ai-access-dialog label { display: block; font-weight: 700; }
+#ai-access-dialog input {
+  box-sizing: border-box;
+  width: 100%;
+  min-width: 0;
+  min-height: 46px;
+  margin: 0;
+  padding: 10px 12px;
+  border: 1px solid #aebfd3;
+  border-radius: 10px;
+  background: #fcfdff;
+  color: inherit;
+  font: inherit;
+}
+#ai-access-dialog .ai-access-actions { display: flex; flex-wrap: wrap; justify-content: flex-end; gap: 10px; }
+#ai-access-dialog button {
+  position: static;
+  min-height: 44px;
+  margin: 0;
+  padding: 10px 16px;
+  border: 1px solid #b9d1df;
+  border-radius: 9px;
+  background: #fff;
+  color: #244d78;
+  font: inherit;
+  font-weight: 700;
+  cursor: pointer;
+}
+#ai-access-dialog button.primary-button { border-color: #244d78; background: #244d78; color: #fff; }
+#ai-access-dialog :is(input, button):focus-visible { outline: 3px solid #f0a202; outline-offset: 3px; }
+#ai-access-dialog #ai-access-error { color: #9f1239; }

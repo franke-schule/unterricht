@@ -1,5 +1,5 @@
 import {calculate,normaliseNumber} from '../logic/perceptron.mjs';
-import {parseLinearRelation as parse,equivalent,sameBoundary,countMatching} from '../logic/linear-inequality.mjs?v=20261013a';
+import {parseLinearRelation as parse,equivalent,sameBoundary,countMatching} from '../logic/linear-inequality.mjs?v=20261015-fractions';
 import {unlockSolution} from '../../../../klasse-10/1-Datenbanken/tab-navigation.mjs';
 
 const KEY='informatik11-perzeptron-aufgabe5-1-grafisch-v1';
@@ -14,7 +14,6 @@ const REQUIRED=FLAGS.filter(id=>id!=='six-expert');
 const $=selector=>document.querySelector(selector);
 const value=id=>$('#'+id).value;
 const fmt=n=>Number.isInteger(n)?String(n):String(Math.round(n*1e9)/1e9).replace('.',',');
-const simple=txt=>String(txt).replaceAll('−','-').replaceAll('₁','1').replaceAll('₂','2');
 const sameSet=(a,b)=>a.length===b.length&&b.every(item=>a.includes(item));
 let checked=Object.fromEntries(FLAGS.map(id=>[id,false]));
 let drawn={a:''};
@@ -84,12 +83,12 @@ function validateFlag(id) {
   if(id==='discover-mc')return sameSet([...$('#discover-options').querySelectorAll('input:checked')].map(el=>el.value),['x1','x2','safe']);
   if(id.startsWith('four-mc-')) return fourChoicesCorrect(Number(id.at(-1)));
   if(id==='five-a') return drawn.a===value('five-a')&&countMatching(parse(drawn.a),ROWS).count===4;
-  if(id==='six-line') return equivalent(parse(value('six-line'),{kind:'Gleichung',variables:'diagram'}),parse('y=0.5x+0.5',{kind:'Gleichung'}),{line:true});
-  if(id==='six-diagram') return equivalent(parse(value('six-diagram'),{variables:'diagram'}),SIX_TARGET);
+  if(id==='six-line') return equivalent(parse(value('six-line'),{kind:'Gleichung'}),parse('y=0.5x+0.5',{kind:'Gleichung'}),{line:true});
+  if(id==='six-diagram') return equivalent(parse(value('six-diagram')),SIX_TARGET);
   if(id==='six-input') return equivalent(parse(value('six-input'),{variables:'input'}),SIX_TARGET);
   if(id==='six-parameters') {const p=parameters('six');return !!p&&equivalent(neuronRelation(p),parse(value('six-input'),{variables:'input'}))&&equivalent(neuronRelation(p),SIX_TARGET);}
   if(id==='six-rows') {const p=parameters('six');return !!p&&readSelects('.six-row-select').every((v,i)=>v===rowOutputs(SIX_ROWS,p)[i].output&&v===SIX_ROWS[i].target);}
-  if(id==='six-expert') return equivalent(parse(value('six-expert'),{variables:'input'}),SIX_REVERSE)&&isExpertNeuronForm(value('six-expert'));
+  if(id==='six-expert') return equivalent(parse(value('six-expert'),{variables:'input'}),SIX_REVERSE);
   return false;
 }
 function neuronRelation(p) {return parse(`${p.w1}x1+(${p.w2})x2>${p.s}`);}
@@ -193,12 +192,12 @@ function renderFourPoint() {
 }
 
 function checkSixLine() {
-  const relation=inspectFormula('six-line',{kind:'Gleichung',variables:'diagram'});if(!relation.ok)return;
+  const relation=inspectFormula('six-line',{kind:'Gleichung'});if(!relation.ok)return;
   if(equivalent(relation,parse('y=0.5x+0.5',{kind:'Gleichung'}),{line:true})){showFeedback('six-line','Korrekt. y = 0,5x + 0,5.','success');mark('six-line',true);}
   else showFeedback('six-line','Noch nicht korrekt. Suche zwei gut ablesbare Punkte auf der Geraden.');
 }
 function checkSixDiagram() {
-  const relation=inspectFormula('six-diagram',{variables:'diagram'});if(!relation.ok)return;
+  const relation=inspectFormula('six-diagram');if(!relation.ok)return;
   if(equivalent(relation,SIX_TARGET)){showFeedback('six-diagram','Korrekt. y > 0,5x + 0,5.','success');mark('six-diagram',true);}
   else if(sameBoundary(relation,SIX_TARGET))showFeedback('six-diagram','Teilweise korrekt. Deine Grenze passt, aber die markierte Seite oder das strenge Zeichen noch nicht.','partial');
   else showFeedback('six-diagram','Noch nicht korrekt. Prüfe, auf welcher Seite U2 und G1 liegen.');
@@ -226,16 +225,9 @@ function checkSixRows() {
 }
 function checkSixExpert() {
   const relation=inspectFormula('six-expert',{variables:'input'});if(!relation.ok)return;
-  if(equivalent(relation,SIX_REVERSE)&&isExpertNeuronForm(value('six-expert'))){showFeedback('six-expert','Korrekt. Außerhalb der Linie sind die Seiten vertauscht. Auf der Grenze geben beide strengen Neuronen 0 aus.','success');mark('six-expert',true);}
+  if(equivalent(relation,SIX_REVERSE)){showFeedback('six-expert','Korrekt. Außerhalb der Linie sind die Seiten vertauscht. Auf der Grenze geben beide strengen Neuronen 0 aus.','success');mark('six-expert',true);}
   else if(sameBoundary(relation,SIX_REVERSE))showFeedback('six-expert','Teilweise korrekt. Die Seiten sind vertauscht, aber prüfe das Zeichen beim Multiplizieren mit −1 und den Grenzfall.','partial');
-  else showFeedback('six-expert','Noch nicht korrekt. Wähle zuerst die andere Seite der Geraden und forme dann zu > um.');
-}
-function isExpertNeuronForm(source) {
-  const parts=simple(source).replace(/\s/g,'').split('>');
-  if(parts.length!==2)return false;
-  const left=parse(`${parts[0]}>0`,{variables:'input'});
-  const right=parse(`x1>${parts[1]}`,{variables:'input'});
-  return left.ok&&Math.abs(left.c)<=1e-9&&right.ok&&Math.abs(right.a-1)<=1e-9&&Math.abs(right.b)<=1e-9;
+  else showFeedback('six-expert','Noch nicht korrekt. Wähle die andere Seite derselben Geraden und prüfe das Ungleichheitszeichen.');
 }
 
 function geoStatus(message) {$('#ggb-status').textContent=message;}

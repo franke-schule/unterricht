@@ -1,0 +1,123 @@
+<!doctype html>
+<html lang="de">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="robots" content="noindex, nofollow">
+    <title>Solarzellen untersuchen – Physik 11</title>
+    <link rel="stylesheet" href="../../../../styles.css?v=20261017">
+    <link rel="stylesheet" href="../1-Kreisbewegungen/bewegung-koerpern.css?v=20260831c">
+    <link rel="stylesheet" href="aufgabe1.css?v=20261018b">
+    <script src="../../../informatik/quiz-fragen-pruefen.js?v=20261022-feedback-two-sentences"></script>
+    <script type="module" src="aufgabe1.mjs?v=20261029-criteria-v1"></script>
+  </head>
+  <body class="physics-revision-page photovoltaik-page">
+    <div class="site-backdrop" aria-hidden="true"></div>
+    <main class="page-shell physics-revision-shell">
+      <nav class="topbar" aria-label="Navigation">
+        <a class="back-link" href="../index.html">Zur Aufgabenübersicht</a>
+        <a class="back-link" href="../../../../index.html">Startseite</a>
+      </nav>
+      <header class="physics-revision-hero">
+        <p class="eyebrow">Photovoltaik</p>
+        <h1>Solarzellen untersuchen – Vorbereitung auf das Schülerexperiment</h1>
+        <p class="module-task-number"><strong>Aufgabe 1</strong></p>
+        <p>Bereite die Messung einer Solarzelle vor.</p>
+      </header>
+
+      <div class="physics-step-tabs" role="tablist" aria-label="Arbeitsschritte des Lernmoduls">
+        <button id="tab-solar" type="button" role="tab" aria-selected="true" aria-controls="panel-solar" data-physics-tab="solar">1 · Solarzellen</button>
+        <button id="tab-curve" type="button" role="tab" aria-selected="false" aria-controls="panel-curve" data-physics-tab="curve" tabindex="-1">2 · Kennlinie und MPP</button>
+        <button id="tab-knowledge" type="button" role="tab" aria-selected="false" aria-controls="panel-knowledge" data-physics-tab="knowledge" tabindex="-1">3 · Wissenscheck</button>
+        <button id="tab-setup" type="button" role="tab" aria-selected="false" aria-controls="panel-setup" data-physics-tab="setup" tabindex="-1">4 · Versuchsaufbau</button>
+        <button id="tab-final" type="button" role="tab" aria-selected="false" aria-controls="panel-final" data-physics-tab="final" tabindex="-1">5 · Abschlussquiz</button>
+      </div>
+      <div class="physics-revision-panels">
+        <section id="panel-solar" class="physics-revision-panel" role="tabpanel" aria-labelledby="tab-solar" data-physics-panel="solar">
+          <div class="physics-card-heading"><p class="eyebrow">Entdecken</p><h2>Licht liefert elektrische Energie</h2></div>
+          <article class="physics-task-card">
+            <p>Eine Solarzelle auf dem Schuldach versorgt ein angeschlossenes Gerät. Wie viel elektrische Leistung das Gerät erhält, hängt auch davon ab, welcher Widerstand im Stromkreis angeschlossen ist.</p>
+            <figure class="pv-energy-figure">
+              <svg viewBox="0 0 760 245" role="img" aria-label="Die Sonne sendet Licht in alle Richtungen. Ein Teil trifft auf die Solarzelle; diese gibt elektrische Energie an ein angeschlossenes Gerät ab.">
+                <defs><marker id="energy-arrow-light" markerWidth="10" markerHeight="10" refX="8" refY="4" orient="auto"><path d="M0 0L0 8L9 4z" fill="#d28b16"/></marker><marker id="energy-arrow-electric" markerWidth="10" markerHeight="10" refX="8" refY="4" orient="auto"><path d="M0 0L0 8L9 4z" fill="#1b7894"/></marker></defs>
+                <circle cx="120" cy="120" r="34" class="pv-lamp"/><path d="M120 72v-24M120 168v24M72 120H48M168 120h24M86 86 69 69M154 154l17 17M154 86l17-17M86 154l-17 17M100 72l-8-22M140 168l8 22M72 100l-22-8M168 140l22 8M140 72l8-22M100 168l-8 22M168 100l22-8M72 140l-22 8" class="pv-ray"/>
+                <rect x="295" y="70" width="175" height="105" rx="9" class="pv-cell"/><path d="M310 84h145M310 105h145M310 126h145M310 147h145M338 78v88M375 78v88M412 78v88" class="pv-cell-line"/>
+                <rect x="555" y="75" width="170" height="92" rx="12" class="pv-device"/><path d="M595 139v-32l27-20 27 20v32zM604 139v-22h14v22M655 105h24v34h-24z" class="pv-house"/>
+                <line x1="210" y1="120" x2="285" y2="120" class="pv-light-arrow" marker-end="url(#energy-arrow-light)"/><line x1="480" y1="120" x2="545" y2="120" class="pv-electric-arrow" marker-end="url(#energy-arrow-electric)"/>
+                <text x="120" y="205" text-anchor="middle">Sonne</text><text x="382" y="205" text-anchor="middle">Solarzelle</text><text x="640" y="205" text-anchor="middle">angeschlossenes Gerät</text>
+              </svg>
+              <figcaption>Lichtenergie wird in elektrische Energie umgewandelt.</figcaption>
+            </figure>
+            <p>Photovoltaik bezeichnet die direkte Umwandlung von Lichtenergie in elektrische Energie.</p>
+          </article>
+          <article class="physics-task-card"><p>Die abgegebenen Werte hängen von der <strong>Beleuchtung</strong>, der <strong>Temperatur</strong> und dem <strong>angeschlossenen Widerstand</strong> ab. Im Experiment verändern wir innerhalb einer Messreihe gezielt <strong>nur den Widerstand</strong>.</p></article>
+          <nav class="physics-step-next" aria-label="Weiter zum nächsten Reiter"><button type="button" class="physics-primary-button" data-next-tab="curve">Weiter → 2 · Kennlinie und MPP</button></nav>
+        </section>
+
+        <section id="panel-curve" class="physics-revision-panel" role="tabpanel" aria-labelledby="tab-curve" data-physics-panel="curve" hidden>
+          <div class="physics-card-heading"><p class="eyebrow">Verstehen</p><h2>Kennlinie und MPP</h2><p>Die Grafik zeigt eine illustrative einzelne Solarzelle bei gleichbleibender Beleuchtung und Temperatur.</p></div>
+          <article class="physics-task-card">
+            <div class="pv-graphs"><figure><div id="ui-graph" class="pv-svg-host"></div><figcaption>Illustrative U-I-Kennlinie einer einzelnen Solarzelle; die Rechtecke vergleichen U · I in den Bereichen A, B und C.</figcaption></figure><figure><div id="pu-graph" class="pv-svg-host"></div><figcaption>Zugehörige P-U-Kennlinie: Die Leistung ist an B unter den gezeigten Punkten am größten.</figcaption></figure></div>
+            <p>Jeder Punkt der Kurve beschreibt eine Einstellung des Widerstands: Spannung U und Stromstärke I gehören zusammen. Verändert sich der Widerstand, verschiebt sich der Punkt entlang der Kennlinie.</p>
+            <p>Im Leerlauf fließt kein Strom: I = 0 A und U = U<sub>0</sub>. Beim gezielten Kurzschluss ist U ungefähr 0 V und I = I<sub>k</sub>. Beides wird im Versuch nur nach Anleitung gemessen.</p>
+            <p>Bei Punkt A sind 0,20 V und 0,49 A gleichzeitig vorhanden; ihr Produkt ist 0,098 W. Bei Punkt B sind es 0,45 V und 0,44 A; ihr Produkt ist 0,198 W. Obwohl B nicht die größte Spannung hat, ist das Produkt hier größer.</p>
+            <p>Die elektrische Leistung am angeschlossenen Gerät ist P = U · I. Der Maximum-Power-Point (MPP) ist der Punkt mit der größten abgegebenen elektrischen Leistung bei den gerade herrschenden Bedingungen.</p>
+            <p>Hier liegt der MPP bei B: U<sub>mpp</sub> = 0,45 V, I<sub>mpp</sub> = 0,44 A und P<sub>mpp</sub> = 0,198 W. Im Leerlauf und beim idealisierten Kurzschluss ist P = 0 W. U₀ und Iₖ gehören zu verschiedenen Punkten; ihr Produkt ist nicht die maximale Leistung.</p>
+            <p>Bei stärkerer Bestrahlung steht bei vergleichbarer Temperatur typischerweise mehr elektrische Leistung zur Verfügung. Wie sich die Kennlinie in unserem Versuch verändert, messen wir erst dort. Ein MPP-Tracker passt den Betrieb an den Bereich größter Leistung an.</p>
+          </article>
+          <nav class="physics-step-next" aria-label="Weiter zum nächsten Reiter"><button type="button" class="physics-primary-button" data-next-tab="knowledge">Weiter → 3 · Wissenscheck</button></nav>
+        </section>
+
+        <section id="panel-knowledge" class="physics-revision-panel" role="tabpanel" aria-labelledby="tab-knowledge" data-physics-panel="knowledge" hidden>
+          <div class="physics-card-heading"><p class="eyebrow">Anwenden</p><h2>Wissenscheck</h2><p>Prüfe die Grundlagen. Eine oder mehrere Antworten können richtig sein.</p><p class="pv-set-status" data-set-status="knowledge" aria-live="polite">Noch nicht vollständig bearbeitet.</p></div>
+          <div id="knowledge-questions" class="physics-multiple-choice"></div>
+          <nav class="physics-step-next" aria-label="Weiter zum nächsten Reiter"><button type="button" class="physics-primary-button" data-next-tab="setup">Weiter → 4 · Versuchsaufbau</button></nav>
+        </section>
+
+        <section id="panel-setup" class="physics-revision-panel" role="tabpanel" aria-labelledby="tab-setup" data-physics-panel="setup" hidden>
+          <div class="physics-card-heading"><p class="eyebrow">Anwenden und sichern</p><h2>Versuchsaufbau</h2></div>
+          <article class="physics-task-card">
+            <figure class="pv-setup-figures"><svg viewBox="320 105 480 330" role="img" aria-label="Schaltplan mit Solarzelle, veränderlichem Widerstand und den mit A und V gekennzeichneten Messgeräten.">
+              <path d="M420 230V170H485M555 170H600M700 170H760V390H420V340" class="circuit-wire"/>
+              <circle cx="520" cy="170" r="35" class="circuit-meter"/><text x="520" y="179" text-anchor="middle">A</text>
+              <path d="M600 170l12-16 12 32 12-32 12 32 12-32 12 32 12-16h16" class="circuit-resistor"/>
+              <rect x="380" y="230" width="80" height="110" fill="#dceef6" stroke="none"/><path d="M380 230H460M380 340H460M380 230V276M380 294V340M460 230V276M460 294V340" class="circuit-solar-outline"/><circle cx="420" cy="230" r="6" class="circuit-terminal"/><circle cx="420" cy="340" r="6" class="circuit-terminal"/><text x="420" y="283" text-anchor="middle">Solar-</text><text x="420" y="312" text-anchor="middle">zelle</text>
+              <path d="M420 230H550V260M550 340V340H420" class="circuit-wire"/><circle cx="550" cy="300" r="40" class="circuit-meter"/><circle cx="550" cy="260" r="5" class="circuit-terminal"/><circle cx="550" cy="340" r="5" class="circuit-terminal"/><text x="550" y="309" text-anchor="middle">V</text>
+              <text x="650" y="126" text-anchor="middle">veränderlicher Widerstand</text>
+            </svg></figure>
+            <p class="pv-work-order"><strong>Beschreibe</strong> den abgebildeten Schaltplan in eigenen Worten. Gehe auf die eingebauten Messgeräte ein.</p>
+            <section class="physics-semantic-task" aria-labelledby="pv-description-title">
+              <label id="pv-description-title" for="pv-description-answer">Deine Beschreibung des Schaltplans</label>
+              <textarea id="pv-description-answer" maxlength="3000" rows="8" placeholder="Die Solarzelle ist mit … verbunden. Das Messgerät A …"></textarea>
+              <div class="physics-semantic-task__actions"><span id="pv-description-count">0 von 3000 Zeichen</span><button id="pv-description-check" type="button">Antwort prüfen</button></div>
+              <p class="privacy-note">Hinweis: Gib keine personenbezogenen Informationen ein. Deine Antwort wird zur automatischen Auswertung an den Skriptserver und dort an ein KI-System übertragen.</p>
+              <div id="pv-description-feedback" class="physics-semantic-feedback" role="status" aria-live="polite" hidden></div>
+              <div class="physics-help-stack">
+                <details><summary>Hilfe 1: Hinweis</summary><p>Suche die Solarzelle, den veränderlichen Widerstand und die Kreise mit A und V. Verfolge die Leitungen.</p></details>
+                <details><summary>Hilfe 2: Denkansatz</summary><p>Prüfe, welches Messgerät im geschlossenen Stromweg liegt und welches mit beiden Anschlüssen der Solarzelle verbunden ist. Nenne jeweils die gemessene Größe.</p></details>
+                <details><summary>Hilfe 3: Teillösung</summary><p>Das Amperemeter A liegt im Stromweg und misst die Stromstärke. Beschreibe nun die Verbindung und Aufgabe des Voltmeters V sowie den Widerstand.</p></details>
+              </div>
+            </section>
+          </article>
+          <nav class="physics-step-next" aria-label="Weiter zum nächsten Reiter"><button type="button" class="physics-primary-button" data-next-tab="final">Weiter → 5 · Abschlussquiz</button></nav>
+        </section>
+        <section id="panel-final" class="physics-revision-panel" role="tabpanel" aria-labelledby="tab-final" data-physics-panel="final" hidden>
+          <div class="physics-card-heading"><p class="eyebrow">Übertragen und sichern</p><h2>Abschlussquiz</h2><p>Übertrage dein Wissen auf neue Messsituationen. Eine oder mehrere Antworten können richtig sein.</p><p class="pv-set-status" data-set-status="final" aria-live="polite">Noch nicht vollständig bearbeitet.</p></div>
+          <form id="final-quiz" class="physics-multiple-choice" novalidate>
+            <div id="final-questions"></div>
+            <div class="action-row"><button id="evaluate-quiz" type="button" class="physics-primary-button">Quiz auswerten</button></div>
+            <p id="final-feedback" class="physics-feedback" role="status" aria-live="polite"></p>
+          </form>
+          <section id="quiz-summary" class="pv-summary" aria-labelledby="quiz-summary-title" hidden>
+            <h2 id="quiz-summary-title">Überblick: sieben Fragen und eine Beschreibung</h2>
+            <div id="quiz-summary-answers" class="pv-summary-grid"></div>
+            <article class="pv-summary-description"><h3>Beschreibung des Schaltplans</h3><p>Die Solarzelle ist mit dem veränderlichen Widerstand und dem Amperemeter A zu einem geschlossenen Stromkreis verbunden. A liegt in Reihe und misst die Stromstärke. Das Voltmeter V ist parallel an die beiden Anschlüsse der Solarzelle geschaltet und misst ihre Spannung. Durch Verändern des Widerstands entstehen verschiedene Punkte der Kennlinie.</p></article>
+            <h2>Bereit für das Experiment</h2>
+            <ul><li>Eine Solarzelle wandelt Lichtenergie direkt in elektrische Energie um.</li><li>Zu einem Punkt der Kennlinie gehören Spannung U und Stromstärke I derselben Widerstandseinstellung.</li><li>Die Leistung ergibt sich aus P = U · I; der MPP ist der Punkt mit der größten Leistung unter den betrachteten Bedingungen.</li><li>Das Amperemeter misst in Reihe die Stromstärke; das Voltmeter misst parallel zur Solarzelle deren Spannung.</li></ul>
+            <p>Fachliche Quellen: <a href="https://www.lehrplanplus.bayern.de/serviceinformation/l446766" target="_blank" rel="noopener">LehrplanPLUS Bayern – Photovoltaik</a>; <a href="https://www.lehrplanplus.bayern.de/sixcms/media.php/71/LPP-GY-PH_1142_PV%20in%20Anwendungen.pdf" target="_blank" rel="noopener">ISB – Photovoltaik in Anwendungen</a>.</p>
+          </section>
+        </section>
+      </div>
+    </main>
+  </body>
+</html>

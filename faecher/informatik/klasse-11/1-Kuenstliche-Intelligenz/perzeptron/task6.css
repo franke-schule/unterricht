@@ -1,23 +1,47 @@
 .task6-page .variant-choice { margin:1.25rem 0; }
 .task6-page .perceptron-hero h1 { overflow-wrap:anywhere; hyphens:auto; }
+.task6-page .page-shell { width:min(1600px,calc(100% - 44px)); }
 .task6-page .variant-choice h2 { font-size:1.15rem; }
 .task6-page .variant-buttons { display:flex; flex-wrap:wrap; gap:.7rem; }
 .task6-page .variant-buttons button { margin-top:.3rem; }
 .task6-page .task6-layout { display:grid; grid-template-columns:minmax(0,1fr) minmax(320px,420px); gap:1.2rem; align-items:start; margin-top:1rem; }
-.task6-page .task6-ide { min-width:0; position:sticky; top:1rem; }
+.task6-page .task6-ide { min-width:0; position:sticky; top:1rem; max-height:calc(100dvh - 2rem); overflow-y:auto; }
+.task6-page .task6-ide:focus-visible { outline:3px solid #f0a202; outline-offset:3px; }
 .task6-page .task6-tasks { min-width:0; max-height:calc(100vh - 2rem); overflow-y:auto; padding:0 .25rem .4rem 0; }
 .task6-page .task6-tasks .card { margin:0 0 1rem; }
+/* Erst geöffnet steht die Sortierhilfe unter beiden Arbeitsspalten. */
+@media(min-width:1151px){
+  .task6-layout:has(#tasks-einfach:not([hidden]) #code-snippets-help[open]) .task6-tasks,
+  .task6-layout:has(#tasks-einfach:not([hidden]) #code-snippets-help[open]) #tasks-einfach { display:contents; }
+  .task6-layout:has(#tasks-einfach:not([hidden]) #code-snippets-help[open]) .task6-ide { grid-column:1; grid-row:1 / span 4; }
+  .task6-layout:has(#tasks-einfach:not([hidden]) #code-snippets-help[open]) .task6-tasks .card { grid-column:2; }
+  .task6-layout:has(#tasks-einfach:not([hidden]) #code-snippets-help[open]) #code-snippets-help { grid-column:1 / -1; margin:0; }
+}
 .task6-page .ide-container { border:1px solid #b9d1df; border-radius:.85rem; overflow:hidden; background:#fff; }
 .task6-page .ide-container iframe { display:block; width:100%; min-height:690px; border:0; }
 .task6-page textarea { width:100%; }
-.task6-page .code-snippets { padding-left:1.2rem; }
-.task6-page .code-snippets li { margin:.5rem 0; }
-.task6-page .code-snippets code { display:block; padding:.4rem; background:#edf6fb; overflow-x:auto; user-select:text; }
+/* Sortierhilfe aus Physik 11, Aufgabe 7: Kartenbank und nummerierte Felder. */
+.task6-page .step-order { display:grid; gap:10px; margin:10px 0 12px; }
+.task6-page .step-order-bank { display:flex; flex-wrap:wrap; gap:6px; min-height:46px; align-content:flex-start; padding:6px 8px; border:1px solid #cbd5e1; border-radius:10px; background:#f8fafc; }
+.task6-page .step-order-rows { display:grid; gap:8px; margin:0; padding:0; list-style:none; }
+.task6-page .step-order-row { display:flex; align-items:center; gap:8px; min-width:0; }
+.task6-page .step-order-number { display:grid; flex:0 0 28px; place-items:center; width:28px; height:28px; border-radius:50%; color:#fff; background:var(--p-ink); font-weight:800; }
+.task6-page .cloze-token,.task6-page .formula-slot { min-width:0; max-width:100%; min-height:46px; padding:6px 12px; border:1px solid #93c5fd; border-radius:9px; color:var(--p-ink); background:#eff6ff; font:inherit; text-align:left; line-height:1.3; cursor:grab; touch-action:none; user-select:none; }
+.task6-page .formula-slot { flex:1 1 auto; width:100%; border:2px dashed #93c5fd; }
+.task6-page .formula-slot:not(.is-filled) { color:#64748b; font-weight:600; cursor:pointer; }
+.task6-page .formula-slot.is-filled { border-style:solid; background:#fff; }
+.task6-page .cloze-token.is-picked,.task6-page .formula-slot.is-picked,.task6-page .formula-slot.is-selected { outline:3px solid var(--p-blue); outline-offset:2px; }
+.task6-page .formula-slot.is-drop-target { border-color:var(--p-ink); background:#dbeafe; }
+.task6-page .is-dragging { opacity:.45; }
+.task6-page .cloze-drag-ghost { position:fixed; z-index:1000; display:inline-flex; align-items:center; max-width:min(360px,90vw); transform:translate(-50%,-50%); box-shadow:0 6px 18px rgba(30,58,138,.25); pointer-events:none; }
+.task6-page .step-order code,.task6-page .cloze-drag-ghost code { white-space:pre-wrap; overflow-wrap:anywhere; font-size:.85rem; }
+.task6-page .code-snippet-context { min-width:0; margin:.25rem 0; color:var(--p-ink); }
+.task6-page .drag-help { color:#64748b; font-size:.88rem; }
 .task6-page .task6-summary { margin:1.5rem 0; }
 .task6-page .quiz-question { min-width:0; }
 .task6-page [hidden] { display:none!important; }
 .task6-page .feedback h3,.task6-page .feedback h4 { margin:.2rem 0 .5rem; }
 .task6-page .feedback ul { margin:.2rem 0 .8rem; }
 .task6-page button:disabled { opacity:.65; cursor:wait; }
-@media(max-width:1050px){.task6-page .task6-layout{grid-template-columns:1fr}.task6-page .task6-ide{position:static}.task6-page .task6-tasks{max-height:none;overflow:visible}}
+@media(max-width:1150px){.task6-page .task6-layout{grid-template-columns:1fr}.task6-page .task6-ide{position:static;max-height:none;overflow:visible}.task6-page .task6-tasks{max-height:none;overflow:visible}}
 @media(max-width:620px){.task6-page .ide-container iframe{min-height:590px}.task6-page .variant-buttons button{width:100%}}

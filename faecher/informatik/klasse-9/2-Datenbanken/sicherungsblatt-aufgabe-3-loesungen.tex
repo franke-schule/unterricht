@@ -1,0 +1,135 @@
+\documentclass[10pt,a4paper]{article}
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage[ngerman]{babel}
+\usepackage[a4paper,left=12mm,right=12mm,top=12mm,bottom=9mm]{geometry}
+\usepackage{lmodern}
+\usepackage[table]{xcolor}
+\usepackage{tabularx}
+\usepackage{array}
+\usepackage{microtype}
+\usepackage[most]{tcolorbox}
+\pagestyle{empty}
+\setlength{\parindent}{0pt}
+\setlength{\parskip}{0pt}
+\setlength{\tabcolsep}{3pt}
+\renewcommand{\familydefault}{\sfdefault}
+\linespread{1.0}\selectfont
+\renewcommand{\arraystretch}{1.02}
+\definecolor{Navy}{HTML}{17324D}
+\definecolor{Blue}{HTML}{3B6EA5}
+\definecolor{Sky}{HTML}{EAF3FA}
+\definecolor{Mint}{HTML}{E8F5EF}
+\definecolor{Gold}{HTML}{F3B33D}
+\definecolor{Ink}{HTML}{1E2935}
+\definecolor{Muted}{HTML}{617080}
+\definecolor{Line}{HTML}{D8E1E8}
+\definecolor{CodeBg}{HTML}{F5F7F9}
+\color{Ink}
+\newcommand{\sectiontitle}[1]{%
+  \vspace{.3mm}{\color{Blue}\bfseries\large #1}\par
+  \vspace{.2mm}{\color{Blue}\rule{\linewidth}{.65pt}}\par\vspace{.3mm}}
+\newcommand{\sqlkw}[1]{\textcolor{Blue}{\bfseries #1}}
+\newcommand{\sqlbox}[1]{%
+  \begin{tcolorbox}[colback=CodeBg,colframe=Line,arc=1.3mm,boxrule=.55pt,
+    left=2.2mm,right=2.2mm,top=.5mm,bottom=.5mm,boxsep=0pt]
+  {\ttfamily\fontsize{9.4}{11.2}\selectfont #1}
+  \end{tcolorbox}}
+\newcommand{\workbox}[1]{%
+  \begin{tcolorbox}[colback=Sky,colframe=Blue,arc=1.2mm,boxrule=.55pt,
+    left=2mm,right=2mm,top=.35mm,bottom=.35mm,boxsep=0pt]
+  {\fontsize{9.2}{11}\selectfont\hyphenpenalty=10000\exhyphenpenalty=10000\textcolor{Blue}{\bfseries Arbeitsauftrag:} #1}
+  \end{tcolorbox}}
+\newcommand{\pageheader}{%
+  \colorbox{Navy}{\parbox{\dimexpr\linewidth-2\fboxsep\relax}{%
+    \vspace{1.5mm}\color{white}\begin{tabularx}{\linewidth}{@{}Xr@{}}
+    {\small\bfseries INFORMATIK \textperiodcentered{} KLASSE 9} &
+    \colorbox{Gold}{\color{Navy}\small\bfseries\strut LÖSUNGEN}
+    \end{tabularx}
+    \vspace{1mm}{\fontsize{17}{20}\selectfont\bfseries
+    Aufgabe 3 -- Dopplungen vermeiden und Zeilen begrenzen}\par
+    \vspace{.6mm}{\large Sicherungsblatt}\vspace{1.5mm}}}}
+\newcommand{\pagefooter}[1]{%
+  \vfill{\color{Line}\rule{\linewidth}{.5pt}}\par\vspace{1mm}
+  \begin{tabularx}{\linewidth}{@{}Xc r@{}}
+  {\small\color{Muted}Klasse 9 \textperiodcentered{} Datenbanken} &
+  {\small\color{Muted}#1 / 1} &
+  {\small\color{Muted}Sicherungsblatt \textperiodcentered{} Aufgabe 3}
+  \end{tabularx}}
+\newcommand{\merkebox}[1]{%
+  \begin{tcolorbox}[colback=Mint,colframe=Blue,arc=2mm,boxrule=.8pt,
+    left=3mm,right=3mm,top=1.5mm,bottom=1.5mm]
+  \textcolor{Blue}{\bfseries Merke}\par\vspace{.5mm}
+  {\fontsize{9.6}{11.6}\selectfont #1}
+  \end{tcolorbox}}
+\newcommand{\smallcaption}[1]{{\small\color{Muted}#1}\par\vspace{.5mm}}
+\newcommand{\miniresult}[2]{%
+  {\fontsize{8.6}{10.2}\selectfont
+  \begin{tabular}{|>{\ttfamily\bfseries}l|}\hline
+  \rowcolor{Sky}#1\\\hline
+  #2\\\hline
+  \end{tabular}}}
+\begin{document}
+\pageheader\par
+\sectiontitle{1 \textperiodcentered{} Dopplungen vermeiden mit DISTINCT}
+\begin{minipage}[t]{.48\linewidth}
+\workbox{Zeige die Geschlechtsangaben aller Mitglieder an.}
+\smallcaption{SQL-Anweisung}
+\sqlbox{\sqlkw{SELECT} gender\par\sqlkw{FROM} users}
+\smallcaption{Ergebnisrelation (Ausschnitt aus 317 Zeilen)}
+{\fontsize{8.6}{10.2}\selectfont
+\begin{tabular}{|>{\ttfamily\bfseries}l|}\hline
+\rowcolor{Sky}gender\\\hline
+male\\\hline male\\\hline male\\\hline \ldots\\\hline
+\end{tabular}}
+\end{minipage}\hfill
+\begin{minipage}[t]{.48\linewidth}
+\workbox{Zeige jede unterschiedliche Geschlechtsangabe nur einmal an.}
+\smallcaption{SQL-Anweisung}
+\sqlbox{\sqlkw{SELECT} \sqlkw{DISTINCT} gender\par\sqlkw{FROM} users}
+\smallcaption{Ergebnisrelation (4 Zeilen)}
+{\fontsize{8.6}{10.2}\selectfont
+\begin{tabular}{|>{\ttfamily\bfseries}l|}\hline
+\rowcolor{Sky}gender\\\hline
+male\\\hline female\\\hline diverse\\\hline NULL\\\hline
+\end{tabular}}\par\vspace{.5mm}
+{\small\color{Muted}NULL steht für das Konto admin ohne Eintrag.}
+\par\vspace{.4mm}
+\smallcaption{Allgemeine Form}
+\sqlbox{\sqlkw{SELECT} \sqlkw{DISTINCT} Spaltenname\par\sqlkw{FROM} tabellenname}
+\end{minipage}\par
+\vspace{1mm}
+\merkebox{DISTINCT steht direkt hinter SELECT. Gleiche Werte erscheinen in der Ergebnisrelation nur einmal; die Tabelle users bleibt unverändert. NULL bedeutet: kein Wert eingetragen.}
+
+\sectiontitle{2 \textperiodcentered{} Zeilen begrenzen mit LIMIT}
+\begin{minipage}[t]{.48\linewidth}
+\workbox{Zeige die Usernames der ersten drei Mitglieder an.}
+\smallcaption{SQL-Anweisung}
+\sqlbox{\sqlkw{SELECT} username\par\sqlkw{FROM} users\par\sqlkw{LIMIT} 3}
+\smallcaption{Ergebnisrelation (3 Zeilen)}
+\miniresult{username}{zornigerfotograf\\wanderwut\_finn\\bergcoder}
+\vspace{.5mm}\par
+{\fontsize{9.2}{11}\selectfont LIMIT 3 zeigt höchstens drei Zeilen; ohne Sortierung hängt die Auswahl von der vorhandenen Reihenfolge ab.}
+\end{minipage}\hfill
+\begin{minipage}[t]{.48\linewidth}
+\workbox{Zeige die Usernames und Geburtsdaten der vier jüngsten Mitglieder an.}
+\smallcaption{SQL-Anweisung}
+\sqlbox{\sqlkw{SELECT} username, birthday\par\sqlkw{FROM} users\par\sqlkw{ORDER BY} birthday DESC\par\sqlkw{LIMIT} 4}
+\smallcaption{Ergebnisrelation (4 Zeilen)}
+{\fontsize{8.6}{10.2}\selectfont
+\begin{tabular}{|>{\ttfamily\bfseries}l|>{\ttfamily}l|}\hline
+\rowcolor{Sky}username & birthday\\\hline
+gartenlesemaus & 2010-07-07\\\hline
+gartencoderin & 2010-06-28\\\hline
+codekickemmi & 2010-06-22\\\hline
+modereiselio & 2010-06-15\\\hline
+\end{tabular}}\par\vspace{.5mm}
+{\fontsize{9.2}{11}\selectfont Erst sortiert ORDER BY die spätesten Geburtsdaten nach oben; danach zeigt LIMIT die ersten vier Zeilen.}
+\end{minipage}\par
+\vspace{.4mm}
+\smallcaption{Allgemeine Form}
+\sqlbox{\sqlkw{SELECT} Spaltenname\par\sqlkw{FROM} tabellenname\par\sqlkw{LIMIT} Anzahl}
+\vspace{1mm}
+\merkebox{Reihenfolge der Klauseln: SELECT (gegebenenfalls mit DISTINCT) $\rightarrow$ FROM $\rightarrow$ ORDER BY $\rightarrow$ LIMIT.}
+\pagefooter{1}
+\end{document}

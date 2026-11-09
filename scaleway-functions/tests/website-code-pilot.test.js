@@ -12,16 +12,18 @@ const start = transformed.indexOf('<script>', transformed.indexOf('</main>')) + 
 const fullScript = transformed.slice(start, transformed.indexOf('</script>', start));
 const script = fullScript.slice(0, fullScript.indexOf('    function setupChoiceQuiz('));
 
-function element() {
-  return { disabled: false, hidden: true, dataset: {}, children: [], className: '',
+function element(ownerDocument) {
+  return { ownerDocument, disabled: false, hidden: true, dataset: {}, children: [], className: '',
     set textContent(value) { this.text = String(value); this.children = []; },
     get textContent() { return this.text || ''; },
-    appendChild(child) { this.children.push(child); } };
+    appendChild(child) { this.children.push(child); }, append(...items) { this.children.push(...items); },
+    replaceChildren(...items) { this.children = items; } };
 }
 function harness(fetchImpl) {
   const state = { code: 'Robot dudu = new Robot(1, 1, 12, 12);', ready: true };
-  const elements = Object.fromEntries(['10-3a', '10-3b'].flatMap(task =>
-    ['button', 'result'].map(kind => [kind + '-' + task, element()])));
+  const elements = {};
+  const document = { getElementById: id => elements[id], createElement: () => element(document) };
+  for (const task of ['10-3a', '10-3b']) for (const kind of ['button', 'result']) elements[kind + '-' + task] = element(document);
   elements['button-10-3a'].textContent = 'Meinen Code für a prüfen';
   elements['button-10-3b'].textContent = 'Meinen Code für b prüfen';
   elements['robot-ide'] = { contentWindow: { online_ide_access: { getIDE(id) {
@@ -33,13 +35,14 @@ function harness(fetchImpl) {
   } } } };
   const timers = new Map();
   let timerCount = 0;
-  const context = vm.createContext({ document: { getElementById: id => elements[id], createElement: element },
+  const context = vm.createContext({ document,
     window: { crypto: { randomUUID } }, URL, AbortController, fetch: fetchImpl,
     setTimeout: callback => { timers.set(++timerCount, callback); return timerCount; },
     clearTimeout: id => timers.delete(id) });
-  const helper = fs.readFileSync(path.resolve(__dirname, '../../faecher/informatik/klasse-11/1-Kuenstliche-Intelligenz/perzeptron/ui/semantic-answer.mjs'), 'utf8').replace(/^export /gm, '');
+  const helper = fs.readFileSync(path.resolve(__dirname, '../../faecher/informatik/klasse-11/1-Kuenstliche-Intelligenz/perzeptron/ui/semantic-answer.mjs'), 'utf8').replace(/^import .*ai-access.*;\r?\n/m, '').replace(/^export /gm, '');
+  Object.assign(context, require('./fixtures/authorized-handler').clientGlobals);
   vm.runInContext(helper, context);
-  vm.runInContext('globalThis.scwTestModule = { evaluateSemanticAnswer, evaluateCodeAnswer };', context);
+  vm.runInContext('globalThis.scwTestModule = { evaluateSemanticAnswer, evaluateCodeAnswer, renderCompactEvaluation, observeIdeCodeChanges(frame, id, callback) { globalThis.codeChanged = callback; return () => {}; } };', context);
   vm.runInContext(script.replace(/import\('[^']+'\)/g, 'Promise.resolve(scwTestModule)'), context);
   return { elements, state, timers, context };
 }
@@ -83,7 +86,7 @@ test('Code aus Hauptprogramm.java geht als JSON-Body an Scaleway; a/b haben eige
     assert.equal(call.options.credentials, 'omit');
     assert.equal(h.elements['button-' + taskId].disabled, false);
     const maxPoints = taskId === '10-3a' ? 3 : 6;
-    assert.equal(h.elements['result-' + taskId].children[0].textContent, `${maxPoints} von ${maxPoints} Punkten – korrekt`);
+    assert.equal(h.elements['result-' + taskId].children[0].textContent, `${maxPoints} von ${maxPoints} Punkten – Sehr gut, alles richtig`);
   }
   assert.equal(h.elements['button-10-3a'].textContent, 'Meinen Code für a prüfen');
   assert.equal(h.timers.size, 0);
@@ -115,7 +118,7 @@ test('Doppelklick wird abgefangen; Fehler geben den Prüfbutton für einen erneu
       json: async () => responseFor(options, { ok: false, message: 'Bitte warte eine Minute.' }) }); });
   });
   const running = h.context.submitCode('10-3a');
-  await Promise.resolve();
+  await new Promise(resolve => setImmediate(resolve));
   await h.context.submitCode('10-3a');
   assert.equal(calls, 1);
   finish();
@@ -123,10 +126,25 @@ test('Doppelklick wird abgefangen; Fehler geben den Prüfbutton für einen erneu
   assert.equal(h.elements['result-10-3a'].textContent, 'Bitte warte eine Minute.');
   assert.equal(h.elements['button-10-3a'].disabled, false);
   const retry = h.context.submitCode('10-3a');
-  await Promise.resolve();
+  await new Promise(resolve => setImmediate(resolve));
   finish();
   await retry;
   assert.equal(calls, 2);
+});
+
+test('IDE-Änderung entfernt sichtbares Feedback und verwirft eine verspätete Codebewertung', async () => {
+  let finish;
+  const h = harness((url, options) => new Promise(resolve => { finish = () => resolve({ ok: true, json: async () => responseFor(options) }); }));
+  const running = h.context.submitCode('10-3a');
+  await new Promise(resolve => setImmediate(resolve));
+  h.state.code = 'Robot dudu = new Robot(1, 1, 8, 8);';
+  h.context.codeChanged();
+  assert.equal(h.elements['result-10-3a'].hidden, true);
+  finish();
+  await running;
+  assert.equal(h.elements['result-10-3a'].hidden, true);
+  assert.equal(h.elements['result-10-3a'].children.length, 0);
+  assert.equal(h.elements['button-10-3a'].disabled, false);
 });
 
 test('Falsche requestId und Punktegrenzen werden nicht als gültige Codebewertung angezeigt', async () => {
@@ -143,7 +161,7 @@ test('Timeout beendet die Codeanfrage und stellt den ursprünglichen Button wied
   const h = harness((url, options) => new Promise((resolve, reject) =>
     options.signal.addEventListener('abort', () => reject(new Error('abgebrochen')))));
   const running = h.context.submitCode('10-3a');
-  await Promise.resolve();
+  await new Promise(resolve => setImmediate(resolve));
   [...h.timers.values()][0]();
   await running;
   assert.match(h.elements['result-10-3a'].textContent, /zu lange gedauert/);

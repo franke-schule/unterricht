@@ -1449,6 +1449,17 @@ const IDE_ID =
       'Java10Aufgabe5Tiere';
 const MAX_CODE_LENGTH =
       12000;
+let scwCodeRevision = 0;
+import('../../klasse-11/1-Kuenstliche-Intelligenz/perzeptron/ui/semantic-answer.mjs?v=20261029-criteria-v1').then(({ observeIdeCodeChanges }) => {
+  observeIdeCodeChanges(document.getElementById('ide-5'), IDE_ID, () => {
+    scwCodeRevision += 1;
+    for (const taskId of Object.keys(SCW_TASK_POINTS)) {
+      const box = document.getElementById('result-' + taskId);
+      box?.replaceChildren();
+      if (box) box.hidden = true;
+    }
+  });
+});
     function restoreCodeButton(pending) {
       pending.button.disabled =
         false;
@@ -1702,6 +1713,7 @@ async function submitCode(taskId) {
       }
 
 
+  const submittedCodeRevision = scwCodeRevision;
   button.dataset.defaultLabel = button.textContent.trim();
   button.disabled = true;
   button.textContent = 'Programm wird geprüft …';
@@ -1709,188 +1721,25 @@ async function submitCode(taskId) {
   resultBox.className = 'result';
   resultBox.textContent = 'Der aktuelle Programmcode wird ausgewertet.';
   try {
-    const { evaluateCodeAnswer } = await import('../../klasse-11/1-Kuenstliche-Intelligenz/perzeptron/ui/semantic-answer.mjs?v=20261010-scaleway');
+    const { evaluateCodeAnswer, renderCompactEvaluation } = await import('../../klasse-11/1-Kuenstliche-Intelligenz/perzeptron/ui/semantic-answer.mjs?v=20261029-criteria-v1');
     const result = await evaluateCodeAnswer({ serverUrl: SCRIPT_SERVER_URL, taskId, code,
       expectedMaxPoints: SCW_TASK_POINTS[taskId] });
-    showEvaluation(resultBox, result);
-  } catch (error) { showError(resultBox, error.message || 'Die Auswertung konnte nicht abgeschlossen werden.'); }
+    if (submittedCodeRevision !== scwCodeRevision || getAllProgramCode() !== code) return;
+    showEvaluation(resultBox, result, renderCompactEvaluation);
+   } catch (error) {
+    try { if (submittedCodeRevision !== scwCodeRevision || getAllProgramCode() !== code) return; } catch { return; }
+    showError(resultBox, error.message || 'Die Auswertung konnte nicht abgeschlossen werden.');
+  }
   finally { restoreCodeButton({ button }); }
 }
 
-    function showEvaluation(
-      resultBox,
-      result
-    ) {
-      resultBox.textContent =
-        '';
+    function showEvaluation(resultBox, result, renderCompactEvaluation) {
+  resultBox.hidden = false;
+  resultBox.className = 'result ' + (result.points === result.maxPoints ? 'high' : result.points > 0 ? 'medium' : 'low');
+  renderCompactEvaluation(resultBox, result);
+}
 
-      resultBox.hidden =
-        false;
-
-      resultBox.className =
-        'result ' +
-        getEvaluationLevelClass(
-          result.points,
-          result.maxPoints
-        );
-
-      const heading =
-        document.createElement(
-          'h3'
-        );
-
-      heading.textContent =
-        result.points +
-        ' von ' +
-        result.maxPoints +
-        ' Punkten – ' +
-        result.status;
-
-      resultBox.appendChild(
-        heading
-      );
-
-      appendList(
-        resultBox,
-        'Das ist dir gelungen:',
-        result.strengths,
-        'Es wurde noch kein eindeutiger richtiger Aspekt erkannt.'
-      );
-
-      appendList(
-        resultBox,
-        'Das solltest du überprüfen:',
-        result.missing,
-        'Es fehlen keine wesentlichen Aspekte.'
-      );
-
-      const feedbackContainer =
-        document.createElement(
-          'div'
-        );
-
-      feedbackContainer.className =
-        'feedback';
-
-      const feedbackHeading =
-        document.createElement(
-          'h4'
-        );
-
-      feedbackHeading.textContent =
-        'Rückmeldung zur Codeanalyse';
-
-      const feedbackText =
-        document.createElement(
-          'p'
-        );
-
-      feedbackText.textContent =
-        result.feedback ||
-        'Überprüfe deinen Programmcode noch einmal.';
-
-      feedbackContainer.appendChild(
-        feedbackHeading
-      );
-
-      feedbackContainer.appendChild(
-        feedbackText
-      );
-
-      resultBox.appendChild(
-        feedbackContainer
-      );
-    }
-
-
-    function getEvaluationLevelClass(
-      points,
-      maxPoints
-    ) {
-      const ratio =
-        Number(points) /
-        Math.max(
-          1,
-          Number(maxPoints)
-        );
-
-      if (ratio < 0.4) {
-        return 'low';
-      }
-
-      if (ratio < 0.75) {
-        return 'medium';
-      }
-
-      return 'high';
-    }
-
-
-    function appendList(
-      container,
-      headingText,
-      items,
-      emptyText
-    ) {
-      const heading =
-        document.createElement(
-          'h4'
-        );
-
-      heading.textContent =
-        headingText;
-
-      container.appendChild(
-        heading
-      );
-
-      if (
-        !Array.isArray(items) ||
-        items.length === 0
-      ) {
-        const paragraph =
-          document.createElement(
-            'p'
-          );
-
-        paragraph.textContent =
-          emptyText;
-
-        container.appendChild(
-          paragraph
-        );
-
-        return;
-      }
-
-      const list =
-        document.createElement(
-          'ul'
-        );
-
-      items.forEach(
-        function(item) {
-          const listItem =
-            document.createElement(
-              'li'
-            );
-
-          listItem.textContent =
-            String(item);
-
-          list.appendChild(
-            listItem
-          );
-        }
-      );
-
-      container.appendChild(
-        list
-      );
-    }
-
-
-    function showError(
+function showError(
       resultBox,
       message
     ) {

@@ -88,6 +88,8 @@ function prepare() {
   const dependencies = [
     'include',
     sharedClient,
+    'faecher/informatik/klasse-11/1-Kuenstliche-Intelligenz/perzeptron/ui/ai-access.mjs',
+    'faecher/informatik/klasse-11/1-Kuenstliche-Intelligenz/perzeptron/ui/ai-access.css',
     'faecher/informatik/klasse-9/eingaben-speichern.js',
     'faecher/informatik/quiz-fragen-pruefen.js',
     'faecher/informatik/klasse-9/3-Modellierung-und-Programmierung-Online-IDE/sicherungsblatt-aufgabe-1-loesungen.pdf'

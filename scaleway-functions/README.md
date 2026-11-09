@@ -1,25 +1,37 @@
 # Scaleway-Testserver für die Unterrichtswebsite
 
-Stand 13.10.2026: Der Healthcheck der bereitgestellten Function meldet 69
-Aufgaben, die lokale `apps-script/Tasks.gs` enthielt vor der Bereinigung 67
-und enthält jetzt 64. Die drei nicht mehr verwendeten Quizaufgaben wurden
-aus der gemeinsamen Serverquelle entfernt. Vor einem erneuten
-Codeupload müssen die beiden zusätzlich bereitgestellten Aufgaben mit der
-aktuellen Serverquelle abgeglichen werden. Ein Paket aus dem lokalen Stand
-würde diese Aufgaben sonst entfernen. Die Bewertungsroute `11-5-1` wird
-weiterhin von Modul 5.2 verwendet und muss erhalten bleiben.
+Stand 29.10.2026: Maßgebliche Quellen sind ausschließlich die JavaScript-Dateien
+unter `scaleway-functions/source/`. `apps-script/` bleibt als unverändertes
+Google-Archiv erhalten und wird weder für neue Aufgaben gepflegt noch zum Bau
+oder Betrieb von Scaleway benötigt. Es gilt `manifest-allgemein.txt`, Abschnitt 0.
 
-Die drei entfernten Quizkennungen sind auf dem laufenden Server noch registriert:
-Leere Prüfanfragen wurden jeweils mit `INPUT_TOO_SHORT` abgewiesen. Dabei wurde
-kein Modell aufgerufen. Die Bereinigung erfordert deshalb eine neue
-Function-Bereitstellung aus der zuvor abgeglichenen Quelle. Das neu gebaute
-lokale ZIP enthält 64 Aufgaben und wurde noch nicht hochgeladen.
+Der lokale Bestand enthält 84 Bewertungsaufgaben. Die ausdrücklich beauftragte
+Gesamtmigration ergänzt bei den 79 zuvor offenen Aufgaben den vollständigen
+Kriterienvertrag: Einzelurteile mit Originalbelegen, serverseitig berechnete
+Punkte und genau ein fester nächster Hinweis. Alle 19 Codeaufgaben verwenden
+denselben Vertrag. Bei `b`, `c`, `2b`, `1a`, `1b`, `1c` und `1f` entfallen auf
+Entscheidung der Lehrkraft die bisherigen Stil-/Beobachtungs-Metapunkte;
+diese Aufgaben besitzen jeweils fünf fachliche Punkte, außer `1a` und `1b`:
+Dort gelten seit dem 08.11.2026 jeweils vier Punkte. Die Bedeutung des
+Werts 100 gehört ausschließlich zu `1b`; die x-Startposition ist auch dort
+kein Pflichtaspekt mehr.
 
-Dieser Server übernimmt Aufgaben, Prompts, Bewertungsregeln und Ergebnisformat
-aus `apps-script/`. Der Google-Server bleibt erhalten. Am 10.10.2026 wurden
-35 lokale Website-Dateien auf diesen Server umgestellt; noch nicht veröffentlicht.
-Die zwei weiteren manuellen Tests wurden auf ausdrücklichen Benutzerwunsch
-übersprungen und durch automatische technische Prüfungen ergänzt.
+Die [Ausgangsliste](../docs/ki-feedback-offene-aufgaben-2026-10-29.md),
+[Spezifikation](../docs/ki-feedback-migration-plan.md) und der
+[Prüfbericht](../docs/ki-feedback-migration-pruefung.md) dokumentieren Umfang,
+Kriterien und Nachweise. Der aktuelle Überblick steht in
+[KI-FEEDBACK-MIGRATION.md](../KI-FEEDBACK-MIGRATION.md).
+
+Die Online-Umstellung ist durch einen lokalen Build nicht bestätigt:
+Die aktuelle ZIP muss in die Function `ki-auswertung` hochgeladen und erneut
+bereitgestellt werden; außerdem sind die geänderten Website-Dateien zu
+veröffentlichen. Danach folgen fachliche Vergleichstests gegen das tatsächlich
+eingesetzte Modell. Eine gleiche Aufgabenzahl allein beweist keinen gleichen
+Quell- oder Bewertungsstand.
+
+Die späteren Chat-Schritt-Abschnitte dokumentieren die historische Migration
+vom 10.10.2026. Angaben zur Google-Bereitstellung und damalige Uploadstände
+sind historische Protokolle, keine Voraussetzung für neue Aufgaben.
 
 ## Bauen und prüfen
 
@@ -29,17 +41,191 @@ Aus dem Repository-Verzeichnis:
 ```powershell
 node scaleway-functions/build-core.js
 node --test scaleway-functions/tests/*.test.js
-node --test apps-script/tests/*.test.js
 & ./scaleway-functions/package.ps1
 ```
 
-`build-core.js` übernimmt `Tasks.gs`, `EvaluationSchema.gs`, die reinen Funktionen
-aus `Helpers.gs`, `Rules.gs` und den Promptaufbau aus `Gemini.gs`. Grenzen und
-Ergebnistypen stammen aus `Config.gs`. Bei geänderter Quellstruktur bricht die
-Extraktion ab. Generierter Kern und SHA256-Quellmanifest liegen im ZIP; bei jeder
-neuen Bereitstellung das getestete ZIP samt Prüfsumme extern archivieren.
+`source/tasks.js` enthält Aufgaben und Bewertungsrubriken, `source/rules.js`
+die regelbasierte Nachbearbeitung. Gemeinsame Quellen sind `prompt.js`,
+`helpers.js`, `evaluation-schema.js` und `config.js`. Neue KI-Aufgaben werden
+automatisch in diesen Scaleway-Quellen samt passenden Tests ergänzt; Google-
+Dateien werden dafür nicht geändert. Bestehende Frontend-Anbindung verwenden.
+
+`build-core.js` bündelt diese sechs Dateien unverändert zum generierten
+`evaluation-core.js` und erstellt das SHA256-Quellmanifest. Beide generierten
+Dateien nicht manuell ändern. `package.ps1` erzeugt `dist/ki-auswertung-test.zip`
+und `dist/ki-auswertung-test.sha256.txt`; die fünf Laufzeitdateien liegen direkt
+im ZIP-Root. Bei jeder Bereitstellung das getestete ZIP samt Prüfsumme extern
+archivieren. Archivtests unter `apps-script/tests/` bleiben erhalten; neue
+Bewertungstests gehören unter `scaleway-functions/tests/`.
 
 ## Konfiguration auf Scaleway
+
+### Serverseitiger Unterrichtspasswortschutz (live auf `franke-schule.de`, 04.11.2026)
+
+Jeder Auswertungs-POST benötigt jetzt den Header `X-AI-Password`. Sein Wert ist
+das mit UTF-8 und anschließend Base64 kodierte Unterrichtspasswort. Base64 dient
+nur dem Transport von Sonderzeichen; HTTPS schützt die Übertragung. Der Handler
+prüft den Header vor dem Modellaufruf gegen den Secret **`AI_ACCESS_PASSWORD_HASH`**.
+Fehlender/falscher Zugang führt zu HTTP 401 (`AUTH_REQUIRED`), fehlende/defekte
+Secret-Konfiguration zu HTTP 503 (`AUTH_CONFIGURATION`). Es gibt keine Sperre
+nach Passwortfehlversuchen. Die vorhandene Bremse für autorisierte Modellaufrufe
+bleibt erhalten. Es ist kein globales Tages- oder Kostenlimit eingebaut.
+
+Den Prüfwert lokal mit `node scaleway-functions/create-access-password-hash.js`
+erzeugen. Passwort zweimal verdeckt eingeben, vollständige ausgegebene Zeile als
+Secret hinterlegen. Jedes nicht leere Passwort bis 256 UTF-8-Bytes ohne
+Steuerzeichen ist möglich. Format:
+`scrypt$v1$32768$8$1$<16-Byte-Salt als Hex>$<64-Byte-Prüfwert als Hex>`.
+Prüfwert und Passwort nicht ins Repository, in Testanfragen im Chat oder ins ZIP
+aufnehmen. Der API-Schlüssel `AI_API_KEY` bleibt ein eigener Secret.
+
+Der gemeinsame Browser-Helfer fragt das Passwort in einem nativen Dialog ab und
+merkt es nur im Arbeitsspeicher bis zum Seitenwechsel/Neuladen. HTTP 401 verwirft
+die gemerkte Eingabe; der nächste bewusste Prüfklick fragt erneut. Das Passwort
+wird nie Teil des Modellprompts oder der gespeicherten Aufgabenantwort.
+
+Zusätzliche Prüfungen:
+
+```powershell
+node --test scaleway-functions/tests/access-password.test.js scaleway-functions/tests/access-password-hash.test.js
+node scaleway-functions/tests/access-password-browser.check.js
+& ./scaleway-functions/package-access-update.ps1
+```
+
+Die letzte Anweisung baut zwei getrennte Pakete unter `dist/`:
+`ki-auswertung-passwortschutz.zip` für die Function und
+`website-passwortschutz.zip` mit ausschließlich drei zentralen Website-Dateien
+unter ihren bisherigen `faecher/`-Pfaden. Daneben stehen SHA256-Dateien und
+`passwortschutz-bereitstellung.json`. Andere parallele Moduländerungen sind
+nicht Teil dieses Website-Pakets. Die bestehenden Imports bleiben erhalten;
+beim Rollout Hosting-/Browser-Caches aktualisieren und mit **Strg+F5** neu laden.
+Eine alte, gecachte Clientfassung erhält HTTP 401 und muss neu geladen werden.
+
+`GET /health` und `OPTIONS` bleiben ohne Passwort verfügbar. Der neue Healthcheck
+meldet `accessProtection: "password-v1"` und `accessConfigured: true/false`.
+`configured` setzt jetzt sowohl Modell- als auch Passwortkonfiguration voraus.
+Diese Angaben beweisen noch keine erfolgreiche Passwort- oder Modellprüfung.
+
+Vor Upload den bisherigen Function-Code sichern und die vorhandenen Live-Aufgaben
+mit dem lokalen Bewertungsbestand abgleichen. Während des Rollouts
+`AI_EVALUATION_ENABLED=false` setzen, Server und Website veröffentlichen, CORS
+und abgewiesene Zugriffe prüfen, danach wieder aktivieren und kontrollierte Text-
+und Codefälle testen. Alte PowerShell-/Browserskripte brauchen ebenfalls den neuen
+Header; keine Klartextpasswörter in Skripte oder die Shell-Historie schreiben.
+Bei Störungen die KI deaktivieren; keine ungeschützte Serverfassung reaktivieren.
+Ausführlicher Ablauf: [SCALEWAY-PASSWORTSCHUTZ.md](../SCALEWAY-PASSWORTSCHUTZ.md).
+
+### Kriterienweise Rückmeldung in Inf11 KI Aufgabe 6.2, Teilaufgabe 1
+
+`11-6-klassifizieren` verwendet `feedbackCriteria` aus `source/tasks.js`.
+Das Modell liefert ausschließlich vier Einzelurteile unter `criteria`, je
+mit einem vorgegebenen Status und wörtlichen Belegstellen aus der aktuellen
+Antwort. `scaleway-client.js` erzeugt dafür das passende JSON-Schema und prüft
+Vollständigkeit, Statuswerte und das tatsächliche Vorkommen jedes Zitats.
+Erfundene Belege oder das frühere freie Punkte-/Feedbackformat werden als
+technischer Bewertungsfehler zurückgewiesen, ohne Schülerpunkte anzuzeigen.
+
+`source/rules.js` zählt die erfüllten Kriterien und wählt den ersten noch
+offenen Schritt in der Reihenfolge Multiplikation, Addition,
+Schwellenvergleich, unveränderte Gewichte. Der einzelne sichtbare Hinweis
+stammt aus den Aufgabenangaben, nicht aus frei erzeugter Modellprosa.
+Spätere erfüllte Kriterien zählen sofort; es gibt keinen gespeicherten
+Schrittzähler, der nach einer Änderung veralten könnte. Eindeutige Aussagen
+über unveränderte Gewichte werden zusätzlich unabhängig vom Wortlaut der
+übrigen Erklärung geprüft. Bei Widersprüchen oder unklaren Aussagen wird
+diese lokale Übersteuerung nicht verwendet.
+
+Der Browser erhält weiterhin die bisherige Ergebnishülle. Aufgaben ohne
+`feedbackCriteria` behalten ihren bisherigen internen Modellvertrag. Die Prüfungen in
+`tests/task6-2-klassifizieren.test.js` verwenden simulierte Modellurteile;
+sie prüfen das Schema, die Belegkontrolle und die Auswahl des nächsten
+Schritts, nicht die allgemeine semantische Genauigkeit des KI-Modells.
+Nach Upload der aktuellen ZIP und erneuter Bereitstellung sind die Beispiele
+zusätzlich mit dem tatsächlich konfigurierten Modell auf der Website zu prüfen.
+
+### Kriterienweise Rückmeldung in Inf10 DB Aufgabe 9
+
+Die vier Beschreibe-Aufgaben P2, P5, P8 und P11 verwenden dieselbe
+`feedbackCriteria`-Auswertung wie die oben beschriebene Inf11-Aufgabe.
+Jeweils fünf Kriterien ergeben höchstens fünf Punkte. Ausgabe,
+Zuordnung und Auswahlbedingungen werden getrennt beurteilt; bei P2 folgt
+die Bedeutung einer Ergebniszeile, bei P11 die Gruppierung/Zählung je Mitglied.
+Bei allen vier Aufgaben ist die Sortierung das fünfte Kriterium, einschließlich
+Richtung und gegebenenfalls weiterer Sortierspalten bei Gleichheit.
+Ein Satz darf mehrere Kriterien erfüllen, insbesondere individuelle
+Kommentaranzahl und Zählung je Mitglied bei P11. Die vorhandenen Rubriken
+und die Regeln für sinngleiche SQL-Beschreibungen bleiben maßgeblich.
+
+Das Modell unterscheidet fehlende, teilweise erklärte und falsche Aspekte
+anhand aufgabenbezogener Statuswerte. Der Server zählt die erfüllten Kriterien
+und zeigt genau einen vorgegebenen Hinweis zum ersten offenen Kriterium
+(`Schritt N von 5`). Bei einer erneuten Prüfung zählt immer die aktuelle
+Antwort. Die Website verwirft Rückmeldungen nach einer Textänderung und
+speichert keinen separaten Schrittzähler. Alte Freigaben aus der
+Vier-Punkte-Rubrik werden anhand von `assessmentVersion` gezielt verworfen;
+Eingaben und andere Fortschritte bleiben erhalten. Seit der Gesamtmigration
+zeigen auch die übrigen SQL-Beschreibungen genau einen nächsten Hinweis.
+
+`tests/aufgabe9-criteria.test.js` prüft die Einzelurteile, Belege,
+typische Fehlertypen und die Schrittfolge mit simulierten Modellantworten.
+`faecher/informatik/klasse-10/1-Datenbanken/tests/aufgabe9-criteria-browser.check.cjs`
+prüft den gesamten lokalen Server-/Browserweg, Bearbeitung, Speicherung und
+Smartphone-Anzeige ohne externe Modellaufrufe. Diese Tests belegen keine
+semantische Trefferquote des echten Modells. Zur Veröffentlichung müssen
+sowohl die aktuelle Function-ZIP hochgeladen und erneut bereitgestellt als
+auch die geänderten Website-Dateien veröffentlicht werden.
+
+### Neue Aufgaben und weitere Umstellungen
+
+Für neue Beschreibe- und Programmieraufgaben ist der Kriterienvertrag
+verbindlich (`manifest-allgemein.txt`, Abschnitt 0.1). Der gemeinsame
+Codeprompt unterstützt `responseType: 'code'` zusammen mit `feedbackCriteria`
+und wörtlichen Codebelegen. Die 19 bestehenden Codeaufgaben wurden mit der
+Gesamtmigration ausdrücklich umgestellt. Neue Kriterienaufgaben verwenden denselben
+Scaleway-Transport und dieselbe Ergebnisanzeige mit `maxHints: 1`.
+
+Die zentrale Übersicht [KI-FEEDBACK-MIGRATION.md](../KI-FEEDBACK-MIGRATION.md)
+enthält bereits umgestellte und teilweise vorbereitete Aufgaben, den
+technischen Vertrag und die Checkliste. Der Bestandstest
+`tests/criterion-feedback-contract.test.js` kontrolliert neue Aufgaben,
+Kriterienkonfiguration und Dokumentation gegen den eingefrorenen Altbestand.
+
+### Gemeinsame Bewertung von SQL-Beschreibungen
+
+Die verbindlichen Kriterien stehen in `manifest-datenbankaufgaben.txt`,
+Abschnitt 4.1. Jede SQL-Beschreibe-Aufgabe erhält in `source/tasks.js` ein
+`sqlDescription`-Objekt mit aufgabenbezogenen `aliases` und
+`requireUnchangedSource` (normalerweise `false`). Der bestehende Promptaufbau
+bindet die gemeinsamen Regeln automatisch ein. Die individuelle Rubrik legt
+weiterhin die Lernziele und die Punkte fest. Keine globalen Wortersetzungen im
+Schülertext und keine neue Bewertungspipeline verwenden.
+
+`tests/sql-description-criteria.test.js` prüft den Aufgabenbestand, die
+Bezeichnungen und den Server-Antwortweg mit simulierten Modellantworten.
+Für jede neue Aufgabe in `tests/fixtures/sql-description-cases.json` mindestens
+eine richtige, eine unvollständige und eine falsche synthetische Antwort mit
+fachlich geprüften Sollpunkten ergänzen. Diese lokalen Prüfungen belegen keine
+semantische Zuverlässigkeit des tatsächlichen KI-Modells.
+
+Nach Upload der aktuellen ZIP und erneuter Bereitstellung können die echten
+Modellantworten über den vorhandenen Endpunkt verglichen werden:
+
+```powershell
+node scaleway-functions/tests/sql-description-live.check.js --dry-run
+node scaleway-functions/tests/sql-description-live.check.js --live --runs 2 --out scaleway-functions/dist/sql-live-report.json
+```
+
+Ohne `--live` gibt es keine Netzwerk- oder Modellaufrufe. Die Vorschau nennt die
+Anzahl geplanter Aufrufe. `--task AUFGABENKENNUNG` begrenzt die Prüfung auf eine
+Aufgabe; `--url HTTPS-ENDPUNKT` wählt einen anderen Testserver. Der Bericht
+enthält echte Punkte und Rückmeldungen je Antwort und Durchlauf. Er wird bei
+jeder Antwort aktualisiert. Abweichungen und technische Fehler liefern einen
+Fehlerstatus; bei technischen Fehlern wird die Serie beendet. Zusätzlich zur
+Punktzahl müssen die Rückmeldungen fachlich geprüft werden. Nur synthetische
+Beispiele übertragen. Die zentrale Überarbeitung ist erst nach Bereitstellung
+und tatsächlicher Live-Prüfung online bestätigt.
+
+### Zugang und Laufzeit
 
 Bereits eingerichtet im Namespace:
 
@@ -352,8 +538,8 @@ einem getrennten Function-Zugriffsschlüssel aufgerufen werden.
 
 Lokale Tests verwenden simulierte Modellantworten. Sie ersetzen nicht die Tests
 der echten Scaleway-Laufzeit, des gewählten Modells, der Klassenlast und jeder
-betroffenen Website-Aufgabe. Der vorhandene Google-Live-Export muss vor dem
-Produktivwechsel mit den lokalen Aufgaben-/Regeldateien abgeglichen sein.
+betroffenen Website-Aufgabe. Maßgeblich für künftige Änderungen sind die
+Scaleway-Quellen unter `source/`; Google-Abgleich ist nicht erforderlich.
 
 ## Rückweg
 

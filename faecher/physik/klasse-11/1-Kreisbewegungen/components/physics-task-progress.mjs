@@ -58,8 +58,8 @@ function getPageState() {
  * Versioned per-page student progress. Call restore() after the page has built
  * all dynamic controls, and register custom closure state before restoring.
  */
-export function createPhysicsTaskProgress(taskId) {
-  const storageKey = `physik11-kreisbewegungen-${taskId}-v${VERSION}`;
+export function createPhysicsTaskProgress(taskId, namespace = "physik11-kreisbewegungen") {
+  const storageKey = `${namespace}-${taskId}-v${VERSION}`;
   const parts = new Map();
   let saved = null;
   let restoring = false;

@@ -1,8 +1,8 @@
 import { createForceArrowGrid } from "./components/point-vector-grid.mjs?v=20260930a";
-import { setupPhysicsSemanticTask } from "./components/physics-semantic-task.mjs";
+import { setupPhysicsSemanticTask } from "./components/physics-semantic-task.mjs?v=20261029-criteria-v1";
 import { setupPhysicsStepTabs } from "./components/physics-step-tabs.mjs";
 import { enableTokenDrag, wasDragged } from "./components/token-drag.mjs";
-import { appendPhysicsText, physicsTextSpan } from "./components/physics-notation.mjs?v=20260911a";
+import { appendPhysicsText, physicsTextSpan } from "./components/physics-notation.mjs?v=20261022-force-indices";
 import { createPhysicsTaskProgress } from "./components/physics-task-progress.mjs?v=20260930a";
 
 const SCRIPT_SERVER_URL = "https://unterrichtkiichezbn4-ki-auswertung.functions.fnc.fr-par.scw.cloud/";
@@ -518,21 +518,5 @@ setupAccelerationCalculation();
 setupForceDrawingTasks();
 setupMultipleChoiceTasks();
 setupFinalQuiz();
-// Der Angriffspunkt der Kräfte gehört nicht zum Erwartungshorizont, soll aber
-// in jeder Rückmeldung zu Aufgabe 5 hervorgehoben werden.
-function forceBalanceFeedback(result) {
-  const content = document.createDocumentFragment();
-  if (result.feedback) {
-    const serverFeedback = document.createElement("p");
-    serverFeedback.textContent = result.feedback;
-    content.append(serverFeedback);
-  }
-  const note = document.createElement("p");
-  note.className = "physics-semantic-note";
-  appendPhysicsText(note, "**Die Gewichtskraft greift immer im Körpermittelpunkt per Definition. Die Gegenkraft des Tisches greift am Kontaktpunkt zwischen Körper und Tisch.**");
-  content.append(note);
-  return content;
-}
-
-setupPhysicsSemanticTask({ answerId: "force-balance-answer", buttonId: "check-force-balance", feedbackId: "force-balance-feedback", countId: "force-balance-count", taskId: "ph11-kreisbewegungen-kraeftegleichgewicht-beschreibung", serverUrl: SCRIPT_SERVER_URL, feedbackBuilder: forceBalanceFeedback, shortAnswerHint: "Formuliere eine etwas ausführlichere Begründung zu beiden Abbildungen." });
+setupPhysicsSemanticTask({ answerId: "force-balance-answer", buttonId: "check-force-balance", feedbackId: "force-balance-feedback", countId: "force-balance-count", taskId: "ph11-kreisbewegungen-kraeftegleichgewicht-beschreibung", serverUrl: SCRIPT_SERVER_URL, shortAnswerHint: "Formuliere eine etwas ausführlichere Begründung zu beiden Abbildungen." });
 taskProgress.restore();

@@ -24,17 +24,20 @@ export const JOIN_TASKS = [
   {
     "id": "P2",
     "type": "describe",
-    "prompt": "**Beschreibe** in eigenen Worten, welche Informationen diese Abfrage ausgibt und warum nur bestimmte Fotos erscheinen.",
+    "maxFeedbackHints": 1,
+    "maxPoints": 5,
+    "assessmentVersion": "20261029-ordering",
+    "prompt": "**Beschreibe** in eigenen Worten, welche Informationen diese Abfrage ausgibt und warum nur bestimmte Fotos erscheinen. **Erkläre** auch die Sortierung.",
     "tables": [
       "users",
       "photos"
     ],
     "statement": "SELECT users.username, photos.description\nFROM users, photos\nWHERE users.id = photos.user_id\n  AND users.city = 'Hamburg'\nORDER BY users.username, photos.id",
-    "model": "Die Abfrage zeigt Benutzernamen und Beschreibungen der Fotos, die Mitglieder aus Hamburg hochgeladen haben. Die Mitglieds-ID wird mit der user_id des Fotos verbunden; pro passendem Foto erscheint eine Zeile.",
+    "model": "Die Abfrage zeigt Benutzernamen und Beschreibungen der Fotos, die Mitglieder aus Hamburg hochgeladen haben. Die Mitglieds-ID wird mit der user_id des Fotos verbunden; pro passendem Foto erscheint eine Zeile. Sortiert wird zuerst nach Benutzername von A bis Z, bei gleichem Benutzernamen nach Foto-ID aufsteigend.",
     "hints": [
       "Achte zuerst auf die beiden ausgegebenen Spalten.",
       "Überlege, welche Person photos.user_id bezeichnet.",
-      "Die Stadtbedingung bezieht sich auf die hochladende Person; beschrieben werden ihre Fotos."
+      "Die Stadtbedingung bezieht sich auf die hochladende Person; beschrieben werden ihre Fotos. Prüfe außerdem die Angaben hinter ORDER BY und ihre Sortierrichtung."
     ],
     "feedback": {
       "success": "Korrekt: Ausgabe, Verknüpfung und Ortsfilter sind verständlich erklärt.",
@@ -90,17 +93,20 @@ export const JOIN_TASKS = [
   {
     "id": "P5",
     "type": "describe",
-    "prompt": "**Beschreibe** in eigenen Worten, welche Kommentare diese Abfrage zeigt und was die beiden Bedingungen zusätzlich zur Verknüpfung auswählen.",
+    "maxFeedbackHints": 1,
+    "maxPoints": 5,
+    "assessmentVersion": "20261029-ordering",
+    "prompt": "**Beschreibe** in eigenen Worten, welche Kommentare diese Abfrage zeigt und was die beiden Bedingungen zusätzlich zur Verknüpfung auswählen. **Erkläre** auch die Sortierung.",
     "tables": [
       "users",
       "comments"
     ],
     "statement": "SELECT users.username, comments.body\nFROM users, comments\nWHERE users.id = comments.user_id\n  AND users.city = 'Hamburg'\n  AND comments.body LIKE '%Foto%'\nORDER BY users.username, comments.id",
-    "model": "Die Abfrage zeigt Benutzernamen und Texte von Kommentaren, die Mitglieder aus Hamburg geschrieben haben und deren Text „Foto“ enthält. Die user_id des Kommentars wird mit der ID der verfassenden Person verbunden.",
+    "model": "Die Abfrage zeigt Benutzernamen und Texte von Kommentaren, die Mitglieder aus Hamburg geschrieben haben und deren Text „Foto“ enthält. Die user_id des Kommentars wird mit der ID der verfassenden Person verbunden. Sortiert wird zuerst nach Benutzername von A bis Z, bei gleichem Benutzernamen nach Kommentar-ID aufsteigend.",
     "hints": [
       "Unterscheide die Verbindung von den zwei Filtern.",
       "city steht bei der Person, body beim Kommentar.",
-      "Gesucht sind Kommentare aus Hamburg mit „Foto“ im Text, nicht Kommentare unter Fotos aus Hamburg."
+      "Gesucht sind Kommentare aus Hamburg mit „Foto“ im Text, nicht Kommentare unter Fotos aus Hamburg. Prüfe außerdem die Angaben hinter ORDER BY und ihre Sortierrichtung."
     ],
     "feedback": {
       "success": "Korrekt: Du unterscheidest Verknüpfung, Stadtfilter und Textfilter.",
@@ -157,18 +163,21 @@ export const JOIN_TASKS = [
   {
     "id": "P8",
     "type": "describe",
-    "prompt": "**Beschreibe** in eigenen Worten, welche Personen und welches Foto diese Abfrage verbindet. Erkläre die Bedeutung der Foto-ID 10.",
+    "maxFeedbackHints": 1,
+    "maxPoints": 5,
+    "assessmentVersion": "20261029-ordering",
+    "prompt": "**Beschreibe** in eigenen Worten, welche Personen und welches Foto diese Abfrage verbindet. Erkläre die Bedeutung der Foto-ID 10. **Erkläre** auch die Sortierung.",
     "tables": [
       "users",
       "likes",
       "photos"
     ],
     "statement": "SELECT users.username, photos.description\nFROM users, likes, photos\nWHERE users.id = likes.user_id\n  AND photos.id = likes.photo_id\n  AND photos.id = 10\nORDER BY users.username",
-    "model": "Die Abfrage zeigt die Benutzernamen der Personen, die Foto 10 geliked haben, und dessen Beschreibung. likes.user_id ist die likende Person; likes.photo_id verweist auf das Foto. Die 10 wählt genau dieses Foto aus.",
+    "model": "Die Abfrage zeigt die Benutzernamen der Personen, die Foto 10 geliked haben, und dessen Beschreibung. likes.user_id ist die likende Person; likes.photo_id verweist auf das Foto. Die 10 wählt genau dieses Foto aus. Die Benutzernamen werden von A bis Z sortiert.",
     "hints": [
       "Betrachte die zwei Fremdschlüssel in likes.",
       "likes.user_id ist die likende, nicht die hochladende Person.",
-      "Die Bedingung photos.id = 10 wählt ein Foto; die übrigen Bedingungen ordnen Likes und Personen zu."
+      "Die Bedingung photos.id = 10 wählt ein Foto; die übrigen Bedingungen ordnen Likes und Personen zu. Prüfe außerdem die Angaben hinter ORDER BY und ihre Sortierrichtung."
     ],
     "feedback": {
       "success": "Korrekt: Du hast liker, Foto und beide Verbindungen richtig beschrieben.",
@@ -224,17 +233,20 @@ export const JOIN_TASKS = [
   {
     "id": "P11",
     "type": "describe",
-    "prompt": "**Beschreibe** in eigenen Worten, welche Mitglieder und welche Anzahl diese Abfrage ausgibt. Erkläre, wozu GROUP BY dient.",
+    "maxFeedbackHints": 1,
+    "maxPoints": 5,
+    "assessmentVersion": "20261029-ordering",
+    "prompt": "**Beschreibe** in eigenen Worten, welche Mitglieder und welche Anzahl diese Abfrage ausgibt. Erkläre, wozu GROUP BY dient. **Erkläre** auch die Sortierung.",
     "tables": [
       "users",
       "comments"
     ],
     "statement": "SELECT users.username, COUNT(comments.id) AS anzahl_kommentare\nFROM users, comments\nWHERE users.id = comments.user_id\n  AND users.city = 'Leipzig'\nGROUP BY users.id, users.username\nORDER BY anzahl_kommentare DESC, users.username",
-    "model": "Für jedes Leipziger Mitglied mit mindestens einem geschriebenen Kommentar erscheint sein Benutzername und die Anzahl seiner Kommentare. comments.user_id ordnet die Kommentare den Verfassern zu. GROUP BY bildet für jedes Mitglied eine eigene Gruppe, damit COUNT je Person zählt.",
+    "model": "Für jedes Leipziger Mitglied mit mindestens einem geschriebenen Kommentar erscheint sein Benutzername und die Anzahl seiner Kommentare. comments.user_id ordnet die Kommentare den Verfassern zu. GROUP BY bildet für jedes Mitglied eine eigene Gruppe, damit COUNT je Person zählt. Sortiert wird zuerst nach Kommentaranzahl absteigend, bei gleicher Anzahl nach Benutzername von A bis Z.",
     "hints": [
       "Betrachte zuerst die beiden Ergebnisspalten.",
       "Die Stadtbedingung betrifft den Verfasser; Kommentare werden über comments.user_id zugeordnet.",
-      "GROUP BY trennt die verbundenen Zeilen je Mitglied; COUNT zählt innerhalb dieser Gruppe."
+      "GROUP BY trennt die verbundenen Zeilen je Mitglied; COUNT zählt innerhalb dieser Gruppe. Prüfe außerdem die Angaben hinter ORDER BY und ihre Sortierrichtung."
     ],
     "feedback": {
       "success": "Korrekt: Ausgabe, Verfasserbeziehung und Gruppierung sind richtig erklärt.",

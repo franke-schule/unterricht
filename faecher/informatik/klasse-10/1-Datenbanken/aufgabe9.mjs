@@ -1,8 +1,8 @@
-import { evaluateSemanticAnswer } from '../../klasse-11/1-Kuenstliche-Intelligenz/perzeptron/ui/semantic-answer.mjs?v=20261010-scaleway';
+import { evaluateSemanticAnswer } from '../../klasse-11/1-Kuenstliche-Intelligenz/perzeptron/ui/semantic-answer.mjs?v=20261029-criteria-v1';
 import { analyzeMultiTableSelect, classifyDescriptionResult, compareRelations, diagnoseSqlError, sqlTokens, validateSelectStatement } from './sql-lab-core.mjs?v=20260929b';
-import { SqlWorker, appendHints, renderRelation, renderServerFeedback, schemaCard } from './sql-lab.js?v=20261014-a9';
-import { focusTabPanelStart, enableTabKeyboardNavigation, renderTabFlowNavigation, syncTabSemantics } from './tab-navigation.mjs?v=20261001a';
-import { JOIN_TASKS } from './aufgabe9-daten.mjs?v=20261014-a9';
+import { SqlWorker, appendHints, renderRelation, renderServerFeedback, schemaCard } from './sql-lab.js?v=20261029-criterion-feedback';
+import { appendSolutionDownloadFromTemplate, focusTabPanelStart, enableTabKeyboardNavigation, renderTabFlowNavigation, syncTabSemantics } from './tab-navigation.mjs?v=20261001a';
+import { JOIN_TASKS } from './aufgabe9-daten.mjs?v=20261029-ordering';
 
 const STORAGE_KEY = 'inf10-insta-verbund-aufgabe9-v1';
 const SCRIPT_SERVER_URL = 'https://unterrichtkiichezbn4-ki-auswertung.functions.fnc.fr-par.scw.cloud/';
@@ -38,27 +38,31 @@ const QUIZ = [
   { question: 'Welche Verbindung zählt die Follower eines Mitglieds?', options: [['a', 'users.id = follows.following_id', true], ['b', 'users.id = follows.follower_id', false], ['c', 'users.id = follows.id', false], ['d', 'photos.id = follows.following_id', false]], success: 'Korrekt: following_id zeigt auf das Mitglied mit den Followern.', hint: 'Die folgende Person steht in follower_id.' },
   { question: 'Welche Aussagen zur Abfrage nach Leipziger Mitgliedern und ihren Fotos stimmen?', options: [['a', 'users.id = photos.user_id verbindet Foto und hochladende Person.', true], ['b', "users.city = 'Leipzig' ist eine zusätzliche Auswahlbedingung.", true], ['c', 'photos.user_id bezeichnet die Person, die das Foto liked.', false], ['d', 'GROUP BY ist nötig, um nur Leipziger Zeilen auszuwählen.', false]], success: 'Korrekt: Verbindung und Auswahlbedingung haben unterschiedliche Aufgaben.', hint: 'Trenne die Schlüsselverbindung von der Stadtbedingung.' }
 ];
-const state = { tab: 'intro', answers: {}, completed: {}, quiz: {}, quizPassed: false, feedback: {}, results: {}, server: {}, quizFeedback: '' };
+const state = { tab: 'intro', introStep: 1, answers: {}, completed: {}, quiz: {}, quizPassed: false, feedback: {}, results: {}, server: {}, quizFeedback: '' };
 let database;
 let databaseReady = false;
 
 function el(tag, className = '', value) { const node = document.createElement(tag); node.className = className; if (value !== undefined) node.textContent = value; return node; }
 function richText(tag, value, className = '') { const node = el(tag, className); const parts = value.split(/\*\*(.*?)\*\*/g); parts.forEach((part, index) => node.append(index % 2 ? el('strong', '', part) : document.createTextNode(part))); return node; }
-function save() { try { localStorage.setItem(STORAGE_KEY, JSON.stringify({ tab: state.tab, answers: state.answers, completed: state.completed, quiz: state.quiz, quizPassed: state.quizPassed })); } catch { /* Ohne Speicher bleibt das Modul bedienbar. */ } }
+function save() { try { localStorage.setItem(STORAGE_KEY, JSON.stringify({ tab: state.tab, introStep: state.introStep, answers: state.answers, completed: state.completed, assessmentVersions: Object.fromEntries(REQUIRED.filter((task) => task.assessmentVersion).map((task) => [task.id, task.assessmentVersion])), quiz: state.quiz, quizPassed: state.quizPassed })); } catch { /* Ohne Speicher bleibt das Modul bedienbar. */ } }
 function selected(questionIndex) { return Array.isArray(state.quiz[questionIndex]) ? state.quiz[questionIndex] : []; }
 function quizCorrect(questionIndex) { const actual = [...new Set(selected(questionIndex))].sort(); const right = QUIZ[questionIndex].options.filter((option) => option[2]).map((option) => option[0]).sort(); return actual.length === right.length && actual.every((value, index) => value === right[index]); }
 function allRequiredDone() { return REQUIRED.every((task) => state.completed[task.id] === state.answers[task.id] && Boolean(state.answers[task.id]?.trim())); }
 function unlocked() { return allRequiredDone() && state.quizPassed && QUIZ.every((_, index) => quizCorrect(index)); }
 function restore() {
   try {
-    const saved = JSON.parse(localStorage.getItem(STORAGE_KEY) || '{}');
+    const savedText = localStorage.getItem(STORAGE_KEY);
+    if (savedText === null) return;
+    const saved = JSON.parse(savedText);
     if (!saved || typeof saved !== 'object' || Array.isArray(saved)) return;
     if (saved.answers && typeof saved.answers === 'object' && !Array.isArray(saved.answers)) for (const [id, value] of Object.entries(saved.answers)) if (ALL_TASKS.has(id) && typeof value === 'string' && value.length <= 20000) state.answers[id] = value;
-    if (saved.completed && typeof saved.completed === 'object' && !Array.isArray(saved.completed)) for (const task of REQUIRED) if (typeof saved.completed[task.id] === 'string' && saved.completed[task.id] === state.answers[task.id] && saved.completed[task.id].trim()) state.completed[task.id] = saved.completed[task.id];
+    if (saved.completed && typeof saved.completed === 'object' && !Array.isArray(saved.completed)) for (const task of REQUIRED) if ((!task.assessmentVersion || saved.assessmentVersions?.[task.id] === task.assessmentVersion) && typeof saved.completed[task.id] === 'string' && saved.completed[task.id] === state.answers[task.id] && saved.completed[task.id].trim()) state.completed[task.id] = saved.completed[task.id];
     if (saved.quiz && typeof saved.quiz === 'object' && !Array.isArray(saved.quiz)) QUIZ.forEach((question, index) => { const values = saved.quiz[index]; if (Array.isArray(values)) state.quiz[index] = [...new Set(values.filter((value) => typeof value === 'string' && question.options.some(([id]) => id === value)))]; });
     state.quizPassed = saved.quizPassed === true && QUIZ.every((_, index) => quizCorrect(index));
+    state.introStep = Number.isInteger(saved.introStep) && saved.introStep >= 1 && saved.introStep <= 12 ? saved.introStep : 1;
     if (TABS.some(([id]) => id === saved.tab)) state.tab = saved.tab;
     if (state.tab === 'summary' && !unlocked()) state.tab = 'quiz';
+    save(); // Geänderte Rubrikfreigaben einmalig im vorhandenen Stand bereinigen.
   } catch { /* Beschädigter oder gesperrter Speicher ist optional. */ }
 }
 function updateUnlock() {
@@ -82,24 +86,117 @@ function render() {
   const number = TABS.findIndex(([id]) => id === state.tab) + 1;
   panel.append(heading(number, TABS[number - 1][1], state.tab === 'extra' ? 'Vertiefen' : state.tab === 'quiz' || state.tab === 'summary' ? 'Sichern' : 'Üben'));
   if (state.tab === 'intro') renderIntro(panel);
-  if (state.tab === 'practice') JOIN_TASKS.filter((task) => task.required && Number(task.id.slice(1)) <= 6).forEach((task) => panel.append(renderTask(task)));
+  if (state.tab === 'practice') renderPractice(panel);
   if (state.tab === 'count') renderCount(panel);
   if (state.tab === 'extra') renderExtra(panel);
   if (state.tab === 'quiz') renderQuiz(panel);
   if (state.tab === 'summary') renderSummary(panel);
+  if (state.tab === 'quiz' || state.tab === 'summary') appendSolutionDownloadFromTemplate(panel);
   if (state.tab === 'extra') { const nav = el('nav', 'tab-flow-navigation'); nav.setAttribute('aria-label', 'Zum Pflichtweg zurück'); [['count', 'Zurück: 3. Verbinden und zählen'], ['quiz', 'Weiter: 6. Abschlussquiz']].forEach(([id, label]) => { const button = el('button', 'primary-button tab-flow-button', label); button.type = 'button'; button.addEventListener('click', () => activate(id, { focusContent: true })); nav.append(button); }); panel.append(nav); }
   else if (state.tab !== 'summary') renderTabFlowNavigation(panel, { items: FLOW, currentId: state.tab, onNavigate: activate, isEnabled: (id) => id !== 'summary' || unlocked() });
 }
 function code(text) { return el('pre', 'given-sql', text); }
 function renderIntro(panel) {
-  const card = el('section', 'scenario-card accent join-example');
-  card.append(richText('p', '**Verfolge** die Verbindung zwischen den Mitgliedern und ihren Fotos. Die gleiche Zahl in users.id und photos.user_id zeigt, wer ein Foto hochgeladen hat.'));
-  card.append(renderRelation({ columns: ['id', 'username'], values: [[1, 'zornigerfotograf'], [2, 'wanderwut_finn']] }, { title: 'users – Auszug' }));
-  card.append(renderRelation({ columns: ['id', 'user_id', 'url'], values: [[1, 1, 'storage/photos/2/1.webp'], [7, 2, 'storage/photos/2/7.webp'], [8, 2, 'storage/photos/2/8.webp']] }, { title: 'photos – Auszug' }));
-  card.append(code("SELECT users.username, photos.url\nFROM users, photos\nWHERE users.id = photos.user_id\n  AND users.id = 2\nORDER BY photos.id\nLIMIT 2"));
-  card.append(renderRelation({ columns: ['username', 'url'], values: [['wanderwut_finn', 'storage/photos/2/7.webp'], ['wanderwut_finn', 'storage/photos/2/8.webp']] }, { title: 'Ergebnisrelation' }));
-  card.append(el('p', '', 'users.id = photos.user_id verbindet das Foto mit der hochladenden Person. users.id = 2 wählt zusätzlich ein bestimmtes Mitglied aus. Ohne die erste Bedingung würden unpassende Kombinationen entstehen.'));
-  const memory = el('aside', 'short-summary'); memory.append(el('strong', '', 'Merke'), el('p', '', 'Im Verbund gehören Verknüpfungsbedingungen und zusätzliche Auswahlbedingungen beide in WHERE. Gleichnamige Spalten werden mit dem Tabellennamen eindeutig benannt.')); card.append(memory); panel.append(card);
+  const phases = ['1 · Auftrag', '2 · Tabellen und Schlüssel', '3 · Fotos zuordnen', '4 · Ergebnis bilden'];
+  const steps = [
+    { phase: 1, explanation: 'Welche Foto-URLs gehören zum Mitglied wanderwut_finn?' },
+    { phase: 2, explanation: 'FROM users, photos nennt die beiden Tabellen. Jede Fotozeile enthält in user_id die ID der hochladenden Person.', clause: 1 },
+    { phase: 2, explanation: 'Wir betrachten Finn: In users hat er die ID 2. Die zusätzliche Bedingung users.id = 2 wählt dieses Mitglied aus.', clause: 3, userId: true },
+    { phase: 2, explanation: 'Ein Foto gehört zu Finn, wenn seine user_id gleich Finns users.id ist. users.id = photos.user_id ist die Verknüpfungsbedingung.', clause: 2, join: true },
+    { phase: 3, explanation: 'Foto 1 hat user_id 1. Das ist nicht Finns ID 2; diese Zeile kommt nicht in sein Ergebnis.', photoId: 1 },
+    { phase: 3, explanation: 'Foto 7 hat user_id 2. Es gehört zu Finn und erscheint im Ergebnis.', photoId: 7 },
+    { phase: 3, explanation: 'Auch Foto 8 hat user_id 2. Ein Mitglied kann mehrere Fotos hochladen.', photoId: 8 },
+    { phase: 3, explanation: 'Foto 9 hat ebenfalls user_id 2 und wird mit Finn verbunden.', photoId: 9 },
+    { phase: 3, explanation: 'Foto 10 hat user_id 2 und wird ebenfalls übernommen.', photoId: 10 },
+    { phase: 3, explanation: 'Foto 11 hat user_id 3. Es gehört zu einer anderen Person und wird nicht übernommen.', photoId: 11 },
+    { phase: 4, explanation: 'SELECT gibt für jedes passende Foto Finns Benutzernamen und die Foto-URL aus. ORDER BY photos.id ordnet die vier Zeilen nach der Foto-ID.', clause: [0, 4] },
+    { phase: 4, explanation: 'Merke: Eine Verknüpfungsbedingung verbindet Zeilen über passende Schlüsselwerte. Eine zusätzliche Auswahlbedingung grenzt die Treffer ein; die Quelltabellen bleiben unverändert.', clause: -1 }
+  ];
+  const users = [[1, 'zornigerfotograf'], [2, 'wanderwut_finn'], [3, 'bergcoder']];
+  const photos = [[1, 1, 'storage/photos/2/1.webp'], [7, 2, 'storage/photos/2/7.webp'], [8, 2, 'storage/photos/2/8.webp'], [9, 2, 'storage/photos/2/9.webp'], [10, 2, 'storage/photos/2/10.webp'], [11, 3, 'storage/photos/2/11.webp']];
+  const clauses = ['SELECT users.username, photos.url', 'FROM users, photos', 'WHERE users.id = photos.user_id', '  AND users.id = 2', 'ORDER BY photos.id'];
+  const card = el('section', 'task-card sql9-intro'); card.setAttribute('aria-labelledby', 'join-intro-title');
+  const title = el('h3', '', 'Verbund Schritt für Schritt'); title.id = 'join-intro-title';
+  card.append(title, richText('p', '**Verfolge** die Animation mit „Weiter“ und „Zurück“. Beobachte, welche Fotos zu Finn gehören und warum nur diese in der Ergebnisrelation erscheinen.'));
+  const heading = el('div', 'sql9-intro-heading'); const progress = el('div', 'sql9-intro-progress');
+  phases.forEach((phase) => progress.append(el('span', '', phase)));
+  const stepper = el('div', 'intro-stepper'); const previous = el('button', 'secondary-button', 'Zurück'); previous.type = 'button'; previous.setAttribute('aria-label', 'Einen Animationsschritt zurück');
+  const count = el('span', '', ''); count.id = 'intro-frame-count'; count.setAttribute('aria-live', 'polite');
+  const next = el('button', 'primary-button', 'Weiter'); next.type = 'button'; next.setAttribute('aria-label', 'Einen Animationsschritt weiter');
+  stepper.append(previous, count, next); heading.append(progress, stepper); card.append(heading);
+  const workspace = el('div', 'sql9-intro-workspace'); const visual = el('div', 'sql9-intro-visual');
+  const explanation = el('p', 'intro-explanation'); explanation.id = 'intro-explanation'; explanation.setAttribute('aria-live', 'polite');
+  const sql = el('pre', 'given-sql sql9-intro-sql'); sql.id = 'intro-sql'; const sqlCode = el('code');
+  clauses.forEach((line, index) => { const clause = el('span', '', line); clause.dataset.clause = String(index); sqlCode.append(clause); }); sql.append(sqlCode);
+  const source = el('div', 'sql9-intro-sources');
+  const makeTable = (name, headers, rows, selectedColumns = []) => {
+    const wrap = el('div', 'sql9-intro-table table-scroll'); wrap.tabIndex = 0; wrap.setAttribute('role', 'group'); wrap.setAttribute('aria-label', `${name} – tabellarischer Ausschnitt`);
+    const table = document.createElement('table'); table.className = 'data-table sql9-intro-source-table';
+    const caption = document.createElement('caption'); caption.textContent = name === 'users' ? 'users – Ausschnitt (id: int, username: varchar(255), …)' : 'photos – Ausschnitt (id: int, user_id: int, url: varchar(255), …)'; table.append(caption);
+    const thead = document.createElement('thead'); const headerRow = document.createElement('tr');
+    headers.forEach((header, index) => { const th = document.createElement('th'); th.scope = 'col'; th.textContent = header; if (selectedColumns.includes(index)) th.classList.add('is-selected'); headerRow.append(th); }); thead.append(headerRow); table.append(thead);
+    const tbody = document.createElement('tbody');
+    rows.forEach((row) => { const tr = document.createElement('tr'); tr.dataset.rowId = String(row[0]);
+      row.forEach((value, index) => { const td = document.createElement('td'); td.textContent = String(value); if (selectedColumns.includes(index)) td.classList.add('is-selected'); tr.append(td); }); tbody.append(tr); });
+    table.append(tbody); wrap.append(table); return wrap;
+  };
+  const usersTable = makeTable('users', ['id', 'username'], users); usersTable.id = 'intro-users-table';
+  const photosTable = makeTable('photos', ['id', 'user_id', 'url'], photos); photosTable.id = 'intro-photos-table'; source.append(usersTable, photosTable);
+  const resultCard = el('div', 'sql9-result-card'); resultCard.append(el('h4', '', 'Ergebnisrelation'));
+  const resultWrap = el('div', 'sql9-intro-table table-scroll'); resultWrap.tabIndex = 0; resultWrap.setAttribute('role', 'group'); resultWrap.setAttribute('aria-label', 'Ergebnisrelation mit Finns Foto-URLs');
+  const resultTable = document.createElement('table'); resultTable.className = 'data-table sql9-result-table'; resultTable.id = 'intro-result-table'; const resultCaption = document.createElement('caption'); resultCaption.textContent = 'Ergebnisrelation – username, url'; resultTable.append(resultCaption);
+  const resultHead = document.createElement('thead'); const resultHeader = document.createElement('tr'); ['username', 'url'].forEach((label) => { const th = document.createElement('th'); th.scope = 'col'; th.textContent = label; resultHeader.append(th); }); resultHead.append(resultHeader); resultTable.append(resultHead);
+  const resultBody = document.createElement('tbody'); resultBody.id = 'intro-result-body'; resultTable.append(resultBody); resultWrap.append(resultTable); resultCard.append(resultWrap);
+  const resultNote = el('p', 'sql9-result-note'); resultNote.id = 'intro-result-note'; resultNote.setAttribute('aria-live', 'polite'); resultCard.append(resultNote);
+  visual.append(explanation, sql, source); workspace.append(visual, resultCard); card.append(workspace); appendHints(card, [
+    'Vergleiche Finns ID in users mit user_id der gerade markierten Fotozeile.',
+    'Gleiche Zahlen zeigen, welche Person ein Foto hochgeladen hat. Achte zusätzlich darauf, dass nur Finn mit users.id = 2 ausgewählt ist.',
+    'Bei den Fotos 7, 8, 9 und 10 ist user_id = 2; deshalb erscheinen genau diese vier Fotos für Finn.'
+  ]); panel.append(card);
+  function update() {
+    const step = steps[state.introStep - 1]; count.textContent = `Schritt ${state.introStep} von 12`;
+    progress.querySelectorAll('span').forEach((node, index) => { node.className = index + 1 === step.phase ? 'is-active' : index + 1 < step.phase ? 'is-complete' : ''; if (index + 1 === step.phase) node.setAttribute('aria-current', 'step'); else node.removeAttribute('aria-current'); });
+    explanation.textContent = step.explanation;
+    previous.disabled = state.introStep === 1; next.textContent = state.introStep === 12 ? 'Erneut abspielen' : 'Weiter'; next.setAttribute('aria-label', state.introStep === 12 ? 'Erneut abspielen' : 'Einen Animationsschritt weiter');
+    const activeClauses = Array.isArray(step.clause) ? step.clause.map(String) : [String(step.clause)];
+    sqlCode.querySelectorAll('span').forEach((node) => { node.classList.toggle('is-active-clause', activeClauses.includes(node.dataset.clause) || (state.introStep >= 5 && state.introStep <= 10 && ['2', '3'].includes(node.dataset.clause))); });
+    usersTable.querySelectorAll('tbody tr').forEach((row) => { row.classList.toggle('is-active', Boolean(step.userId) && row.dataset.rowId === '2'); row.querySelectorAll('td').forEach((cell) => cell.classList.toggle('is-selected', Boolean(step.join) && cell.cellIndex === 0)); });
+    usersTable.querySelectorAll('thead th').forEach((cell) => cell.classList.toggle('is-selected', Boolean(step.join) && cell.cellIndex === 0));
+    photosTable.querySelectorAll('th, td').forEach((cell) => cell.classList.toggle('is-selected', Boolean(step.join) && cell.cellIndex === 1));
+    photosTable.querySelectorAll('tbody tr').forEach((row) => {
+      row.classList.toggle('is-active', Number(row.dataset.rowId) === step.photoId);
+      row.querySelectorAll('td').forEach((cell) => cell.classList.toggle('is-selected', (Boolean(step.join) && cell.cellIndex === 1) || (Boolean(step.userId) && row.dataset.rowId === '7' && cell.cellIndex === 1)));
+    });
+    resultBody.replaceChildren();
+    const included = state.introStep >= 6 ? photos.filter(([id]) => id >= 7 && id <= 10 && (state.introStep >= 10 || id <= step.photoId)) : [];
+    included.forEach(([, , url]) => { const row = document.createElement('tr'); [ 'wanderwut_finn', url ].forEach((value) => { const cell = document.createElement('td'); cell.textContent = value; row.append(cell); }); resultBody.append(row); });
+    resultNote.textContent = step.photoId === 1 || step.photoId === 11 ? 'Der Wert in photos.user_id verweist auf ein anderes Mitglied; diese Fotozeile gehört nicht zu Finns Ergebnis.' : state.introStep >= 6 && state.introStep <= 9 ? 'Der Wert in photos.user_id ist 2 und verweist damit auf Finn (users.id = 2).' : '';
+  }
+  const change = (direction) => { state.introStep = direction > 0 && state.introStep === 12 ? 1 : Math.max(1, Math.min(12, state.introStep + direction)); save(); update(); };
+  previous.addEventListener('click', () => change(-1)); next.addEventListener('click', () => change(1)); update();
+}
+function renderPractice(panel) {
+  JOIN_TASKS.filter((task) => task.required && Number(task.id.slice(1)) <= 6).forEach((task) => {
+    if (task.id === 'P2') {
+      const info = el('section', 'scenario-card accent');
+      info.append(el('h3', '', 'Kurz erklärt: Nach zwei Attributen sortieren'));
+      const example = el('pre', 'given-sql'); example.append(el('code', '', 'ORDER BY users.city, users.username'));
+      info.append(example, el('p', '', 'Hier wird zuerst nach Stadt sortiert; nur bei gleicher Stadt entscheidet der Benutzername über die Reihenfolge. Ohne Zusatz gilt für jedes Attribut ASC (aufsteigend: A bis Z bzw. kleine Zahlen zuerst); DESC direkt hinter einem Attribut kehrt dessen Sortierrichtung um.'));
+      panel.append(info);
+    }
+    if (task.id === 'P3') {
+      const distinct = el('section', 'scenario-card accent');
+      distinct.append(el('h3', '', 'Wiederholung: Doppelte Ergebniszeilen mit DISTINCT vermeiden'));
+      const distinctExample = el('pre', 'given-sql'); distinctExample.append(el('code', '', 'SELECT DISTINCT users.city\nFROM users'));
+      distinct.append(distinctExample, el('p', '', 'Auch wenn mehrere Mitglieder in derselben Stadt wohnen, erscheint jede Stadt hier nur einmal. DISTINCT steht direkt hinter SELECT und entfernt doppelte Ergebniszeilen; bei mehreren ausgewählten Attributen muss die gesamte Kombination übereinstimmen.'));
+      const like = el('section', 'scenario-card accent');
+      like.append(el('h3', '', 'Wiederholung: Textmuster mit LIKE und % suchen'));
+      const likeExample = el('pre', 'given-sql'); likeExample.append(el('code', '', "SELECT photos.description\nFROM photos\nWHERE photos.description LIKE '%Wald%'"));
+      like.append(likeExample, el('p', '', 'Diese Abfrage findet Beschreibungen, die „Wald“ enthalten: LIKE vergleicht den Text mit einem Muster in einfachen Anführungszeichen, und % steht für beliebig viele Zeichen – auch für kein Zeichen. Mit \'Wald%\' muss der Text mit „Wald“ beginnen, mit \'%Wald\' muss er damit enden.'));
+      panel.append(distinct, like);
+    }
+    panel.append(renderTask(task));
+  });
 }
 function renderCount(panel) {
   JOIN_TASKS.filter((task) => ['P7', 'P8'].includes(task.id)).forEach((task) => panel.append(renderTask(task)));
@@ -215,12 +312,12 @@ async function checkDescription(task, card) {
   const answer = input.value.trim(); if (answer.length < 10) { state.server[task.id] = { level: 'error', text: 'Bitte formuliere eine etwas ausführlichere Antwort.' }; renderFeedback(task, card); return; }
   button.disabled = true; state.server[task.id] = { level: 'loading', text: 'Deine Erklärung wird geprüft …' }; renderFeedback(task, card);
   try {
-    const result = await evaluateSemanticAnswer({ serverUrl: SCRIPT_SERVER_URL, taskId: `inf10-db-a9-${task.id.toLowerCase()}`, answer });
+    const result = await evaluateSemanticAnswer({ serverUrl: SCRIPT_SERVER_URL, taskId: `inf10-db-a9-${task.id.toLowerCase()}`, answer, expectedMaxPoints: task.maxPoints });
     if (input.value.trim() !== answer) return;
     const feedback = classifyDescriptionResult(result);
-    if (feedback.level === 'error' || !['korrekt', 'teilweise korrekt', 'noch nicht korrekt'].includes(feedback.status) || !Number.isInteger(feedback.points) || feedback.maxPoints !== 4 || feedback.points < 0 || feedback.points > 4 || (feedback.status === 'korrekt') !== (feedback.points === 4)) throw new Error('Ungültige Auswertung');
-    state.server[task.id] = feedback; if (feedback.points === 4 && feedback.status === 'korrekt') state.completed[task.id] = input.value; else delete state.completed[task.id];
-  } catch { if (input.value.trim() !== answer) return; delete state.completed[task.id]; state.server[task.id] = { level: 'error', text: 'Die Auswertung ist gerade nicht erreichbar. Deine Eingabe bleibt erhalten; versuche es erneut.' }; }
+    if (feedback.level === 'error' || !['korrekt', 'teilweise korrekt', 'noch nicht korrekt'].includes(feedback.status) || !Number.isInteger(feedback.points) || feedback.maxPoints !== task.maxPoints || feedback.points < 0 || feedback.points > task.maxPoints || (feedback.status === 'korrekt') !== (feedback.points === task.maxPoints)) throw new Error('Ungültige Auswertung');
+    state.server[task.id] = feedback; if (feedback.points === task.maxPoints && feedback.status === 'korrekt') state.completed[task.id] = input.value; else delete state.completed[task.id];
+  } catch (error) { if (input.value.trim() !== answer) return; delete state.completed[task.id]; state.server[task.id] = { level: 'error', text: error?.message || 'Die Auswertung konnte nicht abgeschlossen werden. Deine Eingabe bleibt erhalten; versuche es erneut.' }; }
   finally { button.disabled = false; if (input.value.trim() === answer) { save(); renderFeedback(task, card); updateUnlock(); if (unlocked()) activate('summary', { focusContent: true }); } }
 }
 function renderQuiz(panel) {

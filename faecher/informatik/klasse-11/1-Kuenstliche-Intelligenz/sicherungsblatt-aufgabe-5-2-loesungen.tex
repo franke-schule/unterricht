@@ -56,35 +56,9 @@
 
 \begin{document}
 
-\sheettitle{Das Perzeptron genauer betrachtet}{Künstliche Intelligenz · Sicherungsblatt zu Aufgabe 5.2 · Informatik 11}
+\sheettitle{Das Perzeptron genauer betrachtet}{Künstliche Intelligenz \textperiodcentered{} Sicherungsblatt zu Aufgabe 5.2 \textperiodcentered{} Informatik 11}
 
-\sectionline{1. So rechnet das Perzeptron}
-\begin{center}
-\begin{tikzpicture}[node distance=3mm,every node/.style={align=center},
- block/.style={draw=blue,fill=lightblue,rounded corners=1mm,minimum width=22mm,minimum height=11mm},
- flow/.style={->,thick,navy}]
-\node[block] (inputs) {Eingaben\\$x_1,x_2$};
-\node[block,right=of inputs] (weights) {Gewichte\\$w_1,w_2$};
-\node[block,right=of weights] (products) {Produkte\\$w_1x_1,\ w_2x_2$};
-\node[block,right=of products] (sum) {Summe\\$a$};
-\node[block,right=of sum] (compare) {Vergleich\\$a>\theta$};
-\node[block,right=of compare] (output) {Ausgabe\\$f(a)$};
-\draw[flow] (inputs)--(weights); \draw[flow] (weights)--(products); \draw[flow] (products)--(sum);
-\draw[flow] (sum)--(compare); \draw[flow] (compare)--(output);
-\end{tikzpicture}
-\end{center}
-\noindent\begin{minipage}[t]{0.49\linewidth}\centering
-\textbf{Hase $(2|4)$}\\$-1\cdot2=-2,\quad 2\cdot4=8$\\$-2+8=6>3\ \longrightarrow 1$\\ungefährlich
-\end{minipage}\hfill
-\begin{minipage}[t]{0.49\linewidth}\centering
-\textbf{Hai $(4|1)$}\\$-1\cdot4=-4,\quad 2\cdot1=2$\\$-4+2=-2<3\ \longrightarrow 0$\\gefährlich
-\end{minipage}
-\begin{center}\small Feste Werte in beiden Spuren: $w_1=-1$, $w_2=2$, $\theta=3$.\end{center}
-\begin{merke}
-Erst Summe und Schwelle bestimmen die Ausgabe.
-\end{merke}
-
-\sectionline{2. Neuronen-Ungleichung}
+\sectionline{1. Neuronen-Ungleichung}
 \noindent\begin{minipage}[c]{0.68\linewidth}\centering
 \begin{tikzpicture}[x=1mm,y=1mm,font=\small,every node/.style={align=center},
  input/.style={draw=blue,fill=lightblue,rounded corners=2mm,minimum width=20mm,minimum height=13mm},
@@ -111,7 +85,7 @@ x_1\cdot w_1+x_2\cdot w_2>s.
 \end{ueberblick}
 \end{minipage}
 
-\sectionline{3. Von der Neuronen- zur Geradenungleichung}
+\sectionline{2. Von der Neuronen- zur Geradenungleichung}
 Für $w_2>0$ lässt sich die Neuronen-Ungleichung nach $x_2$ auflösen:
 \[
 \begin{aligned}
@@ -130,27 +104,19 @@ y &> -\frac{w_1}{w_2}\cdot x_1+\frac{s}{w_2}
 {\small Bei $w_2<0$ kehrt sich beim Teilen das Ungleichheitszeichen um; bei $w_2=0$ ist diese Umformung nicht möglich.}
 
 \clearpage
-\sheettitle{Das Perzeptron genauer betrachtet}{Künstliche Intelligenz · Sicherungsblatt zu Aufgabe 5.2 · Informatik 11}
-\sectionline{4. Erste Epoche der Delta-Lernregel}
+\sheettitle{Das Perzeptron genauer betrachtet}{Künstliche Intelligenz \textperiodcentered{} Sicherungsblatt zu Aufgabe 5.2 \textperiodcentered{} Informatik 11}
+\sectionline{3. Erste Epoche der Delta-Lernregel}
 \begin{center}
-\begin{tikzpicture}[node distance=6mm,every node/.style={align=center},update/.style={draw=blue,fill=lightblue,rounded corners=1mm,minimum height=12mm,minimum width=48mm}]
-\node[update] (delta) {$\delta=t-f(a)$\\Soll minus Ausgabe};
-\node[update,right=of delta] (weights) {$w_i(\mathrm{alt})+\delta\alpha x_i$\\$\longrightarrow w_i(\mathrm{neu})$};
-\node[update,right=of weights] (threshold) {$\theta(\mathrm{alt})-\delta\alpha$\\$\longrightarrow\theta(\mathrm{neu})$};
+\begin{tikzpicture}[node distance=4mm,every node/.style={align=center,font=\small},update/.style={draw=blue,fill=lightblue,rounded corners=1mm,minimum height=12mm,minimum width=39mm,inner sep=2mm}]
+\node[update] (delta) {$\delta=t-f(a)$\\Soll $t$ minus Ausgabe $f(a)$};
+\node[update,right=of delta] (weights) {$w_{i,\mathrm{neu}}=w_{i,\mathrm{alt}}+\delta\alpha x_i$};
+\node[update,right=of weights] (threshold) {$\theta_{\mathrm{neu}}=\theta_{\mathrm{alt}}-\delta\alpha$};
 \draw[->,thick,navy] (delta)--(weights); \draw[->,thick,navy] (weights)--(threshold);
-\end{tikzpicture}
-\end{center}
-\begin{center}\begin{tcolorbox}[colback=lightgray,colframe=navy,boxrule=.8pt,arc=1.5mm,width=.8\linewidth]
-Start: $w_1=1,\ w_2=1,\ \theta=1,\ \alpha=1$\end{tcolorbox}\end{center}
-\begin{center}
-\begin{tikzpicture}[node distance=17mm,every node/.style={circle,draw=blue,fill=lightblue,minimum size=8mm,font=\bfseries}]
-\node (s1) {1}; \node[right=of s1] (s2) {2}; \node[right=of s2] (s3) {3}; \node[right=of s3] (s4) {4};
-\draw[->,thick,navy] (s1)--(s2); \draw[->,thick,navy] (s2)--(s3); \draw[->,thick,navy] (s3)--(s4);
 \end{tikzpicture}
 \end{center}
 \begin{center}
 \renewcommand{\arraystretch}{1.8}
-\begin{tabularx}{\linewidth}{@{}c c c c c c c@{}}
+\begin{tabularx}{\linewidth}{@{}*{7}{>{\centering\arraybackslash}X}@{}}
 \toprule
 Schritt & $(x_1,x_2;t)$ & \shortstack{vorher\\$(w_1,w_2,\theta)$} & $a$ & $f(a)$ & $\delta$ & \shortstack{nachher\\$(w_1,w_2,\theta)$} \\
 \midrule
@@ -168,7 +134,7 @@ Schritt & $(x_1,x_2;t)$ & \shortstack{vorher\\$(w_1,w_2,\theta)$} & $a$ & $f(a)$
 \end{tcolorbox}
 \end{center}
 \begin{merke}
-Bei $\delta=0$ bleibt alles gleich; sonst speichert das Perzeptron neue Gewichte und eine neue Schwelle.
+Das Perzeptron speichert Gelerntes in den Gewichten und im Schwellenwert ab. Wenn der Parameter $\delta=0$ ist, so werden die Parameter des Perzeptrons nicht verändert. Der Soll-Wert ist dann erreicht.
 \end{merke}
 
 \end{document}

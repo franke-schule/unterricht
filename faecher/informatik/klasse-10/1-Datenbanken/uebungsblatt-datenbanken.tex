@@ -1,0 +1,119 @@
+\documentclass[10pt,a4paper]{article}
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage[ngerman]{babel}
+\usepackage[a4paper,margin=14mm]{geometry}
+\usepackage{lmodern}
+\usepackage[table]{xcolor}
+\usepackage{tabularx,array,microtype,tikz}
+\newif\ifsolution
+\solutionfalse
+\pagestyle{empty}
+\setlength{\parindent}{0pt}\setlength{\parskip}{0pt}
+\renewcommand{\familydefault}{\sfdefault}
+\definecolor{Navy}{HTML}{17324D}\definecolor{Blue}{HTML}{3B6EA5}\definecolor{Gold}{HTML}{F3B33D}\definecolor{Ink}{HTML}{1E2935}\definecolor{Muted}{HTML}{617080}\definecolor{Line}{HTML}{D8E1E8}\definecolor{Sky}{HTML}{EAF3FA}\definecolor{CodeBg}{HTML}{F5F7F9}\definecolor{Grid}{HTML}{E6EDF2}
+\color{Ink}
+\newcommand{\sectiontitle}[1]{\vspace{.6mm}{\color{Blue}\bfseries\large #1}\par\vspace{.3mm}{\color{Blue}\rule{\linewidth}{.7pt}}\vspace{.4mm}\par}
+\newcommand{\kopf}{\noindent\colorbox{Navy}{\parbox{\dimexpr\linewidth-2\fboxsep\relax}{\vspace{1.2mm}\color{white}\begin{tabularx}{\linewidth}{@{}Xr@{}}{\small\bfseries INFORMATIK \textperiodcentered{} KLASSE 10} & \colorbox{Gold}{\color{Navy}\small\bfseries\strut\ifsolution L\"OSUNGEN\else \"UBUNGSBLATT\fi}\end{tabularx}\par\vspace{1mm}{\fontsize{18}{21}\selectfont\bfseries \"Ubungsblatt: Relationale Datenbanken}\par\vspace{1.2mm}}}\par}
+\newcommand{\fuss}[1]{\ifnum#1=1\par\vspace{2mm}\else\vfill\fi
+\noindent\begin{minipage}{\linewidth}
+{\color{Line}\rule{\linewidth}{.5pt}}\par\vspace{.6mm}
+\begin{tabularx}{\linewidth}{@{}Xr@{}}{\small\color{Muted}Klasse 10 \textperiodcentered{} Datenbanken} & {\small\color{Muted}\"Ubungsblatt \textperiodcentered{} Seite #1 von 2}\end{tabularx}
+\end{minipage}\par}
+\newcommand{\task}[2]{{\bfseries #1} #2\par\vspace{.4mm}}
+\newcommand{\gridfield}[2]{\begin{tikzpicture}\path[use as bounding box] (0,0) rectangle (\linewidth,#1);\draw[Grid,line width=.25pt,step=5mm] (0,0) grid (\linewidth,#1);\draw[Line,line width=.45pt] (0,0) rectangle (\linewidth,#1);\ifsolution\node[anchor=north west,align=left,text width=\dimexpr\linewidth-4mm\relax,inner sep=0pt,font=\small,text=Blue] at (2mm,#1) {#2};\fi\end{tikzpicture}}
+\newcommand{\schematext}[1]{{\small\ttfamily #1}\par}
+\newcommand{\tblhead}{\rowcolor{Sky}}
+\newcommand{\dbtitle}[1]{{\small\bfseries\color{Blue}\texttt{#1}}\par\vspace{.4mm}}
+\begin{document}
+\kopf
+\sectiontitle{Aufgabe 1 \textperiodcentered{} Grundwissen}
+\task{1a:}{\textbf{Ordne} die Datentypen ihren Beschreibungen zu. \textbf{Verbinde} die passenden Eintr\"age.}
+\noindent\begin{tikzpicture}[x=1mm,y=1mm,matchbox/.style={draw=Blue,line width=.5pt,minimum height=5mm,inner xsep=1mm,inner ysep=.3mm,outer sep=0pt,anchor=west,align=left}]
+\path[use as bounding box] (0,0) rectangle (182,27);
+\node[matchbox,text width=29mm,font=\ttfamily\bfseries] (integer) at (0,23) {INTEGER};
+\node[matchbox,text width=29mm,font=\ttfamily\bfseries] (varchar) at (0,17) {VARCHAR(n)};
+\node[matchbox,text width=29mm,font=\ttfamily\bfseries] (char) at (0,11) {CHAR(n)};
+\node[matchbox,text width=29mm,font=\ttfamily\bfseries] (date) at (0,5) {DATE};
+\node[matchbox,text width=86mm] (descdate) at (93,23) {Datum im Format YYYY-MM-DD};
+\node[matchbox,text width=86mm] (descfixed) at (93,17) {Text fester L\"ange n};
+\node[matchbox,text width=86mm] (descint) at (93,11) {ganze Zahlen};
+\node[matchbox,text width=86mm] (descvariable) at (93,5) {Text variabler L\"ange mit h\"ochstens n Zeichen};
+\ifsolution
+\draw[Blue,line width=.7pt] (integer.east) -- (descint.west);
+\draw[Blue,line width=.7pt] (varchar.east) -- (descvariable.west);
+\draw[Blue,line width=.7pt] (char.east) -- (descfixed.west);
+\draw[Blue,line width=.7pt] (date.east) -- (descdate.west);
+\fi
+\end{tikzpicture}\par
+\task{1b:}{\textbf{Erg\"anze} den Satz.}Eine Spalte einer Datenbanktabelle entspricht in der objektorientierten Programmierung \ifsolution\textbf{einem Attribut}.\else\rule{42mm}{.4pt}.\fi\par
+\vspace{1mm}
+\task{1c:}{\textbf{Erkl\"are} den Begriff \glqq Prim\"arschl\"ussel\grqq{} und seinen Zweck in einer relationalen Datenbank.}
+\gridfield{18mm}{Ein Prim\"arschl\"ussel identifiziert jeden Datensatz eindeutig. Sein Wert darf sich nicht wiederholen und nicht fehlen; so kann ein Datensatz gezielt gefunden und von anderen Tabellen referenziert werden.}
+\sectiontitle{Aufgabe 2 \textperiodcentered{} Tabellen mit SQL verkn\"upfen}
+\task{2a:}{Drei Tabellenausz\"uge und ihre Schemata:}
+\schematext{Mannschaften (mannschaft\_id: int [PS], mannschaft\_name: varchar(255))}
+\schematext{Turniere (turnier\_id: int [PS], turnier\_name: varchar(255))}
+\schematext{Turnierteilnahmen (mannschaft\_id: int [FS $\rightarrow$ Mannschaften],}
+\schematext{\hspace{4mm}turnier\_id: int [FS $\rightarrow$ Turniere]); das Paar bildet den zusammengesetzten PS.}
+\begingroup\renewcommand{\arraystretch}{1.04}\setlength{\tabcolsep}{1.3mm}
+\begin{minipage}[t]{.33\linewidth}\dbtitle{Mannschaften}
+{\footnotesize\begin{tabular}{|c|l|}\hline\rowcolor{Sky}\textbf{mannschaft\_id}&\textbf{mannschaft\_name}\\\hline
+1&Adler U15\\\hline 2&Adler U17\\\hline 3&Falken U15\\\hline\end{tabular}}
+\end{minipage}\hfill
+\begin{minipage}[t]{.23\linewidth}\dbtitle{Turniere}
+{\footnotesize\begin{tabular}{|c|l|}\hline\rowcolor{Sky}\textbf{turnier\_id}&\textbf{turnier\_name}\\\hline
+1&Herbstcup\\\hline 2&Stadtpokal\\\hline\end{tabular}}
+\end{minipage}\hfill
+\begin{minipage}[t]{.39\linewidth}\dbtitle{Turnierteilnahmen}
+{\footnotesize\begin{tabular}{|c|c|}\hline\rowcolor{Sky}\textbf{mannschaft\_id}&\textbf{turnier\_id}\\\hline
+1&1\\\hline 2&1\\\hline 2&2\\\hline 3&2\\\hline\end{tabular}}
+\end{minipage}\par\endgroup\vspace{1mm}
+\textbf{Schreibe} eine SQL-Anweisung, die f\"ur jede eingetragene Turnierteilnahme den Mannschaftsnamen und den Turniernamen ausgibt. Gib nur Kombinationen aus, f\"ur die tats\"achlich eine Teilnahme gespeichert ist.\par
+{\small Beispiel: Mannschaft 1 nimmt an Turnier 1 teil, aber nicht an Turnier 2. Daher erscheint nur ihre Kombination mit Turnier 1.}\par
+\gridfield{30mm}{{\ttfamily\fontsize{8.6}{9.6}\selectfont SELECT Mannschaften.mannschaft\_name,\\Turniere.turnier\_name\\FROM Turnierteilnahmen\\JOIN Mannschaften ON\\Turnierteilnahmen.mannschaft\_id = Mannschaften.mannschaft\_id\\JOIN Turniere ON\\Turnierteilnahmen.turnier\_id = Turniere.turnier\_id;}}
+\vspace{1mm}\task{2b:}{Dieselben Mannschaften mit Vereinsbezug:}
+\schematext{Mannschaften (mannschaft\_id: int [PS], mannschaft\_name: varchar(255), verein\_id: int [FS $\rightarrow$ Vereine])}
+\schematext{Vereine (verein\_id: int [PS], verein\_name: varchar(255))}
+\begingroup\renewcommand{\arraystretch}{1.04}\setlength{\tabcolsep}{1.6mm}
+\begin{minipage}[t]{.58\linewidth}\dbtitle{Mannschaften}
+{\footnotesize\begin{tabular}{|c|l|c|}\hline\rowcolor{Sky}\textbf{mannschaft\_id}&\textbf{mannschaft\_name}&\textbf{verein\_id}\\\hline
+1&Adler U15&1\\\hline 2&Adler U17&1\\\hline 3&Falken U15&2\\\hline\end{tabular}}
+\end{minipage}\hfill
+\begin{minipage}[t]{.39\linewidth}\dbtitle{Vereine}
+{\footnotesize\begin{tabular}{|c|l|}\hline\rowcolor{Sky}\textbf{verein\_id}&\textbf{verein\_name}\\\hline
+1&SV Adler\\\hline 2&TSV Falken\\\hline\end{tabular}}
+\end{minipage}\par\endgroup\vspace{1.5mm}
+\textbf{Schreibe} eine SQL-Anweisung, die die Namen aller Mannschaften zusammen mit dem Namen ihres jeweiligen Vereins ausgibt.\par
+\gridfield{25mm}{{\ttfamily\fontsize{8.6}{9.6}\selectfont SELECT Mannschaften.mannschaft\_name, Vereine.verein\_name\\FROM Mannschaften\\JOIN Vereine ON\\Mannschaften.verein\_id = Vereine.verein\_id;}}
+\fuss{1}
+\newpage
+\kopf
+\sectiontitle{Aufgabe 3 \textperiodcentered{} InstaHub modellieren}
+\task{3a:}{\textbf{Erg\"anze} das Klassendiagramm von InstaHub. \textbf{Zeichne} die Beziehungen f\"ur Hochladen, Kommentieren, Liken und Folgen ein und \textbf{beschrifte} sie mit Beziehungsnamen und Kardinalit\"aten.}
+\noindent\begin{tikzpicture}[x=1mm,y=1mm]
+\path[use as bounding box] (0,0) rectangle (182,70);
+\draw[Blue,line width=.8pt] (8,24) rectangle (48,46);\draw[Blue,line width=.8pt] (8,40) -- (48,40);\node[font=\bfseries\ttfamily] at (28,43) {users};
+\draw[Blue,line width=.8pt] (134,24) rectangle (174,46);\draw[Blue,line width=.8pt] (134,40) -- (174,40);\node[font=\bfseries\ttfamily] at (154,43) {photos};
+\ifsolution
+\draw[Blue,line width=.8pt] (48,38) -- node[above,fill=white,inner sep=1pt,font=\scriptsize]{kann hochladen} (134,38);
+\node[font=\scriptsize\bfseries,fill=white,inner sep=1pt] at (52,38) {1};
+\node[font=\scriptsize\bfseries,fill=white,inner sep=1pt] at (130,38) {n};
+\draw[Blue,line width=.8pt] (48,34) -- node[above,fill=white,inner sep=1pt,font=\scriptsize]{kann kommentieren} (134,34);
+\node[font=\scriptsize\bfseries,fill=white,inner sep=1pt] at (52,34) {n};
+\node[font=\scriptsize\bfseries,fill=white,inner sep=1pt] at (130,34) {m};
+\draw[Blue,line width=.8pt] (48,29) -- node[below,fill=white,inner sep=1pt,font=\scriptsize]{kann liken} (134,29);
+\node[font=\scriptsize\bfseries,fill=white,inner sep=1pt] at (52,29) {n};
+\node[font=\scriptsize\bfseries,fill=white,inner sep=1pt] at (130,29) {m};
+\draw[Blue,line width=.8pt] (17,46) .. controls (17,64) and (39,64) .. (39,46);
+\node[font=\scriptsize\bfseries,fill=white,inner sep=1pt] at (17,49) {n};
+\node[font=\scriptsize\bfseries,fill=white,inner sep=1pt] at (39,49) {m};
+\node[font=\scriptsize,fill=white,inner sep=1pt] at (28,63) {kann folgen};
+\fi
+\end{tikzpicture}\par
+\task{3b:}{\textbf{Beschreibe} die Beziehungen aus deinem Diagramm jeweils in beide Richtungen. Welche zus\"atzlichen Tabellen werden f\"ur ihre Umsetzung ben\"otigt, obwohl sie nicht als Klassenkarten eingezeichnet sind? \textbf{Begr\"unde} deine Entscheidung.}
+\gridfield{65mm}{Ein Benutzer kann mehrere Fotos hochladen; jedes Foto wird von genau einem Benutzer hochgeladen. Daf\"ur steht \texttt{photos.user\_id} als Fremdschl\"ussel auf \texttt{users.id}; eine zus\"atzliche Beziehungstabelle ist nicht n\"otig. Ein Benutzer kann mehrere Fotos kommentieren und ein Foto kann von mehreren Benutzern kommentiert werden. Daf\"ur braucht man \texttt{comments}. Ein Benutzer kann mehrere Fotos liken und ein Foto Likes von mehreren Benutzern erhalten; daf\"ur braucht man \texttt{likes}. Ein Benutzer kann mehreren Benutzern folgen und von mehreren Benutzern gefolgt werden; daf\"ur braucht man \texttt{follows}. Diese drei n:m-Beziehungen ben\"otigen jeweils eine Beziehungstabelle mit zwei Fremdschl\"usseln. Bei \texttt{follows} verweisen \texttt{follower\_id} und \texttt{following\_id} beide auf \texttt{users}; jede Zeile bezeichnet eine Richtung.}
+\vspace{1mm}\task{3c:}{\textbf{Beschreibe} die Ergebnistabelle, wenn das Kreuzprodukt zwischen \texttt{users} und \texttt{photos} gebildet wird.}
+\gridfield{29mm}{Die Ergebnistabelle enth\"alt die Spalten von \texttt{users} und die Spalten von \texttt{photos}. Jeder Datensatz aus \texttt{users} wird mit jedem Datensatz aus \texttt{photos} kombiniert, unabh\"angig davon, ob ein Benutzer das Foto hochgeladen hat. Bei u Benutzerdatens\"atzen und p Fotodatens\"atzen entstehen u \textperiodcentered{} p Ergebniszeilen.}
+\fuss{2}
+\end{document}

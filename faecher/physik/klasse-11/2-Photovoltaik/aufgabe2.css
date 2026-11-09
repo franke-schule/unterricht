@@ -1,0 +1,136 @@
+.pv-experiment-grid { display:grid; grid-template-columns:minmax(0,1.2fr) minmax(230px,.8fr); gap:1rem; align-items:center; margin:1rem 0; }
+.pv-apparatus { min-width:0; margin:0; padding:.75rem; border:1px solid #d9e4ed; border-radius:12px; background:#fbfdff; }
+.pv-apparatus svg { display:block; width:100%; height:auto; color:#193851; font:16px/1.2 system-ui,sans-serif; }
+.pv-flashlight rect,.pv-flashlight path { fill:#d9e4ed; stroke:#36566e; stroke-width:3; }
+.pv-flashlight circle { fill:#fff2bf; stroke:#aa7e13; stroke-width:3; }
+.pv-cell path { stroke:#4a99ae; stroke-width:2; }
+.pv-cell text { font-size:12px; }
+.pv-beam { stroke:none; }
+.pv-apparatus[data-color="rot"] #beam-start,.pv-apparatus[data-color="rot"] #beam-end { stop-color:#df5145; }
+.pv-apparatus[data-color="grün"] #beam-start,.pv-apparatus[data-color="grün"] #beam-end { stop-color:#49a866; }
+.pv-apparatus[data-color="gelb"] #beam-start,.pv-apparatus[data-color="gelb"] #beam-end { stop-color:#f1c735; }
+.pv-apparatus[data-color="blau"] #beam-start,.pv-apparatus[data-color="blau"] #beam-end { stop-color:#4d8ee0; }
+.pv-apparatus[data-color="rot"] .pv-cell .pv-cell-halo { fill:#f6b5aa; }
+.pv-apparatus[data-color="grün"] .pv-cell .pv-cell-halo { fill:#aae3ba; }
+.pv-apparatus[data-color="gelb"] .pv-cell .pv-cell-halo { fill:#fce599; }
+.pv-apparatus[data-color="blau"] .pv-cell .pv-cell-halo { fill:#b3d2fb; }
+.pv-readings { display:grid; gap:.6rem; }
+.pv-readings section { padding:.75rem; border:1px solid #d4e0e9; border-radius:10px; background:#fff; }
+.pv-readings h3 { margin:0 0 .25rem; font-size:1rem; }
+.pv-readings output { font-size:1.45rem; font-weight:800; font-variant-numeric:tabular-nums; }
+.pv-controls { display:grid; gap:.65rem; margin:1rem 0; }
+.pv-controls input[type="range"] { width:100%; min-height:38px; accent-color:#176ca0; }
+.pv-controls select,.pv-controls button,.pv-series-toggle { min-height:44px; }
+.pv-switch { display:flex; align-items:center; gap:.55rem; min-height:44px; }
+.pv-switch input { width:1.2rem; height:1.2rem; }
+.pv-wiper { fill:none; stroke:#754a21; stroke-width:3; stroke-linecap:round; }
+.pv-dial { fill:#fff; stroke:#754a21; stroke-width:3; }
+.pv-open-gap { stroke:#a34c3b; stroke-width:5; stroke-linecap:round; }
+.pv-graphs { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:1rem; margin-top:1.2rem; }
+.pv-graphs figure { min-width:0; margin:0; }
+.pv-graphs h3 { text-align:center; font-size:1rem; }
+.pv-svg-host svg { display:block; width:100%; height:auto; overflow:visible; font-family:system-ui,sans-serif; }
+.graph-grid { stroke:#dce5ee; stroke-width:1; }
+.graph-axis { stroke:#263d53; stroke-width:2.5; }
+.graph-tick { fill:#263d53; font-size:12px; }
+.graph-axis-title { fill:#192f45; font-size:14px; font-weight:800; }
+.graph-point-label { fill:#172f49; font-size:11px; font-weight:700; paint-order:stroke; stroke:#fff; stroke-width:3px; stroke-linejoin:round; }
+.pv-graphs figcaption { margin:.4rem 0; color:#52647b; text-align:center; font-size:.9rem; }
+.pv-series-visibility { display:flex; flex-wrap:wrap; gap:.5rem; margin:1rem 0; }
+.pv-series-toggle { display:flex; align-items:center; gap:.45rem; padding:.4rem .65rem; border:1px solid #d9e4ed; border-radius:8px; cursor:pointer; }
+.pv-series-toggle input { width:1.1rem; height:1.1rem; }
+.series-symbol { width:12px; height:12px; display:inline-block; background:var(--series-color); }
+.series-symbol.circle { border-radius:50%; }.series-symbol.triangle { clip-path:polygon(50% 0,100% 100%,0 100%); }.series-symbol.diamond { transform:rotate(45deg); }.series-symbol.cross { clip-path:polygon(35% 0,65% 0,65% 35%,100% 35%,100% 65%,65% 65%,65% 100%,35% 100%,35% 65%,0 65%,0 35%,35% 35%); }.series-symbol.hexagon { clip-path:polygon(25% 0,75% 0,100% 50%,75% 100%,25% 100%,0 50%); }
+.pv-table-details { margin-top:1rem; }
+.pv-table-scroll { max-width:100%; overflow-x:auto; }
+.pv-table-scroll table { width:100%; border-collapse:collapse; }
+.pv-table-scroll th,.pv-table-scroll td { padding:.5rem; border:1px solid #d3dee8; text-align:left; white-space:nowrap; }
+.pv-table-scroll th { background:#eef4f8; }
+.pv-mpp-result { margin-top:.75rem; padding:.75rem; border-left:4px solid #1b7894; background:#f4f9fc; }
+.pv-summary { margin-top:1rem; padding:1rem; border:2px solid #1b7894; border-radius:12px; background:#f4f9fc; }
+.pv-summary[hidden] { display:none; }
+.pv-summary-grid { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:.7rem; }
+.pv-summary-grid article { padding:.7rem; background:#fff; border:1px solid #d4e0e9; border-radius:8px; }
+.photovoltaik-page button:focus-visible,.photovoltaik-page a:focus-visible,.photovoltaik-page input:focus-visible,.photovoltaik-page select:focus-visible,.photovoltaik-page summary:focus-visible { outline:3px solid rgba(23,99,213,.5); outline-offset:3px; }
+@media(max-width:1000px) { .pv-experiment-grid,.pv-graphs { grid-template-columns:1fr; } }
+@media(max-width:760px) { .pv-readings { grid-template-columns:repeat(3,minmax(0,1fr)); }.pv-readings output { font-size:1.1rem; }.pv-summary-grid { grid-template-columns:1fr; } }
+@media(max-width:480px) {
+  .pv-readings { grid-template-columns:1fr; }
+  .pv-apparatus { padding:.35rem; }
+  .pv-apparatus svg { font-size:26px; }
+  .pv-apparatus .pv-cell text { font-size:23px; }
+  .pv-controls .action-row { display:grid; grid-template-columns:1fr; }
+  .pv-controls button { width:100%; }
+  .pv-graphs .graph-tick { font-size:19px; }
+  .pv-graphs .graph-axis-title { font-size:20px; }
+  .pv-graphs .graph-point-label { font-size:17px; }
+}
+.photovoltaik-page .physics-step-tabs { grid-template-columns:repeat(3,minmax(0,1fr)); }
+.pv-cell text { fill:#193851; stroke:none; font-size:16px; font-weight:600; }
+
+/* Aufgabe 2: kompakte Arbeitsfläche mit Schaltbild und beiden Diagrammen. */
+.photovoltaik-page .physics-revision-shell { width:min(1240px,calc(100% - 28px)); }
+.photovoltaik-page .physics-revision-panels { width:100%; }
+.photovoltaik-page .physics-revision-hero { margin:.35rem auto .5rem; padding-top:.3rem; padding-bottom:.25rem; }
+.photovoltaik-page .physics-step-tabs { margin-bottom:.4rem; }
+.photovoltaik-page .physics-revision-hero h1 { font-size:clamp(1.6rem,2.2vw,2rem); margin:.15rem 0; }
+.photovoltaik-page .physics-revision-hero p { margin:.2rem 0; }
+.photovoltaik-page .physics-card-heading { margin-bottom:.3rem; }
+.photovoltaik-page .physics-card-heading h2 { margin:.1rem 0; }
+.photovoltaik-page #panel-experiment > .physics-card-heading { display:none; }
+.photovoltaik-page #panel-experiment > .physics-task-card { min-width:0; padding:.75rem; display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:.15rem .7rem; }
+.photovoltaik-page #panel-experiment > .physics-task-card > p:not(.pv-model-notice) { margin:.1rem 0; font-size:.9rem; line-height:1.3; }
+.photovoltaik-page .pv-model-notice { grid-column:1/-1; margin:.15rem 0 .25rem; font-size:.86rem; }
+.pv-workspace { grid-column:1/-1; display:grid; grid-template-columns:minmax(0,40fr) minmax(0,60fr); gap:.8rem; align-items:start; }
+.pv-left,.pv-graphs { min-width:0; }
+.pv-apparatus { position:relative; padding:.25rem; margin:0; }
+.pv-apparatus svg { width:100%; height:225px; font-size:14px; }
+.pv-lamp-color { position:absolute; top:.25rem; left:.4rem; z-index:1; display:flex; align-items:center; gap:.3rem; padding:.15rem .3rem; background:rgba(255,255,255,.94); border-radius:6px; font-size:.82rem; }
+.pv-lamp-color select { min-height:32px; max-width:7rem; }
+.pv-cell .pv-cell-plate,.pv-cell .pv-light-arrow { fill:none; stroke:#1d4961; stroke-width:3; stroke-linecap:round; stroke-linejoin:round; }
+.pv-cell .pv-cell-halo { fill:#ffe6a3; stroke:none; opacity:.7; }
+.pv-cell .pv-light-arrow { stroke:#b47c17; stroke-width:2.5; stroke-dasharray:none; }
+.pv-cell circle { fill:#1d4961; }
+.pv-apparatus .circuit-voltage { stroke-dasharray:none; }
+.pv-apparatus .circuit-resistor { fill:#fff; stroke:#1d4961; stroke-width:3; }
+.pv-apparatus .pv-wiper { fill:none; stroke:#754a21; stroke-width:3; stroke-linecap:round; stroke-linejoin:round; }
+.pv-switch-contact { fill:#1d4961; }
+.pv-switch-arm { fill:none; stroke:#1d4961; stroke-width:4; stroke-linecap:round; transform-box:view-box; transform-origin:470px 130px; transition:transform .25s ease; }
+.pv-apparatus[data-open="true"] .pv-switch-arm { transform:rotate(35deg); }
+.pv-readings { grid-template-columns:repeat(3,minmax(0,1fr)); gap:.25rem; margin:.3rem 0; }
+.pv-readings section { min-width:0; padding:.3rem; }
+.pv-readings h3 { font-size:.78rem; margin:0; }
+.pv-readings output { font-size:1.04rem; }
+.pv-controls { gap:.15rem; margin:.25rem 0 0; font-size:.86rem; }
+.pv-controls input[type="range"] { min-height:30px; }
+.pv-controls .pv-switch { min-height:30px; }
+.pv-controls .action-row { display:flex; gap:.4rem; margin:.05rem 0; }
+.pv-controls button { min-height:36px; padding:.3rem .5rem; font-size:.82rem; }
+.pv-set-status { margin:.1rem 0; font-size:.82rem; }
+.pv-graphs { display:grid; grid-template-columns:minmax(0,1fr); gap:.25rem; margin:0; }
+.pv-graphs figure { min-width:0; padding:.15rem .3rem; border:1px solid #d9e4ed; border-radius:10px; }
+.pv-graphs h3 { margin:0; font-size:.92rem; }
+.pv-graphs .pv-svg-host svg { width:100%; height:auto; }
+.pv-graphs figcaption { margin:0; font-size:.74rem; }
+.pv-graphs .graph-tick { font-size:12px; }
+.pv-graphs .graph-axis-title { font-size:13px; }
+.pv-graphs .graph-point-label { font-size:11px; }
+.pv-analysis { grid-column:1/-1; min-width:0; margin-top:.5rem; }
+.pv-analysis .action-row { display:flex; flex-wrap:wrap; gap:.5rem; margin:.35rem 0; }
+.pv-analysis #selected-series { max-width:16rem; margin-left:.4rem; }
+.pv-analysis .pv-mpp-result { display:inline-block; margin:.2rem 0; padding:.3rem .5rem; font-size:.88rem; }
+.pv-analysis .pv-mpp-result:empty { display:none; }
+.pv-helps { grid-column:1/-1; display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:.7rem; margin-top:.4rem; }
+.pv-model-details { grid-column:1/-1; margin-top:.4rem; }
+.photovoltaik-page .physics-task-card.pv-merksatz { border:1px solid #a8d3e2; border-left:6px solid #1b7894; background:#edf7fb; color:#193851; line-height:1.5; text-align:left; }
+.pv-merksatz h2 { margin:.3rem 0 1rem; color:#193851; font-size:clamp(1.3rem,3vw,1.8rem); }
+.physics-task-card.pv-merksatz > p { margin:.75rem 0; color:inherit; }
+.physics-task-card.pv-merksatz > .eyebrow { color:#1b7894; }
+.physics-task-card.pv-merksatz > .pv-merksatz-formula { padding:.65rem 1rem; border:1px solid #a8d3e2; border-radius:10px; background:#fff; color:#193851; text-align:center; font-size:clamp(1.4rem,4vw,1.9rem); }
+.pv-merksatz ul { margin:.5rem 0; padding-left:1.35rem; }
+.pv-merksatz li + li { margin-top:.5rem; }
+@media (max-width:600px) { .photovoltaik-page .physics-step-tabs { grid-template-columns:minmax(0,1fr); } }
+.photovoltaik-page [hidden] { display:none !important; }
+@media (prefers-reduced-motion: reduce) { .pv-switch-arm { transition:none; } }
+@media (max-width:940px) { .pv-workspace { grid-template-columns:minmax(0,1fr); } .pv-apparatus svg { height:auto; max-height:280px; } .pv-graphs { grid-template-columns:minmax(0,1fr); } }
+@media (max-width:600px) { .photovoltaik-page #panel-experiment > .physics-task-card { grid-template-columns:minmax(0,1fr); } .pv-workspace,.pv-analysis,.pv-helps,.pv-model-notice,.pv-model-details { grid-column:1; } .pv-helps { grid-template-columns:minmax(0,1fr); } .pv-readings output { font-size:.86rem; } .pv-readings h3 { font-size:.68rem; } .pv-controls .action-row { flex-wrap:wrap; } .pv-lamp-color { position:static; margin:.1rem; } .pv-apparatus svg { font-size:20px; } .pv-apparatus .pv-cell text { font-size:18px; } .pv-graphs .graph-tick { font-size:12px; } .pv-graphs .graph-axis-title { font-size:13px; } .pv-graphs .graph-point-label { font-size:11px; } }

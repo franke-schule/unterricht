@@ -1,0 +1,29 @@
+name: Netcup-Verbindung testen
+
+on:
+  workflow_dispatch:
+
+permissions: {}
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Testdatei erstellen
+        run: |
+          mkdir -p netcup-test
+          echo '<!doctype html><meta charset="utf-8"><h1>GitHub überträgt erfolgreich zu netcup.</h1>' > netcup-test/github-netcup-test.html
+
+      - name: Testdatei verschlüsselt übertragen
+        uses: SamKirkland/FTP-Deploy-Action@v4.4.0
+        with:
+          server: ${{ secrets.NETCUP_FTP_SERVER }}
+          username: ${{ secrets.NETCUP_FTP_USERNAME }}
+          password: ${{ secrets.NETCUP_FTP_PASSWORD }}
+          protocol: ftps
+          port: 21
+          security: strict
+          local-dir: ./netcup-test/
+          server-dir: ./
+          state-name: .netcup-test-sync-state.json
