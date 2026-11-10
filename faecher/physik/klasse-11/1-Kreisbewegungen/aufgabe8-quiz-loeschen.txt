@@ -1,0 +1,47 @@
+Wiederholungsquiz zu Aufgabe 8: Das Gravitationsgesetz
+Zugehöriges Modul: aufgabe8.html
+Angelegt am: 09.11.2026
+
+Das Quiz wird nur auf Anweisung der Lehrkraft gelöscht. Es wird kein Löschdatum festgelegt.
+
+Dateien im Repository:
+- faecher/physik/klasse-11/1-Kreisbewegungen/aufgabe8-quiz.html
+- faecher/physik/klasse-11/1-Kreisbewegungen/aufgabe8-quiz.mjs
+- faecher/physik/klasse-11/1-Kreisbewegungen/aufgabe8-quiz.css
+- faecher/physik/klasse-11/1-Kreisbewegungen/aufgabe8-quiz-loeschen.txt (diese Anleitung)
+- scaleway-functions/tests/phy11-a8-quiz.test.js
+
+Geänderte Dateien im Repository:
+- scaleway-functions/source/tasks.js: zusammenhängender Block der drei unten genannten IDs und Kriterienkonfiguration am Dateiende.
+- KI-FEEDBACK-MIGRATION.md: drei Tabellenzeilen sowie Gesamtzählung 88.
+
+Geänderte Dateien außerhalb des Repositorys:
+- ../informatik-material/phy11/1-Kreisbewegungen/phy11-kreisbewegungen.html: Folie mit dem exakten Titel „Quiz zu Aufgabe 8: Das Gravitationsgesetz“ direkt hinter der Modulfolie; folgende Foliennummern/aria-labels angepasst.
+- ../informatik-material/phy11/1-Kreisbewegungen/Phy11-wdh8.svg: QR-Datei für den beauftragten Kurzlink.
+
+Quiz-URL: https://www.franke-schule.de/faecher/physik/klasse-11/1-Kreisbewegungen/aufgabe8-quiz.html
+Präsentationslink und QR-Ziel: https://bycs.link/Phy11-wdh8
+Der Kurzlink verweist auf die oben genannte Quiz-URL. Der Kurzlink ist bei einer Löschung zu deaktivieren.
+
+Scaleway-Aufgaben-IDs und sichtbare Arbeitsaufträge:
+- ph11-a8-quiz-mond-beschreibung — „Der Mond bewegt sich näherungsweise auf einer Kreisbahn um die Erde. Erkläre, welche Kraft ihn zur Erde hin umlenkt, welche Rolle diese Kraft übernimmt und ob dafür eine zusätzliche Zentripetalkraft nötig ist.“ — 3 Punkte.
+- ph11-a8-quiz-zweikoerper-beschreibung — „Ein leichter Körper A und ein schwererer Körper B ziehen einander an. Erkläre für beide Kraftpfeile Angriffskörper und Richtung, vergleiche die Kraftbeträge und begründe mit a = F/m, welcher Körper stärker beschleunigt wird.“ — 4 Punkte.
+- ph11-a8-quiz-gesetz-beschreibung — „Beschreibe den Zusammenhang zwischen beiden Massen, Mittelpunktabstand und Gravitationskraft mit dem Gravitationsgesetz. Erkläre die Wirkung eines verdoppelten Abstands und stelle das Gesetz nach G um.“ — 4 Punkte.
+
+Der Quizstand kann in Browsern unter dem Schlüssel `physik11-kreisbewegungen-aufgabe8-test-v1` verbleiben; die gespeicherten Daten dürfen dort zurückbleiben.
+
+Vollständige Löschcheckliste (erst auf ausdrückliche Anweisung der Lehrkraft):
+- [ ] Quizdateien `aufgabe8-quiz.html`, `aufgabe8-quiz.mjs` und `aufgabe8-quiz.css` löschen.
+- [ ] In `scaleway-functions/source/tasks.js` alle Taskblöcke mit Präfix `ph11-a8-quiz-` und ihre Kriterienkonfiguration am Dateiende entfernen; alle übrigen Aufgaben erhalten.
+- [ ] `scaleway-functions/tests/phy11-a8-quiz.test.js` entfernen und übrige Tests erhalten.
+- [ ] Drei Zeilen in `KI-FEEDBACK-MIGRATION.md` entfernen und Gesamtzählung von 88 entsprechend aktualisieren.
+- [ ] Präsentationsfolie 14 entfernen; alle folgenden Folien-IDs und Nummern in `aria-label` wieder um eins zurückzählen.
+- [ ] `../informatik-material/phy11/1-Kreisbewegungen/Phy11-wdh8.svg` löschen.
+- [ ] Kurzlink `https://bycs.link/Phy11-wdh8` deaktivieren.
+- [ ] Restekontrolle in beiden Repositories mit `git grep -nw "aufgabe8-quiz"` und `git grep -n "ph11-a8-quiz-"` ausführen.
+- [ ] Relevante Tests ausführen.
+- [ ] Scaleway-Kern und Upload-ZIP neu bauen; ZIP in die Function `ki-auswertung` hochladen und erneut bereitstellen. `apps-script/` unverändert lassen.
+- [ ] Entfernte IDs ohne Modellaufruf live prüfen; erwartet wird `UNKNOWN_TASK`. Ohne Zugriff keine bestätigte Serverlöschung melden.
+- [ ] Website neu hochladen.
+- [ ] Abfrage, Lösungsfassungen, Modul `aufgabe8.html`, Sicherungsblatt, gemeinsame Assets und Komponenten ausdrücklich erhalten.
+- [ ] Zuletzt diese Löschanleitung selbst löschen.

@@ -42,7 +42,7 @@ Modell die Bedeutung der vorhandenen Aussage richtig beurteilt hat.
 
 ## Vollständig konfigurierte Aufgaben
 
-Lokaler Stand: **85 von 85 registrierten Aufgaben** verwenden den vollständigen Kriterienvertrag. Noch offen: **0**.
+Lokaler Stand: **88 von 88 registrierten Aufgaben** verwenden den vollständigen Kriterienvertrag. Noch offen: **0**.
 
 Die vollständige [Ausgangsliste der 79 offenen Aufgaben](docs/ki-feedback-offene-aufgaben-2026-10-29.md) dokumentiert den Bestand vor der ausdrücklich beauftragten Gesamtmigration. Die [Spezifikation](docs/ki-feedback-migration-plan.md) enthält Kriterien, feste Hinweise und fachliche Vergleichsfälle; der [Prüfbericht](docs/ki-feedback-migration-pruefung.md) unterscheidet lokale Prüfungen und ausstehende Online-Nachweise.
 
@@ -99,6 +99,9 @@ Die vollständige [Ausgangsliste der 79 offenen Aufgaben](docs/ki-feedback-offen
 | `ph11-a5-quiz-kurve-beschreibung` | Physik Klasse 11 – Quiz zu Aufgabe 5: Auto und Hammerwurf | 4 |
 | `ph11-a5-quiz-naesse-beschreibung` | Physik Klasse 11 – Quiz zu Aufgabe 5: Dieselbe Kurve bei Nässe | 4 |
 | `ph11-a5-quiz-masse-beschreibung` | Physik Klasse 11 – Quiz zu Aufgabe 5: LKW und kleines Auto | 4 |
+| `ph11-a8-quiz-mond-beschreibung` | Physik Klasse 11 – Quiz zu Aufgabe 8: Mondbahn erklären | 3 |
+| `ph11-a8-quiz-zweikoerper-beschreibung` | Physik Klasse 11 – Quiz zu Aufgabe 8: Kräftepaar und Beschleunigung erklären | 4 |
+| `ph11-a8-quiz-gesetz-beschreibung` | Physik Klasse 11 – Quiz zu Aufgabe 8: Gravitationsgesetz und Abstand erklären | 4 |
 | `ph11-kreisbewegungen-zentripetalkraft-beschreibung` | Physik Klasse 11 – Kreisbewegung: Geschwindigkeitsvektor und Zentripetalkraft beschreiben | 5 |
 | `ph11-zentripetalkraft-herleitung-dv` | Physik Klasse 11 – Zentripetalkraft: Konstruktion von Δv beschreiben | 3 |
 | `ph11-zentripetalkraft-herleitung-naeherung` | Physik Klasse 11 – Zentripetalkraft: Näherung Bogen gleich Sehne begründen | 2 |
@@ -220,7 +223,7 @@ auch die für Aufgabe 9 nötigen bisherigen Abhängigkeiten. Der Servercode
 wurde bei dieser Fehlerkorrektur nicht verändert. Ein einzelner erfolgreicher
 P2-Aufruf ist kein fachlicher Live-Nachweis für den gesamten Aufgabenbestand.
 
-Die Legacy-Fixture ist leer. Sämtliche 85 registrierten KI-Aufgaben sind lokal auf Einzelkriterien umgestellt, einschließlich der 19 Codeaufgaben. Es gibt keine nur teilweise vorbereitete registrierte Aufgabe mehr.
+Die Legacy-Fixture ist leer. Sämtliche 88 registrierten KI-Aufgaben sind lokal auf Einzelkriterien umgestellt, einschließlich der 19 Codeaufgaben. Es gibt keine nur teilweise vorbereitete registrierte Aufgabe mehr.
 
 `scaleway-functions/tests/fixtures/criterion-feedback-legacy.json` ist die maschinenlesbare Restliste. `criterion-feedback-contract.test.js` verhindert neue Aufgaben ohne Kriterien, Rückfälle sowie eine veraltete Kriterientabelle. Der Altbestand darf nur durch weitere Umstellungen schrumpfen.
 

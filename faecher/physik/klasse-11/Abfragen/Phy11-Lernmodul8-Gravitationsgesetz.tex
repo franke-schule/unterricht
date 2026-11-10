@@ -1,0 +1,136 @@
+\documentclass[10pt,a4paper]{article}
+
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage[ngerman]{babel}
+\usepackage[a4paper,margin=14mm]{geometry}
+\usepackage{lmodern}
+\usepackage[table]{xcolor}
+\usepackage{tabularx}
+\usepackage{amsmath}
+\usepackage{microtype}
+\usepackage{tikz}
+\usetikzlibrary{arrows.meta,calc}
+
+% Die Lösungsfassung unterscheidet sich nur durch \solutiontrue.
+\newif\ifsolution
+\solutionfalse
+
+\pagestyle{empty}
+\setlength{\parindent}{0pt}
+\setlength{\parskip}{0pt}
+\renewcommand{\familydefault}{\sfdefault}
+
+\definecolor{Navy}{HTML}{17324D}
+\definecolor{Blue}{HTML}{3B6EA5}
+\definecolor{Sky}{HTML}{EAF3FA}
+\definecolor{Gold}{HTML}{F3B33D}
+\definecolor{Ink}{HTML}{1E2935}
+\definecolor{Muted}{HTML}{617080}
+\definecolor{Line}{HTML}{D8E1E8}
+\color{Ink}
+
+\newcommand{\FG}{F_{\mathrm G}}
+\newcommand{\kopf}[1]{%
+  \colorbox{Navy}{\parbox{\dimexpr\linewidth-2\fboxsep\relax}{%
+    \vspace{1.3mm}\color{white}
+    \begin{tabularx}{\linewidth}{@{}Xr@{}}
+      {\small\bfseries PHYSIK · KLASSE 11} &
+      \colorbox{Gold}{\color{Navy}\small\bfseries\strut\ifsolution LÖSUNGEN\else ABFRAGE\fi}
+    \end{tabularx}
+    \vspace{0.9mm}
+    {\fontsize{16}{19}\selectfont\bfseries Aufgabe 8 -- Das Gravitationsgesetz}\par
+    \vspace{0.3mm}{\small #1}\vspace{1.1mm}
+  }}\par\vspace{1.5mm}}
+\newcommand{\frage}[2]{%
+  \vspace{1.2mm}{\color{Blue}\bfseries\large #1 · #2}\par
+  \vspace{0.4mm}{\color{Blue}\rule{\linewidth}{0.65pt}}\par\vspace{0.8mm}}
+\newcommand{\antwortfeld}[2]{%
+  \par\vspace{0.7mm}%
+  \pgfmathsetmacro{\aw}{\linewidth/1pt}%
+  \pgfmathsetmacro{\tw}{\aw-7}%
+  \begin{tikzpicture}[x=1pt,y=1pt]
+    \path[use as bounding box] (0,0) rectangle (\aw,-25.607*#1);
+    \ifsolution
+      \node[anchor=north west,text width=\tw pt,inner sep=0pt,align=left,
+        font=\small,text=Blue] at (0,-0.5) {#2};
+    \else
+      \foreach \i in {1,...,#1}{\draw[Line,line width=.55pt] (0,-25.607*\i) -- (\aw,-25.607*\i);}
+    \fi
+  \end{tikzpicture}\par}
+\newcommand{\fuss}[1]{%
+  \vfill{\color{Line}\rule{\linewidth}{0.5pt}}\par\vspace{1mm}
+  \begin{tabularx}{\linewidth}{@{}Xr@{}}
+    {\small\color{Muted}Klasse 11 · Physik · Kreisbewegungen} &
+    {\small\color{Muted}\ifsolution Lösungen\else Abfrage\fi{} · Seite #1 von 2}
+  \end{tabularx}}
+
+\begin{document}
+\kopf{Gravitation · Kräfte zwischen zwei Körpern}
+
+\frage{1}{Newtons Gesetz}
+\textbf{Nenne} das Gesetz, welches Newton formulierte. \textbf{Erkläre} dessen Bedeutung.
+\antwortfeld{2}{Newton formulierte das allgemeine Gravitationsgesetz: Alle Körper mit Masse ziehen einander an. Es gilt auf der Erde und im Weltall; beispielsweise ist die Anziehung der Erde auf den Mond die Kraft, die ihn auf seiner Bahn umlenkt.}
+
+\frage{2}{Zwei Körper}
+\begin{center}
+\begin{tikzpicture}[x=1mm,y=1mm]
+  \path[use as bounding box] (24,-3) rectangle (147,38);
+  \coordinate (A) at (37,18);
+  \coordinate (B) at (133,18);
+  \draw[Navy,line width=.9pt,fill=Sky] (A) circle (8);
+  \draw[Navy,line width=.9pt,fill=Sky] (B) circle (12);
+  \fill[Navy] (A) circle (1.1);
+  \fill[Navy] (B) circle (1.1);
+  \node[font=\small\bfseries,text=Navy] at (37,24) {A};
+  \node[font=\small\bfseries,text=Navy] at (133,28) {B};
+  \node[font=\small] at (37,1) {$m_A$};
+  \node[font=\small] at (133,1) {$m_B>m_A$};
+  \draw[Muted,dashed,line width=.6pt] (37,18) -- (133,18);
+  \ifsolution
+    \draw[-{Latex[length=2.4mm]},Blue,line width=1.1pt] (37,18) -- (62,18);
+    \draw[-{Latex[length=2.4mm]},red!80!black,line width=1.1pt] (133,18) -- (108,18);
+    \node[fill=white,inner sep=1pt,font=\scriptsize,text=Blue] at (49,35) {$F_{\mathrm{B\ auf\ A}}$};
+    \node[fill=white,inner sep=1pt,font=\scriptsize,text=red!80!black] at (121,35) {$F_{\mathrm{A\ auf\ B}}$};
+  \fi
+\end{tikzpicture}
+\end{center}
+\textbf{Zeichne} an beiden Körpern die gegenseitigen Gravitationskräfte als beschriftete Pfeile ein. \textbf{Vergleiche} ihre Beträge und Richtungen. \textbf{Beziehe Stellung}, ob, und falls ja, welche Körper beschleunigt werden.
+\antwortfeld{3}{Die beiden Kräfte sind gleich groß und entgegengesetzt gerichtet, wirken aber auf verschiedene Körper: $F_{\mathrm{A\ auf\ B}}$ wirkt auf B, $F_{\mathrm{B\ auf\ A}}$ auf A. Beide Körper werden zum jeweils anderen Körper hin beschleunigt, da auf jeden eine Gravitationskraft wirkt. Bei gleichem Kraftbetrag wird der leichtere Körper A nach $a=\frac{F}{m}$ stärker beschleunigt als B.}
+
+\frage{3}{Änderungen}
+Ausgehend von unveränderten Anfangswerten wird jede Zeile \textbf{unabhängig} betrachtet; die jeweils nicht genannten Größen bleiben gleich. \textbf{Trage} den Faktor des neuen Kraftbetrags ein und \textbf{begründe} den Fall des doppelten Abstands.
+\par\vspace{0.8mm}
+\renewcommand{\arraystretch}{1.48}
+\begin{tabularx}{\linewidth}{|>{\raggedright\arraybackslash}X|>{\centering\arraybackslash}p{58mm}|}
+\hline
+\rowcolor{Sky}\textbf{Änderung} & \textbf{Neuer Kraftbetrag im Vergleich zu $F$} \\
+\hline
+Nur Masse von A verdoppeln & \rule{0pt}{9mm}\ifsolution $2F$\fi \\
+\hline
+Nur Masse von B verdoppeln & \rule{0pt}{9mm}\ifsolution $2F$\fi \\
+\hline
+Beide Massen verdoppeln & \rule{0pt}{9mm}\ifsolution $4F$\fi \\
+\hline
+Mittelpunktabstand verdoppeln & \rule{0pt}{9mm}\ifsolution $\frac{F}{4}$\fi \\
+\hline
+\end{tabularx}
+\ifsolution
+\antwortfeld{2}{Bei doppeltem Mittelpunktabstand steht $(2r)^2=4r^2$ im Nenner. Der neue Kraftbetrag beträgt daher ein Viertel des ursprünglichen Betrags.}
+\else
+\antwortfeld{2}{}
+\fi
+
+\fuss{1}
+\newpage
+
+\kopf{Gravitation · Kraft berechnen}
+
+\frage{4}{Kraft berechnen}
+Zwei kugelsymmetrische Körper haben die Massen $m_1=20{,}0\,\mathrm{kg}$ und $m_2=30{,}0\,\mathrm{kg}$; ihre Mittelpunkte liegen $r=2{,}00\,\mathrm{m}$ auseinander. \textbf{Berechne} den gegenseitigen Kraftbetrag mit Rechenweg und Einheit; verwende $G=6{,}67430\cdot10^{-11}\,\frac{\mathrm N\cdot\mathrm m^2}{\mathrm{kg}^2}$ und beachte die Anzahl gültiger Ziffern. Du darfst die Formel $\FG=G\,\frac{m_1m_2}{r^2}$ verwenden.
+\antwortfeld{8}{Ansatz: $\displaystyle \FG=G\,\frac{m_1m_2}{r^2}$.\\[1mm]
+Einsetzen: $\displaystyle \FG=\frac{6{,}67430\cdot10^{-11}\,\frac{\mathrm N\cdot\mathrm m^2}{\mathrm{kg}^2}\cdot20{,}0\,\mathrm{kg}\cdot30{,}0\,\mathrm{kg}}{(2{,}00\,\mathrm m)^2}=1{,}001145\cdot10^{-8}\,\mathrm N$.\\[1mm]
+Die Messwerte $20{,}0$, $30{,}0$ und $2{,}00$ haben je drei gültige Ziffern; G ist genauer angegeben. Erst am Ende gerundet: $\boxed{\FG=1{,}00\cdot10^{-8}\,\mathrm N}$.}
+
+\fuss{2}
+\end{document}
