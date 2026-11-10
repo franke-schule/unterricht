@@ -1,0 +1,126 @@
+\documentclass[10pt,a4paper]{article}
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage[ngerman]{babel}
+\usepackage[a4paper,margin=14mm]{geometry}
+\usepackage{lmodern}
+\usepackage[table]{xcolor}
+\usepackage{tabularx}
+\usepackage{microtype}
+\usepackage{amssymb}
+\usepackage{tikz}
+\newif\ifsolution
+\solutiontrue
+\pagestyle{empty}
+\setlength{\parindent}{0pt}
+\setlength{\parskip}{0pt}
+\renewcommand{\familydefault}{\sfdefault}
+\definecolor{Navy}{HTML}{17324D}
+\definecolor{Blue}{HTML}{3B6EA5}
+\definecolor{Gold}{HTML}{F3B33D}
+\definecolor{Ink}{HTML}{1E2935}
+\definecolor{Muted}{HTML}{617080}
+\definecolor{Line}{HTML}{D8E1E8}
+\color{Ink}
+\newcommand{\kopf}[2]{%
+  \colorbox{Navy}{\parbox{\dimexpr\linewidth-2\fboxsep\relax}{%
+    \vspace{1.3mm}\color{white}
+    \begin{tabularx}{\linewidth}{@{}Xr@{}}
+      {\small\bfseries PHYSIK · KLASSE 8} &
+      \colorbox{Gold}{\color{Navy}\small\bfseries\strut\ifsolution LÖSUNGEN\else #1\fi}
+    \end{tabularx}
+    \vspace{0.9mm}
+    {\fontsize{16}{19}\selectfont\bfseries Elektrischer Strom · Widerstand und gültige Ziffern}\par
+    \vspace{0.3mm}{\small #2}\vspace{1.1mm}
+  }}\par\vspace{1.5mm}}
+\newcommand{\frage}[2]{%
+  \vspace{0.6mm}{\color{Blue}\bfseries\normalsize #1 · #2}\par
+  \vspace{0.2mm}{\color{Blue}\rule{\linewidth}{0.55pt}}\par\vspace{0.4mm}}
+\newcommand{\antwortfeld}[2]{%
+  \vspace{0.5mm}%
+  \begin{tikzpicture}[x=1mm,y=1mm]
+    \path[use as bounding box] (0,0) rectangle (181.5,-7*#1);
+    \ifsolution
+      \node[anchor=north west,text width=179mm,inner sep=0pt,align=left,
+        font={\fontsize{11}{14}\selectfont\everymath{\displaystyle}},text=Blue] at (0,-0.8) {#2};
+    \else
+      \foreach \i in {1,...,#1}{\draw[Line,line width=.5pt] (0,-7*\i) -- (181.5,-7*\i);}
+    \fi
+  \end{tikzpicture}\par}
+\newcommand{\rechenfeld}[2]{%
+  \vspace{0.4mm}%
+  \begin{tikzpicture}[x=1mm,y=1mm]
+    \path[use as bounding box] (0,0) rectangle (181.5,-#1);
+    \draw[step=5mm,Line!65,line width=.25pt] (0,-#1) grid (181.5,0);
+    \draw[Line,line width=.55pt] (0,0) rectangle (181.5,-#1);
+    \ifsolution
+      \node[anchor=north west,text width=179mm,inner sep=0pt,align=left,
+        font={\fontsize{11}{14}\selectfont\everymath{\displaystyle}},text=Blue] at (0,-0.7) {#2};
+    \fi
+  \end{tikzpicture}\par}
+\newcommand{\wahl}[2]{%
+  \noindent\ifsolution\ifnum#1=1 $\boxtimes$\else $\square$\fi\else $\square$\fi\enspace #2\par}
+\newcommand{\fuss}[2]{%
+  \vfill{\color{Line}\rule{\linewidth}{0.5pt}}\par\vspace{1mm}
+  \begin{tabularx}{\linewidth}{@{}Xr@{}}
+    {\small\color{Muted}Klasse 8 · Physik · Elektrischer Strom} &
+    {\small\color{Muted}\ifsolution Lösungen\else #2\fi{} · Seite #1 von 2}
+  \end{tabularx}}
+\begin{document}
+\kopf{TEST}{Test zur Abfrage · Taschenrechner · Widerstand und gültige Ziffern}
+\small\textbf{Hilfsmittel: Taschenrechner.}\par\normalsize
+\frage{A1}{Widerstand, Spannung und Stromstärke berechnen}
+\textbf{Berechne} in a) den Widerstand, in b) die Spannung und in c) die Stromstärke. \textbf{Notiere} jeweils Ansatz, nötige Umstellung, Einsetzen mit Einheiten, Taschenrechnerwert und passend gerundetes Ergebnis.\par
+\vspace{0.5mm}
+\textbf{a)} $U=7{,}35\,\mathrm{V}$; $I=0{,}42\,\mathrm{A}$\par
+\rechenfeld{30}{$R=\frac{U}{I}=\frac{7{,}35\,\mathrm{V}}{0{,}42\,\mathrm{A}}=17{,}5\,\Omega$.\par $\Rightarrow R=18\,\Omega$ (zwei gültige Ziffern).}
+\textbf{b)} $R=7{,}4\,\Omega$; $I=0{,}38\,\mathrm{A}$\par
+\rechenfeld{30}{$R=\frac{U}{I}\Rightarrow U=R\cdot I$.\par $U=7{,}4\,\Omega\cdot0{,}38\,\mathrm{A}=2{,}812\,\mathrm{V}$.\par $\Rightarrow U=2{,}8\,\mathrm{V}$.}
+\textbf{c)} $U=9{,}40\,\mathrm{V}$; $R=3{,}7\,\Omega$\par
+\rechenfeld{30}{$R=\frac{U}{I}\Rightarrow I=\frac{U}{R}$.\par $I=\frac{9{,}40\,\mathrm{V}}{3{,}7\,\Omega}=2{,}540540\ldots\,\mathrm{A}$.\par $\Rightarrow I=2{,}5\,\mathrm{A}$.}
+\frage{A2}{Gültige Ziffern erkennen}
+\textbf{Kreuze alle richtigen Aussagen an.}\par
+\wahl{1}{0,0042 A hat zwei gültige Ziffern.}
+\wahl{0}{Die Null vor der 7 in 0,070 A ist eine gültige Ziffer.}
+\wahl{1}{5,00 V hat drei gültige Ziffern.}
+\wahl{0}{Zusätzliche Stellen im Taschenrechnerwert machen das Ergebnis genauer als die gegebenen Messwerte.}
+\frage{A3}{Widerstand und Genauigkeit}
+$U=8{,}25\,\mathrm{V}$; $I=0{,}46\,\mathrm{A}$; $R=\frac{U}{I}$\par
+\textbf{Kreuze alle richtigen Aussagen zur Rechnung an.}\par
+\wahl{0}{$17{,}9\,\Omega$ ist das passend gerundete Endergebnis.}
+\wahl{1}{Bei Multiplikation und Division bestimmt die kleinste Anzahl gültiger Ziffern der gegebenen Messwerte die Anzahl im Endergebnis.}
+\wahl{1}{Zwischenwerte werden nicht vorzeitig gerundet; gerundet wird erst das Endergebnis.}
+\wahl{1}{Aus 8,25 V und 0,46 A ergibt sich passend gerundet $R=18\,\Omega$.}
+\fuss{1}{Test}
+\newpage
+\kopf{TEST}{Test zur Abfrage · Taschenrechner · Widerstand und gültige Ziffern}
+\frage{A4}{Größen und Einheiten}
+\textbf{Ergänze} in der Tabelle jeweils die fehlende Größe, das Formelzeichen und die Einheit.\par
+\vspace{0.5mm}
+\renewcommand{\arraystretch}{1.45}
+\begin{tabularx}{\linewidth}{|>{\raggedright\arraybackslash}X|>{\centering\arraybackslash}p{32mm}|>{\centering\arraybackslash}p{36mm}|}\hline
+\rowcolor{Navy}\color{white}\bfseries Größe & \color{white}\bfseries Formelzeichen & \color{white}\bfseries Einheit \\ \hline
+elektrischer Widerstand & \ifsolution $R$\fi & \ifsolution Ohm ($\Omega$)\fi \\ \hline
+\ifsolution elektrische Spannung\fi & $U$ & \ifsolution Volt (V)\fi \\ \hline
+\ifsolution elektrische Stromstärke\fi & \ifsolution $I$\fi & \ifsolution Ampere (A)\else A\fi \\ \hline
+\end{tabularx}
+\par\vspace{4mm}
+\frage{A5}{Einheiten umrechnen}
+\textbf{Rechne} die vier Angaben in die jeweils genannte Einheit um; erhalte dabei die Anzahl gültiger Ziffern.\par
+\begin{tabularx}{\linewidth}{@{}X X@{}}
+a) $125\,\mathrm{mV}=\ifsolution 0{,}125\,\mathrm{V}\else\rule{29mm}{.4pt}\,\mathrm{V}\fi$ & b) $0{,}347\,\mathrm{k\Omega}=\ifsolution 347\,\mathrm{\Omega}\else\rule{28mm}{.4pt}\,\mathrm{\Omega}\fi$ \\
+\vspace{6mm}&\\[-2mm]
+c) $2{,}365\,\mathrm{V}=\ifsolution 2365\,\mathrm{mV}\else\rule{28mm}{.4pt}\,\mathrm{mV}\fi$ & d) $0{,}047\,\mathrm{mA}=\ifsolution 0{,}000047\,\mathrm{A}\else\rule{28mm}{.4pt}\,\mathrm{A}\fi$
+\end{tabularx}
+\par\vspace{4mm}
+\frage{A6}{Für die Schnellen}
+\textbf{Berechne} in a) den Widerstand, in b) die Spannung und in c) die Stromstärke. \textbf{Notiere} jeweils Ansatz, nötige Umstellung, Einsetzen mit Einheiten, Taschenrechnerwert und passend gerundetes Ergebnis.\par
+\vspace{0.5mm}
+\textbf{a)} $U=4{,}82\,\mathrm{V}$; $I=0{,}37\,\mathrm{A}$\par
+\rechenfeld{30}{$R=\frac{U}{I}=\frac{4{,}82\,\mathrm{V}}{0{,}37\,\mathrm{A}}=13{,}027027\ldots\,\Omega$.\par $\Rightarrow R=13\,\Omega$ (zwei gültige Ziffern).}
+\textbf{b)} $R=18{,}6\,\Omega$; $I=0{,}27\,\mathrm{A}$\par
+\rechenfeld{30}{$R=\frac{U}{I}\Rightarrow U=R\cdot I$.\par $U=18{,}6\,\Omega\cdot0{,}27\,\mathrm{A}=5{,}022\,\mathrm{V}$.\par $\Rightarrow U=5{,}0\,\mathrm{V}$.}
+\textbf{c)} $U=2{,}85\,\mathrm{V}$; $R=8{,}6\,\Omega$\par
+\rechenfeld{30}{$R=\frac{U}{I}\Rightarrow I=\frac{U}{R}$.\par $I=\frac{2{,}85\,\mathrm{V}}{8{,}6\,\Omega}=0{,}331395\ldots\,\mathrm{A}$.\par $\Rightarrow I=0{,}33\,\mathrm{A}$.}
+\fuss{2}{Test}
+\end{document}

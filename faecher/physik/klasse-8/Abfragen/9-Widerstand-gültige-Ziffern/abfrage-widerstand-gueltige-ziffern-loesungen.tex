@@ -1,0 +1,104 @@
+\documentclass[10pt,a4paper]{article}
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage[ngerman]{babel}
+\usepackage[a4paper,margin=14mm]{geometry}
+\usepackage{lmodern}
+\usepackage[table]{xcolor}
+\usepackage{tabularx}
+\usepackage{microtype}
+\usepackage{amssymb}
+\usepackage{tikz}
+\newif\ifsolution
+\solutiontrue
+\pagestyle{empty}
+\setlength{\parindent}{0pt}
+\setlength{\parskip}{0pt}
+\renewcommand{\familydefault}{\sfdefault}
+\definecolor{Navy}{HTML}{17324D}
+\definecolor{Blue}{HTML}{3B6EA5}
+\definecolor{Gold}{HTML}{F3B33D}
+\definecolor{Ink}{HTML}{1E2935}
+\definecolor{Muted}{HTML}{617080}
+\definecolor{Line}{HTML}{D8E1E8}
+\color{Ink}
+\newcommand{\kopf}[2]{%
+  \colorbox{Navy}{\parbox{\dimexpr\linewidth-2\fboxsep\relax}{%
+    \vspace{1.3mm}\color{white}
+    \begin{tabularx}{\linewidth}{@{}Xr@{}}
+      {\small\bfseries PHYSIK · KLASSE 8} &
+      \colorbox{Gold}{\color{Navy}\small\bfseries\strut\ifsolution LÖSUNGEN\else #1\fi}
+    \end{tabularx}
+    \vspace{0.9mm}
+    {\fontsize{16}{19}\selectfont\bfseries Elektrischer Strom · Widerstand und gültige Ziffern}\par
+    \vspace{0.3mm}{\small #2}\vspace{1.1mm}
+  }}\par\vspace{1.5mm}}
+\newcommand{\frage}[2]{%
+  \vspace{0.6mm}{\color{Blue}\bfseries\normalsize #1 · #2}\par
+  \vspace{0.2mm}{\color{Blue}\rule{\linewidth}{0.55pt}}\par\vspace{0.4mm}}
+\newcommand{\antwortfeld}[2]{%
+  \vspace{0.5mm}%
+  \begin{tikzpicture}[x=1mm,y=1mm]
+    \path[use as bounding box] (0,0) rectangle (181.5,-7*#1);
+    \ifsolution
+      \node[anchor=north west,text width=179mm,inner sep=0pt,align=left,
+        font={\fontsize{11}{14}\selectfont\everymath{\displaystyle}},text=Blue] at (0,-0.8) {#2};
+    \else
+      \foreach \i in {1,...,#1}{\draw[Line,line width=.5pt] (0,-7*\i) -- (181.5,-7*\i);}
+    \fi
+  \end{tikzpicture}\par}
+\newcommand{\rechenfeld}[2]{%
+  \vspace{0.4mm}%
+  \begin{tikzpicture}[x=1mm,y=1mm]
+    \path[use as bounding box] (0,0) rectangle (181.5,-#1);
+    \draw[step=5mm,Line!65,line width=.25pt] (0,-#1) grid (181.5,0);
+    \draw[Line,line width=.55pt] (0,0) rectangle (181.5,-#1);
+    \ifsolution
+      \node[anchor=north west,text width=179mm,inner sep=0pt,align=left,
+        font={\fontsize{11}{14}\selectfont\everymath{\displaystyle}},text=Blue] at (0,-0.7) {#2};
+    \fi
+  \end{tikzpicture}\par}
+\newcommand{\wahl}[2]{%
+  \noindent\ifsolution\ifnum#1=1 $\boxtimes$\else $\square$\fi\else $\square$\fi\enspace #2\par}
+\newcommand{\fuss}[2]{%
+  \vfill{\color{Line}\rule{\linewidth}{0.5pt}}\par\vspace{1mm}
+  \begin{tabularx}{\linewidth}{@{}Xr@{}}
+    {\small\color{Muted}Klasse 8 · Physik · Elektrischer Strom} &
+    {\small\color{Muted}\ifsolution Lösungen\else #2\fi{} · Seite #1 von 2}
+  \end{tabularx}}
+\begin{document}
+\kopf{ABFRAGE}{Größen, Ohmsches Gesetz und gültige Ziffern}
+\frage{A1}{Größen und Einheiten}
+\textbf{Ergänze} in der Tabelle jeweils die fehlende Größe, das Formelzeichen und die Einheit.\par
+\vspace{0.5mm}
+\renewcommand{\arraystretch}{1.55}
+\begin{tabularx}{\linewidth}{|>{\raggedright\arraybackslash}X|>{\centering\arraybackslash}p{32mm}|>{\centering\arraybackslash}p{36mm}|}\hline
+\rowcolor{Navy}\color{white}\bfseries Größe & \color{white}\bfseries Formelzeichen & \color{white}\bfseries Einheit \\ \hline
+\ifsolution elektrische Spannung\else Spannung\fi & \ifsolution $U$\fi & \ifsolution Volt (V)\fi \\ \hline
+\ifsolution elektrische Stromstärke\fi & $I$ & \ifsolution Ampere (A)\fi \\ \hline
+\ifsolution elektrischer Widerstand\fi & \ifsolution $R$\fi & \ifsolution Ohm ($\Omega$)\else $\Omega$\fi \\ \hline
+\end{tabularx}
+\par\vspace{4mm}
+\frage{A2}{Drei Rechnungen zum Widerstand}
+\textbf{Berechne} in a) den Widerstand, in b) die Spannung und in c) die Stromstärke. \textbf{Notiere} jeweils Ansatz, nötige Umstellung, Einsetzen mit Einheiten, Taschenrechnerwert und passend gerundetes Ergebnis.\par
+\vspace{0.6mm}
+\textbf{a)} $U=6{,}00\,\mathrm{V}$; $I=40{,}0\,\mathrm{A}$\par
+\rechenfeld{27}{Ansatz: $R=\frac{U}{I}=\frac{6{,}00\,\mathrm{V}}{40{,}0\,\mathrm{A}}=0{,}15\,\Omega$.\par Mit drei gültigen Ziffern: $R=0{,}150\,\Omega$.}
+\textbf{b)} $R=4\,\Omega$; $I=1{,}2\,\mathrm{mA}$\par
+\rechenfeld{27}{$R=\frac{U}{I}\Rightarrow U=R\cdot I$.\par $U=4\,\Omega\cdot0{,}0012\,\mathrm{A}=0{,}0048\,\mathrm{V}=4{,}8\,\mathrm{mV}$.\par Mit einer gültigen Ziffer: $U=0{,}005\,\mathrm{V}=5\,\mathrm{mV}$.}
+\textbf{c)} $R=5{,}8\cdot10^{6}\,\mathrm{\Omega}$; $U=0{,}380\,\mathrm{V}$\par
+\rechenfeld{27}{$R=\frac{U}{I}\Rightarrow I=\frac{U}{R}$.\par $I=\frac{0{,}380\,\mathrm{V}}{5{,}8\cdot10^{6}\,\mathrm{\Omega}}=6{,}551724\ldots\cdot10^{-8}\,\mathrm{A}$.\par Mit zwei gültigen Ziffern: $I=6{,}6\cdot10^{-8}\,\mathrm{A}$.}
+\fuss{1}{Abfrage}
+\newpage
+\kopf{ABFRAGE}{Größen, Ohmsches Gesetz und gültige Ziffern}
+\frage{A3}{Gültige Ziffern erklären}
+\[\begin{array}{l}U=5{,}7\,\mathrm{V};\quad I=0{,}34\,\mathrm{A}\\[1mm]R=\frac{U}{I}=16{,}764705\ldots\,\mathrm{\Omega}\end{array}\]
+\textbf{Erkläre} anhand der Rechnung, mit wie vielen gültigen Ziffern der Widerstand angegeben werden muss. \textbf{Begründe} deine Entscheidung mit den gegebenen Messwerten und \textbf{gib} das passend gerundete Ergebnis an.\par
+\antwortfeld{5}{5,7 V und 0,34 A haben jeweils zwei gültige Ziffern. Bei der Division darf das Ergebnis nicht genauer sein als die ungenaueste Angabe. Die zusätzlichen Stellen des Taschenrechnerwerts 16,764705… $\Omega$ erhöhen die Messgenauigkeit nicht. Ich runde erst das Endergebnis auf zwei gültige Ziffern: $17\,\mathrm{\Omega}$.}
+\frage{A4}{Einheiten umrechnen}
+\textbf{Rechne} a) 0,064 A in mA und b) 825 $\Omega$ in k$\Omega$ um.\par
+\vspace{2mm}
+a) $0{,}064\,\mathrm{A}=\ifsolution 64\,\mathrm{mA}\else\rule{48mm}{0.4pt}\,\mathrm{mA}\fi$\ifsolution\enspace\textcolor{Blue}{(zwei gültige Ziffern)}\fi\par\vspace{7mm}
+b) $825\,\mathrm{\Omega}=\ifsolution 0{,}825\,\mathrm{k\Omega}\else\rule{48mm}{0.4pt}\,\mathrm{k\Omega}\fi$\ifsolution\enspace\textcolor{Blue}{(drei gültige Ziffern)}\fi
+\fuss{2}{Abfrage}
+\end{document}
