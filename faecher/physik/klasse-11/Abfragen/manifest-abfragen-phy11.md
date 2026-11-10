@@ -25,8 +25,9 @@ Vor dem Entwurf festhalten:
 - behandelte Lernziele, gewünschte Schwerpunkte und ausdrücklich ausgeschlossene
   Inhalte sowie bereits vereinbarte Änderungen;
 - gewünschte Fassung: neue Abfrage, weitere Variante oder Überarbeitung;
-- bei beauftragtem Wiederholungsquiz: bestehende Quizdateien, Präsentation der
-  Einheit und gegebenenfalls der vom Auftrag vorgegebene Kurzlink.
+- bestehende Quizdateien, Präsentation der Einheit und den vorgesehenen
+  Kurzlink `https://bycs.link/Phy11-wdhX` (X = Aufgabennummer des Lernmoduls);
+  eine ausdrücklich abweichende Vorgabe der Lehrkraft berücksichtigen.
 
 Modul, Merksätze, Sicherungsblatt und vorhandene Aufgaben gemeinsam lesen. Eine
 knappe Zuordnung erstellen: **Lernziel → Abfrageaufgabe → Quizaufgabe → erwartete
@@ -35,11 +36,23 @@ widersprüchlichen Quellen den Widerspruch klären, statt ihn in neue Materialie
 zu übernehmen. Fehlende Angaben zunächst aus dem Bestand ermitteln; nur für
 inhaltlich notwendige, nicht ableitbare Entscheidungen nachfragen.
 
-Ein Auftrag „Abfrage mit Lösungen und Wiederholungsquiz für den Rest der
-Klasse zu Aufgabe N“ umfasst die vollständige Erstellung beider Teile samt
-Servereinträgen, Löschanleitung, Präsentationsfolie, Link und QR-Code. Eine
-Abfrage allein löst keinen zusätzlichen Quizauftrag aus. Das vorhandene
-Sicherungsblatt dient als Quelle; ein neues wird dadurch nicht beauftragt.
+Ein Auftrag für eine **Phy11-Abfrage zu Aufgabe X** umfasst standardmäßig den
+vollständigen gemeinsamen Satz, auch wenn nur „Abfrage“ genannt wird:
+
+1. Gedruckte Abfrage auf Grundlage des Lernmoduls und seines vorhandenen
+   Sicherungsblatts, begrenzt auf die tatsächlich behandelten Inhalte.
+2. Separate, layoutgleiche Lösungsfassung zur Abfrage.
+3. Inhaltlich passendes Wiederholungsquiz für den Rest der Klasse unter
+   `aufgabeX-quiz.html`, einschließlich Servereinträgen und Löschanleitung.
+4. Eigene Quizfolie direkt hinter der zugehörigen Modulfolie in der
+   Präsentation der Einheit, mit `https://bycs.link/Phy11-wdhX` und passendem
+   QR-Code. X bezeichnet die Aufgabennummer des Lernmoduls, nicht die Nummer
+   einer Quizfrage, Folie oder Abfragevariante.
+
+Ein ausdrücklich engerer oder abweichender Auftrag der Lehrkraft hat Vorrang.
+Das vorhandene Sicherungsblatt dient als Quelle; ein neues wird dadurch nicht
+beauftragt. Die Prüfung des Kurzlinks und der Umgang mit einer fehlenden
+Weiterleitung sind in Abschnitt 10 festgelegt.
 
 Vor der Umsetzung die konkrete Abfragevorlage, Quizvorlage, endgültigen
 Dateinamen und Prüfkriterien kurz festlegen. Das Quiz wird gemäß seinem Manifest
@@ -155,7 +168,7 @@ bei einer reinen Umstrukturierung inhaltlich und gestalterisch erhalten.
   wenn sie Grundlage des Auftrags sind; Beschriftung und Situation müssen
   fachlich zusammenpassen.
 
-Für den Rest der Klasse ist das beauftragte Wiederholungsquiz eine digitale,
+Für den Rest der Klasse ist das zugehörige Wiederholungsquiz eine digitale,
 eigenständige Seite nach Abschnitt 8. Ein zusätzlich gewünschter gedruckter
 Test braucht eine eigene Festlegung; das Phy8-Schema wird nicht übernommen.
 
@@ -299,30 +312,36 @@ Bildinhalt und werden als Abhängigkeiten dokumentiert.
 Vor jeder Erstellung oder Änderung die tatsächlich verwendete Anbindung in
 Quizskript und gemeinsamem
 [semantic-answer.mjs](../../../informatik/klasse-11/1-Kuenstliche-Intelligenz/perzeptron/ui/semantic-answer.mjs)
-prüfen. **Stand 14.10.2026 nutzt diese Anbindung Scaleway.** Die Hinweise im
-Wiederholungsquizmanifest zur ausschließlichen Apps-Script-Bereitstellung
-reichen für diesen Stand nicht aus. Aufgaben und Bewertungsregeln stammen
-weiterhin aus `apps-script/`; der vorhandene Google-Server bleibt erhalten.
-Endpunkte und Aufgabenanzahlen nicht aus früheren Aufträgen ungeprüft übernehmen.
+prüfen. Neue und überarbeitete KI-Aufgaben verwenden ausschließlich den
+bestehenden **Scaleway-Auswertungsserver** gemäß `manifest-allgemein.txt`,
+Abschnitte 0 und 0.1. Die bearbeitbaren Quellen liegen unter
+`scaleway-functions/source/`. `apps-script/` bleibt unverändertes Archiv;
+keine Google-Skript-Dateien ändern und keine parallele Google-Bereitstellung
+pflegen. Endpunkte und Aufgabenanzahlen nicht aus früheren Aufträgen ungeprüft
+übernehmen.
 
 Für jede Freitextaufgabe:
 
 1. Eine eindeutige Aufgaben-ID nach dem Quizmanifest in
-   [Tasks.gs](../../../../apps-script/Tasks.gs) anlegen; alle Quiz-IDs stehen
-   als zusammenhängender Block. Bei Überarbeitung vorhandene IDs nutzen,
+   [tasks.js](../../../../scaleway-functions/source/tasks.js) anlegen;
+   alle Quiz-IDs stehen als zusammenhängender Block. Bei Überarbeitung vorhandene IDs nutzen,
    sofern Lernziel und Zuordnung erhalten bleiben.
 2. Aufgabenwortlaut im Client und im Serverkontext abgleichen. Titel,
-   `maxPoints`, `expectedAspects`, Rubrik und Rückmeldung stimmen überein;
-   Aspektzahl und maximale Punktzahl sind gleich. MC-Lösungen und fachliche
+   `maxPoints`, `expectedAspects`, Rubrik und `feedbackCriteria` stimmen
+   überein; jedes Kriterium zählt einen Punkt. `maxFeedbackHints: 1` setzen
+   und genau einen nächsten Verbesserungsschritt anzeigen. Die Checkliste in
+   [KI-FEEDBACK-MIGRATION.md](../../../../KI-FEEDBACK-MIGRATION.md) beachten
+   und deren Aufgabenübersicht aktualisieren. MC-Lösungen und fachliche
    Erklärungen ebenfalls unabhängig prüfen.
-3. Kommentar in [Config.gs](../../../../apps-script/Config.gs) und jede ID
-   in [code-routing.test.js](../../../../apps-script/tests/code-routing.test.js)
+3. Passende Tests unter [scaleway-functions/tests/](../../../../scaleway-functions/tests/)
    ergänzen; Gesamtsumme im Quiz aus den tatsächlichen Teilwertungen ermitteln.
-4. Bei Scaleway den Bewertungskern nach Quellenänderungen neu bauen, prüfen
-   und das Paket nach [README](../../../../scaleway-functions/README.md)
-   erzeugen. Vor einer Bereitstellung lokale und laufende Aufgabenbestände
-   abgleichen, damit andere Live-Aufgaben nicht verloren gehen. Falls weitere
-   verwendete Bereitstellungen existieren, auch diese berücksichtigen.
+4. Nach Quellenänderungen `node scaleway-functions/build-core.js`, die
+   Scaleway-Tests und `& ./scaleway-functions/package.ps1` ausführen.
+   Die aktuelle `scaleway-functions/dist/ki-auswertung-test.zip` samt
+   SHA256-Datei und Bereitstellungshinweis übergeben; siehe
+   [README](../../../../scaleway-functions/README.md). Generierte Kerndateien
+   nicht von Hand bearbeiten. Vor einer Bereitstellung lokale und laufende
+   Aufgabenbestände abgleichen, damit andere Live-Aufgaben nicht verloren gehen.
 
 Lokaler Bau, technische Tests, echte Modellbewertung, Serverbereitstellung und
 Website-Upload sind unterschiedliche Prüfschritte. Ein simulierter Server
@@ -340,14 +359,25 @@ und das aktuelle Paket übergeben. Keine Zugangsdaten in Materialdateien ablegen
 - Eine eigene Quizfolie direkt hinter der Modulfolie einfügen. Bei erneutem
   Ausführen die vorhandene Quizfolie aktualisieren, keine zweite anlegen.
   Nachfolgende IDs, `aria-label` und Folienzähler konsistent halten.
-- Einen ausdrücklich vorgegebenen Kurzlink verwenden; ohne Vorgabe die volle
-  Quizadresse verwenden. Der QR-Code kodiert exakt dieselbe vollständige URL
-  wie beide Links der Folie. SVG neben der Präsentation ablegen und als
-  Data-URI einbetten; erzeugten QR-Code unabhängig dekodieren.
+- Für Phy11 standardmäßig `https://bycs.link/Phy11-wdhX` verwenden, mit X als
+  Aufgabennummer des Lernmoduls, beispielsweise `https://bycs.link/Phy11-wdh8`
+  für `aufgabe8-quiz.html`. Der sichtbare Linktext lautet `bycs.link/Phy11-wdhX`;
+  beide Links der Quizfolie enthalten die vollständige HTTPS-Adresse. Eine
+  ausdrücklich abweichende Linkvorgabe der Lehrkraft hat Vorrang. Diese
+  Phy11-Regel konkretisiert die allgemeine Linkregel im Wiederholungsquizmanifest.
+- Der QR-Code kodiert exakt dieselbe URL wie beide Links der Folie. Einen
+  beigefügten QR-Code unverändert verwenden und auf Übereinstimmung prüfen;
+  andernfalls einen passenden QR-Code erzeugen. SVG neben der Präsentation
+  als `Phy11-wdhX.svg` ablegen und als Data-URI einbetten; QR-Code unabhängig
+  dekodieren.
 - Linktext und QR-Bild im Browser prüfen. Kurzlink zusätzlich auf Erreichbarkeit
   und das richtige Weiterleitungsziel prüfen. Ein vorgegebener Name beweist
   keine bestehende Weiterleitung: Fehlenden oder falschen Kurzlink als offenen
-  Veröffentlichungsschritt benennen. Keine Ersatzadresse erfinden.
+  Veröffentlichungsschritt benennen, einschließlich der nötigen Einrichtung
+  beziehungsweise Zielkorrektur in ByCS. Das feste Namensschema belegt keine
+  erfolgreiche Einrichtung. Den vorgesehenen Kurzlink in der Folie beibehalten;
+  keine Ersatzadresse erfinden oder stillschweigend auf die volle Quizadresse
+  ausweichen. Ohne bestätigte Prüfung keinen funktionierenden Zugang behaupten.
 - Die eigene Löschanleitung nennt Quizdateien, Server-IDs samt Wortlaut und
   Punkten, geänderte Integrationsdateien, Präsentationspfad, Folientitel,
   QR-Datei, Kurzlink sowie aktuelle und frühere Speicherschlüssel. Folien über
@@ -389,6 +419,9 @@ Bei inhaltlichen Änderungen Abfrage, Lösungen und Quiz gemeinsam prüfen:
 Die Prüfungen aus Abschnitt 7 und dem Quizmanifest gelten zusammen. Zusätzlich
 vor der Übergabe kontrollieren und das Ergebnis knapp dokumentieren:
 
+- [ ] Gemeinsamer Satz aus Abfrage, layoutgleichen Lösungen, Wiederholungsquiz
+      und Präsentationsfolie vollständig; ausdrücklich vereinbarte Ausnahmen
+      sind dokumentiert.
 - [ ] Lernmodul und vorhandenes Sicherungsblatt vollständig gelesen; Lernziele,
       Ausschlüsse und aktuelle Änderungswünsche in beiden Materialien umgesetzt.
 - [ ] Gedruckte Aufgaben sind ohne digitale Hilfsmittel bearbeitbar;
@@ -409,13 +442,15 @@ vor der Übergabe kontrollieren und das Ergebnis knapp dokumentieren:
       Zuordnung und Rückmeldungen lesbar, kein unnötiger horizontaler Überlauf;
       Tastaturbedienung, Antippen als Drag-Alternative und Druckansicht geprüft.
 - [ ] Quizfolie genau einmal direkt nach der Modulfolie vorhanden; QR-Code
-      dekodiert zur verlinkten URL, Kurzlink und Ziel getrennt überprüft.
+      dekodiert zu `https://bycs.link/Phy11-wdhX` (X = Lernmodulnummer) oder
+      zum ausdrücklich abweichend vorgegebenen Link. Kurzlink und Ziel getrennt
+      überprüft; fehlende oder falsche Weiterleitung als offen dokumentiert.
 - [ ] Löschanleitung vollständig und auf den aktuellen Stand gebracht;
       Abfrage und gemeinsam genutzte Dateien werden darin erhalten.
-- [ ] `node --check` für das Quizskript, relevante Tests in `apps-script/tests/`,
-      bei Scaleway dessen Build und Tests sowie die Modultests der Einheit
-      ausgeführt. Neue Fehler behoben; belegte bestehende Fehler und nicht
-      durchgeführte Prüfungen ausdrücklich benannt.
+- [ ] `node --check` für das Quizskript, Scaleway-Build und Tests unter
+      `scaleway-functions/tests/` sowie die Modultests der Einheit ausgeführt;
+      aktuelles Uploadpaket gebaut. Neue Fehler behoben; belegte bestehende
+      Fehler und nicht durchgeführte Prüfungen ausdrücklich benannt.
 - [ ] `git diff --check` bestanden; temporäre Bau- und Renderdateien liegen
       außerhalb der finalen Ablage. Vorhandene fremde Änderungen erhalten.
 - [ ] Übergabe enthält Links zu finalen Abfrage-PDFs, Lösungen und Quiz sowie
@@ -423,7 +458,8 @@ vor der Übergabe kontrollieren und das Ergebnis knapp dokumentieren:
 
 Für eine erneute Ausführung reicht als Auftrag mit den Regeln dieses Manifests:
 
-> Erstelle eine Phy11-Abfrage mit Lösungen und ein Wiederholungsquiz für den
-> Rest der Klasse zu Aufgabe N in der Einheit …, auf Grundlage des Lernmoduls
-> und seines Sicherungsblatts. Beachte das Manifest unter klasse-11/Abfragen.
-> Schwerpunkte oder Ausschlüsse: … . Kurzlink, falls vorgegeben: … .
+> Erstelle eine Phy11-Abfrage zu Aufgabe X in der Einheit … gemäß dem Manifest
+> unter klasse-11/Abfragen. Der Standardauftrag umfasst Lösungen, passendes
+> Wiederholungsquiz und Präsentationsfolie mit https://bycs.link/Phy11-wdhX.
+> Grundlage: Lernmodul und vorhandenes Sicherungsblatt.
+> Schwerpunkte, behandelte Reiter oder Ausschlüsse: … .

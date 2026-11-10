@@ -9,6 +9,14 @@ sondern die Wiederholung dessen, was im zugehörigen Modul bereits erarbeitet
 wurde. Es wird über eine eigene Folie in der Präsentation der Einheit
 angeboten.
 
+Für Physik Klasse 11 gilt ergänzend
+faecher/physik/klasse-11/Abfragen/manifest-abfragen-phy11.md:
+Ein Auftrag für eine Phy11-Abfrage umfasst standardmäßig Abfrage und
+layoutgleiche Lösungen auf Grundlage des Lernmoduls und seines vorhandenen
+Sicherungsblatts, ein inhaltlich passendes Wiederholungsquiz sowie dessen
+Präsentationsfolie mit https://bycs.link/Phy11-wdhX. X ist die Aufgabennummer
+des Lernmoduls. Ein ausdrücklich abweichender Auftrag der Lehrkraft hat Vorrang.
+
 Dieses Manifest gilt für jedes neue oder überarbeitete Wiederholungs-Quiz. Es
 ergänzt:
 
@@ -48,9 +56,11 @@ eigens genannt werden; fehlt ein Schritt, ist das Quiz nicht fertig.
      (Abschnitt 3).
   4. Die Löschanleitung aufgabeN-quiz-loeschen.txt schreiben (Abschnitt 5).
   5. Präsentation der Einheit erweitern: eigene Quiz-Folie direkt hinter der
-     Modulfolie, mit Link und QR-Code (Abschnitt 6). Kurzlink und
-     QR-Code-Datei nur verwenden, wenn sie im Auftrag angegeben bzw.
-     beigefügt sind; sonst vollständiger Link und selbst erzeugter QR-Code.
+     Modulfolie, mit Link und QR-Code (Abschnitt 6). In Phy11 gilt standardmäßig
+     https://bycs.link/Phy11-wdhX (X = Aufgabennummer des Lernmoduls).
+     Sonst einen ausdrücklich vorgegebenen Kurzlink oder die vollständige
+     Quizadresse verwenden. Beigefügte QR-Dateien verwenden und prüfen;
+     andernfalls einen passenden QR-Code erzeugen.
   6. Prüfen: node --check, Tests, git diff --check, Quiz und Präsentation im
      Browser (Abschnitt 7).
   7. Übergabe an die verantwortliche Person mit den Schritten, die nur sie
@@ -61,7 +71,9 @@ eigens genannt werden; fehlt ein Schritt, ist das Quiz nicht fertig.
          nicht bewertet),
        - Website hochladen,
        - Änderungen committen (in unterricht und ggf. informatik-material),
-       - gewünschten Kurzlink anlegen, falls noch keiner angegeben war.
+       - einen vorgesehenen Kurzlink einrichten beziehungsweise sein Ziel
+         korrigieren, falls die Prüfung eine fehlende oder falsche Weiterleitung
+         ergeben hat; in Phy11 gilt das feste Schema Phy11-wdhX.
 
 Das Quiz wird direkt nach Vorlage gebaut, nicht über /lernmodul-loop: Es ist
 kein neues Lernmodul, sondern eine Serie nach fester Vorlage.
@@ -334,9 +346,20 @@ anlegen.
   - Link: Standard ist die vollständige Adresse der Quizseite,
       https://www.florian-franke.org/faecher/<fach>/klasse-<k>/<einheit>/
       aufgabeN-quiz.html
-    Ein Kurzlink (z. B. bycs.link/Phy11-Quiz3) wird nur verwendet, wenn er im
-    Auftrag ausdrücklich angegeben ist. Kurzlinks werden nicht selbst
-    ausgedacht oder angelegt.
+    Ausnahme Physik Klasse 11: Dort ist standardmäßig
+    https://bycs.link/Phy11-wdhX zu verwenden; X ist die Aufgabennummer des
+    Lernmoduls, nicht die Foliennummer oder eine Quizfrage. Beispiel:
+    https://bycs.link/Phy11-wdh8 muss zur Quizseite aufgabe8-quiz.html der
+    betreffenden Einheit führen. Eine ausdrücklich abweichende Linkvorgabe der
+    Lehrkraft hat Vorrang. Für andere Klassen/Fächer wird ein Kurzlink nur
+    verwendet, wenn er ausdrücklich vorgegeben ist. Keine anderen
+    Kurzlinknamen erfinden.
+  - Kurzlink und tatsächliches Weiterleitungsziel getrennt prüfen. Ein
+    festgelegter Name belegt keine bestehende Weiterleitung. Fehlt der
+    Kurzlink oder führt er zum falschen Ziel, die nötige Einrichtung oder
+    Korrektur als offenen Veröffentlichungsschritt übergeben. In Phy11 den
+    vorgesehenen Kurzlink in der Folie beibehalten; keine Ersatzadresse
+    erfinden oder ungefragt auf die volle Quizadresse ausweichen.
   - Linktext ohne „https://“. Ist er lang, --link-size so weit verkleinern,
     dass er vollständig in das Linkfeld passt (kein Überlauf, auf dem Beamer
     noch lesbar); notfalls den Linktext umbrechen lassen, die URL im href
@@ -348,7 +371,7 @@ anlegen.
     qrcode außerhalb des Repositorys oder unter tmp/ (nichts davon
     einchecken), und nach dem Erzeugen mit einem Decoder oder einer
     Handykamera geprüft. Die SVG zusätzlich neben der Präsentation ablegen,
-    benannt wie der Kurzlink bzw. das Quiz (z. B. Phy11-Quiz3.svg); sie
+    benannt wie der Kurzlink bzw. das Quiz (in Phy11 Phy11-wdhX.svg); sie
     steht in der Löschanleitung.
   - Die Präsentation im Browser öffnen und prüfen: Quiz-Folie folgt direkt
     auf die Modulfolie, Zähler stimmt („n / Gesamtzahl“), QR-Bild lädt,
@@ -375,7 +398,9 @@ anlegen.
       Präsentation und den Skriptserver.
   [ ] Präsentation hat direkt hinter der Modulfolie eine eigene Quiz-Folie
       mit Link und passendem QR-Code; folgende Folien sind umnummeriert;
-      Kurzlink nur, wenn beauftragt.
+      in Phy11 Kurzlink https://bycs.link/Phy11-wdhX mit Lernmodulnummer X
+      (außer bei ausdrücklich abweichender Linkvorgabe), sonst Kurzlink nur,
+      wenn beauftragt. Weiterleitungsziel geprüft oder offener Schritt benannt.
   [ ] Übergabe nach Abschnitt 0, Schritt 7: fertig gebaute Scaleway-ZIP
       samt Bereitstellungshinweis, Website-Upload, Commit, ggf. Kurzlink.
   [ ] Tests, node --check und git diff --check ohne Fehler; im Browser

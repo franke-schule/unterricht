@@ -10,6 +10,8 @@
 \usepackage{array}
 \usepackage{microtype}
 \usepackage[most]{tcolorbox}
+\usepackage{tikz}
+\usetikzlibrary{positioning,calc}
 
 \pagestyle{empty}
 \setlength{\parindent}{0pt}
@@ -32,6 +34,11 @@
   \vspace{2.3mm}{\color{Blue}\bfseries\large #1}\par
   \vspace{0.7mm}{\color{Blue}\rule{\linewidth}{0.7pt}}\par\vspace{1.2mm}}
 \newcommand{\schema}[1]{\colorbox{CodeBg}{\parbox{\dimexpr\linewidth-2\fboxsep\relax}{\ttfamily\small #1}}}
+% Klassenkarten nach Sicherungsblatt 4, mit gleich hohen Attributbereichen.
+\newcommand{\classcard}[2]{%
+  \fcolorbox{Blue}{white}{\parbox{42mm}{\centering\vspace{0.6mm}{\normalsize\bfseries\ttfamily #1}\par
+  \vspace{0.6mm}{\color{Blue}\makebox[\linewidth][c]{\rule{\dimexpr\linewidth+2\fboxsep\relax}{0.6pt}}}\par\vspace{0.6mm}%
+  \parbox[t][12mm][t]{\linewidth}{\raggedright\ttfamily\small #2}\par\vspace{0.6mm}}}}
 
 \begin{document}
 \colorbox{Navy}{\parbox{\dimexpr\linewidth-2\fboxsep\relax}{%
@@ -45,29 +52,61 @@
 
 \sectiontitle{1 · Klasse und Klassenleiter}
 {\small Für dieses Schulbeispiel gilt: Jede Klasse hat genau einen Klassenleiter, und jeder Klassenleiter leitet genau eine Klasse. Die Zuordnung lautet: 10a -- KOH, 10b -- SEI, 10c -- BRA.}\par\vspace{1mm}
-{\centering\bfseries\textcolor{Blue}{Klasse \quad 1 \;\rule{32mm}{0.7pt}\; 1 \quad Klassenleiter}\par}
+{\centering
+\begin{tikzpicture}[every node/.style={inner sep=0pt,outer sep=0pt}]
+\node (klasse) {\classcard{Klasse}{\strut}};
+\node[right=35mm of klasse] (klassenleiter) {\classcard{Klassenleiter}{\strut}};
+\draw[Blue,line width=.8pt] (klasse.east) -- (klassenleiter.west);
+\node[above=1mm of $(klasse.east)!0.10!(klassenleiter.west)$,font=\bfseries] {1};
+\node[above=1mm of $(klasse.east)!0.90!(klassenleiter.west)$,font=\bfseries] {1};
+\node[above=1mm of $(klasse.east)!0.50!(klassenleiter.west)$,font=\small] {$\triangleleft$ leitet};
+\end{tikzpicture}\par}
 \vspace{1mm}
 {\small Ein Fremdschlüssel kann den Verweis in \texttt{klasse} oder in \texttt{klassenleiter} speichern. Schema C mit zwei Verweisen speichert die Verbindung doppelt und kann widersprüchlich werden.}\par
 \sectiontitle{2 · Schlüssel und Schloss}
 {\small Für diese Schließanlage gilt: Jeder Schlüssel öffnet genau ein Schloss, und zu jedem Schloss gehört genau ein Schlüssel.}\par\vspace{1mm}
-{\centering\bfseries\textcolor{Blue}{Schlüssel \quad 1 \;\rule{32mm}{0.7pt}\; 1 \quad Schloss}\par}
+{\centering
+\begin{tikzpicture}[every node/.style={inner sep=0pt,outer sep=0pt}]
+\node (schluessel) {\classcard{Schlüssel}{id\par nummer\par besitzer}};
+\node[right=35mm of schluessel] (schloss) {\classcard{Schloss}{id\par ort}};
+\draw[Blue,line width=.8pt] (schluessel.east) -- (schloss.west);
+\node[above=1mm of $(schluessel.east)!0.10!(schloss.west)$,font=\bfseries] {1};
+\node[above=1mm of $(schluessel.east)!0.90!(schloss.west)$,font=\bfseries] {1};
+\node[above=1mm of $(schluessel.east)!0.50!(schloss.west)$,font=\small] {öffnet $\triangleright$};
+\end{tikzpicture}\par}
 \vspace{1.5mm}
 \begin{minipage}[t]{0.48\linewidth}
 \textcolor{Blue}{\bfseries Möglichkeit A}\par\vspace{0.6mm}
-\schema{schluessel (id: int, nummer: int,\par\quad besitzer: varchar(255),\par\quad schloss\_id[schloss]: int)\par
-schloss (id: int, ort: varchar(255))}
+\schema{schluessel (\par
+\quad id: int,\par
+\quad nummer: int,\par
+\quad besitzer: varchar(255),\par
+\quad schloss\_id[schloss]: int\par
+)\par\vspace{1mm}
+schloss (\par
+\quad id: int,\par
+\quad ort: varchar(255)\par
+)}
 \end{minipage}\hfill
 \begin{minipage}[t]{0.48\linewidth}
 \textcolor{Blue}{\bfseries Möglichkeit B}\par\vspace{0.6mm}
-\schema{schluessel (id: int, nummer: int,\par\quad besitzer: varchar(255))\par
-schloss (id: int, ort: varchar(255),\par\quad schluessel\_id[schluessel]: int)}
+\schema{schluessel (\par
+\quad id: int,\par
+\quad nummer: int,\par
+\quad besitzer: varchar(255)\par
+)\par\vspace{1mm}
+schloss (\par
+\quad id: int,\par
+\quad ort: varchar(255),\par
+\quad schluessel\_id[schluessel]: int\par
+)}
 \end{minipage}
 \par\vspace{1.2mm}
 \sectiontitle{3 · Eindeutigkeit}
 {\small Ein Fremdschlüssel speichert nur einen Verweis. Damit die Beziehung 1:1 bleibt, darf derselbe Partner nicht mehreren Zeilen zugeordnet werden. Diese Eindeutigkeit gilt in unseren Beispielen als Annahme.}\par\vspace{1mm}
 \begin{tcolorbox}[colback=Mint,colframe=Blue,arc=2mm,boxrule=.8pt,left=3mm,right=3mm,top=1.7mm,bottom=1.7mm]
 \textbf{Merksatz}\par\smallskip
-Bei einer 1:1-Beziehung gehört zu jedem Datensatz der einen Tabelle genau ein Datensatz der anderen Tabelle -- und umgekehrt. Der Fremdschlüssel kann in einer der beiden Tabellen stehen; die Zuordnung muss zusätzlich eindeutig sein.
+Bei einer 1:1-Beziehung gehört zu jedem Datensatz der einen Tabelle genau ein Datensatz der anderen Tabelle -- und umgekehrt. Der Fremdschlüssel kann in einer der beiden Tabellen stehen, aber nicht in beiden gleichzeitig.
 \end{tcolorbox}
 
 \vfill{\color{Line}\rule{\linewidth}{.5pt}}\par\vspace{1.5mm}
