@@ -67,6 +67,13 @@ body.sql9-page.sql-page:not(.menu-cross-product-page) .step-tabs { grid-template
 .sql9-page .sql9-intro-memo h3 { margin: 0 0 6px; }
 .sql9-page .sql9-intro-memo p { margin: 0 0 6px; font-size: 0.88rem; line-height: 1.4; }
 .sql9-page .sql9-intro-memo .given-sql { margin: 0 0 6px; }
+.sql9-page .sql9-moving-groups { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px; margin-top: 10px; }
+.sql9-page .sql9-moving-group { display: grid; align-content: start; gap: 5px; min-width: 0; padding: 8px; border: 2px solid #8da6c4; border-radius: 10px; background: #f6f9fd; }
+.sql9-page .sql9-moving-group h4 { margin: 0; color: #123c6b; }
+.sql9-page .sql9-moving-row { display: block; padding: 5px 7px; border-radius: 6px; background: #e8f1fb; }
+.sql9-page .sql9-count-number { padding: 5px 7px; color: #123c6b; background: #fff3cf; }
+.sql9-page .sql9-count-number.is-counting { outline: 2px solid #b87808; outline-offset: 2px; }
+.sql9-flight-row { position: fixed; z-index: 1000; box-sizing: border-box; padding: 5px 7px; border: 2px solid #1455b1; border-radius: 6px; color: #123c6b; background: #e8f1fb; font-weight: 800; pointer-events: none; white-space: nowrap; overflow: hidden; }
 @keyframes sql9-cell-pop { from { opacity: 0.3; transform: scale(0.85); } to { opacity: 1; transform: none; } }
 
 /* Ablauf in Bild 2: Die Pfeile bestehen aus Linie und Spitze und berühren die Kästen an beiden Enden */
@@ -113,8 +120,10 @@ body.sql9-page.sql-page:not(.menu-cross-product-page) .step-tabs { grid-template
   .sql9-page .sql9-flow-arrow::after { top: auto; right: auto; bottom: -1px; left: 50%; transform: translateX(-50%); border-top: 10px solid #12324a; border-right: 7px solid transparent; border-bottom: 0; border-left: 7px solid transparent; }
   .sql9-page .intro-stepper { flex-wrap: wrap; }
   .sql9-page #intro-frame-count { min-width: 0; }
+  .sql9-page .sql9-moving-groups { grid-template-columns: 1fr; }
 }
 
 @media (prefers-reduced-motion: reduce) {
   .sql9-page .sql9-result-cells td.is-current { animation: none; }
+  .sql9-flight-row { display: none; }
 }

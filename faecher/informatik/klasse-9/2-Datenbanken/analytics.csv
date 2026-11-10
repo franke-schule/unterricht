@@ -1,0 +1,19 @@
+id;ip;device;brand_family;brand_model;browser_family;browser_version;platform_family;platform_version;user_id;photo_id;created_at;updated_at
+1;192.0.2.1;desktop;Dell;OptiPlex;Chrome;118;Windows;11;1;1;2026-01-20 08:00:00;2026-01-20 08:00:00
+2;192.0.2.2;mobile;Google;Pixel 7;Chrome;120;Android;14;2;2;2026-01-20 08:10:00;2026-01-20 08:10:00
+3;192.0.2.3;desktop;Lenovo;ThinkCentre;Chrome;119;Windows;11;3;3;2026-01-20 08:20:00;2026-01-20 08:20:00
+4;192.0.2.4;tablet;Samsung;Galaxy Tab;Chrome;120;Android;14;4;4;2026-01-20 08:30:00;2026-01-20 08:30:00
+5;192.0.2.5;mobile;Samsung;Galaxy A54;Chrome;118;Android;13;5;5;2026-01-20 08:40:00;2026-01-20 08:40:00
+6;192.0.2.6;desktop;HP;ProDesk;Chrome;119;Linux;22.04;6;6;2026-01-20 08:50:00;2026-01-20 08:50:00
+7;192.0.2.1;desktop;Lenovo;ThinkPad;Firefox;115;Linux;22.04;1;1;2026-01-20 09:00:00;2026-01-20 09:00:00
+8;192.0.2.2;mobile;Google;Pixel 6;Firefox;116;Android;13;2;2;2026-01-20 09:10:00;2026-01-20 09:10:00
+9;192.0.2.3;desktop;Dell;Latitude;Firefox;117;Windows;11;3;3;2026-01-20 09:20:00;2026-01-20 09:20:00
+10;192.0.2.4;tablet;Samsung;Galaxy Tab;Firefox;116;Android;14;4;4;2026-01-20 09:30:00;2026-01-20 09:30:00
+11;192.0.2.5;desktop;HP;EliteDesk;Firefox;115;Windows;10;5;5;2026-01-20 09:40:00;2026-01-20 09:40:00
+12;192.0.2.6;mobile;Samsung;Galaxy S23;Edge;118;Android;14;6;6;2026-01-20 09:50:00;2026-01-20 09:50:00
+13;192.0.2.1;desktop;Dell;OptiPlex;Edge;119;Windows;11;1;1;2026-01-20 10:00:00;2026-01-20 10:00:00
+14;192.0.2.2;desktop;Lenovo;ThinkCentre;Edge;120;Windows;11;2;2;2026-01-20 10:10:00;2026-01-20 10:10:00
+15;192.0.2.3;mobile;Google;Pixel 7;Edge;119;Android;14;3;3;2026-01-20 10:20:00;2026-01-20 10:20:00
+16;192.0.2.4;mobile;Apple;iPhone;Safari;9;iOS;9.3;4;4;2026-01-20 10:30:00;2026-01-20 10:30:00
+17;192.0.2.5;tablet;Apple;iPad;Safari;10;iOS;10.3;5;5;2026-01-20 10:40:00;2026-01-20 10:40:00
+18;192.0.2.6;desktop;Apple;iMac;Safari;17;macOS;14.1;6;6;2026-01-20 10:50:00;2026-01-20 10:50:00
