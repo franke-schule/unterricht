@@ -1,6 +1,6 @@
-import { readSplitProgress } from './sql9-progress-migration.mjs';
+import { bindSolutionCodePersistence, readSplitProgress } from './sql9-progress-migration.mjs';
 import { compareRelations, normalizeRelation, parseDelimited, sqlTokens, validateSelectStatement } from '../../klasse-10/1-Datenbanken/sql-lab-core.mjs?v=20260929b';
-import { enableTabKeyboardNavigation, focusTabPanelStart, renderTabFlowNavigation, syncTabSemantics } from '../../klasse-10/1-Datenbanken/tab-navigation.mjs?v=20260906a';
+import { appendSolutionDownloadFromTemplate, enableTabKeyboardNavigation, focusTabPanelStart, renderTabFlowNavigation, syncTabSemantics } from '../../klasse-10/1-Datenbanken/tab-navigation.mjs?v=20260906a';
 
 // nach USERS_TABLE_SCHEMAS in klasse-10/1-Datenbanken/sql-lab.js, wortgleich
 const USERS_TABLE_SCHEMAS = Object.freeze([
@@ -79,6 +79,8 @@ function restore() {
   if(isPlainObject(saved.quizChecked))for(const q of FINAL_QUIZ)if(saved.quizChecked[q.id]===true)state.quizChecked[q.id]=true;
   if(validFeedback(saved.quizFeedback))state.quizFeedback=saved.quizFeedback;
   state.quizPassed=saved.quizPassed===true;
+  if(typeof saved.solutionCode==='string')state.solutionCode=saved.solutionCode;
+  state.solutionUnlocked=saved.solutionUnlocked===true;
 }function isTabComplete(id) {
   if (id==='intro') return state.introStep===10;
   if (id==='quiz') return state.quizPassed;
@@ -850,7 +852,7 @@ function renderQuiz(panel) {
  const overviewSlot=element('div','sql9-overview-slot');const refresh=()=>{overviewSlot.replaceChildren();if(state.quizPassed)overviewSlot.append(element('p','','Du hast das Abschlussquiz gelöst. Nutze die Übersicht zur gemeinsamen Besprechung.'),renderOverview());};
  form.addEventListener('submit',(event)=>{event.preventDefault();const correct=FINAL_QUIZ.map((question)=>question.options.every(([id,,right])=>new Set(quizSelection(question)).has(id)===right));state.quizPassed=correct.every(Boolean);state.quizFeedback=state.quizPassed?{level:'success',text:'Korrekt: Alle fünf Fragen stimmen. Die Lösungsübersicht ist jetzt sichtbar.'}:correct.some(Boolean)?{level:'partial',text:'Teilweise korrekt: Prüfe die noch offenen Fragen einzeln.'}:{level:'hint',text:'Noch nicht korrekt: Lies die Beispiele und Merksätze erneut.'};save();showFeedback();refresh();updateTabMarks();});
  window.addQuizQuestionChecks?.({questions:FINAL_QUIZ.map((question,index)=>({id:question.id,fieldset:fieldsets[index],solution:question.options.filter(([, ,right])=>right).map(([id])=>id),check:()=>{const chosen=new Set(quizSelection(question));const ok=question.options.every(([id,,right])=>chosen.has(id)===right);const some=question.options.some(([id,,right])=>right&&chosen.has(id));return {result:ok?'correct':some?'mixed':'wrong',text:ok?'Korrekt: Alle richtigen Aussagen dieser Frage sind markiert.':some?'Teilweise korrekt: Mindestens eine richtige Aussage ist markiert. Prüfe die übrigen Optionen.':'Noch nicht korrekt: Nutze den Hinweis und das Beispiel im Pflichtteil.'};}})),buttonClass:'primary-button',rowClass:'action-row',feedbackClass:'feedback',levels:{high:'success',medium:'partial',low:'hint'},onCheck:(question,result)=>{state.quizChecked[question.id]=result==='correct';state.quizPassed=false;save();},onAllCorrect:()=>{for(const question of FINAL_QUIZ)state.quizChecked[question.id]=true;form.requestSubmit();}});
- card.append(form);panel.append(card,overviewSlot);showFeedback();refresh();
+ card.append(form);panel.append(card,overviewSlot);appendSolutionDownloadFromTemplate(panel);bindSolutionCodePersistence(panel,state,save);showFeedback();refresh();
 }
 
 function renderOverview(){

@@ -161,3 +161,12 @@ Das Repository `informatik-material` liegt neben `unterricht` (`C:/Users/Franke/
 - Im Browser prüfen: falscher Code → Meldung, richtiger Code → Download sichtbar, erreichbar ohne Quiz, gespeicherter Code bleibt nach dem Neuladen erhalten. Code in HTML, Dekodiertabelle und Präsentation identisch.
 - `git diff --check`. Keine LaTeX-Hilfsdateien (`.aux`, `.log`, `.fls`, `.fdb_latexmk`) oder Renderbilder einchecken.
 - Übergabe: TeX, PDF, Seitenzahl, durchgeführte Prüfungen, Präsentationsstand und offene Punkte.
+
+## 8. Umsetzungsstand (12.11.2026)
+
+Umgesetzt als **eine** A4-Seite wie die Blätter zu Aufgabe 4 und 5. Damit die Einstiegsgrafik ohne Verkleinerung Platz hat, wurden zwei Punkte gegenüber Abschnitt 3 dieses Prompts verdichtet:
+
+- Aufgabe 3 (Mitglieder je Stadt) entfällt. Die Stadtzählung zeigen bereits die Einstiegsgrafik und Aufgabe 6 mit denselben Städten.
+- Aufgabe 7 (Fotos je User-ID) entfällt als eigene Spalte. Abschnitt 4 sichert Aufgabe 9, die dieselbe Gruppierung enthält.
+
+Die Merksätze sind auf je eine Zeile gekürzt. Präsentation in `informatik-material`: noch offen (aus der Cloud-Session nicht erreichbar).
