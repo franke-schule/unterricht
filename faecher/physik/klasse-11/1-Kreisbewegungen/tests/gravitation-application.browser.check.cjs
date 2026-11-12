@@ -22,6 +22,8 @@ async function main() {
   try {
     browser = await chromium.launch({ executablePath: process.env.SCW_CHROME_PATH || 'C:/Program Files (x86)/Microsoft/Edge/Application/msedge.exe', headless: true });
     const context = await browser.newContext({ viewport: { width: 1366, height: 1000 } });
+    // Die echte Rückmeldeanzeige auch auf Browsern ohne Satzsegmentierung prüfen.
+    await context.addInitScript(() => { Intl.Segmenter = undefined; });
     await context.route('**/*', route => route.request().url().startsWith(origin) ? route.continue() : route.abort());
     await context.route(serviceUrl, async route => {
       const request = route.request().postDataJSON();
@@ -107,6 +109,20 @@ async function main() {
     await checkExplanation(result(1, ['Schritt 2 von 2 – Massen und Beschleunigungen: Vergleiche die Massen von Apfel und Erde und nutze den Zusammenhang zwischen Kraft, Masse und Beschleunigung.']));
     await page.locator('#a1-explanation-feedback').getByText('Schritt 2 von 2', { exact: false }).waitFor();
     assert.equal((await saved()).completed.includes('A1'), false);
+    const answerBeforeTimeout = await page.locator('#a1-explanation-answer').inputValue();
+    await page.evaluate(url => {
+      const originalFetch = window.fetch;
+      const originalTimeout = window.setTimeout;
+      window.fetch = (input, options) => String(input) === url ? new Promise(() => {}) : originalFetch(input, options);
+      window.setTimeout = (callback, delay, ...args) => originalTimeout(callback, delay === 130000 ? 25 : delay, ...args);
+      window.restoreTimeoutTest = () => { window.fetch = originalFetch; window.setTimeout = originalTimeout; };
+    }, serviceUrl);
+    await page.locator('#check-a1-explanation').click();
+    await page.locator('#a1-explanation-feedback').getByText('Die Erklärung konnte gerade nicht geprüft werden. Bitte versuche es erneut.', { exact: true }).waitFor();
+    assert.equal(await page.locator('#check-a1-explanation').isEnabled(), true);
+    assert.equal(await page.locator('#a1-explanation-answer').inputValue(), answerBeforeTimeout);
+    assert.equal((await saved()).completed.includes('A1'), false);
+    await page.evaluate(() => { window.restoreTimeoutTest(); delete window.restoreTimeoutTest; });
     await checkExplanation(result(2));
     await page.locator('#a1-explanation-feedback').getByText('Sehr gut, alles richtig', { exact: false }).waitFor();
     assert.equal((await saved()).completed.includes('A1'), true);
@@ -119,13 +135,14 @@ async function main() {
     assert.equal(await page.locator('#a1-explanation-feedback').isHidden(), true);
     queueEvaluation(result(2));
     pauseNextResponse = true;
+    const pendingRequest = page.waitForRequest(request => request.url() === serviceUrl);
     await page.locator('#check-a1-explanation').click();
     const pendingPassword = page.locator('#ai-access-password');
     if (await pendingPassword.count()) {
       await pendingPassword.fill('lokaler-test');
       await page.getByRole('button', { name: 'Prüfung starten' }).click();
     }
-    await page.waitForRequest(request => request.url() === serviceUrl);
+    await pendingRequest;
     while (!releasePausedResponse) await new Promise(resolve => setTimeout(resolve, 10));
     await page.locator('#a1-explanation-answer').fill('Die Antwort wurde während der laufenden Prüfung verändert; dieses alte Ergebnis darf sie nicht freigeben.');
     const lateResponse = page.waitForResponse(response => response.url() === serviceUrl);

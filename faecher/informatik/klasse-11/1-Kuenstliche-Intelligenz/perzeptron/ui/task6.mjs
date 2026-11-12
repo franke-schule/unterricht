@@ -1,4 +1,4 @@
-import { evaluateSemanticAnswer, evaluateCodeAnswer, observeIdeCodeChanges, renderCompactEvaluation } from './semantic-answer.mjs?v=20261029-criteria-v1';
+import { evaluateSemanticAnswer, evaluateCodeAnswer, observeIdeCodeChanges, renderCompactEvaluation } from './semantic-answer.mjs?v=20261111-request-timeout';
 import { setupCodeSnippetOrder } from './code-snippet-order.mjs';
 
 const SERVER_URL = 'https://unterrichtkiichezbn4-ki-auswertung.functions.fnc.fr-par.scw.cloud/';
@@ -150,8 +150,17 @@ async function checkCode(button) {
   if (code.length > 12000) return showMessage(box,'Dein Programmcode ist zu lang für die automatische Auswertung.');
   button.disabled = true;
   showMessage(box,'Der aktuelle Stand von `Perzeptron.java` wird analysiert.','partial');
-  try { const result = await codeRequest(taskId,code); if (codeRequestVersions.get(requestKey) === requestVersion && getCode() === code) renderEvaluation(box,result,taskId); }
-  catch(error) { try { if (codeRequestVersions.get(requestKey) === requestVersion && getCode() === code) showMessage(box,serverError(error)); } catch {} }
+  try {
+    const result = await codeRequest(taskId,code);
+    if (codeRequestVersions.get(requestKey) !== requestVersion) return;
+    if (getCode() !== code) { box.replaceChildren(); box.hidden = true; return; }
+    renderEvaluation(box,result,taskId);
+  }
+  catch(error) {
+    // Auch eine nach dem Absenden nicht mehr erreichbare IDE muss die
+    // Ladeanzeige beenden. getCode() hier nicht erneut aufrufen.
+    if (codeRequestVersions.get(requestKey) === requestVersion) showMessage(box,serverError(error));
+  }
   finally { button.disabled = false; }
 }
 function buildQuiz() {

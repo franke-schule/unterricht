@@ -1,6 +1,6 @@
 # Kriterienbasiertes Feedback: Umstellung und neue Aufgaben
 
-Stand: 08.11.2026. Diese Datei dokumentiert den **lokalen Quellstand**.
+Stand: 12.11.2026. Diese Datei dokumentiert den **lokalen Quellstand**.
 Ein fertiger Build belegt keine Veröffentlichung und keine zuverlässige
 fachliche Bewertung durch das tatsächlich eingesetzte Modell.
 
@@ -41,6 +41,19 @@ Die Belegkontrolle verhindert erfundene Zitate; sie beweist nicht, dass das
 Modell die Bedeutung der vorhandenen Aussage richtig beurteilt hat.
 
 ## Vollständig konfigurierte Aufgaben
+
+Gezielte Fehlerkorrektur vom 12.11.2026 für Inf11 KI 6.2, einfache Variante,
+Schritt 4 (`11-6-einfach-anpassung`): Nach der gemeldeten Fehlermeldung
+„Das Modell hat keine gültige Bewertung geliefert“ erhält diese Aufgabe
+denselben einmaligen Reparaturversuch wie Inf10 1a, innerhalb des bisherigen
+Gesamtzeitbudgets. Das Ausgabelimit beträgt für diese Aufgabe auch bei anderen
+Modellen als `gpt-oss-120b` 4096 statt 1500 Tokens; die Aufgabenregeln verlangen
+kurze Originalbelege und erklären die Belegwahl beim impliziten Nullfall.
+Die fünf Kriterien, Punkte und strenge Belegprüfung bleiben erhalten.
+Neun gezielte Tests bestehen mit simulierten Modellantworten; eine erfolgreiche
+Live-Modellbewertung ist damit nicht belegt. Die genaue Vertragsverletzung der
+ursprünglichen Live-Antwort ist ohne Serverprotokoll unbekannt. Bereitstellung
+und Prüfstand: [Fehlerbericht](docs/inf11-ki-6-2-schritt4-bewertung-2026-11-12.md).
 
 Lokaler Stand: **88 von 88 registrierten Aufgaben** verwenden den vollständigen Kriterienvertrag. Noch offen: **0**.
 

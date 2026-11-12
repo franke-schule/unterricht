@@ -3,7 +3,7 @@ import { createPhysicsTaskProgress } from './components/physics-task-progress.mj
 import { appendPhysicsText } from './components/physics-notation.mjs?v=20261022-force-indices';
 import { enableTokenDrag, wasDragged } from './components/token-drag.mjs';
 import { setupStepOrder } from './components/step-order.mjs';
-import { setupPhysicsSemanticTask } from './components/physics-semantic-task.mjs?v=20261109-a1-freitext';
+import { setupPhysicsSemanticTask } from './components/physics-semantic-task.mjs?v=20261111-request-timeout';
 import { G, INITIAL, MIN_DISTANCE, MAX_DISTANCE, distance, force, validState, setDistance, moveBody, checkQuantity, parseQuantity } from './gravitation-model.mjs?v=20261109-malzeichen';
 
 // Lehrercode-Freigabe nach dem bestehenden Muster aus kettenkarussell.mjs.

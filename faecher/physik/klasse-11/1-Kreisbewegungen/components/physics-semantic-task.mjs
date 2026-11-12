@@ -1,4 +1,4 @@
-import { evaluateSemanticAnswer, renderCompactEvaluation } from "../../../../informatik/klasse-11/1-Kuenstliche-Intelligenz/perzeptron/ui/semantic-answer.mjs?v=20261029-criteria-v1";
+import { evaluateSemanticAnswer, renderCompactEvaluation } from "../../../../informatik/klasse-11/1-Kuenstliche-Intelligenz/perzeptron/ui/semantic-answer.mjs?v=20261111-request-timeout";
 import { appendPhysicsText } from "./physics-notation.mjs?v=20261022-force-indices";
 
 const MAX_LENGTH = 3000;

@@ -1,0 +1,130 @@
+<!doctype html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Messungen in der Reihenschaltung · Physik 8</title>
+<style>
+:root{color-scheme:light;--ink:#111;--muted:#526174;--blue:#2563eb;--line:#dbe3ec}
+*{box-sizing:border-box}
+body{margin:0;background:#edf2f7;color:var(--ink);font-family:Inter,ui-sans-serif,system-ui,-apple-system,"Segoe UI",Arial,sans-serif}
+button,a,select{-webkit-tap-highlight-color:transparent}button,select{font:inherit}button{cursor:pointer}
+button:focus-visible,a:focus-visible,select:focus-visible{outline:3px solid var(--blue);outline-offset:4px}button:disabled{opacity:.35;cursor:default}
+/* Folienrahmen und Steuerung nach praesentation-reihen-parallelschaltung.html. */
+.shell{min-height:100dvh;display:flex;flex-direction:column;justify-content:center;align-items:center;gap:12px;padding:12px}
+.deck{width:min(calc(100vw - 24px),calc((100dvh - 100px)*16/9));aspect-ratio:16/9;position:relative;container-type:inline-size;background:#fff;box-shadow:0 15px 60px #172b4515;overflow:hidden}
+.slide{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;padding:1.5cqw 5cqw}
+.slide[hidden]{display:none}
+.visual{width:100%;height:100%;display:flex;align-items:center;justify-content:center}
+.visual>svg{width:100%;height:100%}
+svg .wire{fill:none;stroke:var(--ink);stroke-width:3.5;stroke-linecap:square;stroke-linejoin:miter}
+svg .body{fill:#fff;stroke:var(--ink);stroke-width:3.5}
+svg .node{fill:var(--ink)}
+svg text{font-family:Arial,sans-serif;fill:var(--ink);text-anchor:middle;dominant-baseline:central;font-size:43px}
+svg .resistance{font-size:30px}
+.controls{display:flex;justify-content:space-between;align-items:center;width:min(1200px,100%);gap:12px;font-size:14px;color:var(--muted)}
+.nav,.tools,.links{display:flex;align-items:center;gap:8px}
+.controls button,.controls select{border:1px solid var(--line);background:white;color:var(--ink);border-radius:8px;min-height:44px;padding:7px 13px}
+.controls select{max-width:240px;min-height:44px}.controls a{color:var(--muted);font-size:12px}
+#counter{min-width:38px;text-align:center;font-variant-numeric:tabular-nums}
+.sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}
+:fullscreen{background:#edf2f7}.shell:fullscreen .links{display:none}
+@media(max-width:700px){.controls{flex-wrap:wrap;justify-content:center;gap:6px}.links{display:none}.controls button{padding:6px 10px}.controls select{max-width:180px}.shell{padding:6px;gap:8px}.deck{width:min(calc(100vw - 12px),calc((100dvh - 130px)*16/9))}}
+@media print{@page{size:landscape;margin:0}body,.shell{background:white;display:block;padding:0}.deck{width:100%;aspect-ratio:auto;box-shadow:none;overflow:visible}.slide,.slide[hidden]{display:flex;position:relative;width:100vw;height:56.25vw;break-after:page;container-type:inline-size}.slide:last-child{break-after:auto}.controls{display:none}}
+</style>
+</head>
+<body>
+<main class="shell" id="shell">
+  <h1 class="sr-only">Messungen in der Reihenschaltung</h1>
+  <div class="deck" id="deck" aria-label="Präsentation: Messungen in der Reihenschaltung" aria-describedby="instructions"></div>
+  <nav class="controls" aria-label="Präsentationssteuerung">
+    <div class="links"><a href="../index.html">Physik 8</a><a href="../../../../index.html">Startseite</a></div>
+    <div class="nav"><button type="button" id="prev" aria-label="Vorherige Folie">← Zurück</button><span id="counter" aria-live="polite" aria-atomic="true"></span><button type="button" id="next" aria-label="Nächste Folie">Weiter →</button></div>
+    <div class="tools"><label class="sr-only" for="jump">Folie wählen</label><select id="jump"></select><button type="button" id="fullscreen" aria-label="Vollbild ein- oder ausschalten">Vollbild</button></div>
+  </nav>
+  <p class="sr-only" id="instructions">Pfeil rechts oder Leertaste: nächste Folie. Pfeil links: zurück. Pos1: erste Folie. Ende: letzte Folie. F: Vollbild.</p>
+</main>
+<script>
+'use strict';
+// Dieselben SVG-Grundbausteine wie in der vorhandenen Phy8-Präsentation.
+const $=selector=>document.querySelector(selector);
+const path=d=>`<path d="${d}" class="wire"/>`;
+const text=(x,y,label,cls='')=>`<text x="${x}" y="${y}" class="${cls}">${label}</text>`;
+const node=(x,y)=>`<circle cx="${x}" cy="${y}" r="6" class="node"/>`;
+const battery=()=>`<g data-component="battery">${path('M482 390V450 M518 404V436')}</g>`;
+const resistor=(x,value='')=>`<g data-component="resistor"><rect x="${x-70}" y="168" width="140" height="44" class="body"/>${value?text(x,190,value,'resistance'):''}</g>`;
+const meter=(x,y,type)=>`<g data-component="${type==='A'?'ammeter':'voltmeter'}"><circle cx="${x}" cy="${y}" r="36" class="body"/>${text(x,y,type)}</g>`;
+
+function circuit({current=false,after=false,source=false,voltage=false,values=false},title){
+  // Alle Bauteile haben eigene Leitungslücken; keine Leitung durchquert sie.
+  let out=path(after
+    ?'M100 190V420H482 M518 420H900V341 M900 269V190'
+    :'M100 190V420H482 M518 420H900V190');
+  out+=battery();
+  const components=[{x:390,half:70,draw:resistor(390,values?'50 Ω':'R<tspan dy="7" font-size=".7em">1</tspan>')},{x:710,half:70,draw:resistor(710,values?'100 Ω':'R<tspan dy="7" font-size=".7em">2</tspan>')}];
+  if(current){
+    components.push({x:210,half:36,draw:meter(210,190,'A')});
+    if(after)out+=meter(900,305,'A');
+    else components.push({x:550,half:36,draw:meter(550,190,'A')});
+  }
+  components.sort((a,b)=>a.x-b.x);
+  let end=100;
+  for(const component of components){
+    out+=path(`M${end} 190H${component.x-component.half}`)+component.draw;
+    end=component.x+component.half;
+  }
+  out+=path(`M${end} 190H900`);
+  // Voltmeter liegen jeweils parallel zum gemessenen Bauteil.
+  if(voltage){
+    out+=path('M290 190V80H354 M426 80H490V190')+meter(390,80,'V')+node(290,190)+node(490,190);
+    if(!source)out+=path('M610 190V80H674 M746 80H810V190')+meter(710,80,'V')+node(610,190)+node(810,190);
+  }
+  if(source)out+=path('M400 420V520H464 M536 520H600V420')+meter(500,520,'V')+node(400,420)+node(600,420);
+  return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 600" role="img" aria-label="${title}"><title>${title}</title>${out}</svg>`;
+}
+
+const slides=[
+  {title:'Stromstärke vor und zwischen den Widerständen',config:{current:true}},
+  {title:'Stromstärke vor und hinter den Widerständen',config:{current:true,after:true}},
+  {title:'Spannung an der Batterie und am ersten Widerstand',config:{voltage:true,source:true}},
+  {title:'Spannung an beiden Widerständen',config:{voltage:true}},
+  {title:'Spannung an den Widerständen mit 50 Ω und 100 Ω',config:{voltage:true,values:true}}
+];
+const deck=$('#deck'),jump=$('#jump');
+let current=0;
+// Alle fünf Folien bleiben auch für die Druckansicht verfügbar.
+deck.innerHTML=slides.map((slide,index)=>`<section class="slide" aria-label="Folie ${index+1}: ${slide.title}"${index?' hidden':''}><div class="visual">${circuit(slide.config,slide.title)}</div></section>`).join('');
+jump.innerHTML=slides.map((slide,index)=>`<option value="${index}">${index+1}. ${slide.title}</option>`).join('');
+function render(){
+  [...deck.children].forEach((slide,index)=>{slide.hidden=index!==current;});
+  $('#counter').textContent=`${current+1} / ${slides.length}`;
+  $('#prev').disabled=current===0;
+  $('#next').disabled=current===slides.length-1;
+  jump.value=String(current);
+  try{history.replaceState(null,'',`#${current+1}`);}catch{}
+}
+function go(index){current=Math.max(0,Math.min(slides.length-1,index));render();}
+$('#next').addEventListener('click',()=>go(current+1));
+$('#prev').addEventListener('click',()=>go(current-1));
+jump.addEventListener('change',()=>go(Number(jump.value)));
+async function fullscreen(){
+  try{if(document.fullscreenElement)await document.exitFullscreen();else await $('#shell').requestFullscreen();}
+  catch{$('#fullscreen').textContent='Vollbild: F11';}
+}
+$('#fullscreen').addEventListener('click',fullscreen);
+document.addEventListener('fullscreenchange',()=>{$('#fullscreen').textContent=document.fullscreenElement?'Vollbild beenden':'Vollbild';});
+document.addEventListener('keydown',event=>{
+  if(event.ctrlKey||event.altKey||event.metaKey||/SELECT|INPUT|TEXTAREA/.test(event.target.tagName))return;
+  if((event.key===' '||event.key==='Enter')&&event.target.closest('button,a'))return;
+  if(['ArrowRight','PageDown',' '].includes(event.key)){event.preventDefault();go(current+1);}
+  else if(['ArrowLeft','PageUp'].includes(event.key)){event.preventDefault();go(current-1);}
+  else if(event.key==='Home'){event.preventDefault();go(0);}
+  else if(event.key==='End'){event.preventDefault();go(slides.length-1);}
+  else if(event.key.toLowerCase()==='f')fullscreen();
+});
+function loadHash(){const match=location.hash.match(/^#(\d+)$/);go(match?Number(match[1])-1:0);}
+window.addEventListener('hashchange',loadHash);
+loadHash();
+</script>
+</body>
+</html>

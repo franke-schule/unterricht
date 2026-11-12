@@ -32,17 +32,25 @@ async function evaluate({ serverUrl = SCW_FUNCTION_URL, taskId, answer, code,
 
   const requestId = globalThis.crypto?.randomUUID?.() || `${Date.now().toString(36)}-${Math.random().toString(36).slice(2)}`;
   const controller = new AbortController();
-  const timer = setTimeout(() => controller.abort(), timeout);
+  let timer;
+  // Nicht nur den Netzwerkabbruch anfordern: Auch die wartende Oberfläche
+  // muss die Anfrage beenden, wenn der Transport nicht auf abort reagiert.
+  const deadline = new Promise((resolve, reject) => {
+    timer = setTimeout(() => {
+      controller.abort();
+      reject(new Error('Die Auswertung hat zu lange gedauert. Bitte versuche es erneut.'));
+    }, timeout);
+  });
   try {
-    const response = await fetch(SCW_FUNCTION_URL, {
+    const response = await Promise.race([fetch(SCW_FUNCTION_URL, {
       method: 'POST', headers: { 'Content-Type': 'application/json', 'X-AI-Password': passwordHeader },
       credentials: 'omit', referrerPolicy: 'no-referrer', cache: 'no-store',
       signal: controller.signal,
       body: JSON.stringify({ requestId, taskId, requestType,
         [requestType === 'code' ? 'code' : 'answer']: input.trim() })
-    });
+    }), deadline]);
     let payload;
-    try { payload = await response.json(); } catch {
+    try { payload = await Promise.race([response.json(), deadline]); } catch {
       if (response.status === 401) forgetAccessPassword(password);
       throw new Error('Der Server hat keine lesbare Auswertung zurückgegeben.');
     }
@@ -117,7 +125,8 @@ export function observeIdeCodeChanges(frame, ideId, onChange) {
 export function compactFeedbackSentences(values, maxSentences = 2) {
   const result = [];
   const seen = new Set();
-  const segmenter = new Intl.Segmenter('de', { granularity: 'sentence' });
+  const segmenter = typeof globalThis.Intl?.Segmenter === 'function'
+    ? new Intl.Segmenter('de', { granularity: 'sentence' }) : null;
   for (const value of values) {
     if (typeof value !== 'string') continue;
     const text = value.replace(/^\s*[-*•]\s*/, '')
@@ -127,7 +136,11 @@ export function compactFeedbackSentences(values, maxSentences = 2) {
       protectedParts.push(part);
       return '\uE000' + (protectedParts.length - 1) + '\uE001';
     });
-    for (const { segment } of segmenter.segment(protectedText)) {
+    // Ältere Schulbrowser unterstützen Segmenter nicht. Code und Abkürzungen
+    // sind bereits geschützt; Dezimalpunkte bleiben innerhalb eines Satzes.
+    const segments = segmenter ? segmenter.segment(protectedText)
+      : (protectedText.match(/[\s\S]+?(?:[.!?]+(?=\s|$)|$)/g) || []).map(segment => ({ segment }));
+    for (const { segment } of segments) {
       const sentence = segment.replace(/\uE000(\d+)\uE001/g, (_, index) => protectedParts[index]).trim();
       const key = sentence.toLocaleLowerCase('de').replace(/[.!?]+$/, '');
       if (!key || seen.has(key) || /^(?:korrigiere dies|[uü]berarbeite deine antwort mithilfe der hinweise|pr[uü]fe (?:deinen code|deine antwort)(?: noch einmal)?)$/.test(key)) continue;
